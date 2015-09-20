@@ -1,6 +1,6 @@
 Schemas = {};
 
-Books = new Mongo.Collection('books');
+Books = new Mongo.Collection('properties');
 
 
 if (Meteor.isClient) {
