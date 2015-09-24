@@ -3,10 +3,12 @@
 This is a seed project for the FM Clarity Web Application.
 
 It is based on a mashup of 
-* [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate) and
-* Bootstrap INSPINIA theme (https://wrapbootstrap.com/theme/inspinia-responsive-admin-theme-WB0R5L90S)
+- [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate) and
+- [Bootstrap INSPINIA theme](https://wrapbootstrap.com/theme/inspinia-responsive-admin-theme-WB0R5L90S)
 
-## Meteor React BoilerPlate Notes
+
+
+#### Meteor React Boilerplate Notes
 
 A starter project for React &amp; Meteor
 

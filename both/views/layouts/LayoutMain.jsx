@@ -51,11 +51,18 @@ MainLayout = React.createClass({
 
     // FIXED-SIDEBAR
     // Uncomment this if you want to have fixed left navigation
-     $('body').addClass('fixed-sidebar');
+    /*$('body').addClass('fixed-sidebar');
      $('.sidebar-collapse').slimScroll({
          height: '100%',
          railOpacity: 0.9
-     });
+     });*/
+    
+    // slim scroll for right sidebar
+    $('.sidebar-container').slimScroll({
+        height: '100%',
+        railOpacity: 0.4,
+        wheelStep: 10
+    });
 
     // BOXED LAYOUT
     // Uncomment this if you want to have boxed layout
@@ -67,7 +74,8 @@ MainLayout = React.createClass({
     return (
       <div id="wrapper">
         <Navigation />
-        <div id="page-wrapper" className="gray-bg">
+        <div id="page-wrapper" className="gradient-bg">
+          <div id="pattern-bg" className="pattern-bg"></div>
           <TopNavBar />
           <main>{this.props.content}</main>
           <Footer />

@@ -5,15 +5,44 @@ TopNavBar = React.createClass({
         $(".navbar-static-top").removeClass('navbar-static-top').addClass('navbar-fixed-top');
     },
 
-    toggleSideBar() {
+    toggleLeftSideBar() {
         $('body').toggleClass("mini-navbar");
+        this.smoothlyMenu();
+    },
+
+    smoothlyMenu() {
+        if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+            // Hide menu in order to smoothly turn on when maximize menu
+            $('#side-menu').hide();
+            // For smoothly turn on menu
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 100);
+        } else if ($('body').hasClass('fixed-sidebar')) {
+            $('#side-menu').hide();
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 300);
+        } else {
+            // Remove all inline style from jquery fadeIn function to reset menu state
+            $('#side-menu').removeAttr('style');
+        }
+    },
+
+    toggleRightSideBar() {
+        $('#right-sidebar').toggleClass("sidebar-open");
     },    
 
     render() {return (
     <div className="row border-bottom">
         <nav className="navbar navbar-static-top" role="navigation" style={{marginBottom:'0'}}>
+            <div className="navbar-header navbar-logo">
+                <img src="img/fm_logo-sm-white.png"/>
+            </div>
             <div className="navbar-header">
-                <a id="navbar-minimalize" onClick={this.toggleSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>
+                <a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>
                 <form role="search" className="navbar-form-custom" action="search_results">
                     <div className="form-group">
                         <input type="text" placeholder="Search for something..." className="form-control" name="top-search" id="top-search"/>
@@ -26,7 +55,7 @@ TopNavBar = React.createClass({
                 </li>
                 <li className="dropdown">
                     <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i className="fa fa-envelope"></i>  <span className="label label-warning">16</span>
+                        <i className="fa fa-bell"></i>  <span className="label label-warning">3</span>
                     </a>
                     <ul className="dropdown-menu dropdown-messages">
                         <li>
@@ -71,17 +100,22 @@ TopNavBar = React.createClass({
                         <li>
                             <div className="text-center link-block">
                                 <a href="{{pathFor route='mailbox'}}">
-                                    <i className="fa fa-envelope"></i> <strong>Read All Messages</strong>
+                                    <i className="fa fa-bell"></i> <strong>See All Notifications</strong>
                                 </a>
                             </div>
                         </li>
                     </ul>
                 </li>
-                <li className="dropdown">
-                    <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i className="fa fa-bell"></i>  <span className="label label-primary">8</span>
+                <li>
+                    <a onClick={this.toggleRightSideBar} className="right-sidebar-toggle">
+                        <i className="fa fa-tasks"></i>
                     </a>
-                    <ul className="dropdown-menu dropdown-alerts">
+                </li>
+                <li className="dropdown">
+                    <a style={{padding:"0px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />
+                    </a>
+                    <ul className="dropdown-menu dropdown-alerts" style={{right:"-5px"}}>
                         <li>
                             <a href="{{pathFor route='mailbox'}}">
                                 <div>
@@ -111,28 +145,14 @@ TopNavBar = React.createClass({
                         <li className="divider"></li>
                         <li>
                             <div className="text-center link-block">
-                                <a href="{{pathFor route='notifications'}}">
-                                    <strong>See All Alerts</strong>
-                                    <i className="fa fa-angle-right"></i>
+                                <a href={FlowRouter.path('logout')}>
+                                    <i className="fa fa-sign-out"></i> Log out
                                 </a>
                             </div>
                         </li>
                     </ul>
                 </li>
-
-
-                <li>
-                    <a href={FlowRouter.path('logout')}>
-                        <i className="fa fa-sign-out"></i> Log out
-                    </a>
-                </li>
-                <li>
-                    <a className="right-sidebar-toggle">
-                        <i className="fa fa-tasks"></i>
-                    </a>
-                </li>
             </ul>
-
         </nav>
     </div>
 );}});

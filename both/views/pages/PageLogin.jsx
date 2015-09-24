@@ -37,31 +37,32 @@ Login = React.createClass({
     <div className="middle-box text-center loginscreen animated fadeInDown">
         <div>
             <div>
-                <h1 className="logo-name">FM</h1>
+                <img src="img/logo-2-flat.png"/>
             </div>
+            <br/>
             <h3>Welcome</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            </p>
-            <p>Login in. To see it in action.</p>
-            { this.state.errorMessage &&
-            <div className="alert alert-danger alert-dismissable">
-                <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
-                {this.state.errorMessage}
+            <p>We understand FM. We understand an FM system needs to be simple, save you time, and be a pleasure to use. FM Clarity offers you a new, streamlined FM solution.</p>
+            <br/>
+            <div className="dialog">
+                <h3>Login in to see it in action.</h3>
+                { this.state.errorMessage &&
+                    <div className="alert alert-danger alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
+                    {this.state.errorMessage}
+                    </div>
+                }
+                <form className="m-t" role="form" onSubmit={this.handleSubmit}>
+                    <div className="form-group">
+                        <input type="email" ref="email" className="form-control" placeholder="Email Address" required=""/>
+                    </div>
+                    <div className="form-group">
+                        <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
+                    </div>
+                    <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
+                    <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
+                    <small>Don't have an account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+                </form>
             </div>
-            }
-            <form className="m-t" role="form" onSubmit={this.handleSubmit}>
-                <div className="form-group">
-                    <input type="email" ref="email" className="form-control" placeholder="Email Address" required=""/>
-                </div>
-                <div className="form-group">
-                    <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
-                </div>
-                <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
-
-                <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a>
-                <p className="text-muted text-center"><small>Do not have an account?</small></p>
-                <a className="btn btn-sm btn-white btn-block" href={FlowRouter.path('register')}>Create an account</a>
-            </form>
             <p className="m-t">
                 <small>Small print &copy; 2015</small>
             </p>

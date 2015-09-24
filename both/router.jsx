@@ -37,12 +37,6 @@ exposed.route('/lost-password', {
   }
 });
 
-exposed.route('/landing', {
-  action() {
-    ReactLayout.render(BlankLayout,{content:<Landing />});
-  }
-});
-
 var loggedIn = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
@@ -79,17 +73,58 @@ if(Meteor.isClient) {
   });
 }
 
-loggedIn.route('/dashboard', {
+loggedIn.route('/', {
   name: 'dashboard',
   action() {
-    ReactLayout.render(MainLayout,{content:<Dashboard />});
+    ReactLayout.render(MainLayout,{content:<PageDashboard />});
+  }
+});
+
+loggedIn.route('/pmp', {
+  name: 'pmp',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageMaintenence />});
+  }
+});
+
+loggedIn.route('/abc', {
+  name: 'abc',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageCompliance />});
+  }
+});
+
+loggedIn.route('/requests', {
+  name: 'requests',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageRequests />});
+  }
+});
+
+loggedIn.route('/contracts', {
+  name: 'contracts',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageContracts />});
+  }
+});
+loggedIn.route('/suppliers', {
+  name: 'suppliers',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageSuppliers />});
+  }
+});
+
+loggedIn.route('/reports', {
+  name: 'reports',
+  action() {
+    ReactLayout.render(MainLayout,{content:<PageReports />});
   }
 });
 
 loggedIn.route('/settings', {
   name: 'settings',
   action() {
-    ReactLayout.render(MainLayout,{content: <Settings />});
+    ReactLayout.render(MainLayout,{content: <PageSettings />});
   }
 });
 
@@ -101,7 +136,7 @@ loggedIn.route('/logout', {
     });
   }
 });
-
+/*
 FlowRouter.route('/', {
   action() {
     ReactLayout.render(BlankLayout, { content: <Landing /> });
@@ -113,7 +148,7 @@ loggedIn.route('/about', {
     ReactLayout.render(MainLayout, { content: <About /> });
   }
 });
-
+*/
 FlowRouter.notFound = {
   action() {
     ReactLayout.render(BlankLayout, { content: <NotFound /> });

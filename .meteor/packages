@@ -4,7 +4,6 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-platform
 react
 
 meteorhacks:npm
@@ -22,9 +21,23 @@ dbarrett:dropzonejs
 twbs:bootstrap
 kadira:flow-router@2.4.0
 
-
-npm-container
 dburles:collection-helpers
 matb33:collection-hooks
 aldeed:collection2
 lai:document-methods
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+tracker
+logging
+reload
+random
+ejson
+spacebars
+check
+
+
+npm-container
