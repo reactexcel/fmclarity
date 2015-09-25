@@ -5,11 +5,6 @@ PageSuppliers = React.createClass({
 	},
 
 	render() {return(
-    <div className="wrapper wrapper-content animated fadeIn">
-        <div className="row">
-            <div className="col-lg-12">
-			</div>
-		</div>
-	</div>
+		<FilterBox title="Suppliers"/>
 	);}
 })

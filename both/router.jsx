@@ -23,6 +23,7 @@ exposed.route('/login', {
   }
 });
 
+/*
 exposed.route('/register', {
   name: 'register',
   action() {
@@ -36,6 +37,7 @@ exposed.route('/lost-password', {
     ReactLayout.render(BlankLayout,{content:<LostPassword />});
   }
 });
+*/
 
 var loggedIn = FlowRouter.group({
   triggersEnter: [
@@ -125,6 +127,13 @@ loggedIn.route('/settings', {
   name: 'settings',
   action() {
     ReactLayout.render(MainLayout,{content: <PageSettings />});
+  }
+});
+
+loggedIn.route('/properties', {
+  name: 'settings',
+  action() {
+    ReactLayout.render(MainLayout,{content: <PageProperties />});
   }
 });
 

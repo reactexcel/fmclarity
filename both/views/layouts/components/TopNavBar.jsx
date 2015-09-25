@@ -117,6 +117,15 @@ TopNavBar = React.createClass({
                     </a>
                     <ul className="dropdown-menu dropdown-alerts" style={{right:"-5px"}}>
                         <li>
+                            <a href={FlowRouter.path('profile')}>
+                                <div>
+                                    Logged in as:<br/>
+                                    {Meteor.user()._id}
+                                </div>
+                            </a>
+                        </li>
+                        <li className="divider"></li>
+                        <li>
                             <a href="{{pathFor route='mailbox'}}">
                                 <div>
                                     <i className="fa fa-envelope fa-fw"></i> You have 16 messages
