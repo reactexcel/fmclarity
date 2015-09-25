@@ -58,28 +58,29 @@ FilterBox = React.createClass({
 	},
 	
 	render() {
-        return (
-            <div>
-                <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"90px"}}>
-                    <div className="col-lg-12">
-                        <h2 style={{marginTop:"16px"}}>{this.props.title}</h2>
-                        <ol id="filters" className="breadcrumb">
-                            <li className="active"><a data-filter="*">All</a></li>
-                            <li><a data-filter=".metal">Open Requests</a></li>
-                            <li><a data-filter=".transition">Closed Requests</a></li>
-                            <li><a data-filter=".alkali, .alkaline-earth">Open Orders</a></li>
-                            <li><a data-filter=":not(.transition)">Closed Orders</a></li>
-                        </ol>
-
-                        <ol id="sorts" style={{display:"none"}}>
-                            <li className="active"><a data-sort-by="original-order">original order</a></li>
-                            <li><a data-sort-by="name">name</a></li>
-                            <li><a data-sort-by="symbol">symbol</a></li>
-                            <li><a data-sort-by="number">number</a></li>
-                            <li><a data-sort-by="weight">weight</a></li>
-                            <li><a data-sort-by="category">category</a></li>
-                        </ol>
-                    </div>
+    var title = this.props.title;
+    var filters = this.props.filters;
+    return (
+      <div>
+        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"90px"}}>
+          <div className="col-lg-12">
+            <h2 style={{marginTop:"16px"}}>{title}</h2>
+              <ol id="filters" className="breadcrumb">
+                {filters.map(function(i){
+                  return (
+                    <li className={i.className?i.className:''}><a data-filter={i.filter}>{i.text}</a></li>
+                  )
+                })}
+              </ol>
+              <ol id="sorts" style={{display:"none"}}>
+                <li className="active"><a data-sort-by="original-order">original order</a></li>
+                <li><a data-sort-by="name">name</a></li>
+                <li><a data-sort-by="symbol">symbol</a></li>
+                <li><a data-sort-by="number">number</a></li>
+                <li><a data-sort-by="weight">weight</a></li>
+                <li><a data-sort-by="category">category</a></li>
+              </ol>
+            </div>
                 </div>
                 <div className="wrapper wrapper-content animated fadeIn">
                     <div className="row">

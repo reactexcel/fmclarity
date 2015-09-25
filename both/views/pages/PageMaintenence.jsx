@@ -15,7 +15,7 @@ PageMaintenence = React.createClass({
 	        <div className="row">
 	            <div className="col-lg-12">
 	            	<Box title="Calendar">
-	            		<div style={{height:"100px"}}></div>
+		            	<Calendar />
 	            	</Box>
 	            	<Box title="PMP Services Panel">
 	            		<div style={{height:"100px"}}></div>

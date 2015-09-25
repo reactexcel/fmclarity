@@ -15,7 +15,7 @@ PageDashboard = React.createClass({
 	            	<div style={{height:"100px"}}></div>
 	            </Box>
 	            <Box title="PMP Calendar">
-	            	<div style={{height:"100px"}}></div>
+	            	<Calendar />
 	            </Box>
 	            <Box title="ABC Graphs">
 	            	<div style={{height:"100px"}}></div>

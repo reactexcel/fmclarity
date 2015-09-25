@@ -119,8 +119,7 @@ TopNavBar = React.createClass({
                         <li>
                             <a href={FlowRouter.path('profile')}>
                                 <div>
-                                    Logged in as:<br/>
-                                    {Meteor.user()._id}
+                                    Logged in as: <b>{Meteor.user().emails[0].address}</b>
                                 </div>
                             </a>
                         </li>

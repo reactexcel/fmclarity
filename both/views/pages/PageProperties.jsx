@@ -4,7 +4,16 @@ PageProperties = React.createClass({
 		//console.log(Meteor.users.find());
 	},
 
-	render() {return(
-		<FilterBox title="Properties" />
-	);}
+	render() {
+		var filters = [
+	      {
+	        text:"All",
+	        filter:"*",
+	        className:"active"
+	      }
+	    ];
+		return(
+			<FilterBox title="Properties" filters={filters}/>
+		);
+	}
 })

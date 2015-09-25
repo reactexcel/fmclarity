@@ -4,7 +4,20 @@ PageSuppliers = React.createClass({
 		//console.log(Meteor.users.find());
 	},
 
-	render() {return(
-		<FilterBox title="Suppliers"/>
-	);}
+	render() {
+		var filters = [
+	      {
+	        text:"Building",
+	        filter:".metal"
+	      },
+	      {
+	        text:"All",
+	        filter:"*",
+	        className:"active"
+	      }
+	    ];
+		return(
+			<FilterBox title="Suppliers" filters={filters}/>
+		);
+	}
 })
