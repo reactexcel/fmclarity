@@ -13,7 +13,7 @@ Navigation = React.createClass({
 
             <ul className="nav metismenu" id="side-menu">
                 <li>
-                    <a href="#" style={{padding:"0 0 0 15px",height:"80px"}}>
+                    <a href="#" style={{padding:"0 0 0 14px",height:"80px"}}>
                         <img style={{width:"40px","paddingBottom":"10px",float:"left","borderRadius":"2px"}} alt="image" src="img/building-1.jpg" />
                         <div style={{"float":"left","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">463 George St<br/>Northfield</div>
                     </a>
@@ -28,9 +28,6 @@ Navigation = React.createClass({
                     <a href={FlowRouter.path('abc')}><i className="fa fa-check-square"></i> <span className="nav-label">A.B.C.</span></a>
                 </li>
                 <li className="divider"><hr/></li>
-                <li className={FlowRouter.getRouteName()=='properties'?'active':''}>
-                    <a href={FlowRouter.path('properties')}><i className="fa fa-building"></i> <span className="nav-label">Properties</span></a>
-                </li>
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
                 </li>
@@ -44,13 +41,13 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>
-                <li className={FlowRouter.getRouteName()=='settings'?'active':''}>
+                <li>
                     <a href=""><i className="fa fa-cog"></i> <span className="nav-label">Settings</span><span className="fa arrow"></span></a>
                     <ul className="nav nav-second-level">
                         <li className={FlowRouter.getRouteName()=='general'?'active':''}>
                             <a href={FlowRouter.path('general')}>General</a>
                         </li>
-                        <li>
+                        <li className={FlowRouter.getRouteName()=='properties'?'active':''}>
                             <a href={FlowRouter.path('properties')}>Properties</a>
                         </li>
                         <li className={FlowRouter.getRouteName()=='profile'?'active':''}>

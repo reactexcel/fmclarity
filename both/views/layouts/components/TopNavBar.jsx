@@ -39,7 +39,7 @@ TopNavBar = React.createClass({
     <div className="row border-bottom">
         <nav className="navbar navbar-static-top" role="navigation" style={{marginBottom:'0'}}>
             <div className="navbar-header navbar-logo">
-                <img src="img/fm_logo-sm-white.png"/>
+                <img width="190px" src="img/logo-white.svg"/>
             </div>
             <div className="navbar-header">
                 <a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>

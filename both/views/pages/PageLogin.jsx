@@ -37,7 +37,7 @@ Login = React.createClass({
     <div className="middle-box text-center loginscreen animated fadeInDown">
         <div>
             <div>
-                <img src="img/logo-2-flat.png"/>
+                <img width="400px" src="img/logo.svg"/>
             </div>
             <br/>
             <h3>Welcome</h3>
