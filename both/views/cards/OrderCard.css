@@ -1,0 +1,45 @@
+.issue-info {
+	height:100%;
+	float:left;
+	padding:0 5px;
+	max-width:30%;
+	white-space:nowrap;
+	overflow: hidden;
+}
+
+.issue-description {
+	height:100%;
+	float:left;
+	padding:0 5px;
+	max-width: 30%;
+}
+
+.issue-description small {
+	line-height:10px;
+}
+
+.issue-date {
+	height:100%;
+	float:left;
+	padding:0 5px;
+	max-width: 10%;
+	line-height:20px;
+	padding-top:10px;
+	text-align: center;
+	float:right;
+}
+
+.issue-thumbnail img {
+	width:50px;
+	border-radius:50%;
+	border:3px solid #666;
+}
+
+.issue-image img {
+	width:200px;
+	box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	border-radius:0;
+    border-radius: 0;
+    border: 1px solid #999;
+    border-left-color: #777;	
+}

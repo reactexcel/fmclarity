@@ -35,7 +35,10 @@ TopNavBar = React.createClass({
         $('#right-sidebar').toggleClass("sidebar-open");
     },    
 
-    render() {return (
+    render() {
+        var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
+        return (
+
     <div className="row border-bottom">
         <nav className="navbar navbar-static-top" role="navigation" style={{marginBottom:'0'}}>
             <div className="navbar-header navbar-logo">
@@ -119,7 +122,7 @@ TopNavBar = React.createClass({
                         <li>
                             <a href={FlowRouter.path('profile')}>
                                 <div>
-                                    Logged in as: <b>{Meteor.user().emails[0].address}</b>
+                                    Logged in as: <b>{userEmail}</b>
                                 </div>
                             </a>
                         </li>

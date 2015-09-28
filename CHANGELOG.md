@@ -1,5 +1,18 @@
 CHANGELOG.md
 
+v0.0.5-a (28/10/2015)
+- Added Updated Work Order card placeholder to more closely resemble interface designs
+- Added Contract test data
+- Added Contract card / table row
+- Updated cards expansion behaviour
+- Fixed a problem where selected item in left navigation bar was being unneccesarily indented
+
+v0.0.4-a (27/09/2015)
+---------------------
+- Created property card
+- Created Facility data model linked into Property filterbox with test data
+- Fixed a bug where app would sometimes lose user and crash when returning after a pause
+
 v0.0.3-a (26/09/2015)
 ---------------------
 - Replace png logo with svg logo (for better res on mobile / retina displays)

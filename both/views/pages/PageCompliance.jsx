@@ -20,9 +20,11 @@ PageCompliance = React.createClass({
 	            	<Box title="Pie Charts">
 	            		<div style={{height:"100px"}}></div>
 	            	</Box>
-	            	<Box title="ABC Services Panel">
-	            		<div style={{height:"100px"}}></div>
-	            	</Box>
+					<FilterBox
+						title="ABC Services Panel"
+						items={Contracts}
+						card={HeadingCard}
+					/>
 				</div>
 			</div>
 		</div>

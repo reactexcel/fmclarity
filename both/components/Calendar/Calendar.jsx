@@ -23,7 +23,7 @@ Calendar = React.createClass({
         },
         events: [
             {
-                title: 'All Day Event',
+                title: 'Testing & Tagging',
                 start: new Date(y, m, 1)
             },
             {
@@ -33,13 +33,13 @@ Calendar = React.createClass({
             },
             {
                 id: 999,
-                title: 'Repeating Event',
+                title: 'Switchboard, Monthly, ABC Electrical',
                 start: new Date(y, m, d-3, 16, 0),
                 allDay: false,
             },
             {
                 id: 999,
-                title: 'Repeating Event',
+                title: 'Emergency & Exit Lighting',
                 start: new Date(y, m, d+4, 16, 0),
                 allDay: false
             },
@@ -49,13 +49,13 @@ Calendar = React.createClass({
                 allDay: false
             },
             {
-                title: 'Lunch',
+                title: 'Thermographic scan',
                 start: new Date(y, m, d, 12, 0),
                 end: new Date(y, m, d, 14, 0),
                 allDay: false
             },
             {
-                title: 'Birthday Party',
+                title: 'Switchboard visual',
                 start: new Date(y, m, d+1, 19, 0),
                 end: new Date(y, m, d+1, 22, 30),
                 allDay: false

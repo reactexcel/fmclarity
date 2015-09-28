@@ -57,11 +57,12 @@ Box = React.createClass({
 					</a>
 				</div>
 
-				<div className="ibox-content">
-					{this.props.children}
-				</div>
-
 			</div>
+
+            <div className="ibox-content">
+                {this.props.children}
+            </div>
+
 		</div>
 	);}
 });

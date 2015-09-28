@@ -17,9 +17,11 @@ PageMaintenence = React.createClass({
 	            	<Box title="Calendar">
 		            	<Calendar />
 	            	</Box>
-	            	<Box title="PMP Services Panel">
-	            		<div style={{height:"100px"}}></div>
-	            	</Box>
+					<FilterBox
+						title="PMP Services Panel"
+						items={Contracts}
+						card={HeadingCard}
+					/>
 				</div>
 			</div>
 		</div>

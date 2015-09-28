@@ -73,9 +73,6 @@ PageDashboard = React.createClass({
 	            	</div>
 	            	<BarChart />
 	            </Box>
-				<Box title="Properties">
-					<Table />
-				</Box>
 			</div>
 		</div>
 	</div>

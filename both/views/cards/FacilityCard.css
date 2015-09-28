@@ -1,0 +1,7 @@
+.facility-info {
+	float:left;
+	padding:0 5px;
+	max-width:50%;
+	white-space:nowrap;
+	overflow: hidden;
+}
