@@ -27,7 +27,6 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='abc'?'active':''}>
                     <a href={FlowRouter.path('abc')}><i className="fa fa-check-square"></i> <span className="nav-label">A.B.C.</span></a>
                 </li>
-                <li className="divider"><hr/></li>
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
                 </li>
@@ -37,7 +36,6 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
                     <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
-                <li className="divider"><hr/></li>
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>

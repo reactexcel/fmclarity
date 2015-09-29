@@ -52,6 +52,7 @@ PageRequests = React.createClass({
 						items={Issues}
 						filters={filters} 
 						card={OrderCard}
+						header={OrderCardTableHeader}
 					/>
 				</div>
 			</div>

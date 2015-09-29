@@ -47,7 +47,7 @@
 // Your custom style to override base style
 @import "globals/custom.import.less";
 
-.inline-edit {
+.inline-form-control {
 	margin:0;
 	padding:0;
 	border:none;
@@ -55,6 +55,8 @@
 	font-size:inherit;
 	width:100%;
 	outline:none;
+	background:transparent;
+	background-color:transparent;
 }
 
 .landing-page .navbar.navbar-scroll .navbar-brand.navbar-brand-fm {
@@ -158,11 +160,27 @@ ul#side-menu {
 }
 
 .md-skin .nav > li > a {
-
+	white-space:nowrap;
 }
 
 #side-menu.nav > li.active > a {
 	color:#000;
 	background-color:transparent;
 	padding-left:19px;
+}
+
+.md-skin.fixed-sidebar.mini-navbar #page-wrapper {
+    margin: 0 0 0 70px;
+}
+
+body.fixed-sidebar.mini-navbar .nav-label, body.fixed-sidebar.mini-navbar .navbar-default .nav li a span {
+    opacity:0;
+}
+
+body.fixed-nav #wrapper .navbar-static-side {
+	overflow:hidden;
+}
+
+.md-skin.fixed-sidebar.mini-navbar .navbar-static-side {
+	width:70px;
 }

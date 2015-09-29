@@ -8,9 +8,9 @@
   padding: 10px;
   background: #fff;
   color: #262524;
-  border-left:5px solid #ccc;
+  /*border-left:5px solid #ccc;*/
   border-top:1px solid #ccc;
-  overflow:hidden;
+  padding:10px 0;
 }
 
 .grid-item.pre-gigante {
@@ -18,13 +18,15 @@
 }
 
 .grid-item.gigante {
+  overflow:hidden;
   background:#FFFBCC;;
-  height:600px;
   z-index:5000;
   width:100%;
+  min-height:1200px;
   margin:0 0 10px 0;
   border-left-width: 0;
   box-shadow: 1px 2px 5px 2px rgba(0, 0, 0, 0.2);
+  padding-bottom:0;
 }
 
 .card-table-header {
@@ -49,31 +51,36 @@
   overflow:hidden;
 }
 .card-body {
-  overflow:hidden;
   position:absolute;
   left:0;
   right:0;
+  overflow:hidden;
   border-top:1px solid #ddd;
-  padding:10px;
-  background-color:#fff;
-  height:100%;
+  padding:10px 20px 10px 20px;
+  background-color:#f3f3f4;
   margin-top:10px;
   display:none;
+  height:100%;
+  /*margin-left:-15px;
+  margin-right:-15px;*/
 }
 
 .pre-gigante .card-body,.gigante .card-body {
   display:block;
 }
 
-.grid-item.alkali          { background: #F00; background: hsl(   0, 100%, 50%); }
-.grid-item.alkaline-earth  { background: #F80; background: hsl(  36, 100%, 50%); }
-.grid-item.lanthanoid      { background: #FF0; background: hsl(  72, 100%, 50%); }
-.grid-item.actinoid        { background: #0F0; background: hsl( 108, 100%, 50%); }
-.grid-item.transition      { background: #0F8; background: hsl( 144, 100%, 50%); }
-.grid-item.post-transition { background: #0FF; background: hsl( 180, 100%, 50%); }
-.grid-item.metalloid       { background: #08F; background: hsl( 216, 100%, 50%); }
-.grid-item.diatomic        { background: #00F; background: hsl( 252, 100%, 50%); }
-.grid-item.halogen         { background: #F0F; background: hsl( 288, 100%, 50%); }
-.grid-item.noble-gas       { background: #F08; background: hsl( 324, 100%, 50%); }
-
-.grid-item.grid-item-order { background: #fff;}
+.new-card-button {
+  background-color: #db4437;
+  height: 30px;
+  width: 30px;
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+  cursor: pointer;
+  outline: none;
+  padding: 0;  
+  border: none;
+  border-radius: 50%;  
+  color:#fff;
+  font-size:20px;
+  position:relative;
+  top:-5px;
+}

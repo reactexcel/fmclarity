@@ -1,17 +1,3 @@
-MetalCard = React.createClass({
-  render() {
-    var i = this.props.item;
-    return (
-      <div className={"grid-item "+i.tags} data-category={i.tags}>
-        <h3 className="name">{i.name}</h3>
-        <p className="symbol">{i.symbol}</p>
-        <p className="number">{i.number}</p>
-        <p className="weight">{i.weight}</p>
-      </div>      
-    )
-  }
-});
-
 FilterBox = React.createClass({
 
   handleFieldChange(rowIdx, field, val) {
@@ -34,16 +20,14 @@ FilterBox = React.createClass({
       $grid.find('.gigante').not(this).removeClass('gigante');
       $(this).toggleClass('pre-gigante');
       $(this).toggleClass('gigante',250,function(){
-        $grid.find('.pre-gigante').removeClass('pre-gigante');
       });
     });
   },
 
 	componentDidMount() {
-    this.markupIsotope();
     this.title = this.props.title;
-    this.card = this.props.card || MetalCard ;
-    this.items = this.props.items || Metals;
+    this.card = this.props.card;
+    this.items = this.props.items;
     this.applyFilter();
 	},
 
@@ -83,7 +67,8 @@ FilterBox = React.createClass({
     return (
       <div>
         <div className="ibox">
-          {title||filters?<div className="ibox-title">
+          <div className="ibox-title">
+            <button className="new-card-button pull-right">+</button>
             {title?<h5>{title}</h5>:null}
             {!filters?null:
             <ol id="filters" className="breadcrumb">
@@ -95,7 +80,7 @@ FilterBox = React.createClass({
                 )
               })}
             </ol>}
-          </div>:null}
+          </div>
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
               {!Header?null:<Header item={items[0]} />}
@@ -109,6 +94,16 @@ FilterBox = React.createClass({
 });
 
 CardGrid = React.createClass({
+
+  expandItem(event) {
+    var i = $(event.target).closest('.grid-item');
+    $('.gigante').not(i).removeClass('gigante');
+    i.toggleClass('pre-gigante');
+    i.toggleClass('gigante',250,function(){
+      i.removeClass('pre-gigante');
+    })
+  },
+
   render() {
     var items = this.props.items;
     var Card = this.props.card;
@@ -120,8 +115,14 @@ CardGrid = React.createClass({
       <div>
         {items.map(function(i,index){
           return (
-            <div className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12 grid-item"}>
-              <Card item={i} handleFieldChange={handleFieldChange.bind(null,index)}/>
+            <div 
+              onDoubleClick={me.expandItem} 
+              className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12 grid-item"}
+              >
+              <Card
+                item={i} 
+                handleFieldChange={handleFieldChange.bind(null,index)}
+              />
             </div>
           )
         })}

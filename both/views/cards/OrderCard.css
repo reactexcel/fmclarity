@@ -1,41 +1,42 @@
-.issue-info {
-	height:100%;
+.issue-card-status-col {
+	float:left;
+	width:80px;
+	text-align: left;
+}
+
+.issue-title {
+}
+
+.issue-card-info-col {
 	float:left;
 	padding:0 5px;
-	max-width:30%;
+	width:250px;
 	white-space:nowrap;
 	overflow: hidden;
 }
 
-.issue-description {
-	height:100%;
+.issue-card-contact-col {
 	float:left;
 	padding:0 5px;
-	max-width: 30%;
+	width: 200px;
 }
 
-.issue-description small {
-	line-height:10px;
-}
-
-.issue-date {
+.issue-card-date-col {
 	height:100%;
-	float:left;
 	padding:0 5px;
-	max-width: 10%;
+	width: 70px;
 	line-height:20px;
 	padding-top:10px;
 	text-align: center;
 	float:right;
 }
 
-.issue-thumbnail img {
+.issue-card-thumbnail-col img {
 	width:50px;
 	border-radius:50%;
-	border:3px solid #666;
 }
 
-.issue-image img {
+.issue-card-image img {
 	width:200px;
 	box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
 	border-radius:0;

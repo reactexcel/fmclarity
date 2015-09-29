@@ -1,5 +1,13 @@
 CHANGELOG.md
 
+v0.0.6a (29/10/2015)
+- Created detail view for a work order populated with an issued order
+- Removed dividers in left navigation menu
+- Left navigation menu now has fixed position
+- Placeholder bar chart added to ABC screen
+- Fixed problem where clicking on body of expanded card would close the card
+- Issued and closed work orders identify contractor instead of requestor
+
 v0.0.5-a (28/10/2015)
 - Added Updated Work Order card placeholder to more closely resemble interface designs
 - Added Contract test data

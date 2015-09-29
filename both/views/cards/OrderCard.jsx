@@ -1,17 +1,145 @@
+Discussion = React.createClass({
+  render() {
+    return (
+    <div className="social-feed-box">
+
+                            <div className="pull-right social-action dropdown">
+                                <button data-toggle="dropdown" className="dropdown-toggle btn-white">
+                                    <i className="fa fa-angle-down"></i>
+                                </button>
+                                <ul className="dropdown-menu m-t-xs">
+                                    <li><a href="#">Config</a></li>
+                                </ul>
+                            </div>
+                            <div className="social-avatar">
+                                <a href="" className="pull-left">
+                                    <img alt="image" src="img/a6.jpg"/>
+                                </a>
+                                <div className="media-body">
+                                    <a href="#">
+                                        Andrew Williams
+                                    </a>
+                                    <small className="text-muted">Today 4:21 pm - 12.06.2014</small>
+                                </div>
+                            </div>
+                            <div className="social-body">
+                                <p>
+                                    Many desktop publishing packages and web page editors now use Lorem Ipsum as their
+                                    default model text, and a search for 'lorem ipsum' will uncover many web sites still
+                                    in their infancy. Packages and web page editors now use Lorem Ipsum as their
+                                    default model text.
+                                </p>
+                                <p>
+                                    Lorem Ipsum as their
+                                    default model text, and a search for 'lorem ipsum' will uncover many web sites still
+                                    in their infancy. Packages and web page editors now use Lorem Ipsum as their
+                                    default model text.
+                                </p>
+                                <img src="img/gallery/11.jpg" className="img-responsive"/>
+                                <div className="btn-group">
+                                    <button className="btn btn-white btn-xs"><i className="fa fa-thumbs-up"></i> Like this!</button>
+                                    <button className="btn btn-white btn-xs"><i className="fa fa-comments"></i> Comment</button>
+                                    <button className="btn btn-white btn-xs"><i className="fa fa-share"></i> Share</button>
+                                </div>
+                            </div>
+                            <div className="social-footer">
+                                <div className="social-comment">
+                                    <a href="" className="pull-left">
+                                        <img alt="image" src="img/a1.jpg"/>
+                                    </a>
+                                    <div className="media-body">
+                                        <a href="#">
+                                            Andrew Williams
+                                        </a>
+                                        Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words.
+                                        <br/>
+                                        <a href="#" className="small"><i className="fa fa-thumbs-up"></i> 26 Like this!</a> -
+                                        <small className="text-muted">12.06.2014</small>
+                                    </div>
+                                </div>
+
+                                <div className="social-comment">
+                                    <a href="" className="pull-left">
+                                        <img alt="image" src="img/a2.jpg"/>
+                                    </a>
+                                    <div className="media-body">
+                                        <a href="#">
+                                            Andrew Williams
+                                        </a>
+                                        Making this the first true generator on the Internet. It uses a dictionary of.
+                                        <br/>
+                                        <a href="#" className="small"><i className="fa fa-thumbs-up"></i> 11 Like this!</a> -
+                                        <small className="text-muted">10.07.2014</small>
+                                    </div>
+                                </div>
+
+                                <div className="social-comment">
+                                    <a href="" className="pull-left">
+                                        <img alt="image" src="img/a8.jpg"/>
+                                    </a>
+                                    <div className="media-body">
+                                        <a href="#">
+                                            Andrew Williams
+                                        </a>
+                                        Making this the first true generator on the Internet. It uses a dictionary of.
+                                        <br/>
+                                        <a href="#" className="small"><i className="fa fa-thumbs-up"></i> 11 Like this!</a> -
+                                        <small className="text-muted">10.07.2014</small>
+                                    </div>
+                                </div>
+
+                                <div className="social-comment">
+                                    <a href="" className="pull-left">
+                                        <img alt="image" src="img/a3.jpg"/>
+                                    </a>
+                                    <div className="media-body">
+                                        <textarea className="form-control" placeholder="Write comment..."></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+  )}
+});
+
+
+OrderCardTableHeader = React.createClass({
+
+  render() {
+    return (
+      <div className="card-table-header issue-card-table-header">
+        <div className="issue-card-status-col">
+          Status
+        </div>
+        <div className="issue-card-info-col">
+          Issue
+        </div>
+        <div className="issue-card-contact-col">
+          Requester
+        </div>
+        <div className="issue-card-contact-col">
+          Supplier
+        </div>
+        <div className="issue-card-date-col">
+          Issued
+        </div>
+        <div className="issue-card-date-col">
+          Due in
+        </div>
+      </div>
+    )
+  }
+
+});
+
 OrderCard = React.createClass({
-
-  handleNameChange(event) {
-    this.props.handleFieldChange('name',event.target.value);
-  },
-
-  handleAddressChange(event) {
-    this.props.handleFieldChange('address',event.target.value);
-  },
 
   render() {
       var issue = this.props.item;
       var facility = issue.facility;
       var contact = issue.contact;
+      var supplier = issue.supplier;
       var status = issue.status;
       var statusClass = 
         status=='New'?'danger':
@@ -22,53 +150,39 @@ OrderCard = React.createClass({
       return (
         <div>
         <div className="card-header">
-          <div className="issue-status pull-left" style={{width:"80px","textAlign":"left"}}>
-            <span className={"label label-"+statusClass}>{status}</span><br/>
-            {issue.urgent?<span className="label label-danger" style={{position:"relative",top:"2px"}}>URGENT</span>:null}
+          <div className="issue-card-status-col">
+            <span className={"label label-"+statusClass}>{status}</span>
+            {
+              issue.urgent?<i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px",left: "2px"}}></i>
+              :null
+            }
           </div>
-          <div className="issue-info">
-            <a href="#">
+          <div className="issue-card-info-col">
+            <a className="issue-title" href="#">
               {issue.name}
             </a>
             <br/>
-            <small>
+            <span>
               {facility.name}
-            </small>
-            <small>
-              {contact.name}&nbsp;&nbsp;
-              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
-              {contact.email}&nbsp;&nbsp;
-              <i className="fa fa-phone"></i>&nbsp;&nbsp;
-              {contact.phone}
-            </small>
+            </span>
           </div>
-          <div className="issue-description">
-            <br/>
-            <small>
-              {issue.description}
-            </small>
+          <div className="issue-card-contact-col">
+            <ContactCard contact={contact} view="2-line" />
           </div>
-          <div className="issue-date">
-            <div style={{fontSize:"30px"}}>19</div>
-            <div style={{fontSize:"15px"}}>Oct</div>
+          {status=="Issued"||status=="Closed"?
+            <div className="issue-card-contact-col">
+              <ContactCard contact={supplier} view="2-line" />
+            </div>:<i className="fa fa-search"></i>
+          }
+          <div className="issue-card-date-col">
+            <span style={{fontSize:"15px"}}><i className="fa fa-calendar"></i>19-Oct</span>
           </div>
-          <div className="issue-thumbnail pull-right">
-                <img alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
+          <div className="issue-card-date-col">
+            <span style={{fontSize:"15px"}} className="label label-info">2 Days</span>
           </div>
         </div>
         <div className="card-body">
-          <div className="issue-image pull-left">
-                <img alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
-          </div>
-          <div className="issue-type pull-right">
-            <span className="label label-warning">{issue.type}</span>
-          </div>
-          <form style={{float:"left",paddingLeft:"20px"}} className="form-horizontal">
-            <input className="form-control" value={issue.name} onChange={this.handleNameChange}/>
-            <input className="form-control" value={issue.address} onChange={this.handleAddressChange}/>
-            {/*<ContactForm contact={issue.contact} />*/}
-          </form>
-          <span className="pie" style={{display:"none"}}>0.52,1.041</span><svg class="peity" height="16" width="16"><path d="M 8 8 L 8 0 A 8 8 0 0 1 14.933563796318165 11.990700825968545 Z" fill="#1ab394"></path><path d="M 8 8 L 14.933563796318165 11.990700825968545 A 8 8 0 1 1 7.999999999999998 0 Z" fill="#d7d7d7"></path></svg>
+          <IssueDetail issue={issue} handleFieldChange={this.handleFieldChange}/>
         </div>
       </div>
     )

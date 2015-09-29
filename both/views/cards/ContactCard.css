@@ -1,0 +1,14 @@
+.contact-card-2line-text {
+	padding:3px;
+	white-space:nowrap;
+	line-height: 15px;
+}
+
+.contact-card-avatar {
+	float:left;
+	padding-right:3px;
+}
+.contact-card-avatar img {
+	border-radius: 50%;
+	width:35px;
+}
