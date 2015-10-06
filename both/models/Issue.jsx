@@ -1,4 +1,60 @@
-Issues = [
+Issues = new Mongo.Collection('issues');
+
+
+if (Meteor.isClient) {
+  //Meteor.subscribe('books');
+
+  //Meteor.startup(function () {
+    // Use Meteor.startup to render the component after the page is ready
+    //React.render(<App />, document.getElementById("render-target"));
+  //});
+}
+
+if (Meteor.isServer) {
+  Meteor.publish('issues', function () {
+    return Issues.find();
+  });
+}
+
+Meteor.methods({
+  "Issue.save": function(item) {
+    Issues.upsert(item._id, {$set: _.omit(item, '_id')});
+  },
+  "Issue.destroy":function(item) {
+    Issues.remove(item._id);
+  },
+  "Issue.new":function(item) {
+    newItem = _.extend({},item,{
+      name:"New Work Order",
+      description:"Enter description",
+      status:"New",
+      urgent:false,
+      thumb:1,
+      facility:{
+        name:"2 Georges Rd (Building A)",
+      },
+      contact:{
+        name:"John Smith",
+        email:"johnny@flart.flart",
+        phone:"0444-123-321",
+        thumb:"a1.jpg"
+      },
+      supplier:{
+        name:"XYY Contractors",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-1.png"
+      },
+    });
+    Issues.insert(newItem);
+  }
+});
+
+Issues.before.insert(function (userId, doc) {
+  doc.createdAt = moment().toDate();
+});
+
+ExampleIssues = [
   {
     name:"Toilet won't flush",
     description:"Toilet won't flush. Brown liquid leaking onto floor. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
@@ -20,9 +76,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-1.png"
     },
-    number:80,
-    weight:200.59,
-    tags:"transition metal"
   },
   {
     name:"Rust from ceiling fan",
@@ -44,9 +97,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-2.png"
     },
-    number:52,
-    weight:127.6,
-    tags:"metalloid"
   },
   {
     name:"Shocking doors",
@@ -69,9 +119,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-3.png"
     },
-    number:83,
-    weight:208.980,
-    tags:"post-transition metal"
   },
   {
     name:"Barbed wire on floor",
@@ -93,9 +140,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-4.png"
     },
-    number:82,
-    weight:207.2,
-    tags:"post-transition metal"
   },
   {
     name:"Live explosives",
@@ -117,9 +161,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-1.png"
     },
-    number:79,
-    weight:196.967,
-    tags:"transition metal"
   },
   {
     name:"Exploding fire extinguishers",
@@ -141,9 +182,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-2.png"
     },
-    number:19,
-    weight:39.0983,
-    tags:"alkali metal"
   },
   {
     name:"Cracked walls, level 7",
@@ -166,9 +204,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-3.png"
     },
-    number:11,
-    weight:39.0983,
-    tags:"alkali metal"
   },
   {
     name:"Frayed elevator cabling",
@@ -190,9 +225,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-4.png"
     },
-    number:48,
-    weight:112.411,
-    tags:"transition metal"
   },
   {
     name:"Nixious gas from AC",
@@ -214,9 +246,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-1.png"
     },
-    number:20,
-    weight:40.078,
-    tags:"alkaline-earth metal"
   },
   {
     name:"Non-ergonomic chairs",
@@ -238,9 +267,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-2.png"
     },
-    number:75,
-    weight:186.207,
-    tags:"transition metal"
   },
   {
     name:"Intermittent muzak",
@@ -262,9 +288,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-3.png"
     },
-    number:81,
-    weight:204.383,
-    tags:"post-transition metal"
   },
   {
     name:"Coffee machine leaking",
@@ -286,9 +309,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-4.png"
     },
-    number:51,
-    weight:121.76,
-    tags:"metalloid"
   },
   {
     name:"Sparks from light switches",
@@ -310,9 +330,6 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-1.png"
     },
-    number:27,
-    weight:58.933,
-    tags:"transition metal"
   },
   {
     name:"Un-funny jokes",
@@ -334,8 +351,5 @@ Issues = [
       phone:"0400-123-123",
       thumb:"supplier-2.png"
     },
-    number:70,
-    weight:173.054,
-    tags:"lanthanoid metal"
   }
 ];

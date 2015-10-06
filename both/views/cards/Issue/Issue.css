@@ -1,3 +1,7 @@
+.issue-page .grid-item.gigante {
+	height:800px;
+}
+
 .issue-card-status-col {
 	float:left;
 	width:80px;

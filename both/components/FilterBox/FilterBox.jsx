@@ -14,16 +14,6 @@ FilterBox = React.createClass({
     this.setState({items: rows});
   },
 
-  markupIsotope() {
-    var $grid = $('.isotope');
-    $grid.on( 'click', '.grid-item', function() {
-      $grid.find('.gigante').not(this).removeClass('gigante');
-      $(this).toggleClass('pre-gigante');
-      $(this).toggleClass('gigante',250,function(){
-      });
-    });
-  },
-
 	componentDidMount() {
     this.title = this.props.title;
     this.card = this.props.card;
@@ -33,8 +23,8 @@ FilterBox = React.createClass({
 
   getInitialState() {
     return {
-      selectedFilterNum:0,
-      items:this.props.items
+      selectedFilterNum:0
+      //items:this.props.items
     }
   },
 
@@ -56,26 +46,27 @@ FilterBox = React.createClass({
   },
 
 	render() {
-    var title = this.props.title;
-    var filters = this.props.filters;
-    var selectedFilterNum = this.state.selectedFilterNum;
-    var component = this;
-    var Card = this.props.card || MetalCard;
-    var Header = this.props.header;
-    var initialItems = this.state.items;
-    var items = this.applyFilter(initialItems) || Metals;
+    var $this = this;
+    var title = $this.props.title;
+    var filters = $this.props.filters;
+    var selectedFilterNum = $this.state.selectedFilterNum;
+    var Card = $this.props.card;
+    var Header = $this.props.header;
+    var initialItems = $this.props.items;
+    var newItemCallback = this.props.newItemCallback;
+    var items = $this.applyFilter(initialItems);
     return (
       <div>
         <div className="ibox">
           <div className="ibox-title">
-            <button className="new-card-button pull-right">+</button>
+            <button onClick={newItemCallback} className="new-card-button pull-right">+</button>
             {title?<h5>{title}</h5>:null}
             {!filters?null:
             <ol id="filters" className="breadcrumb">
               {filters.map(function(i,index){
                 return (
                   <li className={selectedFilterNum==index?'active':''}>
-                    <a onClick={component.setFilter.bind(null,index)}>{i.text}</a>
+                    <a onClick={$this.setFilter.bind(null,index)}>{i.text}</a>
                   </li>
                 )
               })}
@@ -84,7 +75,7 @@ FilterBox = React.createClass({
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
               {!Header?null:<Header item={items[0]} />}
-              <CardGrid card={Card} items={items} numCols={this.props.numCols} handleFieldChange={this.handleFieldChange}/>
+              <CardGrid card={Card} items={items} numCols={$this.props.numCols} handleFieldChange={$this.handleFieldChange}/>
             </div>
           </div>
         </div>

@@ -1,8 +1,13 @@
 ContactCard = React.createClass({
 	render() {
-		var contact = this.props.contact;
+		var contact = this.props.contact || {};
 		var view = this.props.view;
 		switch(view) {
+			case 'avatar':return (
+				<div className="contact-card-avatar">
+					<img alt="image" title={contact.name} data-toggle="tooltip" src={"img/"+contact.thumb}/>
+				</div>
+			);
 			case '2-line':return (
 				<div className="contact-card contact-card-2line">
 					<div className="contact-card-avatar">

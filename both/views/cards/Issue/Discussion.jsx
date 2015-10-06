@@ -1,3 +1,49 @@
+IssueDiscussion = React.createClass({
+	render() {
+		var issue = this.props.issue;
+		return (
+            <div className="feed-activity-list">
+                <div className="feed-element">
+                                                        <a href="#" className="pull-left">
+                                                            <img alt="image" className="img-circle" src="img/a2.jpg"/>
+                                                        </a>
+                                                        <div className="media-body ">
+                                                            <small className="pull-right">2h ago</small>
+                                                            <strong>{issue.contact.name}</strong> createed issue. <br/>
+                                                            <small className="text-muted">Today 2:10 pm - 12.06.2014</small>
+                                                            <div className="well">
+                                                                {issue.description}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="feed-element">
+                                                        <a href="#" className="pull-left">
+                                                            <img alt="image" className="img-circle" src="img/a3.jpg"/>
+                                                        </a>
+                                                        <div className="media-body ">
+                                                            <small className="pull-right">2h ago</small>
+                                                            <strong>Janet Rosowski</strong> add 1 photo. <br/>
+                                                            <small className="text-muted">2 days ago at 8:30am</small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="feed-element">
+                                                        <a href="#" className="pull-left">
+                                                            <img alt="image" className="img-circle" src="img/a4.jpg"/>
+                                                        </a>
+                                                        <div className="media-body ">
+                                                            <small className="pull-right text-navy">5h ago</small>
+                                                            <strong>{issue.supplier.name}</strong> started looking at <strong>issue</strong>. <br/>
+                                                            <small className="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
+                                                            <div className="actions">
+                                                                <a className="btn btn-xs btn-white"><i className="fa fa-message"></i> Contact </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+		)
+	}
+});
+
 Discussion = React.createClass({
   render() {
     return (
@@ -101,91 +147,4 @@ Discussion = React.createClass({
 
                         </div>
   )}
-});
-
-
-OrderCardTableHeader = React.createClass({
-
-  render() {
-    return (
-      <div className="card-table-header issue-card-table-header">
-        <div className="issue-card-status-col">
-          Status
-        </div>
-        <div className="issue-card-info-col">
-          Issue
-        </div>
-        <div className="issue-card-contact-col">
-          Requester
-        </div>
-        <div className="issue-card-contact-col">
-          Supplier
-        </div>
-        <div className="issue-card-date-col">
-          Issued
-        </div>
-        <div className="issue-card-date-col">
-          Due in
-        </div>
-      </div>
-    )
-  }
-
-});
-
-OrderCard = React.createClass({
-
-  render() {
-      var issue = this.props.item;
-      var facility = issue.facility;
-      var contact = issue.contact;
-      var supplier = issue.supplier;
-      var status = issue.status;
-      var statusClass = 
-        status=='New'?'danger':
-        status=='Issued'?'warning':
-        status=='Open'?'info':
-        status=='Closed'?'success':'default';
-
-      return (
-        <div>
-        <div className="card-header">
-          <div className="issue-card-status-col">
-            <span className={"label label-"+statusClass}>{status}</span>
-            {
-              issue.urgent?<i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px",left: "2px"}}></i>
-              :null
-            }
-          </div>
-          <div className="issue-card-info-col">
-            <a className="issue-title" href="#">
-              {issue.name}
-            </a>
-            <br/>
-            <span>
-              {facility.name}
-            </span>
-          </div>
-          <div className="issue-card-contact-col">
-            <ContactCard contact={contact} view="2-line" />
-          </div>
-          {status=="Issued"||status=="Closed"?
-            <div className="issue-card-contact-col">
-              <ContactCard contact={supplier} view="2-line" />
-            </div>:<i className="fa fa-search"></i>
-          }
-          <div className="issue-card-date-col">
-            <span style={{fontSize:"15px"}}><i className="fa fa-calendar"></i>19-Oct</span>
-          </div>
-          <div className="issue-card-date-col">
-            <span style={{fontSize:"15px"}} className="label label-info">2 Days</span>
-          </div>
-        </div>
-        <div className="card-body">
-          <IssueDetail issue={issue} handleFieldChange={this.handleFieldChange}/>
-        </div>
-      </div>
-    )
-  }
-
 });

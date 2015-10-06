@@ -22,7 +22,7 @@
   background:#FFFBCC;;
   z-index:5000;
   width:100%;
-  min-height:1200px;
+  height:800px;
   margin:0 0 10px 0;
   border-left-width: 0;
   box-shadow: 1px 2px 5px 2px rgba(0, 0, 0, 0.2);
@@ -49,6 +49,7 @@
 
 .card-header {
   overflow:hidden;
+  -webkit-user-select: none;
 }
 .card-body {
   position:absolute;

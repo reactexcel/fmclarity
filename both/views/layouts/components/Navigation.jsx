@@ -13,9 +13,9 @@ Navigation = React.createClass({
 
             <ul className="nav metismenu" id="side-menu">
                 <li>
-                    <a href="#" style={{padding:"0 0 0 14px",height:"80px"}}>
+                    <a href={FlowRouter.path('properties')} style={{padding:"0 0 0 14px",height:"80px"}}>
                         <img style={{width:"40px","paddingBottom":"10px",float:"left","borderRadius":"2px"}} alt="image" src="img/building-1.jpg" />
-                        <div style={{"float":"left","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">463 George St<br/>Northfield</div>
+                        <div style={{"float":"left","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">2 Georges Rd<br/>Northfield</div>
                     </a>
                 </li>
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>

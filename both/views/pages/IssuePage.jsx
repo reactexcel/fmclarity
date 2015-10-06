@@ -1,8 +1,19 @@
 PageRequests = React.createClass({
 
-	componentDidMount() {
-		//console.log(Meteor.users.find());
-	},
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        var handle = Meteor.subscribe('issues');
+        return {
+            issues : Issues.find({},{
+            	sort:{createdAt:-1}
+            }).fetch()
+        }
+    },
+
+    createNewIssue() {
+    	Meteor.call("Issue.new");
+    },
 
 	render() {
 		var filters = [
@@ -47,11 +58,12 @@ PageRequests = React.createClass({
 		            <h2 style={{marginTop:"16px"}}>Work Requests</h2>
 		          </div>
 		        </div>
-		        <div className="wrapper wrapper-content animated fadeIn">
+		        <div className="issue-page wrapper wrapper-content animated fadeIn">
 					<FilterBox 
-						items={Issues}
+						items={this.data.issues}
 						filters={filters} 
 						card={OrderCard}
+						newItemCallback={this.createNewIssue}
 						header={OrderCardTableHeader}
 					/>
 				</div>

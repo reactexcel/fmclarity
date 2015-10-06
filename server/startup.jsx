@@ -1,23 +1,20 @@
 console.log("Starting server...");
 
 Meteor.startup(function(){
-	var data = [{
-			address:'Blank Street'
-		},
-		{
-			address:'Untitled Lane'
-        },
-        {
-            address:'Incognito Avenue'
-        },
-        {
-            address:'Anonymous Road'
-		}];
-	console.log(Books.find().fetch());
-	if(Books.find().count()==0) {
-		console.log('creating intial test data');
-	    data.map(function(item){
-    		Books.insert(item);
+
+    if(Issues.find().count()==0) {
+    	console.log('creating example issues...');
+    	ExampleIssues.map(function(item){
+    		console.log({'inserting':item});
+    		Issues.insert(item);
+    	})
+    }
+
+    if(Facilities.find().count()==0) {
+    	console.log('creating example facilities...');
+    	ExampleFacilities.map(function(item){
+    		console.log({'inserting':item});
+    		Facilities.insert(item);
     	})
     }
 
