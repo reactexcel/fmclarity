@@ -1,4 +1,4 @@
-OrderCard = React.createClass({
+IssueSummary = React.createClass({
 
   render() {
       var issue = this.props.item;
@@ -14,7 +14,6 @@ OrderCard = React.createClass({
 
       return (
         <div>
-        <div className="card-header">
           <div className="issue-card-status-col">
             <span className={"label label-"+statusClass}>{status}</span>
             {
@@ -46,10 +45,6 @@ OrderCard = React.createClass({
             <span style={{fontSize:"15px"}} className="label label-info">2 Days</span>
           </div>
         </div>
-        <div className="card-body">
-          <IssueDetail issue={issue} handleFieldChange={this.props.handleFieldChange}/>
-        </div>
-      </div>
     )
   }
 

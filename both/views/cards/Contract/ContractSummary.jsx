@@ -1,4 +1,4 @@
-ContractCardTableHeader = React.createClass({
+ContractHeader = React.createClass({
 
 	render() {
 		return (
@@ -32,7 +32,7 @@ ContractCardTableHeader = React.createClass({
 
 });
 
-ContractCardHeader = React.createClass({
+ContractSummary = React.createClass({
 
 	render() {
 		var contract = this.props.item;
@@ -70,7 +70,7 @@ ContractCardHeader = React.createClass({
 	}
 });
 
-ContractCardBody = React.createClass({
+ContractDetail = React.createClass({
 
 	render() {
 		var contract = this.props.item;
@@ -83,17 +83,4 @@ ContractCardBody = React.createClass({
 			</div>
 		)
 	}
-});
-
-ContractCard = React.createClass({
-
-	render() {
-		return (
-			<div className="card">
-				<ContractCardHeader item={this.props.item}/>
-				<ContractCardBody item={this.props.item}/>
-			</div>
-		)
-	}
-
 });

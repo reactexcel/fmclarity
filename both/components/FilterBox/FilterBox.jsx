@@ -1,19 +1,5 @@
 FilterBox = React.createClass({
 
-  handleFieldChange(rowIdx, field, val) {
-    // If we were lazy here, we would simply write
-    //     this.state.data[rowIdx][field] = val;
-    //     this.forceUpdate();
-    // but mutating in this way can be confusing and prevents performance
-    // optimizations later, so we instead treat the current data as
-    // immutable and copy it when modifying:
-    var row = _.clone(this.state.items[rowIdx]);
-    row[field] = val;
-    var rows = this.state.items.slice();
-    rows[rowIdx] = row;
-    this.setState({items: rows});
-  },
-
 	componentDidMount() {
     this.title = this.props.title;
     this.card = this.props.card;
@@ -24,7 +10,6 @@ FilterBox = React.createClass({
   getInitialState() {
     return {
       selectedFilterNum:0
-      //items:this.props.items
     }
   },
 
@@ -49,33 +34,54 @@ FilterBox = React.createClass({
     var $this = this;
     var title = $this.props.title;
     var filters = $this.props.filters;
+
     var selectedFilterNum = $this.state.selectedFilterNum;
-    var Card = $this.props.card;
-    var Header = $this.props.header;
     var initialItems = $this.props.items;
-    var newItemCallback = this.props.newItemCallback;
     var items = $this.applyFilter(initialItems);
+    var numCols = parseInt(this.props.numCols) || 1;
+    var colSize = Math.floor(12 / numCols);
+
+    var newItemCallback = this.props.newItemCallback;
+
+    var Header = $this.props.itemView.header;
+
     return (
       <div>
-        <div className="ibox">
+        <div className="filter-box ibox">
           <div className="ibox-title">
-            <button onClick={newItemCallback} className="new-card-button pull-right">+</button>
+            <button 
+              onClick={newItemCallback} 
+              className="new-card-button pull-right"
+            >+</button>
             {title?<h5>{title}</h5>:null}
             {!filters?null:
-            <ol id="filters" className="breadcrumb">
+            <ol id="filters" className="breadcrumb" style={{backgroundColor:"transparent",padding:"15px 0 15px 20px"}}>
               {filters.map(function(i,index){
                 return (
-                  <li className={selectedFilterNum==index?'active':''}>
+                  <li key={index} className={selectedFilterNum==index?'active':''}>
                     <a onClick={$this.setFilter.bind(null,index)}>{i.text}</a>
                   </li>
                 )
               })}
             </ol>}
+            {!Header?null:<Header item={items[0]} />}
           </div>
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
-              {!Header?null:<Header item={items[0]} />}
-              <CardGrid card={Card} items={items} numCols={$this.props.numCols} handleFieldChange={$this.handleFieldChange}/>
+              {items.map(function(i,index){
+                return (
+                  <div 
+                    key={i._id}
+                    style={{padding:0}}
+                    className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
+                  >
+                    <CardWrapper 
+                      item={i}
+                      itemView={$this.props.itemView}
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -84,40 +90,91 @@ FilterBox = React.createClass({
   }
 });
 
-CardGrid = React.createClass({
+CardWrapper = React.createClass({
 
-  expandItem(event) {
-    var i = $(event.target).closest('.grid-item');
-    $('.gigante').not(i).removeClass('gigante');
-    i.toggleClass('pre-gigante');
-    i.toggleClass('gigante',250,function(){
-      i.removeClass('pre-gigante');
-    })
+  getInitialState() {
+    var shouldExpand = this.props.item.isNewItem?true:false;
+    return {
+      shouldExpand:shouldExpand,
+      didExpand:false
+    }
+  },
+
+  expand() {
+    if(!this.state.didExpand) {
+      var i = $(React.findDOMNode(this));
+      //$('.gigante').not(i).removeClass('gigante');
+      i.addClass('pre-gigante');
+      i.toggleClass('gigante',250,function(){
+        i.removeClass('diminished pre-gigante');        
+      });
+      this.setState({
+        didExpand:true
+      });
+      /*i.toggleClass('gigante',250,function(){
+        //i.removeClass('pre-gigante');
+        this.setState({
+          didExpand:true
+        });
+      })*/
+    }
+  },
+
+  contract() {
+    if(this.state.didExpand) {
+      var i = $(React.findDOMNode(this));
+      i.toggleClass('gigante',250);
+      this.setState({
+        didExpand:false
+      })
+    }
+  },
+
+  toggle() {
+    var newState = this.state;
+    newState.shouldExpand = !newState.shouldExpand;
+    this.setState(newState);
+  },
+
+  componentDidUpdate () {
+    if(this.state.shouldExpand&!this.state.didExpand) {
+      this.expand();
+    }
+    else if(this.state.didExpand&!this.state.shouldExpand) {
+      this.contract();
+    }
   },
 
   render() {
-    var items = this.props.items;
-    var Card = this.props.card;
-    var me = this;
-    var handleFieldChange = this.props.handleFieldChange;
-    var numCols = parseInt(this.props.numCols) || 1;
-    var colSize = Math.floor(12 / numCols);
+    var $this = this;
+    var item = this.props.item;
+    var Summary = this.props.itemView.summary;
+    var Detail = this.props.itemView.detail;
     return (
-      <div>
-        {items.map(function(i,index){
-          return (
-            <div 
-              onDoubleClick={me.expandItem} 
-              className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12 grid-item"}
-              >
-              <Card
-                item={i} 
-                handleFieldChange={handleFieldChange.bind(null,index)}
-              />
+      <div 
+        className={(item.isNewItem?"new-grid-item diminished ":'')+"grid-item"}
+      >
+        <div className="card-header">
+          <div className="card-header-left-toolbar">
+            <div
+              onClick={this.toggle}
+              className="grid-item-select-button"
+            >
+              <i className="grid-item-select-button-top fa fa-th"></i><br/>
+              <i className="grid-item-select-button-bottom fa fa-th"></i>
             </div>
-          )
-        })}
+          </div>
+          <div className="card-header-summary">
+            <Summary item={item} />
+          </div>
+          <div className="card-header-right-toolbar">
+          </div>
+        </div>
+        <div className="card-body">
+          <Detail item={item}/>
+        </div>
       </div>
+
     )
   }
 });

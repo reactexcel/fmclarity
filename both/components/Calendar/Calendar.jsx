@@ -13,6 +13,7 @@ Calendar = React.createClass({
             right: 'month,agendaWeek,agendaDay'
         },
         editable: true,
+        height:'auto',
         droppable: true, // this allows things to be dropped onto the calendar
         drop: function() {
             // is the "remove after drop" checkbox checked?

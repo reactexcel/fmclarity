@@ -5,11 +5,11 @@ PageProperties = React.createClass({
     getMeteorData() {
         var handle = Meteor.subscribe('facilities');
         return {
-            facilities : Facilities.find({},{sort:{createdAt:-1}}).fetch()
+            items : Facilities.find({},{sort:{createdAt:-1}}).fetch()
         }
     },
 
-    createNewFacility() {
+    createNew() {
     	Meteor.call("Facility.new");
     },
 
@@ -43,11 +43,14 @@ PageProperties = React.createClass({
 		          </div>
 		        </div>
 		        <div className="facility-page wrapper wrapper-content animated fadeIn">
-					<FilterBox
-						filters={filters}
-						items={this.data.facilities}
-						newItemCallback={this.createNewFacility}
-						card={FacilityCard}
+					<FilterBox 
+						items={this.data.items}
+						filters={filters} 
+						itemView={{
+							summary:FacilitySummary,
+							detail:FacilityDetail
+						}}
+						newItemCallback={this.createNew}
 					/>
 				</div>
 			</div>

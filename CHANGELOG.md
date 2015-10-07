@@ -1,5 +1,18 @@
 CHANGELOG.md
 
+
+v0.0.9a (07/10/2015)
+- Fixed a bug that was causing expanded cards to get mixed up when a new card was created
+- New Order and Facility cards expand when created
+- Removed building type & location from property card
+- Resizeed dashboard components on larger screens
+- Restyled progress indicators on dashboard using jquery-knob
+- Button for card expansion (instead of double click)
+- Fixed a bug that was causing cards to collapse when content was edited
+- Updated card row layout and expansion / transition behaviour
+- Created different expansion animations / transition for new orders and facilities
+- Changed delete icon
+
 v0.0.8a (06/10/2015)
 - Created Properties(or Facilities) database collection
 - Connected Facilities view to Facilties database

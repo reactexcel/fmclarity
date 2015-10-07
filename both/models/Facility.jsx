@@ -19,6 +19,7 @@ if (Meteor.isServer) {
 
 Meteor.methods({
 	"Facility.save": function(item) {
+		item.isNewItem = false;
 		Facilities.upsert(item._id, {$set: _.omit(item, '_id')});
 	},
  	"Facility.destroy":function(item) {
@@ -27,6 +28,7 @@ Meteor.methods({
 	"Facility.new":function(item) {
 		newItem = _.extend({},item,{
 			name:"Enter facility name",
+			isNewItem:true,
 			address:"Enter facility address",
 			location: "Enter facility location",
 			description:"Enter facility description",

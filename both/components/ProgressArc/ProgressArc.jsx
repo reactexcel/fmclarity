@@ -1,6 +1,9 @@
 ProgressArc = React.createClass({
 
 	componentDidMount() {
+        $(".dial").knob({
+        	readOnly:true
+        });
 	},
 	render() {
 		var title = this.props.title;
@@ -10,18 +13,12 @@ ProgressArc = React.createClass({
 		var percentage = Math.floor(thisMonth*100/lastMonth);
 	    return (
 			<div className="ibox">
-				<div className="ibox-content">
+				<div className="ibox-content" style={{padding:0,height:"140px"}}>
 					<h5 style={{float:"none"}}>{title}</h5>
-						<div style={{margin:"10px 0 10px 25px"}}>
-							<div className={color+" c100 p"+percentage}>
-							<span>{thisMonth}</span>
-							<div className="slice">
-							<div className="bar"></div>
-							<div className="fill"></div>
-						</div>
+                    <div>
+						<input type="text" readOnly value={thisMonth} data-max={lastMonth} className="dial m-r-sm" dataFgColor="#1AB394" data-width="85" data-height="85" />
 					</div>
-				</div>
-				<p style={{clear:"both"}}><i>Last month total: {lastMonth}</i></p>
+					<p style={{clear:"both"}}><i>Last month: {lastMonth}</i></p>
 				</div>
 			</div>
 	    )

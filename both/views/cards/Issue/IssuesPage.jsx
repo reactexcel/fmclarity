@@ -58,13 +58,17 @@ PageRequests = React.createClass({
 		            <h2 style={{marginTop:"16px"}}>Work Requests</h2>
 		          </div>
 		        </div>
+		    	{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}
 		        <div className="issue-page wrapper wrapper-content animated fadeIn">
 					<FilterBox 
 						items={this.data.issues}
 						filters={filters} 
-						card={OrderCard}
+						itemView={{
+							header:IssueHeader,
+							summary:IssueSummary,
+							detail:IssueDetail
+						}}
 						newItemCallback={this.createNewIssue}
-						header={OrderCardTableHeader}
 					/>
 				</div>
 			</div>

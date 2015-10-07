@@ -2,30 +2,37 @@
 
 IssueDetail = React.createClass({
 
-    saveIssue() {
-        Meteor.call("Issue.save",this.issue);
+    saveItem() {
+        this.item.save();
+        //Meteor.call("Issue.save",this.issue);
     },
 
-    deleteIssue() {
-        Meteor.call("Issue.destroy",this.issue);
-    },
+    deleteItem() {
+        var dom = $(React.findDOMNode(this));
+        var parent = dom.closest('.grid-item');
+        var $scope = this;
+        parent.toggleClass('diminished gigante',250,function(){
+            $scope.item.destroy();
+            //Meteor.call("Issue.destroy",$scope.facility);
+        });
+    },    
 
     updateField(field) {
         var $this = this;
         return function(event) {
-            $this.issue[field] = event.target.value;
-            $this.saveIssue();
+            $this.item[field] = event.target.value;
+            $this.saveItem();
         }
     },
 
     componentWillMount: function() {
-        this.saveIssue = _.debounce(this.saveIssue,500);
+        this.saveItem = _.debounce(this.saveItem,500);
     },
 
     render() {
-        var issue = this.issue = this.props.issue;
+        var issue = this.item = this.props.item;
         var facility = issue.facility;
-        var createdAt = moment(this.issue.createdAt).calendar();
+        var createdAt = moment(issue.createdAt).calendar();
         var contact = issue.contact;
         var supplier = issue.supplier;
         var status = issue.status;
@@ -39,8 +46,12 @@ IssueDetail = React.createClass({
     <div className="row">
         <div className="col-lg-12">
             <div className="m-b-md">
-                <btn className="btn btn-white btn-xs pull-right">Edit</btn>
-                <btn onClick={this.deleteIssue} className="btn btn-white btn-xs pull-right">Delete</btn>
+                <button 
+                    onClick={this.deleteItem} 
+                    className="delete-button pull-right"
+                >
+                    <i className="fa fa-trash-o"></i>
+                </button>
                 <h2 style={{width:"70%"}}><input className="inline-form-control" defaultValue={issue.name} onChange={this.updateField('name')}/></h2>
                 <h3><i className="fa fa-location-arrow"></i>&nbsp;&nbsp;{facility.name}</h3>
             </div>

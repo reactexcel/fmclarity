@@ -26,6 +26,7 @@ Meteor.methods({
   "Issue.new":function(item) {
     newItem = _.extend({},item,{
       name:"New Work Order",
+      isNewItem:true,
       description:"Enter description",
       status:"New",
       urgent:false,
@@ -47,6 +48,15 @@ Meteor.methods({
       },
     });
     Issues.insert(newItem);
+  }
+});
+
+Issues.helpers({
+  save:function(){
+    Meteor.call('Issue.save',this);
+  },
+  destroy:function() {
+    Meteor.call('Issue.destroy',this);
   }
 });
 

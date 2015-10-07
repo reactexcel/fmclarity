@@ -18,4 +18,7 @@ Meteor.startup(function(){
     	})
     }
 
+    Facilities.remove({isNewItem:true});
+    Issues.remove({isNewItem:true});
+
 })

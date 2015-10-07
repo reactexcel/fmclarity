@@ -75,7 +75,7 @@ MainLayout = React.createClass({
       <div id="wrapper">
         <Navigation />
         <div id="page-wrapper" className="gradient-bg">
-          <div id="pattern-bg" className="pattern-bg"></div>
+          {/*<div id="pattern-bg" className="pattern-bg"></div>*/}
           <TopNavBar />
           <main>{this.props.content}</main>
           {/*<Footer />*/}

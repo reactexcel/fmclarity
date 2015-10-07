@@ -7,7 +7,12 @@ FacilityDetail = React.createClass({
     },
 
     deleteFacility() {
-        Meteor.call("Facility.destroy",this.facility);
+        var dom = $(React.findDOMNode(this));
+        var parent = dom.closest('.grid-item');
+        var $scope = this;
+        parent.toggleClass('diminished gigante',250,function(){
+            Meteor.call("Facility.destroy",$scope.facility);
+        });
     },
 
     updateField(field) {
@@ -24,22 +29,20 @@ FacilityDetail = React.createClass({
 
     render() {
         var $this = this;
-        var facility = this.facility = this.props.facility;
+        var facility = this.facility = this.props.item;
         var createdAt = moment(this.facility.createdAt).format();
         var contact = facility.contact;
-        var type = facility.status;
-        var type = 
-        type=='Office'?'danger':
-        type=='Residential'?'warning':
-        type=='Warehouse'?'info':
-        type=='Recreational'?'success':'default';
         return (
 <div>
     <div className="row">
         <div className="col-lg-12">
+            <button 
+                onClick={this.deleteFacility} 
+                className="delete-button pull-right"
+            >
+                <i className="fa fa-trash-o"></i>
+            </button>
             <div className="m-b-md">
-                <a href="#" className="btn btn-white btn-xs pull-right">Edit</a>
-                <a href="#" onClick={this.deleteFacility} className="btn btn-white btn-xs pull-right">Delete</a>
                 <h2 style={{width:"70%"}}>
                     <input 
                         className="inline-form-control" 
@@ -65,16 +68,6 @@ FacilityDetail = React.createClass({
                                 style={{width:"90%",marginLeft:"3px"}} 
                                 defaultValue={facility.address} 
                                 onChange={this.updateField('address')}
-                            />
-                        </dd>
-                        <dt>Location:</dt>
-                        <dd>
-                            <i className="fa fa-location-arrow"></i>
-                            <input 
-                                className="inline-form-control"
-                                style={{width:"90%",marginLeft:"3px"}} 
-                                defaultValue={facility.location} 
-                                onChange={this.updateField('location')}
                             />
                         </dd>
                         <dt>Description:</dt>

@@ -30,11 +30,13 @@ PageContracts = React.createClass({
 		          </div>
 		        </div>
 		        <div className="wrapper wrapper-content animated fadeIn">
-					<FilterBox
+					<FilterBox 
 						items={Contracts}
-						card={ContractCard}
-						header={ContractCardTableHeader}
-						filters={filters}
+						filters={filters} 
+						itemView={{
+							summary:ContractSummary,
+							detail:ContractDetail
+						}}
 					/>
 				</div>
 			</div>

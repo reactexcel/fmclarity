@@ -1,16 +1,59 @@
 .isotope {
   margin-right:-20px;
   margin-left:-20px;
-  background-color:#ddd;
+  background-color:transparent;
+}
+
+.md-skin .filter-box.ibox {
+  background-color:transparent;
+  border:0;
+  box-shadow:none;
+}
+
+.md-skin .filter-box.ibox > .ibox-title {
+  border-bottom:1px solid #bbb;
+  background-color:#eee;
+  padding:0;
+}
+
+.grid-item-select-button {
+  color:transparent;
+  height:100%;
+  float:left;
+  padding:5px 5px 5px 5px;
+  cursor:pointer;
+}
+
+.grid-item:hover .grid-item-select-button, .grid-item.gigante .grid-item-select-button {
+  color:#ddd;
+}
+
+.grid-item-select-button-top {
+  position:relative;
+  top:5px;
+}
+
+.grid-item-select-button-bottom {
+  position:relative;
+  top:-2px;
+}
+
+.md-skin .filter-box.ibox > .ibox-content {
+  background-color:transparent;
 }
 
 .grid-item {
-  padding: 10px;
   background: #fff;
   color: #262524;
   /*border-left:5px solid #ccc;*/
-  border-top:1px solid #ccc;
-  padding:10px 0;
+  border-top:1px solid #eee;
+  border-bottom:1px solid #ddd;
+  padding:0;
+}
+
+.new-grid-item {
+  font-style:italic;
+  color:#999;
 }
 
 .grid-item.pre-gigante {
@@ -19,18 +62,19 @@
 
 .grid-item.gigante {
   overflow:hidden;
-  background:#FFFBCC;;
+  background:#fff;
   z-index:5000;
   width:100%;
   height:800px;
-  margin:0 0 10px 0;
+  margin:10px 0 10px 0;
   border-left-width: 0;
-  box-shadow: 1px 2px 5px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
   padding-bottom:0;
+  border-top:1px solid #bbb;
+  border-bottom:1px solid #aaa;
 }
 
 .card-table-header {
-  background-color:#fff;
   font-weight: bold;
   overflow:hidden;
   padding-left:15px;
@@ -39,18 +83,35 @@
   border-left:5px solid #aaa;
 }
 
-.grid-item.gigante:hover {
-    background:#FFFBCC;
+.grid-item.gigante .card-header,.grid-item:hover .card-header,.grid-item.diminished .card-header {
+    background:#eee;
 }
 
-.grid-item:hover {
-    background:#eee;
+.grid-item.diminished {
+  height:0px;
 }
 
 .card-header {
   overflow:hidden;
   -webkit-user-select: none;
 }
+
+.card-header-summary {
+  padding:5px;
+  overflow:hidden;
+  position:absolute;
+  left:20px;
+  right:0;
+}
+
+.card-header-right-toolbar {
+  opacity:0;
+}
+
+.gigante .card-header-right-toolbar {
+  opacity:1;
+}
+
 .card-body {
   position:absolute;
   left:0;
@@ -59,9 +120,7 @@
   border-top:1px solid #ddd;
   padding:10px 20px 10px 20px;
   background-color:#f3f3f4;
-  margin-top:10px;
   display:none;
-  height:100%;
   /*margin-left:-15px;
   margin-right:-15px;*/
 }
@@ -83,5 +142,6 @@
   color:#fff;
   font-size:20px;
   position:relative;
-  top:-5px;
+  top:9px;
+  right:9px;
 }
