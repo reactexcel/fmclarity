@@ -1,3 +1,7 @@
+.contact-card-2line {
+	text-align:left;
+}
+
 .contact-card-2line-text {
 	padding:3px;
 	white-space:nowrap;
@@ -11,4 +15,152 @@
 .contact-card-avatar img {
 	border-radius: 50%;
 	width:35px;
+}
+
+.texture-overlay {
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	opacity:0.3;
+	pointer-events: none;
+}
+
+.color-overlay-1 {
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	opacity:0.05;
+	pointer-events: none;
+}
+
+.color-overlay-2 {
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:50%;
+	right:0;
+	opacity:0.05;
+	pointer-events: none;
+	border-left:1px solid #000;
+}
+
+.color-1 {
+	background-color:#fff;
+}
+
+.color-2 {
+	background-color:#f00;
+}
+
+.color-3 {
+	background-color:#00f;
+}
+
+.texture-overlay-bordered-1 {
+}
+
+.texture-overlay-bordered-2 {
+	border:3px solid #000;
+}
+
+.texture-overlay-bordered-3 {
+	border:3px solid #00f;
+}
+
+.texture-overlay-bordered-4 {
+	border:3px double #000;
+}
+
+.texture-overlay-bordered-5 {
+	border:3px double #f00;
+}
+
+.texture-1 {
+ 	background:url('patterns/business-card-texture-1.jpg');	
+}
+.texture-2 {
+ 	background:url('patterns/business-card-texture-2.jpg');	
+}
+.texture-3 {
+ 	background:url('patterns/business-card-texture-3.jpg');	
+}
+.texture-4 {
+ 	background:url('patterns/business-card-texture-4.jpg');	
+}
+.texture-5 {
+ 	background:url('patterns/business-card-texture-5.jpg');	
+}
+
+
+
+.contacts-page .grid-item {
+	background: none;
+	box-shadow: none;
+	border:none;
+}
+
+.contacts-page .grid-item:hover .card-header {
+	background:transparent;
+}
+
+.business-card {
+	padding:10px;
+	position:relative;
+	background-color:#fff;
+	overflow:hidden;
+ 	box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
+ 	border:1px solid #bbb;
+ 	border-bottom-color:#aaa;
+ 	color:#000;
+ 	opacity:1;
+ 	height:100%;
+}
+
+.business-card.small h2 {
+	font-size:1.8em;
+}
+
+.business-card.small {
+	padding:5px;
+	font-size:0.8em;
+}
+
+.business-card-style-1 {
+
+}
+
+.business-card-style-2 h2 {
+	font-weight:bold;
+}
+
+.business-card-style-3 {
+	font-family:'Georgia serif';
+}
+
+.business-card .contact-thumbnail {
+	float:left;
+	width:48%;
+	min-height:200px;
+	position:relative;
+}
+
+.business-card .contact-thumbnail > img {
+	width:100%;
+}
+
+.business-card .contact-info {
+	text-align: right;
+	overflow: hidden;
+	width:50%;
+	padding-top:40px;
+	float:left;
+	padding-left:5px;
+}
+
+.business-card.small .contact-info {
+	padding-top:10px;
 }

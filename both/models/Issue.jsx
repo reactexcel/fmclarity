@@ -18,6 +18,9 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   "Issue.save": function(item) {
+    if(item.name&&item.description&&item.service&&item.supplier) {
+      item.isNewItem = false;
+    }
     Issues.upsert(item._id, {$set: _.omit(item, '_id')});
   },
   "Issue.destroy":function(item) {
@@ -25,9 +28,7 @@ Meteor.methods({
   },
   "Issue.new":function(item) {
     newItem = _.extend({},item,{
-      name:"New Work Order",
       isNewItem:true,
-      description:"Enter description",
       status:"New",
       urgent:false,
       thumb:1,
@@ -39,13 +40,7 @@ Meteor.methods({
         email:"johnny@flart.flart",
         phone:"0444-123-321",
         thumb:"a1.jpg"
-      },
-      supplier:{
-        name:"XYY Contractors",
-        email:"xyz@abc.123",
-        phone:"0400-123-123",
-        thumb:"supplier-1.png"
-      },
+      }
     });
     Issues.insert(newItem);
   }

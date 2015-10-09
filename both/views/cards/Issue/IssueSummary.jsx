@@ -31,11 +31,11 @@ IssueSummary = React.createClass({
             </span>
           </div>
           <div className="issue-card-contact-col">
-            <ContactCard contact={contact} view="2-line" />
+            <ContactCard item={contact} view="2-line" />
           </div>
           {status=="Issued"||status=="Closed"?
             <div className="issue-card-contact-col">
-              <ContactCard contact={supplier} view="2-line" />
+              <ContactCard item={supplier} view="2-line" />
             </div>:<i className="fa fa-search"></i>
           }
           <div className="issue-card-date-col">

@@ -1,0 +1,16 @@
+.super-select.absolute {
+	position:absolute;
+	width:96%;
+}
+
+.super-select.absolute .dropdown-menu {
+	width:100%;
+	overflow-y:scroll;
+	max-height:160px;
+	top:-2px;
+}
+
+.super-select .browse-button {
+	font-weight:bold;
+	text-align: center;
+}

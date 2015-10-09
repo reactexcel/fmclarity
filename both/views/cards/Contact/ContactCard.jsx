@@ -1,6 +1,15 @@
+ContactViewName = React.createClass({
+	render() {
+		var contact = this.props.item || {};
+		return (
+			<span>{contact.name}</span>
+		)
+	}
+})
+
 ContactCard = React.createClass({
 	render() {
-		var contact = this.props.contact || {};
+		var contact = this.props.item || {};
 		var view = this.props.view;
 		switch(view) {
 			case 'avatar':return (

@@ -16,28 +16,6 @@
   padding:0;
 }
 
-.grid-item-select-button {
-  color:transparent;
-  height:100%;
-  float:left;
-  padding:5px 5px 5px 5px;
-  cursor:pointer;
-}
-
-.grid-item:hover .grid-item-select-button, .grid-item.gigante .grid-item-select-button {
-  color:#ddd;
-}
-
-.grid-item-select-button-top {
-  position:relative;
-  top:5px;
-}
-
-.grid-item-select-button-bottom {
-  position:relative;
-  top:-2px;
-}
-
 .md-skin .filter-box.ibox > .ibox-content {
   background-color:transparent;
 }
@@ -52,8 +30,6 @@
 }
 
 .new-grid-item {
-  font-style:italic;
-  color:#999;
 }
 
 .grid-item.pre-gigante {
@@ -99,38 +75,35 @@
 .card-header-summary {
   padding:5px;
   overflow:hidden;
-  position:absolute;
-  left:20px;
-  right:0;
-}
-
-.card-header-right-toolbar {
-  opacity:0;
-}
-
-.gigante .card-header-right-toolbar {
-  opacity:1;
 }
 
 .card-body {
   position:absolute;
+  /*top:16px;*/
   left:0;
   right:0;
-  overflow:hidden;
+  /*bottom:0;*/
+  overflow:visible;
   border-top:1px solid #ddd;
-  padding:10px 20px 10px 20px;
-  background-color:#f3f3f4;
+  padding:10px 50px 10px 20px;
   display:none;
   /*margin-left:-15px;
   margin-right:-15px;*/
+}
+
+.grid-item.gigante .card-header,.grid-item.pre-gigante .card-header {
+  height:5px;
+}
+
+.new-grid-item.gigante .card-body,.new-grid-item.pre-gigante .card-body {
+  /*top:16px;*/
 }
 
 .pre-gigante .card-body,.gigante .card-body {
   display:block;
 }
 
-.new-card-button {
-  background-color: #db4437;
+.card-button {
   height: 30px;
   width: 30px;
   box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
@@ -138,10 +111,74 @@
   outline: none;
   padding: 0;  
   border: none;
-  border-radius: 50%;  
-  color:#fff;
+  border-radius: 50%;    
   font-size:20px;
   position:relative;
+  box-shadow:none;
+}
+
+.new-card-button {
+  background-color: #db4437;
+  color:#fff;
   top:9px;
   right:9px;
 }
+
+.expand-button {
+  background-color: transparent;
+  box-shadow: none;
+  color:#000;
+}
+
+.delete-button {
+  background-color: #aaa;
+  color:#fff;
+}
+
+
+.grid-item-select-button {
+  color:#000;
+  height:100%;
+  float:left;
+  padding:5px 5px 5px 5px;
+  cursor:pointer;
+}
+
+.grid-item-select-button-top {
+  position:relative;
+  top:5px;
+}
+
+.grid-item-select-button-bottom {
+  position:relative;
+  top:-2px;
+}
+
+.card-header-right-toolbar {
+  float:right;
+  opacity:0.1;
+  padding:9px;
+}
+
+.card-body-right-toolbar {
+  position:absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  width:50px;
+  padding-right:9px;
+}
+
+.card-header-left-toolbar {
+  float:left;
+  opacity:0.1;
+}
+
+.grid-item:hover .card-header-right-toolbar, 
+.grid-item.gigante .card-header-right-toolbar,
+.grid-item:hover .card-header-left-toolbar, 
+.grid-item.gigante .card-header-left-toolbar 
+{
+  opacity:0.3;
+}
+

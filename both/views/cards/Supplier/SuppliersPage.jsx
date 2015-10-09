@@ -1,8 +1,13 @@
 PageSuppliers = React.createClass({
 
-	componentDidMount() {
-		//console.log(Meteor.users.find());
-	},
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        var handle = Meteor.subscribe('contacts');
+        return {
+            items : Contacts.find({},{sort:{createdAt:-1}}).fetch()
+        }
+    },
 
 	render() {
 		// okay - so we really need to pass in a function here
@@ -26,16 +31,17 @@ PageSuppliers = React.createClass({
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
 		          <div className="col-lg-12">
-		            <h2 style={{marginTop:"16px"}}>Contracts</h2>
+		            <h2 style={{marginTop:"16px"}}>Contacts</h2>
 		          </div>
 		        </div>
-		        <div className="wrapper wrapper-content animated fadeIn">
+		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
 					<FilterBox 
-						items={Contracts}
-						filters={filters} 
+						items={this.data.items}
+						filters={filters}
+						numCols={2}
 						itemView={{
-							summary:ContractSummary,
-							detail:ContractDetail
+							summary:ContactSummary,
+							detail:ContactSummary
 						}}
 					/>
 				</div>

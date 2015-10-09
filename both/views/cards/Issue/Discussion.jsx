@@ -1,6 +1,8 @@
 IssueDiscussion = React.createClass({
 	render() {
 		var issue = this.props.issue;
+        var contact = issue.contact || {};
+        var supplier = issue.supplier || {};
 		return (
             <div className="feed-activity-list">
                 <div className="feed-element">
@@ -9,7 +11,7 @@ IssueDiscussion = React.createClass({
                                                         </a>
                                                         <div className="media-body ">
                                                             <small className="pull-right">2h ago</small>
-                                                            <strong>{issue.contact.name}</strong> createed issue. <br/>
+                                                            <strong>{contact.name}</strong> createed issue. <br/>
                                                             <small className="text-muted">Today 2:10 pm - 12.06.2014</small>
                                                             <div className="well">
                                                                 {issue.description}
@@ -32,7 +34,7 @@ IssueDiscussion = React.createClass({
                                                         </a>
                                                         <div className="media-body ">
                                                             <small className="pull-right text-navy">5h ago</small>
-                                                            <strong>{issue.supplier.name}</strong> started looking at <strong>issue</strong>. <br/>
+                                                            <strong>{supplier.name}</strong> started looking at <strong>issue</strong>. <br/>
                                                             <small className="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
                                                             <div className="actions">
                                                                 <a className="btn btn-xs btn-white"><i className="fa fa-message"></i> Contact </a>

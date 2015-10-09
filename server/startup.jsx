@@ -2,23 +2,17 @@ console.log("Starting server...");
 
 Meteor.startup(function(){
 
-    if(Issues.find().count()==0) {
-    	console.log('creating example issues...');
-    	ExampleIssues.map(function(item){
-    		console.log({'inserting':item});
-    		Issues.insert(item);
-    	})
-    }
+    var collections = [Issues, Facilities, Contacts, Services];
+    var dataSets = [ExampleIssues, ExampleFacilities, ExampleContacts, ExampleServices];
 
-    if(Facilities.find().count()==0) {
-    	console.log('creating example facilities...');
-    	ExampleFacilities.map(function(item){
-    		console.log({'inserting':item});
-    		Facilities.insert(item);
-    	})
-    }
-
-    Facilities.remove({isNewItem:true});
-    Issues.remove({isNewItem:true});
-
+    collections.map(function(i,idx){
+        if(i.find().count()==0) {
+            console.log('creating example issues...');
+            dataSets[idx].map(function(item){
+                console.log({'inserting':item});
+                i.insert(item);
+            })
+        }
+        i.remove({isNewItem:true});
+    });
 })

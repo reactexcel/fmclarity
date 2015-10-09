@@ -51,7 +51,7 @@ FilterBox = React.createClass({
           <div className="ibox-title">
             <button 
               onClick={newItemCallback} 
-              className="new-card-button pull-right"
+              className="card-button new-card-button pull-right"
             >+</button>
             {title?<h5>{title}</h5>:null}
             {!filters?null:
@@ -93,66 +93,70 @@ FilterBox = React.createClass({
 CardWrapper = React.createClass({
 
   getInitialState() {
-    var shouldExpand = this.props.item.isNewItem?true:false;
+    var item = this.props.item;
     return {
-      shouldExpand:shouldExpand,
+      shouldExpand:item.isNewItem?true:false,
       didExpand:false
     }
   },
 
+  deleteItem() {
+    var dom = $(React.findDOMNode(this));
+    var parent = dom.closest('.grid-item');
+    var $scope = this;
+    parent.toggleClass('diminished gigante',250,function(){
+      $scope.item.destroy();
+      //Meteor.call("Issue.destroy",$scope.facility);
+    });
+  },    
+
   expand() {
-    if(!this.state.didExpand) {
-      var i = $(React.findDOMNode(this));
-      //$('.gigante').not(i).removeClass('gigante');
+    var $this = this;
+    if(!$this.state.didExpand) {
+      var i = $(React.findDOMNode($this));
       i.addClass('pre-gigante');
       i.toggleClass('gigante',250,function(){
-        i.removeClass('diminished pre-gigante');        
+        i.removeClass('diminished pre-gigante');
+        $this.setState({didExpand:true});
       });
-      this.setState({
-        didExpand:true
-      });
-      /*i.toggleClass('gigante',250,function(){
-        //i.removeClass('pre-gigante');
-        this.setState({
-          didExpand:true
-        });
-      })*/
     }
   },
 
   contract() {
-    if(this.state.didExpand) {
-      var i = $(React.findDOMNode(this));
-      i.toggleClass('gigante',250);
-      this.setState({
-        didExpand:false
-      })
+    var $this = this;
+    if($this.state.didExpand) {
+      var i = $(React.findDOMNode($this));
+      i.toggleClass('gigante',250,function(){
+        $this.setState({didExpand:false})
+      });
     }
   },
 
   toggle() {
-    var newState = this.state;
-    newState.shouldExpand = !newState.shouldExpand;
-    this.setState(newState);
+    this.setState({shouldExpand:!this.state.shouldExpand});
   },
 
   componentDidUpdate () {
-    if(this.state.shouldExpand&!this.state.didExpand) {
+    if(this.state.shouldExpand) {
       this.expand();
     }
-    else if(this.state.didExpand&!this.state.shouldExpand) {
+    else if(!this.state.shouldExpand) {
       this.contract();
     }
   },
 
   render() {
     var $this = this;
-    var item = this.props.item;
+    var item = this.item = this.props.item;
     var Summary = this.props.itemView.summary;
     var Detail = this.props.itemView.detail;
     return (
       <div 
-        className={(item.isNewItem?"new-grid-item diminished ":'')+"grid-item"}
+        className={
+          (item.isNewItem?"new-grid-item diminished ":'')+
+          (this.state.didExpand?"gigante ":'')+
+          "grid-item"
+        }
       >
         <div className="card-header">
           <div className="card-header-left-toolbar">
@@ -164,15 +168,48 @@ CardWrapper = React.createClass({
               <i className="grid-item-select-button-bottom fa fa-th"></i>
             </div>
           </div>
+          <div className="card-header-right-toolbar">
+            <button 
+              onClick={this.toggle}
+              className="card-button expand-button pull-right"
+            >
+              <i className={"fa "+(this.state.shouldExpand?"fa-caret-down":"fa-caret-left")}></i>
+            </button>
+          </div>
           <div className="card-header-summary">
             <Summary item={item} />
           </div>
-          <div className="card-header-right-toolbar">
-          </div>
         </div>
+        {Detail&&(this.state.shouldExpand||this.state.didExpand)?
         <div className="card-body">
+          <div className="card-body-right-toolbar">
+            <button 
+              onClick={this.toggle}
+              className="card-button expand-button pull-right"
+            >
+              <i className={"fa "+(this.state.shouldExpand?"fa-caret-down":"fa-caret-left")}></i>
+            </button>
+            <button 
+                onClick={this.deleteItem} 
+                className="card-button delete-button pull-right"
+            >
+                <i className="fa fa-paperclip"></i>
+            </button>
+            <button 
+                onClick={this.deleteItem} 
+                className="card-button delete-button pull-right"
+            >
+                <i className="fa fa-camera"></i>
+            </button>
+            <button 
+                onClick={this.deleteItem} 
+                className="card-button delete-button pull-right"
+            >
+                <i className="fa fa-trash-o"></i>
+            </button>
+          </div>
           <Detail item={item}/>
-        </div>
+        </div>:null}
       </div>
 
     )

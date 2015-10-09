@@ -20,7 +20,9 @@ PageMaintenence = React.createClass({
 					<FilterBox
 						title="PMP Services Panel"
 						items={Contracts}
-						card={HeadingCard}
+						itemView={{
+							summary:HeadingCard
+						}}
 					/>
 				</div>
 			</div>

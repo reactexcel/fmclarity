@@ -45,6 +45,16 @@ Meteor.methods({
 	}
 })
 
+Facilities.helpers({
+  save:function(){
+    Meteor.call('Facility.save',this);
+  },
+  Facilities:function() {
+    Meteor.call('Facility.destroy',this);
+  }
+});
+
+
 Facilities.before.insert(function (userId, doc) {
   doc.createdAt = moment().toDate();
 });
