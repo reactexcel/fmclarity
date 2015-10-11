@@ -18,7 +18,7 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   "Issue.save": function(item) {
-    if(item.name&&item.description&&item.service&&item.supplier) {
+    if(item.name&&item.supplier) {
       item.isNewItem = false;
     }
     Issues.upsert(item._id, {$set: _.omit(item, '_id')});

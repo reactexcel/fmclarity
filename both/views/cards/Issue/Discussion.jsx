@@ -36,9 +36,6 @@ IssueDiscussion = React.createClass({
                                                             <small className="pull-right text-navy">5h ago</small>
                                                             <strong>{supplier.name}</strong> started looking at <strong>issue</strong>. <br/>
                                                             <small className="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
-                                                            <div className="actions">
-                                                                <a className="btn btn-xs btn-white"><i className="fa fa-message"></i> Contact </a>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

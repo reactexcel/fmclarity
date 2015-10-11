@@ -2,6 +2,13 @@ CHANGELOG.md
 
 So one of the main issues that he wants solved is to be able to issue 'tickets', so work requests to the base building contractors. So these are contractors that work for the owner. As such the cost of the work is contained within the building outgoings, so the work requests would need to be zero dollar - you may recall in the work order example I sent you that there were different types of work requests, eg, preventative maintenance, ad-hoc, warranty, contract, no-cost, etc. So we would need to be able to show how this could be done easily and kept track of.
 
+v0.0.11a (11/10/2015)
+- Changed bagdes to a more muted pallete
+- Work Order : Updated Work Order summary view to give it a "gmail" feel
+- Work Order : Facilities can now be selected from dropdown in detail view
+- Work Order : Added buttons to toggle log / chat view
+- Work Order : Added "Send Order" button
+
 v0.0.10a (07/10/2015)
 - Updated supplier browsing screen
 - Updated work order screen layout

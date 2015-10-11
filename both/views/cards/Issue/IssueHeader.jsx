@@ -3,23 +3,17 @@ IssueHeader = React.createClass({
   render() {
     return (
       <div className="card-table-header issue-card-table-header">
-        <div className="issue-card-status-col" style={{padding:0,margin:0}}>
-          Status
+        <div className="issue-summary-col issue-summary-col-1" style={{padding:0,margin:0}}>
+          Facility
         </div>
-        <div className="issue-card-info-col" style={{padding:0,margin:0}}>
-          Issue
+        <div className="issue-summary-col issue-summary-col-2" style={{padding:0,margin:0}}>
+          Status&nbsp;&nbsp;Issue
         </div>
-        <div className="issue-card-contact-col" style={{padding:0,margin:0}}>
-          Requester
+        <div className="issue-summary-col issue-summary-col-4" style={{padding:0,margin:0}}>
+          Requested
         </div>
-        <div className="issue-card-contact-col" style={{padding:0,margin:0}}>
-          Supplier
-        </div>
-        <div className="issue-card-date-col" style={{padding:0,margin:0}}>
-          Issued
-        </div>
-        <div className="issue-card-date-col" style={{padding:0,margin:0}}>
-          Due in
+        <div className="issue-summary-col issue-summary-col-3" style={{padding:0,margin:0}}>
+          Contact
         </div>
       </div>
     )

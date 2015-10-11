@@ -7,9 +7,11 @@ IssueDetail = React.createClass({
     getMeteorData() {
         Meteor.subscribe('contacts');
         Meteor.subscribe('services');
+        Meteor.subscribe('facilities');
         return {
             services : Services.find({},{sort:{name:1}}).fetch(),
-            suppliers : Contacts.find({},{sort:{createdAt:-1}}).fetch()
+            suppliers : Contacts.find({},{sort:{createdAt:-1}}).fetch(),
+            facilities : Facilities.find({},{sort:{name:1}}).fetch()
         }
     },
 
@@ -41,6 +43,12 @@ IssueDetail = React.createClass({
         this.item.save();
     },
 
+    sendOrder() {
+        alert('Sending work order...');
+        this.item.status = "Issued";
+        this.saveItem();
+    },
+
     componentWillMount: function() {
         // perhaps we could debounce it in the model???
         this.saveItem = _.debounce(this.saveItem,500);
@@ -63,17 +71,19 @@ IssueDetail = React.createClass({
     <div className="row">
         <div className="col-lg-9">
             <div className="row">
-                <div className="col-lg-12">
-                    <i className="fa fa-location-arrow"></i>
-                    <input 
-                        className="inline-form-control" 
-                        style={{width:"90%",marginLeft:"3px",fontWeight:"bold"}} 
-                        defaultValue={facility.name} 
-                        onChange={this.updateField('address')}
-                    />
-                    <h2 style={{marginTop:"13px"}}>
+                <div className="col-lg-12" style={{paddingRight:0}}>
+                    <SuperSelect 
+                        items={this.data.facilities} 
+                        itemView={ContactViewName}
+                        onChange={this.updateObjectField('facility')}
+                    >
+                        <i className="fa fa-location-arrow"></i>
+                        <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
+                    </SuperSelect>
+
+                    <h2 style={{marginTop:"13px",paddingBottom:"6px",borderBottom:"1px solid #f90"}}>
                         <input 
-                             placeholder="Type issue title here"
+                            placeholder="Type issue title here"
                             className="inline-form-control" 
                             defaultValue={issue.name} 
                             onChange={this.updateField('name')}
@@ -85,7 +95,7 @@ IssueDetail = React.createClass({
                 <div className="col-lg-12">
                     <div className="row">
                         <div className="col-lg-7" style={{paddingRight:0}}>
-                            <span className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
+                            <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
                             <SuperSelect 
                                 items={['Normal','High','Critical']} 
                                 onChange={this.updateObjectField('priority')}
@@ -106,10 +116,8 @@ IssueDetail = React.createClass({
                                 :
                                     <span className="choose-service-btn label dropdown-label">Choose Service Type <i className="fa fa-caret-down"></i></span>
                                 }
-                                {issue.subservice?
+                                {!issue.subservice?null:
                                     <span className="choose-subservice-btn label dropdown-label label-info">{issue.subservice.name} <i className="fa fa-caret-down"></i></span>
-                                :
-                                    null
                                 }
                                 {issue.service&&(!issue.subservice)&&issue.service.subservices&&issue.service.subservices.length?
                                     <span className="choose-subservice-btn label dropdown-label">Choose Sub-service <i className="fa fa-caret-down"></i></span>
@@ -132,12 +140,10 @@ IssueDetail = React.createClass({
                                 onChange={this.updateObjectField('supplier')}
                             />
 
-                            {supplier?
+                            {!supplier?null:
                                 <div style={{width:"96%",height:"160px","position":"absolute"}}>
                                     <ContactSummary item={supplier} size="small"/>
                                 </div>
-                            :
-                                null
                             }
 
                             {issue.service&&issue.service.subservices&&issue.service.subservices.length?
@@ -157,16 +163,17 @@ IssueDetail = React.createClass({
                                 onChange={this.updateService}
                             />
                         </div>
+                        <div className="col-lg-12" style={{paddingRight:0}}>
+                            <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-1" data-toggle="tab"><i className="fa fa-tasks"></i></a>
+                            <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-2" data-toggle="tab"><i className="fa fa-comment"></i></a>
+                            <button onClick={this.sendOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'warning':'default')}><i className="fa fa-paper-plane"></i></button>
+                        </div>
                         {issue.isNewItem?null:
                         <div className="col-lg-12">
-                                        <ul className="" style={{opacity:0}}>
-                                            <li className="active"><a href="#tab-1" data-toggle="tab">Activity</a></li>
-                                            <li className=""><a href="#tab-2" data-toggle="tab">Messages</a></li>
-                                        </ul>
                             <div className="panel blank-panel" style={{borderTop:"1px solid #ccc",borderRadius:"0px"}}>
                                 <div className="panel-body" style={{padding:"5px"}}>
                                     <div className="tab-content">
-                                        <div className="tab-pane active" id="tab-1">
+                                        <div className="tab-pane" id="tab-1">
                                             <IssueTrackerTable />
                                         </div>
                                         <div className="tab-pane" id="tab-2" style={{paddingTop:"10px"}}>

@@ -158,7 +158,7 @@ CardWrapper = React.createClass({
           "grid-item"
         }
       >
-        <div className="card-header">
+        <div className="card-header" onClick={this.toggle}>
           <div className="card-header-left-toolbar">
             <div
               onClick={this.toggle}

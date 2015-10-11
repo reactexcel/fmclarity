@@ -1,49 +1,54 @@
 IssueSummary = React.createClass({
 
+
+    updateField(field) {
+        var $this = this;
+        // returns a function that modifies 'field'
+        return function(event) {
+            $this.item[field] = event.target.value;
+            $this.saveItem();
+        }
+    },
+
+
   render() {
-      var issue = this.props.item;
+      var issue = this.item = this.props.item;
       var facility = issue.facility;
       var contact = issue.contact;
       var supplier = issue.supplier;
       var status = issue.status;
+
+
       var statusClass = 
-        status=='New'?'danger':
+        status=='New'?'success':
         status=='Issued'?'warning':
-        status=='Open'?'info':
-        status=='Closed'?'success':'default';
+        status=='Open'?'danger':
+        status=='Closed'?'info':'';
 
       return (
-        <div>
-          <div className="issue-card-status-col">
-            <span className={"label label-"+statusClass}>{status}</span>
-            {
-              issue.urgent?<i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px",left: "2px"}}></i>
-              :null
-            }
-          </div>
-          <div className="issue-card-info-col">
-            <a className="issue-title" href="#">
-              {issue.name}
-            </a>
-            <br/>
-            <span>
+        <div className={"issue-summary issue-status-"+status}>
+          <div className="issue-summary-col issue-summary-col-1">
+            <span className="issue-summary-facility-name">
               {facility.name}
             </span>
           </div>
-          <div className="issue-card-contact-col">
-            <ContactCard item={contact} view="2-line" />
+          <div className="issue-summary-col issue-summary-col-2">
+            <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
+            {!issue.urgent?null:
+              <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
+            }
+            <span className="issue-summary-name">{issue.name}</span>
+            <span className="issue-summary-description">{issue.description}</span>
           </div>
-          {status=="Issued"||status=="Closed"?
-            <div className="issue-card-contact-col">
-              <ContactCard item={supplier} view="2-line" />
-            </div>:<i className="fa fa-search"></i>
-          }
-          <div className="issue-card-date-col">
-            <span style={{fontSize:"15px"}}><i className="fa fa-calendar"></i>19-Oct</span>
+          <div className="issue-summary-col issue-summary-col-4">
+            {moment(issue.createdAt).fromNow()}
           </div>
-          <div className="issue-card-date-col">
-            <span style={{fontSize:"15px"}} className="label label-info">2 Days</span>
+          <div className="issue-summary-col issue-summary-col-3">
+            {status=='New'?null:
+              <ContactCard item={supplier} view="avatar" />
+            }
           </div>
+
         </div>
     )
   }

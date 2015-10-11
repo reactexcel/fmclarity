@@ -49,7 +49,7 @@ Facilities.helpers({
   save:function(){
     Meteor.call('Facility.save',this);
   },
-  Facilities:function() {
+  destroy:function() {
     Meteor.call('Facility.destroy',this);
   }
 });

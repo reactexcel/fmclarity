@@ -55,21 +55,6 @@ FacilityDetail = React.createClass({
                                 defaultValue={facility.description} 
                                 onChange={this.updateField('description')}
                             />
-                            <br/><br/><b>Contacts:</b><br/><br/>
-                        </div>
-                        <div className="col-lg-6">
-                            <div>
-                                <ContactCard contact={contact} view="2-line"/>
-                                <ContactCard contact={contact} view="2-line"/>
-                                <ContactCard contact={contact} view="2-line"/>
-                            </div>
-                        </div>
-                        <div className="col-lg-6">
-                            <div>
-                                <ContactCard contact={contact} view="2-line"/>
-                                <ContactCard contact={contact} view="2-line"/>
-                                <ContactCard contact={contact} view="2-line"/>
-                            </div>
                         </div>
                     </div>
                 </div>
