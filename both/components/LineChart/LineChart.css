@@ -1,0 +1,17 @@
+.chart-legend {
+	list-style: none;
+	padding:0;
+}
+
+.chart-legend li {
+	float:left;
+}
+
+.chart-legend span {
+	float:left;
+	display:inline-block;
+	border:1px solid #bbb;
+	width:30px;
+	height:13px;
+	margin:2px;
+}

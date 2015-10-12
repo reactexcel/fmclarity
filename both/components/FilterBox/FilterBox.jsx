@@ -128,6 +128,9 @@ CardWrapper = React.createClass({
       var i = $(React.findDOMNode($this));
       i.toggleClass('gigante',250,function(){
         $this.setState({didExpand:false})
+        if($this.item.isNewItem) {
+          $this.item.destroy();
+        }
       });
     }
   },

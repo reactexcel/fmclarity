@@ -18,30 +18,23 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   "Issue.save": function(item) {
-    if(item.name&&item.supplier) {
-      item.isNewItem = false;
-    }
     Issues.upsert(item._id, {$set: _.omit(item, '_id')});
   },
   "Issue.destroy":function(item) {
     Issues.remove(item._id);
   },
   "Issue.new":function(item) {
-    newItem = _.extend({},item,{
+    newItem = _.extend({
       isNewItem:true,
-      status:"New",
       urgent:false,
       thumb:1,
-      facility:{
-        name:"2 Georges Rd (Building A)",
-      },
       contact:{
         name:"John Smith",
         email:"johnny@flart.flart",
         phone:"0444-123-321",
         thumb:"a1.jpg"
       }
-    });
+    },item);
     Issues.insert(newItem);
   }
 });
@@ -67,7 +60,7 @@ ExampleIssues = [
     urgent:true,
     thumb:1,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -88,7 +81,7 @@ ExampleIssues = [
     status:"New",
     thumb:2,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -110,7 +103,7 @@ ExampleIssues = [
     urgent:true,
     thumb:3,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -128,10 +121,10 @@ ExampleIssues = [
   {
     name:"Barbed wire on floor",
     description:"Barbed wire in staff room a tripping hazard. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    status:"Open",
+    status:"Issued",
     thumb:4,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -152,7 +145,7 @@ ExampleIssues = [
     status:"New",
     thumb:5,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -173,7 +166,7 @@ ExampleIssues = [
     status:"New",
     thumb:1,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -191,11 +184,11 @@ ExampleIssues = [
   {
     name:"Cracked walls, level 7",
     description:"Large cracks appearing in walls on level 7. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    status:"Open",
+    status:"Issued",
     urgent:true,
     thumb:2,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -216,7 +209,7 @@ ExampleIssues = [
     status:"Issued",
     thumb:3,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -234,10 +227,10 @@ ExampleIssues = [
   {
     name:"Nixious gas from AC",
     description:"Air conditioner producing noxious gas. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    status:"Open",
+    status:"Issued",
     thumb:4,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -258,7 +251,7 @@ ExampleIssues = [
     status:"Issued",
     thumb:5,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -279,7 +272,7 @@ ExampleIssues = [
     status:"New",
     thumb:1,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -300,7 +293,7 @@ ExampleIssues = [
     status:"New",
     thumb:2,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -321,7 +314,7 @@ ExampleIssues = [
     status:"Closed",
     thumb:3,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",
@@ -342,7 +335,7 @@ ExampleIssues = [
     status:"Issued",
     thumb:4,
     facility:{
-      name:"2 Georges Rd (Building A)",
+      name:"Georges Rd (Building A)",
     },
     contact:{
       name:"John Smith",

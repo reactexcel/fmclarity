@@ -43,9 +43,25 @@ IssueDetail = React.createClass({
         this.item.save();
     },
 
+    createOrder() {
+        this.item.status = "New";
+        this.item.isNewItem = false;
+        this.saveItem();
+    },
+
     sendOrder() {
         alert('Sending work order...');
         this.item.status = "Issued";
+        this.saveItem();
+    },
+
+    closeOrder() {
+        this.item.status = "Closing...";
+        this.saveItem();
+    },
+
+    reallyCloseOrder() {
+        this.item.status = "Closed";
         this.saveItem();
     },
 
@@ -77,11 +93,12 @@ IssueDetail = React.createClass({
                         itemView={ContactViewName}
                         onChange={this.updateObjectField('facility')}
                     >
+                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
                         <i className="fa fa-location-arrow"></i>
                         <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
                     </SuperSelect>
 
-                    <h2 style={{marginTop:"13px",paddingBottom:"6px",borderBottom:"1px solid #f90"}}>
+                    <h2 style={{marginTop:"13px",paddingBottom:"6px",borderBottom:"1px solid #ccc"}}>
                         <input 
                             placeholder="Type issue title here"
                             className="inline-form-control" 
@@ -95,7 +112,6 @@ IssueDetail = React.createClass({
                 <div className="col-lg-12">
                     <div className="row">
                         <div className="col-lg-7" style={{paddingRight:0}}>
-                            <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
                             <SuperSelect 
                                 items={['Normal','High','Critical']} 
                                 onChange={this.updateObjectField('priority')}
@@ -109,6 +125,7 @@ IssueDetail = React.createClass({
                                 onChange={this.updateField('description')}
                             />
                         </div>
+                        {issue.status?
                         <div className="col-lg-5">
                             <div style={{height:"32px"}}>
                                 {issue.service?
@@ -136,7 +153,7 @@ IssueDetail = React.createClass({
                                 items={this.data.suppliers} 
                                 classes="absolute"
                                 toggleId=".choose-contract-btn"
-                                initialState={{open:issue.isNewItem}}
+                                initialState={{open:issue.status=='New'}}
                                 onChange={this.updateObjectField('supplier')}
                             />
 
@@ -163,18 +180,27 @@ IssueDetail = React.createClass({
                                 onChange={this.updateService}
                             />
                         </div>
+                        :null}
                         <div className="col-lg-12" style={{paddingRight:0}}>
                             <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-1" data-toggle="tab"><i className="fa fa-tasks"></i></a>
                             <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-2" data-toggle="tab"><i className="fa fa-comment"></i></a>
-                            <button onClick={this.sendOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'warning':'default')}><i className="fa fa-paper-plane"></i></button>
+                            {!issue.status?
+                                <button onClick={this.createOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+((issue.name&&issue.description)?'success':'default')}>Create Request <i className="fa fa-paper-plane"></i></button>
+                            :null}
+                            {issue.status=='New'?
+                                <button onClick={this.sendOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'warning':'default')}>Issue Order <i className="fa fa-paper-plane"></i></button>
+                            :null}
+                            {issue.status=='Issued'?
+                                <button onClick={this.closeOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'danger':'default')}>Close Order <i className="fa fa-paper-plane"></i></button>
+                            :null}
                         </div>
                         {issue.isNewItem?null:
                         <div className="col-lg-12">
                             <div className="panel blank-panel" style={{borderTop:"1px solid #ccc",borderRadius:"0px"}}>
                                 <div className="panel-body" style={{padding:"5px"}}>
                                     <div className="tab-content">
-                                        <div className="tab-pane" id="tab-1">
-                                            <IssueTrackerTable />
+                                        <div className="active tab-pane" id="tab-1">
+                                            <IssueTrackerTable issue={issue}/>
                                         </div>
                                         <div className="tab-pane" id="tab-2" style={{paddingTop:"10px"}}>
                                             <IssueDiscussion issue={issue}/>
@@ -215,6 +241,9 @@ IssueDetail = React.createClass({
             </div>
         </div>
     </div>
+    {issue.status=='Closing...'?
+        <img className="close-order-popup" src="img/close-order.PNG" onClick={this.reallyCloseOrder}/>
+    :null}
 </div>
 
 

@@ -2,6 +2,9 @@ console.log("Starting server...");
 
 Meteor.startup(function(){
 
+    Facilities.remove({});
+    Issues.remove({});
+
     var collections = [Issues, Facilities, Contacts, Services];
     var dataSets = [ExampleIssues, ExampleFacilities, ExampleContacts, ExampleServices];
 

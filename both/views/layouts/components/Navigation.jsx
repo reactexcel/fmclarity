@@ -1,23 +1,52 @@
 Navigation = React.createClass({
 
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        Meteor.subscribe('facilities');
+        return {
+            facility : Session.get("selectedFacility") || {},
+            facilities : Facilities.find({},{sort:{name:1}}).fetch()
+        }
+    },
+
     componentDidMount() {
         // Initialize metisMenu
         $('#side-menu').metisMenu();
     },
 
-    render() {return (
+    selectFacility(facility) {
+        Session.set("selectedFacility",facility);
+    },
+
+    render() {
+
+    var facility = this.data.facility;
+
+    return (
     <nav className="navbar-default navbar-static-side" role="navigation">
         <div className="sidebar-collapse">
 
             <a className="close-canvas-menu"><i className="fa fa-times"></i></a>
 
             <ul className="nav metismenu" id="side-menu">
-                <li>
-                    <a href={FlowRouter.path('properties')} style={{padding:"0 0 0 14px",height:"80px"}}>
-                        <img style={{width:"40px","paddingBottom":"10px",float:"left","borderRadius":"2px"}} alt="image" src="img/building-1.jpg" />
-                        <div style={{"float":"left","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">2 Georges Rd<br/>Northfield</div>
-                    </a>
+                <li style={{height:"70px"}}>
+                    <a style={{fontWeight:"normal"}}>
+                    <SuperSelect 
+                        items={this.data.facilities} 
+                        itemView={ContactViewName}
+                        onChange={this.selectFacility}
+                    >
+                        <div style={{position:"absolute",top:"-12px",left:"-8px",whiteSpace:"nowrap"}}>
+                            <img style={{width:"40px","paddingBottom":"10px",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
+                            <div style={{"display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
+                        </div>
+                    </SuperSelect>
+                </a>
                 </li>
+
+                <li className="divider" style={{clear:"both"}}></li>
+
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}><i className="fa fa-newspaper-o"></i> <span className="nav-label">Dashboard</span></a>
                 </li>

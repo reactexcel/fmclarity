@@ -4,15 +4,23 @@ PageRequests = React.createClass({
 
     getMeteorData() {
         var handle = Meteor.subscribe('issues');
+        var selectedFacility = Session.get("selectedFacility");
+        var q = {};
+        if(selectedFacility&&selectedFacility.address) {
+        	q['facility.name'] = selectedFacility.name
+        };
         return {
-            issues : Issues.find({},{
+            issues : Issues.find(q,{
             	sort:{createdAt:-1}
             }).fetch()
         }
     },
 
     createNewIssue() {
-    	Meteor.call("Issue.new");
+        var selectedFacility = Session.get("selectedFacility") || {
+        	name:"Select Facility"
+        };
+    	Meteor.call("Issue.new",{facility:selectedFacility});
     },
 
 	render() {

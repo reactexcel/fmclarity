@@ -101,7 +101,10 @@ Books.helpers({
 
 ExampleFacilities = [
 	{
-		name:"2 Georges Rd (Building A)",
+		name:"All facilities",
+	},
+	{
+		name:"Georges Rd (Building A)",
 		address:"2 Georges Rd",
 		location: "Building A",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -115,7 +118,7 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"2 Georges Rd (Building B)",
+		name:"Georges Rd (Building B)",
 		address:"2 Georges Rd",
 		location: "Building B",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -181,7 +184,7 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Franklin Scholar, Launceston",
+		name:"Franklin Scholar, Hobart",
 		address:"12 Warwick St, Hobart, TAS",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:1,

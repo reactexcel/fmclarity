@@ -1,5 +1,6 @@
 IssueTrackerTable = React.createClass({
     render(){
+        var issue = this.props.issue;
         return (
             <table className="table table-striped">
                 <thead>
@@ -12,9 +13,10 @@ IssueTrackerTable = React.createClass({
                 </tr>
                 </thead>
                 <tbody>
+                {issue.status?
                 <tr>
                     <td>
-                        <span className="label label-danger"><i className="fa fa-check"></i> New</span>
+                        <span className="label label-success"><i className="fa fa-check"></i> New</span>
                     </td>
                     <td>
                         Create issue
@@ -31,6 +33,8 @@ IssueTrackerTable = React.createClass({
                         </p>
                     </td>
                 </tr>
+                :null}
+                {issue.status&&issue.status!='New'?
                 <tr>
                     <td>
                         <span className="label label-warning"><i className="fa fa-check"></i> Issued</span>
@@ -38,22 +42,24 @@ IssueTrackerTable = React.createClass({
                     <td>
                         Various versions
                     </td>
-                                                        <td>
-                                                            12.07.2014 10:10:1
-                                                        </td>
-                                                        <td>
-                                                            14.07.2014 10:16:36
-                                                        </td>
-                                                        <td>
-                                                            <p className="small">
-                                                                Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                                                            </p>
-                                                        </td>
+                    <td>
+                        12.07.2014 10:10:1
+                    </td>
+                    <td>
+                        14.07.2014 10:16:36
+                    </td>
+                    <td>
+                        <p className="small">
+                            Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                        </p>
+                    </td>
 
-                                                    </tr>
+                </tr>
+                :null}
+                {issue.status&&issue.status!='New'&&issue.status!='Issued'?
                                                     <tr>
                                                         <td>
-                                                            <span className="label label-success"><i className="fa fa-check"></i> Opened</span>
+                                                            <span className="label label-info"><i className="fa fa-check"></i> Closed</span>
                                                         </td>
                                                         <td>
                                                             There are many variations
@@ -71,6 +77,7 @@ IssueTrackerTable = React.createClass({
                                                         </td>
 
                                                     </tr>
+                :null}
 
                                                     </tbody>
                                                 </table>
