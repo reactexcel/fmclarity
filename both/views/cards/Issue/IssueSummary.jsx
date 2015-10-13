@@ -34,7 +34,7 @@ IssueSummary = React.createClass({
           </div>
           <div className="issue-summary-col issue-summary-col-2">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
-            {!issue.urgent?null:
+            {issue.priority!='Urgent'?null:
               <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
             }
             <span className="issue-summary-name">{issue.name}</span>

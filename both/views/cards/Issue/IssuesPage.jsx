@@ -31,19 +31,13 @@ PageRequests = React.createClass({
 	      {
 	        text:"Urgent",
 	        filter(i) {
-	        	return i.urgent;
+	        	return i.priority=='Urgent';
 	        }
 	      },
 	      {
 	        text:"New",
 	        filter(i) {
 	        	return i.status=='New';
-	        }
-	      },
-	      {
-	        text:"Open",
-	        filter(i) {
-	        	return i.status=='Open';
 	        }
 	      },
 	      {

@@ -116,7 +116,8 @@ TopNavBar = React.createClass({
                 </li>
                 <li className="dropdown">
                     <a style={{padding:"0px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />
+                        {/*<img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />*/}
+                        <img style={{width:"40px"}} alt="image" className="img-circle" src="img/a9.jpg" />
                     </a>
                     <ul className="dropdown-menu dropdown-alerts" style={{right:"-5px"}}>
                         <li>

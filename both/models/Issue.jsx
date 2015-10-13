@@ -26,7 +26,7 @@ Meteor.methods({
   "Issue.new":function(item) {
     newItem = _.extend({
       isNewItem:true,
-      urgent:false,
+      priority:"Normal",
       thumb:1,
       contact:{
         name:"John Smith",
@@ -57,7 +57,7 @@ ExampleIssues = [
     name:"Toilet won't flush",
     description:"Toilet won't flush. Brown liquid leaking onto floor. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
     status:"New",
-    urgent:true,
+    priority:"Urgent",
     thumb:1,
     facility:{
       name:"Georges Rd (Building A)",
@@ -100,7 +100,7 @@ ExampleIssues = [
     name:"Shocking doors",
     description:"Customers entering through sliding doors receiving electric shocks. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     status:"New",
-    urgent:true,
+    priority:"Urgent",
     thumb:3,
     facility:{
       name:"Georges Rd (Building A)",
@@ -185,7 +185,7 @@ ExampleIssues = [
     name:"Cracked walls, level 7",
     description:"Large cracks appearing in walls on level 7. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     status:"Issued",
-    urgent:true,
+    priority:"Urgent",
     thumb:2,
     facility:{
       name:"Georges Rd (Building A)",

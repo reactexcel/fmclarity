@@ -16,18 +16,10 @@ BarChart = React.createClass({
 	
 	initChart() {
 	    var barData = {
-	        labels: ["January", "February", "March", "April", "May", "June"],
+	        labels: ["Mechanical", "Fire Protection", "Electrical", "Water Treatment", "Lifts", "Generator"],
 	        datasets: [
 	            {
-	                label: "Open",
-	                fillColor: "rgba(220,220,220,0.5)",
-	                strokeColor: "rgba(220,220,220,0.8)",
-	                highlightFill: "rgba(220,220,220,0.75)",
-	                highlightStroke: "rgba(220,220,220,1)",
-	                data: [0,0,0,0,0,0]
-	            },
-	            {
-	                label: "Closed",
+	                label: "Compliant",
 	                fillColor: "rgba(26,179,148,0.5)",
 	                strokeColor: "rgba(26,179,148,0.8)",
 	                highlightFill: "rgba(26,179,148,0.75)",
@@ -46,14 +38,11 @@ BarChart = React.createClass({
 	        barStrokeWidth: 2,
 	        barValueSpacing: 5,
 	        barDatasetSpacing: 1,
-	        responsive: true,
-			legendTemplate : "<ul class=\"chart-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+	        responsive: true
 	    }
 
 	    var ctx = document.getElementById("bar-chart").getContext("2d");
 	    this.chart = new Chart(ctx).Bar(barData, barOptions);
-		this.legend = this.chart.generateLegend();
-  		$('#bar-chart-wrapper').append(this.legend); 
 
   		this.setState({
   			initialised:true
@@ -71,13 +60,10 @@ BarChart = React.createClass({
 	updateData() {
 		if(!this.state.initialised)
 			return;
-        var data = {
-        	closed:this.createRandomSet(6,10),
-        	open:this.createRandomSet(6,10)
-        }
+        var data = this.createRandomSet(6,9);
+        console.log(data);
         for(var i=0;i<6;i++) {
-	        this.chart.datasets[0].bars[i].value = data.closed[i];
-	        this.chart.datasets[1].bars[i].value = data.open[i];
+	        this.chart.datasets[0].bars[i].value = data[i];
         }
         this.chart.update();
 	},
@@ -90,7 +76,7 @@ BarChart = React.createClass({
 	render() {
 		this.updateData();
 	    return (
-	    	<div id="bar-chart-wrapper">
+	    	<div>
 	    		<canvas id="bar-chart"></canvas>
 	    	</div>
 	    )

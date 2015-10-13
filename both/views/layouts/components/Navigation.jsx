@@ -29,8 +29,7 @@ Navigation = React.createClass({
 
             <a className="close-canvas-menu"><i className="fa fa-times"></i></a>
 
-            <ul className="nav metismenu" id="side-menu">
-                <li style={{height:"70px"}}>
+                <div style={{position:"relative",top:"20px",left:"20px"}}>
                     <a style={{fontWeight:"normal"}}>
                     <SuperSelect 
                         items={this.data.facilities} 
@@ -38,14 +37,14 @@ Navigation = React.createClass({
                         onChange={this.selectFacility}
                     >
                         <div style={{position:"absolute",top:"-12px",left:"-8px",whiteSpace:"nowrap"}}>
-                            <img style={{width:"40px","paddingBottom":"10px",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
-                            <div style={{"display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
+                            <img style={{width:"40px","paddingBottom":"10px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
+                            <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
                         </div>
                     </SuperSelect>
                 </a>
-                </li>
+                </div>
 
-                <li className="divider" style={{clear:"both"}}></li>
+            <ul className="nav metismenu" id="side-menu" style={{marginTop:"55px"}}>
 
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}><i className="fa fa-newspaper-o"></i> <span className="nav-label">Dashboard</span></a>

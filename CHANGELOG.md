@@ -2,6 +2,15 @@ CHANGELOG.md
 
 So one of the main issues that he wants solved is to be able to issue 'tickets', so work requests to the base building contractors. So these are contractors that work for the owner. As such the cost of the work is contained within the building outgoings, so the work requests would need to be zero dollar - you may recall in the work order example I sent you that there were different types of work requests, eg, preventative maintenance, ad-hoc, warranty, contract, no-cost, etc. So we would need to be able to show how this could be done easily and kept track of.
 
+v0.0.13a (13/10/2015)
+- Dashboard : Changed Non-Compliant items graph
+- Work Order : Made service type selector available when order is created
+- Left navigation : Buildings dropdown wraps to prevent overflow
+- Picture of Rich now used as top right avatar placeholder
+- Fixed "All priorities show as normal, urgent category only shows normal priority"
+- Added image placeholder to reports screen
+- Creating a new item now rests the filter state to "All" (preventing new items from disappearing when created under "issued" or "closed" filter)
+
 v0.0.12a (12/10/2015)
 - Navigation : Can now select facility from dropdown in left navigation
 - Navigation : Can now select "All Facilities" from dropdown in left navigation
@@ -9,7 +18,6 @@ v0.0.12a (12/10/2015)
 - Dashboard : Graphs change when a new facility is selected (change is currently random for demonstration purposes only)
 - Work Order : Modified submit button so that it changes according to the state of the order
 - Work Order : Added placeholder image for work order close screen
-
 
 v0.0.11a (11/10/2015)
 - Changed bagdes to a more muted pallete

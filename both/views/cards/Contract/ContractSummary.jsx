@@ -41,7 +41,7 @@ ContractSummary = React.createClass({
 		var facility = contract.facility;
 		var amount = contract.amount || {};
 		return (
-			<div className="card-header">
+			<div>
 				<div className="contract-card-col contract-card-service-col">
 					{service.name}
 				</div>
@@ -79,8 +79,7 @@ ContractDetail = React.createClass({
 		var facility = contract.facility;
 		var amount = contract.amount || {};
 		return (
-			<div className="card-body">
-			</div>
+			<div></div>
 		)
 	}
 });

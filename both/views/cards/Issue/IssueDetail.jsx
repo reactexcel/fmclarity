@@ -94,6 +94,9 @@ IssueDetail = React.createClass({
                         onChange={this.updateObjectField('facility')}
                     >
                         <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
+                        {issue.priority!='Urgent'?null:
+                          <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
+                        }
                         <i className="fa fa-location-arrow"></i>
                         <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
                     </SuperSelect>
@@ -102,7 +105,7 @@ IssueDetail = React.createClass({
                         <input 
                             placeholder="Type issue title here"
                             className="inline-form-control" 
-                            defaultValue={issue.name} 
+                            value={issue.name} 
                             onChange={this.updateField('name')}
                         />
                     </h2>
@@ -113,10 +116,38 @@ IssueDetail = React.createClass({
                     <div className="row">
                         <div className="col-lg-7" style={{paddingRight:0}}>
                             <SuperSelect 
-                                items={['Normal','High','Critical']} 
+                                items={['Normal','Critical','Urgent']} 
                                 onChange={this.updateObjectField('priority')}
                             >
                                 <span><i className="fa fa-circle text-danger"></i> <span style={{fontWeight:"bold",fontSize:"10px"}}>{issue.priority||"Normal"} Priority</span></span>
+                            </SuperSelect>
+                            {issue.service&&issue.service.subservices&&issue.service.subservices.length?
+                            <SuperSelect 
+                                itemView={ContactViewName}
+                                items={issue.service.subservices}
+                                onChange={this.updateObjectField('subservice')}
+                                classes="pull-right"
+                            >
+                                {issue.subservice?
+                                    <span className="label dropdown-label label-info">{issue.subservice.name} <i className="fa fa-caret-down"></i></span>
+                                :
+                                    <span className="label dropdown-label">Choose Sub-service <i className="fa fa-caret-down"></i></span>
+                                }
+                            </SuperSelect>
+
+                            :null
+                            }
+                            <SuperSelect 
+                                itemView={ContactViewName}
+                                items={this.data.services} 
+                                onChange={this.updateService}
+                                classes="pull-right"
+                            >
+                                {issue.service?
+                                    <span className="label dropdown-label label-info">{issue.service.name} <i className="fa fa-caret-down"></i></span>
+                                :
+                                    <span className="label dropdown-label">Choose Service Type <i className="fa fa-caret-down"></i></span>
+                                }
                             </SuperSelect>
                             <textarea 
                                 placeholder="Type issue description here"
@@ -128,19 +159,6 @@ IssueDetail = React.createClass({
                         {issue.status?
                         <div className="col-lg-5">
                             <div style={{height:"32px"}}>
-                                {issue.service?
-                                    <span className="choose-service-btn label dropdown-label label-info">{issue.service.name} <i className="fa fa-caret-down"></i></span>
-                                :
-                                    <span className="choose-service-btn label dropdown-label">Choose Service Type <i className="fa fa-caret-down"></i></span>
-                                }
-                                {!issue.subservice?null:
-                                    <span className="choose-subservice-btn label dropdown-label label-info">{issue.subservice.name} <i className="fa fa-caret-down"></i></span>
-                                }
-                                {issue.service&&(!issue.subservice)&&issue.service.subservices&&issue.service.subservices.length?
-                                    <span className="choose-subservice-btn label dropdown-label">Choose Sub-service <i className="fa fa-caret-down"></i></span>
-                                :
-                                    null
-                                }
                                 {issue.supplier?
                                     <span className="choose-contract-btn label dropdown-label label-success">Change Contract <i className="fa fa-caret-down"></i></span>
                                 :
@@ -163,22 +181,6 @@ IssueDetail = React.createClass({
                                 </div>
                             }
 
-                            {issue.service&&issue.service.subservices&&issue.service.subservices.length?
-                            <SuperSelect 
-                                itemView={ContactViewName}
-                                items={issue.service.subservices}
-                                classes="absolute"
-                                toggleId=".choose-subservice-btn"
-                                onChange={this.updateObjectField('subservice')}
-                            />:null
-                            }
-                            <SuperSelect 
-                                itemView={ContactViewName}
-                                items={this.data.services} 
-                                classes="absolute"
-                                toggleId=".choose-service-btn"
-                                onChange={this.updateService}
-                            />
                         </div>
                         :null}
                         <div className="col-lg-12" style={{paddingRight:0}}>
@@ -192,6 +194,9 @@ IssueDetail = React.createClass({
                             :null}
                             {issue.status=='Issued'?
                                 <button onClick={this.closeOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'danger':'default')}>Close Order <i className="fa fa-paper-plane"></i></button>
+                            :null}
+                            {issue.status=='Closed'?
+                                <img style={{float:"right",margin:"15px 0 15px 0"}} src="img/5-stars-small.gif" />
                             :null}
                         </div>
                         {issue.isNewItem?null:

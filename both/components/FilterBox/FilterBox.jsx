@@ -30,6 +30,11 @@ FilterBox = React.createClass({
     })
   },
 
+  createNewItem() {
+    this.setFilter(0);
+    this.props.newItemCallback();
+  },
+
 	render() {
     var $this = this;
     var title = $this.props.title;
@@ -50,7 +55,7 @@ FilterBox = React.createClass({
         <div className="filter-box ibox">
           <div className="ibox-title">
             <button 
-              onClick={newItemCallback} 
+              onClick={this.createNewItem} 
               className="card-button new-card-button pull-right"
             >+</button>
             {title?<h5>{title}</h5>:null}

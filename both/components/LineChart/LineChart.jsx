@@ -1,8 +1,5 @@
 LineChart = React.createClass({
 
-//	                data: [65, 59, 80, 81, 56, 55]
-//	                data: [28, 48, 40, 19, 86, 27]
-
     mixins: [ReactMeteorData],
 
     getMeteorData() {
