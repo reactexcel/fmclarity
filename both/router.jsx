@@ -131,9 +131,16 @@ loggedIn.route('/settings', {
 });
 
 loggedIn.route('/properties', {
-  name: 'settings',
+  name: 'properties',
   action() {
     ReactLayout.render(MainLayout,{content: <PageProperties />});
+  }
+});
+
+loggedIn.route('/contacts', {
+  name: 'contacts',
+  action() {
+    ReactLayout.render(MainLayout,{content: <UsersPage />});
   }
 });
 

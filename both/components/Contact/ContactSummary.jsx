@@ -18,10 +18,11 @@ ContactSummary = React.createClass({
 	    var colorOverlayStyle = Math.ceil(this.random()*2);
 	    var colorOverlayCol = Math.ceil(this.random()*3);
 	    var cardStyle = Math.ceil(this.random()*3);
+		var radiusStyle = Math.ceil(this.random()*6);
 	    var size=this.props.size;
-	    var services = contact.services?contact.services.join(' | '):'';
+	    var services = contact&&contact.services?contact.services.join(' | '):'';
 	    return (
-	    	<div className={"business-card"+" business-card-style-"+cardStyle+" "+size}>
+	    	<div className={"business-card"+" business-card-style-"+cardStyle+" business-card-radius-style-"+radiusStyle+" "+size}>
 	    		{/*
 				<div style={{marginTop:"10px",width:"25px",float:"left"}}>
 					<input type="checkbox" />
@@ -29,8 +30,8 @@ ContactSummary = React.createClass({
 				<div className="contact-thumbnail pull-left">
 				    <img alt="image" src={"img/"+contact.thumb} />
 				 </div>
-			    <div className={"texture-overlay texture-"+textureNum+" texture-overlay-bordered-"+borderStyle}></div>
-			    <div className={"color-overlay-"+colorOverlayStyle+" color-"+colorOverlayCol}></div>
+			    <div className={"texture-overlay texture-"+textureNum+" business-card-radius-style-"+radiusStyle+" texture-overlay-bordered-"+borderStyle}></div>
+			    <div className={"color-overlay-"+colorOverlayStyle+" business-card-radius-style-"+radiusStyle+" color-"+colorOverlayCol}></div>
 				 <div className="contact-info">
 				 	<div>
 						<h2>{contact.name}</h2>

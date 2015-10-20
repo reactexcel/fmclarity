@@ -1,15 +1,13 @@
 IssueSummary = React.createClass({
 
-
-    updateField(field) {
-        var $this = this;
-        // returns a function that modifies 'field'
-        return function(event) {
-            $this.item[field] = event.target.value;
-            $this.saveItem();
-        }
-    },
-
+  updateField(field) {
+    var $this = this;
+    // returns a function that modifies 'field'
+    return function(event) {
+      $this.item[field] = event.target.value;
+      $this.saveItem();
+    }
+  },
 
   render() {
       var issue = this.item = this.props.item;
@@ -25,13 +23,21 @@ IssueSummary = React.createClass({
         status=='Open'?'danger':
         status=='Closed'?'info':'';
 
+    var shouldShowFacility = true;
+    var selectedFacility = Session.get("selectedFacility");
+    if(selectedFacility&&selectedFacility.address) {
+      shouldShowFacility = false;
+    }
+
       return (
         <div className={"issue-summary issue-status-"+status}>
-          <div className="issue-summary-col issue-summary-col-1">
-            <span className="issue-summary-facility-name">
-              {facility.name}
-            </span>
-          </div>
+          {!shouldShowFacility?null:
+            <div className="issue-summary-col issue-summary-col-1">
+              <span className="issue-summary-facility-name">
+                {facility.name}
+              </span>
+            </div>
+          }
           <div className="issue-summary-col issue-summary-col-2">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
             {issue.priority!='Urgent'?null:
@@ -48,7 +54,6 @@ IssueSummary = React.createClass({
               <ContactCard item={supplier} view="avatar" />
             }
           </div>
-
         </div>
     )
   }

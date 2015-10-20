@@ -61,7 +61,6 @@ BarChart = React.createClass({
 		if(!this.state.initialised)
 			return;
         var data = this.createRandomSet(6,9);
-        console.log(data);
         for(var i=0;i<6;i++) {
 	        this.chart.datasets[0].bars[i].value = data[i];
         }

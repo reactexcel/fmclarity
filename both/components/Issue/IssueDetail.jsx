@@ -105,7 +105,7 @@ IssueDetail = React.createClass({
                         <input 
                             placeholder="Type issue title here"
                             className="inline-form-control" 
-                            value={issue.name} 
+                            defaultValue={issue.name} 
                             onChange={this.updateField('name')}
                         />
                     </h2>

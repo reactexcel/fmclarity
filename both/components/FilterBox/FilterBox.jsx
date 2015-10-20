@@ -98,9 +98,8 @@ FilterBox = React.createClass({
 CardWrapper = React.createClass({
 
   getInitialState() {
-    var item = this.props.item;
     return {
-      shouldExpand:item.isNewItem?true:false,
+      shouldExpand:false,
       didExpand:false
     }
   },
@@ -108,47 +107,77 @@ CardWrapper = React.createClass({
   deleteItem() {
     var dom = $(React.findDOMNode(this));
     var parent = dom.closest('.grid-item');
-    var $scope = this;
+    var $this = this;
     parent.toggleClass('diminished gigante',250,function(){
-      $scope.item.destroy();
+      $this.props.item.destroy();
       //Meteor.call("Issue.destroy",$scope.facility);
     });
   },    
 
   expand() {
     var $this = this;
-    if(!$this.state.didExpand) {
-      var i = $(React.findDOMNode($this));
-      i.addClass('pre-gigante');
-      i.toggleClass('gigante',250,function(){
-        i.removeClass('diminished pre-gigante');
-        $this.setState({didExpand:true});
+    $this.isAnimating = true;
+    var i = $(React.findDOMNode($this));
+    i.addClass('pre-gigante');
+    i.toggleClass('gigante',250,function(){
+      i.removeClass('diminished pre-gigante');
+      $this.isAnimating = false;
+      $this.setState({
+        didExpand:true,
+        shouldExpand:true,
       });
-    }
+    });
   },
 
   contract() {
     var $this = this;
-    if($this.state.didExpand) {
-      var i = $(React.findDOMNode($this));
-      i.toggleClass('gigante',250,function(){
-        $this.setState({didExpand:false})
-        if($this.item.isNewItem) {
-          $this.item.destroy();
-        }
+    $this.isAnimating = true;
+    var i = $(React.findDOMNode($this));
+    i.toggleClass('gigante',250,function(){
+      $this.isAnimating = false;
+      $this.setState({
+        didExpand:false,
+        shouldExpand:false,
       });
-    }
+      if($this.props.item.isNewItem) {
+        $this.props.item.destroy();
+      }
+    });
   },
 
   toggle() {
     this.setState({shouldExpand:!this.state.shouldExpand});
   },
 
+  shouldComponentUpdate() {
+    if(this.isAnimating) {
+      return false;
+    }
+    return true;
+  },
+
+  componentWillMount() {
+    this.isAnimating = false;
+    if(this.props.item.isNewItem) {
+      this.setState({
+        shouldExpand:true
+      });
+    }
+  },
+
+  componentWillReceiveProps() {
+    if(this.props.item.isNewItem) {
+      this.setState({
+        shouldExpand:true
+      });
+    }
+  },
+
   componentDidUpdate () {
-    if(this.state.shouldExpand) {
+    if(!this.state.didExpand&&this.state.shouldExpand) {
       this.expand();
     }
-    else if(!this.state.shouldExpand) {
+    else if(this.state.didExpand&&!this.state.shouldExpand) {
       this.contract();
     }
   },

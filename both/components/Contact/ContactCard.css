@@ -23,7 +23,7 @@
 	bottom:0;
 	left:0;
 	right:0;
-	opacity:0.3;
+	opacity:0.6;
 	pointer-events: none;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .texture-overlay-bordered-3 {
-	border:3px solid #00f;
+	border:3px solid #001947;
 }
 
 .texture-overlay-bordered-4 {
@@ -80,21 +80,43 @@
 }
 
 .texture-1 {
- 	background:url('patterns/business-card-texture-1.jpg');	
+ 	background:url('patterns/business-card-texture-1.png');	
 }
 .texture-2 {
- 	background:url('patterns/business-card-texture-2.jpg');	
+ 	background:url('patterns/business-card-texture-2.png');	
 }
 .texture-3 {
- 	background:url('patterns/business-card-texture-3.jpg');	
+ 	background:url('patterns/business-card-texture-3.png');	
 }
 .texture-4 {
- 	background:url('patterns/business-card-texture-4.jpg');	
+ 	background:url('patterns/business-card-texture-4.png');	
 }
 .texture-5 {
- 	background:url('patterns/business-card-texture-5.jpg');	
+ 	background:url('patterns/business-card-texture-5.png');	
 }
 
+.business-card-radius-style-1 {
+
+}
+
+.business-card-radius-style-2 {
+	border-radius:20px 0;	
+}
+
+.business-card-radius-style-3 {
+	border-radius:0 20px;
+}
+
+.business-card-radius-style-4 {
+	border-radius:20px;
+}
+
+.business-card-radius-style-5 {
+	border-radius:20px 0;	
+}
+
+.business-card-radius-style-6 {
+}
 
 
 .contacts-page .grid-item {
