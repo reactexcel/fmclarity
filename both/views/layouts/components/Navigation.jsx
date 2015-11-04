@@ -64,6 +64,9 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
                     <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
+                <li className={FlowRouter.getRouteName()=='sustainability'?'active':''}>
+                    <a href={FlowRouter.path('sustainability')}><i className="fa fa-leaf"></i> <span className="nav-label">Sustainability</span> </a>
+                </li>
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>
@@ -72,6 +75,9 @@ Navigation = React.createClass({
                     <ul className="nav nav-second-level">
                         <li className={FlowRouter.getRouteName()=='general'?'active':''}>
                             <a href={FlowRouter.path('general')}>General</a>
+                        </li>
+                        <li className={FlowRouter.getRouteName()=='team'?'active':''}>
+                            <a href={FlowRouter.path('team')}>Team</a>
                         </li>
                         <li className={FlowRouter.getRouteName()=='properties'?'active':''}>
                             <a href={FlowRouter.path('properties')}>Properties</a>

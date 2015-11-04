@@ -1,12 +1,19 @@
 CHANGELOG.md
 
-So one of the main issues that he wants solved is to be able to issue 'tickets', so work requests to the base building contractors. So these are contractors that work for the owner. As such the cost of the work is contained within the building outgoings, so the work requests would need to be zero dollar - you may recall in the work order example I sent you that there were different types of work requests, eg, preventative maintenance, ad-hoc, warranty, contract, no-cost, etc. So we would need to be able to show how this could be done easily and kept track of.
+v0.1.1a (03/11/2015)
+- Model created for paid accounts and teams
+- Added "teams" button to settings
+- Added "sustainability" button to settings
+- Team page created (located under settings)
+- Team page can be used to invite people to a team
+- When inviting a member only need their email address
+- When a member is invited - if the exist - they are added to the team
+- When a member is invited - if they don't exist - they are emailed an invite
 
 v0.1.0a (14/10/2015)
 - Tidied folder structure of components
 - Users/Contacts view added
 - Work Order : Facility name hidden from summary view when a facility is selected in top left nav
-
 
 v0.0.13a (13/10/2015)
 - Dashboard : Changed Non-Compliant items graph

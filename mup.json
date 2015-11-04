@@ -2,19 +2,19 @@
   // Server authentication info
   "servers": [
     {
-      "host": "52.64.191.104",
+      "host": "52.64.250.63",
       "username": "ubuntu",
       // "password": "password"
       // or pem file (ssh based authentication)
-      "pem": "c:/dev/ubuntu-1.pem"
+      "pem": "c:/dev/aws-fm-1.pem"
     }
   ],
 
   // Install MongoDB in the server, does not destroy local MongoDB on future setup
-  "setupMongo": false,
+  "setupMongo": true,
 
   // WARNING: Node.js is required! Only skip if you already have Node.js installed on server.
-  "setupNode": false,
+  "setupNode": true,
 
   // WARNING: If nodeVersion omitted will setup 0.10.36 by default. Do not use v, only version number.
   "nodeVersion": "0.10.40",
@@ -35,7 +35,7 @@
   // Configure environment
   "env": {
     "PORT": 3000,
-    "ROOT_URL": "http://52.64.191.104/",
+    "ROOT_URL": "http://52.64.250.63/",
     //"MONGO_URL": "mongodb://gentlenode:password@127.0.0.1:27017/gentlenode",
     //"MONGO_OPLOG_URL": "mongodb://oplogger:password@127.0.0.1:27017/local?authSource=admin",
     "METEOR_ENV": "production"

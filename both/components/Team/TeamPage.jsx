@@ -1,10 +1,16 @@
-UsersPage = React.createClass({
+TeamPage = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var handle = Meteor.subscribe('users');
-        var users = Users.find({},{sort:{'emails[0]':-1}}).fetch();
+        var handle = Meteor.subscribe('accounts');
+        Meteor.subscribe('users');
+        var account = this.account = FMAccounts.findOne({
+        	name:"Lucky 12"
+        });
+        console.log(account);
+        var users = account?account.getTeam():[];
+        console.log(users);
         var items = [];
         users.map(function(i,idx){
         	items[idx] = {
@@ -17,8 +23,31 @@ UsersPage = React.createClass({
         	}
         });
         return {
+        	account:account,
             items : items
         }
+    },
+
+    handleInvite(e) {
+    	var account = this.account;
+    	e.preventDefault();
+    	var input = this.refs.invitationEmail;
+    	console.log(input);
+    	var email = input.value;
+    	var re = /.+@.+\..+/i
+    	if(!re.test(email)) {
+    		alert('Please enter a valid email address');
+    	}
+    	else {
+    		Meteor.call('inviteUser', email,function(error,result){
+    			console.log({
+    				error:error,
+    				result:result
+    			});
+    			account.addMember(result);
+    		});
+	    	//alert(email);
+	    }
     },
 
 	render() {
@@ -47,7 +76,14 @@ UsersPage = React.createClass({
 		          </div>
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-					<FilterBox 
+<form className="form-inline">
+  <div className="form-group">
+    <label>Invite users</label>
+    <input type="email" className="form-control" ref="invitationEmail" placeholder="Email address"/>
+    <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
+  </div>
+  </form>
+  					<FilterBox 
 						items={this.data.items}
 						filters={filters}
 						numCols={2}

@@ -37,6 +37,7 @@ TopNavBar = React.createClass({
 
     render() {
         var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
+        var userThumb = Meteor.user().profile.thumb;
         return (
 
     <div className="row border-bottom">
@@ -117,7 +118,7 @@ TopNavBar = React.createClass({
                 <li className="dropdown">
                     <a style={{padding:"0px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         {/*<img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />*/}
-                        <img style={{width:"40px"}} alt="image" className="img-circle" src="img/a9.jpg" />
+                        <img style={{width:"40px"}} alt="image" className="img-circle" src={"img/"+userThumb} />
                     </a>
                     <ul className="dropdown-menu dropdown-alerts" style={{right:"-5px"}}>
                         <li>

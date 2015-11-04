@@ -20,8 +20,19 @@ exposed.route('/login', {
   name: 'login',
   action() {
     ReactLayout.render(BlankLayout,{content:<Login />});
+  },
+});
+
+exposed.route('/enroll-account/:token', {
+  name: 'enroll',
+  action(params,queryParams) {
+    var token = params.token;
+    Accounts.resetPassword(token,'fart');
+    Accounts.verifyEmail(token);
+    FlowRouter.go('/login');
   }
 });
+
 
 /*
 exposed.route('/register', {
@@ -127,6 +138,13 @@ loggedIn.route('/settings', {
   name: 'settings',
   action() {
     ReactLayout.render(MainLayout,{content: <PageSettings />});
+  }
+});
+
+loggedIn.route('/team', {
+  name: 'team',
+  action() {
+    ReactLayout.render(MainLayout,{content: <TeamPage />});
   }
 });
 
