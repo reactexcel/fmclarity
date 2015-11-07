@@ -10,10 +10,10 @@ Meteor.startup(function(){
 
     Facilities.remove({});
     Issues.remove({});
-    FMAccounts.remove({});
+    Team.remove({});
 
-    var collections = [Issues, Facilities, Contacts, Services, FMAccounts];
-    var dataSets = [ExampleIssues, ExampleFacilities, ExampleContacts, ExampleServices, ExampleAccounts];
+    var collections = [Issues, Facilities, Contacts, Services, Team];
+    var dataSets = [ExampleIssues, ExampleFacilities, ExampleContacts, ExampleServices, ExampleTeams];
 
     collections.map(function(i,idx){
         if(i.find().count()==0) {

@@ -1,5 +1,18 @@
 TopNavBar = React.createClass({
 
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        Meteor.subscribe('teams');
+        var teams = Team.find({},{sort:{name:1}}).fetch();
+        console.log(teams);
+        return {
+            user : Meteor.user(),
+            team : Session.get("selectedTeam") || {},
+            teams : teams
+        }
+    },
+
     componentDidMount() {
         $('body').addClass('fixed-nav');
         $(".navbar-static-top").removeClass('navbar-static-top').addClass('navbar-fixed-top');
@@ -9,6 +22,12 @@ TopNavBar = React.createClass({
         $('body').toggleClass("mini-navbar");
         this.smoothlyMenu();
     },
+
+    selectTeam(team) {
+        console.log(team);
+        Session.set("selectedTeam",team);
+    },
+
 
     smoothlyMenu() {
         if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
@@ -37,7 +56,7 @@ TopNavBar = React.createClass({
 
     render() {
         var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
-        var userThumb = Meteor.user().profile.thumb;
+        var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
         return (
 
     <div className="row border-bottom">
@@ -127,6 +146,18 @@ TopNavBar = React.createClass({
                                     Logged in as: <b>{userEmail}</b>
                                 </div>
                             </a>
+                        </li>
+                        <li className="divider"></li>
+                        <li>
+                            <SuperSelect 
+                                items={this.data.teams} 
+                                itemView={ContactViewName}
+                                onChange={this.selectTeam}
+                            >
+                                <div style={{position:"absolute",top:"-12px",left:"-8px",whiteSpace:"nowrap"}}>
+                                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{this.data.team.name||'Select Team'}</div>
+                                </div>
+                            </SuperSelect>
                         </li>
                         <li className="divider"></li>
                         <li>

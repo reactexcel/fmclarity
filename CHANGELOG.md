@@ -1,5 +1,16 @@
 CHANGELOG.md
 
+v0.1.2a (07/11/2015)
+- Team members can see only facilities of the accounts they are members of
+- Team members can add facilities to team
+- Users current active team influences facilities that can be seen
+- [SOURCE] FMAccounts renamed Team
+- [SOURCE] Adding user to team moved to methods
+- Invitation field clears after submit
+- Created a development mode where email invitation can only be sent to a registered address
+- Teams that user is a member of appear under their profile dropdown
+- Users can select a team from the dropdown and the current active team saved in a session variable
+
 v0.1.1a (03/11/2015)
 - Model created for paid accounts and teams
 - Added "teams" button to settings

@@ -15,6 +15,11 @@ User = {
     return Meteor.userId();
   },
 
+  getTeams() {
+    Meteor.subscribe('teams');
+    return Team.find({'_members':{'_id':Meteor.userId()}}).fetch();
+  },
+
   isLoggedIn: function() {
     return !! Meteor.userId();
   },

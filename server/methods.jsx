@@ -4,7 +4,6 @@ Accounts.emailTemplates.enrollAccount.subject = function (user) {
     return "Welcome to FM Clarity, " + user.profile.name;
 };
 Accounts.onEnrollmentLink = function(token,done) {
-	console.log('flart');
 	Accounts.resetPassword(token,'fart');
 	Accounts.verifyEmail(token);
 	done();
@@ -42,22 +41,6 @@ Meteor.startup(function(){
 
 Meteor.methods({
 
-	inviteUser: function(email) {
-		var user = Accounts.findUserByEmail(email);
-		var uid;
-		if(user) {
-			uid = user._id;
-		}
-		else {
-			var temp = email.split('@');
-			var name = temp[0];
-			uid = Accounts.createUser({email:email,profile:{name:name}});
-			Accounts.sendEnrollmentEmail(uid);
-		}
-		return {
-			_id:uid
-		};
-	},
 
 	sendEmail: function (to, from, subject, text) {
 	    check([to, from, subject, text], [String]);

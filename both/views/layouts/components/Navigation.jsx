@@ -4,9 +4,20 @@ Navigation = React.createClass({
 
     getMeteorData() {
         Meteor.subscribe('facilities');
+        var tid, team, facilities;
+        var selectedTeam = Session.get("selectedTeam");
+        tid = selectedTeam?selectedTeam._id:null;
+        team = Team.findOne(tid);
+        if(team) {
+            facilities = team.getFacilities();
+        }
+        else {
+            facilities = Facilities.find({},{sort:{name:1}}).fetch();
+        }
+
         return {
             facility : Session.get("selectedFacility") || {},
-            facilities : Facilities.find({},{sort:{name:1}}).fetch()
+            facilities : facilities
         }
     },
 
