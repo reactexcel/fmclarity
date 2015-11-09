@@ -17,108 +17,6 @@
 	width:35px;
 }
 
-.texture-overlay {
-	position:absolute;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	opacity:0.6;
-	pointer-events: none;
-}
-
-.color-overlay-1 {
-	position:absolute;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	opacity:0.05;
-	pointer-events: none;
-}
-
-.color-overlay-2 {
-	position:absolute;
-	top:0;
-	bottom:0;
-	left:50%;
-	right:0;
-	opacity:0.05;
-	pointer-events: none;
-	border-left:1px solid #000;
-}
-
-.color-1 {
-	background-color:#fff;
-}
-
-.color-2 {
-	background-color:#f00;
-}
-
-.color-3 {
-	background-color:#00f;
-}
-
-.texture-overlay-bordered-1 {
-}
-
-.texture-overlay-bordered-2 {
-	border:3px solid #000;
-}
-
-.texture-overlay-bordered-3 {
-	border:3px solid #001947;
-}
-
-.texture-overlay-bordered-4 {
-	border:3px double #000;
-}
-
-.texture-overlay-bordered-5 {
-	border:3px double #f00;
-}
-
-.texture-1 {
- 	background:url('patterns/business-card-texture-1.png');	
-}
-.texture-2 {
- 	background:url('patterns/business-card-texture-2.png');	
-}
-.texture-3 {
- 	background:url('patterns/business-card-texture-3.png');	
-}
-.texture-4 {
- 	background:url('patterns/business-card-texture-4.png');	
-}
-.texture-5 {
- 	background:url('patterns/business-card-texture-5.png');	
-}
-
-.business-card-radius-style-1 {
-
-}
-
-.business-card-radius-style-2 {
-	border-radius:20px 0;	
-}
-
-.business-card-radius-style-3 {
-	border-radius:0 20px;
-}
-
-.business-card-radius-style-4 {
-	border-radius:20px;
-}
-
-.business-card-radius-style-5 {
-	border-radius:20px 0;	
-}
-
-.business-card-radius-style-6 {
-}
-
-
 .contacts-page .grid-item {
 	background: none;
 	box-shadow: none;
@@ -134,9 +32,6 @@
 	position:relative;
 	background-color:#fff;
 	overflow:hidden;
- 	box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
- 	border:1px solid #bbb;
- 	border-bottom-color:#aaa;
  	color:#000;
  	opacity:1;
  	height:100%;
@@ -155,12 +50,8 @@
 
 }
 
-.business-card-style-2 h2 {
+.business-card h2 {
 	font-weight:bold;
-}
-
-.business-card-style-3 {
-	font-family:'Georgia serif';
 }
 
 .business-card .contact-thumbnail {

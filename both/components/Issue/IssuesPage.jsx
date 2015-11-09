@@ -3,16 +3,21 @@ PageRequests = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var handle = Meteor.subscribe('issues');
-        var selectedFacility = Session.get("selectedFacility");
-        var q = {};
-        if(selectedFacility&&selectedFacility.address) {
-        	q['facility.name'] = selectedFacility.name
-        };
+	    var issues;
+    	if(Meteor.user()) {
+	        var facility = Meteor.user().getSelectedFacility();
+	        if(facility) {
+	        	issues = facility.getIssues();
+	        }
+	        else {
+	        	var team = Meteor.user().getSelectedTeam();
+	        	if(team) {
+	        		issues = team.getIssues();
+	        	}
+	        }
+	    }
         return {
-            issues : Issues.find(q,{
-            	sort:{createdAt:-1}
-            }).fetch()
+            issues : issues
         }
     },
 
@@ -20,7 +25,7 @@ PageRequests = React.createClass({
         var selectedFacility = Session.get("selectedFacility") || {
         	name:"Select Facility"
         };
-    	Meteor.call("Issue.new",{facility:selectedFacility});
+    	Meteor.call("Issue.new",{_facility:selectedFacility});
     },
 
 	render() {

@@ -11,7 +11,7 @@ IssueSummary = React.createClass({
 
   render() {
       var issue = this.item = this.props.item;
-      var facility = issue.facility;
+      var facility = issue._facility;
       var contact = issue.contact;
       var supplier = issue.supplier;
       var status = issue.status;

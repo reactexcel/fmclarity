@@ -3,13 +3,11 @@ TeamPage = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        Meteor.subscribe('teams');
         Meteor.subscribe('users');
-        Meteor.subscribe('facilities');
 
         var tid,team,members,facilities;
         tid = Session.get("selectedTeam")._id;
-        team = Team.findOne(tid);
+        team = Teams.findOne(tid);
         if(team) {
             members = team.getMembers();
             members = this.processUsers(members);
@@ -76,7 +74,7 @@ TeamPage = React.createClass({
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
 		          <div className="col-lg-12">
-		            <h2 style={{marginTop:"16px"}}>Contacts</h2>
+		            <h2 style={{marginTop:"16px"}}>Team Members</h2>
 		          </div>
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
@@ -95,20 +93,6 @@ TeamPage = React.createClass({
 							detail:ContactSummary
 						}}
 					/>
-                    <form className="form-inline">
-                        <div className="form-group">
-                            <label>Invite users</label>
-                            <input type="text" className="form-control" ref="facilityName" placeholder="Facility name"/>
-                            <button type="submit" style={{width:0,opacity:0}} onClick={this.handleAddFacility}>Invite</button>
-                        </div>
-                    </form>
-                    <FilterBox 
-                        items={this.data.facilities}
-                        itemView={{
-                            summary:FacilitySummary,
-                            detail:FacilityDetail
-                        }}
-                    />
 				</div>
 			</div>
 		);

@@ -105,7 +105,7 @@ CardWrapper = React.createClass({
   },
 
   deleteItem() {
-    var dom = $(React.findDOMNode(this));
+    var dom = $(ReactDOM.findDOMNode(this));
     var parent = dom.closest('.grid-item');
     var $this = this;
     parent.toggleClass('diminished gigante',250,function(){
@@ -117,7 +117,7 @@ CardWrapper = React.createClass({
   expand() {
     var $this = this;
     $this.isAnimating = true;
-    var i = $(React.findDOMNode($this));
+    var i = $(ReactDOM.findDOMNode($this));
     i.addClass('pre-gigante');
     i.toggleClass('gigante',250,function(){
       i.removeClass('diminished pre-gigante');
@@ -132,7 +132,7 @@ CardWrapper = React.createClass({
   contract() {
     var $this = this;
     $this.isAnimating = true;
-    var i = $(React.findDOMNode($this));
+    var i = $(ReactDOM.findDOMNode($this));
     i.toggleClass('gigante',250,function(){
       $this.isAnimating = false;
       $this.setState({

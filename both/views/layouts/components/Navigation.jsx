@@ -1,29 +1,21 @@
-Navigation = React.createClass({
+FacilityFilter = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        Meteor.subscribe('facilities');
-        var tid, team, facilities;
-        var selectedTeam = Session.get("selectedTeam");
-        tid = selectedTeam?selectedTeam._id:null;
-        team = Team.findOne(tid);
-        if(team) {
-            facilities = team.getFacilities();
+        var user = Meteor.user();
+        if(user) {
+            var team = Meteor.user().getSelectedTeam();
+            if(team) {
+                return {
+                    user : user,
+                    team : team,
+                    facility : user.getSelectedFacility(),
+                    facilities : team.getFacilities()
+                }
+            }
         }
-        else {
-            facilities = Facilities.find({},{sort:{name:1}}).fetch();
-        }
-
-        return {
-            facility : Session.get("selectedFacility") || {},
-            facilities : facilities
-        }
-    },
-
-    componentDidMount() {
-        // Initialize metisMenu
-        $('#side-menu').metisMenu();
+        return {}
     },
 
     selectFacility(facility) {
@@ -31,8 +23,38 @@ Navigation = React.createClass({
     },
 
     render() {
+        var facility = this.data.facility;
+        return (
+            <SuperSelect 
+                items={this.data.facilities} 
+                itemView={ContactViewName}
+                onChange={this.selectFacility}
+            >
+            {
+                facility?
+                <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
+                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
+                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
+                </div>
+                :
+                <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
+                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-undefined.jpg"} />
+                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">All facilities<br/>(click to select one)</div>
+                </div>
+            }
+            </SuperSelect>
+        )}
+})
 
-    var facility = this.data.facility;
+Navigation = React.createClass({
+
+    componentDidMount() {
+        // Initialize metisMenu
+        $('#side-menu').metisMenu();
+    },
+
+    render() {
+
 
     return (
     <nav className="navbar-default navbar-static-side" role="navigation">
@@ -42,45 +64,41 @@ Navigation = React.createClass({
 
                 <div style={{position:"relative",top:"20px",left:"20px"}}>
                     <a style={{fontWeight:"normal"}}>
-                    <SuperSelect 
-                        items={this.data.facilities} 
-                        itemView={ContactViewName}
-                        onChange={this.selectFacility}
-                    >
-                        <div style={{position:"absolute",top:"-12px",left:"-8px",whiteSpace:"nowrap"}}>
-                            <img style={{width:"40px","paddingBottom":"10px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
-                            <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
-                        </div>
-                    </SuperSelect>
-                </a>
+                        <FacilityFilter/>
+                    </a>
                 </div>
 
             <ul className="nav metismenu" id="side-menu" style={{marginTop:"55px"}}>
-
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}><i className="fa fa-newspaper-o"></i> <span className="nav-label">Dashboard</span></a>
                 </li>
+                {/*
                 <li className={FlowRouter.getRouteName()=='pmp'?'active':''}>
-                    <a href={FlowRouter.path('pmp')}><i className="fa fa-calendar"></i> <span className="nav-label">P.M.P.</span><span className="label label-warning pull-right">6</span></a>
+                    <a href={FlowRouter.path('pmp')}><i className="fa fa-calendar"></i> <span className="nav-label">P.M.P.</span></a>
                 </li>
                 <li className={FlowRouter.getRouteName()=='abc'?'active':''}>
                     <a href={FlowRouter.path('abc')}><i className="fa fa-check-square"></i> <span className="nav-label">A.B.C.</span></a>
                 </li>
+                */}
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
                 </li>
+                {/*
                 <li className={FlowRouter.getRouteName()=='contracts'?'active':''}>
                     <a href={FlowRouter.path('contracts')}><i className="fa fa-file-text-o"></i> <span className="nav-label">Contracts</span> </a>
                 </li>
+                */}
                 <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
                     <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
                 <li className={FlowRouter.getRouteName()=='sustainability'?'active':''}>
                     <a href={FlowRouter.path('sustainability')}><i className="fa fa-leaf"></i> <span className="nav-label">Sustainability</span> </a>
                 </li>
+                {/*
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>
+                */}
                 <li>
                     <a href=""><i className="fa fa-cog"></i> <span className="nav-label">Settings</span><span className="fa arrow"></span></a>
                     <ul className="nav nav-second-level">

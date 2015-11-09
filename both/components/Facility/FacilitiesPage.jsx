@@ -3,9 +3,12 @@ PageProperties = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var handle = Meteor.subscribe('facilities');
+        var selectedTeam = FM.getSelectedTeam();
+        var selectedFacility = FM.getSelectedFacility();
+        var facilities = selectedTeam?selectedTeam.getFacilities():Facilities.find({},{sort:{name:1}}).fetch();
         return {
-            items : Facilities.find({},{sort:{createdAt:-1}}).fetch()
+        	selectedFacility : selectedFacility,
+            items : facilities
         }
     },
 

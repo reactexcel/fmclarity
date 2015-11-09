@@ -72,7 +72,7 @@ IssueDetail = React.createClass({
 
     render() {
         var issue = this.item = this.props.item;
-        var facility = issue.facility;
+        var facility = issue._facility;
         var createdAt = moment(issue.createdAt).calendar();
         var contact = issue.contact;
         var supplier = issue.supplier;

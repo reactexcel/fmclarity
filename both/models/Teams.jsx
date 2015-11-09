@@ -1,4 +1,4 @@
-Team = new Mongo.Collection('teams');
+Teams = new Mongo.Collection('teams');
 
 var validEmails = {
   'gmail.com':['mrleokeith','mr.richo'],
@@ -15,9 +15,6 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-  Meteor.publish('teams', function () {
-    return Team.find();
-  });
   Meteor.methods({
     "Team.inviteMember": function(item,email) {
       var user = Accounts.findUserByEmail(email);
@@ -54,17 +51,17 @@ var defaults = {
 Meteor.methods({
   "Team.save": function(item) {
     item.isNewItem = false;
-    Team.upsert(item._id, {$set: _.omit(item, '_id')});
+    Teams.upsert(item._id, {$set: _.omit(item, '_id')});
   },
   "Team.destroy":function(item) {
-    Team.remove(item._id);
+    Teams.remove(item._id);
   },
   "Team.new":function(item) {
     newItem = _.extend({},item,defaults);
-    Team.insert(newItem);
+    Teams.insert(newItem);
   },
   "Team.addMember":function(item,member) {
-    Team.update(item._id,{$push:{_members:member}});
+    Teams.update(item._id,{$push:{_members:member}});
   },
   "Team.addFacility":function(item,facilityQuery) {
     var facility = Facilities.findOne(facilityQuery);
@@ -75,7 +72,7 @@ Meteor.methods({
   }
 });
 
-Team.helpers({
+Teams.helpers({
   save:function(){
     Meteor.call('Team.save',this);
   },
@@ -97,30 +94,20 @@ Team.helpers({
     Meteor.call('Team.addMember',this,item);
   },
   getFacilities:function() {
-    if (this._facilities.length) {
-      return Facilities.find({
-        $or:this._facilities
-      }).fetch();
-    }
-    return [];
+    return Facilities.find({"_team._id":this._id}).fetch();
   },
   addFacility:function(item) {
     return Meteor.call('Team.addFacility',this,item);
+  },
+  getFacility(i) {
+    var facilities = this.getFacilities();
+    return facilities[i];
+  },
+  getIssues() {
+    return Issues.find({"_team._id":this._id}).fetch();
   }
 });
 
-Team.before.insert(function (userId, doc) {
+Teams.before.insert(function (userId, doc) {
   doc.createdAt = moment().toDate();
 });
-
-ExampleTeams = [
-  {
-    name:"Lucky 12",
-    email:"xyz@abc.123",
-    phone:"0400-123-123",
-    thumb:"supplier-1.png",
-    _members:[],
-    _facilities:[],
-    _contacts:[]
-  }
-];

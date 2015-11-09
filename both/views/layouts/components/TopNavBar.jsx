@@ -1,81 +1,7 @@
-TopNavBar = React.createClass({
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-        Meteor.subscribe('teams');
-        var teams = Team.find({},{sort:{name:1}}).fetch();
-        console.log(teams);
-        return {
-            user : Meteor.user(),
-            team : Session.get("selectedTeam") || {},
-            teams : teams
-        }
-    },
-
-    componentDidMount() {
-        $('body').addClass('fixed-nav');
-        $(".navbar-static-top").removeClass('navbar-static-top').addClass('navbar-fixed-top');
-    },
-
-    toggleLeftSideBar() {
-        $('body').toggleClass("mini-navbar");
-        this.smoothlyMenu();
-    },
-
-    selectTeam(team) {
-        console.log(team);
-        Session.set("selectedTeam",team);
-    },
-
-
-    smoothlyMenu() {
-        if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
-            // Hide menu in order to smoothly turn on when maximize menu
-            $('#side-menu').hide();
-            // For smoothly turn on menu
-            setTimeout(
-                function () {
-                    $('#side-menu').fadeIn(500);
-                }, 100);
-        } else if ($('body').hasClass('fixed-sidebar')) {
-            $('#side-menu').hide();
-            setTimeout(
-                function () {
-                    $('#side-menu').fadeIn(500);
-                }, 300);
-        } else {
-            // Remove all inline style from jquery fadeIn function to reset menu state
-            $('#side-menu').removeAttr('style');
-        }
-    },
-
-    toggleRightSideBar() {
-        $('#right-sidebar').toggleClass("sidebar-open");
-    },    
+Notifications = React.createClass({
 
     render() {
-        var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
-        var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
         return (
-
-    <div className="row border-bottom">
-        <nav className="navbar navbar-static-top" role="navigation" style={{marginBottom:'0'}}>
-            <div className="navbar-header navbar-logo">
-                <img width="190px" src="img/logo-white.svg"/>
-            </div>
-            <div className="navbar-header">
-                <a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>
-                <form role="search" className="navbar-form-custom" action="search_results">
-                    <div className="form-group">
-                        <input type="text" placeholder="Search for something..." className="form-control" name="top-search" id="top-search"/>
-                    </div>
-                </form>
-            </div>
-            <ul className="nav navbar-top-links navbar-right">
-                <li>
-                    {/*<span className="m-r-sm text-muted welcome-message"> Welcome to INSPINIA+ Admin Theme.</span>*/}
-                </li>
                 <li className="dropdown">
                     <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         <i className="fa fa-bell"></i>  <span className="label label-warning">3</span>
@@ -129,14 +55,100 @@ TopNavBar = React.createClass({
                         </li>
                     </ul>
                 </li>
+
+        )
+    }
+});
+
+TopNavBar = React.createClass({
+
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        Meteor.subscribe('teamsAndFacilitiesForUser');
+        var user, team, teams;
+        user = Meteor.user();
+        if(user) {
+            team = user.getSelectedTeam();
+            teams = user.getTeams();
+        }
+        return {
+            user:user,
+            team:team,
+            teams:teams
+        }
+    },
+
+    componentDidMount() {
+        $('body').addClass('fixed-nav');
+        $(".navbar-static-top").removeClass('navbar-static-top').addClass('navbar-fixed-top');
+    },
+
+    toggleLeftSideBar() {
+        $('body').toggleClass("mini-navbar");
+        this.smoothlyMenu();
+    },
+
+    selectTeam(team) {
+        Meteor.user().selectTeam(team);
+    },
+
+
+    smoothlyMenu() {
+        if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+            // Hide menu in order to smoothly turn on when maximize menu
+            $('#side-menu').hide();
+            // For smoothly turn on menu
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 100);
+        } else if ($('body').hasClass('fixed-sidebar')) {
+            $('#side-menu').hide();
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 300);
+        } else {
+            // Remove all inline style from jquery fadeIn function to reset menu state
+            $('#side-menu').removeAttr('style');
+        }
+    },
+
+    toggleRightSideBar() {
+        $('#right-sidebar').toggleClass("sidebar-open");
+    },    
+
+    render() {
+        if(!this.data.user||!this.data.team) {
+            return <div/>
+        }
+        var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
+        var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
+        var setTeam = this.selectTeam;
+        var selectedTeam = this.data.team;
+        return (
+
+    <div className="row border-bottom">
+        <nav className="navbar navbar-fixed-top" role="navigation" style={{marginBottom:'0'}}>
+            <div className="navbar-header navbar-logo">
+                <img width="190px" src="img/logo-white.svg"/>
+            </div>
+            <div className="navbar-header">
+                <a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>
+            </div>
+            <ul className="nav navbar-top-links navbar-right">
+                {/*
                 <li>
                     <a onClick={this.toggleRightSideBar} className="right-sidebar-toggle">
                         <i className="fa fa-tasks"></i>
                     </a>
                 </li>
+                */}
                 <li className="dropdown">
-                    <a style={{padding:"0px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <a style={{padding:"8px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         {/*<img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />*/}
+                        <span style={{marginRight:"10px"}}>{selectedTeam.name}</span>
                         <img style={{width:"40px"}} alt="image" className="img-circle" src={"img/"+userThumb} />
                     </a>
                     <ul className="dropdown-menu dropdown-alerts" style={{right:"-5px"}}>
@@ -148,17 +160,13 @@ TopNavBar = React.createClass({
                             </a>
                         </li>
                         <li className="divider"></li>
-                        <li>
-                            <SuperSelect 
-                                items={this.data.teams} 
-                                itemView={ContactViewName}
-                                onChange={this.selectTeam}
-                            >
-                                <div style={{position:"absolute",top:"-12px",left:"-8px",whiteSpace:"nowrap"}}>
-                                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{this.data.team.name||'Select Team'}</div>
-                                </div>
-                            </SuperSelect>
-                        </li>
+                        {this.data.teams.map(function(team){
+                            return (
+                                <li key={team._id} className={team.name==selectedTeam.name?"active":''} onClick={setTeam.bind(null,team)}>
+                                    <a>{team.name}</a>
+                                </li>
+                            )
+                        })}
                         <li className="divider"></li>
                         <li>
                             <a href="{{pathFor route='mailbox'}}">

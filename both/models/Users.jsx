@@ -6,33 +6,32 @@ if (Meteor.isServer) {
   });
 }
 
-User = {
-  get: function() {
-    return Meteor.user() || {};
-  },
-
-  id: function() {
-    return Meteor.userId();
-  },
-
+Meteor.users.helpers({
   getTeams() {
-    Meteor.subscribe('teams');
-    return Team.find({'_members':{'_id':Meteor.userId()}}).fetch();
+    return Teams.find({'_members':{'_id':Meteor.userId()}}).fetch();
   },
-
+  getTeam(i) {
+    var teams = this.getTeams();
+    console.log(teams);
+    return teams[i];
+  },
+  selectTeam(team) {
+    Session.set('selectedTeam',team);
+    Session.set('selectedFacility',0);
+  },
+  getSelectedTeam() {
+    return Teams.findOne(Session.get('selectedTeam'));
+  },
+  selectFacility(facility) {
+    Session.set('selectedFacility',facility);
+  },
+  getSelectedFacility() {
+    return Facilities.findOne(Session.get('selectedFacility'));
+  },
   isLoggedIn: function() {
     return !! Meteor.userId();
   },
-
   isLoggedOut: function() {
     return ! User.isLoggedIn();
-  },
-
-  profile: function() {
-    return User.get().profile;
-  },
-
-  create: function(opts, callback) {
-    Accounts.createUser(opts, callback);
   }
-};
+});

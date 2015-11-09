@@ -3,8 +3,8 @@ Register = React.createClass({
 
     handleSubmit: function(e) {
         e.preventDefault();
-        var email = React.findDOMNode(this.refs.email).value.trim();
-        var password = React.findDOMNode(this.refs.password).value.trim();
+        var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
+        var password = ReactDOM.findDOMNode(this.refs.password).value.trim();
         console.log({
             email:email,
             password:password

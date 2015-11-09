@@ -1,21 +1,5 @@
 Issues = new Mongo.Collection('issues');
 
-
-if (Meteor.isClient) {
-  //Meteor.subscribe('books');
-
-  //Meteor.startup(function () {
-    // Use Meteor.startup to render the component after the page is ready
-    //React.render(<App />, document.getElementById("render-target"));
-  //});
-}
-
-if (Meteor.isServer) {
-  Meteor.publish('issues', function () {
-    return Issues.find();
-  });
-}
-
 Meteor.methods({
   "Issue.save": function(item) {
     Issues.upsert(item._id, {$set: _.omit(item, '_id')});
@@ -52,12 +36,14 @@ Issues.before.insert(function (userId, doc) {
   doc.createdAt = moment().toDate();
 });
 
+
+
+
 ExampleIssues = [
   {
     name:"Toilet won't flush",
     description:"Toilet won't flush. Brown liquid leaking onto floor. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
     status:"New",
-    priority:"Urgent",
     thumb:1,
     facility:{
       name:"Georges Rd (Building A)",
@@ -100,7 +86,6 @@ ExampleIssues = [
     name:"Shocking doors",
     description:"Customers entering through sliding doors receiving electric shocks. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     status:"New",
-    priority:"Urgent",
     thumb:3,
     facility:{
       name:"Georges Rd (Building A)",
@@ -185,7 +170,6 @@ ExampleIssues = [
     name:"Cracked walls, level 7",
     description:"Large cracks appearing in walls on level 7. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     status:"Issued",
-    priority:"Urgent",
     thumb:2,
     facility:{
       name:"Georges Rd (Building A)",

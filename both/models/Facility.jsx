@@ -10,13 +10,6 @@ if (Meteor.isClient) {
   //});
 }
 
-if (Meteor.isServer) {
-  // Only publish tasks that are public or belong to the current user
-  Meteor.publish('facilities', function () {
-    return Facilities.find();
-  });
-}
-
 Meteor.methods({
 	"Facility.save": function(item) {
 		item.isNewItem = false;
@@ -51,6 +44,12 @@ Facilities.helpers({
   },
   destroy:function() {
     Meteor.call('Facility.destroy',this);
+  },
+  getIssues() {
+  	return Issues.find({"_facility._id":this._id});
+  },
+  getIssueCount() {
+  	return Issues.count({"_facility._id":this._id});
   }
 });
 
@@ -100,9 +99,6 @@ Books.helpers({
 
 
 ExampleFacilities = [
-	{
-		name:"All facilities",
-	},
 	{
 		name:"Georges Rd (Building A)",
 		address:"2 Georges Rd",

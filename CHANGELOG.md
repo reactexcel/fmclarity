@@ -1,5 +1,14 @@
 CHANGELOG.md
 
+v0.1.3a
+- [SOURCE] Collection names all plural
+- Designed teams page (as mockup)
+- Set up test data to test multiple teams
+- teamId saved in issues for simplifying publication
+- Removed inactive modules from left navigation
+- Selected team now impacts on displayed issues
+- Changed "all facilities" icon and text to make intention clearer
+
 v0.1.2a (07/11/2015)
 - Team members can see only facilities of the accounts they are members of
 - Team members can add facilities to team
