@@ -141,6 +141,20 @@ loggedIn.route('/settings', {
   }
 });
 
+loggedIn.route('/account', {
+  name: 'account',
+  action() {
+    ReactLayout.render(MainLayout,{content: <AccountProfilePage />});
+  }
+});
+
+loggedIn.route('/profile', {
+  name: 'profile',
+  action() {
+    ReactLayout.render(MainLayout,{content: <UserProfilePage />});
+  }
+});
+
 loggedIn.route('/team', {
   name: 'team',
   action() {

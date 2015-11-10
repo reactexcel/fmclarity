@@ -5,35 +5,20 @@ TeamPage = React.createClass({
     getMeteorData() {
         Meteor.subscribe('users');
 
-        var tid,team,members,facilities;
-        tid = Session.get("selectedTeam")._id;
-        team = Teams.findOne(tid);
-        if(team) {
-            members = team.getMembers();
-            members = this.processUsers(members);
-            facilities = team.getFacilities();
+        var user,team,members,facilities;
+        user = Meteor.user();
+        if(user) {
+            team = user.getSelectedTeam();
+            if(team) {
+                members = team.getMembers();
+                facilities = team.getFacilities();
+            }
         }
-        
         return {
         	team : team||[],
             members : members||[],
             facilities : facilities||[]
         }
-    },
-
-    processUsers(users) {
-        var items = [];
-        users.map(function(i,idx){
-            items[idx] = {
-                _id: i._id,
-                email : i.emails[0].address
-            }
-            for(var key in i.profile) {
-                var val = i.profile[key];
-                items[idx][key] = val;
-            }
-        });
-        return items;
     },
 
     handleInvite(e) {
@@ -78,19 +63,18 @@ TeamPage = React.createClass({
 		          </div>
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-                    <form className="form-inline">
+                    <form className="form-inline" style={{position:"absolute",zIndex:2000,margin:"7px"}}>
                         <div className="form-group">
                             <label>Invite users</label>
-                            <input type="email" className="form-control" ref="invitationEmail" placeholder="Email address"/>
+                            <input style={{borderRadius:"30px"}} type="email" className="form-control" ref="invitationEmail" placeholder="Email address"/>
                             <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                         </div>
                     </form>
-  					<FilterBox 
+  					<FilterBox2 
 						items={this.data.members}
-						numCols={2}
 						itemView={{
-							summary:ContactSummary,
-							detail:ContactSummary
+							summary:ContactCard,
+							detail:UserProfile
 						}}
 					/>
 				</div>

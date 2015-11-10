@@ -28,7 +28,11 @@ if (Meteor.isServer) {
         var server = temp[1];
         var isValidEmail = validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0));
         if(isValidEmail) {
-          uid = Accounts.createUser({email:email,profile:{name:name}});
+          uid = Accounts.createUser({email:email,profile:{
+            name:name,
+            phone:{},
+            address:{}
+          }});
           Accounts.sendEnrollmentEmail(uid);
         }
         else {

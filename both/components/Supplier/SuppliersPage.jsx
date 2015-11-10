@@ -35,12 +35,11 @@ PageSuppliers = React.createClass({
 		          </div>
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-					<FilterBox 
+					<FilterBox2 
 						items={this.data.items}
 						filters={filters}
-						numCols={2}
 						itemView={{
-							summary:ContactSummary,
+							summary:ContactCard,
 							detail:ContactSummary
 						}}
 					/>

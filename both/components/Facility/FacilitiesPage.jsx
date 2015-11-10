@@ -3,9 +3,16 @@ PageProperties = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var selectedTeam = FM.getSelectedTeam();
-        var selectedFacility = FM.getSelectedFacility();
-        var facilities = selectedTeam?selectedTeam.getFacilities():Facilities.find({},{sort:{name:1}}).fetch();
+    	Meteor.subscribe('teamsAndFacilitiesForUser');
+    	var user, selectedTeam, selectedFacility, facilties;
+    	user = Meteor.user();
+    	if(user) {
+	        selectedTeam = user.getSelectedTeam();
+    	    if(selectedTeam) {
+	    	    selectedFacility = user.getSelectedFacility();
+	        	facilities = selectedTeam.getFacilities();
+	        }
+        }
         return {
         	selectedFacility : selectedFacility,
             items : facilities
@@ -21,23 +28,6 @@ PageProperties = React.createClass({
 	},
 
 	render() {
-		var filters = [
-	     	{
-	        	text:"All"
-	      	},
-	    	{
-	      		text:"Office",
-	      		filter(i) {
-	      			return i.type=="Office"
-	      		}
-	    	},
-	    	{
-	     		text:"Residential",
-	      		filter(i) {
-	      			return i.type=="Residential"
-	      		}
-	  		}
-	    ];
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
@@ -46,9 +36,8 @@ PageProperties = React.createClass({
 		          </div>
 		        </div>
 		        <div className="facility-page wrapper wrapper-content animated fadeIn">
-					<FilterBox 
+					<FilterBox2 
 						items={this.data.items}
-						filters={filters} 
 						itemView={{
 							summary:FacilitySummary,
 							detail:FacilityDetail

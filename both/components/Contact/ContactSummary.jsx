@@ -29,7 +29,7 @@ ContactSummary = React.createClass({
 				 	<div>
 						<h2>{contact.name}</h2>
 						<b>Email</b> {contact.email}<br/>
-						<b>Phone</b> {contact.phone}<br/>
+						<b>Phone</b> {contact.phone.mobile}<br/>
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
 						{services}

@@ -1,5 +1,11 @@
 CHANGELOG.md
 
+v0.1.4a
+- Created team page / detail view on right
+- Update facilities page
+- User profile page
+- Team profile page
+
 v0.1.3a
 - [SOURCE] Collection names all plural
 - Designed teams page (as mockup)

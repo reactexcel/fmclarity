@@ -1,4 +1,4 @@
-ROADMAP.md
+ROADMAP.md
 
 v0.2.0a "Love In" (10/11/2015)
 - Model created for paid accounts and teams
@@ -30,8 +30,9 @@ TODO
 - Brainstorm list of "actions" for RBAC inc[create facility, add to team, create contact, add to team, edit own profile, edit other profile]
 - Work out team selection interface element
 
-IN PROGRESS
-- Team members have a profile page that can be edited
+TODAY
+- Fix email invite
+- Pimp invite user field
+- "Hamburger" should be changed to arrow sitting in vertical middle of left navigation bar
 - Accounts can have a different status depending on the level of the paid account (default status is... Founding Member? for beta)
-- Team has a profile page that can be edited
-- Email invitation needs to point to fmclarity.com
+- Text boxes are not editable
