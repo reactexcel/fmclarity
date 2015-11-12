@@ -11,6 +11,7 @@ Meteor.startup(function(){
 
     ExampleTeams = [
       {
+        type:"fm",
         name:"Team Blah",
         email:"xyz@abc.123",
         phone:"0400-123-123",
@@ -19,6 +20,7 @@ Meteor.startup(function(){
         _contacts:[]
       },
       {
+        type:"fm",
         name:"Team Superblah",
         email:"knockers@run.123",
         phone:"0400-223-122",
@@ -27,13 +29,63 @@ Meteor.startup(function(){
         _contacts:[]
       },
       {
+        type:"fm",
         name:"Tonsils",
         email:"schturm@run.123",
         phone:"0400-223-122",
         thumb:"supplier-1.png",
         _members:[{_id:leo1._id}],
         _contacts:[]
-      }
+      },
+      {
+        type:"contractor",
+        name:"Normal Contractors",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-1.png",
+        _members:[{_id:leo1._id},{_id:rich1._id}],
+        services:["Mechanical","Fire Prevention","Electrical"]
+      },
+      {
+        type:"contractor",
+        name:"Harrison Services",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-2.png",
+        services:["UPS"]
+      },
+      {
+        type:"contractor",
+        name:"Rovo",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-3.png",
+        services:["Mechanical","Fire Prevention","Electrical"]
+      },
+      {
+        type:"contractor",
+        name:"Shotnick",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-4.png",
+        services:["Lifts","Fire Prevention","Electrical","Water Treatment"]
+      },
+      {
+        type:"contractor",
+        name:"ABC Contractors",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-5.png",
+        services:["UPS","Fire Prevention","Egress"]
+      },
+      {
+        type:"contractor",
+        name:"DEF Contractors",
+        email:"xyz@abc.123",
+        phone:"0400-123-123",
+        thumb:"supplier-6.png",
+        services:["Generator","E&E Lighting","Water Treatment"]
+      }      
     ];
 
 
@@ -55,7 +107,7 @@ Meteor.startup(function(){
         i.remove({isNewItem:true});
     });
 
-    var teams = Teams.find({}).fetch();
+    var teams = Teams.find({type:"fm"}).fetch();
     for(var i in ExampleFacilities) {
         var r = Math.floor(Math.random()*teams.length);
         ExampleFacilities[i]._team = {_id:teams[r]._id};

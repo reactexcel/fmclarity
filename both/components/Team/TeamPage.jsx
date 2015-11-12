@@ -15,9 +15,9 @@ TeamPage = React.createClass({
             }
         }
         return {
-        	team : team||[],
-            members : members||[],
-            facilities : facilities||[]
+        	team : team,
+            members : members,
+            facilities : facilities
         }
     },
 
@@ -74,7 +74,7 @@ TeamPage = React.createClass({
 						items={this.data.members}
 						itemView={{
 							summary:ContactCard,
-							detail:UserProfile
+							detail:ContactSummary
 						}}
 					/>
 				</div>

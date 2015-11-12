@@ -4,8 +4,7 @@
   background-color:transparent;
 }
 
-.md-skin .filter-box.ibox,
-.md-skin .filter-box-2.ibox {
+.md-skin .filter-box.ibox {
   background-color:transparent;
   border:0;
   box-shadow:none;
@@ -58,8 +57,16 @@
   border-left:5px solid #aaa;
 }
 
+.grid-item:hover .card-header,
+.grid-item.active .card-header {
+  background:#eee;
+}
+
+.grid-item.active:hover .card-header {
+  background:#eee;
+}
+
 .filter-box .grid-item.gigante .card-header,
-.filter-box .grid-item:hover .card-header,
 .filter-box .grid-item.diminished .card-header {
     background:#eee;
 }

@@ -60,6 +60,9 @@ FilterBox2 = React.createClass({
 
     var Header = $this.props.itemView.header;
 
+    if(!items) {
+    	return <div/>
+    }
     return (
     <div className="row">
       	<div className="col-lg-6">
@@ -89,7 +92,7 @@ FilterBox2 = React.createClass({
 		                  		<div 
 		                    		key={i._id}
 		                    		style={{padding:0}}
-		                    		className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
+		                    		className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
 		                  		>
 			                    	<CardHeaderWrapper
 			                      		item={i}
@@ -130,28 +133,13 @@ CardHeaderWrapper = React.createClass({
 		var item = this.props.item;
 		var isSelected = this.props.isSelected;
 		return (
-			<div className="grid-item">
-		        <div className="card-header" onClick={this.toggle.bind(null,item)}>
-		          	<div className="card-header-left-toolbar">
-		            	<div onClick={this.toggle.bind(null,item)}
-		              		className="grid-item-select-button"
-		            	>
-			              	<i className="grid-item-select-button-top fa fa-th"></i><br/>
-			              	<i className="grid-item-select-button-bottom fa fa-th"></i>
-		            	</div>
-		          	</div>
-		          	<div className="card-header-right-toolbar">
-		            	<button onClick={this.toggle.bind(null,item)}
-		              		className="card-button expand-button pull-right"
-		            	>
-		              		<i className={"fa "+(isSelected?"fa-caret-down":"fa-caret-left")}></i>
-		            	</button>
-		        	</div>
-		          	<div className="card-header-summary">
-			            <View item={item} />
-			        </div>
-		        </div>
-	        </div>
+			<div className={"grid-item"+(isSelected?" active":"")}>
+        <div className="card-header" onClick={this.toggle.bind(null,item)}>
+          <div className="card-header-summary">
+            <View item={item} />
+          </div>
+        </div>
+      </div>
 		)
 	}
 })

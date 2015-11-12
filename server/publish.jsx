@@ -15,3 +15,7 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 	issues = Issues.find({"_team._id":{$in:teamIds}});
 	return [teams,facilities,issues];
 });
+
+Meteor.publish("contractors",function() {
+	return Teams.find({type:"contractor"});
+});

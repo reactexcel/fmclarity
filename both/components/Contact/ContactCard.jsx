@@ -9,9 +9,15 @@ ContactViewName = React.createClass({
 
 ContactCard = React.createClass({
 	render() {
-		var contact = this.props.item || {};
-		var profile = contact.profile || {phone:{}};
-		var view = this.props.view;
+		var contact,profile,view;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		else {
+			profile = {};
+		}
+		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (
 				<div className="contact-card-avatar">
@@ -33,9 +39,9 @@ ContactCard = React.createClass({
 	            <small className="contact-card contact-card-1line">
 	              {profile.name}&nbsp;&nbsp;
 	              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
-	              {contact.emails[0].address}&nbsp;&nbsp;
+	              {profile.email}&nbsp;&nbsp;
 	              <i className="fa fa-phone"></i>&nbsp;&nbsp;
-	              {profile.phone.mobile}
+	              {profile.phone}
 	            </small>
 	        );
 		}

@@ -1,0 +1,99 @@
+/* entire container, keeps perspective */
+.flip-container {
+	perspective: 1000;
+}
+
+.flip-container.flip .flipper {
+	transform: rotateY(180deg);
+}
+
+/* flip speed goes here */
+.flipper {
+	transition: 0.4s;
+	transform-style: preserve-3d;
+
+	position: relative;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+	backface-visibility: hidden;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	right:0;
+}
+
+/* front pane, placed above back */
+.front {
+	z-index: 2;
+	/* for firefox 31 */
+	transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+	transform: rotateY(180deg);
+}
+
+.user-profile-card .dl-horizontal dt {
+	margin-bottom:5px;
+}
+
+h2.background {
+    position: relative;
+    z-index: 1;
+    
+    &:before {
+        border-top: 1px solid #ddd;
+        content:"";
+        margin: 0 auto; /* this centers the line to the full width specified */
+        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+        top: 50%; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    span { 
+        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
+        background: #fff; 
+        padding: 0 5px; 
+        margin-left: 20px;
+    }
+}
+
+h4.background {
+    position: relative;
+    z-index: 1;
+    font-weight: lighter;
+    text-transform: uppercase;
+    margin-top:20px;
+    margin-bottom:10px;
+    
+    &:before {
+        border-top: 1px solid #ddd;
+        content:"";
+        margin: 0 auto; /* this centers the line to the full width specified */
+        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+        top: 50%; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    span { 
+        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
+        background: #fff; 
+        padding: 0 5px; 
+        margin-left: 20px;
+
+        span {
+        	margin:0;
+        	padding:0;
+        	background:#fff;
+        }
+
+    }
+}
+
+

@@ -1,187 +1,159 @@
+
 UserProfile = React.createClass({
 
-    componentWillMount: function() {
-        this.saveItem = _.debounce(this.saveItem,500);
-    },
+	save() {
+		var user = this.props.item;
+		return function() {
+			user.save();
+		}
+	},
 
-    saveItem() {
-        this.user.save();
-    },
-
-    updateField(field,subfield) {
-        var $this = this;
-        // returns a function that modifies 'field'
-        return function(event) {
-        	if(subfield) {
-	            $this.user.profile[field][subfield] = event.target.value;
-        	}
-        	else {
-	            $this.user.profile[field] = event.target.value;
-	        }
-            $this.saveItem();
-        }
-    },
+	getForm() {
+		return [
+			{
+				key:"firstName",
+				type:"text"
+			},
+			{
+				key:"lastName",
+				type:"text"
+			},
+			{
+				key:"name",
+				type:"text"
+			},
+			{
+				key:"email",
+				type:"text"
+			},
+			{
+				key:"phone",
+				type:"text"
+			},
+			{
+				key:"dob",
+				type:"date"
+			}
+		]
+	},
 
 	render() {
-		var user, profile;
-		this.user = this.props.item;
-		user = this.user;
+		var user, profile, schema;
+		var user = this.props.item;
 		if(user) {
-			profile = user.profile;
+			profile = user.getProfile();
+			schema = Schema.UserProfile;
 		}
 		if(!user||!profile) {
-			return (<div/>)
+			return <div/>
 		}
 		return (
-		    <div className="user-profile-card">
-			            	<div className="row" style={{borderTop:"1px solid #ddd"}}>
-			            		<div className="col-lg-12">
-		            				<h2 style={{float:"left",backgroundColor:"#fff","margin":0,"position":"relative",top:"-17px",padding:"3px"}}>{profile.name}</h2>
-		            			</div>
-			            	</div>
-			            	<div className="row">
-			            		<div className="col-lg-7">
-			            			<dl className="dl-horizontal">
-			            				<dt>Name</dt>
-			            				<dd>
-					                        <input 
-					                            placeholder="Enter display name"
-					                            className="inline-form-control" 
-					                            value={profile.name} 
-					                            onChange={this.updateField('name')}
-					                        />
-					                    </dd>
-			            				<dt>Email</dt>
-			            				<dd>{user.emails[0].address}</dd>
-			            				<dt>Phone</dt>
-			            				<dd>
-						                        <input 
-						                            placeholder="Enter work phone"
-						                            className="inline-form-control" 
-						                            value={profile.phone.business} 
-						                            onChange={this.updateField('phone','business')}
-						                        />
-						                        <input 
-						                            placeholder="Enter mobile"
-						                            className="inline-form-control" 
-						                            value={profile.phone.mobile} 
-						                            onChange={this.updateField('phone','mobile')}
-						                        />
-			            				</dd>
-			            				<dt>ABN</dt>
-			            				<dd>
-						                    <input 
-						                        placeholder="Enter ABN"
-						                        className="inline-form-control" 
-						                        value={profile.abn} 
-						                        onChange={this.updateField('abn')}
-						                    />
-			            				</dd>
-			            			</dl>
-			            		</div>
-			            		<div className="col-lg-5">
-									<div className="contact-thumbnail">
-										<img style={{width:"100%"}} alt="image" src={"img/"+profile.thumb}/>
-									</div>
-								</div>
-							</div>
+		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
+			    <div className="row">
+			        <div className="col-lg-12">
+		            	<h2 className="background"><span>{profile.name}</span></h2>
+		            </div>
+			   	</div>
+			   	<div className="row">
+			        <div className="col-lg-7">
+			        	<AutoForm item={profile} schema={schema} form={this.getForm()} save={this.save()} />
+			        </div>
+			        <div className="col-lg-5">
+						<div className="contact-thumbnail">
+							<img style={{width:"100%"}} alt="image" src={"img/"+profile.thumb}/>
+						</div>
+					</div>
+				</div>
+				<div className="row">
+			        <div className="col-lg-12">
+		            	<h4 className="background"><span>About Me</span></h4>
+		            	<textarea className="inline-form-control" defaultValue={user.bio} onChange={this.save()}></textarea>
+		            </div>
+				</div>
+				<div className="row">
+			        <div className="col-lg-12">
+		            	<h4 className="background"><span>Change Password</span></h4>
+		            	<dl className="dl-horizontal">
+		            		<dt>Old password</dt>
+		            		<dd><input type="password" className="inline-form-control"/></dd>
+		            		<dt>New password</dt>
+		            		<dd><input type="password" className="inline-form-control"/></dd>
+		            		<dt>Confirm new password</dt>
+		            		<dd><input type="password" className="inline-form-control"/></dd>
+		            	</dl>
+		            </div>
+				</div>
 			</div>
+		)
+	}
+});
+
+UserProfileWidget= React.createClass({
+	getInitialState() {
+		return {
+			edit:false
+		}
+	},
+
+	toggleEdit() {
+		this.refs.card.classList.toggle("flip");
+	},
+
+	render() {
+		var user = this.props.item;
+		return (
+			<div ref="card" className="flip-container">
+				<div className="flipper">
+					<div className="front">
+			            <div className="ibox" style={{backgroundColor:"#fff",padding:"10px"}}>
+							<ContactSummary item={user}/>
+							<a onClick={this.toggleEdit} style={{
+								position:"absolute",
+								right:"5px",
+								top:0,
+								fontSize:"15px",
+								color:"#ddd"
+							}} onClick={this.toggleEdit}>
+								<i className="fa fa-cog"></i> Edit
+							</a>
+			            </div>
+		            </div>
+					<div className="back">
+			            <div className="ibox" style={{backgroundColor:"#eee",padding:"20px"}}>
+							<UserProfile item={user}/>
+							<a onClick={this.toggleEdit} style={{
+								position:"absolute",
+								right:"5px",
+								top:0,
+								fontSize:"15px",
+								color:"#ddd"
+							}} onClick={this.toggleEdit}>
+								<i className="fa fa-eye"></i> View
+							</a>
+			            </div>
+		            </div>
+	            </div>
+            </div>
 		)
 	}
 });
 
 UserProfilePage = React.createClass({
 
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+		return {
+			user:Meteor.user()
+		}
+	},
+
 	render() {
 		return (
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6 col-md-6 col-sm-6">
-			            <Box title="User Profile">
-			            	<UserProfile item={Meteor.user()}/>
-			            </Box>
-					</div>
-				</div>
-			</div>
-		)
-	}
-})
-
-UserProfilePageMD = React.createClass({
-	render() {
-		var user = this.props.user||Meteor.user();
-		var profile = user.profile;
-		return (
-		    <div className="wrapper wrapper-content animated fadeIn">
-		        <div className="row">
-		            <div className="col-lg-12 col-md-12 col-sm-12">
-			            <Box title="User Profile">
-			            	<div className="row">
-			            		<div className="col-lg-3">
-									<div className="contact-thumbnail">
-										<img style={{width:"100%"}} alt="image" src={"img/"+profile.thumb}/>
-									</div>
-								</div>
-								<div className="col-lg-9">
-									<div className="row">
-										<div className="col-lg-12">
-											<div className="row">
-												<div className="col-lg-6">
-													<MDInput label="First name" value={profile.firstname}/>
-												</div>
-												<div className="col-lg-6">
-													<MDInput label="Last name" value={profile.lastname}/>
-												</div>
-											</div>
-										</div>
-										<div className="col-lg-12">
-											<div className="row">
-												<div className="col-lg-6" value={profile.email}>
-													<MDInput label="Email"/>
-												</div>
-												<div className="col-lg-6">
-													<MDInput label="ABN" value={profile.abn}/>
-												</div>
-											</div>
-										</div>
-										<div className="col-lg-12">
-											<div className="row">
-												<div className="col-lg-6">
-													<MDInput label="Phone BH" value={profile.phone.work}/>
-												</div>
-												<div className="col-lg-6">											
-													<MDInput label="Mobile" value={profile.phone.mobile}/>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="col-lg-12">
-									<div className="col-lg-6">
-										<MDInput label="Address line 1" value={profile.address.line1}/>
-									</div>
-									<div className="col-lg-6">
-										<MDInput label="Address line 2" value={profile.address.line2}/>
-									</div>
-								</div>
-								<div className="col-lg-12">
-									<div className="row">
-										<div className="col-lg-3">
-											<MDInput label="Suburb/City" value={profile.address.city}/>
-										</div>
-										<div className="col-lg-3">
-											<MDInput label="State" value={profile.address.state}/>
-										</div>
-										<div className="col-lg-3">
-											<MDInput label="Country" value={profile.address.country}/>
-										</div>
-										<div className="col-lg-3">
-											<MDInput label="Postcode/Zip" value={profile.address.zip}/>
-										</div>
-									</div>
-								</div>
-							</div>
-			            </Box>
+		            	<UserProfileWidget item={this.data.user} />
 					</div>
 				</div>
 			</div>

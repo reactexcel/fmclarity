@@ -5,14 +5,38 @@ var validEmails = {
   'fmclarity.com':'*'
 };
 
-if (Meteor.isClient) {
-  //Meteor.subscribe('books');
 
-  //Meteor.startup(function () {
-    // Use Meteor.startup to render the component after the page is ready
-    //React.render(<App />, document.getElementById("render-target"));
-  //});
-}
+Schema.TeamProfile = new SimpleSchema({
+    name: {
+      type: String,
+      label: "Team Name",
+      optional: true
+    },
+    email: {
+      type: String,
+      label: "Email",
+      regEx: SimpleSchema.RegEx.Email
+    },
+    phone: {
+      type: String,
+      label: "Phone",
+      optional:true
+    },
+    thumb: {
+      type: String,
+      label: "Thumbnail",
+      optional:true
+    },
+    type: {
+      type: String,
+      label: "Account type"
+    },
+    abn: {
+      type: String,
+      label: "ABN"
+    }
+});
+
 
 if (Meteor.isServer) {
   Meteor.methods({
@@ -30,8 +54,7 @@ if (Meteor.isServer) {
         if(isValidEmail) {
           uid = Accounts.createUser({email:email,profile:{
             name:name,
-            phone:{},
-            address:{}
+            email:email
           }});
           Accounts.sendEnrollmentEmail(uid);
         }
@@ -85,6 +108,9 @@ Teams.helpers({
   },
   inviteMember:function(email) {
     return Meteor.call('Team.inviteMember',this, email)
+  },
+  getProfile() {
+    return this;
   },
   getMembers:function() {
     if (this._members.length) {

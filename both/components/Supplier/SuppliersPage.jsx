@@ -3,9 +3,9 @@ PageSuppliers = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var handle = Meteor.subscribe('contacts');
+        var handle = Meteor.subscribe('contractors');
         return {
-            items : Contacts.find({},{sort:{createdAt:-1}}).fetch()
+            items : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
         }
     },
 

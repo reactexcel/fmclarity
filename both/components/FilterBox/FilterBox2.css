@@ -1,3 +1,16 @@
+.md-skin .filter-box-2.ibox {
+	padding:10px;
+	background-color:#fff;
+}
+
+.md-skin .filter-box-2.ibox > .ibox-title {
+	background-color: transparent;
+}
+
 .filter-box-2-detail-pane .card-body {
 	padding-top:10px;
+}
+
+.table-row:last-child > .grid-item {
+	border:none;
 }

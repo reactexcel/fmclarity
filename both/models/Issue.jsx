@@ -29,6 +29,9 @@ Issues.helpers({
   },
   destroy:function() {
     Meteor.call('Issue.destroy',this);
+  },
+  getContractor() {
+    return Teams.findOne(this._contractor);
   }
 });
 
@@ -54,11 +57,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a1.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-1.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -75,11 +75,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a2.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-2.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -96,11 +93,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a3.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-3.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -117,11 +111,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a4.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-4.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -138,11 +129,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a5.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-1.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -159,11 +147,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a6.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-2.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -180,11 +165,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a7.jpg"
     },
-    supplier:{
-      name:"Arvis A",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-3.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -201,11 +183,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a8.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-4.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -222,11 +201,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a1.jpg"
     },
-    supplier:{
-      name:"QQQ Maintenence",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-1.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -243,11 +219,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a2.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-2.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -264,11 +237,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a3.jpg"
     },
-    supplier:{
-      name:"XYY Suppliers",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-3.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -285,11 +255,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a4.jpg"
     },
-    supplier:{
-      name:"XYY Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-4.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -306,11 +273,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a5.jpg"
     },
-    supplier:{
-      name:"ABC Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-1.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   },
   {
@@ -327,11 +291,8 @@ ExampleIssues = [
       phone:"0444-123-321",
       thumb:"a6.jpg"
     },
-    supplier:{
-      name:"DEF Contractors",
-      email:"xyz@abc.123",
-      phone:"0400-123-123",
-      thumb:"supplier-2.png"
+    _contractor:{
+        name:"Normal Contractors",
     },
   }
 ];

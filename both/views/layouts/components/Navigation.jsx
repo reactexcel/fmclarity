@@ -48,9 +48,36 @@ FacilityFilter = React.createClass({
 
 Navigation = React.createClass({
 
+    getInitialState() {
+        return {
+            expanded:true
+        }
+    },
+
     componentDidMount() {
-        // Initialize metisMenu
         $('#side-menu').metisMenu();
+    },
+
+    toggleLeftSideBar() {
+        $('body').toggleClass("mini-navbar");
+        if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+            $('#side-menu').hide();
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 100);
+        } else if ($('body').hasClass('fixed-sidebar')) {
+            $('#side-menu').hide();
+            setTimeout(
+                function () {
+                    $('#side-menu').fadeIn(500);
+                }, 300);
+        } else {
+            $('#side-menu').removeAttr('style');
+        }
+        this.setState({
+            expanded:!this.state.expanded
+        })
     },
 
     render() {
@@ -83,22 +110,22 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
                 </li>
-                {/*
-                <li className={FlowRouter.getRouteName()=='contracts'?'active':''}>
-                    <a href={FlowRouter.path('contracts')}><i className="fa fa-file-text-o"></i> <span className="nav-label">Contracts</span> </a>
-                </li>
                 <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
                     <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
                 <li className={FlowRouter.getRouteName()=='sustainability'?'active':''}>
                     <a href={FlowRouter.path('sustainability')}><i className="fa fa-leaf"></i> <span className="nav-label">Sustainability</span> </a>
                 </li>
+                {/*
+                <li className={FlowRouter.getRouteName()=='contracts'?'active':''}>
+                    <a href={FlowRouter.path('contracts')}><i className="fa fa-file-text-o"></i> <span className="nav-label">Contracts</span> </a>
+                </li>
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>
                 */}
                 <li>
-                    <a href=""><i className="fa fa-cog"></i> <span className="nav-label">Settings</span><span className="fa arrow"></span></a>
+                    <a href=""><i className="fa fa-cog"></i> <span className="nav-label">Settings</span>{/*<span className="fa arrow"></span>*/}</a>
                     <ul className="nav nav-second-level">
                         <li className={FlowRouter.getRouteName()=='account'?'active':''}>
                             <a href={FlowRouter.path('account')}>Account</a>
@@ -123,6 +150,17 @@ Navigation = React.createClass({
                     </ul>
                 </li>
             </ul>
+            <a style={{
+                position:"absolute",
+                right:"-1px",
+                fontSize:"20px",
+                padding:"0px 5px",
+                top:"40%",
+                color:"#ccc",
+                backgroundColor:"#eee",
+                border:"1px solid #eaeaea"
+            }} onClick={this.toggleLeftSideBar}><i className="fa fa-ellipsis-v"></i> </a>
+            
 
         </div>
     </nav>

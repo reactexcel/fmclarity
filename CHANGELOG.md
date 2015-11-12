@@ -1,5 +1,20 @@
 CHANGELOG.md
 
+v0.2.1a
+- Moved the hamburger (so to speak)
+- Fixed bug where fields were being deselected after typing one letter
+- Table entries tidied up - removed grip icon - added avatars - show selected and hover state
+- Enabled sticky post options
+- Work requests - Arrow on rhs removed
+- Created new "edit" view for teams and users
+- Added 'datepicker' and 'switch' to available input types
+- Updated user and account profile edit views (not yet complete)
+
+v0.2.0a
+- Removed contractor collection and made contractors into a type of Team/Account
+- Made text boxes on profile pages reactive and editable by creating an autoform component
+- Various bug fixes
+
 v0.1.4a
 - Created team page / detail view on right
 - Update facilities page

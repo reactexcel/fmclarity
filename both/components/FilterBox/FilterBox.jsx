@@ -50,6 +50,10 @@ FilterBox = React.createClass({
 
     var Header = $this.props.itemView.header;
 
+    if(!items) {
+      return <div/>
+    }
+
     return (
       <div>
         <div className="filter-box ibox">
@@ -74,6 +78,22 @@ FilterBox = React.createClass({
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
               {items.map(function(i,index){
+                if(i.sticky)
+                return (
+                  <div 
+                    key={i._id}
+                    style={{padding:0}}
+                    className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
+                  >
+                    <CardWrapper 
+                      item={i}
+                      itemView={$this.props.itemView}
+                    />
+                  </div>
+                )
+              })}
+              {items.map(function(i,index){
+                if(!i.sticky)
                 return (
                   <div 
                     key={i._id}
@@ -182,6 +202,11 @@ CardWrapper = React.createClass({
     }
   },
 
+  toggleSticky() {
+    this.item.sticky = this.item.sticky?false:true;
+    this.item.save();
+  },
+
   render() {
     var $this = this;
     var item = this.item = this.props.item;
@@ -195,25 +220,26 @@ CardWrapper = React.createClass({
           "grid-item"
         }
       >
-        <div className="card-header" onClick={this.toggle}>
-          <div className="card-header-left-toolbar">
+        <div className="card-header">
+          <div className="card-header-left-toolbar" style={{opacity:item.sticky?1:0.1,color:item.sticky?"blue":"#000"}}>
             <div
-              onClick={this.toggle}
+              onClick={this.toggleSticky}
               className="grid-item-select-button"
+              style={{padding:"10px 5px 7px 13px",fontSize:"20px"}}
             >
-              <i className="grid-item-select-button-top fa fa-th"></i><br/>
-              <i className="grid-item-select-button-bottom fa fa-th"></i>
+              <i className="fa fa-thumb-tack"></i>
             </div>
           </div>
           <div className="card-header-right-toolbar">
+          {/*
             <button 
               onClick={this.toggle}
               className="card-button expand-button pull-right"
             >
-              <i className={"fa "+(this.state.shouldExpand?"fa-caret-down":"fa-caret-left")}></i>
             </button>
+          */}
           </div>
-          <div className="card-header-summary">
+          <div className="card-header-summary" onClick={this.toggle}>
             <Summary item={item} />
           </div>
         </div>
@@ -224,7 +250,7 @@ CardWrapper = React.createClass({
               onClick={this.toggle}
               className="card-button expand-button pull-right"
             >
-              <i className={"fa "+(this.state.shouldExpand?"fa-caret-down":"fa-caret-left")}></i>
+              <i className={"fa fa-close"}></i>
             </button>
             <button 
                 onClick={this.deleteItem} 

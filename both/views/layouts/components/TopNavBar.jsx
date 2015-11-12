@@ -135,7 +135,7 @@ TopNavBar = React.createClass({
                 <img width="190px" src="img/logo-white.svg"/>
             </div>
             <div className="navbar-header">
-                <a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>
+                {/*<a id="navbar-minimalize" onClick={this.toggleLeftSideBar} className="minimalize-styl-2 btn btn-primary " href="#"><i className="fa fa-bars"></i> </a>*/}
             </div>
             <ul className="nav navbar-top-links navbar-right">
                 {/*

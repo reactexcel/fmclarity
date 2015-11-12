@@ -5,12 +5,12 @@ IssueDetail = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        Meteor.subscribe('contacts');
+        Meteor.subscribe('contractors');
         Meteor.subscribe('services');
         Meteor.subscribe('facilities');
         return {
             services : Services.find({},{sort:{name:1}}).fetch(),
-            suppliers : Contacts.find({},{sort:{createdAt:-1}}).fetch(),
+            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
             facilities : Facilities.find({},{sort:{name:1}}).fetch()
         }
     },
@@ -75,7 +75,7 @@ IssueDetail = React.createClass({
         var facility = issue._facility;
         var createdAt = moment(issue.createdAt).calendar();
         var contact = issue.contact;
-        var supplier = issue.supplier;
+        var supplier = issue.getContractor()||{};
         var status = issue.status;
         var statusClass = 
         status=='New'?'success':
@@ -159,7 +159,7 @@ IssueDetail = React.createClass({
                         {issue.status?
                         <div className="col-lg-5">
                             <div style={{height:"32px"}}>
-                                {issue.supplier?
+                                {supplier?
                                     <span className="choose-contract-btn label dropdown-label label-success">Change Contract <i className="fa fa-caret-down"></i></span>
                                 :
                                     <span className="choose-contract-btn label dropdown-label">Choose Contract <i className="fa fa-caret-down"></i></span>
@@ -172,7 +172,7 @@ IssueDetail = React.createClass({
                                 classes="absolute"
                                 toggleId=".choose-contract-btn"
                                 initialState={{open:issue.status=='New'}}
-                                onChange={this.updateObjectField('supplier')}
+                                onChange={this.updateObjectField('_contractor')}
                             />
 
                             {!supplier?null:

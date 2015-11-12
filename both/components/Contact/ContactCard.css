@@ -17,20 +17,9 @@
 	width:35px;
 }
 
-.contacts-page .grid-item {
-	background: none;
-	box-shadow: none;
-	border:none;
-}
-
-.contacts-page .grid-item:hover .card-header {
-	background:transparent;
-}
-
 .business-card {
 	padding:10px;
 	position:relative;
-	background-color:#fff;
 	overflow:hidden;
  	color:#000;
  	opacity:1;
