@@ -47,6 +47,12 @@
 // Your custom style to override base style
 @import "globals/custom.import.less";
 
+
+
+body.md-skin {
+	background-color:#CED7E0;
+}
+
 .inline-form-control {
 	margin:0;
 	padding:0;
@@ -59,6 +65,7 @@
 	background-color:transparent;
 	resize:none;
 	overflow:hidden;
+	color:#333;
 }
 
 textarea.inline-form-control {
@@ -127,10 +134,6 @@ textarea.inline-form-control {
 	margin:6px 18px;
 }
 
-body.mini-navbar .navbar-header.navbar-logo {
-	width:50px;
-}
-
 ul#side-menu {
 	margin-top:10px;
 }
@@ -183,10 +186,13 @@ ul#side-menu {
 
 body.fixed-sidebar.mini-navbar .nav-label, body.fixed-sidebar.mini-navbar .navbar-default .nav li a span {
     opacity:0;
+    background-color:#fff;
 }
 
 body.fixed-nav #wrapper .navbar-static-side {
 	overflow:hidden;
+	position:fixed;
+	background-color:#fff;
 }
 
 .md-skin.fixed-sidebar.mini-navbar .navbar-static-side {
@@ -201,6 +207,11 @@ body.fixed-nav #wrapper .navbar-static-side {
 	margin-right:20px;
 }
 
+body.fixed-nav #wrapper .navbar-static-side {
+	padding-top:5px;
+}
+
+body.fixed-nav #wrapper .navbar-static-side,
 body.fixed-nav #wrapper #page-wrapper {
 	margin-top:55px;
 }

@@ -74,7 +74,7 @@ TeamPage = React.createClass({
 						items={this.data.members}
 						itemView={{
 							summary:ContactCard,
-							detail:ContactSummary
+							detail:UserProfileWidget
 						}}
 					/>
 				</div>

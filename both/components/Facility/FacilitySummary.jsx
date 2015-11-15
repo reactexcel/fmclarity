@@ -16,20 +16,20 @@ FacilitySummary = React.createClass({
 					<input type="checkbox" />
 				</div>*/}
 				<div className="facility-thumbnail pull-left">
-				    <img style={{width:"40px","borderRadius":"2px"}} alt="image" src={"img/building-"+facility.thumb+".jpg"} />
+				    <img style={{width:"40px"}} alt="image" src={"img/"+facility.thumb} />
 				 </div>
 				 <div className="facility-info">
 					<a href="#">
 						{facility.name}
 					</a>
 					<br/>
-					<small>
+					<span>
 						{contact.name}&nbsp;&nbsp;
 						<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 						{contact.email}&nbsp;&nbsp;
 						<i className="fa fa-phone"></i>&nbsp;&nbsp;
 						{contact.phone}
-					</small>
+					</span>
 			    </div>
 			</div>
 		)

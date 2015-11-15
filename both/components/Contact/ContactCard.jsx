@@ -36,13 +36,13 @@ ContactCard = React.createClass({
 	           	</div>
 			);
 			default:return (
-	            <small className="contact-card contact-card-1line">
+	            <span className="contact-card contact-card-1line">
 	              {profile.name}&nbsp;&nbsp;
 	              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
 	              {profile.email}&nbsp;&nbsp;
 	              <i className="fa fa-phone"></i>&nbsp;&nbsp;
 	              {profile.phone}
-	            </small>
+	            </span>
 	        );
 		}
 	}

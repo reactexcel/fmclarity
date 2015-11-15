@@ -2,10 +2,6 @@ Notifications = React.createClass({
 
     render() {
         return (
-                <li className="dropdown">
-                    <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i className="fa fa-bell"></i>  <span className="label label-warning">3</span>
-                    </a>
                     <ul className="dropdown-menu dropdown-messages">
                         <li>
                             <div className="dropdown-messages-box">
@@ -54,8 +50,6 @@ Notifications = React.createClass({
                             </div>
                         </li>
                     </ul>
-                </li>
-
         )
     }
 });
@@ -145,6 +139,12 @@ TopNavBar = React.createClass({
                     </a>
                 </li>
                 */}
+                <li className="dropdown">
+                    <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                        <i className="fa fa-bell"></i>  <span className="label label-warning">3</span>
+                    </a>
+                    <Notifications />
+                </li>
                 <li className="dropdown">
                     <a style={{padding:"8px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         {/*<img style={{width:"40px"}} alt="image" className="img-circle" src="img/profile-nothumb.png" />*/}

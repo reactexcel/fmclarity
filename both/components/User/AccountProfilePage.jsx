@@ -7,34 +7,109 @@ AccountProfile = React.createClass({
 		}
 	},
 
-	getForm() {
-		return [
-			{
-				key:"name",
-				type:"text"
-			},
-			{
-				key:"email",
-				type:"text"
-			},
-			{
-				key:"phone",
-				type:"text"
-			},
-			{
-				key:"abn",
-				type:"text"
-			},
-			{
-				key:"type",
-				type:"text"
+	form1 : [
+		{
+			key:"name",
+			type:"mdtext"
+		},
+		{
+			key:"abn",
+			type:"mdtext"
+		},
+		{
+			key:"contactName",
+			type:"mdtext"
+		},
+		{
+			key:"email",
+			type:"mdtext"
+		}
+	],
+
+	form2 : [
+		{
+			key:"website",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"facebook",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"addressLine1",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"addressLine2",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"city",
+			type:"mdtext",
+			cols:3
+		},
+		{
+			key:"state",
+			type:"mdtext",
+			cols:3
+		},
+		{
+			key:"country",
+			type:"mdtext",
+			cols:3
+		},
+		{
+			key:"postcode",
+			type:"mdtext",
+			cols:3
+		},
+		{
+			key:"headline",
+			type:"textarea",
+		},
+		{
+			key:"bio",
+			type:"textarea",
+		},
+		{
+			key:"references",
+			type:"textarea",
+		},
+		{
+			key:"services",
+			type:"select"
+		},
+		{
+			key:"areasServiced",
+			type:"select"
+		},
+		{
+			key:"defaultWorkOrderValue",
+			type:"dltext"
+		},
+		{
+			key:"activeModules",
+			type:"switchbank",
+			options:{
+				labels:[
+					"Work request",
+					"PMP",
+					"ABC",
+					"Contractor login",
+					"Reports",
+					"Sustainability",
+					"Utilities"
+				]
 			}
-		]
-	},
+		}
+	],
 
 	componentDidMount() {
 		var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
-
 		elems.forEach(function(html) {
 		  var switchery = new Switchery(html, {size:'small',color:'#db4437'});
 		});
@@ -58,43 +133,18 @@ AccountProfile = React.createClass({
 		            </div>
 			   	</div>
 			   	<div className="row">
-			        <div className="col-lg-7">
-			        	<AutoForm item={profile} schema={schema} form={this.getForm()} save={this.save()} />
+			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+			        	<AutoForm item={profile} schema={schema} form={this.form1} save={this.save()} />
 			        </div>
 			        <div className="col-lg-5">
 						<div className="contact-thumbnail">
-							<img style={{width:"100%"}} alt="image" src={"img/"+profile.thumb}/>
+							<img style={{width:"93%"}} alt="image" src={"img/"+profile.thumb}/>
 						</div>
 					</div>
 				</div>
 				<div className="row">
 			        <div className="col-lg-12">
-		            	<h4 className="background"><span>About {team.name}</span></h4>
-		            	<textarea className="inline-form-control" defaultValue={profile.bio} onChange={this.save()}></textarea>
-		            </div>
-				</div>
-				<div className="row">
-			        <div className="col-lg-12">
-		            	<h4 className="background"><span>Change Password</span></h4>
-		            	<dl className="dl-horizontal">
-		            		<dt>Old password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            		<dt>New password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            		<dt>Confirm new password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            	</dl>
-		            </div>
-				</div>
-				<div className="row">
-			        <div className="col-lg-12">
-		            	<h4 className="background"><span>Options</span></h4>
-						<label>Something</label><input type="checkbox" defaultChecked={true} className="js-switch" /><br/>
-						<label>Something</label><input type="checkbox" defaultChecked={false} className="js-switch" /><br/>
-						<label>Something</label><input type="checkbox" defaultChecked={true} className="js-switch" /><br/>
-						<label>Something</label><input type="checkbox" defaultChecked={false} className="js-switch" /><br/>
-						<label>Something</label><input type="checkbox" defaultChecked={true} className="js-switch" /><br/>
-						<label>Something</label><input type="checkbox" defaultChecked={false} className="js-switch" /><br/>
+			        	<AutoForm item={profile} schema={schema} form={this.form2} save={this.save()} />
 		            </div>
 				</div>
 			</div>
@@ -103,55 +153,16 @@ AccountProfile = React.createClass({
 });
 
 AccountProfileWidget= React.createClass({
-	getInitialState() {
-		return {
-			edit:false
-		}
-	},
-
-	toggleEdit() {
-		this.refs.card.classList.toggle("flip");
-	},
-
 	render() {
-		var team = this.props.item;
 		return (
-			<div ref="card" className="flip-container">
-				<div className="flipper">
-					<div className="front">
-			            <div className="ibox" style={{backgroundColor:"#fff",padding:"10px"}}>
-							<ContactSummary item={team}/>
-							<a onClick={this.toggleEdit} style={{
-								position:"absolute",
-								right:"5px",
-								top:0,
-								fontSize:"15px",
-								color:"#ddd"
-							}} onClick={this.toggleEdit}>
-								<i className="fa fa-cog"></i> Edit
-							</a>
-			            </div>
-		            </div>
-					<div className="back">
-			            <div className="ibox" style={{backgroundColor:"#eee",padding:"20px"}}>
-							<AccountProfile item={team}/>
-							<a onClick={this.toggleEdit} style={{
-								position:"absolute",
-								right:"5px",
-								top:0,
-								fontSize:"15px",
-								color:"#ddd"
-							}} onClick={this.toggleEdit}>
-								<i className="fa fa-eye"></i> View
-							</a>
-			            </div>
-		            </div>
-	            </div>
-            </div>
+			<FlipWidget
+				front={ContactSummary}
+				back={AccountProfile}
+				item={this.props.item}
+			/>
 		)
 	}
 });
-
 
 AccountProfilePage = React.createClass({
 
@@ -173,7 +184,11 @@ AccountProfilePage = React.createClass({
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6 col-md-6 col-sm-6">
-		            	<AccountProfileWidget item={this.data.team}/>
+						<FlipWidget
+							front={AccountProfile}
+							back={ContactSummary}
+							item={this.data.team}
+						/>
 					</div>
 				</div>
 			</div>

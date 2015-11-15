@@ -1,5 +1,34 @@
 IssueSummary = React.createClass({
 
+  mixins: [ReactMeteorData],
+
+  getMeteorData() {
+    var issue = this.props.item;
+    if(!issue) {
+      return {
+        ready:false
+      }
+    }
+    else {
+      var status = issue.status;
+      var statusClass = 
+        status=='New'?'success':
+        status=='Issued'?'warning':
+        status=='Open'?'danger':
+        status=='Closed'?'info':'';
+
+      return {
+        ready:true,
+        issue:issue,
+        facility:issue.getFacility(),
+        contact:issue.getContact(),
+        supplier:issue.getContractor(),
+        status:status,
+        statusClass:statusClass
+      }
+    }
+  },
+
   updateField(field) {
     var $this = this;
     // returns a function that modifies 'field'
@@ -10,34 +39,19 @@ IssueSummary = React.createClass({
   },
 
   render() {
-      var issue = this.item = this.props.item;
-      var facility = issue._facility;
-      var contact = issue.contact;
-      var supplier = issue.getContractor();
-      var status = issue.status;
-
-
-      var statusClass = 
-        status=='New'?'success':
-        status=='Issued'?'warning':
-        status=='Open'?'danger':
-        status=='Closed'?'info':'';
-
-    var shouldShowFacility = true;
-    var selectedFacility = Session.get("selectedFacility");
-    if(selectedFacility&&selectedFacility.address) {
-      shouldShowFacility = false;
-    }
-
-      return (
+      if(this.data.ready) {
+        var issue = this.item = this.data.issue;
+        var facility = this.data.facility;
+        var contact = this.data.contact;
+        var supplier = this.data.supplier;
+        var statusClass = this.data.statusClass;
+        return (
         <div className={"issue-summary issue-status-"+status}>
-          {!shouldShowFacility?null:
-            <div className="issue-summary-col issue-summary-col-1">
-              <span className="issue-summary-facility-name">
-                {facility.name}
-              </span>
-            </div>
-          }
+          <div className="issue-summary-col issue-summary-col-1">
+            <span className="issue-summary-facility-name">
+              {facility.name}
+            </span>
+          </div>
           <div className="issue-summary-col issue-summary-col-2">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
             {issue.priority!='Urgent'?null:
@@ -50,12 +64,13 @@ IssueSummary = React.createClass({
             {moment(issue.createdAt).fromNow()}
           </div>
           <div className="issue-summary-col issue-summary-col-3">
-            {status=='New'?null:
+            {issue.status=='New'?null:
               <ContactCard item={supplier} view="avatar" />
             }
           </div>
         </div>
-    )
+      )
+    }
   }
 
 });

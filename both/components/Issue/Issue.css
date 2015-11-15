@@ -20,14 +20,6 @@
 	padding-top:10px;
 }
 
-.dl-horizontal dt {
-	width:90px;
-}
-
-.dl-horizontal dd {
-    margin-left: 110px;
-}
-
 .issue-summary-col-2 {
 	padding-top:10px;
 	width:65%;
@@ -35,14 +27,21 @@
 
 .issue-summary-col-3 {
 	float:right;
-	width:40px;
+	width:5%;
 }
 
 .issue-summary-col-4 {
 	padding-top:10px;
 	float:right;
-	text-align: right;
 	width:10%;
+}
+
+.dl-horizontal dt {
+	width:90px;
+}
+
+.dl-horizontal dd {
+    margin-left: 110px;
 }
 
 .issue-status-New .issue-summary-facility-name {

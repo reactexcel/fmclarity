@@ -40,7 +40,7 @@ PageProperties = React.createClass({
 						items={this.data.items}
 						itemView={{
 							summary:FacilitySummary,
-							detail:FacilityDetail
+							detail:FacilityProfileWidget
 						}}
 						newItemCallback={this.createNew}
 					/>

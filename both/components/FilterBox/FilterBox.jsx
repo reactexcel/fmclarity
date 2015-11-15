@@ -83,7 +83,7 @@ FilterBox = React.createClass({
                   <div 
                     key={i._id}
                     style={{padding:0}}
-                    className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
+                    className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
                   >
                     <CardWrapper 
                       item={i}

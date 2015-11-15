@@ -10,12 +10,12 @@
   box-shadow:none;
 }
 
-.md-skin .filter-box.ibox > .ibox-title,
-.md-skin .filter-box-2.ibox > .ibox-title {
-  border-bottom:1px solid #bbb;
+.md-skin .filter-box.ibox > .ibox-title {
+  border-bottom:1px solid #ddd;
   background-color:#eee;
   padding:0;
 }
+
 
 .md-skin .filter-box.ibox > .ibox-content {
   background-color:transparent;
@@ -25,7 +25,7 @@
   background: #fff;
   color: #262524;
   /*border-left:5px solid #ccc;*/
-  border-top:1px solid #eee;
+  /*border-top:1px solid #eee;*/
   border-bottom:1px solid #ddd;
   padding:0;
 }
@@ -49,12 +49,25 @@
 }
 
 .card-table-header {
-  font-weight: bold;
-  overflow:hidden;
-  padding-left:25px;
-  padding-right:55px;
-  font-size:smaller;
-  border-left:5px solid #aaa;
+    font-weight: bold;
+    font-size: 12px;
+    min-height: 48px;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    padding-top: 16px;
+    padding-left: 37px;
+    padding-right:18px;
+    color: #999;
+}
+
+.card-table-header > div {
+  margin:0!important;
+  padding:0!important;
+  text-align:left!important;
+  border:2px solid #fff;
+  position:relative;
+  left:-2px;
+  top:-2px;
 }
 
 .grid-item:hover .card-header,
@@ -78,6 +91,7 @@
 .card-header {
   overflow:hidden;
   -webkit-user-select: none;
+  min-height:48px;
 }
 
 .card-header-summary {

@@ -1,5 +1,14 @@
 CHANGELOG.md
 
+v0.2.2a
+- Member and team/contractor profile restyled using material design guidelines, now contains all required form elements (although some are placeholders)
+- Facilities profile restyled using material design, contains all basic form elements
+- Work order table header restyled to match material design guidelines
+- Contractors now see the issues that are assigned to them (after they are issued) - tesy by assigning issue to normal contractors and issuing it - then switching team to "normal contractors"
+- Contractors can now navigate through the facilities from the issues assigned to them
+- Minor global layout changes
+- Changed "team blah" to kaplan and added their logo
+
 v0.2.1a
 - Moved the hamburger (so to speak)
 - Fixed bug where fields were being deselected after typing one letter

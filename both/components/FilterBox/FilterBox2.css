@@ -1,5 +1,4 @@
 .md-skin .filter-box-2.ibox {
-	padding:10px;
 	background-color:#fff;
 }
 
@@ -12,5 +11,10 @@
 }
 
 .table-row:last-child > .grid-item {
-	border:none;
+	border-bottom:none;
+}
+
+.md-skin .filter-box-2.ibox > .ibox-title {
+	border-bottom:1px solid #ddd;
+	padding:0;
 }

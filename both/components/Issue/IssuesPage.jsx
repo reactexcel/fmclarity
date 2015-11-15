@@ -3,6 +3,9 @@ PageRequests = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+        Meteor.subscribe('contractors');
+        Meteor.subscribe('services');
+        Meteor.subscribe('teamsAndFacilitiesForUser');
 	    var issues;
     	if(Meteor.user()) {
 	        var facility = Meteor.user().getSelectedFacility();
@@ -22,10 +25,16 @@ PageRequests = React.createClass({
     },
 
     createNewIssue() {
-        var selectedFacility = Session.get("selectedFacility") || {
-        	name:"Select Facility"
-        };
-    	Meteor.call("Issue.new",{_facility:selectedFacility});
+        var selectedFacility = Meteor.user().getSelectedFacility();
+        if(selectedFacility) {
+	    	Meteor.call("Issue.new",{
+	    		_facility:{
+	    			_id:selectedFacility._id,
+	    			name:selectedFacility.name
+	    		},
+	    		_team:selectedFacility._team
+	    	});
+	    }
     },
 
 	render() {

@@ -1,5 +1,5 @@
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 100;
+  font-weight: 400;
 }
 
 h1 {
@@ -30,3 +30,61 @@ h3, h4, h5 {
   margin-top: 5px;
   font-weight: 600;
 }
+
+h2.background {
+    position: relative;
+    z-index: 1;
+    
+    &:before {
+        border-top: 1px solid #ddd;
+        content:"";
+        margin: 0 auto; /* this centers the line to the full width specified */
+        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+        top: 13px; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    span { 
+        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
+        background: #fff; 
+        padding: 0 3px; 
+        /*margin-left: 14px;*/
+        position:relative;
+        left:14px;
+    }
+}
+
+h4.background {
+    position: relative;
+    z-index: 1;
+
+    text-transform: uppercase;
+    margin:10px 0;
+    
+    &:before {
+        border-top: 1px solid #ddd;
+        content:"";
+        margin: 0 auto; /* this centers the line to the full width specified */
+        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+        top: 50%; left: 0; right: 0; bottom: 0;
+        width: 100%;
+        z-index: -1;
+    }
+
+    span { 
+        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
+        background: #fff; 
+        padding: 0 3px; 
+        margin-left: 14px;
+
+        span {
+        	margin:0;
+        	padding:0;
+        	background:#fff;
+        }
+
+    }
+}
+
+

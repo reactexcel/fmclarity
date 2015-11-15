@@ -1,4 +1,3 @@
 Accounts.onLogin(function(user){
-	console.log(Meteor.userId());
-
+	//console.log(Meteor.userId());
 });

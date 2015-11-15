@@ -5,21 +5,84 @@ var validEmails = {
   'fmclarity.com':'*'
 };
 
-
 Schema.TeamProfile = new SimpleSchema({
     name: {
       type: String,
-      label: "Team Name",
-      optional: true
+      label: "Company Name"
+    },
+    abn: {
+      type: String,
+      label: "ABN",
+      optional:true
+    },
+    contactName: {
+      type: String,
+      label: "Contact name",
+      optional:true
     },
     email: {
       type: String,
       label: "Email",
       regEx: SimpleSchema.RegEx.Email
     },
+    website: {
+      type: String,
+      label: "Website",
+      optional:true
+    },
+    facebook: {
+      type: String,
+      label: "Facebook",
+      optional:true
+    },
     phone: {
       type: String,
       label: "Phone",
+      optional:true
+    },
+    addressLine1 :{
+      type: String,
+      label: "Address line 2",
+      optional:true
+    },
+    addressLine2 :{
+      type: String,
+      label: "Address line 2",
+      optional:true
+    },
+    city :{
+      type: String,
+      label: "City/Suburb",
+      optional:true
+    },
+    state :{
+      type: String,
+      label: "State",
+      optional:true
+    },
+    country :{
+      type: String,
+      label: "Country",
+      optional:true
+    },
+    postcode :{
+      type: String,
+      label: "Postcode/ZIP",
+      optional:true
+    },
+    headline : {
+      type: String,
+      label: "My headline",
+      optional:true
+    },
+    bio : {
+      type: String,
+      label: "Short bio",
+      optional:true
+    },
+    references : {
+      type: String,
+      label: "References",
       optional:true
     },
     thumb: {
@@ -29,17 +92,39 @@ Schema.TeamProfile = new SimpleSchema({
     },
     type: {
       type: String,
-      label: "Account type"
+      label: "Account type",
+      optional:true
     },
-    abn: {
-      type: String,
-      label: "ABN"
+    defaultWorkOrderValue: {
+      type: Number,
+      label: "Default value for work orders",
+      optional:true,
+    },
+    services : {
+      type: [String],
+      label: "Services",
+      optional:true
+    },
+    areasServiced : {
+      type: [String],
+      label: "Places serviced",
+      optional:true
+    },
+    activeModules: {
+      type: [Object],
+      label: "Active modules",
+      optional:true
     }
 });
 
 
 if (Meteor.isServer) {
+  // could define make code more dry by generating these for all collections on startup
   Meteor.methods({
+    "Team.save": function(item) {
+      item.isNewItem = false;
+      Teams.upsert(item._id, {$set: _.omit(item, '_id')});
+    },
     "Team.inviteMember": function(item,email) {
       var user = Accounts.findUserByEmail(email);
       var uid;
@@ -52,10 +137,10 @@ if (Meteor.isServer) {
         var server = temp[1];
         var isValidEmail = validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0));
         if(isValidEmail) {
-          uid = Accounts.createUser({email:email,profile:{
+          uid = Meteor.call("User.new",{
             name:name,
             email:email
-          }});
+          });
           Accounts.sendEnrollmentEmail(uid);
         }
         else {
@@ -76,10 +161,6 @@ var defaults = {
 }
 
 Meteor.methods({
-  "Team.save": function(item) {
-    item.isNewItem = false;
-    Teams.upsert(item._id, {$set: _.omit(item, '_id')});
-  },
   "Team.destroy":function(item) {
     Teams.remove(item._id);
   },
@@ -100,19 +181,19 @@ Meteor.methods({
 });
 
 Teams.helpers({
-  save:function(){
+  save(){
     Meteor.call('Team.save',this);
   },
-  destroy:function() {
+  destroy() {
     Meteor.call('Team.destroy',this);
   },
-  inviteMember:function(email) {
+  inviteMember(email) {
     return Meteor.call('Team.inviteMember',this, email)
   },
   getProfile() {
     return this;
   },
-  getMembers:function() {
+  getMembers() {
     if (this._members.length) {
     	return Users.find({
     		$or:this._members
@@ -120,13 +201,18 @@ Teams.helpers({
     }
     return [];
   },
-  addMember:function(item) {
+  addMember(item) {
     Meteor.call('Team.addMember',this,item);
   },
-  getFacilities:function() {
-    return Facilities.find({"_team._id":this._id}).fetch();
+  getFacilities() {
+    if(this.type=="contractor") {
+      return this.getContractorFacilities();
+    }
+    else {
+      return Facilities.find({"_team._id":this._id}).fetch();
+    }
   },
-  addFacility:function(item) {
+  addFacility(item) {
     return Meteor.call('Team.addFacility',this,item);
   },
   getFacility(i) {
@@ -134,8 +220,28 @@ Teams.helpers({
     return facilities[i];
   },
   getIssues() {
-    return Issues.find({"_team._id":this._id}).fetch();
-  }
+    if(this.type=="contractor") {
+      return this.getContractorIssues();
+    }
+    else {
+      return Issues.find({"_team._id":this._id}).fetch();
+    }
+  },
+  getContractorIssues() {
+    return Issues.find({"_contractor._id":this._id,status:{$ne:"New"}}).fetch();
+  },
+  getContractorFacilities() {
+    var issues, facilityQueries, facilities;
+      issues = this.getContractorIssues();
+      if(issues&&issues.length) {
+        facilityQueries = [];
+        issues.map(function(i){
+          facilityQueries.push(i._facility);
+        });
+        facilities = Facilities.find({$or:facilityQueries}).fetch();
+      }
+      return facilities;
+  },
 });
 
 Teams.before.insert(function (userId, doc) {

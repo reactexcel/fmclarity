@@ -52,6 +52,10 @@ FilterBox2 = React.createClass({
 
     var selectedFilterNum = $this.state.selectedFilterNum;
     var initialItems = $this.props.items;
+
+
+    //console.log(initialItems);
+
     var items = $this.applyFilter(initialItems);
     var numCols = parseInt(this.props.numCols) || 1;
     var colSize = Math.floor(12 / numCols);
@@ -108,16 +112,12 @@ FilterBox2 = React.createClass({
     		</div>
     	</div>
     	<div className="col-lg-6" style={{paddingLeft:"5px"}}>
-    		<div className="filter-box-2-detail-pane ibox">
-    			<div className="ibox-content">
     				{this.state.selectedItem?
 			        <CardBodyWrapper
 			            item={this.state.selectedItem}
 			            view={this.props.itemView.detail}
 			        />
 			        :null}
-    			</div>
-    		</div>
     	</div>
     </div>
     )

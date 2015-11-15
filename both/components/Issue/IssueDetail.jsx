@@ -5,9 +5,6 @@ IssueDetail = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        Meteor.subscribe('contractors');
-        Meteor.subscribe('services');
-        Meteor.subscribe('facilities');
         return {
             services : Services.find({},{sort:{name:1}}).fetch(),
             suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),

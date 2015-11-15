@@ -8,34 +8,37 @@ UserProfile = React.createClass({
 		}
 	},
 
-	getForm() {
-		return [
-			{
-				key:"firstName",
-				type:"text"
-			},
-			{
-				key:"lastName",
-				type:"text"
-			},
-			{
-				key:"name",
-				type:"text"
-			},
-			{
-				key:"email",
-				type:"text"
-			},
-			{
-				key:"phone",
-				type:"text"
-			},
-			{
-				key:"dob",
-				type:"date"
-			}
-		]
-	},
+	form1 : [
+		{
+			key:"firstName",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"lastName",
+			type:"mdtext",
+			cols:6
+		},
+		{
+			key:"name",
+			type:"mdtext"
+		},
+		{
+			key:"email",
+			type:"mdtext"
+		},
+		{
+			key:"phone",
+			type:"mdtext"
+		}
+	],
+
+	form2 : [
+		{
+			key:"bio",
+			type:"textarea"
+		}
+	],
 
 	render() {
 		var user, profile, schema;
@@ -48,92 +51,39 @@ UserProfile = React.createClass({
 			return <div/>
 		}
 		return (
-		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
+		    <div className="user-profile-card">
 			    <div className="row">
 			        <div className="col-lg-12">
 		            	<h2 className="background"><span>{profile.name}</span></h2>
 		            </div>
 			   	</div>
 			   	<div className="row">
-			        <div className="col-lg-7">
-			        	<AutoForm item={profile} schema={schema} form={this.getForm()} save={this.save()} />
+			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+			        	<AutoForm item={profile} schema={schema} form={this.form1} save={this.save()} />
 			        </div>
 			        <div className="col-lg-5">
 						<div className="contact-thumbnail">
 							<img style={{width:"100%"}} alt="image" src={"img/"+profile.thumb}/>
 						</div>
 					</div>
-				</div>
-				<div className="row">
 			        <div className="col-lg-12">
-		            	<h4 className="background"><span>About Me</span></h4>
-		            	<textarea className="inline-form-control" defaultValue={user.bio} onChange={this.save()}></textarea>
-		            </div>
-				</div>
-				<div className="row">
-			        <div className="col-lg-12">
-		            	<h4 className="background"><span>Change Password</span></h4>
-		            	<dl className="dl-horizontal">
-		            		<dt>Old password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            		<dt>New password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            		<dt>Confirm new password</dt>
-		            		<dd><input type="password" className="inline-form-control"/></dd>
-		            	</dl>
-		            </div>
+			        	<AutoForm item={profile} schema={schema} form={this.form2} save={this.save()} />
+			        </div>
 				</div>
 			</div>
 		)
 	}
 });
 
+
 UserProfileWidget= React.createClass({
-	getInitialState() {
-		return {
-			edit:false
-		}
-	},
-
-	toggleEdit() {
-		this.refs.card.classList.toggle("flip");
-	},
-
 	render() {
-		var user = this.props.item;
 		return (
-			<div ref="card" className="flip-container">
-				<div className="flipper">
-					<div className="front">
-			            <div className="ibox" style={{backgroundColor:"#fff",padding:"10px"}}>
-							<ContactSummary item={user}/>
-							<a onClick={this.toggleEdit} style={{
-								position:"absolute",
-								right:"5px",
-								top:0,
-								fontSize:"15px",
-								color:"#ddd"
-							}} onClick={this.toggleEdit}>
-								<i className="fa fa-cog"></i> Edit
-							</a>
-			            </div>
-		            </div>
-					<div className="back">
-			            <div className="ibox" style={{backgroundColor:"#eee",padding:"20px"}}>
-							<UserProfile item={user}/>
-							<a onClick={this.toggleEdit} style={{
-								position:"absolute",
-								right:"5px",
-								top:0,
-								fontSize:"15px",
-								color:"#ddd"
-							}} onClick={this.toggleEdit}>
-								<i className="fa fa-eye"></i> View
-							</a>
-			            </div>
-		            </div>
-	            </div>
-            </div>
+			<FlipWidget
+				front={ContactSummary}
+				back={UserProfile}
+				item={this.props.item}
+			/>
 		)
 	}
 });
@@ -153,7 +103,11 @@ UserProfilePage = React.createClass({
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6 col-md-6 col-sm-6">
-		            	<UserProfileWidget item={this.data.user} />
+						<FlipWidget
+							front={UserProfile}
+							back={ContactSummary}
+							item={this.data.user}
+						/>
 					</div>
 				</div>
 			</div>

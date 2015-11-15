@@ -10,8 +10,7 @@ if (Meteor.isServer) {
 Schema.UserProfile = new SimpleSchema({
     name: {
       type: String,
-      label: "Display name",
-      optional: true
+      label: "Display name"
     },
     email: {
       type: String,
@@ -35,7 +34,7 @@ Schema.UserProfile = new SimpleSchema({
     },
     lastName: {
         type: String,
-        label: "Surname",
+        label: "Last Name",
         optional: true
     },
     dob: {
@@ -50,6 +49,7 @@ Schema.UserProfile = new SimpleSchema({
     },
     bio: {
         type: String,
+        label: "About me",
         optional: true
     }
 });
@@ -123,10 +123,12 @@ Meteor.methods({
   },
   "User.new":function(item) {
     // this should employ createuser (move out of team model)
-    newItem = _.extend({},item,{
-      
+    return Accounts.createUser({
+      email:item.email,
+      profile:_.extend({
+        thumb:"ProfilePlaceholderSuit.png"
+      },item)
     });
-    Users.insert(newItem);
   }
 })
 
@@ -145,17 +147,21 @@ Users.helpers({
     return teams[i];
   },
   getProfile() {
-    return this.profile||{}
+    if(!this.profile._id) {
+      this.profile._id = this._id;
+    }
+    return this.profile;
   },
   selectTeam(team) {
-    Session.set('selectedTeam',team);
+    Session.set('selectedTeam',{_id:team._id});
     Session.set('selectedFacility',0);
   },
   getSelectedTeam() {
-    return Teams.findOne(Session.get('selectedTeam'));
+    var selectedTeamQuery = Session.get('selectedTeam');
+    return Teams.findOne(selectedTeamQuery);
   },
   selectFacility(facility) {
-    Session.set('selectedFacility',facility);
+    Session.set('selectedFacility',{_id:facility._id});
   },
   getSelectedFacility() {
     return Facilities.findOne(Session.get('selectedFacility'));
