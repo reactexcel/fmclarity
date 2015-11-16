@@ -7,6 +7,75 @@ ContactViewName = React.createClass({
 	}
 })
 
+ContactAvatarSmall = React.createClass({
+	render() {
+		var contact, profile;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		return (
+			<div className="contact-card-avatar">
+			{profile?
+				<img alt="image" title={profile.name} data-toggle="tooltip" src={profile.thumb}/>
+			:
+				<div style={{width:"35px",height:"35px",border:"1px solid #ddd",borderRadius:"50%",backgroundColor:"#eee"}}/>
+			}
+			</div>
+		)
+	}
+
+});
+
+Contact2LineWithAvatar = React.createClass({
+	render() {
+		var contact, profile;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		if(!profile) {
+			return <div />
+		}
+		return (
+			<div className="contact-card contact-card-2line">
+				<ContactAvatarSmall item={contact} />
+				<div className="contact-card-2line-text">
+		        	{profile.name}<br/>
+		        	<span style={{fontSize:"11px",color:"#777"}}>
+		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
+		            	{profile.email}&nbsp;&nbsp;
+		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
+		            	{profile.phone}
+		            </span>
+		       	</div>
+	        </div>
+		)
+	}
+});
+
+Contact1Line = React.createClass({
+	render() {
+		var contact, profile;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		if(!profile) {
+			return <div />
+		}
+		return (
+            <span className="contact-card contact-card-1line">
+              {profile.name}&nbsp;&nbsp;
+              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
+              {profile.email}&nbsp;&nbsp;
+              <i className="fa fa-phone"></i>&nbsp;&nbsp;
+              {profile.phone}
+            </span>
+		)
+	}
+});
+
 ContactCard = React.createClass({
 	render() {
 		var contact,profile,view;
@@ -20,30 +89,14 @@ ContactCard = React.createClass({
 		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (
-				<div className="contact-card-avatar">
-					<img alt="image" title={profile.name} data-toggle="tooltip" src={"img/"+profile.thumb}/>
-				</div>
+				<ContactAvatarSmall item={contact} />
 			);
-			case '2-line':return (
-				<div className="contact-card contact-card-2line">
-					<div className="contact-card-avatar">
-						<img alt="image" src={"img/"+profile.thumb}/>
-					</div>
-					<div className="contact-card-2line-text">
-			            {profile.name}<br/>
-			            <i className="fa fa-envelope"></i>&nbsp;&nbsp;{profile.email}
-			       	</div>
-	           	</div>
+			case '1-line':return (
+				<Contact1Line item={contact} />
 			);
 			default:return (
-	            <span className="contact-card contact-card-1line">
-	              {profile.name}&nbsp;&nbsp;
-	              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
-	              {profile.email}&nbsp;&nbsp;
-	              <i className="fa fa-phone"></i>&nbsp;&nbsp;
-	              {profile.phone}
-	            </span>
+				<Contact2LineWithAvatar item={contact} />
 	        );
 		}
 	}
-})
+});

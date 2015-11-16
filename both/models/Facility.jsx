@@ -145,6 +145,9 @@ Facilities.helpers({
   getIssues() {
   	return Issues.find({"_facility._id":this._id}).fetch();
   },
+  getTeam() {
+  	return Teams.findOne(this._team);
+  },
   getIssueCount() {
   	return Issues.find({"_facility._id":this._id}).count();
   }

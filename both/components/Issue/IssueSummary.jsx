@@ -21,7 +21,7 @@ IssueSummary = React.createClass({
         ready:true,
         issue:issue,
         facility:issue.getFacility(),
-        contact:issue.getContact(),
+        creator:issue.getCreator(),
         supplier:issue.getContractor(),
         status:status,
         statusClass:statusClass
@@ -42,31 +42,36 @@ IssueSummary = React.createClass({
       if(this.data.ready) {
         var issue = this.item = this.data.issue;
         var facility = this.data.facility;
-        var contact = this.data.contact;
+        var creator = this.data.creator;
         var supplier = this.data.supplier;
         var statusClass = this.data.statusClass;
         return (
         <div className={"issue-summary issue-status-"+status}>
+
           <div className="issue-summary-col issue-summary-col-1">
-            <span className="issue-summary-facility-name">
-              {facility.name}
-            </span>
+            <ContactAvatarSmall item={creator} />
           </div>
+
           <div className="issue-summary-col issue-summary-col-2">
+            <ContactAvatarSmall item={supplier} />
+          </div>
+          <div className="issue-summary-col issue-summary-col-3">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
             {issue.priority!='Urgent'?null:
               <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
             }
+          </div>
+          <div className="issue-summary-col issue-summary-col-4">
+            <span className="issue-summary-facility-name">
+              {facility?facility.name:null}
+            </span>
+          </div>
+          <div className="issue-summary-col issue-summary-col-5">
             <span className="issue-summary-name">{issue.name}</span>
             <span className="issue-summary-description">{issue.description}</span>
           </div>
-          <div className="issue-summary-col issue-summary-col-4">
+          <div className="issue-summary-col issue-summary-col-6">
             {moment(issue.createdAt).fromNow()}
-          </div>
-          <div className="issue-summary-col issue-summary-col-3">
-            {issue.status=='New'?null:
-              <ContactCard item={supplier} view="avatar" />
-            }
           </div>
         </div>
       )

@@ -9,33 +9,29 @@ TODO (general)
 - Remove redundant JS libraries (that came with Inpinia)
 - Write test plan [login, click through each screen, create a work order, invote a user to a team]
 
+
 IN PROGRESS
-- Generate more extensive test data
+- Now generate more detailed test data for contractors on start up
+- Generate more extensive test data (Issues, Contractor teams, reviews/notifications)
+- Contractor cards should be set up to show team, rating, reviews, when browsing
+- Autogenerate creator for issues and add avatar to work order table
+- Autogenerate contact for facilities and add to facilities card
+- Add outstanding issues to facilities card
 
 v0.3.0a "Little Bob" (17/11/2015)
-- Contractor cards should be set up to show team, rating, reviews, when browsing
+- Should not reuse email addresses when generating user data
 - Users can add contacts for their team, users current active account influences contacts that can be seen
 - Accounts have a contact list of "preferred contractors" (v0.3.0a+ - these preferred contractors can be selected from contractor directory)
-
-- Conversations run over container into lower workorder, container doesn't appear to expand to fit
-
 - Make module selection options work
 - Contractors need to have a different menu view
-
 - All buildings no longer appearing
-
 - Remove browse button from dropdown boxes
 
 
-- Reinstate notifications
-- Work requests -  Can sorting and filtering be visible and easy rather than users having to open a dropdown? Ie have text buttons
-
-
-- Automatic completion of contractor based on type of repair
-- Populate comments and history sections with realistic info
-
-
 v0.4.0a "Demo v2"
+- Automatic completion of contractor based on type of repair
+- Setup discussion system
+- Populate comments and history sections with realistic info
 - Settings menu doesn't work very well in minimized view - should be tabbed subselection
 - iBoxes should be evently spaced (currrently the space in the centre iw bigger than the gutter)
 - Dashboard should look and feel more "cutting edge" with some cool looking D3 visualisations instead of graphs (TODO: find some examples)
@@ -52,7 +48,7 @@ v0.4.0a "Demo v2"
 - Demo users and their profiles
 
 v0.5.0a
-- Need a message system so that notifications can be accurate, and so that contractors can archive an order withough deleting it from managers view
+- Need a message system so that notifications can be accurate, and so that contractors can archive an order without deleting it from managers view
 - Facilities have their own team which may include members from another account - be it another paid FM Clarity account, or a contractor account, a facility that is created by a member of an account, by default, has that accounts members as its team - but this can be changed after facility creation
 - Facilities field autocompletes
 - Created "facilities selector" widget

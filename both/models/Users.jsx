@@ -125,6 +125,7 @@ Meteor.methods({
     // this should employ createuser (move out of team model)
     return Accounts.createUser({
       email:item.email,
+      name:item.name,
       profile:_.extend({
         thumb:"ProfilePlaceholderSuit.png"
       },item)

@@ -9,16 +9,28 @@ FilterBox = React.createClass({
 
   getInitialState() {
     return {
-      selectedFilterNum:0
+      selectedFilterNum:0,
+      selectedSortNum:2
     }
   },
 
   applyFilter(items) {
     var filters = this.props.filters;
-    if(filters) {
-      var filter = this.props.filters[this.state.selectedFilterNum].filter;
+    if(items&&filters) {
+      var filter = filters[this.state.selectedFilterNum].filter;
       if(filter) {
         return _.filter(items,filter);
+      }
+    }
+    return items;
+  },
+
+  applySort(items) {
+    var headers = this.props.headers;
+    if(items&&headers) {
+      var sort = headers[this.state.selectedSortNum].sort;
+      if(sort) {
+        return items.sort(sort);
       }
     }
     return items;
@@ -30,8 +42,15 @@ FilterBox = React.createClass({
     })
   },
 
+  setSort(sortNum) {
+    this.setState({
+      selectedSortNum:sortNum
+    })
+  },
+
   createNewItem() {
     this.setFilter(0);
+    this.setSort(2);
     this.props.newItemCallback();
   },
 
@@ -39,10 +58,14 @@ FilterBox = React.createClass({
     var $this = this;
     var title = $this.props.title;
     var filters = $this.props.filters;
+    var headers = this.props.headers;
 
     var selectedFilterNum = $this.state.selectedFilterNum;
+    var selectedSortNum = this.state.selectedSortNum;
     var initialItems = $this.props.items;
     var items = $this.applyFilter(initialItems);
+    items = $this.applySort(items);
+
     var numCols = parseInt(this.props.numCols) || 1;
     var colSize = Math.floor(12 / numCols);
 
@@ -63,7 +86,9 @@ FilterBox = React.createClass({
               className="card-button new-card-button pull-right"
             >+</button>
             {title?<h5>{title}</h5>:null}
+
             {!filters?null:
+
             <ol id="filters" className="breadcrumb" style={{backgroundColor:"transparent",padding:"15px 0 15px 20px"}}>
               {filters.map(function(i,index){
                 return (
@@ -72,8 +97,31 @@ FilterBox = React.createClass({
                   </li>
                 )
               })}
-            </ol>}
-            {!Header?null:<Header item={items[0]} />}
+            </ol>
+
+            }
+
+            {!headers?null:
+              <div className="card-table-header issue-card-table-header">
+              {headers.map(function(i,index){
+                return (
+                  <div 
+                    key={index}
+                    onClick={$this.setSort.bind(null,index)} 
+                    style={{color:(index==selectedSortNum)?'#000':'#999'}}  
+                    className={"issue-summary-col issue-summary-col-"+(index+1)}
+                  >
+                    <div>{i.text}</div>
+                    {index==selectedSortNum?
+                      <div style={{paddingLeft:"14px",position:"relative",top:"-10px",fontSize:"20px"}}><i className="fa fa-caret-down"></i></div>
+                      :null
+                    }                    
+                  </div>
+                )
+              })}
+              </div>
+            }
+
           </div>
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
@@ -185,12 +233,24 @@ CardWrapper = React.createClass({
     }
   },
 
+
+  markupCheckboxes() {
+    $(this.refs.iCheck).iCheck({
+      checkboxClass: 'icheckbox_square-grey'
+    });
+  },
+
+
   componentWillReceiveProps() {
     if(this.props.item.isNewItem) {
       this.setState({
         shouldExpand:true
       });
     }
+  },
+
+  componentDidMount() {
+    this.markupCheckboxes();
   },
 
   componentDidUpdate () {
@@ -210,6 +270,7 @@ CardWrapper = React.createClass({
   render() {
     var $this = this;
     var item = this.item = this.props.item;
+    var creator = this.item.getCreator?this.item.getCreator():{};
     var Summary = this.props.itemView.summary;
     var Detail = this.props.itemView.detail;
     return (
@@ -221,16 +282,24 @@ CardWrapper = React.createClass({
         }
       >
         <div className="card-header">
-          <div className="card-header-left-toolbar" style={{opacity:item.sticky?1:0.1,color:item.sticky?"blue":"#000"}}>
+        {/*
+          <div className="card-header-left-toolbar">
+            <div className="hide-on-hover" style={{position:"absolute",top:"7px",left:"7px"}}>
+              <ContactAvatarSmall item={creator} />
+            </div>
+            <div className="show-on-hover">
+              <input ref="iCheck" type="checkbox"/>
+            </div>
+          </div>
+        */}
+          <div className="card-header-right-toolbar">
             <div
+              style={{padding:"10px 5px 7px 13px",fontSize:"20px",opacity:item.sticky?1:0.1,color:item.sticky?"blue":"#000"}}
               onClick={this.toggleSticky}
               className="grid-item-select-button"
-              style={{padding:"10px 5px 7px 13px",fontSize:"20px"}}
             >
               <i className="fa fa-thumb-tack"></i>
             </div>
-          </div>
-          <div className="card-header-right-toolbar">
           {/*
             <button 
               onClick={this.toggle}

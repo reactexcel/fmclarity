@@ -55,8 +55,8 @@
     border-top: 1px solid #ddd;
     background-color: #fff;
     padding-top: 16px;
-    padding-left: 37px;
-    padding-right:18px;
+    padding-left: 5px;
+    padding-right:45px;
     color: #999;
 }
 
@@ -177,8 +177,8 @@
 
 .card-header-right-toolbar {
   float:right;
-  opacity:0.1;
-  padding:9px;
+  opacity:1;
+  padding-right:9px;
 }
 
 .card-body-right-toolbar {
@@ -192,7 +192,25 @@
 
 .card-header-left-toolbar {
   float:left;
-  opacity:0.1;
+  opacity:1;
+  width:40px;
+  padding:13px;
+}
+
+.card-header-left-toolbar .show-on-hover {
+  display:none;
+}
+
+.card-header-left-toolbar .hide-on-hover {
+  display:block;
+}
+
+.card-header-left-toolbar:hover .show-on-hover {
+  display:block;
+}
+
+.card-header-left-toolbar:hover .hide-on-hover {
+  display:none;
 }
 
 .grid-item:hover .card-header-right-toolbar, 
@@ -200,6 +218,6 @@
 .grid-item:hover .card-header-left-toolbar, 
 .grid-item.gigante .card-header-left-toolbar 
 {
-  opacity:0.3;
+  /*opacity:0.3;*/
 }
 

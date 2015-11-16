@@ -12,7 +12,7 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 		teamIds.push(t._id);
 	});
 	facilities = Facilities.find({"_team._id":{$in:teamIds}});
-	issues = Issues.find({"_team._id":{$in:teamIds}});
+	issues = Issues.find({"_team._id":{$in:teamIds}},{sort: {createdAt: -1}});
 	return [teams,facilities,issues];
 });
 

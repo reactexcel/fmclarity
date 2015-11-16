@@ -138,7 +138,7 @@ AccountProfile = React.createClass({
 			        </div>
 			        <div className="col-lg-5">
 						<div className="contact-thumbnail">
-							<img style={{width:"93%"}} alt="image" src={"img/"+profile.thumb}/>
+							<img style={{width:"93%"}} alt="image" src={profile.thumb}/>
 						</div>
 					</div>
 				</div>

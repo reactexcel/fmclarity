@@ -1,5 +1,24 @@
 CHANGELOG.md
 
+v0.2.4a
+- Test users now have avatars sourced from http://api.randomuser.me
+- Updated source code for various "user details" list and card views to improve compatibility
+- Detailed test data for issues generated on start up
+- Issue row restyled to show creator and better match material design guidelines
+- Every user generate portrait is now unique
+- Workorder : Conversations no longer run over container into lower workorder
+- Added notifications icon
+- Added sorting function to work order table
+- Randomised work order creation date an sorted work order table by date
+
+v0.2.3a 
+- Fixed a problem where contractor images were not displaying correctly in the work order table
+- Fixed an error that was causing the "new work order" button to fail
+- Fixed an issue that was causing the selected team to reset every time any team was edited
+- Can no longer create a work order for 'all facilities'
+- New users now have placeholder profile image
+- A selection of test users are now generated on startup and randomly assigned to teams
+
 v0.2.2a
 - Member and team/contractor profile restyled using material design guidelines, now contains all required form elements (although some are placeholders)
 - Facilities profile restyled using material design, contains all basic form elements

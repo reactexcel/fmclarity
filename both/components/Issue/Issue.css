@@ -13,27 +13,54 @@
 	white-space: nowrap;
 	padding-left:2px;
 	cursor: pointer;
+	padding-right:10px;
 }
 
+
+.card-table-header > .issue-summary-col {
+	height:30px;
+}
+
+/* creator */
 .issue-summary-col-1 {
-	width:20%;
-	padding-top:10px;
+	width:50px;
+	padding-top:2px;
+	padding-right:none;
 }
 
+/* contractor */
 .issue-summary-col-2 {
-	padding-top:10px;
-	width:65%;
+	width:50px;
+	padding-top:2px;
+	padding-right:none;
 }
 
+/* contactor */
 .issue-summary-col-3 {
-	float:right;
-	width:5%;
+	padding-top:10px;
+	width:55px;
+	padding-right:none;
 }
 
+/* facility */
 .issue-summary-col-4 {
 	padding-top:10px;
+	float:left;
+	width:20%;
+}
+
+/* issue */
+.issue-summary-col-5 {
+	padding-top:10px;
+	float:left;
+	width:45%;
+}
+
+/* when */
+.issue-summary-col-6 {
+	padding-top:10px;
 	float:right;
-	width:10%;
+	width:15%;	
 }
 
 .dl-horizontal dt {
@@ -61,11 +88,11 @@
 }
 
 .issue-page .grid-item.gigante {
-	height:600px;
+	height:700px;
 }
 
 .issue-page .new-grid-item.gigante {
-	height:600px;
+	height:700px;
 }
 
 .issue-page .dropzone {

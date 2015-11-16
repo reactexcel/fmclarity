@@ -23,7 +23,8 @@ FacilitySummary = React.createClass({
 						{facility.name}
 					</a>
 					<br/>
-					<span>
+					<span style={{fontSize:"11px",color:"#777"}}>
+						<b style={{color:"#000"}}>Contact </b>
 						{contact.name}&nbsp;&nbsp;
 						<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 						{contact.email}&nbsp;&nbsp;

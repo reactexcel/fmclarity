@@ -31,7 +31,7 @@ ContactSummary = React.createClass({
 					<input type="checkbox" />
 				</div>*/}
 				<div className="contact-thumbnail pull-left">
-				    <img alt="image" src={"img/"+contact.thumb} />
+				    <img alt="image" src={contact.thumb} />
 				 </div>
 				 <div className="contact-info">
 				 	<div>
