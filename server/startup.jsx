@@ -128,8 +128,8 @@ Meteor.startup(function(){
     }
 
     initializeCollections(
-        [Contacts, Services, Teams],
-        [ExampleContacts, ExampleServices, ExampleTeams]        
+        [Services, Teams],
+        [ExampleServices, ExampleTeams]        
     );
 
     var teams = Teams.find({type:"fm"}).fetch();
@@ -179,7 +179,7 @@ Meteor.startup(function(){
         };
 
         if(status!='New') {
-            ExampleIssues[i]._contractor = {
+            ExampleIssues[i]._supplier = {
                 _id:contractors[c]._id,
                 name:contractors[c].name
             };

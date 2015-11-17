@@ -228,7 +228,7 @@ Teams.helpers({
     }
   },
   getContractorIssues() {
-    return Issues.find({"_contractor._id":this._id,status:{$ne:"New"}}).fetch();
+    return Issues.find({"_supplier._id":this._id,status:{$ne:"New"}}).fetch();
   },
   getContractorFacilities() {
     var issues, facilityQueries, facilities;

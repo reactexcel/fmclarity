@@ -1,0 +1,27 @@
+Messages = FM.createCollection('Messages',{
+  name:{
+    type:String,
+    input:"mdtext",
+    label:"Title"
+  },
+  text:{
+    type:String,
+    input:"textarea",
+    label:"Message",
+  },
+  rating:{
+    type:Number,
+    input:"vote",
+    label:"Rating"
+  },
+  _creator:{
+    type:Object,
+    input:"contact",
+    label:"Creator"
+  },
+  _recipient:{
+    type:Object,
+    input:"contact",
+    label:"Recipient"
+  }
+});

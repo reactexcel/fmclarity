@@ -17,12 +17,16 @@ IssueSummary = React.createClass({
         status=='Open'?'danger':
         status=='Closed'?'info':'';
 
+      // note: in order to reduce the overhead of loading the creator
+      // supplier etc - we should denormalise the tables
+      // that is to say - any field we want to use in this context
+      // get saved directly in the issue doucment (thumbnail etc)
       return {
         ready:true,
         issue:issue,
         facility:issue.getFacility(),
         creator:issue.getCreator(),
-        supplier:issue.getContractor(),
+        supplier:issue.getSupplier(),
         status:status,
         statusClass:statusClass
       }

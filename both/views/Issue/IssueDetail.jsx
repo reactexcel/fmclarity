@@ -72,7 +72,7 @@ IssueDetail = React.createClass({
         var facility = issue._facility;
         var createdAt = moment(issue.createdAt).calendar();
         var contact = issue.contact;
-        var supplier = issue.getContractor()||{};
+        var supplier = issue.getSupplier()||{};
         var status = issue.status;
         var statusClass = 
         status=='New'?'success':
@@ -169,7 +169,7 @@ IssueDetail = React.createClass({
                                 classes="absolute"
                                 toggleId=".choose-contract-btn"
                                 initialState={{open:issue.status=='New'}}
-                                onChange={this.updateObjectField('_contractor')}
+                                onChange={this.updateObjectField('_supplier')}
                             />
 
                             {!supplier?null:

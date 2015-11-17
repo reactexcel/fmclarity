@@ -1,38 +1,28 @@
-Issues = new Mongo.Collection('issues');
-
-Meteor.methods({
-  "Issue.save": function(item) {
-    Issues.upsert(item._id, {$set: _.omit(item, '_id')});
-  },
-  "Issue.destroy":function(item) {
-    Issues.remove(item._id);
-  },
-  "Issue.new":function(item) {
-    newItem = _.extend({
-      isNewItem:true,
-      name:"",
-      status:"New",
-      thumb:1,
-      contact:{
-        name:"John Smith",
-        email:"johnny@flart.flart",
-        phone:"0444-123-321",
-        thumb:"a1.jpg"
-      }
-    },item);
-    Issues.insert(newItem);
+Schema.Issues = new SimpleSchema({
+  name:{
+    type:String,
   }
 });
 
+Issues = FM.createCollection('Issue',{
+  name:"",
+  status:"New",
+  thumb:1,
+  _team:{
+  },
+  _facility:{
+  },
+  _contact:{
+  },
+  _supplier:{
+  },
+  _assignee:{
+  }
+},true);
+
 Issues.helpers({
-  save:function(){
-    Meteor.call('Issue.save',this);
-  },
-  destroy:function() {
-    Meteor.call('Issue.destroy',this);
-  },
   getFacility() {
-    return Facilities.findOne(this._facility);
+    return Facilities.findOne(this._facility._id);
   },
   getContact() {
     return this.contact;
@@ -40,13 +30,13 @@ Issues.helpers({
   getCreator() {
     return Users.findOne(this._creator._id);
   },
-  getContractor() {
-    return Teams.findOne(this._contractor);
-  }
-});
-
-Issues.before.insert(function (userId, doc) {
-  if(!doc.createdAt) {
-    doc.createdAt = moment().toDate();
+  setSupplier(supplier) {
+    this._supplier = supplier;
+    this.save();
+  },
+  getSupplier() {
+    if(this._supplier) {
+      return Teams.findOne(this._supplier._id);
+    }
   }
 });

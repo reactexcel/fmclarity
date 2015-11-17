@@ -2,21 +2,31 @@ ROADMAP.md
 
 - should sticky items ignore the filter?
 
+
+
+- Auto generate random reviews on startup
+
+
 TODO (general)
 - Brainstorm list of "actions" for RBAC inc[create facility, add to team, create contact, add to team, edit own profile, edit other profile]
-- Work out team selection interface element
 - Tidy folder structure and create component dictionary 
 - Remove redundant JS libraries (that came with Inpinia)
 - Write test plan [login, click through each screen, create a work order, invote a user to a team]
 
 
 IN PROGRESS
-- Now generate more detailed test data for contractors on start up
-- Generate more extensive test data (Issues, Contractor teams, reviews/notifications)
+- Rationalise account form using my new schema system (cols becomes size)
+- create a new AccountCard which shows contact card at top and account detail below (account detail probably wrapped in two separate components, one for fm and one for contractor)
+- Rename AccountEdit and AccountView?
+
+---
+- Generate more extensive test data for contractor teams
+- Generate contractor review for closed work orders
+- Management teams see creator and contractor team, contractor teams see creators teams and assignee
 - Contractor cards should be set up to show team, rating, reviews, when browsing
-- Autogenerate creator for issues and add avatar to work order table
 - Autogenerate contact for facilities and add to facilities card
 - Add outstanding issues to facilities card
+- 
 
 v0.3.0a "Little Bob" (17/11/2015)
 - Should not reuse email addresses when generating user data

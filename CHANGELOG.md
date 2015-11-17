@@ -1,5 +1,12 @@
 CHANGELOG.md
 
+v0.2.5a
+- Work order : Fixed an issue that was causing new item creation to fail
+- Core : Rewrote parts of the database interface to make the code more maintainable
+- Created a "Message" data model to be used for reviews and discussions
+- Made a review view
+- Added reviews to contractor cards
+
 v0.2.4a
 - Test users now have avatars sourced from http://api.randomuser.me
 - Updated source code for various "user details" list and card views to improve compatibility

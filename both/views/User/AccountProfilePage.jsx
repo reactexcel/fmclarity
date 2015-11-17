@@ -156,10 +156,49 @@ AccountProfileWidget= React.createClass({
 	render() {
 		return (
 			<FlipWidget
-				front={ContactSummary}
+				front={AccountView}
 				back={AccountProfile}
 				item={this.props.item}
 			/>
+		)
+	}
+});
+
+AccountView = React.createClass({
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	Meteor.subscribe('users');
+    	var team, orders;
+    	team = this.props.item;
+    	if(team) {
+    		orders = Issues.find({"_supplier._id":team._id,status:"Closed"}).fetch();
+	    }
+    	return {
+    		team:team,
+    		reviews:orders||[]
+    	}
+    },
+
+	render() {
+		var team = this.data.team;
+		var reviews = this.data.reviews;
+		return (
+			<div>
+				<ContactSummary item={team} />
+				<hr/>
+				<div style={{padding:"10px"}}>
+				{reviews.map(function(i,idx){
+					return (
+						<div className="row" key={idx}>
+							<div className="col-md-12">
+								<Message item={i} />
+							</div>
+						</div>
+					)
+				})}
+				</div>
+			</div>
 		)
 	}
 });
@@ -186,7 +225,7 @@ AccountProfilePage = React.createClass({
 		            <div className="col-lg-6 col-md-6 col-sm-6">
 						<FlipWidget
 							front={AccountProfile}
-							back={ContactSummary}
+							back={AccountView}
 							item={this.data.team}
 						/>
 					</div>
