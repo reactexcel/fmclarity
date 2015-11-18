@@ -110,8 +110,8 @@ Schema.TeamProfile = new SimpleSchema({
       label: "Places serviced",
       optional:true
     },
-    activeModules: {
-      type: [Object],
+    modules: {
+      type: Object,
       label: "Active modules",
       optional:true
     }

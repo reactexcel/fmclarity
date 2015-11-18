@@ -76,6 +76,26 @@ Contact1Line = React.createClass({
 	}
 });
 
+Contact3Line = React.createClass({
+	render() {
+		var contact, profile;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		if(!profile) {
+			return <div />
+		}
+		return (
+            <div className="contact-card contact-card-1line">
+              <div style={{color:"#000"}}>{profile.name}</div>
+              <div style={{color:"#777"}}><i className="fa fa-envelope"></i>&nbsp;&nbsp;{profile.email}<br/>
+              <i className="fa fa-phone"></i>&nbsp;&nbsp;{profile.phone}</div>
+            </div>
+		)
+	}
+});
+
 ContactCard = React.createClass({
 	render() {
 		var contact,profile,view;

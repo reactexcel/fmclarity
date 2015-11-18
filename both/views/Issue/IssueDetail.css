@@ -1,0 +1,18 @@
+.issue-nav-btn {
+	float:left;
+	text-transform: uppercase;
+	padding:0;
+	font-weight:bold;
+	padding-right:10px;
+	color:#444;
+}
+
+
+.issue-nav-btn:hover {
+	color:#000;
+}
+
+
+.issue-nav-btn.active {
+	text-decoration: underline;
+}

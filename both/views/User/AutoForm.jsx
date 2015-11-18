@@ -1,16 +1,46 @@
 AutoInput = {};
 
+AutoInput.rating = React.createClass({
+	render() {
+		return (
+			<div className="autoinput-rating">
+				<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+			</div>
+		)
+	}
+});
+
 AutoInput.switchbank = React.createClass({
 	componentDidMount() {
+		var obj = this.props.value;
+		var save = this.props.onChange;
 		var elems = Array.prototype.slice.call(document.querySelectorAll('.switch'));
+
 		elems.forEach(function(html) {
 		  var switchery = new Switchery(html, {size:'small',color:'#db4437'});
+		  this.onchange = function(e){
+		  	var value = e.target.checked;
+		  	var fieldName = e.target.dataset.fieldName;
+		  	obj[fieldName] = value;
+		  	save({
+		  		target:{
+		  			value:obj
+		  		}
+		  	});
+		  }
 		});
 	},
 
 	render() {
-		var labels = this.props.options.labels;
-		var cols = this.props.options.cols||6;
+		var $scope = this;
+		var value,labels,options,size;
+		value = this.props.value;
+		labels = Object.keys(value);
+		options = this.props.options;
+		size = 6;
+		if(options) {
+			size = options.size||6;
+		}
 		return (
 			<div className="md-switchbank md-h4-container" style={{margin:"0 -14px",height:"80px"}}>
 	           	<h4 className="background"><span>{this.props.placeholder}</span></h4>
@@ -19,12 +49,13 @@ AutoInput.switchbank = React.createClass({
 	           			return (
 	           				<div 
 	           					key={label}
-	           					className={"md-switch col-lg-"+cols}
+	           					className={"md-switch col-lg-"+size}
 	           				>
 								<input 
-									type="checkbox" 
-									defaultChecked={true} 
-									className="switch" 
+									type="checkbox"
+									data-field-name={label}
+									defaultChecked={value[label]} 
+									className="switch"
 								/>
 								<label>{label}</label>
 							</div>

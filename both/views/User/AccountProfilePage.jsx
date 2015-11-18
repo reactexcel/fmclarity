@@ -92,19 +92,8 @@ AccountProfile = React.createClass({
 			type:"dltext"
 		},
 		{
-			key:"activeModules",
+			key:"modules",
 			type:"switchbank",
-			options:{
-				labels:[
-					"Work request",
-					"PMP",
-					"ABC",
-					"Contractor login",
-					"Reports",
-					"Sustainability",
-					"Utilities"
-				]
-			}
 		}
 	],
 

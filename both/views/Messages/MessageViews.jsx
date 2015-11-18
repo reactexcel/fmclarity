@@ -27,7 +27,9 @@ Message = React.createClass({
 						<ContactAvatarSmall item={creator} />
 					</div>
 					<div className="col-lg-11">
-				       	<img style={{float:"right",position:"relative",top:"-5px"}} src="img/5-stars-small.gif" />
+						<div style={{float:"right",position:"relative",top:"-5px"}}>
+							<AutoInput.rating />
+						</div>
 						<div style={{color:"#333",fontWeight:"bold"}}>
 				        	{profile.name}&nbsp;&nbsp;&bull;&nbsp;&nbsp;{moment(message.createdAt).fromNow()}
 				       	</div>

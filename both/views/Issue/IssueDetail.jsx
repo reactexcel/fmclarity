@@ -5,10 +5,32 @@ IssueDetail = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        return {
-            services : Services.find({},{sort:{name:1}}).fetch(),
-            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
-            facilities : Facilities.find({},{sort:{name:1}}).fetch()
+        var issue = this.props.item;
+        if(!issue) {
+            return {
+                ready:false
+            }
+        }
+        else {
+            var status = issue.status;
+            var statusClass = 
+                status=='New'?'success':
+                status=='Issued'?'warning':
+                status=='Open'?'danger':
+                status=='Closed'?'info':'';
+
+            return {
+                ready:true,
+                creator:issue.getCreator(),
+                issue:issue,
+                status:status,
+                statusClass:statusClass,
+                facility:issue.getFacility(),
+                facilities : Facilities.find({},{sort:{name:1}}).fetch(),
+                supplier:issue.getSupplier(),
+                suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
+                services : Services.find({},{sort:{name:1}}).fetch(),
+            }
         }
     },
 
@@ -68,37 +90,36 @@ IssueDetail = React.createClass({
     },
 
     render() {
-        var issue = this.item = this.props.item;
-        var facility = issue._facility;
+        var issue = this.item = this.data.issue;
+        var facility = this.data.facility;
+        var creator = this.data.creator;
         var createdAt = moment(issue.createdAt).calendar();
-        var contact = issue.contact;
-        var supplier = issue.getSupplier()||{};
-        var status = issue.status;
-        var statusClass = 
-        status=='New'?'success':
-        status=='Issued'?'warning':
-        status=='Open'?'danger':
-        status=='Closed'?'info':'';
+        var supplier = this.data.supplier;
+        var status = this.data.status;
+        var statusClass = this.data.statusClass;
+
+        if(!this.data.ready) return <div />;
+
         return (
 <div>
     <div className="row">
-        <div className="col-lg-9">
-            <div className="row">
-                <div className="col-lg-12" style={{paddingRight:0}}>
-                    <SuperSelect 
-                        items={this.data.facilities} 
-                        itemView={ContactViewName}
-                        onChange={this.updateObjectField('facility')}
-                    >
-                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
-                        {issue.priority!='Urgent'?null:
-                          <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
-                        }
-                        <i className="fa fa-location-arrow"></i>
-                        <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
-                    </SuperSelect>
-
-                    <h2 style={{marginTop:"13px",paddingBottom:"6px",borderBottom:"1px solid #ccc"}}>
+        <div className="col-lg-1">
+            <div>
+                <ContactAvatarSmall item={creator} />
+            </div>
+            <div style={{float:"left",clear:"both"}}>
+                <SuperSelect 
+                    items={['Normal','Critical','Urgent']} 
+                    onChange={this.updateObjectField('priority')}
+                >
+                    <span style={{fontSize:"20px",position:"relative",top:"20px",padding:"10px"}}><i className="fa fa-circle text-danger"></i></span>
+                </SuperSelect>
+            </div>
+        </div>
+        <div className="col-lg-11" style={{marginLeft:"-25px",marginRight:"-25px",width:"95%"}}>
+            <div className="row" style={{borderBottom:"1px solid #ddd",paddingBottom:"10px",marginBottom:"10px"}}>
+                <div className="col-lg-6">
+                    <h2 style={{margin:0}}>
                         <input 
                             placeholder="Type issue title here"
                             className="inline-form-control" 
@@ -106,139 +127,137 @@ IssueDetail = React.createClass({
                             onChange={this.updateField('name')}
                         />
                     </h2>
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-lg-12">
-                    <div className="row">
-                        <div className="col-lg-7" style={{paddingRight:0}}>
-                            <SuperSelect 
-                                items={['Normal','Critical','Urgent']} 
-                                onChange={this.updateObjectField('priority')}
-                            >
-                                <span><i className="fa fa-circle text-danger"></i> <span style={{fontWeight:"bold",fontSize:"10px"}}>{issue.priority||"Normal"} Priority</span></span>
-                            </SuperSelect>
-                            {issue.service&&issue.service.subservices&&issue.service.subservices.length?
-                            <SuperSelect 
-                                itemView={ContactViewName}
-                                items={issue.service.subservices}
-                                onChange={this.updateObjectField('subservice')}
-                                classes="pull-right"
-                            >
-                                {issue.subservice?
-                                    <span className="label dropdown-label label-info">{issue.subservice.name} <i className="fa fa-caret-down"></i></span>
-                                :
-                                    <span className="label dropdown-label">Choose Sub-service <i className="fa fa-caret-down"></i></span>
-                                }
-                            </SuperSelect>
-
-                            :null
-                            }
-                            <SuperSelect 
-                                itemView={ContactViewName}
-                                items={this.data.services} 
-                                onChange={this.updateService}
-                                classes="pull-right"
-                            >
-                                {issue.service?
-                                    <span className="label dropdown-label label-info">{issue.service.name} <i className="fa fa-caret-down"></i></span>
-                                :
-                                    <span className="label dropdown-label">Choose Service Type <i className="fa fa-caret-down"></i></span>
-                                }
-                            </SuperSelect>
-                            <textarea 
-                                placeholder="Type issue description here"
-                                className="issue-description-textarea inline-form-control" 
-                                defaultValue={issue.description} 
-                                onChange={this.updateField('description')}
-                            />
-                        </div>
-                        {issue.status?
-                        <div className="col-lg-5">
-                            <div style={{height:"32px"}}>
-                                {supplier?
-                                    <span className="choose-contract-btn label dropdown-label label-success">Change Contract <i className="fa fa-caret-down"></i></span>
-                                :
-                                    <span className="choose-contract-btn label dropdown-label">Choose Contract <i className="fa fa-caret-down"></i></span>
-                                }
-                            </div>
-
-                            <SuperSelect 
-                                itemView={ContactCard}
-                                items={this.data.suppliers} 
-                                classes="absolute"
-                                toggleId=".choose-contract-btn"
-                                initialState={{open:issue.status=='New'}}
-                                onChange={this.updateObjectField('_supplier')}
-                            />
-
-                            {!supplier?null:
-                                <div style={{width:"96%",height:"160px","position":"absolute"}}>
-                                    <ContactSummary item={supplier} size="small"/>
-                                </div>
-                            }
-
-                        </div>
-                        :null}
-                        <div className="col-lg-12" style={{paddingRight:0}}>
-                            <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-1" data-toggle="tab"><i className="fa fa-tasks"></i></a>
-                            <a style={{margin:"5px",marginLeft:0}} className="pull-left btn btn-lg btn-default" href="#tab-2" data-toggle="tab"><i className="fa fa-comment"></i></a>
-                            {!issue.status?
-                                <button onClick={this.createOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+((issue.name&&issue.description)?'success':'default')}>Create Request <i className="fa fa-paper-plane"></i></button>
-                            :null}
-                            {issue.status=='New'?
-                                <button onClick={this.sendOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'warning':'default')}>Issue Order <i className="fa fa-paper-plane"></i></button>
-                            :null}
-                            {issue.status=='Issued'?
-                                <button onClick={this.closeOrder} style={{margin:"5px",marginRight:0}} type="button" className={"pull-right btn btn-lg btn-"+(supplier?'danger':'default')}>Close Order <i className="fa fa-paper-plane"></i></button>
-                            :null}
-                            {issue.status=='Closed'?
-                                <img style={{float:"right",margin:"15px 0 15px 0"}} src="img/5-stars-small.gif" />
-                            :null}
-                        </div>
-                        {issue.isNewItem?null:
-                        <div className="col-lg-12">
-                            <div className="panel blank-panel" style={{borderTop:"1px solid #ccc",borderRadius:"0px"}}>
-                                <div className="panel-body" style={{padding:"5px"}}>
-                                    <div className="tab-content">
-                                        <div className="active tab-pane" id="tab-1">
-                                            <IssueTrackerTable issue={issue}/>
-                                        </div>
-                                        <div className="tab-pane" id="tab-2" style={{paddingTop:"10px"}}>
-                                            <IssueDiscussion issue={issue}/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div style={{marginTop:"5px",marginBottom:"7px"}}>
+                        <SuperSelect 
+                            items={this.data.facilities} 
+                            itemView={ContactViewName}
+                            onChange={this.updateObjectField('facility')}
+                        >
+                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
+                        </SuperSelect>
+                    </div>
+                    <div>
+                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
+                        {issue.priority!='Urgent'?null:
+                        <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
                         }
                     </div>
                 </div>
-            </div>
-        </div>
-        <div className="col-lg-3">
-            <div className="file-panel">
-                {issue.isNewItem
-                ?
+                <div className="col-lg-2">
                     <div>
-                        <div className="file-panel-image-browser">
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/default-placeholder.png"} />
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/file-placeholder.png"} />
-                        </div>
+                        <SuperSelect 
+                            itemView={ContactViewName}
+                            items={this.data.services} 
+                            classes="absolute"
+                            onChange={this.updateService}
+                        >
+                            <span className="issue-nav-btn btn btn-sm">Service type</span>
+                        </SuperSelect>
+                        {issue.service?
+                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
+                        :null}
                     </div>
-                :
-                    <div>
-                        <div className="file-panel-image-browser">
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
-                            <a href=""><img style={{"width":"40px","borderRadius":"1px","margin":"1px"}} alt="image" src="img/issue-1.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","borderRadius":"1px","margin":"1px"}} alt="image" src="img/issue-2.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","borderRadius":"1px","margin":"1px"}} alt="image" src="img/issue-3.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","borderRadius":"1px","margin":"1px"}} alt="image" src="img/issue-2.jpg"/></a>
+                    {issue.service&&issue.service.subservices&&issue.service.subservices.length?
+                        <div style={{position:"relative",top:"15px"}}>
+                            <SuperSelect 
+                                itemView={ContactViewName}
+                                items={issue.service.subservices}
+                                classes="absolute"
+                                onChange={this.updateObjectField('subservice')}
+                            >
+                                <span className="issue-nav-btn btn btn-sm">Service subtype</span>
+                            </SuperSelect>
+                            {issue.subservice?
+                                <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.subservice.name}</span>
+                            :null}
                         </div>
-                        <div className="file-panel-file-browser">
+                    :null}
+                </div>
+                <div className="col-lg-2">
+                    {issue.status?
+                    <div>
+
+                        <SuperSelect 
+                            itemView={ContactCard}
+                            items={this.data.suppliers} 
+                            classes="absolute"
+                            onChange={this.updateObjectField('_supplier')}
+                        >
+                            <span className="issue-nav-btn btn btn-sm">Supplier</span>
+
+                        </SuperSelect>
+
+                        {!supplier?null:
+                            <div style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>
+                                <Contact3Line item={supplier}/>
+                            </div>
+                        }
+
+                    </div>
+                    :null}
+                </div>
+                <div className="col-lg-2">
+                    <div style={{float:"right"}}>
+                        {!issue.status?
+                            <button onClick={this.createOrder} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'success':'default')}>Create request</button>
+                        :null}
+                        {issue.status=='New'?
+                            <button onClick={this.sendOrder} type="button" className={"btn btn-sm btn-"+(supplier?'warning':'default')}>Issue order</button>
+                        :null}
+                        {issue.status=='Issued'?
+                            <button onClick={this.closeOrder} type="button" className={"btn btn-sm btn-"+(supplier?'danger':'default')}>Close order</button>
+                        :null}
+                        {issue.status=='Closed'?
+                            <button onClick={this.closeOrder} type="button" className={"btn btn-sm btn-"+(supplier?'danger':'default')}>Rate supplier</button>
+                        :null}
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col-lg-6">
+                    <span style={{marginTop:"10px"}} className="btn btn-sm issue-nav-btn">Description</span><br/>
+                    <textarea 
+                        placeholder="Type issue description here"
+                        className="issue-description-textarea inline-form-control" 
+                        defaultValue={issue.description} 
+                        onChange={this.updateField('description')}
+                    />
+                    <div className="attachments">
+                        <span style={{marginLeft:"-22px",marginTop:"10px"}} className="btn btn-sm issue-nav-btn"><i className="fa fa-paperclip"></i></span><br/>
+                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
+                        </div>
+                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-1.jpg"} />
+                        </div>
+                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-2.jpg"} />
+                        </div>
+                        <div style={{width:"100%",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
                             <FileBrowser />
                         </div>
                     </div>
+                </div>
+                {issue.isNewItem?null:
+                <div className="col-lg-6">
+                    <div className="panel blank-panel">
+                        <div className="panel-heading" style={{padding:0,marginTop:"10px",height:"40px"}}>
+                            <a className="pull-left btn btn-sm issue-nav-btn " href="#tab-1" data-toggle="tab">Conversation</a>
+                            <a className="pull-left btn btn-sm issue-nav-btn " href="#tab-2" data-toggle="tab">Work order log</a>
+                        </div>
+                        <div className="panel-body" style={{padding:0}}>
+                            <div className="tab-content">
+                                <div className="tab-pane active" id="tab-1">
+                                    <IssueDiscussion issue={issue}/>
+                                </div>
+                                <div className="tab-pane" id="tab-2">
+                                    <IssueTrackerTable issue={issue}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 }
             </div>
         </div>

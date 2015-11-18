@@ -7,8 +7,7 @@ IssueTrackerTable = React.createClass({
                 <tr>
                     <th>Status</th>
                     <th>Title</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>When</th>
                     <th>Comments</th>
                 </tr>
                 </thead>
@@ -23,9 +22,6 @@ IssueTrackerTable = React.createClass({
                     </td>
                     <td>
                         12.07.2014 10:10:1
-                    </td>
-                    <td>
-                        14.07.2014 10:16:36
                     </td>
                     <td>
                         <p className="small">
@@ -46,9 +42,6 @@ IssueTrackerTable = React.createClass({
                         12.07.2014 10:10:1
                     </td>
                     <td>
-                        14.07.2014 10:16:36
-                    </td>
-                    <td>
                         <p className="small">
                             Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
                         </p>
@@ -66,9 +59,6 @@ IssueTrackerTable = React.createClass({
                                                         </td>
                                                         <td>
                                                             12.07.2014 10:10:1
-                                                        </td>
-                                                        <td>
-                                                            14.07.2014 10:16:36
                                                         </td>
                                                         <td>
                                                             <p className="small">

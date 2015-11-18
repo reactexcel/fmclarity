@@ -72,46 +72,66 @@ PageRequests = React.createClass({
 	    var headers = [
 	    {
 	    	text:"Creator",
-	    	sort(a,b){
-	    		return	(a._creator.name<b._creator.name)?-1:1;
+	    	sortFunction(a,b){
+	    		if(!a._creator||!a._creator.name) {
+	    			return -1;
+	    		}
+	    		else if(!b._creator||!b._creator.name) {
+	    			return 1;
+	    		}
+	    		else if	(a._creator.name<b._creator.name){
+	    			return -1;
+		    	}
+		    	else if (a.cratedAt<b.createdAt) {
+		    		return -1;
+		    	}
+		    	else {
+		    		return 1;
+		    	}
 	    	},
 	    },
 	    {
 	    	text:"Supplier",
-	    	sort(a,b) {
-	    		if(!a._contractor||!a._contractor.name) {
+	    	sortFunction(a,b) {
+	    		if(!a._supplier||!a._supplier.name) {
 	    			return -1;
 	    		}
-	    		else if(!b._contractor||!b._contractor.name) {
+	    		else if(!b._supplier||!b._supplier.name) {
 	    			return 1;
 	    		}
-	    		else {
-		    		return	(a._contractor.name<b._contractor.name)?-1:1;	    		
+	    		else if	(a._supplier.name<b._supplier.name){
+	    			return -1;
+		    	}
+		    	else if (a.cratedAt<b.createdAt) {
+		    		return -1;
+		    	}
+		    	else {
+		    		return 1;
 		    	}
 	    	},
 	    },
 	    {
 	    	text:"Status",
-	    	sort(a,b) {
+	    	sortFunction(a,b) {
 	    		var weight = {'New':0,'Issued':1,'Closed':2};
 	    		return	(weight[a.status]<weight[b.status])?-1:1;
 	    	},
 	    },
 	    {
 	    	text:"Facility",
-	    	sort(a,b) {
+	    	sortFunction(a,b) {
 	    		return (a._facility.name<b._facility.name)?-1:1;
 	    	},
 	    },
 	    {
 	    	text:"Issue",
-	    	sort(a,b) {
+	    	sortFunction(a,b) {
 	    		return (a.name<b.name)?-1:1;
 	    	},
 	    },
 	    {
 	    	text:"Updated",
-	    	sort(a,b) {
+	    	sortFunction(a,b) {
 	    		return (a.createdAt>b.createdAt)?-1:1;
 	    	},
 	    }

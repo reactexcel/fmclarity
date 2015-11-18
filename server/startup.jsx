@@ -32,6 +32,7 @@ Meteor.startup(function(){
 
     initializeUsers();
 
+
     ExampleTeams = [
       {
         type:"fm",
@@ -120,6 +121,35 @@ Meteor.startup(function(){
     Facilities.remove({});
     Issues.remove({});
     Teams.remove({});
+
+
+    for(var i in ExampleTeams) {
+        var team = ExampleTeams[i];
+        if(team.type=='fm') {
+            ExampleTeams[i].modules = {
+                "Dashboard":true,
+                "PMP":false,
+                "ABC":false,
+                "Work Requests":true,
+                "Suppliers":true,
+                "Sustainability":false,
+                "Contracts":false,
+                "Reports":false
+            };
+        }
+        else {
+            ExampleTeams[i].modules = {
+                "Dashboard":false,
+                "PMP":false,
+                "ABC":false,
+                "Work Requests":true,
+                "Suppliers":false,
+                "Sustainability":false,
+                "Contracts":false,
+                "Reports":false
+            };
+        }
+    }
 
     var users = Users.find().fetch();
     for(var i in users) {

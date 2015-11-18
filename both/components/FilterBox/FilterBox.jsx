@@ -10,7 +10,8 @@ FilterBox = React.createClass({
   getInitialState() {
     return {
       selectedFilterNum:0,
-      selectedSortNum:2
+      selectedSortNum:2,
+      sortDirection:1
     }
   },
 
@@ -28,9 +29,12 @@ FilterBox = React.createClass({
   applySort(items) {
     var headers = this.props.headers;
     if(items&&headers) {
-      var sort = headers[this.state.selectedSortNum].sort;
-      if(sort) {
-        return items.sort(sort);
+      var f = headers[this.state.selectedSortNum].sortFunction;
+      var modifier = this.state.sortDirection;
+      if(f) {
+        return items.sort(function(a,b){
+          return f(a,b)*modifier;
+        });
       }
     }
     return items;
@@ -43,8 +47,16 @@ FilterBox = React.createClass({
   },
 
   setSort(sortNum) {
+    var sortDirection = this.state.sortDirection;
+    if(sortNum==this.state.selectedSortNum) {
+      sortDirection*=-1;
+    }
+    else {
+      sortDirection = 1;
+    }
     this.setState({
-      selectedSortNum:sortNum
+      selectedSortNum:sortNum,
+      sortDirection:sortDirection
     })
   },
 
@@ -62,6 +74,7 @@ FilterBox = React.createClass({
 
     var selectedFilterNum = $this.state.selectedFilterNum;
     var selectedSortNum = this.state.selectedSortNum;
+    var sortDirection = this.state.sortDirection;
     var initialItems = $this.props.items;
     var items = $this.applyFilter(initialItems);
     items = $this.applySort(items);
@@ -113,7 +126,9 @@ FilterBox = React.createClass({
                   >
                     <div>{i.text}</div>
                     {index==selectedSortNum?
-                      <div style={{paddingLeft:"14px",position:"relative",top:"-10px",fontSize:"20px"}}><i className="fa fa-caret-down"></i></div>
+                      <div style={{paddingLeft:"14px",position:"relative",top:"-10px",fontSize:"20px"}}>
+                        <i className={"fa fa-caret-"+(sortDirection==1?"down":"up")}></i>
+                      </div>
                       :null
                     }                    
                   </div>
@@ -320,24 +335,6 @@ CardWrapper = React.createClass({
               className="card-button expand-button pull-right"
             >
               <i className={"fa fa-close"}></i>
-            </button>
-            <button 
-                onClick={this.deleteItem} 
-                className="card-button delete-button pull-right"
-            >
-                <i className="fa fa-paperclip"></i>
-            </button>
-            <button 
-                onClick={this.deleteItem} 
-                className="card-button delete-button pull-right"
-            >
-                <i className="fa fa-camera"></i>
-            </button>
-            <button 
-                onClick={this.deleteItem} 
-                className="card-button delete-button pull-right"
-            >
-                <i className="fa fa-trash-o"></i>
             </button>
           </div>
           <Detail item={item}/>

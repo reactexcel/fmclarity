@@ -161,14 +161,17 @@ TestIssues.generate = function() {
 	var location = getRandom(this.locations);
 	var title = getRandom(this.title);
 	var descriptions = shuffle(this.description);
-	var numDescriptionLines = Math.floor(Math.random()*4)+2;
+	var numDescriptionLines = Math.floor(Math.random()*8)+2;
 	var descriptionLines = [];
 	for(var i=0;i<numDescriptionLines;i++) {
 		descriptionLines.push(
 			capitalize(descriptions[i])
 		);
 	}
-	var description = descriptionLines.join(' ');
+	var descriptionPart1 = descriptionLines.join(' ');
+	descriptionLines = descriptionLines.reverse();
+	var descriptionPart2 = descriptionLines.join(' ');
+	var description = descriptionPart1+"\n\n"+descriptionPart2;
 	var problems = shuffle(this.problems);
 	var problem1 = problems[0];
 	var problem2 = problems[1];

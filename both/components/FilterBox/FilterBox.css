@@ -116,6 +116,7 @@
 
 .filter-box .grid-item.gigante .card-header,
 .filter-box .grid-item.pre-gigante .card-header {
+  min-height:5px;
   height:5px;
 }
 
@@ -187,7 +188,12 @@
   bottom:0;
   right:0;
   width:50px;
-  padding-right:9px;
+  padding-right:4px;
+  opacity:0.3;
+}
+
+.card-body-right-toolbar:hover {
+  opacity:1;
 }
 
 .card-header-left-toolbar {
