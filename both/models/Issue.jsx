@@ -1,8 +1,3 @@
-Schema.Issues = new SimpleSchema({
-  name:{
-    type:String,
-  }
-});
 
 Issues = FM.createCollection('Issue',{
   name:"",

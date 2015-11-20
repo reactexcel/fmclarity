@@ -8,93 +8,27 @@ AccountProfile = React.createClass({
 	},
 
 	form1 : [
-		{
-			key:"name",
-			type:"mdtext"
-		},
-		{
-			key:"abn",
-			type:"mdtext"
-		},
-		{
-			key:"contactName",
-			type:"mdtext"
-		},
-		{
-			key:"email",
-			type:"mdtext"
-		}
+		"name",
+		"abn",
+		"contactName",
+		"email"
 	],
-
 	form2 : [
-		{
-			key:"website",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"facebook",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"addressLine1",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"addressLine2",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"city",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"state",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"country",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"postcode",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"headline",
-			type:"textarea",
-		},
-		{
-			key:"bio",
-			type:"textarea",
-		},
-		{
-			key:"references",
-			type:"textarea",
-		},
-		{
-			key:"services",
-			type:"select"
-		},
-		{
-			key:"areasServiced",
-			type:"select"
-		},
-		{
-			key:"defaultWorkOrderValue",
-			type:"dltext"
-		},
-		{
-			key:"modules",
-			type:"switchbank",
-		}
+		"website",
+		"facebook",
+		"addressLine1",
+		"addressLine2",
+		"city",
+		"state",
+		"country",
+		"postcode",
+		"headline",
+		"bio",
+		"references",
+		"services",
+		"areasServiced",
+		"defaultWorkOrderValue",
+		"modules",
 	],
 
 	componentDidMount() {
@@ -109,7 +43,7 @@ AccountProfile = React.createClass({
 		team = this.props.item;
 		if(team) {
 			profile = team.getProfile();
-			schema = Schema.TeamProfile;
+			schema = FM.schemas['Team'];
 		}
 		if(!team||!profile) {
 			return <div/>

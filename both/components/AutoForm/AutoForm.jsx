@@ -196,7 +196,7 @@ AutoInput.mdtext = React.createClass({
       		<input 
       			type="text" 
       			pattern=".{1,80}" 
-      			className={used?'used':''} 
+      			className={"input "+(used?'used':'')} 
       			defaultValue={value}
       			onChange={this.props.onChange}
       		/>
@@ -208,21 +208,55 @@ AutoInput.mdtext = React.createClass({
 	}
 });
 
-AutoInput.textarea = React.createClass({
+AutoInput.mdtextarea = React.createClass({
+
+	componentDidMount() {
+		$(this.refs.input).elastic();
+	},
 
 	render() {
+		var value = this.props.value;
+		var used = value&&value.length;
+		var options = this.props.options;
+		var containerStyle = _.extend(options?options.containerStyle:{});
+		return (
+			<div className="md-textarea" style={containerStyle}>
+	           	{/*<h4 className="background"><span>{this.props.placeholder}</span></h4>*/}
+	          	<textarea 
+	          		ref="input"
+	          		className={"input inline-form-control "+(used?'used':'')}
+	          		defaultValue={value} 
+	          		onChange={this.props.onChange}>
+	          	</textarea>
+      			<span className="highlight"></span>
+      			<span className="bar"></span>
+	      		<label>{this.props.placeholder}</label>
+	        </div>
+		)
+	}
+});
+
+AutoInput.textarea = React.createClass({
+
+	componentDidMount() {
+		$(this.refs.input).elastic();
+	},
+
+	render() {
+		var value = this.props.value;
+		var used = value&&value.length;
 		var options = this.props.options;
 		var containerStyle = _.extend({
 			margin:"0 -14px"
 		},options?options.containerStyle:{});
 		return (
-			<div className="md-textarea md-h4-container" style={containerStyle}>
+			<div className="dl-textarea md-h4-container" style={containerStyle}>
 	           	<h4 className="background"><span>{this.props.placeholder}</span></h4>
 	          	<textarea 
+	          		ref="input"
 	          		style={{margin:"0 17px",width:"97%"}}
-	          		className="inline-form-control" 
-	          		placeholder="Type here..."
-	          		defaultValue={this.props.value} 
+	          		className={"input inline-form-control "+(used?'used':'')}
+	          		defaultValue={value} 
 	          		onChange={this.props.onChange}>
 	          	</textarea>
 	        </div>
@@ -238,7 +272,7 @@ AutoInput.custom = React.createClass({
 			margin:"0 -14px"
 		},options?options.containerStyle:{});
 		return (
-			<div className="md-textarea md-h4-container" style={containerStyle}>
+			<div className="dl-textarea md-h4-container" style={containerStyle}>
 	           	<h4 className="background"><span>{this.props.placeholder}</span></h4>
 	          	<textarea 
 	          		style={{margin:"0 17px",width:"97%"}}
@@ -285,7 +319,7 @@ AutoForm = React.createClass({
 	},
 
     componentWillMount: function() {
-        this.saveItem = _.debounce(this.saveItem,500);
+        this.saveItem = _.debounce(this.saveItem,2000);
     },
 
     componentWillReceiveProps(nextProps) {
@@ -314,7 +348,7 @@ AutoForm = React.createClass({
     },
 
     saveItem() {
-    	var schema = this.props.schema.schema();
+    	var schema = this.props.schema;
     	var originalItem = this.props.item;
     	var save = this.props.save;
     	for(var i in schema) {
@@ -326,34 +360,31 @@ AutoForm = React.createClass({
 	render() {
 		var $scope = this;
 		var item = this.state.item;
-		var schema = this.props.schema.schema();
-		var schemaKeys = this.props.form||Object.keys(schema);
+		var schema = this.props.schema;
+		var form = this.props.form||Object.keys(schema);
 		return (
 			<div className="autoform row">
-				{schemaKeys.map(function(i){
-					var type, placeholder, Input, cols, options;
+				{form.map(function(key){
 
-					cols = i.cols||12;
-					options = i.options;
+					var s = _.extend({
+						input:"mdtext",
+						size:12,
+						options:{}
+					},schema[key]);
 
-					type = "text";
-					if(_.isObject(i)) {
-						type = i.type;
-						i = i.key;
-					}
-
-					placeholder = schema[i]?schema[i].label:i.charAt(0).toUpperCase() + i.slice(1);
-					if(!schema[i].optional) {
+					var placeholder = s.label||key.charAt(0).toUpperCase() + key.slice(1);
+					if(s.required) {
 						placeholder+='*';
 					}
-					Input = AutoInput[type];
+					var Input = AutoInput[s.input];
+
 					return (
-					<div key={item._id+'-'+i} className={"col-lg-"+cols}>
+					<div key={item._id+'-'+key} className={"col-lg-"+s.size}>
 						<Input
 							placeholder={placeholder}
-							value={item[i]} 
-							onChange={$scope.updateField(i)}
-							options={options}
+							value={item[key]} 
+							onChange={$scope.updateField(key)}
+							options={s.options}
 						/>
 					</div>
 					)

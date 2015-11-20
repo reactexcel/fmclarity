@@ -162,8 +162,8 @@ loggedIn.route('/team', {
   }
 });
 
-loggedIn.route('/properties', {
-  name: 'properties',
+loggedIn.route('/facilities', {
+  name: 'facilities',
   action() {
     ReactLayout.render(MainLayout,{content: <PageProperties />});
   }

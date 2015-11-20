@@ -118,8 +118,8 @@
 }
 
 textarea.issue-description-textarea.inline-form-control {
-    min-height: 250px;
-    /*font-size: 16px;
+    /*min-height: 250px;
+    font-size: 16px;
     padding: 10px;
     margin-top: 15px;
     background-color: #eee;

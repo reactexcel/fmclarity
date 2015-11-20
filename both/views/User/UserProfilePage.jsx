@@ -8,44 +8,39 @@ UserProfile = React.createClass({
 		}
 	},
 
-	form1 : [
-		{
-			key:"firstName",
-			type:"mdtext",
-			cols:6
+	form1 : {
+		firstName:{
+			label:"First name",
+			size:6
 		},
-		{
-			key:"lastName",
-			type:"mdtext",
-			cols:6
+		lastName:{
+			label:"Last name",
+			size:6
 		},
-		{
-			key:"name",
-			type:"mdtext"
+		name:{
+			label:"Display name",
 		},
-		{
-			key:"email",
-			type:"mdtext"
+		email:{
+			label:"Email address",
 		},
-		{
-			key:"phone",
-			type:"mdtext"
+		phone:{
+			label:"Phone number",
 		}
-	],
+	},
 
-	form2 : [
-		{
-			key:"bio",
-			type:"textarea"
+	form2 : {
+		bio:{
+			label:"About me",
+			input:"textarea"
 		}
-	],
+	},
 
 	render() {
 		var user, profile, schema;
 		var user = this.props.item;
 		if(user) {
 			profile = user.getProfile();
-			schema = Schema.UserProfile;
+			//schema = Schema.UserProfile;
 		}
 		if(!user||!profile) {
 			return <div/>
@@ -59,7 +54,7 @@ UserProfile = React.createClass({
 			   	</div>
 			   	<div className="row">
 			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-			        	<AutoForm item={profile} schema={schema} form={this.form1} save={this.save()} />
+			        	<AutoForm item={profile} schema={this.form1} save={this.save()} />
 			        </div>
 			        <div className="col-lg-5">
 						<div className="contact-thumbnail">
@@ -67,7 +62,7 @@ UserProfile = React.createClass({
 						</div>
 					</div>
 			        <div className="col-lg-12">
-			        	<AutoForm item={profile} schema={schema} form={this.form2} save={this.save()} />
+			        	<AutoForm item={profile} schema={this.form2} save={this.save()} />
 			        </div>
 				</div>
 			</div>

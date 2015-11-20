@@ -89,6 +89,10 @@ IssueDetail = React.createClass({
         this.saveItem = _.debounce(this.saveItem,500);
     },
 
+    componentDidMount: function() {
+        $(this.refs.description).elastic();
+    },
+
     render() {
         var issue = this.item = this.data.issue;
         var facility = this.data.facility;
@@ -218,14 +222,15 @@ IssueDetail = React.createClass({
                 <div className="col-lg-6">
                     <span style={{marginTop:"10px"}} className="btn btn-sm issue-nav-btn">Description</span><br/>
                     <textarea 
+                        ref="description"
                         placeholder="Type issue description here"
                         className="issue-description-textarea inline-form-control" 
                         defaultValue={issue.description} 
                         onChange={this.updateField('description')}
                     />
                     <div className="attachments">
-                        <span style={{marginLeft:"-22px",marginTop:"10px"}} className="btn btn-sm issue-nav-btn"><i className="fa fa-paperclip"></i></span><br/>
-                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                        <div className="btn btn-sm issue-nav-btn"><i className="fa fa-paperclip"></i></div>
+                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
                         </div>
                         <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>

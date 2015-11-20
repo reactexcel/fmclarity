@@ -5,126 +5,122 @@ var validEmails = {
   'fmclarity.com':'*'
 };
 
-Schema.TeamProfile = new SimpleSchema({
-    name: {
-      type: String,
-      label: "Company Name"
-    },
-    abn: {
-      type: String,
-      label: "ABN",
-      optional:true
+Teams = FM.createCollection('Team',{
+  name: {
+    type: String,
+    label: "Company Name",
+    required:true
+  },
+  abn: {
+    type: String,
+    label: "ABN",
     },
     contactName: {
       type: String,
       label: "Contact name",
-      optional:true
     },
     email: {
       type: String,
       label: "Email",
-      regEx: SimpleSchema.RegEx.Email
-    },
-    website: {
-      type: String,
-      label: "Website",
-      optional:true
-    },
-    facebook: {
-      type: String,
-      label: "Facebook",
-      optional:true
+      regEx: SimpleSchema.RegEx.Email,
     },
     phone: {
       type: String,
       label: "Phone",
-      optional:true
+    },
+    website: {
+      type: String,
+      label: "Website",
+      size:6
+    },
+    facebook: {
+      type: String,
+      label: "Facebook",
+      size:6
     },
     addressLine1 :{
       type: String,
       label: "Address line 2",
-      optional:true
+      size:6
     },
     addressLine2 :{
       type: String,
       label: "Address line 2",
-      optional:true
+      size:6
     },
     city :{
       type: String,
       label: "City/Suburb",
-      optional:true
+      size:3
     },
     state :{
       type: String,
       label: "State",
-      optional:true
+      size:3
     },
     country :{
       type: String,
       label: "Country",
-      optional:true
+      size:3
     },
     postcode :{
       type: String,
       label: "Postcode/ZIP",
-      optional:true
+      size:3
     },
     headline : {
       type: String,
       label: "My headline",
-      optional:true
+      input:"mdtextarea",
     },
     bio : {
       type: String,
       label: "Short bio",
-      optional:true
+      input:"mdtextarea",
     },
     references : {
       type: String,
       label: "References",
-      optional:true
+      input:"mdtextarea",
     },
     thumb: {
       type: String,
       label: "Thumbnail",
-      optional:true
     },
     type: {
       type: String,
       label: "Account type",
-      optional:true
     },
     defaultWorkOrderValue: {
       type: Number,
       label: "Default value for work orders",
-      optional:true,
+      input:"dltext"
     },
     services : {
       type: [String],
       label: "Services",
-      optional:true
+      input:"select",
     },
     areasServiced : {
       type: [String],
       label: "Places serviced",
-      optional:true
+      input:"select",
     },
     modules: {
       type: Object,
       label: "Active modules",
-      optional:true
-    }
-});
+      input:"switchbank"
+    },
+    _members: {
+      type: [Object],
+      label:"Members"
+    },
+},true);
 
 
 if (Meteor.isServer) {
   // could define make code more dry by generating these for all collections on startup
   Meteor.methods({
-    "Team.save": function(item) {
-      item.isNewItem = false;
-      Teams.upsert(item._id, {$set: _.omit(item, '_id')});
-    },
     "Team.inviteMember": function(item,email) {
       var user = Accounts.findUserByEmail(email);
       var uid;
@@ -153,21 +149,7 @@ if (Meteor.isServer) {
   })
 }
 
-var defaults = {
-	name:"Default Team",
-	facilities:[],
-	contacts:[],
-	team:[]
-}
-
 Meteor.methods({
-  "Team.destroy":function(item) {
-    Teams.remove(item._id);
-  },
-  "Team.new":function(item) {
-    newItem = _.extend({},item,defaults);
-    Teams.insert(newItem);
-  },
   "Team.addMember":function(item,member) {
     Teams.update(item._id,{$push:{_members:member}});
   },
@@ -181,12 +163,6 @@ Meteor.methods({
 });
 
 Teams.helpers({
-  save(){
-    Meteor.call('Team.save',this);
-  },
-  destroy() {
-    Meteor.call('Team.destroy',this);
-  },
   inviteMember(email) {
     return Meteor.call('Team.inviteMember',this, email)
   },
@@ -242,8 +218,4 @@ Teams.helpers({
       }
       return facilities;
   },
-});
-
-Teams.before.insert(function (userId, doc) {
-  doc.createdAt = moment().toDate();
 });

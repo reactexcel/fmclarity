@@ -7,88 +7,32 @@ FacilityProfile = React.createClass({
 		}
 	},
 
-	form1 : [
-		{
-			key:"name",
-			type:"mdtext"
-		},
-		{
-			key:"address",
-			type:"mdtext"
-		},
-		{
-			key:"description",
-			type:"textarea"
-		}
-	],
-
-	form2 : [
-		{
-			key:"addressLine1",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"addressLine2",
-			type:"mdtext",
-			cols:6
-		},
-		{
-			key:"city",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"state",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"country",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"postcode",
-			type:"mdtext",
-			cols:3
-		},
-		{
-			key:"buildingAreas",
-			type:"custom",
-			options:{
-				containerStyle:{height:"300px"}
-			}
-		},
-		{
-			key:"buildingServices",
-			type:"custom",
-			options:{
-				containerStyle:{height:"300px"}
-			}
-		}
-	],
+	form1 : ["name","address","description"],
+	form2 : ["addressLine1","addressLine2","city","state","country","postcode","buildingAreas","buildingServices"],
 
 	render() {
 		var item = this.props.item;
-		var schema = Schema.Facility;
+		var schema = FM.schemas['Facility'];
 		if(!item) {
 			return <div/>
 		}
 		return (
 		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <div className="row">
-			        <div className="col-lg-12">
-		            	<h2 className="background"><span>{item.name}</span></h2>
-		            </div>
+				    <div className="col-lg-12">
+			            <h2 className="background"><span>{item.name}</span></h2>
+			        </div>
 			   	</div>
 			   	<div className="row">
-			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-			        	<AutoForm item={item} schema={schema} form={this.form1} save={this.save()} />
-			        </div>
-			        <div className="col-lg-5">
-						<div className="contact-thumbnail">
-							<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+		           	<h4 className="background" style={{margin:"10px 15px"}}><span>Basic info</span></h4>
+		           	<div>
+				        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+				        	<AutoForm item={item} schema={schema} form={this.form1} save={this.save()} />
+				        </div>
+				        <div className="col-lg-5">
+							<div className="contact-thumbnail">
+								<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+							</div>
 						</div>
 					</div>
 				</div>

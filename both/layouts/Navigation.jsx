@@ -114,10 +114,27 @@ Navigation = React.createClass({
                     </a>
                 </div>
 
+            {/*nope - this should be data driven
+            perhaps even database driven*/}
             <ul className="nav metismenu" id="side-menu" style={{marginTop:"55px"}}>
                 {!modules['Dashboard']?null:
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}><i className="fa fa-newspaper-o"></i> <span className="nav-label">Dashboard</span></a>
+                </li>
+                }
+                {!modules['Facilities']?null:
+                <li className={FlowRouter.getRouteName()=='facilities'?'active':''}>
+                    <a href={FlowRouter.path('facilities')}><i className="fa fa-building"></i> <span className="nav-label">Facilities</span></a>
+                </li>
+                }
+                {!modules['Work Requests']?null:
+                <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
+                    <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
+                </li>
+                }
+                {!modules['Suppliers']?null:
+                <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
+                    <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
                 }
                 {!modules['PMP']?null:
@@ -128,16 +145,6 @@ Navigation = React.createClass({
                 {!modules['ABC']?null:
                 <li className={FlowRouter.getRouteName()=='abc'?'active':''}>
                     <a href={FlowRouter.path('abc')}><i className="fa fa-check-square"></i> <span className="nav-label">A.B.C.</span></a>
-                </li>
-                }
-                {!modules['Work Requests']?null:
-                <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
-                    <a href={FlowRouter.path('requests')}><i className="fa fa-wrench"></i> <span className="nav-label">Work Requests</span></a>
-                </li>
-                }
-                {!modules['Dashboard']?null:
-                <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
-                    <a href={FlowRouter.path('suppliers')}><i className="fa fa-group"></i> <span className="nav-label">Suppliers</span> </a>
                 </li>
                 }
                 {!modules['Sustainability']?null:
@@ -163,9 +170,6 @@ Navigation = React.createClass({
                         </li>
                         <li className={FlowRouter.getRouteName()=='team'?'active':''}>
                             <a href={FlowRouter.path('team')}>Team</a>
-                        </li>
-                        <li className={FlowRouter.getRouteName()=='properties'?'active':''}>
-                            <a href={FlowRouter.path('properties')}>Properties</a>
                         </li>
                         <li className={FlowRouter.getRouteName()=='profile'?'active':''}>
                             <a href={FlowRouter.path('profile')}>Profile</a>

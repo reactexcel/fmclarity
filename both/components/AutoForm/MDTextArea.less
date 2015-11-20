@@ -1,0 +1,114 @@
+@default: #aaaaaa;
+@valid: #000000;
+@focus: #0152b5;
+@border: #dddddd;
+
+* { box-sizing:border-box; }
+
+
+/* form starting stylings ------------------------------- */
+.md-textarea { position:relative; margin-bottom:30px; display:inline-block; width:100%;}
+.md-textarea > label {
+  color:#aaa; 
+  font-size:13px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  top:15px;
+  transition:0.2s ease all;
+}
+.md-textarea > textarea 				{
+  color:#333;
+  height:27px;
+  font-weight:400;
+  font-size:13px;
+  padding:4px 0;
+  display:block;
+  width:100%;
+  border:none;
+  border-bottom:1px solid @border;
+  background-color: transparent;
+}
+.md-textarea > textarea:focus 		{ outline:none; }
+
+.md-textarea > textarea.valid { border-bottom: 1px solid @border;}
+
+/* BOTTOM BARS ================================= */
+.md-textarea > .bar 	{ position:relative; display:block; width:100%; }
+.md-textarea > .bar:before, .bar:after 	{
+  content:'';
+  height:2px;
+  width:0;
+  bottom:1px; 
+  position:absolute;
+  background:@focus; 
+  transition:0.2s ease all;
+}
+.md-textarea > .bar:before {
+  left:50%;
+}
+.md-textarea > .bar:after {
+  right:50%; 
+}
+
+.md-textarea > textarea.valid ~ .bar:before, textarea.valid ~ .bar:after{
+  background: @valid !important;
+}
+
+/* HIGHLIGHTER ================================== */
+.md-textarea > .highlight {
+  position:absolute;
+  height:60%; 
+  width:100px; 
+  top:25%; 
+  left:0;
+  pointer-events:none;
+  transition:0.2s ease all;
+  opacity:0.5;
+}
+
+/* active state -------------------------------------------- */
+.md-textarea > textarea.used ~ label {
+  top:-12px;
+  font-size:11px;
+  color:@default;  
+}
+
+
+.md-textarea > textarea:focus ~ label 		{
+  top:-12px;
+  font-size:11px;
+  color:@focus;
+}
+
+
+.md-textarea > textarea.valid ~ label , .md-textarea > textarea.valid.used ~ label{
+  color: @valid;
+}
+
+.md-textarea > textarea:focus ~ .bar:before {
+  width:50%;
+}
+.md-textarea > textarea:focus ~ .bar:after {
+  width:50%;
+}
+
+.md-textarea > textarea:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+}
+
+.md-textarea > textarea.valid ~ .hightlight {
+    -webkit-animation:validHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+	from { background:@focus; }
+  to 	{ width:0; background:transparent; }
+}
+
+@-webkit-keyframes validHighlighter {
+	from { background:@valid !important; }
+  to 	{ width:0; background:transparent; }
+}
+

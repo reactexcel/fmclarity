@@ -128,6 +128,7 @@ Meteor.startup(function(){
         if(team.type=='fm') {
             ExampleTeams[i].modules = {
                 "Dashboard":true,
+                "Facilities":true,
                 "PMP":false,
                 "ABC":false,
                 "Work Requests":true,
@@ -140,6 +141,7 @@ Meteor.startup(function(){
         else {
             ExampleTeams[i].modules = {
                 "Dashboard":false,
+                "Facilities":true,
                 "PMP":false,
                 "ABC":false,
                 "Work Requests":true,

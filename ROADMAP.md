@@ -1,98 +1,84 @@
 ROADMAP.md
-
+==========
 
 
 TODO (general)
-- should sticky items ignore the filter?
-- Brainstorm list of "actions" for RBAC inc[create facility, add to team, create contact, add to team, edit own profile, edit other profile]
-- Tidy folder structure and create component dictionary 
-- Remove redundant JS libraries (that came with Inpinia)
-- Write test plan [login, click through each screen, create a work order, invote a user to a team]
+--------------
+* should sticky items ignore the filter?
+* Brainstorm list of "actions" for RBAC inc[create facility, add to team, create contact, add to team, edit own profile, edit other profile]
+* Tidy folder structure and create component dictionary 
+* Remove redundant JS libraries (that came with Inpinia)
+* Write test plan [login, click through each screen, create a work order, invote a user to a team]
 
 DONE
-- Reverse sorting on work order tables
-- Can not switch on/off modules from account settings
-- Contractors have different default modules that managers
-
+----
 
 IN PROGRESS
+-----------
+* New facilities can now be added to team
+* Changed core form rendering function for Teams, Facilities, Users to help with creation of new Facility form
+* Changed textareas to material design style in order to make accordians
 
+v0.3.0a "Demo v2"
+------------------------------
 
-v0.3.0a "Demo v2" (17/11/2015)
-- Make reverse sorting available
+**Work order detail**
+* Auto generate service types for contractors
+* Filter contractor based on type of repair
+* Make discussion component (for log an comments)
+* Hook discussions into notifications widget
+* When creating a work order, need to be able to assign job not just to a team but also to an individual within that team
+* Create images/files attachment component
 
+**Work order table**
+* Management teams see creator and contractor team, contractor teams see creators teams and assignee
+* Fix sorting by creators
 
-***Work order detail
-- Update work order to match Adrian's design
-- Auto generate service types for contractors
-- Filter contractor based on type of repair
-- Make discussion component (for log an comments)
-- Hook discussions into notifications widget
-- When creating a work order, need to be able to assign job not just to a team but also to an individual within that team
-- Create images/files attachment component
+**Test data**
+* Generate more extensive test data for contractor teams
+* Auto generate random reviews on startup
+* Generate contractor review for closed work orders
+* Autogenerate contact for facilities and add to facilities card
+* Populate comments and history sections with realistic info
+* Need better quality, real world test data (for work orders and the like)
 
-***Work order table
-- Management teams see creator and contractor team, contractor teams see creators teams and assignee
-- Fix sorting by creators
+**Accounts**
+* create a new AccountCard which shows contact card at top and account detail below (account detail probably wrapped in two separate components, one for fm and one for contractor)
+* Rename AccountEdit and AccountView?
 
-***Test data
-- Generate more extensive test data for contractor teams
-- Auto generate random reviews on startup
-- Generate contractor review for closed work orders
-- Autogenerate contact for facilities and add to facilities card
-- Populate comments and history sections with realistic info
-- Need better quality, real world test data (for work orders and the like)
+**Contractor card**
+* Contractor cards should be set up to show team, rating, reviews, when browsing
 
-***Accounts
-- create a new AccountCard which shows contact card at top and account detail below (account detail probably wrapped in two separate components, one for fm and one for contractor)
-- Rename AccountEdit and AccountView?
+**Facilities card**
+* Reformat facilities card
+* Add outstanding issues to facilities card
+* Add floorplans and lease end dates
 
-***Contractor card
-- Contractor cards should be set up to show team, rating, reviews, when browsing
+**Suppliers page**
+* Users can add contacts for their team, users current active account influences contacts that can be seen
+* Accounts have a contact list of "preferred contractors" (v0.3.0a+ - these preferred contractors can be selected from contractor directory)
 
-***Facilities card
-- Reformat facilities card
-- Add outstanding issues to facilities card
-- Add floorplans and lease end dates
-
-***Suppliers page
-- Users can add contacts for their team, users current active account influences contacts that can be seen
-- Accounts have a contact list of "preferred contractors" (v0.3.0a+ - these preferred contractors can be selected from contractor directory)
-
-***Dashboard
-- iBoxes should be evently spaced (currrently the space in the centre iw bigger than the gutter)
-- Dashboard should look and feel more "cutting edge" with some cool looking D3 visualisations instead of graphs (TODO: find some examples)
+**Dashboard**
+* iBoxes should be evently spaced (currrently the space in the centre iw bigger than the gutter)
+* Dashboard should look and feel more "cutting edge" with some cool looking D3 visualisations instead of graphs (TODO: find some examples)
 
 ***Other
-- Rationalise account form using my new schema system (cols becomes size)
-- Photographs of actual Kaplan properties
+* Rationalise account form using my new schema system (cols becomes size)
+* Photographs of actual Kaplan properties
 
-UNCATEGORISED
-- Team screen : when a new user is created should be selected
-- Placeholder avatars using initials
-- Validation required for form elements
-- Team page has RBAC
-- Work order: "Sticky" pin should be moved to the right of the, selection box with requestor in the left
-- All buildings no longer appearing
-- Remove browse button from dropdown boxes
-- Should not reuse email addresses when generating user data
-- Settings menu doesn't work very well in minimized view - should be tabbed subselection
-- Facilities have their own team which may include members from another account - be it another paid FM Clarity account, or a contractor account, a facility that is created by a member of an account, by default, has that accounts members as its team - but this can be changed after facility creation
-- Facilities field autocompletes
-- Created "facilities selector" widget
-- Invite field autocompletes
-- Fix email invite
-- Pimp invite user field
-
-Adrians Recommendations
-- Comments should be 13 point, description should be body point, Differentiate sizes between H1 & H2
-- Typography should be treated universally. Ie body font should work across all devices
-- Showing company logo is good but display needs to be rethought, remove borders
-- Service types should be a combination of suggestive search and combo box
-- Consistency around button styles (this may be resolved on Friday)
-- Move photo/file respository icons horizntally above images
-- Change out issued status with another colour (this should get resolved at next meeting with Kongo)
-- Swap out red sample contractor icon with another colour
-- Include work request type, eg preventative maintenance, ad-hoc, base building, warranty, contract, no-cost
-- Need detail around value of work order, work order number, job location 
-
+**UNCATEGORISED**
+* Team screen : when a new user is created should be selected
+* Placeholder avatars using initials
+* Validation required for form elements
+* Team page has RBAC
+* Work order: "Sticky" pin should be moved to the right of the, selection box with requestor in the left
+* All buildings no longer appearing
+* Remove browse button from dropdown boxes
+* Should not reuse email addresses when generating user data
+* Settings menu doesn't work very well in minimized view - should be tabbed subselection
+* Facilities have their own team which may include members from another account - be it another paid FM Clarity account, or a contractor account, a facility that is created by a member of an account, by default, has that accounts members as its team - but this can be changed after facility creation
+* Facilities field autocompletes
+* Created "facilities selector" widget
+* Invite field autocompletes
+* Fix email invite
+* Pimp invite user field

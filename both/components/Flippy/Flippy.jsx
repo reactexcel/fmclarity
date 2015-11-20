@@ -21,7 +21,7 @@ FlipWidget= React.createClass({
 							<a onClick={this.toggleEdit} style={{
 								position:"absolute",
 								right:"2px",
-								padding:"7px",
+								padding:"6px",
 								top:0,
 								fontSize:"15px",
 								color:"#ccc"
@@ -36,7 +36,7 @@ FlipWidget= React.createClass({
 							<a onClick={this.toggleEdit} style={{
 								position:"absolute",
 								right:"2px",
-								padding:"7px",
+								padding:"6px",
 								top:0,
 								fontSize:"15px",
 								color:"#ccc"

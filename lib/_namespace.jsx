@@ -2,6 +2,7 @@ Schema = {};
 FM = {};
 
 FM.collections = {};
+FM.schemas = {};
 
 FM.makeSchema = function(schema) {
 	var ss = {};
@@ -10,7 +11,7 @@ FM.makeSchema = function(schema) {
 	    ss[i] = {
 	    	type:field.type,
 	    	label:field.label,
-	    	optional:true
+	    	optional:!field.required
 	    }
 	}
 	return new SimpleSchema(ss);
@@ -20,8 +21,14 @@ FM.makeNewItemTemplate = function(schema) {
 	var n = {};
 	for(var i in schema) {
 	    var field = schema[i];
-	    if(field.type==String) {
-	    	n[i] = field.label;
+	    if(i.indexOf('.')>=0) {
+
+	    }
+	    else if(field.type==String) {
+	    	n[i] = field.defaultValue||"";
+	    }
+	    else if(_.isArray(field.type)) {
+	    	n[i] = [];
 	    }
 	    else if(field.type==Object) {
 	    	n[i] = {};
@@ -39,6 +46,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// and the fields that I am sending to my own Autoform
 	var collection, schema, newItemTemplate;
 
+	this.schemas[name] = template;
 	collection = new Mongo.Collection(name);
 	if(!shouldNotCreateSchema) {
 		schema = this.makeSchema(template);

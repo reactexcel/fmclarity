@@ -11,16 +11,28 @@ PageProperties = React.createClass({
     	    if(selectedTeam) {
 	    	    selectedFacility = user.getSelectedFacility();
 	        	facilities = selectedTeam.getFacilities();
+		        return {
+		        	ready:true,
+		        	selectedTeam : selectedTeam,
+		        	selectedFacility : selectedFacility,
+		            facilities : facilities
+		        }
 	        }
         }
         return {
-        	selectedFacility : selectedFacility,
-            items : facilities
+        	ready:false
         }
     },
 
     createNew() {
-    	Meteor.call("Facility.new");
+    	var selectedTeam = this.data.selectedTeam;
+    	console.log('rooter');
+    	Meteor.call("Facility.new",{
+    		_team:{
+    			_id:selectedTeam._id,
+    			name:selectedTeam.name
+    		}
+    	});
     },
 
 	componentDidMount() {
@@ -28,6 +40,7 @@ PageProperties = React.createClass({
 	},
 
 	render() {
+		if(!this.data.ready) return <div/>
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
@@ -37,7 +50,7 @@ PageProperties = React.createClass({
 		        </div>
 		        <div className="facility-page wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
-						items={this.data.items}
+						items={this.data.facilities}
 						itemView={{
 							summary:FacilitySummary,
 							detail:FacilityProfileWidget
