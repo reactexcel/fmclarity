@@ -10,13 +10,6 @@ IssueSummary = React.createClass({
       }
     }
     else {
-      var status = issue.status;
-      var statusClass = 
-        status=='New'?'success':
-        status=='Issued'?'warning':
-        status=='Open'?'danger':
-        status=='Closed'?'info':'';
-
       // note: in order to reduce the overhead of loading the creator
       // supplier etc - we should denormalise the tables
       // that is to say - any field we want to use in this context
@@ -27,8 +20,7 @@ IssueSummary = React.createClass({
         facility:issue.getFacility(),
         creator:issue.getCreator(),
         supplier:issue.getSupplier(),
-        status:status,
-        statusClass:statusClass
+        status:issue.status,
       }
     }
   },
@@ -48,7 +40,6 @@ IssueSummary = React.createClass({
         var facility = this.data.facility;
         var creator = this.data.creator;
         var supplier = this.data.supplier;
-        var statusClass = this.data.statusClass;
         return (
         <div className={"issue-summary issue-status-"+status}>
 
@@ -60,10 +51,7 @@ IssueSummary = React.createClass({
             <ContactAvatarSmall item={supplier} />
           </div>
           <div className="issue-summary-col issue-summary-col-3">
-            <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
-            {issue.priority!='Urgent'?null:
-              <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
-            }
+            <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
           </div>
           <div className="issue-summary-col issue-summary-col-4">
             <span className="issue-summary-facility-name">

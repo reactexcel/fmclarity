@@ -15,14 +15,15 @@ DONE
 
 IN PROGRESS
 -----------
-* New facilities can now be added to team
-* Changed core form rendering function for Teams, Facilities, Users to help with creation of new Facility form
-* Changed textareas to material design style in order to make accordians
+
+
+
 
 v0.3.0a "Demo v2"
 ------------------------------
 
 **Work order detail**
+
 * Auto generate service types for contractors
 * Filter contractor based on type of repair
 * Make discussion component (for log an comments)
@@ -31,10 +32,12 @@ v0.3.0a "Demo v2"
 * Create images/files attachment component
 
 **Work order table**
+
 * Management teams see creator and contractor team, contractor teams see creators teams and assignee
 * Fix sorting by creators
 
 **Test data**
+
 * Generate more extensive test data for contractor teams
 * Auto generate random reviews on startup
 * Generate contractor review for closed work orders
@@ -43,30 +46,37 @@ v0.3.0a "Demo v2"
 * Need better quality, real world test data (for work orders and the like)
 
 **Accounts**
+
 * create a new AccountCard which shows contact card at top and account detail below (account detail probably wrapped in two separate components, one for fm and one for contractor)
 * Rename AccountEdit and AccountView?
 
 **Contractor card**
+
 * Contractor cards should be set up to show team, rating, reviews, when browsing
 
 **Facilities card**
+
 * Reformat facilities card
 * Add outstanding issues to facilities card
 * Add floorplans and lease end dates
 
 **Suppliers page**
+
 * Users can add contacts for their team, users current active account influences contacts that can be seen
 * Accounts have a contact list of "preferred contractors" (v0.3.0a+ - these preferred contractors can be selected from contractor directory)
 
 **Dashboard**
+
 * iBoxes should be evently spaced (currrently the space in the centre iw bigger than the gutter)
 * Dashboard should look and feel more "cutting edge" with some cool looking D3 visualisations instead of graphs (TODO: find some examples)
 
-***Other
+**Other**
+
 * Rationalise account form using my new schema system (cols becomes size)
 * Photographs of actual Kaplan properties
 
 **UNCATEGORISED**
+
 * Team screen : when a new user is created should be selected
 * Placeholder avatars using initials
 * Validation required for form elements
@@ -82,3 +92,4 @@ v0.3.0a "Demo v2"
 * Invite field autocompletes
 * Fix email invite
 * Pimp invite user field
+

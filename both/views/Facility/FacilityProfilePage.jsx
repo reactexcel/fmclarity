@@ -1,4 +1,31 @@
+
+
 FacilityProfile = React.createClass({
+
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	Meteor.subscribe('users');
+		var item, schema, team, tenants;
+		item = this.props.item;
+		schema = FM.schemas['Facility'];
+		if(item){
+			team = item.getTeam();
+			if(team) {
+				tenants = team.getMembers();
+				return {
+					ready:true,
+					facility:item,
+					schema:schema,
+					tenants:tenants.slice(0,3)
+				}
+			}
+		}
+		return {
+			ready:false
+		}
+
+    },
 
 	save() {
 		var item = this.props.item;
@@ -7,15 +34,18 @@ FacilityProfile = React.createClass({
 		}
 	},
 
-	form1 : ["name","address","description"],
-	form2 : ["addressLine1","addressLine2","city","state","country","postcode","buildingAreas","buildingServices"],
+	form1 : ["name","description"],
+	form2 : ["address","addressLine2","city","state","country","postcode"],
+	form3 : ["buildingAreas","buildingServices"],
 
 	render() {
-		var item = this.props.item;
-		var schema = FM.schemas['Facility'];
-		if(!item) {
-			return <div/>
-		}
+		var ready = this.data.ready;
+		if(!ready) return (<div/>);
+
+		var item = this.data.facility;
+		var tenants = this.data.tenants;
+		var schema = this.data.schema;
+
 		return (
 		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <div className="row">
@@ -24,22 +54,76 @@ FacilityProfile = React.createClass({
 			        </div>
 			   	</div>
 			   	<div className="row">
-		           	<h4 className="background" style={{margin:"10px 15px"}}><span>Basic info</span></h4>
-		           	<div>
-				        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+			   		<CollapseBox title="Property Details">
+				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
 				        	<AutoForm item={item} schema={schema} form={this.form1} save={this.save()} />
 				        </div>
-				        <div className="col-lg-5">
-							<div className="contact-thumbnail">
-								<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+				        <div className="col-lg-12" style={{paddingTop:"10px"}}>
+				        	<AutoForm item={item} schema={schema} form={this.form2} save={this.save()} />
+			            </div>
+					</CollapseBox>
+			   		<CollapseBox title="Lease Particulars" collapsed={true}>
+				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
+				        	<AutoForm item={item} schema={schema} form={[
+				        		'leaseCommencement',
+				        		'leaseExpiry',
+				        		'tenancyInsuranceExpiry',
+				        		'temporaryParking',
+				        		'permanentParking'
+				        	]} save={this.save()} />
+				        </div>
+					</CollapseBox>
+			   		<CollapseBox title="Tenant Details" collapsed={true}>
+			            <div className="row" style={{margin:"15px 30px"}}>
+			              	{tenants.map(function(tenant){
+			                	return (
+			                  		<div 
+			                    		key={tenant._id}
+			                    		style={{padding:0}}
+			                    		className={"table-row col-lg-12"}
+			                  		>
+				                    	<ContactCard item={tenant}/>
+			                  		</div>	
+		                	)
+			              	})}
+			            </div>
+					</CollapseBox>
+			   		<CollapseBox title="Building areas & services" collapsed={true}>
+					</CollapseBox>
+			   		<CollapseBox title="Documents & images" collapsed={true}>
+			   			<div className="row" style={{margin:"15px"}}>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
+							</div>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
+							</div>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
+							</div>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
+							</div>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
+							</div>
+					        <div className="col-lg-4" style={{padding:0}}>
+								<div className="contact-thumbnail">
+									<img style={{width:"100%"}} alt="image" src={"img/"+item.thumb}/>
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div className="row">
-			        <div className="col-lg-12" style={{paddingTop:"10px"}}>
-			        	<AutoForm item={item} schema={schema} form={this.form2} save={this.save()} />
-		            </div>
+					</CollapseBox>
 				</div>
 			</div>
 		)

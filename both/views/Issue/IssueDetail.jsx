@@ -13,18 +13,12 @@ IssueDetail = React.createClass({
         }
         else {
             var status = issue.status;
-            var statusClass = 
-                status=='New'?'success':
-                status=='Issued'?'warning':
-                status=='Open'?'danger':
-                status=='Closed'?'info':'';
 
             return {
                 ready:true,
                 creator:issue.getCreator(),
                 issue:issue,
                 status:status,
-                statusClass:statusClass,
                 facility:issue.getFacility(),
                 facilities : Facilities.find({},{sort:{name:1}}).fetch(),
                 supplier:issue.getSupplier(),
@@ -100,7 +94,6 @@ IssueDetail = React.createClass({
         var createdAt = moment(issue.createdAt).calendar();
         var supplier = this.data.supplier;
         var status = this.data.status;
-        var statusClass = this.data.statusClass;
 
         if(!this.data.ready) return <div />;
 
@@ -113,10 +106,10 @@ IssueDetail = React.createClass({
             </div>
             <div style={{float:"left",clear:"both"}}>
                 <SuperSelect 
-                    items={['Normal','Critical','Urgent']} 
+                    items={['Scheduled','Standard','Urgent','Critical']} 
                     onChange={this.updateObjectField('priority')}
                 >
-                    <span style={{fontSize:"20px",position:"relative",top:"20px",padding:"10px"}}><i className="fa fa-circle text-danger"></i></span>
+                    <span style={{fontSize:"20px",position:"relative",top:"15px",padding:"9px"}}><i className={"fa fa-circle priority-"+(issue.priority)}></i></span>
                 </SuperSelect>
             </div>
         </div>
@@ -141,10 +134,7 @@ IssueDetail = React.createClass({
                         </SuperSelect>
                     </div>
                     <div>
-                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+statusClass}>{issue.status}</span>
-                        {issue.priority!='Urgent'?null:
-                        <i className="fa fa-exclamation-triangle text-danger" style={{fontSize:"20px",position:"relative",top: "4px"}}></i>
-                        }
+                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
                     </div>
                 </div>
                 <div className="col-lg-2">
@@ -155,7 +145,7 @@ IssueDetail = React.createClass({
                             classes="absolute"
                             onChange={this.updateService}
                         >
-                            <span className="issue-nav-btn btn btn-sm">Service type</span>
+                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Service type</span>
                         </SuperSelect>
                         {issue.service?
                             <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
@@ -169,7 +159,7 @@ IssueDetail = React.createClass({
                                 classes="absolute"
                                 onChange={this.updateObjectField('subservice')}
                             >
-                                <span className="issue-nav-btn btn btn-sm">Service subtype</span>
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Service subtype</span>
                             </SuperSelect>
                             {issue.subservice?
                                 <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.subservice.name}</span>
@@ -187,7 +177,7 @@ IssueDetail = React.createClass({
                             classes="absolute"
                             onChange={this.updateObjectField('_supplier')}
                         >
-                            <span className="issue-nav-btn btn btn-sm">Supplier</span>
+                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Supplier</span>
 
                         </SuperSelect>
 
@@ -203,16 +193,16 @@ IssueDetail = React.createClass({
                 <div className="col-lg-2">
                     <div style={{float:"right"}}>
                         {!issue.status?
-                            <button onClick={this.createOrder} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'success':'default')}>Create request</button>
+                            <button onClick={this.createOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'New':'default')}>Create request</button>
                         :null}
                         {issue.status=='New'?
-                            <button onClick={this.sendOrder} type="button" className={"btn btn-sm btn-"+(supplier?'warning':'default')}>Issue order</button>
+                            <button onClick={this.sendOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Issued':'default')}>Issue order</button>
                         :null}
                         {issue.status=='Issued'?
-                            <button onClick={this.closeOrder} type="button" className={"btn btn-sm btn-"+(supplier?'danger':'default')}>Close order</button>
+                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Closed':'default')}>Close order</button>
                         :null}
                         {issue.status=='Closed'?
-                            <button onClick={this.closeOrder} type="button" className={"btn btn-sm btn-"+(supplier?'danger':'default')}>Rate supplier</button>
+                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Closed':'default')}>Rate supplier</button>
                         :null}
                     </div>
                 </div>
@@ -220,7 +210,7 @@ IssueDetail = React.createClass({
 
             <div className="row">
                 <div className="col-lg-6">
-                    <span style={{marginTop:"10px"}} className="btn btn-sm issue-nav-btn">Description</span><br/>
+                    <span style={{paddingLeft:0}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <textarea 
                         ref="description"
                         placeholder="Type issue description here"
@@ -229,7 +219,6 @@ IssueDetail = React.createClass({
                         onChange={this.updateField('description')}
                     />
                     <div className="attachments">
-                        <div className="btn btn-sm issue-nav-btn"><i className="fa fa-paperclip"></i></div>
                         <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
                         </div>
@@ -247,9 +236,15 @@ IssueDetail = React.createClass({
                 {issue.isNewItem?null:
                 <div className="col-lg-6">
                     <div className="panel blank-panel">
-                        <div className="panel-heading" style={{padding:0,marginTop:"10px",height:"40px"}}>
-                            <a className="pull-left btn btn-sm issue-nav-btn " href="#tab-1" data-toggle="tab">Conversation</a>
-                            <a className="pull-left btn btn-sm issue-nav-btn " href="#tab-2" data-toggle="tab">Work order log</a>
+                        <div className="panel-heading">
+                            <div className="issue-tab active" href="#tab-1" data-toggle="tab">
+                                <div className="btn btn-sm btn-flat issue-nav-btn">Conversation</div>
+                                <div className="highlight"/>
+                            </div>
+                            <div className="issue-tab" href="#tab-2" data-toggle="tab">
+                                <div className="btn btn-sm btn-flat issue-nav-btn">Work order log</div>
+                                <div className="highlight"/>
+                            </div>
                         </div>
                         <div className="panel-body" style={{padding:0}}>
                             <div className="tab-content">

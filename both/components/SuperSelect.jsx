@@ -1,7 +1,7 @@
 DumbCard = React.createClass({
 	render() {
 		return (
-			<span><i className="fa fa-circle text-danger"></i> <span style={{fontWeight:"bold",fontSize:"10px"}}>{this.props.item}</span></span>
+			<span><i className={"fa fa-circle priority-"+(this.props.item)}></i> <span style={{fontWeight:"bold",fontSize:"10px"}}>{this.props.item}</span></span>
 		)
 	}
 })

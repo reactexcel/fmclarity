@@ -1,3 +1,4 @@
+
 .close-order-popup {
 	position: absolute;
 	width:600px;
@@ -85,14 +86,6 @@
 
 .issue-summary-description:before {
 	content:' - ';
-}
-
-.issue-page .grid-item.gigante {
-	height:700px;
-}
-
-.issue-page .new-grid-item.gigante {
-	height:700px;
 }
 
 .issue-page .dropzone {

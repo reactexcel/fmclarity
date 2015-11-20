@@ -334,7 +334,7 @@ CardWrapper = React.createClass({
               onClick={this.toggle}
               className="card-button expand-button pull-right"
             >
-              <i className={"fa fa-close"}></i>
+              <i className={"fa fa-compress"}></i>
             </button>
           </div>
           <Detail item={item}/>

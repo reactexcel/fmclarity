@@ -169,9 +169,9 @@ TestIssues.generate = function() {
 		);
 	}
 	var descriptionPart1 = descriptionLines.join(' ');
-	descriptionLines = descriptionLines.reverse();
-	var descriptionPart2 = descriptionLines.join(' ');
-	var description = descriptionPart1+"\n\n"+descriptionPart2;
+	//descriptionLines = descriptionLines.reverse();
+	//var descriptionPart2 = descriptionLines.join(' ');
+	var description = descriptionPart1;//+"\n\n"+descriptionPart2;
 	var problems = shuffle(this.problems);
 	var problem1 = problems[0];
 	var problem2 = problems[1];
@@ -212,6 +212,7 @@ TestIssues.generate = function() {
 	    description:capitalize(description),
 	    status:getRandom(this.status),
 	    createdAt:randomDate(startDate, new Date()),
+	    priority:getRandom(['Scheduled','Standard','Urgent','Critical']),
 	    thumb:5,
 	    contact:{
 	      name:"John Smith",

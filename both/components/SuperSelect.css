@@ -4,10 +4,9 @@
 }
 
 .super-select.absolute .dropdown-menu {
-	width:100%;
-	overflow-y:scroll;
-	max-height:160px;
-	top:-2px;
+	width:250px;
+	overflow-y:auto;
+	top:18px;
 }
 
 .super-select .browse-button {

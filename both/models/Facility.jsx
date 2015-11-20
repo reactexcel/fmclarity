@@ -7,6 +7,7 @@ Facilities = FM.createCollection('Facility',{
     address: {
     	type: String,
     	label: "Address",
+    	size:6,
     },
     description: {
     	type: String,
@@ -70,7 +71,33 @@ Facilities = FM.createCollection('Facility',{
 		options:{
 			containerStyle:{height:"300px"}
 		}
-    }
+    },
+    leaseCommencement: {
+    	type:String,
+    	label:"Lease commencement",
+    	size:6
+    },
+    leaseExpiry: {
+    	type:String,
+    	label:"Lease expiry",
+    	size:6
+    },
+    tenancyInsuranceExpiry:{
+    	type:String,
+    	label:"Tenancy insurance expiry",
+    	size:6
+    },
+    permanentParking:{
+    	type:String,
+    	label:"Permanent parking",
+    	size:6
+    },
+    temporaryParking:{
+    	type:String,
+    	label:"Temporary parking",
+    	size:6
+    },
+
 },true);
 
 Facilities.helpers({

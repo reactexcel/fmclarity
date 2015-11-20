@@ -1,13 +1,31 @@
 CHANGELOG.md
 ============
 
+**v0.2.8a
+
+* WO : fixed colours to match Adrian's design
+* WO : Changed position and shape of service type and supplier drop downs
+* WO : Restyled buttons to match MD guidelines
+* WO : Open work order form now expands to match height of content
+* Facility form : Made collapsible groups for form elements
+* Facility form : Started to enter new form inputs
+
+**v0.2.7a
+
+* New facilities can now be added to team
+* Changed core form rendering function for Teams, Facilities, Users to help with creation of new Facility form
+* Changed textareas to material design style in order to make accordians
+* Reformatted markup files
+
 **v0.2.6a**
+
 * Updated work orders to match Adrian's design
 * Can reverse sort work order tables
 * Can not switch on/off modules from account settings
 * Contractors have different default modules than managers
 
 **v0.2.5a**
+
 * Work order : Fixed an issue that was causing new item creation to fail
 * Core : Rewrote parts of the database interface to make the code more maintainable
 * Created a "Message" data model to be used for reviews and discussions
@@ -15,6 +33,7 @@ CHANGELOG.md
 * Added reviews to contractor cards
 
 **v0.2.4a**
+
 * Test users now have avatars sourced from http://api.randomuser.me
 * Updated source code for various "user details" list and card views to improve compatibility
 * Detailed test data for issues generated on start up
@@ -26,6 +45,7 @@ CHANGELOG.md
 * Randomised work order creation date an sorted work order table by date
 
 v0.2.3a 
+
 * Fixed a problem where contractor images were not displaying correctly in the work order table
 * Fixed an error that was causing the "new work order" button to fail
 * Fixed an issue that was causing the selected team to reset every time any team was edited
@@ -34,6 +54,7 @@ v0.2.3a
 * A selection of test users are now generated on startup and randomly assigned to teams
 
 **v0.2.2a**
+
 * Member and team/contractor profile restyled using material design guidelines, now contains all required form elements (although some are placeholders)
 * Facilities profile restyled using material design, contains all basic form elements
 * Work order table header restyled to match material design guidelines
@@ -43,6 +64,7 @@ v0.2.3a
 * Changed "team blah" to kaplan and added their logo
 
 **v0.2.1a**
+
 * Moved the hamburger (so to speak)
 * Fixed bug where fields were being deselected after typing one letter
 * Table entries tidied up - removed grip icon - added avatars - show selected and hover state
@@ -53,17 +75,20 @@ v0.2.3a
 * Updated user and account profile edit views (not yet complete)
 
 **v0.2.0a**
+
 * Removed contractor collection and made contractors into a type of Team/Account
 * Made text boxes on profile pages reactive and editable by creating an autoform component
 * Various bug fixes
 
 **v0.1.4a**
+
 * Created team page / detail view on right
 * Update facilities page
 * User profile page
 * Team profile page
 
 **v0.1.3a**
+
 * [SOURCE] Collection names all plural
 * Designed teams page (as mockup)
 * Set up test data to test multiple teams
@@ -73,6 +98,7 @@ v0.2.3a
 * Changed "all facilities" icon and text to make intention clearer
 
 **0.1.2a**
+
 * Team members can see only facilities of the accounts they are members of
 * Team members can add facilities to team
 * Users current active team influences facilities that can be seen
@@ -84,6 +110,7 @@ v0.2.3a
 * Users can select a team from the dropdown and the current active team saved in a session variable
 
 **0.1.1a**
+
 * Model created for paid accounts and teams
 * Added "teams" button to settings
 * Added "sustainability" button to settings
@@ -99,6 +126,7 @@ v0.2.3a
 * Work Order : Facility name hidden from summary view when a facility is selected in top left nav
 
 **0.0.13a**
+
 * Dashboard : Changed Non-Compliant items graph
 * Work Order : Made service type selector available when order is created
 * Left navigation : Buildings dropdown wraps to prevent overflow
@@ -108,6 +136,7 @@ v0.2.3a
 * Creating a new item now rests the filter state to "All" (preventing new items from disappearing when created under "issued" or "closed" filter)
 
 **0.0.12a**
+
 * Navigation : Can now select facility from dropdown in left navigation
 * Navigation : Can now select "All Facilities" from dropdown in left navigation
 * Work Order : Work Orders now filtered according to selected facility in left navigation
@@ -116,6 +145,7 @@ v0.2.3a
 * Work Order : Added placeholder image for work order close screen
 
 **0.0.11a**
+
 * Changed bagdes to a more muted pallete
 * Work Order : Updated Work Order summary view to give it a "gmail" feel
 * Work Order : Facilities can now be selected from dropdown in detail view
@@ -123,6 +153,7 @@ v0.2.3a
 * Work Order : Added "Send Order" button
 
 **0.0.10a**
+
 * Updated supplier browsing screen
 * Updated work order screen layout
 * Restyled expanded card box
@@ -132,6 +163,7 @@ v0.2.3a
 * Work order : Created selector box for contracts
 
 **0.0.9a**
+
 * Fixed a bug that was causing expanded cards to get mixed up when a new card was created
 * New Order and Facility cards expand when created
 * Removed building type & location from property card
@@ -144,6 +176,7 @@ v0.2.3a
 * Changed delete icon
 
 **0.0.8a**
+
 * Created Properties(or Facilities) database collection
 * Connected Facilities view to Facilties database
 * Removed space at bottom of order card
@@ -154,11 +187,13 @@ v0.2.3a
 * Activated "new" button for Facilities and Work Orders
 
 **0.0.7a**
+
 * Made header of order unselectable (to remove the "blue bar" on double click)
 * Reformatted work order form to better match screen designs
 * Made title field of issue editable
 
 **0.0.6a**
+
 * Created detail view for a work order populated with an issued order
 * Removed dividers in left navigation menu
 * Left navigation menu now has fixed position
@@ -167,6 +202,7 @@ v0.2.3a
 * Issued and closed work orders identify contractor instead of requestor
 
 **0.0.5a**
+
 * Added Updated Work Order card placeholder to more closely resemble interface designs
 * Added Contract test data
 * Added Contract card / table row
@@ -174,11 +210,13 @@ v0.2.3a
 * Fixed a problem where selected item in left navigation bar was being unneccesarily indented
 
 **0.0.4a**
+
 * Created property card
 * Created Facility data model linked into Property filterbox with test data
 * Fixed a bug where app would sometimes lose user and crash when returning after a pause
 
 **0.0.3a**
+
 * Replace png logo with svg logo (for better res on mobile / retina displays)
 * Added placeholders for line charts, bar charts and progress arcs to dashboard and ABC
 * Properties menu item moved into settings
@@ -188,10 +226,12 @@ v0.2.3a
 * Created placeholder cards for work orders
 
 **0.0.2a**
+
 * Added placeholder FullCalendar.js to Dashboard and PMP
 * Updated filter buttons on properties, contracts, work requests and suppliers pages
 
 **0.0.1a**
+
 * Simple login screen with registration disabled
 * Basic branding and simple, Asana like, theme
 * Working left navigation with routing and placeholder pages
