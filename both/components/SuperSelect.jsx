@@ -59,7 +59,7 @@ SuperSelect = React.createClass({
 	                        </span>
 						)                    	
                     })}
-                    <li className="browse-button">Browse</li>
+                    {/*<li className="browse-button">Browse</li>*/}
                     </ul>
 
                 </span>

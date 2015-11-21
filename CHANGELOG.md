@@ -1,7 +1,12 @@
 CHANGELOG.md
 ============
 
-**v0.2.8a
+**v0.2.9a**
+
+* WO table : cleaned up scrolling behaviour of newly opened orders
+
+
+**v0.2.8a**
 
 * WO : fixed colours to match Adrian's design
 * WO : Changed position and shape of service type and supplier drop downs
@@ -10,7 +15,7 @@ CHANGELOG.md
 * Facility form : Made collapsible groups for form elements
 * Facility form : Started to enter new form inputs
 
-**v0.2.7a
+**v0.2.7a**
 
 * New facilities can now be added to team
 * Changed core form rendering function for Teams, Facilities, Users to help with creation of new Facility form

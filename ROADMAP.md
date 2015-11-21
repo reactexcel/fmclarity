@@ -15,6 +15,7 @@ DONE
 
 IN PROGRESS
 -----------
+* Adding new team member fails
 
 
 

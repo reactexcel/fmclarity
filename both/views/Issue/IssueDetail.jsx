@@ -130,7 +130,7 @@ IssueDetail = React.createClass({
                             itemView={ContactViewName}
                             onChange={this.updateObjectField('facility')}
                         >
-                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility.name}</span>
+                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility?facility.name:''}</span>
                         </SuperSelect>
                     </div>
                     <div>

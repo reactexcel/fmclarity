@@ -46,8 +46,8 @@ FilterBox = React.createClass({
     })
   },
 
-  setSort(sortNum) {
-    var sortDirection = this.state.sortDirection;
+  setSort(sortNum,sortDirection) {
+    var direction = sortDirection||this.state.sortDirection;
     if(sortNum==this.state.selectedSortNum) {
       sortDirection*=-1;
     }
@@ -61,8 +61,6 @@ FilterBox = React.createClass({
   },
 
   createNewItem() {
-    this.setFilter(0);
-    this.setSort(2);
     this.props.newItemCallback();
   },
 
@@ -182,8 +180,7 @@ CardWrapper = React.createClass({
 
   getInitialState() {
     return {
-      shouldExpand:false,
-      didExpand:false
+      collapsed:true
     }
   },
 
@@ -198,56 +195,39 @@ CardWrapper = React.createClass({
   },    
 
   expand() {
-    var $this = this;
-    $this.isAnimating = true;
-    var i = $(ReactDOM.findDOMNode($this));
-    i.addClass('pre-gigante');
-    i.toggleClass('gigante',250,function(){
-      i.removeClass('diminished pre-gigante');
-      $this.isAnimating = false;
-      $this.setState({
-        didExpand:true,
-        shouldExpand:true,
-      });
+    this.setState({
+      collapsed:false
     });
+    $('html, body').animate({
+        scrollTop: $(this.refs.container).offset().top-60
+    }, 750, 'easeInOutQuart');
   },
 
   contract() {
-    var $this = this;
-    $this.isAnimating = true;
-    var i = $(ReactDOM.findDOMNode($this));
-    i.toggleClass('gigante',250,function(){
-      $this.isAnimating = false;
-      $this.setState({
-        didExpand:false,
-        shouldExpand:false,
-      });
-      if($this.props.item.isNewItem) {
-        $this.props.item.destroy();
-      }
+    this.setState({
+      collapsed:true
     });
+    if(this.props.item.isNewItem) {
+      this.props.item.destroy();
+    }
   },
 
   toggle() {
-    this.setState({shouldExpand:!this.state.shouldExpand});
-  },
-
-  shouldComponentUpdate() {
-    if(this.isAnimating) {
-      return false;
+    if(this.state.collapsed) {
+      this.expand();
     }
-    return true;
+    else {
+      this.contract();
+    }
   },
 
   componentWillMount() {
-    this.isAnimating = false;
     if(this.props.item.isNewItem) {
       this.setState({
-        shouldExpand:true
+        collapsed:false
       });
     }
   },
-
 
   markupCheckboxes() {
     $(this.refs.iCheck).iCheck({
@@ -255,26 +235,16 @@ CardWrapper = React.createClass({
     });
   },
 
-
   componentWillReceiveProps() {
     if(this.props.item.isNewItem) {
       this.setState({
-        shouldExpand:true
+        collapsed:false
       });
     }
   },
 
   componentDidMount() {
     this.markupCheckboxes();
-  },
-
-  componentDidUpdate () {
-    if(!this.state.didExpand&&this.state.shouldExpand) {
-      this.expand();
-    }
-    else if(this.state.didExpand&&!this.state.shouldExpand) {
-      this.contract();
-    }
   },
 
   toggleSticky() {
@@ -290,9 +260,10 @@ CardWrapper = React.createClass({
     var Detail = this.props.itemView.detail;
     return (
       <div 
+        ref="container"
         className={
           (item.isNewItem?"new-grid-item diminished ":'')+
-          (this.state.didExpand?"gigante ":'')+
+          (!this.state.collapsed?"gigante ":'')+
           "grid-item"
         }
       >
@@ -327,7 +298,7 @@ CardWrapper = React.createClass({
             <Summary item={item} />
           </div>
         </div>
-        {Detail&&(this.state.shouldExpand||this.state.didExpand)?
+      {Detail&&(!this.state.collapsed)?
         <div className="card-body">
           <div className="card-body-right-toolbar">
             <button 
