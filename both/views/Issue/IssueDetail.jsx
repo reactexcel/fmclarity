@@ -102,7 +102,7 @@ IssueDetail = React.createClass({
     <div className="row">
         <div className="col-lg-1">
             <div>
-                <ContactAvatarSmall item={creator} />
+                <span style={{top:"3px",position:"relative"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
             </div>
             <div style={{float:"left",clear:"both"}}>
                 <SuperSelect 
@@ -124,17 +124,17 @@ IssueDetail = React.createClass({
                             onChange={this.updateField('name')}
                         />
                     </h2>
-                    <div style={{marginTop:"5px",marginBottom:"7px"}}>
+                    <div style={{marginTop:"15px",marginBottom:"7px"}}>
                         <SuperSelect 
                             items={this.data.facilities} 
                             itemView={ContactViewName}
                             onChange={this.updateObjectField('facility')}
                         >
-                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">{facility?facility.name:''}</span>
+                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">
+                                {facility?(facility.name+' - '+facility.location):''}
+
+                            </span>
                         </SuperSelect>
-                    </div>
-                    <div>
-                        <span style={{marginRight:"4px"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
                     </div>
                 </div>
                 <div className="col-lg-2">
@@ -145,7 +145,7 @@ IssueDetail = React.createClass({
                             classes="absolute"
                             onChange={this.updateService}
                         >
-                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Service type</span>
+                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.service?"Select":""} service type</span>
                         </SuperSelect>
                         {issue.service?
                             <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
@@ -159,7 +159,7 @@ IssueDetail = React.createClass({
                                 classes="absolute"
                                 onChange={this.updateObjectField('subservice')}
                             >
-                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Service subtype</span>
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.subservice?"Select":""} subtype</span>
                             </SuperSelect>
                             {issue.subservice?
                                 <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.subservice.name}</span>
@@ -172,12 +172,12 @@ IssueDetail = React.createClass({
                     <div>
 
                         <SuperSelect 
-                            itemView={ContactCard}
+                            itemView={Contact2Line}
                             items={this.data.suppliers} 
                             classes="absolute"
                             onChange={this.updateObjectField('_supplier')}
                         >
-                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">Supplier</span>
+                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>
 
                         </SuperSelect>
 

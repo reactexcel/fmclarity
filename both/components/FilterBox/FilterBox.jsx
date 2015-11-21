@@ -262,7 +262,7 @@ CardWrapper = React.createClass({
       <div 
         ref="container"
         className={
-          (item.isNewItem?"new-grid-item diminished ":'')+
+          (item.isNewItem?"new-grid-item ":'')+
           (!this.state.collapsed?"gigante ":'')+
           "grid-item"
         }

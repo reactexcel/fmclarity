@@ -55,7 +55,7 @@ SuperSelect = React.createClass({
 	                        <li onClick={handleClick.bind(null,i)}>
 	                        	<Card item={i} />
 	                        </li>
-	                        <li className="divider"></li>
+	                        <li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
 	                        </span>
 						)                    	
                     })}

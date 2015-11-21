@@ -22,43 +22,44 @@
 	height:30px;
 }
 
-/* creator */
+/* priority */
 .issue-summary-col-1 {
 	width:50px;
 	padding-top:2px;
 	padding-right:none;
+	text-align: center;
 }
 
-/* contractor */
+/* contractor
 .issue-summary-col-2 {
 	width:50px;
 	padding-top:2px;
 	padding-right:none;
 }
-
-/* contactor */
-.issue-summary-col-3 {
+*/
+/* status */
+.issue-summary-col-2 {
 	padding-top:10px;
 	width:55px;
 	padding-right:none;
 }
 
 /* facility */
-.issue-summary-col-4 {
+.issue-summary-col-3 {
 	padding-top:10px;
 	float:left;
 	width:20%;
 }
 
 /* issue */
-.issue-summary-col-5 {
+.issue-summary-col-4 {
 	padding-top:10px;
 	float:left;
 	width:45%;
 }
 
 /* when */
-.issue-summary-col-6 {
+.issue-summary-col-5 {
 	padding-top:10px;
 	float:right;
 	width:15%;	

@@ -9,6 +9,11 @@ Facilities = FM.createCollection('Facility',{
     	label: "Address",
     	size:6,
     },
+    location: {
+    	type: String,
+    	label: "Location",
+    	size:6,
+    },
     description: {
     	type: String,
     	label: "Description",
@@ -114,34 +119,9 @@ Facilities.helpers({
 
 ExampleFacilities = [
 	{
-		name:"Georges Rd (Building A)",
-		address:"2 Georges Rd",
-		location: "Building A",
-		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
-	},
-	{
-		name:"Georges Rd (Building B)",
-		address:"2 Georges Rd",
-		location: "Building B",
-		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
-	},
-	{
 		name:"Head Office",
 		address:"4/45 Clarence Street, Sydney",
+		location:"Clarence Street, Sydney",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-2.jpg",
 		contact:{
@@ -152,8 +132,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Franklin Scholar, Osbourne Park",
+		name:"Franklin Scholar",
 		address:"1/76 Hasler Rd, Osbourne Park, WA",
+		location:"Hasler Rd, Osbourne Park",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -164,8 +145,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Franklin Scholar, Cantebury",
+		name:"Franklin Scholar",
 		address:"21 Shierlaw Ave, Canterbury, VIC",
+		location:"Shierlaw Ave, Cantebury",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -176,8 +158,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Franklin Scholar, Launceston",
-		address:"65 Cameron ST, Launceston, TAS",
+		name:"Franklin Scholar",
+		address:"65 Cameron St, Launceston, TAS",
+		location:"Cameron St, Launceston",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -188,8 +171,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Franklin Scholar, Hobart",
+		name:"Franklin Scholar",
 		address:"12 Warwick St, Hobart, TAS",
+		location:"Warwick St, Hobart",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -200,8 +184,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Professional & International English - Adelaide",
-		address:"22 Peel St, Adelaide",
+		name:"Professional & International English",
+		address:"22 Peel St",
+		location:"Peel St, Adelaide",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-3.jpg",
 		contact:{
@@ -212,8 +197,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Professional & International English - Brisbane",
+		name:"Professional & International English",
 		address:"252 St Pauls Terrace, Spring Hill",
+		location:"St Pauls Terrace, Spring Hill",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-4.jpg",
 		contact:{
@@ -224,8 +210,9 @@ ExampleFacilities = [
 		}
 	},
 	{
-		name:"Professional & International English - Cairns",
-		address:"130 McLeod St",
+		name:"Professional & International English",
+		address:"130 McLeod St, Cairns",
+		location:"McLeod St, Cairns",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -238,6 +225,7 @@ ExampleFacilities = [
 	{
 		name:"Bradford College",
 		address:"132 Grenfell St, Adelaide",
+		location:"Grenfell St, Adelaide",
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{

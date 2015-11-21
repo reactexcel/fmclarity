@@ -27,6 +27,32 @@ ContactAvatarSmall = React.createClass({
 
 });
 
+Contact2Line = React.createClass({
+	render() {
+		var contact, profile;
+		contact = this.props.item;
+		if(contact) {
+			profile = contact.getProfile();
+		}
+		if(!profile) {
+			return <div />
+		}
+		return (
+			<div className="contact-card contact-card-2line">
+				<div className="contact-card-2line-text">
+		        	{profile.name}<br/>
+		        	<span style={{fontSize:"11px",color:"#777"}}>
+		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
+		            	{profile.email}&nbsp;&nbsp;
+		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
+		            	{profile.phone}
+		            </span>
+		       	</div>
+	        </div>
+		)
+	}
+});
+
 Contact2LineWithAvatar = React.createClass({
 	render() {
 		var contact, profile;

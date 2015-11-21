@@ -42,27 +42,29 @@ IssueSummary = React.createClass({
         var supplier = this.data.supplier;
         return (
         <div className={"issue-summary issue-status-"+status}>
-
+          
           <div className="issue-summary-col issue-summary-col-1">
-            <ContactAvatarSmall item={creator} />
+            <span style={{fontSize:"20px",position:"relative",top:"3px"}}><i className={"fa fa-circle priority-"+(issue.priority)}></i></span>
+            {/*<ContactAvatarSmall item={creator} />*/}
           </div>
-
+          {/*}
           <div className="issue-summary-col issue-summary-col-2">
             <ContactAvatarSmall item={supplier} />
           </div>
-          <div className="issue-summary-col issue-summary-col-3">
+          */}
+          <div className="issue-summary-col issue-summary-col-2">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
           </div>
-          <div className="issue-summary-col issue-summary-col-4">
+          <div className="issue-summary-col issue-summary-col-3">
             <span className="issue-summary-facility-name">
-              {facility?facility.name:null}
+              {facility?facility.location:null}
             </span>
           </div>
-          <div className="issue-summary-col issue-summary-col-5">
+          <div className="issue-summary-col issue-summary-col-4">
             <span className="issue-summary-name">{issue.name}</span>
-            <span className="issue-summary-description">{issue.description}</span>
+            {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
-          <div className="issue-summary-col issue-summary-col-6">
+          <div className="issue-summary-col issue-summary-col-5">
             {moment(issue.createdAt).fromNow()}
           </div>
         </div>

@@ -70,6 +70,7 @@ PageRequests = React.createClass({
 	    ];
 
 	    var headers = [
+	    /*
 	    {
 	    	text:"Creator",
 	    	sortFunction(a,b){
@@ -108,6 +109,14 @@ PageRequests = React.createClass({
 		    	else {
 		    		return 1;
 		    	}
+	    	},
+	    },
+	    */
+	    {
+	    	text:"Priority",
+	    	sortFunction(a,b) {
+	    		var weight = {'Scheduled':0,'Standard':1,'Urgent':2,'Critical':2};
+	    		return	(weight[a.priority]<weight[b.priority])?-1:1;
 	    	},
 	    },
 	    {
