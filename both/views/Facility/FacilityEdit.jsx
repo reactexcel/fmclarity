@@ -1,6 +1,4 @@
-
-
-FacilityProfile = React.createClass({
+FacilityEdit = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -34,8 +32,7 @@ FacilityProfile = React.createClass({
 		}
 	},
 
-	form1 : ["name","description"],
-	form2 : ["address","addressLine2","city","state","country","postcode"],
+	form1 : ["name","description","address"],
 	form3 : ["buildingAreas","buildingServices"],
 
 	render() {
@@ -58,19 +55,10 @@ FacilityProfile = React.createClass({
 				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
 				        	<AutoForm item={item} schema={schema} form={this.form1} save={this.save()} />
 				        </div>
-				        <div className="col-lg-12" style={{paddingTop:"10px"}}>
-				        	<AutoForm item={item} schema={schema} form={this.form2} save={this.save()} />
-			            </div>
 					</CollapseBox>
 			   		<CollapseBox title="Lease Particulars" collapsed={true}>
 				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={item} schema={schema} form={[
-				        		'leaseCommencement',
-				        		'leaseExpiry',
-				        		'tenancyInsuranceExpiry',
-				        		'temporaryParking',
-				        		'permanentParking'
-				        	]} save={this.save()} />
+				        	<AutoForm item={item} schema={schema} form={['lease']} save={this.save()} />
 				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Tenant Details" collapsed={true}>
@@ -129,47 +117,3 @@ FacilityProfile = React.createClass({
 		)
 	}
 });
-
-FacilityProfileWidget= React.createClass({
-	render() {
-		return (
-			<FlipWidget
-				front={FacilityProfile}
-				back={FacilityDetail}
-				item={this.props.item}
-			/>
-		)
-	}
-});
-
-FacilityProfilePage = React.createClass({
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	var user, item;
-    	user = Meteor.user();
-    	if(user) {
-    		item = user.getSelectedFacility();
-    	}
-		return {
-			item:item
-		}
-	},
-
-	render() {
-		return (
-		    <div className="wrapper wrapper-content animated fadeIn">
-		        <div className="row">
-		            <div className="col-lg-6 col-md-6 col-sm-6">
-						<FlipWidget
-							front={FacilityDetail}
-							back={FacilityProfile}
-							item={this.data.item}
-						/>
-					</div>
-				</div>
-			</div>
-		)
-	}
-})

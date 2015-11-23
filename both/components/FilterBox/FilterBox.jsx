@@ -46,17 +46,22 @@ FilterBox = React.createClass({
     })
   },
 
-  setSort(sortNum,sortDirection) {
-    var direction = sortDirection||this.state.sortDirection;
+  setSort(sortNum) {
+    var direction;
+    console.log({
+      sortNum:sortNum,
+      newSortNum:this.state.selectedSortNum,
+      sortDirection:this.state.sortDirection,
+    });
     if(sortNum==this.state.selectedSortNum) {
-      sortDirection*=-1;
+      direction = this.state.sortDirection*=-1;
     }
     else {
-      sortDirection = 1;
+      direction = 1;
     }
     this.setState({
       selectedSortNum:sortNum,
-      sortDirection:sortDirection
+      sortDirection:direction
     })
   },
 
@@ -104,7 +109,7 @@ FilterBox = React.createClass({
               {filters.map(function(i,index){
                 return (
                   <li key={index} className={selectedFilterNum==index?'active':''}>
-                    <a onClick={$this.setFilter.bind(null,index)}>{i.text}</a>
+                    <a onClick={$this.setFilter.bind($this,index)}>{i.text}</a>
                   </li>
                 )
               })}

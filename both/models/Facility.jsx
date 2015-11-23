@@ -1,68 +1,132 @@
 
+// labels need i18n
+Address = {
+	streetNumber:{
+		label:"Street number",
+		size:3
+	},
+	streetName:{
+		label: "Street name",
+		size:9
+	},
+	city:{
+		label:"City",
+		size:6,
+	},
+	state:{
+		label:"State",
+		size:3,
+	},
+	postcode:{
+		label:"Postcode",
+		size:3
+	},
+	buildingName:{
+		label:"Building name",
+		size:12,
+	},
+	buildingDirections:{
+		label:"Directions",
+		size:12,
+		input:"mdtextarea",
+	}
+};
+
+Contact = {
+	phone:{
+		label:"Phone",
+	},
+	email:{
+		label:"Email",
+	},
+	name:{
+		label:"Name",
+	}	
+}
+
+FacilityClient = {
+	type:{
+		label:"Client type",
+	},
+	name : {
+		label:"Client name",
+	},
+	abn:{
+		label:"Client ABN"
+	},
+	address:{
+		type:Object,
+		label:"Client address",
+		schema:Address,
+	},
+	contact:{
+		type:Object,
+		label:"Contact",
+		schema:Contact
+	}
+}
+
+Lease = {
+    leaseCommencement: {
+    	label:"Lease commencement",
+    	size:6
+    },
+    leaseExpiry: {
+    	label:"Lease expiry",
+    	size:6
+    },
+    tenancyInsuranceExpiry:{
+    	label:"Tenancy insurance expiry",
+    	size:6
+    },
+    permanentParking:{
+    	label:"Permanent parking",
+    	size:6
+    },
+    temporaryParking:{
+    	label:"Temporary parking",
+    	size:6
+    }	
+};
+
 Facilities = FM.createCollection('Facility',{
     name: {
-    	type: String,
     	label: "Name",
     },
-    address: {
-    	type: String,
-    	label: "Address",
-    	size:6,
+    type: {
+    	label:"Property type",
     },
-    location: {
-    	type: String,
-    	label: "Location",
-    	size:6,
+    size: {
+    	label:"Net lettable area (m²)"
     },
     description: {
-    	type: String,
     	label: "Description",
     	input:"mdtextarea",
     },
     thumb: {
-    	type:String,
     	label:"Thumbnail file",
     },
-    addressLine1 :{
-    	type: String,
-    	label: "Address line 2",
-    	size:6,
+    client: {
+    	type:Object,
+    	schema:FacilityClient
     },
-    addressLine2 :{
-    	type: String,
-    	label: "Address line 2",
-    	size:6
+    address:{
+    	type:Object,
+    	label:"Address",
+    	schema:Address,
     },
-    city :{
-    	type: String,
-    	label: "City/Suburb",
-    	size:3
-    },
-    state :{
-    	type: String,
-    	label: "State",
-    	size:3
-    },
-    country :{
-    	type: String,
-    	label: "Country",
-    	size:3
-    },
-    postcode :{
-    	type: String,
-    	label: "Postcode/ZIP",
-    	size:3,
+    lease:{
+    	type:Object,
+    	schema:Lease,
     },
     _team: {
-    	type: Object,
     	label: "Team query object",
     },
-    "_team._id": {
-    	type:String,
-    	label:"Team id"
+    _tenants : {
+    	type: [Object],
+    	label: "Tenants"
     },
     buildingAreas: {
-    	type:String,
     	label:"Areas",
     	input:"custom",
 		options:{
@@ -70,39 +134,12 @@ Facilities = FM.createCollection('Facility',{
 		}
     },
     buildingServices: {
-    	type:String,
     	label:"Services",
     	input:"custom",
 		options:{
 			containerStyle:{height:"300px"}
 		}
-    },
-    leaseCommencement: {
-    	type:String,
-    	label:"Lease commencement",
-    	size:6
-    },
-    leaseExpiry: {
-    	type:String,
-    	label:"Lease expiry",
-    	size:6
-    },
-    tenancyInsuranceExpiry:{
-    	type:String,
-    	label:"Tenancy insurance expiry",
-    	size:6
-    },
-    permanentParking:{
-    	type:String,
-    	label:"Permanent parking",
-    	size:6
-    },
-    temporaryParking:{
-    	type:String,
-    	label:"Temporary parking",
-    	size:6
-    },
-
+    }
 },true);
 
 Facilities.helpers({
@@ -114,14 +151,33 @@ Facilities.helpers({
   },
   getIssueCount() {
   	return Issues.find({"_facility._id":this._id}).count();
-  }
+  },
+  getLocation() {
+  	if(this.address) {
+  		var a = this.address;
+	  	return a.streetNumber+' '+a.streetName+', '+a.city;
+	}
+  },
+  getBuildingAndLocation() {
+  	if(this.address) {
+  		return this.address.buildingName+'-'+this.getLocation();
+  	}
+  },
 });
 
 ExampleFacilities = [
 	{
 		name:"Head Office",
-		address:"4/45 Clarence Street, Sydney",
 		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"4/45",
+			streetName:"Clarence",
+			streetType:"St",
+			city:"Sydney",
+			state:"NSW",
+			country:"Australia",
+			buildingName:"Head Office",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-2.jpg",
 		contact:{
@@ -133,8 +189,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Franklin Scholar",
-		address:"1/76 Hasler Rd, Osbourne Park, WA",
 		location:"Hasler Rd, Osbourne Park",
+		address:{
+			streetNumber:"1/76",
+			streetName:"Hasler",
+			streetType:"Rd",
+			city:"Osbourne Park",
+			state:"WA",
+			country:"Australia",
+			buildingName:"Franklin Scholar",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -146,8 +210,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Franklin Scholar",
-		address:"21 Shierlaw Ave, Canterbury, VIC",
 		location:"Shierlaw Ave, Cantebury",
+		address:{
+			streetNumber:"21",
+			streetName:"Shierlaw",
+			streetType:"Ave",
+			city:"Canterbury",
+			state:"VIC",
+			country:"Australia",
+			buildingName:"Franklin Scholar",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -159,8 +231,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Franklin Scholar",
-		address:"65 Cameron St, Launceston, TAS",
 		location:"Cameron St, Launceston",
+		address:{
+			streetNumber:"65",
+			streetName:"Cameron",
+			streetType:"St",
+			city:"Launceston",
+			state:"TAS",
+			country:"Australia",
+			buildingName:"Franklin Scholar",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -172,8 +252,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Franklin Scholar",
-		address:"12 Warwick St, Hobart, TAS",
 		location:"Warwick St, Hobart",
+		address:{
+			streetNumber:"12",
+			streetName:"Warwick",
+			streetType:"St",
+			city:"Hobart",
+			state:"TAS",
+			country:"Australia",
+			buildingName:"Franklin Scholar",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -185,8 +273,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Professional & International English",
-		address:"22 Peel St",
 		location:"Peel St, Adelaide",
+		address:{
+			streetNumber:"22",
+			streetName:"Peel",
+			streetType:"St",
+			city:"Adelaide",
+			state:"SA",
+			country:"Australia",
+			buildingName:"Professional & International English",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-3.jpg",
 		contact:{
@@ -198,8 +294,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Professional & International English",
-		address:"252 St Pauls Terrace, Spring Hill",
 		location:"St Pauls Terrace, Spring Hill",
+		address:{
+			streetNumber:"252",
+			streetName:"Pauls",
+			streetType:"Tce",
+			city:"Spring Hill",
+			state:"QLD",
+			country:"Australia",
+			buildingName:"Professional & International English",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-4.jpg",
 		contact:{
@@ -211,8 +315,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Professional & International English",
-		address:"130 McLeod St, Cairns",
 		location:"McLeod St, Cairns",
+		address:{
+			streetNumber:"130",
+			streetName:"McLeod",
+			streetType:"St",
+			city:"Cairns",
+			state:"QLD",
+			country:"Australia",
+			buildingName:"Professional & International English",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{
@@ -224,8 +336,16 @@ ExampleFacilities = [
 	},
 	{
 		name:"Bradford College",
-		address:"132 Grenfell St, Adelaide",
 		location:"Grenfell St, Adelaide",
+		address:{
+			streetNumber:"132",
+			streetName:"Grenfell",
+			streetType:"St",
+			city:"Adelaide",
+			state:"SA",
+			country:"Australia",
+			buildingName:"Bradford College",
+		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 		thumb:"building-1.jpg",
 		contact:{

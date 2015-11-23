@@ -7,7 +7,7 @@ if (Meteor.isServer) {
 }
 
 // adapted from https://github.com/aldeed/meteor-collection2 example
-Schema.UserProfile = new SimpleSchema({
+Schema.UserProfile = {
     name: {
       type: String,
       label: "Display name"
@@ -15,7 +15,7 @@ Schema.UserProfile = new SimpleSchema({
     email: {
       type: String,
       label: "Email",
-      regEx: SimpleSchema.RegEx.Email
+      //regEx: SimpleSchema.RegEx.Email
     },
     phone: {
       type: String,
@@ -44,7 +44,7 @@ Schema.UserProfile = new SimpleSchema({
     },
     website: {
         type: String,
-        regEx: SimpleSchema.RegEx.Url,
+        //regEx: SimpleSchema.RegEx.Url,
         optional: true
     },
     bio: {
@@ -52,9 +52,9 @@ Schema.UserProfile = new SimpleSchema({
         label: "About me",
         optional: true
     }
-});
+}
 
-Schema.User = new SimpleSchema({
+Schema.User = {
     username: {
         type: String,
         optional: true
@@ -68,7 +68,7 @@ Schema.User = new SimpleSchema({
     },
     "emails.$.address": {
         type: String,
-        regEx: SimpleSchema.RegEx.Email
+        //regEx: SimpleSchema.RegEx.Email
     },
     "emails.$.verified": {
         type: Boolean
@@ -109,9 +109,9 @@ Schema.User = new SimpleSchema({
         type: [String],
         optional: true
     }
-});
+}
 
-Meteor.users.attachSchema(Schema.User);
+//Meteor.users.attachSchema(Schema.User);
 
 Meteor.methods({
   "User.save": function(item) {
@@ -121,15 +121,18 @@ Meteor.methods({
   "User.destroy":function(item) {
     Users.remove(item._id);
   },
-  "User.new":function(item) {
-    // this should employ createuser (move out of team model)
-    return Accounts.createUser({
+  "User.new":function(item,password) {
+    var user = {
       email:item.email,
       name:item.name,
       profile:_.extend({
-        thumb:"ProfilePlaceholderSuit.png"
+        thumb:"img\ProfilePlaceholderSuit.png"
       },item)
-    });
+    }
+    if(password) {
+      user.password = password;
+    }
+    return Accounts.createUser(user);
   }
 })
 

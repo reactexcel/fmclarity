@@ -1,4 +1,49 @@
+IpsoTabso = React.createClass({
+    getInitialState() {
+        return {
+            active:0
+        }
+    },
 
+    selectTab(activeIndex) {
+        this.setState({
+            active:activeIndex
+        });
+    },
+
+    render() {
+        var active = this.state.active;
+        var selectTab = this.selectTab;
+        var tabs = this.props.tabs;
+        var content = tabs[active]?tabs[active].content:null;
+        return (
+            <div className="panel blank-panel">
+                <div className="panel-heading">
+                    {tabs.map(function(i,idx){
+                        return (
+                            <div 
+                                onClick={selectTab.bind(null,idx)} 
+                                className={idx==active?"issue-tab active":"issue-tab"}
+                                key={idx}
+                            >
+                                <div className="btn btn-sm btn-flat issue-nav-btn">{i.tab}</div>
+                                <div className="highlight"/>
+                            </div>
+                        )
+                    })}
+                </div>
+                <div className="panel-body" style={{padding:0}}>
+                    <div className="tab-content">
+                        <div className="tab-pane active">
+                            {content}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+});
 
 IssueDetail = React.createClass({
 
@@ -209,7 +254,7 @@ IssueDetail = React.createClass({
             </div>
 
             <div className="row">
-                <div className="col-lg-6">
+                <div className="col-lg-12">
                     <span style={{paddingLeft:0}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <textarea 
                         ref="description"
@@ -218,7 +263,19 @@ IssueDetail = React.createClass({
                         defaultValue={issue.description} 
                         onChange={this.updateField('description')}
                     />
-                    <div className="attachments">
+                </div>
+                <div className="col-lg-12">
+                    <IpsoTabso tabs={[{
+                        tab:"Conversation",
+                        content:<IssueDiscussion issue={issue}/>
+                    },
+                    {
+                        tab:"Work order log",
+                        content:<IssueTrackerTable issue={issue}/>
+                    },
+                    {
+                        tab:<span><span>Images</span><span className="label label-warning pull-right">3</span></span>,
+                        content:<div className="attachments">
                         <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
                         </div>
@@ -228,37 +285,13 @@ IssueDetail = React.createClass({
                         <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-2.jpg"} />
                         </div>
-                        <div style={{width:"100%",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
-                            <FileBrowser />
                         </div>
-                    </div>
+                    },
+                    {
+                        tab:"Documents",
+                        content:<FileBrowser />
+                    }]} />
                 </div>
-                {issue.isNewItem?null:
-                <div className="col-lg-6">
-                    <div className="panel blank-panel">
-                        <div className="panel-heading">
-                            <div className="issue-tab active" href="#tab-1" data-toggle="tab">
-                                <div className="btn btn-sm btn-flat issue-nav-btn">Conversation</div>
-                                <div className="highlight"/>
-                            </div>
-                            <div className="issue-tab" href="#tab-2" data-toggle="tab">
-                                <div className="btn btn-sm btn-flat issue-nav-btn">Work order log</div>
-                                <div className="highlight"/>
-                            </div>
-                        </div>
-                        <div className="panel-body" style={{padding:0}}>
-                            <div className="tab-content">
-                                <div className="tab-pane active" id="tab-1">
-                                    <IssueDiscussion issue={issue}/>
-                                </div>
-                                <div className="tab-pane" id="tab-2">
-                                    <IssueTrackerTable issue={issue}/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                }
             </div>
         </div>
     </div>

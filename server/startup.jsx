@@ -16,13 +16,31 @@ Meteor.startup(function(){
         });        
     }
 
+    // Use find/create pattern here
 
-
-    var leo1 = Accounts.findUserByEmail('mrleokeith@gmail.com');
-    var rich1 = Accounts.findUserByEmail('mr.richo@gmail.com');
+    //Meteor.users.remove({});
+    var leo1,rich1,leoId,richId;
+    leo1 = Accounts.findUserByEmail('mrleokeith@gmail.com');
+    if(!leo1) {
+        Meteor.call('User.new',{
+            name:'Leo',
+            email:'mrleokeith@gmail.com',
+        },'fm1q2w3e');
+        leo1 = Accounts.findUserByEmail('mrleokeith@gmail.com');
+    }
+    rich1 = Accounts.findUserByEmail('mr.richo@gmail.com');
+    if(leo1) {
+        leoId = leo1._id;
+    }
+    if(rich1) {
+        richId = rich1._id;
+    }
+    Facilities.remove({});
+    Issues.remove({});
+    Teams.remove({});
 
     function initializeUsers() {
-        Users.remove({_id:{$nin:[leo1._id,rich1._id]}});
+        Users.remove({_id:{$nin:[leoId,richId]}});
         for(var i=0;i<100;i++) {
             var newUser = makeRandomUser();
             Meteor.call('User.new',newUser);
@@ -30,7 +48,7 @@ Meteor.startup(function(){
     }
 
 
-    initializeUsers();
+    //initializeUsers();
 
 
     ExampleTeams = [
@@ -40,7 +58,7 @@ Meteor.startup(function(){
         email:"xyz@abc.123",
         phone:"0400-123-123",
         thumb:"img/k-100-ltblue.png",
-        _members:[{_id:leo1._id},{_id:rich1._id}],
+        _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
       {
@@ -49,7 +67,7 @@ Meteor.startup(function(){
         email:"knockers@run.123",
         phone:"0400-223-122",
         thumb:"img/logo-placeholder.png",
-        _members:[{_id:leo1._id},{_id:rich1._id}],
+        _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
       {
@@ -58,7 +76,7 @@ Meteor.startup(function(){
         email:"schturm@run.123",
         phone:"0400-223-122",
         thumb:"img/logo-placeholder.png",
-        _members:[{_id:leo1._id}],
+        _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
       {
@@ -67,7 +85,7 @@ Meteor.startup(function(){
         email:"xyz@abc.123",
         phone:"0400-123-123",
         thumb:"img/supplier-1.png",
-        _members:[{_id:leo1._id},{_id:rich1._id}],
+        _members:[{_id:leoId},{_id:richId}],
         services:["Mechanical","Fire Prevention","Electrical"]
       },
       {
@@ -118,9 +136,6 @@ Meteor.startup(function(){
     ];
 
 
-    Facilities.remove({});
-    Issues.remove({});
-    Teams.remove({});
 
 
     for(var i in ExampleTeams) {
@@ -168,6 +183,7 @@ Meteor.startup(function(){
     for(var i in ExampleFacilities) {
         var r = Math.floor(Math.random()*teams.length);
         ExampleFacilities[i]._team = {_id:teams[r]._id};
+        ExampleFacilities[i].lease = {};
     }
 
     collections = [Facilities];

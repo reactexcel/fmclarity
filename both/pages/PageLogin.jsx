@@ -11,7 +11,7 @@ Login = React.createClass({
         var component = this;
         var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
         var password = ReactDOM.findDOMNode(this.refs.password).value.trim();
-        if (!email || !password) {
+        if (!email) {//} || !password) {
             return;
         }
         Meteor.loginWithPassword(email,password,function(error){

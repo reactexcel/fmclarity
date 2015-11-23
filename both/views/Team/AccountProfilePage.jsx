@@ -1,4 +1,4 @@
-AccountProfile = React.createClass({
+AccountEdit = React.createClass({
 
 	save() {
 		var team = this.props.item;
@@ -75,12 +75,12 @@ AccountProfile = React.createClass({
 	}
 });
 
-AccountProfileWidget= React.createClass({
+AccountFlipWidget= React.createClass({
 	render() {
 		return (
 			<FlipWidget
 				front={AccountView}
-				back={AccountProfile}
+				back={AccountEdit}
 				item={this.props.item}
 			/>
 		)
@@ -94,6 +94,8 @@ AccountView = React.createClass({
     	Meteor.subscribe('users');
     	var team, orders;
     	team = this.props.item;
+    	// would be nice to have a mixin to deal with this pattern
+    	// would dry up the code alot
     	if(team) {
     		orders = Issues.find({"_supplier._id":team._id,status:"Closed"}).fetch();
 	    }
@@ -126,7 +128,7 @@ AccountView = React.createClass({
 	}
 });
 
-AccountProfilePage = React.createClass({
+AccountIndexPage = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -147,7 +149,7 @@ AccountProfilePage = React.createClass({
 		        <div className="row">
 		            <div className="col-lg-6 col-md-6 col-sm-6">
 						<FlipWidget
-							front={AccountProfile}
+							front={AccountEdit}
 							back={AccountView}
 							item={this.data.team}
 						/>

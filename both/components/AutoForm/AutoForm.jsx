@@ -390,26 +390,43 @@ AutoForm = React.createClass({
 	render() {
 		var $scope = this;
 		var item = this.state.item;
+		console.log(item);
+		var id = this.props.key||item._id;
 		var schema = this.props.schema;
 		var form = this.props.form||Object.keys(schema);
 		return (
 			<div className="autoform row">
 				{form.map(function(key){
 
-					var s = _.extend({
+					var s = schema[key];
+					var placeholder = 
+						(s.label || key.charAt(0).toUpperCase()+key.slice(1))+
+						(s.required?'*':'');
+
+					if(s.schema!=null) {
+						return (
+							<span>
+								{s.label?<h5 style={{padding:"7px"}}>{s.label}</h5>:null}
+					        	<AutoForm 
+					        		item={item[key]} 
+					        		key={id} 
+					        		schema={s.schema} 
+					        		save={$scope.props.save} 
+					        	/>
+					        </span>
+						)
+					}
+
+					s = _.extend({
 						input:"mdtext",
 						size:12,
 						options:{}
-					},schema[key]);
+					},s);
 
-					var placeholder = s.label||key.charAt(0).toUpperCase() + key.slice(1);
-					if(s.required) {
-						placeholder+='*';
-					}
 					var Input = AutoInput[s.input];
 
 					return (
-					<div key={item._id+'-'+key} className={"col-lg-"+s.size}>
+					<div key={id+'-'+key} className={"col-lg-"+s.size}>
 						<Input
 							placeholder={placeholder}
 							value={item[key]} 

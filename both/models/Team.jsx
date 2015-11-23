@@ -22,7 +22,7 @@ Teams = FM.createCollection('Team',{
     email: {
       type: String,
       label: "Email",
-      regEx: SimpleSchema.RegEx.Email,
+      //regEx: SimpleSchema.RegEx.Email,
     },
     phone: {
       type: String,

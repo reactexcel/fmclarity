@@ -3,6 +3,11 @@ CHANGELOG.md
 
 **v0.2.9a**
 
+* General : Removed redundant Inspinia JS plugins and Meteor packages to improve performance on my shitty laptop that I have with me in Cairns
+* Facility : Made some updates to the "Autoform" form generation code that will facilitate completion of the Facilities form
+* WO : Finished tab functionality used in Work Order detail page
+* WO : Moved files and images into tabs, moved tabs to below discussion
+* Updated Kaplan facility test data so that address fields are correctly populated
 * WO table : cleaned up scrolling behaviour of newly opened orders
 
 

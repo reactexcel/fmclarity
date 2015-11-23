@@ -4,45 +4,53 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-react
 
-meteorhacks:npm
+#aldeed:collection2
+abpetkov:switchery
 cosmos:browserify
 
+#dbarrett:dropzonejs
+dburles:collection-helpers
+
+#kadira:reaktor
+kadira:flow-router@2.4.0
+kadira:react-layout
+
+lai:document-methods
+
+meteorhacks:npm
+matb33:collection-hooks
+momentjs:moment
+monbro:mongodb-mapreduce-aggregation
+
+twbs:bootstrap
+#tomwasd:flow-router-autoscroll
+zimme:active-route
+
+
 accounts-password
-kadira:reaktor
+#blaze-html-templates
+check
+ejson
+email
+fortawesome:fontawesome
+jquery
 
 less
-fortawesome:fontawesome
-zimme:active-route
-jquery
-tomwasd:flow-router-autoscroll
-dbarrett:dropzonejs
-twbs:bootstrap
-kadira:flow-router@2.4.0
+logging
 
-dburles:collection-helpers
-matb33:collection-hooks
-aldeed:collection2
-lai:document-methods
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
-blaze-html-templates
-session
-tracker
-logging
+
+react
 reload
 random
-ejson
-spacebars
-check
 
+standard-minifiers
+session
+spacebars
+
+tracker
 
 npm-container
-isotope:isotope
-momentjs:moment
-email
-monbro:mongodb-mapreduce-aggregation
-abpetkov:switchery

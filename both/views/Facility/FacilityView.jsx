@@ -1,4 +1,4 @@
-FacilityDetail = React.createClass({
+FacilityView = React.createClass({
 
     saveFacility() {
         Meteor.call("Facility.save",this.facility);

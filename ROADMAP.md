@@ -7,11 +7,12 @@ TODO (general)
 * should sticky items ignore the filter?
 * Brainstorm list of "actions" for RBAC inc[create facility, add to team, create contact, add to team, edit own profile, edit other profile]
 * Tidy folder structure and create component dictionary 
-* Remove redundant JS libraries (that came with Inpinia)
 * Write test plan [login, click through each screen, create a work order, invote a user to a team]
 
 DONE
 ----
+
+
 
 IN PROGRESS
 -----------
@@ -19,9 +20,26 @@ IN PROGRESS
 
 
 
-
 v0.3.0a "Demo v2"
 ------------------------------
+
+**Slack prioritization**
+
+* Facilities form with the fields from your spreadsheet
+* Sections for floor plans and other items on property
+* Finalise work order design
+* Close out work order screen
+* Contractors filtered by service type when creating a work order
+* Being able to write reviews for contractors on closed work orders
+* Conversations in work orders
+* Adding new facilities
+* Being able to assign an work order to a team member
+* Notifications when work orders progress
+* File uploads and document/image management including
+* Work order log
+* Browsing for contractors and adding preferred contractors to a contact list
+* Dashboard reflecting real data
+* Work order container expanding or contracting as content changes size
 
 **Work order detail**
 
@@ -48,12 +66,10 @@ v0.3.0a "Demo v2"
 
 **Accounts**
 
-* create a new AccountCard which shows contact card at top and account detail below (account detail probably wrapped in two separate components, one for fm and one for contractor)
 * Rename AccountEdit and AccountView?
 
 **Contractor card**
 
-* Contractor cards should be set up to show team, rating, reviews, when browsing
 
 **Facilities card**
 

@@ -14,27 +14,27 @@ FM.makeSchema = function(schema) {
 	    	optional:!field.required
 	    }
 	}
-	return new SimpleSchema(ss);
+	//return new SimpleSchema(ss);
 }
 
 FM.makeNewItemTemplate = function(schema) {
 	var n = {};
 	for(var i in schema) {
 	    var field = schema[i];
-	    if(i.indexOf('.')>=0) {
-
+	    if(field.defaultValue!=null) {
+	    	n[i] = field.defaultValue;
 	    }
 	    else if(field.type==String) {
-	    	n[i] = field.defaultValue||"";
+	    	n[i] = "";
 	    }
-	    else if(_.isArray(field.type)) {
-	    	n[i] = [];
+	    else if(field.type==Number) {
+	    	n[i] = null;
 	    }
 	    else if(field.type==Object) {
 	    	n[i] = {};
 	    }
-	    else if(field.type==Number) {
-	    	n[i] = null;
+	    else if(_.isArray(field.type)) {
+	    	n[i] = [];
 	    }
 	}
 	return n;  
@@ -49,7 +49,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	this.schemas[name] = template;
 	collection = new Mongo.Collection(name);
 	if(!shouldNotCreateSchema) {
-		schema = this.makeSchema(template);
+		//schema = this.makeSchema(template);
 	}
 	newItemTemplate = this.makeNewItemTemplate(template);
 
@@ -121,7 +121,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 
 	if(schema) {
 		console.log('attaching '+name+' schema');
-		collection.attachSchema(schema);
+		//collection.attachSchema(schema);
 	}
 	return collection;
 }
