@@ -1,4 +1,4 @@
-Notifications = React.createClass({
+NotificationView = React.createClass({
 
     render() {
         return (
@@ -115,7 +115,7 @@ TopNavBar = React.createClass({
 
     render() {
         if(!this.data.user||!this.data.team) {
-            return <div/>
+            return (<div/>)
         }
         var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
         var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
@@ -141,9 +141,9 @@ TopNavBar = React.createClass({
                 */}
                 <li className="dropdown">
                     <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i className="fa fa-bell"></i>  <span className="label label-warning">3</span>
+                        <i className="fa fa-bell"></i>  <span className="label label-notification">3</span>
                     </a>
-                    <Notifications />
+                    <NotificationView />
                 </li>
                 <li className="dropdown">
                     <a style={{padding:"8px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">

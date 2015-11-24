@@ -126,7 +126,7 @@ Meteor.methods({
       email:item.email,
       name:item.name,
       profile:_.extend({
-        thumb:"img\ProfilePlaceholderSuit.png"
+        thumb:"img/ProfilePlaceholderSuit.png"
       },item)
     }
     if(password) {

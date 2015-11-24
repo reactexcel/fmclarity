@@ -44,12 +44,6 @@ PageRequests = React.createClass({
 	        text:"All"
 	    },
 	    {
-	        text:"Urgent",
-	        filter(i) {
-	        	return i.priority=='Urgent';
-	        }
-	    },
-	    {
 	        text:"New",
 	        filter(i) {
 	        	return i.status=='New';

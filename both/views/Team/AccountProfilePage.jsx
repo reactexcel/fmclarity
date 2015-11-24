@@ -128,7 +128,7 @@ AccountView = React.createClass({
 	}
 });
 
-AccountIndexPage = React.createClass({
+AccountProfilePage = React.createClass({
 
     mixins: [ReactMeteorData],
 

@@ -20,73 +20,141 @@ Address = {
 	postcode:{
 		label:"Postcode",
 		size:3
-	},
-	buildingName:{
-		label:"Building name",
-		size:12,
-	},
-	buildingDirections:{
-		label:"Directions",
-		size:12,
-		input:"mdtextarea",
 	}
 };
 
 Contact = {
+}
+
+FacilityHolder = {
+	type:{
+		label:"Holder type",
+	},
+	companyName : {
+		label:"Company name",
+		size:6,
+	},
+	abn:{
+		label:"ABN",
+		size:6
+	},
+	contactName: {
+		label:"Contact name",
+	},
 	phone:{
 		label:"Phone",
+		size:6
 	},
 	email:{
 		label:"Email",
-	},
-	name:{
-		label:"Name",
-	}	
-}
-
-FacilityClient = {
-	type:{
-		label:"Client type",
-	},
-	name : {
-		label:"Client name",
-	},
-	abn:{
-		label:"Client ABN"
+		size:6
 	},
 	address:{
 		type:Object,
-		label:"Client address",
+		label:"Address",
 		schema:Address,
 	},
-	contact:{
+}
+
+Insurance = {
+	insurer:{
+		label:"Insurer",
+		size:6
+	},
+	policyNumber:{
+		label:"Policy number",
+		size:6
+	},
+	sumInsured:{
+		label:"Sum insured",
+		size:6
+	},
+	expiry:{
+		label:"Expiry",
+		size:6
+	},
+	documents:{
+		label:"Insurance documents",
 		type:Object,
-		label:"Contact",
-		schema:Contact
+		//input:"attachment",
+	},
+}
+
+SecurityDeposit = {
+	purpose:{
+		label:"Purpose",
+	},
+	amountRequired:{
+		label:"Amount required",
+		size:6,
+	},
+	amountHeld:{
+		label:"Amount held",
+		size:6,
+	},
+	bankName:{
+		label:"Nank name",
+		size:6,
+	},
+	reviewDate:{
+		label:"Review date",
+		size:6,
+	},
+	favoureeName:{
+		label:"Favouree name",
+	},
+	originalHeldBy:{
+		label:"Original held by"
 	}
 }
 
+Parking = {  
+    permanent:{
+    	label:"Permanent",
+    	size:6
+    },
+    temporary:{
+    	label:"Temporary",
+    	size:6
+    },
+}
+
 Lease = {
-    leaseCommencement: {
+    commencement: {
     	label:"Lease commencement",
     	size:6
     },
-    leaseExpiry: {
+    expiry: {
     	label:"Lease expiry",
     	size:6
     },
-    tenancyInsuranceExpiry:{
-    	label:"Tenancy insurance expiry",
+    landlordExecuted: {
+    	label:"Landlord executed",
+    	input:"switch",
     	size:6
     },
-    permanentParking:{
-    	label:"Permanent parking",
+    tenantExecuted: {
+    	label:"Tenant executed",
+    	input:"switch",
     	size:6
     },
-    temporaryParking:{
-    	label:"Temporary parking",
-    	size:6
-    }	
+	documents:{
+		label:"Lease documents",
+		type:Object,
+		//input:"attachment",
+	},
+    parking: {
+    	label:"Parking",
+    	schema:Parking,
+    },
+    insuranceDetails: {
+    	label:"Insurance details",
+    	schema:Insurance
+    },
+    securityDeposit: {
+    	label:"Security deposit",
+    	schema:SecurityDeposit
+    }
 };
 
 Facilities = FM.createCollection('Facility',{
@@ -95,9 +163,11 @@ Facilities = FM.createCollection('Facility',{
     },
     type: {
     	label:"Property type",
+    	size:6
     },
     size: {
-    	label:"Net lettable area (m²)"
+    	label:"Net lettable area (m²)",
+    	size:6
     },
     description: {
     	label: "Description",
@@ -106,9 +176,9 @@ Facilities = FM.createCollection('Facility',{
     thumb: {
     	label:"Thumbnail file",
     },
-    client: {
+    holder: {
     	type:Object,
-    	schema:FacilityClient
+    	schema:FacilityHolder
     },
     address:{
     	type:Object,
@@ -148,6 +218,21 @@ Facilities.helpers({
   },
   getTeam() {
   	return Teams.findOne(this._team);
+  },
+  getContacts() {
+    if (this._contacts.length) {
+    	// this is pretty fucking inefficient
+    	// idea - store contactIds and sometimes denormalise by making contacts as well
+    	// perhaps if contacts is empty or if it has "expired"
+    	var contacts = this._contacts;
+    	var contactIds = [];
+    	contacts.map(function(contact){
+    		contactIds.push(contact._id);
+    	});
+    	return Users.find({_id:{$in:contactIds}}).fetch();
+    }
+    return [];
+
   },
   getIssueCount() {
   	return Issues.find({"_facility._id":this._id}).count();

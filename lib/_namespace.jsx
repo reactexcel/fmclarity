@@ -46,8 +46,16 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// and the fields that I am sending to my own Autoform
 	var collection, schema, newItemTemplate;
 
+
 	this.schemas[name] = template;
-	collection = new Mongo.Collection(name);
+	this.collections[name] = collection = new Mongo.Collection(name);
+
+
+	/*console.log({
+		name:name,
+		template:template,
+	});*/
+
 	if(!shouldNotCreateSchema) {
 		//schema = this.makeSchema(template);
 	}
@@ -55,31 +63,36 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 
 	// add collection methods
 	var methods = {};
-	methods[name+'.save'] = function(item) {
+	methods[name+'.save'] = function(item,actor) {
+		actor = actor||Meteor.user();
 		item.isNewItem = false;
 		console.log({
 			saving:item
 		});
 		collection.upsert(item._id, {$set: _.omit(item, '_id')},function(err,obj){
+	        FM.notify(actor,"updated",[name,item]);
 			console.log({
 				error:err,
 				data:obj
 			});
 		});		
 	}
-	methods[name+'.destroy'] = function(item) {
+	methods[name+'.destroy'] = function(item,actor) {
+		actor = actor||Meteor.user();
+        FM.notify(actor,"deleted",[name,item]);
 		console.log({
 			destroying:item
 		});
 		collection.remove(item._id);
 	}
-	methods[name+'.new'] = function(item) {
+	methods[name+'.new'] = function(item,actor) {
+		actor = actor||Meteor.user();
 		newItem = _.extend({
 			isNewItem:true,
 			_creator:{
-				_id:Meteor.user()._id,
-				name:Meteor.user().name,
-				thumb:Meteor.user().profile.thumb
+				_id:actor._id,
+				name:actor.name,
+				thumb:actor.profile.thumb
 			},
 		},newItemTemplate,item);
 		console.log({
@@ -89,6 +102,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		});
 
 		collection.insert(newItem,function(err,obj){
+	        FM.notify(actor,"created",[name,item]);
 			console.log({
 				error:err,
 				data:obj
@@ -110,7 +124,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		getCreator:function() {
 			return Users.find(this._creator._id).fetch();
 		}
-	})
+	});
 
 	// add collection hooks
 	collection.before.insert(function (userId, doc) {

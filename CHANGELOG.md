@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v0.2.10a**
+
+* Facilities : Removed line from seecond level headings in facilities form
+* Facilities : Changed icon in collapsible boxes
+* Facilities : Added property type, lettable areas, facility holder details, lease details, insurance details, security deposit to form
+* Facilities : Added contacts field to facilities data model, added contacts area to facilities form
+* Facilities : On startup - now generate a random user to be the contact for each facility
+* WO : Reorder tabs so that images are first and open by default, documents, conversation, log
+* WO : Changed closed order to black
+* WO : Changed notification color to GMDG pink (500)
+* Core : Created model and basic functions for notification system
+
 **v0.2.9a**
 
 * General : Removed redundant Inspinia JS plugins and Meteor packages to improve performance on my shitty laptop that I have with me in Cairns
@@ -84,6 +96,10 @@ v0.2.3a
 * Added 'datepicker' and 'switch' to available input types
 * Updated user and account profile edit views (not yet complete)
 
+*Milestone - 0.2.0a*
+
+* Live data model added
+
 **v0.2.0a**
 
 * Removed contractor collection and made contractors into a type of Team/Account
@@ -134,6 +150,10 @@ v0.2.3a
 * Tidied folder structure of components
 * Users/Contacts view added
 * Work Order : Facility name hidden from summary view when a facility is selected in top left nav
+
+*Milestone - 0.1.0a*
+
+* Basic functionality fit for first demo
 
 **0.0.13a**
 

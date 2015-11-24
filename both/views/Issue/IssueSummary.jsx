@@ -1,3 +1,14 @@
+IssuePriority = React.createClass({
+  render() {
+    var priority = this.props.value;
+    return (
+      <span title={priority} style={{fontSize:"20px",position:"relative",top:"3px"}}>
+        <i className={"fa fa-circle"+(priority=='Scheduled'?'-o':'')+" priority-"+(priority)}></i>
+      </span>
+    )
+  }
+})
+
 IssueSummary = React.createClass({
 
   mixins: [ReactMeteorData],
@@ -44,7 +55,7 @@ IssueSummary = React.createClass({
         <div className={"issue-summary issue-status-"+status}>
           
           <div className="issue-summary-col issue-summary-col-1">
-            <span style={{fontSize:"20px",position:"relative",top:"3px"}}><i className={"fa fa-circle priority-"+(issue.priority)}></i></span>
+            <IssuePriority value={issue.priority} />
             {/*<ContactAvatarSmall item={creator} />*/}
           </div>
           {/*}

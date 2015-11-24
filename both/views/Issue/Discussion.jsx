@@ -11,7 +11,7 @@ IssueDiscussion = React.createClass({
                                                         </a>
                                                         <div className="media-body ">
                                                             <small className="pull-right">2h ago</small>
-                                                            <strong>{contact.name}</strong> createed issue. <br/>
+                                                            <strong>{contact.name}</strong> created issue. <br/>
                                                             <small className="text-muted">Today 2:10 pm - 12.06.2014</small>
                                                             <div className="well">
                                                                 {issue.description}

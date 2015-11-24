@@ -4,16 +4,18 @@ FacilityEdit = React.createClass({
 
     getMeteorData() {
     	Meteor.subscribe('users');
-		var item, schema, team, tenants;
-		item = this.props.item;
+		var facility, schema, team, tenants, contacts;
+		facility = this.props.item;
 		schema = FM.schemas['Facility'];
-		if(item){
-			team = item.getTeam();
+		if(facility){
+			team = facility.getTeam();
+			contacts = facility.getContacts();
 			if(team) {
 				tenants = team.getMembers();
 				return {
 					ready:true,
-					facility:item,
+					facility:facility,
+					contacts:contacts,
 					schema:schema,
 					tenants:tenants.slice(0,3)
 				}
@@ -32,7 +34,7 @@ FacilityEdit = React.createClass({
 		}
 	},
 
-	form1 : ["name","description","address"],
+	form1 : ["name","type","size","description","address"],
 	form3 : ["buildingAreas","buildingServices"],
 
 	render() {
@@ -41,6 +43,7 @@ FacilityEdit = React.createClass({
 
 		var item = this.data.facility;
 		var tenants = this.data.tenants;
+		var contacts = this.data.contacts;
 		var schema = this.data.schema;
 
 		return (
@@ -56,12 +59,22 @@ FacilityEdit = React.createClass({
 				        	<AutoForm item={item} schema={schema} form={this.form1} save={this.save()} />
 				        </div>
 					</CollapseBox>
-			   		<CollapseBox title="Lease Particulars" collapsed={true}>
-				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={item} schema={schema} form={['lease']} save={this.save()} />
-				        </div>
+			   		<CollapseBox title="Contacts">
+			            <div className="row" style={{margin:"15px 30px"}}>
+			              	{contacts.map(function(contact){
+			                	return (
+			                  		<div 
+			                    		key={contact._id}
+			                    		style={{padding:0}}
+			                    		className={"table-row col-lg-12"}
+			                  		>
+				                    	<ContactCard item={contact}/>
+			                  		</div>	
+		                	)
+			              	})}
+			            </div>
 					</CollapseBox>
-			   		<CollapseBox title="Tenant Details" collapsed={true}>
+			   		<CollapseBox title="Tenants">
 			            <div className="row" style={{margin:"15px 30px"}}>
 			              	{tenants.map(function(tenant){
 			                	return (
@@ -75,6 +88,16 @@ FacilityEdit = React.createClass({
 		                	)
 			              	})}
 			            </div>
+					</CollapseBox>
+			   		<CollapseBox title="Facility Holder" collapsed={true}>
+				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
+				        	<AutoForm item={item} schema={schema} form={['holder']} save={this.save()} />
+				        </div>
+					</CollapseBox>
+			   		<CollapseBox title="Lease Particulars" collapsed={true}>
+				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
+				        	<AutoForm item={item} schema={schema} form={['lease']} save={this.save()} />
+				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Building areas & services" collapsed={true}>
 					</CollapseBox>

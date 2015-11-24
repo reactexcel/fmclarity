@@ -8,7 +8,7 @@ FacilitySummary = React.createClass({
 
 	render() {
 	    var facility = this.props.item || {};
-	    var contact = facility.contact || {};
+	    var contact = facility._contacts?facility._contacts[0]:{};
 	    return (
 	    	<div>
 	    		{/*

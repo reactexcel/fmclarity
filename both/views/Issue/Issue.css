@@ -12,7 +12,7 @@
 
 .issue-page .panel-heading {
 	padding: 0;
-    height: 40px;
+    height: 41px;
     border-bottom: 1px solid #ddd;
     margin-bottom: 17px;
 }
@@ -20,11 +20,18 @@
 
 .issue-tab {
 	float:left;
+	border-bottom: 1px solid #ddd;
 }
 
-.issue-tab.active, .issue-tab:hover {
+.issue-tab:hover {
+	background-color: #f7f7f7;
+	border-bottom-color:#ccc;
+}
+
+.issue-tab.active,.issue-tab.active:hover {
 	background-color: #eee;
 }
+
 
 .issue-tab > .highlight {
 	width: 100%;

@@ -40,7 +40,7 @@ PageSuppliers = React.createClass({
 						filters={filters}
 						itemView={{
 							summary:ContactCard,
-							detail:AccountProfileWidget
+							detail:AccountFlipWidget
 						}}
 					/>
 				</div>

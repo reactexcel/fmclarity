@@ -147,6 +147,9 @@ IssueDetail = React.createClass({
     <div className="row">
         <div className="col-lg-1">
             <div>
+                <ContactAvatarSmall item={creator} />
+            </div>
+            <div>
                 <span style={{top:"3px",position:"relative"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
             </div>
             <div style={{float:"left",clear:"both"}}>
@@ -154,7 +157,9 @@ IssueDetail = React.createClass({
                     items={['Scheduled','Standard','Urgent','Critical']} 
                     onChange={this.updateObjectField('priority')}
                 >
-                    <span style={{fontSize:"20px",position:"relative",top:"15px",padding:"9px"}}><i className={"fa fa-circle priority-"+(issue.priority)}></i></span>
+                    <div style={{padding:"9px"}}>
+                        <IssuePriority value={issue.priority} />
+                    </div>
                 </SuperSelect>
             </div>
         </div>
@@ -217,7 +222,7 @@ IssueDetail = React.createClass({
                     <div>
 
                         <SuperSelect 
-                            itemView={Contact2Line}
+                            itemView={ContactViewName}
                             items={this.data.suppliers} 
                             classes="absolute"
                             onChange={this.updateObjectField('_supplier')}
@@ -246,9 +251,6 @@ IssueDetail = React.createClass({
                         {issue.status=='Issued'?
                             <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Closed':'default')}>Close order</button>
                         :null}
-                        {issue.status=='Closed'?
-                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Closed':'default')}>Rate supplier</button>
-                        :null}
                     </div>
                 </div>
             </div>
@@ -265,24 +267,17 @@ IssueDetail = React.createClass({
                     />
                 </div>
                 <div className="col-lg-12">
-                    <IpsoTabso tabs={[{
-                        tab:"Conversation",
-                        content:<IssueDiscussion issue={issue}/>
-                    },
+                    <IpsoTabso tabs={[
                     {
-                        tab:"Work order log",
-                        content:<IssueTrackerTable issue={issue}/>
-                    },
-                    {
-                        tab:<span><span>Images</span><span className="label label-warning pull-right">3</span></span>,
+                        tab:<span><span>Images</span><span className="label label-notification">3</span></span>,
                         content:<div className="attachments">
-                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
+                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
                         </div>
-                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-1.jpg"} />
                         </div>
-                        <div className="ibox" style={{width:"100px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
+                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
                             <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-2.jpg"} />
                         </div>
                         </div>
@@ -290,7 +285,15 @@ IssueDetail = React.createClass({
                     {
                         tab:"Documents",
                         content:<FileBrowser />
-                    }]} />
+                    },                    {
+                        tab:"Conversation",
+                        content:<IssueDiscussion issue={issue}/>
+                    },
+                    {
+                        tab:"Work order log",
+                        content:<IssueTrackerTable issue={issue}/>
+                    },
+                    ]} />
                 </div>
             </div>
         </div>

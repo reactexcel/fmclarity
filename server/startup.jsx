@@ -19,7 +19,7 @@ Meteor.startup(function(){
     // Use find/create pattern here
 
     //Meteor.users.remove({});
-    var leo1,rich1,leoId,richId;
+    var leo1,rich1,leoId,richId,system,systemId;
     leo1 = Accounts.findUserByEmail('mrleokeith@gmail.com');
     if(!leo1) {
         Meteor.call('User.new',{
@@ -28,6 +28,15 @@ Meteor.startup(function(){
         },'fm1q2w3e');
         leo1 = Accounts.findUserByEmail('mrleokeith@gmail.com');
     }
+    system = Accounts.findUserByEmail('system@fmclarity.com');
+    if(!system) {
+        Meteor.call('User.new',{
+            name:'System',
+            email:'system@fmclarity.com',
+        },'fm1q2w3e');
+        system = Accounts.findUserByEmail('system@fmclarity.com');
+    }
+
     rich1 = Accounts.findUserByEmail('mr.richo@gmail.com');
     if(leo1) {
         leoId = leo1._id;
@@ -35,20 +44,24 @@ Meteor.startup(function(){
     if(rich1) {
         richId = rich1._id;
     }
+    if(system) {
+        systemId = system._id;
+    }
     Facilities.remove({});
     Issues.remove({});
     Teams.remove({});
+    Log.remove({});
 
     function initializeUsers() {
         Users.remove({_id:{$nin:[leoId,richId]}});
         for(var i=0;i<100;i++) {
             var newUser = makeRandomUser();
-            Meteor.call('User.new',newUser);
+            var newUserId = Meteor.call('User.new',newUser);
+            //FM.notify(system,"created",['User',{_id:newUserId}]);
         }
     }
 
-
-    //initializeUsers();
+    initializeUsers();
 
 
     ExampleTeams = [
@@ -61,6 +74,7 @@ Meteor.startup(function(){
         _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
+      /*
       {
         type:"fm",
         name:"Team Superblah",
@@ -79,6 +93,7 @@ Meteor.startup(function(){
         _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
+      */
       {
         type:"contractor",
         name:"Normal Contractors",
@@ -182,8 +197,25 @@ Meteor.startup(function(){
     var teams = Teams.find({type:"fm"}).fetch();
     for(var i in ExampleFacilities) {
         var r = Math.floor(Math.random()*teams.length);
+        var contact = makeRandomUser();
+        var contactId = Meteor.call('User.new',contact);
+
+        ExampleFacilities[i]._contacts = [{
+            _id:contactId,
+            name:contact.name,
+            phone:contact.phone,
+            email:contact.email
+        }];
+
         ExampleFacilities[i]._team = {_id:teams[r]._id};
-        ExampleFacilities[i].lease = {};
+        ExampleFacilities[i].lease = {
+            parking:{},
+            insuranceDetails:{},
+            securityDeposit:{},
+        };
+        ExampleFacilities[i].holder = {
+            address:{},
+        };        
     }
 
     collections = [Facilities];

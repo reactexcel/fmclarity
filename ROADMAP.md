@@ -27,8 +27,10 @@ v0.3.0a "Demo v2"
 
 * Facilities form with the fields from your spreadsheet
 * Sections for floor plans and other items on property
+
 * Finalise work order design
 * Close out work order screen
+
 * Contractors filtered by service type when creating a work order
 * Being able to write reviews for contractors on closed work orders
 * Conversations in work orders

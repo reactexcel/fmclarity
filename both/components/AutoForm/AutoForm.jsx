@@ -16,8 +16,8 @@ CollapseBox = React.createClass({
 		var collapsed = this.state.collapsed;
 		return (
 			<div>
-			    <h4 onClick={this.toggle} className="background" style={{margin:"10px 15px"}}>
-			    	<span><i className={"fa fa-"+(collapsed?'plus':'minus')+"-circle"}></i> {this.props.title}</span>
+			    <h4 onClick={this.toggle} className="background" style={{margin:"10px 15px",cursor:"pointer"}}>
+			    	<span><i className={"fa fa-caret-"+(collapsed?'right':'down')}></i> {this.props.title}</span>
 			    </h4>
 			    <div className={"collapse-box "+(collapsed?'collapsed':'')} ref="collapser">
 			    	{this.props.children}
@@ -35,6 +35,36 @@ AutoInput.rating = React.createClass({
 		return (
 			<div className="autoinput-rating">
 				<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+			</div>
+		)
+	}
+});
+
+AutoInput.switch = React.createClass({
+	componentDidMount() {
+		var save = this.props.onChange;
+		var input = this.refs.input;
+		new Switchery(this.refs.input, {size:'small',color:'#db4437'});
+		input.onchange = function(e){
+		  	save({
+		  		target:{
+		  			value:e.target.checked
+		  		}
+		  	});
+		  }
+	},
+
+	render() {
+		var value = this.props.value;
+		var label = this.props.placeholder;
+		return (
+	        <div style={{paddingBottom:"30px"}}>
+				<input 
+					ref="input"
+					type="checkbox"
+					defaultChecked={value}
+				/>
+				<label>{label}</label>
 			</div>
 		)
 	}
@@ -95,6 +125,32 @@ AutoInput.switchbank = React.createClass({
 			</div>
 		)
 	}
+});
+
+AutoInput.menu = React.createClass({
+	componentDidMount() {
+		$(this.refs.input).select2({
+			tags:true,
+			placeholder:"Type to add..."
+		});
+	},
+
+	render() {
+		var options = this.props.options;
+		return (
+			<div className="md-select md-h4-container" style={{margin:"0 -14px",height:"80px"}}>
+	           	<h4 className="background"><span>{this.props.placeholder}</span></h4>
+	           	<div style={{width:"100%",padding:"0 17px"}}>
+					<select ref="input" className="form-control" multiple="multiple">
+						{options.map(function(i){
+							return <option key={i} value={i}>{i}</option>
+						})}
+					</select>
+				</div>
+			</div>
+		)
+	}
+
 });
 
 AutoInput.select = React.createClass({
@@ -390,7 +446,6 @@ AutoForm = React.createClass({
 	render() {
 		var $scope = this;
 		var item = this.state.item;
-		console.log(item);
 		var id = this.props.key||item._id;
 		var schema = this.props.schema;
 		var form = this.props.form||Object.keys(schema);
