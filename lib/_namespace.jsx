@@ -45,41 +45,25 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// this can then be repurposed to create both the newItemTemplate
 	// and the fields that I am sending to my own Autoform
 	var collection, schema, newItemTemplate;
-
-
 	this.schemas[name] = template;
 	this.collections[name] = collection = new Mongo.Collection(name);
-
-
-	/*console.log({
-		name:name,
-		template:template,
-	});*/
-
-	if(!shouldNotCreateSchema) {
-		//schema = this.makeSchema(template);
-	}
 	newItemTemplate = this.makeNewItemTemplate(template);
 
 	// add collection methods
 	var methods = {};
-	methods[name+'.save'] = function(item,actor) {
-		actor = actor||Meteor.user();
+	methods[name+'.save'] = function(item) {
 		item.isNewItem = false;
 		console.log({
 			saving:item
 		});
 		collection.upsert(item._id, {$set: _.omit(item, '_id')},function(err,obj){
-	        FM.notify(actor,"updated",[name,item]);
 			console.log({
 				error:err,
 				data:obj
 			});
 		});		
 	}
-	methods[name+'.destroy'] = function(item,actor) {
-		actor = actor||Meteor.user();
-        FM.notify(actor,"deleted",[name,item]);
+	methods[name+'.destroy'] = function(item) {
 		console.log({
 			destroying:item
 		});
@@ -101,8 +85,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			and:newItemTemplate
 		});
 
-		collection.insert(newItem,function(err,obj){
-	        FM.notify(actor,"created",[name,item]);
+		return collection.insert(newItem,function(err,obj){
 			console.log({
 				error:err,
 				data:obj
@@ -113,15 +96,31 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 
 	// add collection helpers
 	collection.helpers({
-		save:function() {
+		collectionName:name,
+		save() {
 			console.log('calling save method...');
-			Meteor.call(name+'.save',this);
+			var obj = this;
+			Meteor.call(name+'.save',obj,function(){
+				FM.notify("updated",obj);
+			});
 		},
-		destroy:function(){
+		destroy(){
 			console.log('calling destroy method...');
-			Meteor.call(name+'.destroy',this);
+			var obj = this;
+			Meteor.call(name+'.destroy',obj,function(){
+				FM.notify("deleted",obj);
+			});
 		},
-		getCreator:function() {
+		getName(){
+			return this.name;
+		},
+		getNotifications() {
+		    return Log.find({
+				"action.collectionName":name,
+				"action.query":{_id:this._id}
+		    }).fetch();
+		},
+		getCreator() {
 			return Users.find(this._creator._id).fetch();
 		}
 	});
@@ -131,11 +130,20 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		if(!doc.createdAt) {
 			doc.createdAt = moment().toDate();
 		}
-	});	
+	});
 
 	if(schema) {
 		console.log('attaching '+name+' schema');
 		//collection.attachSchema(schema);
 	}
 	return collection;
+}
+
+FM.create = function(collectionName,item) {
+	Meteor.call(collectionName+'.new',item,function(err,id){
+		FM.notify("created",{
+			collectionName:collectionName,
+			_id:id
+		});
+	});
 }

@@ -1,44 +1,17 @@
+
+
 IssueDiscussion = React.createClass({
 	render() {
-		var issue = this.props.issue;
-        var contact = issue.contact || {};
-        var supplier = issue.supplier || {};
 		return (
             <div className="feed-activity-list">
                 <div className="feed-element">
-                                                        <a href="#" className="pull-left">
-                                                            <img alt="image" className="img-circle" src="img/a2.jpg"/>
-                                                        </a>
-                                                        <div className="media-body ">
-                                                            <small className="pull-right">2h ago</small>
-                                                            <strong>{contact.name}</strong> created issue. <br/>
-                                                            <small className="text-muted">Today 2:10 pm - 12.06.2014</small>
-                                                            <div className="well">
-                                                                {issue.description}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="feed-element">
-                                                        <a href="#" className="pull-left">
-                                                            <img alt="image" className="img-circle" src="img/a3.jpg"/>
-                                                        </a>
-                                                        <div className="media-body ">
-                                                            <small className="pull-right">2h ago</small>
-                                                            <strong>Janet Rosowski</strong> add 1 photo. <br/>
-                                                            <small className="text-muted">2 days ago at 8:30am</small>
-                                                        </div>
-                                                    </div>
-                                                    <div className="feed-element">
-                                                        <a href="#" className="pull-left">
-                                                            <img alt="image" className="img-circle" src="img/a4.jpg"/>
-                                                        </a>
-                                                        <div className="media-body ">
-                                                            <small className="pull-right text-navy">5h ago</small>
-                                                            <strong>{supplier.name}</strong> started looking at <strong>issue</strong>. <br/>
-                                                            <small className="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                {this.props.items.map(function(n){
+                    return <div key={n._id} className="feed-element">
+                        <NotificationSummary item={n} />
+                    </div>
+                })}
+                </div>
+            </div>
 		)
 	}
 });

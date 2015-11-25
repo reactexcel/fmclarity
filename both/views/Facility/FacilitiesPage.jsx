@@ -26,8 +26,7 @@ PageProperties = React.createClass({
 
     createNew() {
     	var selectedTeam = this.data.selectedTeam;
-    	console.log('rooter');
-    	Meteor.call("Facility.new",{
+		FM.create("Facility",{
     		_team:{
     			_id:selectedTeam._id,
     			name:selectedTeam.name

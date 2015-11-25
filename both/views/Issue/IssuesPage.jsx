@@ -28,7 +28,7 @@ PageRequests = React.createClass({
     createNewIssue() {
         var selectedFacility = Meteor.user().getSelectedFacility();
         if(selectedFacility) {
-	    	Meteor.call("Issue.new",{
+	    	FM.create("Issue",{
 	    		_facility:{
 	    			_id:selectedFacility._id,
 	    			name:selectedFacility.name

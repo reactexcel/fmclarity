@@ -1,7 +1,6 @@
 ROADMAP.md
 ==========
 
-
 TODO (general)
 --------------
 * should sticky items ignore the filter?
@@ -12,13 +11,11 @@ TODO (general)
 DONE
 ----
 
-
+"Where" should be {selectedFacility, selectedTeam and currentPage}
 
 IN PROGRESS
 -----------
 * Adding new team member fails
-
-
 
 v0.3.0a "Demo v2"
 ------------------------------

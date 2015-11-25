@@ -2,57 +2,20 @@ NotificationView = React.createClass({
 
     render() {
         return (
-                    <ul className="dropdown-menu dropdown-messages">
-                        <li>
-                            <div className="dropdown-messages-box">
-                                <a href="{{pathFor route='profile'}}" className="pull-left">
-                                    <img alt="image" className="img-circle" src="img/a7.jpg"/>
-                                </a>
-                                <div className="media-body">
-                                    <small className="pull-right">46h ago</small>
-                                    <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br/>
-                                    <small className="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="divider"></li>
-                        <li>
-                            <div className="dropdown-messages-box">
-                                <a href="{{pathFor route='profile'}}" className="pull-left">
-                                    <img alt="image" className="img-circle" src="img/a4.jpg"/>
-                                </a>
-                                <div className="media-body ">
-                                    <small className="pull-right text-navy">5h ago</small>
-                                    <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br/>
-                                    <small className="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="divider"></li>
-                        <li>
-                            <div className="dropdown-messages-box">
-                                <a href="{{pathFor route='profile'}}" className="pull-left">
-                                    <img alt="image" className="img-circle" src="img/profile.jpg"/>
-                                </a>
-                                <div className="media-body ">
-                                    <small className="pull-right">23h ago</small>
-                                    <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br/>
-                                    <small className="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
-                                </div>
-                            </div>
-                        </li>
-                        <li className="divider"></li>
-                        <li>
-                            <div className="text-center link-block">
-                                <a href="{{pathFor route='mailbox'}}">
-                                    <i className="fa fa-bell"></i> <strong>See All Notifications</strong>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
+            <ul className="dropdown-menu dropdown-messages">
+                {this.props.items.map(function(n){
+                    return <li key={n._id} style={{borderBottom:"1px solid #ddd"}}>
+                        <div className="dropdown-messages-box">
+                            <NotificationSummary item={n} />
+                        </div>
+                    </li>
+                })}
+            </ul>
         )
     }
-});
+
+
+})
 
 TopNavBar = React.createClass({
 
@@ -60,16 +23,19 @@ TopNavBar = React.createClass({
 
     getMeteorData() {
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var user, team, teams;
+        Meteor.subscribe('notifications');
+        var user, team, teams, notifications;
         user = Meteor.user();
         if(user) {
             team = user.getSelectedTeam();
             teams = user.getTeams();
+            notifications = user.getNotifications();
         }
         return {
             user:user,
             team:team,
-            teams:teams
+            teams:teams,
+            notifications:notifications
         }
     },
 
@@ -121,6 +87,7 @@ TopNavBar = React.createClass({
         var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
         var setTeam = this.selectTeam;
         var selectedTeam = this.data.team;
+        var notifications = this.data.notifications;
         return (
 
     <div className="row border-bottom">
@@ -141,9 +108,12 @@ TopNavBar = React.createClass({
                 */}
                 <li className="dropdown">
                     <a className="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i className="fa fa-bell"></i>  <span className="label label-notification">3</span>
+                        <i className="fa fa-bell"></i>  
+                        {notifications.length?
+                            <span className="label label-notification">{notifications.length}</span>
+                        :null}
                     </a>
-                    <NotificationView />
+                    <NotificationView items={notifications}/>
                 </li>
                 <li className="dropdown">
                     <a style={{padding:"8px"}} className="dropdown-toggle count-info" data-toggle="dropdown" href="#">

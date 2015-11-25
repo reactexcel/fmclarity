@@ -69,6 +69,7 @@ IssueDetail = React.createClass({
                 supplier:issue.getSupplier(),
                 suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
                 services : Services.find({},{sort:{name:1}}).fetch(),
+                notifications:issue.getNotifications()
             }
         }
     },
@@ -139,6 +140,9 @@ IssueDetail = React.createClass({
         var createdAt = moment(issue.createdAt).calendar();
         var supplier = this.data.supplier;
         var status = this.data.status;
+        var notifications = this.data.notifications;
+
+        console.log(notifications);
 
         if(!this.data.ready) return <div />;
 
@@ -286,13 +290,9 @@ IssueDetail = React.createClass({
                         tab:"Documents",
                         content:<FileBrowser />
                     },                    {
-                        tab:"Conversation",
-                        content:<IssueDiscussion issue={issue}/>
-                    },
-                    {
-                        tab:"Work order log",
-                        content:<IssueTrackerTable issue={issue}/>
-                    },
+                        tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
+                        content:<IssueDiscussion items={notifications}/>
+                    }
                     ]} />
                 </div>
             </div>

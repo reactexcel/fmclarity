@@ -2,6 +2,15 @@ Meteor.publish('teams', function () {
 	return Teams.find({_members:{_id:this.userId}});
 });
 
+Meteor.publish('notifications', function () {
+	var cursor = Log.find({});
+	console.log({
+		'user':this.userId,
+		'notifications':cursor.fetch()
+	});
+    return cursor;
+});
+
 Meteor.publish('teamsAndFacilitiesForUser', function () {
 	console.log('updating subscription');
 	var teams, facilities, issues;

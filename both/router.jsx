@@ -114,6 +114,13 @@ loggedIn.route('/requests', {
   }
 });
 
+loggedIn.route('/notifications', {
+  name: 'notifications',
+  action() {
+    ReactLayout.render(MainLayout,{content:<NotificationsPage />});
+  }
+});
+
 loggedIn.route('/contracts', {
   name: 'contracts',
   action() {

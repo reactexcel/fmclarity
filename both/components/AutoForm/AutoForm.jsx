@@ -460,7 +460,7 @@ AutoForm = React.createClass({
 
 					if(s.schema!=null) {
 						return (
-							<span>
+							<span key={id+'-'+key}>
 								{s.label?<h5 style={{padding:"7px"}}>{s.label}</h5>:null}
 					        	<AutoForm 
 					        		item={item[key]} 

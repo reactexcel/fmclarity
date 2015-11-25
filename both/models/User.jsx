@@ -143,12 +143,18 @@ Users.helpers({
   destroy:function() {
     Meteor.call('User.destroy',this);
   },
+  getName() {
+    return this.profile.name;
+  },
   getTeams() {
     return Teams.find({'_members':{'_id':Meteor.userId()}}).fetch();
   },
   getTeam(i) {
     var teams = this.getTeams();
     return teams[i];
+  },
+  getNotifications() {
+    return Log.find({'recipients':{'_id':Meteor.userId()}}).fetch();    
   },
   getProfile() {
     if(!this.profile._id) {

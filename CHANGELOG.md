@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v0.2.11a**
+
+* Finished core functions for notification system
+* Integrated user notifications into top navigation bar
+* Integrated work order notifications into work order detail screen
+* Rolled work order "conversations" and "work log" into "updates"
+
 **v0.2.10a**
 
 * Facilities : Removed line from seecond level headings in facilities form
