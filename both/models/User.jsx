@@ -1,11 +1,5 @@
 Users = Meteor.users;
 
-if (Meteor.isServer) {
-  Meteor.publish('users', function () {
-    return Users.find();
-  });
-}
-
 // adapted from https://github.com/aldeed/meteor-collection2 example
 Schema.UserProfile = {
     name: {
@@ -137,6 +131,7 @@ Meteor.methods({
 })
 
 Users.helpers({
+  collectionName:'users',
   save:function(){
     Meteor.call('User.save',this);
   },

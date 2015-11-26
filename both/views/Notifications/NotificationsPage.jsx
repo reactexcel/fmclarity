@@ -5,17 +5,27 @@ NotificationSummary = React.createClass({
     getMeteorData() {
         Meteor.subscribe('users');
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var notification = this.props.item;
-        var actor = notification.getActor();
+        var notification,actor,action,object;
+        notification = this.props.item;
+        if(notification) {
+            actor = notification.getActor();
+            action = notification.getAction();
+            object = notification.getObject();
+            return {
+                ready:true,
+            	notification:notification,
+            	actor:actor,
+            	action:notification.getAction(),
+            	object:notification.getObject()
+            }
+        }
         return {
-        	notification:notification,
-        	actor:actor,
-        	action:notification.getAction(),
-        	object:notification.getObject()
+            ready:false
         }
     },
 
 	render() {
+        if(!this.data.ready) return <div/>
 		var data = this.data;
 		var notification = data.notification;
 		var object = this.data.object;

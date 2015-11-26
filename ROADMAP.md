@@ -11,17 +11,15 @@ TODO (general)
 DONE
 ----
 
-"Where" should be {selectedFacility, selectedTeam and currentPage}
-
 IN PROGRESS
 -----------
-* Adding new team member fails
 
 v0.3.0a "Demo v2"
 ------------------------------
 
 **Slack prioritization**
 
+* Adding new facilities
 * Facilities form with the fields from your spreadsheet
 * Sections for floor plans and other items on property
 
@@ -31,14 +29,14 @@ v0.3.0a "Demo v2"
 * Contractors filtered by service type when creating a work order
 * Being able to write reviews for contractors on closed work orders
 * Conversations in work orders
-* Adding new facilities
 * Being able to assign an work order to a team member
+
 * Notifications when work orders progress
-* File uploads and document/image management including
 * Work order log
+
+* File uploads and document/image management including
 * Browsing for contractors and adding preferred contractors to a contact list
 * Dashboard reflecting real data
-* Work order container expanding or contracting as content changes size
 
 **Work order detail**
 
@@ -63,13 +61,6 @@ v0.3.0a "Demo v2"
 * Populate comments and history sections with realistic info
 * Need better quality, real world test data (for work orders and the like)
 
-**Accounts**
-
-* Rename AccountEdit and AccountView?
-
-**Contractor card**
-
-
 **Facilities card**
 
 * Reformat facilities card
@@ -88,7 +79,6 @@ v0.3.0a "Demo v2"
 
 **Other**
 
-* Rationalise account form using my new schema system (cols becomes size)
 * Photographs of actual Kaplan properties
 
 **UNCATEGORISED**

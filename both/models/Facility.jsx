@@ -196,19 +196,13 @@ Facilities = FM.createCollection('Facility',{
     	type: [Object],
     	label: "Tenants"
     },
-    buildingAreas: {
-    	label:"Areas",
-    	input:"custom",
-		options:{
-			containerStyle:{height:"300px"}
-		}
+    areas: {
+    	label:"Building areas",
+    	input:"select",
     },
-    buildingServices: {
-    	label:"Services",
-    	input:"custom",
-		options:{
-			containerStyle:{height:"300px"}
-		}
+    services: {
+    	label:"Building services",
+    	input:"select",
     }
 },true);
 
@@ -220,7 +214,7 @@ Facilities.helpers({
   	return Teams.findOne(this._team);
   },
   getContacts() {
-    if (this._contacts.length) {
+    if (this._contacts&&this._contacts.length) {
     	// this is pretty fucking inefficient
     	// idea - store contactIds and sometimes denormalise by making contacts as well
     	// perhaps if contacts is empty or if it has "expired"

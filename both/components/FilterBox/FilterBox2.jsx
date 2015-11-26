@@ -8,22 +8,23 @@ FilterBox2 = React.createClass({
 	},
 
 	getInitialState() {
-    	return {
-    		selectedFilterNum:0,
-    		selectedItem:this.props.items[0]
-    	}
-  	},
 
-  	applyFilter(items) {
-    	var filters = this.props.filters;
-    	if(filters) {
-    	  	var filter = this.props.filters[this.state.selectedFilterNum].filter;
-      		if(filter) {
-		        return _.filter(items,filter);
-      		}
-    	}
-    	return items;
-  	},
+    return {
+    	selectedFilterNum:0,
+    	selectedItem:this.props.items?this.props.items[0]:null
+    }
+  },
+
+  applyFilter(items) {
+    var filters = this.props.filters;
+    if(filters) {
+    	var filter = this.props.filters[this.state.selectedFilterNum].filter;
+      if(filter) {
+		    return _.filter(items,filter);
+      }
+    }
+    return items;
+  },
 
   	setFilter(filterNum) {
 	    this.setState({

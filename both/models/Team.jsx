@@ -137,6 +137,7 @@ if (Meteor.isServer) {
             name:name,
             email:email
           });
+          console.log()
           Accounts.sendEnrollmentEmail(uid);
         }
         else {

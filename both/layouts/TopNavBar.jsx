@@ -4,7 +4,7 @@ NotificationView = React.createClass({
         return (
             <ul className="dropdown-menu dropdown-messages">
                 {this.props.items.map(function(n){
-                    return <li key={n._id} style={{borderBottom:"1px solid #ddd"}}>
+                    return <li key={n._id} style={{paddingBottom:"5px",marginBottom:"5px",borderBottom:"1px solid #ddd"}}>
                         <div className="dropdown-messages-box">
                             <NotificationSummary item={n} />
                         </div>

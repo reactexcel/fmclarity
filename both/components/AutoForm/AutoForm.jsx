@@ -444,6 +444,7 @@ AutoForm = React.createClass({
     },
 
 	render() {
+		if(!this.state.item) return <div/>;
 		var $scope = this;
 		var item = this.state.item;
 		var id = this.props.key||item._id;

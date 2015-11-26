@@ -48,11 +48,11 @@ FilterBox = React.createClass({
 
   setSort(sortNum) {
     var direction;
-    console.log({
+    /*console.log({
       sortNum:sortNum,
       newSortNum:this.state.selectedSortNum,
       sortDirection:this.state.sortDirection,
-    });
+    });*/
     if(sortNum==this.state.selectedSortNum) {
       direction = this.state.sortDirection*=-1;
     }

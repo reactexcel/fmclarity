@@ -30,6 +30,9 @@ LogSchema = {
 
 Meteor.methods({
 	"Log.notify":function(action) {
+		if(!action) {
+			return;
+		}
 		var actor = action.actor || Meteor.user();
 		var team = Teams.findOne(action.context.team);
 		team._members.map(function(i){

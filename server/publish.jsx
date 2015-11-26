@@ -2,17 +2,21 @@ Meteor.publish('teams', function () {
 	return Teams.find({_members:{_id:this.userId}});
 });
 
+Meteor.publish('config', function () {
+    return Config.find({});
+});
+
+Meteor.publish('users', function () {
+    return Users.find({});
+});
+
 Meteor.publish('notifications', function () {
 	var cursor = Log.find({});
-	console.log({
-		'user':this.userId,
-		'notifications':cursor.fetch()
-	});
     return cursor;
 });
 
 Meteor.publish('teamsAndFacilitiesForUser', function () {
-	console.log('updating subscription');
+	//console.log('updating subscription');
 	var teams, facilities, issues;
 
 	teams = Teams.find({_members:{_id:this.userId}});

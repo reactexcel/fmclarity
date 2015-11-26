@@ -74,14 +74,13 @@ Meteor.startup(function(){
         _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
-      /*
       {
         type:"fm",
         name:"Team Superblah",
         email:"knockers@run.123",
         phone:"0400-223-122",
         thumb:"img/logo-placeholder.png",
-        _members:[{_id:leoId},{_id:richId}],
+        _members:[{_id:leoId}],
         _contacts:[],
       },
       {
@@ -90,10 +89,9 @@ Meteor.startup(function(){
         email:"schturm@run.123",
         phone:"0400-223-122",
         thumb:"img/logo-placeholder.png",
-        _members:[{_id:leoId},{_id:richId}],
+        _members:[{_id:leoId}],
         _contacts:[],
       },
-      */
       {
         type:"contractor",
         name:"Normal Contractors",
@@ -190,15 +188,61 @@ Meteor.startup(function(){
     }
 
     initializeCollections(
-        [Services, Teams],
-        [ExampleServices, ExampleTeams]        
+        [Teams],
+        [ExampleTeams]        
     );
 
     var teams = Teams.find({type:"fm"}).fetch();
+    var config = Config.findOne({});
     for(var i in ExampleFacilities) {
         var r = Math.floor(Math.random()*teams.length);
         var contact = makeRandomUser();
         var contactId = Meteor.call('User.new',contact);
+
+        ExampleFacilities[i].areas = [
+            {
+                name:'Standard areas',
+                number:1,
+                areas:[
+                    {
+                        name:'Male bathroom',
+                        location:'North',
+                        number:1
+                    },{
+                        name:'Female bathroom',
+                        location:'North',
+                        number:1
+                    },{
+                        name:'Male bathroom',
+                        location:'South',
+                        number:1
+                    },{
+                        name:'Kitchen',
+                        number:1
+                    },{
+                        name:'Work room',
+                        number:5
+                    }
+                ]
+            },
+            {
+                name:'Other areas',
+                number:1,
+                areas:[
+                    {
+                        name:'Male bathroom',
+                        location:'North',
+                        number:1
+                    },{
+                        name:'Female bathroom',
+                        location:'North',
+                        number:1
+                    }
+                ]
+            }
+        ];
+
+        ExampleFacilities[i].services = JSON.parse(JSON.stringify(config.services));
 
         ExampleFacilities[i]._contacts = [{
             _id:contactId,

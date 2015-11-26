@@ -142,7 +142,7 @@ IssueDetail = React.createClass({
         var status = this.data.status;
         var notifications = this.data.notifications;
 
-        console.log(notifications);
+        //console.log(notifications);
 
         if(!this.data.ready) return <div />;
 
