@@ -193,7 +193,6 @@ Meteor.startup(function(){
     );
 
     var teams = Teams.find({type:"fm"}).fetch();
-    var config = Config.findOne({});
     for(var i in ExampleFacilities) {
         var r = Math.floor(Math.random()*teams.length);
         var contact = makeRandomUser();
@@ -201,7 +200,7 @@ Meteor.startup(function(){
 
         ExampleFacilities[i].areas = [
             {
-                name:'Standard areas',
+                name:'Standard level',
                 number:1,
                 areas:[
                     {
@@ -226,23 +225,21 @@ Meteor.startup(function(){
                 ]
             },
             {
-                name:'Other areas',
+                name:'Unique areas',
                 number:1,
                 areas:[
                     {
-                        name:'Male bathroom',
-                        location:'North',
+                        name:'Reception',
                         number:1
                     },{
-                        name:'Female bathroom',
-                        location:'North',
+                        name:'Basement',
                         number:1
                     }
                 ]
             }
         ];
 
-        ExampleFacilities[i].services = JSON.parse(JSON.stringify(config.services));
+        ExampleFacilities[i].services = JSON.parse(JSON.stringify(Config.services));
 
         ExampleFacilities[i]._contacts = [{
             _id:contactId,

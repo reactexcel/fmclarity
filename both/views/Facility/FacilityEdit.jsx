@@ -1,15 +1,262 @@
+FacilityAreaRow = React.createClass({
+	render() {
+		var area = this.props.area;
+		var deleteArea = this.props.delete;
+		var updateField = this.props.update;
+		var Menu = AutoInput.menu;
+		return (
+			<tr>
+				<td style={{width:"30px"}}>
+					<input 
+						type="text" 
+						className="inline-form-control" 
+						defaultValue={area.number}
+						onChange={updateField.bind(null,'number')}
+					/>
+				</td>
+				<td style={{padding:"3px",width:"60%"}}>
+					<Menu 
+						options={Config.areaNames} 
+						onChange={updateField.bind(null,'name')}
+						value={area.name}
+					/>
+				</td>
+					<td style={{padding:"3px"}}>
+					<Menu 
+						options={["","North","South","East","West"]} 
+						onChange={updateField.bind(null,'location')}
+						value={area.location}
+					/>
+				</td>
+				<td className="actions" style={{width:"30px"}}>
+					<span 
+						onClick={deleteArea}
+					>
+						<i className="fa fa-times"></i>
+					</span>
+				</td>
+			</tr>
+		)
+	}
+})
+
+
+FacilityAreas = React.createClass({
+
+	getInitialState() {
+		return {
+			areaGroups:this.props.item.areas
+		}
+	},
+
+	save() {
+		var item = this.props.item;
+		item.areas = this.state.areaGroups;
+		item.save();
+	},
+
+    componentWillMount: function() {
+        this.save = _.debounce(this.save,2000);
+    },
+
+	updateGroupField(groupNum,field,event) {
+		var value = event.target.value;
+		var areaGroups = this.state.areaGroups;
+		areaGroups[groupNum][field] = value;
+		this.setState({
+			areaGroups:areaGroups
+		});
+		this.save();
+	},
+
+	updateAreaField(groupNum,areaNum,field,event) {
+		var value = event.target.value;
+		var areaGroups = this.state.areaGroups;
+		if(!areaGroups[groupNum].areas[areaNum]){
+			areaGroups[groupNum].areas[areaNum] = {};
+		}
+		areaGroups[groupNum].areas[areaNum][field] = value;
+		this.setState({
+			areaGroups:areaGroups
+		});
+		this.save();
+	},
+
+	deleteArea(groupNum,areaNum) {
+		var areaGroups = this.state.areaGroups;
+		areaGroups[groupNum].areas.splice(areaNum,1);		
+		this.setState({
+			areaGroups:areaGroups
+		});
+		this.save();
+	},
+
+	render () {
+		var deleteArea = this.deleteArea;
+		var updateAreaField = this.updateAreaField;
+		var updateGroupField = this.updateGroupField;
+		var areaGroups = this.state.areaGroups;
+		var Menu = AutoInput.menu;
+		return (
+			<div className="panel-group"> 
+				{areaGroups.map(function(group,groupNum){
+					return (<div key={groupNum} className="panel panel-default"> 
+					<div className="panel-heading" role="tab">
+						<h4 className="panel-title">
+							<input 
+								type="text" 
+								className="inline-form-control" 
+								style={{width:"50%"}}
+								onChange={updateGroupField.bind(null,groupNum,'name')}
+								value={group.name}
+							/>
+							<div style={{float:"right"}}>
+								<b>Number like this</b>
+								<input 
+									type="text" 
+									className="inline-form-control" 
+									style={{width:"30px",paddingLeft:"10px"}} 
+									onChange={updateGroupField.bind(null,groupNum,'number')}
+									value={group.number}
+								/>
+							</div>
+						</h4>
+					</div>
+					<div >
+						<table className="table" style={{margin:0}}>
+							<tbody>
+							{group.areas.map(function(area,areaNum){
+								return (
+									<FacilityAreaRow
+										key={areaNum}
+										area={area}
+										delete={deleteArea.bind(null,groupNum,areaNum)}
+										update={updateAreaField.bind(null,groupNum,areaNum)}
+									/>
+								)
+							})}
+							<FacilityAreaRow
+								key={group.areas.length}
+								area={{}}
+								delete={deleteArea.bind(null,groupNum,group.areas.length)}
+								update={updateAreaField.bind(null,groupNum,group.areas.length)}
+							/>
+							</tbody>
+						</table>
+					</div>
+				</div>)
+				})}
+			</div>
+		)
+	}
+})
+
+
+FacilityServices = React.createClass({
+
+	getInitialState() {
+		return {
+			services:this.props.item.services
+		}
+	},
+
+	save() {
+		var item = this.props.item;
+		item.services = this.state.services;
+		item.save();
+	},
+
+    componentWillMount: function() {
+        this.save = _.debounce(this.save,2000);
+    },
+
+	updateSubServiceField(serviceNum,subServiceNum,field,event) {
+		var value = event.target.value;
+		var services = this.state.services;
+		if(!services[serviceNum].subservices[subServiceNum]){
+			services[serviceNum].subservices[subServiceNum] = {};
+		}
+		services[serviceNum].subservices[subServiceNum][field] = value;
+		this.setState({
+			services:services
+		});
+		this.save();
+	},
+
+	render() {
+		var updateSubServiceField = this.updateSubServiceField;
+		var updateServiceField= this.updateServiceField;
+		var facility = this.props.item;
+		var Switch = AutoInput.switch;
+		var Menu = AutoInput.menu;
+		var save = this.save;
+		return(
+			<div className="panel-group" id="accordion" role="tablist" aria-multiselectable="true"> 
+				{facility.services.map(function(service,serviceIndex){
+					return (<div key={serviceIndex} className="panel panel-default"> 
+					<div className="panel-heading" role="tab" id={"heading-"+serviceIndex}>
+						<h4 className="panel-title"> 
+							<a 
+								role="button" 
+								data-toggle="collapse" 
+								data-parent="#accordion" 
+								href={"#collapse-"+serviceIndex} 
+								aria-expanded="false" 
+								aria-controls={"collapse-"+serviceIndex} 
+								className="collapsed"
+							>{service.name}</a>
+						</h4>
+					</div>
+					<div 
+						id={"collapse-"+serviceIndex}
+						className="panel-collapse collapse"
+						role="tabpanel"
+						aria-labelledby={"heading-"+serviceIndex}
+						aria-expanded="false"
+						style={{height:"0px"}}
+					>
+						<table className="table">
+							<tbody>
+							{service.subservices?service.subservices.map(function(subService,subIndex){
+								return (<tr key={subIndex}>
+									<td style={{padding:"0 0 0 5px"}}>
+										<Switch 
+											placeholder={subService.name} 
+											value={subService.available}
+											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'available')}
+										/>
+									</td>
+									<td style={{padding:"3px"}}>
+										<Menu 
+											options={Config.cycleNames} 
+											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'cycle')}
+											value={subService.cycle}
+										/>
+									</td>
+									<td style={{padding:"8px"}}>Select contractor</td>
+								</tr>)
+							}):null}
+							</tbody>
+						</table>
+					</div>
+				</div>)
+				})}
+			</div>
+		)
+	}
+})
+
+
 FacilityEdit = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
     	Meteor.subscribe('users');
-    	Meteor.subscribe('config');
 		var facility, schema, team, tenants, contacts, config;
 		facility = this.props.item;
 		schema = FM.schemas['Facility'];
-		config = Config.findOne();
-		if(config&&facility){
+		if(facility){
 			team = facility.getTeam();
 			contacts = facility.getContacts();
 			if(team) {
@@ -20,7 +267,6 @@ FacilityEdit = React.createClass({
 					contacts:contacts,
 					schema:schema,
 					tenants:tenants.slice(0,3),
-					config:config
 				}
 			}
 		}
@@ -30,6 +276,7 @@ FacilityEdit = React.createClass({
 
     },
 
+    // debounce here and remove debounce from AutoForm, FacilityAreas and FacilityServices
 	save() {
 		var item = this.props.item;
 		return function() {
@@ -48,7 +295,6 @@ FacilityEdit = React.createClass({
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
 		var schema = this.data.schema;
-		var config = this.data.config;
 		//console.log(config);
 
 		return (
@@ -105,112 +351,48 @@ FacilityEdit = React.createClass({
 				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Building areas" collapsed={true}>
-<div className="col-lg-12">
-	<div className="panel-group"> 
-		{facility.areas.map(function(areaGroup,idx){
-			return (<div key={idx} className="panel panel-default"> 
-			<div className="panel-heading" role="tab">
-				<h4 className="panel-title"> 
-					<a>{areaGroup.name}</a>
-				</h4>
-			</div>
-			<div >
-				<table className="table">
-					<tbody>
-					{areaGroup.areas.map(function(area,idx){
-						return (<tr key={idx}>
-							<td>{area.number}</td>
-							<td>{area.name}</td>
-							<td>{area.location}</td>
-						</tr>)
-					})}
-					<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>)
-		})}
-	</div>
-</div>
+						<div className="col-lg-12">
+							<FacilityAreas item={facility} save={this.save()}/>
+						</div>
 					</CollapseBox>
 			   		<CollapseBox title="Default services & suppliers" collapsed={true}>
-<div className="col-lg-12">
-<div className="panel-group" id="accordion" role="tablist" aria-multiselectable="true"> 
-	{facility.services.map(function(service,idx){
-		return (<div key={idx} className="panel panel-default"> 
-		<div className="panel-heading" role="tab" id={"heading-"+idx}>
-			<h4 className="panel-title"> 
-				<a 
-					role="button" 
-					data-toggle="collapse" 
-					data-parent="#accordion" 
-					href={"#collapse-"+idx} 
-					aria-expanded="false" 
-					aria-controls={"collapse-"+idx} 
-					className="collapsed"
-				>{service.name}</a>
-			</h4>
-		</div>
-		<div 
-			id={"collapse-"+idx}
-			className="panel-collapse collapse"
-			role="tabpanel"
-			aria-labelledby={"heading-"+idx}
-			aria-expanded="false"
-			style={{height:"0px"}}
-		>
-			<table className="table">
-				<tbody>
-				{service.subservices?service.subservices.map(function(ss,ssidx){
-					return (<tr key={ssidx}>
-						<td>{ss.name}</td>
-						<td>{ss.cycle}</td>
-						<td>Select contractor</td>
-					</tr>)
-				}):null}
-				</tbody>
-			</table>
-		</div>
-	</div>)
-	})}
-</div>
-</div>
+						<div className="col-lg-12">
+							<FacilityServices item={facility} save={this.save()} />
+						</div>
 					</CollapseBox>
+
+
 			   		<CollapseBox title="Documents & images" collapsed={true}>
-			   			<div className="row" style={{margin:"15px"}}>
+			   			<div className="row" style={{margin:"0 25px 0 20px"}}>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
+		                        </div>
 							</div>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/floor-plan.jpg"} />
+		                        </div>
 							</div>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
+		                        </div>
 							</div>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
+		                        </div>
 							</div>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
+		                        </div>
 							</div>
 					        <div className="col-lg-4" style={{padding:0}}>
-								<div className="contact-thumbnail">
-									<img style={{width:"100%"}} alt="image" src={"img/"+facility.thumb}/>
-								</div>
+		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
+		                        </div>
 							</div>
 						</div>
 					</CollapseBox>

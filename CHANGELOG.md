@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.2.12a**
+
+* Facilities area and service selector
+
 **v0.2.11a**
 
 * Finished core functions for notification system
