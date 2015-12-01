@@ -71,9 +71,16 @@ Meteor.startup(function(){
         email:"xyz@abc.123",
         phone:"0400-123-123",
         thumb:"img/k-100-ltblue.png",
+        timeframes:{
+            "Scheduled":24*7,
+            "Standard":24*3,
+            "Urgent":24,
+            "Critical":0
+        },
         _members:[{_id:leoId},{_id:richId}],
         _contacts:[],
       },
+      /*
       {
         type:"fm",
         name:"Team Superblah",
@@ -92,6 +99,7 @@ Meteor.startup(function(){
         _members:[{_id:leoId}],
         _contacts:[],
       },
+      */
       {
         type:"contractor",
         name:"Normal Contractors",

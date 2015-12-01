@@ -75,17 +75,24 @@ Log.helpers({
 		return this.action.verb;
 	},
 	getObjectType() {
-		return this.action.collectionName;
+		if(this.action) {
+			return this.action.collectionName;
+		}
 	},
 	getObject() {
-		var cName = this.action.collectionName;
-		var collection = FM.collections[cName];
-		var query = this.action.query;
-		return collection.findOne(query);
+		if(this.action) {
+			var cName = this.action.collectionName;
+			var collection = FM.collections[cName];
+			var query = this.action.query;
+			return collection.findOne(query);
+		}
 	},
 });
 
 FM.notify = function(verb,obj,recipients) {
+	if(!obj) {
+		return;
+	}
 	var newAction = {
 		action:{
 			verb:verb,

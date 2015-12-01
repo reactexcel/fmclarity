@@ -207,12 +207,14 @@ TestIssues.generate = function() {
 		startDate = new Date(2015,10,1);
 	}
 
+	var newStatus = getRandom(this.status);
+
 	return {
 	    name:capitalize(title),
 	    description:capitalize(description),
-	    status:getRandom(this.status),
+	    status:newStatus,
 	    createdAt:randomDate(startDate, new Date()),
-	    priority:getRandom(['Scheduled','Standard','Urgent','Critical']),
+	    priority:newStatus=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical']),
 	    thumb:5,
 	    contact:{
 	      name:"John Smith",

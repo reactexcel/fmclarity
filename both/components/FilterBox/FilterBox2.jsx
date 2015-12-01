@@ -26,25 +26,31 @@ FilterBox2 = React.createClass({
     return items;
   },
 
-  	setFilter(filterNum) {
-	    this.setState({
-      		selectedFilterNum:filterNum
-    	})
-  	},
+  setFilter(filterNum) {
+    this.setState({
+      selectedFilterNum:filterNum
+    })
+  },
 
-  	createNewItem() {
-    	this.setFilter(0);
-    	this.props.newItemCallback();
-  	},
+  createNewItem() {
+    var component = this;
+    component.setFilter(0);
+    this.props.newItemCallback(function(newItem){
+      console.log({'callback is being called - hooray!':newItem});
+      component.setState({
+        selectedItem:newItem
+      });
+    });
+  },
 
-  	toggle() {
-  		var $this = this;
-  		return function(item) {
-	  		$this.setState({
-	  			selectedItem:item
-	  		});
-	  	}
-  	},
+  toggle() {
+  	var $this = this;
+  	return function(item) {
+	  	$this.setState({
+	  		selectedItem:item
+	  	});
+	  }
+  },
 
 	render() {
     var $this = this;
@@ -58,6 +64,10 @@ FilterBox2 = React.createClass({
     //console.log(initialItems);
 
     var items = $this.applyFilter(initialItems);
+    items = items.sort(function(a,b){
+      return a.getName()<b.getName()?-1:1;
+    });
+
     var numCols = parseInt(this.props.numCols) || 1;
     var colSize = Math.floor(12 / numCols);
 
@@ -93,6 +103,7 @@ FilterBox2 = React.createClass({
 	          	<div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
 		            <div className="row isotope">
 		              	{items.map(function(i,index){
+                      if(i.sticky||i.isNewItem)
 		                	return (
 		                  		<div 
 		                    		key={i._id}
@@ -108,6 +119,23 @@ FilterBox2 = React.createClass({
 		                  		</div>	
 	                	)
 		              	})}
+                    {items.map(function(i,index){
+                      if(!(i.sticky||i.isNewItem))
+                      return (
+                          <div 
+                            key={i._id}
+                            style={{padding:0}}
+                            className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
+                          >
+                            <CardHeaderWrapper
+                                item={i}
+                                view={$this.props.itemView.summary}
+                                toggle={$this.toggle()}
+                                isSelected={$this.state.selectedItem==i}
+                            />
+                          </div>  
+                    )
+                    })}
 		            </div>
 	        	</div>
     		</div>

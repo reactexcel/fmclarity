@@ -6,8 +6,8 @@ PageDashboard = React.createClass({
 
 	render() {return(
     <div className="wrapper wrapper-content animated fadeIn">
-        <div className="row">
-            <div className="col-lg-6 col-md-6 col-sm-12">
+        <div className="row" style={{margin:"5px 0 0 -20px"}}>
+            <div className="col-lg-6 col-md-6 col-sm-12" style={{padding:"0 0 0 20px"}}>
 	            <Box title="Work Requests">
 	            	<div className="btn-group pull-right">
 	            		<button className="btn btn-white"><i className="fa fa-th"></i> 6 Month</button>
@@ -50,7 +50,7 @@ PageDashboard = React.createClass({
 		            </div>
 	            </Box>
 	        </div>
-            <div className="col-lg-6 col-md-6 col-sm-12">
+            <div className="col-lg-6 col-md-6 col-sm-12" style={{padding:"0 0 0 20px"}}>
 	            <Box title="Non-Compliant Items">
 	            	<div className="btn-group pull-right">
 	            		<button className="btn btn-white"><i className="fa fa-th"></i> 6 Month</button>

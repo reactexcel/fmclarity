@@ -1,7 +1,9 @@
 IssuePriority = React.createClass({
   render() {
-    var priority = this.props.value;
+    var issue = this.props.issue;
+    var priority = issue.priority;
     return (
+
       <span title={priority} style={{fontSize:"20px",position:"relative",top:"3px"}}>
         <i className={"fa fa-circle"+(priority=='Scheduled'?'-o':'')+" priority-"+(priority)}></i>
       </span>
@@ -32,6 +34,7 @@ IssueSummary = React.createClass({
         creator:issue.getCreator(),
         supplier:issue.getSupplier(),
         status:issue.status,
+        timeframe:issue.getTimeframe()
       }
     }
   },
@@ -51,11 +54,12 @@ IssueSummary = React.createClass({
         var facility = this.data.facility;
         var creator = this.data.creator;
         var supplier = this.data.supplier;
+        var timeframe = this.data.timeframe;
         return (
         <div className={"issue-summary issue-status-"+status}>
           
           <div className="issue-summary-col issue-summary-col-1">
-            <IssuePriority value={issue.priority} />
+            <IssuePriority issue={issue} />
             {/*<ContactAvatarSmall item={creator} />*/}
           </div>
           {/*}
@@ -76,7 +80,7 @@ IssueSummary = React.createClass({
             {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
           <div className="issue-summary-col issue-summary-col-5">
-            {moment(issue.createdAt).fromNow()}
+            {moment(issue.createdAt).add(timeframe,'hours').fromNow()}
           </div>
         </div>
       )

@@ -24,14 +24,14 @@ PageProperties = React.createClass({
         }
     },
 
-    createNew() {
+    createNew(callback) {
     	var selectedTeam = this.data.selectedTeam;
 		FM.create("Facility",{
     		_team:{
     			_id:selectedTeam._id,
     			name:selectedTeam.name
     		}
-    	});
+    	},callback);
     },
 
 	componentDidMount() {

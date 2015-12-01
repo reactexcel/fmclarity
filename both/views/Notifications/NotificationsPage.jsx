@@ -11,21 +11,17 @@ NotificationSummary = React.createClass({
             actor = notification.getActor();
             action = notification.getAction();
             object = notification.getObject();
-            return {
-                ready:true,
-            	notification:notification,
-            	actor:actor,
-            	action:notification.getAction(),
-            	object:notification.getObject()
-            }
         }
         return {
-            ready:false
+            notification:notification,
+            actor:actor,
+            action:action,
+            object:object
         }
     },
 
 	render() {
-        if(!this.data.ready) return <div/>
+        if(!this.data.object||!this.data.actor) return <div/>
 		var data = this.data;
 		var notification = data.notification;
 		var object = this.data.object;
@@ -34,7 +30,7 @@ NotificationSummary = React.createClass({
             	<ContactAvatarSmall item={data.actor}/>
                 <div className="media-body">
                     <small className="pull-right">{moment(notification.time).fromNow()}</small>
-                    <strong>{data.actor.getName()}</strong> {data.action} an <strong>{object.collectionName} "{object.getName()}"</strong>. <br/>
+                    <strong>{data.actor.getName()}</strong> {data.action} an <strong>{notification.getObjectType()} "{object.getName()}"</strong>. <br/>
                     <small className="text-muted">{moment(notification.time).format('MMM Do YYYY, h:mm:ss a')}</small>
                     {object.description?<div className="well">{object.description}</div>:null}
                 </div>

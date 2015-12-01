@@ -1,17 +1,30 @@
 
 Issues = FM.createCollection('Issue',{
-  name:"",
-  status:"New",
-  thumb:1,
+  name:{
+  },
+  priority:{
+    defaultValue:"Standard",
+  },
+  description:{
+    input:"textarea"
+  },
+  status:{
+    defaultValue:"New",
+  },
   _team:{
+    type:Object
   },
   _facility:{
+    type:Object
   },
   _contact:{
+    type:Object
   },
   _supplier:{
+    type:Object
   },
   _assignee:{
+    type:Object
   }
 },true);
 
@@ -24,6 +37,18 @@ Issues.helpers({
   },
   getCreator() {
     return Users.findOne(this._creator._id);
+  },
+  getTeam() {
+    return Teams.findOne({_id:this._team._id});
+  },
+  getTimeframe() {
+    var team = this.getTeam();
+    return team.getTimeframe(this.priority);
+  },
+  setPriority(priority) {
+    var team = this.getTeam();
+    this.priority = priority;
+    this.timeframe = team.getTimeframe(priority);
   },
   setSupplier(supplier) {
     this._supplier = supplier;

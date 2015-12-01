@@ -30,6 +30,9 @@ FM.makeNewItemTemplate = function(schema) {
 	    else if(field.type==Number) {
 	    	n[i] = null;
 	    }
+	    else if(field.schema!=null) {
+	    	n[i] = FM.makeNewItemTemplate(field.schema);
+	    }
 	    else if(field.type==Object) {
 	    	n[i] = {};
 	    }
@@ -139,11 +142,13 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	return collection;
 }
 
-FM.create = function(collectionName,item) {
-	Meteor.call(collectionName+'.new',item,function(err,id){
+FM.create = function(collectionName,item,callback) {
+	var collection = FM.collections[collectionName];
+	Meteor.call(collectionName+'.new',item,null,function(err,id){
 		FM.notify("created",{
 			collectionName:collectionName,
 			_id:id
 		});
+		callback(collection.findOne({_id:id}));
 	});
 }

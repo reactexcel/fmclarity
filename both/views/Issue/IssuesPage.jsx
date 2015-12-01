@@ -109,7 +109,7 @@ PageRequests = React.createClass({
 	    {
 	    	text:"Priority",
 	    	sortFunction(a,b) {
-	    		var weight = {'Scheduled':0,'Standard':1,'Urgent':2,'Critical':3};
+	    		var weight = {'Closed':0,'Scheduled':1,'Standard':2,'Urgent':3,'Critical':4};
 	    		return	(weight[a.priority]<weight[b.priority])?-1:1;
 	    	},
 	    },
@@ -133,12 +133,11 @@ PageRequests = React.createClass({
 	    	},
 	    },
 	    {
-	    	text:"Updated",
+	    	text:"Due",
 	    	sortFunction(a,b) {
 	    		return (a.createdAt>b.createdAt)?-1:1;
 	    	},
-	    }
-	    ];
+	    }];
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>

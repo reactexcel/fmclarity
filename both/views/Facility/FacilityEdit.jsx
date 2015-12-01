@@ -301,7 +301,7 @@ FacilityEdit = React.createClass({
 		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <div className="row">
 				    <div className="col-lg-12">
-			            <h2 className="background"><span>{facility.name}</span></h2>
+			            <h2 className="background"><span>{facility.getName()}</span></h2>
 			        </div>
 			   	</div>
 			   	<div className="row">
@@ -310,35 +310,24 @@ FacilityEdit = React.createClass({
 				        	<AutoForm item={facility} schema={schema} form={this.form1} save={this.save()} />
 				        </div>
 					</CollapseBox>
+			   		<CollapseBox title="Documents & images">
+			   			<div className="row" style={{margin:"0 25px 0 20px"}}>
+				   			{facility.thumb.map(function(img,idx){
+				   				return (
+						        <div key={idx} className="col-lg-4" style={{padding:0}}>
+			                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+			                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={img} />
+			                        </div>
+								</div>
+								)
+				   			})}
+						</div>
+					</CollapseBox>
 			   		<CollapseBox title="Contacts">
-			            <div className="row" style={{margin:"15px 30px"}}>
-			              	{contacts.map(function(contact){
-			                	return (
-			                  		<div 
-			                    		key={contact._id}
-			                    		style={{padding:0}}
-			                    		className={"table-row col-lg-12"}
-			                  		>
-				                    	<ContactCard item={contact}/>
-			                  		</div>	
-		                	)
-			              	})}
-			            </div>
+			   			<ContactList items={contacts} />
 					</CollapseBox>
 			   		<CollapseBox title="Tenants">
-			            <div className="row" style={{margin:"15px 30px"}}>
-			              	{tenants.map(function(tenant){
-			                	return (
-			                  		<div 
-			                    		key={tenant._id}
-			                    		style={{padding:0}}
-			                    		className={"table-row col-lg-12"}
-			                  		>
-				                    	<ContactCard item={tenant}/>
-			                  		</div>	
-		                	)
-			              	})}
-			            </div>
+			   			<ContactList items={tenants} />
 					</CollapseBox>
 			   		<CollapseBox title="Facility holder" collapsed={true}>
 				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
@@ -358,42 +347,6 @@ FacilityEdit = React.createClass({
 			   		<CollapseBox title="Default services & suppliers" collapsed={true}>
 						<div className="col-lg-12">
 							<FacilityServices item={facility} save={this.save()} />
-						</div>
-					</CollapseBox>
-
-
-			   		<CollapseBox title="Documents & images" collapsed={true}>
-			   			<div className="row" style={{margin:"0 25px 0 20px"}}>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
-		                        </div>
-							</div>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/floor-plan.jpg"} />
-		                        </div>
-							</div>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
-		                        </div>
-							</div>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
-		                        </div>
-							</div>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
-		                        </div>
-							</div>
-					        <div className="col-lg-4" style={{padding:0}}>
-		                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-		                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/"+facility.thumb} />
-		                        </div>
-							</div>
 						</div>
 					</CollapseBox>
 				</div>

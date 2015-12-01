@@ -178,6 +178,15 @@ Teams.helpers({
     }
     return [];
   },
+  getTimeframe(priority) {
+    var timeframes = this.timeframes||{
+      "Scheduled":24*7,
+      "Standard":24*3,
+      "Urgent":24,
+      "Critical":0,
+    };
+    return timeframes[priority]?timeframes[priority]:timeframes['Standard'];
+  },
   addMember(item) {
     Meteor.call('Team.addMember',this,item);
   },

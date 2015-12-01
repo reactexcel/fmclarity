@@ -13,6 +13,7 @@ PageSuppliers = React.createClass({
 		// okay - so we really need to pass in a function here
 		// seeing as this class is the only one aware of the 
 		// structure of the data being sent in
+		/*
 		var filters = [
 	      {
 	        text:"All"
@@ -27,6 +28,7 @@ PageSuppliers = React.createClass({
 	        }
 	      }
 	    ];
+	    */
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
@@ -37,7 +39,6 @@ PageSuppliers = React.createClass({
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
 						items={this.data.items}
-						filters={filters}
 						itemView={{
 							summary:ContactCard,
 							detail:AccountFlipWidget

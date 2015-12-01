@@ -7,10 +7,15 @@ Address = {
 	},
 	streetName:{
 		label: "Street name",
-		size:9
+		size:6
+	},
+	streetType:{
+		label: "Street name",
+		size:3
 	},
 	city:{
 		label:"City",
+    	defaultValue: "",
 		size:6,
 	},
 	state:{
@@ -24,7 +29,7 @@ Address = {
 };
 
 Contact = {
-}
+};
 
 FacilityHolder = {
 	type:{
@@ -54,7 +59,7 @@ FacilityHolder = {
 		label:"Address",
 		schema:Address,
 	},
-}
+};
 
 Insurance = {
 	insurer:{
@@ -78,7 +83,7 @@ Insurance = {
 		type:Object,
 		//input:"attachment",
 	},
-}
+};
 
 SecurityDeposit = {
 	purpose:{
@@ -93,7 +98,7 @@ SecurityDeposit = {
 		size:6,
 	},
 	bankName:{
-		label:"Nank name",
+		label:"Bank name",
 		size:6,
 	},
 	reviewDate:{
@@ -160,6 +165,7 @@ Lease = {
 Facilities = FM.createCollection('Facility',{
     name: {
     	label: "Name",
+    	defaultValue: "",
     },
     type: {
     	label:"Property type",
@@ -175,6 +181,7 @@ Facilities = FM.createCollection('Facility',{
     },
     thumb: {
     	label:"Thumbnail file",
+    	defaultValue:["img/default-placeholder.png"]
     },
     holder: {
     	type:Object,
@@ -197,10 +204,12 @@ Facilities = FM.createCollection('Facility',{
     	label: "Tenants"
     },
     areas: {
+    	type:[Object],
     	label:"Building areas",
     	input:"select",
     },
     services: {
+    	type:[Object],
     	label:"Building services",
     	input:"select",
     }
@@ -212,6 +221,14 @@ Facilities.helpers({
   },
   getTeam() {
   	return Teams.findOne(this._team);
+  },
+  getName() {
+  	//return this.name?(this.name+', '+this.address.city):'';
+  	return this.name;
+  },
+  getAddress() {
+  	var a = this.address;
+  	return a.streetNumber+' '+a.streetName+' '+a.streetType+', '+a.city;
   },
   getContacts() {
     if (this._contacts&&this._contacts.length) {
@@ -246,192 +263,236 @@ Facilities.helpers({
 
 ExampleFacilities = [
 	{
-		name:"Head Office",
+		name:"Docklands",
 		location:"Clarence Street, Sydney",
 		address:{
-			streetNumber:"4/45",
-			streetName:"Clarence",
-			streetType:"St",
+			streetNumber:"370",
+			streetName:"Docklands",
+			streetType:"Drive",
+			city:"Docklands",
+			state:"VIC",
+			country:"Australia",
+			buildingName:"Docklands",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/370 Docklands.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"Hay St, Perth",
+		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"1525",
+			streetName:"Hay",
+			streetType:"Street",
+			city:"Perth",
+			state:"WA",
+			country:"Australia",
+			buildingName:"Hay St, Perth",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/1525 hay.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"S Steyne St, Sydney",
+		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"30/32",
+			streetName:"S Steyne",
+			streetType:"Street",
 			city:"Sydney",
 			state:"NSW",
 			country:"Australia",
-			buildingName:"Head Office",
+			buildingName:"S Steyne St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-2.jpg",
-		contact:{
-			name:"Pamela Jones",
-			thumb:"a1.jpg",
-			email:"pj@notmail.net",
-			phone:"0434-143-324"
-		}
+		thumb:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Franklin Scholar",
+		name:"George St, Sydney",
+		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"Level 8, 540",
+			streetName:"George",
+			streetType:"Street",
+			city:"Sydney",
+			state:"NSW",
+			country:"Australia",
+			buildingName:"George St, Sydney",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"Macquarie Park",
+		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"Level 5, 4",
+			streetName:"Drake",
+			streetType:"Avenue",
+			city:"Macquarie Park",
+			state:"NSW",
+			country:"Australia",
+			buildingName:"Macquarie Park",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/4 drake.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"Goulburn St, Sydney",
+		location:"Clarence Street, Sydney",
+		address:{
+			streetNumber:"98-104",
+			streetName:"Goulburn",
+			streetType:"Street",
+			city:"Sydney",
+			state:"NSW",
+			country:"Australia",
+			buildingName:"Goulburn St, Sydney",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/98-104 goulburn.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"Murdoch Institute of Technology",
+		location:"South Street, Murdoch",
+		address:{
+			streetNumber:"",
+			streetName:"South",
+			streetType:"Street",
+			city:"Murdoch",
+			state:"WA",
+			country:"Australia",
+			buildingName:"Murdoch Institute of Technology",
+		},
+		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+		thumb:["img/Murdoch.jpg","img/floor-plan.jpg"],
+	},
+	{
+		name:"Osbourne Park",
+		_name:"Franklin Scholar",
 		location:"Hasler Rd, Osbourne Park",
 		address:{
 			streetNumber:"1/76",
 			streetName:"Hasler",
-			streetType:"Rd",
+			streetType:"Road",
 			city:"Osbourne Park",
 			state:"WA",
 			country:"Australia",
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
+		thumb:["img/76 Hasler.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Franklin Scholar",
+		name:"Cantebury",
+		_name:"Franklin Scholar",
 		location:"Shierlaw Ave, Cantebury",
 		address:{
 			streetNumber:"21",
 			streetName:"Shierlaw",
-			streetType:"Ave",
+			streetType:"Avenue",
 			city:"Canterbury",
 			state:"VIC",
 			country:"Australia",
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
+		thumb:["img/21 Shierlaw.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Franklin Scholar",
+		name:"Launceston",
+		_name:"Franklin Scholar",
 		location:"Cameron St, Launceston",
 		address:{
 			streetNumber:"65",
 			streetName:"Cameron",
-			streetType:"St",
+			streetType:"Street",
 			city:"Launceston",
 			state:"TAS",
 			country:"Australia",
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
+		thumb:["img/65 cameron.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Franklin Scholar",
+		name:"Hobart",
+		_name:"Franklin Scholar",
 		location:"Warwick St, Hobart",
 		address:{
 			streetNumber:"12",
 			streetName:"Warwick",
-			streetType:"St",
+			streetType:"Street",
 			city:"Hobart",
 			state:"TAS",
 			country:"Australia",
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"John Smith",
-			thumb:"a1.jpg",
-			email:"johnny@big.net",
-			phone:"0444-123-321"
-		}
+		thumb:["img/12 Warwick.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Professional & International English",
+		name:"Peel St, Adelaide",
+		_name:"Professional & International English",
 		location:"Peel St, Adelaide",
 		address:{
 			streetNumber:"22",
 			streetName:"Peel",
-			streetType:"St",
+			streetType:"Street",
 			city:"Adelaide",
 			state:"SA",
 			country:"Australia",
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-3.jpg",
-		contact:{
-			name:"Neelix Ralph",
-			thumb:"a1.jpg",
-			email:"nralph@email.com",
-			phone:"0423-333-313"
-		}
+		thumb:["img/22 Peel St, adelaide.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Professional & International English",
+		name:"Spring Hill",
+		_name:"Professional & International English",
 		location:"St Pauls Terrace, Spring Hill",
 		address:{
 			streetNumber:"252",
 			streetName:"Pauls",
-			streetType:"Tce",
+			streetType:"Terrace",
 			city:"Spring Hill",
 			state:"QLD",
 			country:"Australia",
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-4.jpg",
-		contact:{
-			name:"Harry Arogula",
-			thumb:"a1.jpg",
-			email:"haro@memail.com",
-			phone:"0444-444-324"
-		}
+		thumb:["img/252 st pauls.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Professional & International English",
+		name:"Cairns",
+		_name:"Professional & International English",
 		location:"McLeod St, Cairns",
 		address:{
 			streetNumber:"130",
 			streetName:"McLeod",
-			streetType:"St",
+			streetType:"Street",
 			city:"Cairns",
 			state:"QLD",
 			country:"Australia",
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"Gary Hardman",
-			thumb:"a1.jpg",
-			email:"hardman@email.com",
-			phone:"0414-111-111"
-		}
+		thumb:["img/130 MacLeod.jpg","img/floor-plan.jpg"],
 	},
 	{
-		name:"Bradford College",
+		name:"Grenfell St, Adelaide",
+		_name:"Bradford College",
 		location:"Grenfell St, Adelaide",
 		address:{
 			streetNumber:"132",
 			streetName:"Grenfell",
-			streetType:"St",
+			streetType:"Street",
 			city:"Adelaide",
 			state:"SA",
 			country:"Australia",
 			buildingName:"Bradford College",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:"building-1.jpg",
-		contact:{
-			name:"Johnny Smithy",
-			thumb:"a1.jpg",
-			email:"js@email.com",
-			phone:"0414-111-111"
-		}
+		thumb:["img/132 Grenfell St.jpg","img/floor-plan.jpg"],
 	}
 ];

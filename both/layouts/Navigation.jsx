@@ -33,8 +33,8 @@ FacilityFilter = React.createClass({
             {
                 facility?
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
-                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/"+facility.thumb} />
-                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.name}</div>
+                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={facility.thumb[0]} />
+                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.getName()}</div>
                 </div>
                 :
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
@@ -124,7 +124,7 @@ Navigation = React.createClass({
                 }
                 {!modules['Facilities']?null:
                 <li className={FlowRouter.getRouteName()=='facilities'?'active':''}>
-                    <a href={FlowRouter.path('facilities')}><i className="fa fa-building"></i> <span className="nav-label">Facilities</span></a>
+                    <a href={FlowRouter.path('facilities')}><i className="fa fa-building"></i> <span className="nav-label">Portfolio</span></a>
                 </li>
                 }
                 {!modules['Work Requests']?null:

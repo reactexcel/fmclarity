@@ -8,7 +8,7 @@ FacilitySummary = React.createClass({
 
 	render() {
 	    var facility = this.props.item || {};
-	    var contact = facility._contacts?facility._contacts[0]:{};
+	    var contact = facility._contacts?facility._contacts[0]:null;
 	    return (
 	    	<div>
 	    		{/*
@@ -16,13 +16,14 @@ FacilitySummary = React.createClass({
 					<input type="checkbox" />
 				</div>*/}
 				<div className="facility-thumbnail pull-left">
-				    <img style={{width:"40px"}} alt="image" src={"img/"+facility.thumb} />
+				    <img style={{width:"40px"}} alt="image" src={facility.thumb[0]} />
 				 </div>
 				 <div className="facility-info">
 					<a href="#">
-						{facility.name}
+						{facility.getName()}
 					</a>
 					<br/>
+					{contact?
 					<span style={{fontSize:"11px",color:"#777"}}>
 						<b style={{color:"#000"}}>Contact </b>
 						{contact.name}&nbsp;&nbsp;
@@ -31,6 +32,7 @@ FacilitySummary = React.createClass({
 						<i className="fa fa-phone"></i>&nbsp;&nbsp;
 						{contact.phone}
 					</span>
+					:null}
 			    </div>
 			</div>
 		)

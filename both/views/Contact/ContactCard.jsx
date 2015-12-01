@@ -1,8 +1,9 @@
 ContactViewName = React.createClass({
 	render() {
 		var contact = this.props.item || {};
+		var name = contact.getName?contact.getName():contact.name;
 		return (
-			<span>{contact.name}</span>
+			<span>{name}</span>
 		)
 	}
 })

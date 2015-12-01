@@ -68,7 +68,7 @@ IssueDetail = React.createClass({
                 facilities : Facilities.find({},{sort:{name:1}}).fetch(),
                 supplier:issue.getSupplier(),
                 suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
-                services : Services.find({},{sort:{name:1}}).fetch(),
+                services : Config.services,
                 notifications:issue.getNotifications()
             }
         }
@@ -116,11 +116,13 @@ IssueDetail = React.createClass({
 
     closeOrder() {
         this.item.status = "Closing...";
+
         this.saveItem();
     },
 
     reallyCloseOrder() {
         this.item.status = "Closed";
+        this.item.priority = "Closed";
         this.saveItem();
     },
 
@@ -162,7 +164,7 @@ IssueDetail = React.createClass({
                     onChange={this.updateObjectField('priority')}
                 >
                     <div style={{padding:"9px"}}>
-                        <IssuePriority value={issue.priority} />
+                        <IssuePriority issue={issue} />
                     </div>
                 </SuperSelect>
             </div>
@@ -247,13 +249,13 @@ IssueDetail = React.createClass({
                 <div className="col-lg-2">
                     <div style={{float:"right"}}>
                         {!issue.status?
-                            <button onClick={this.createOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'New':'default')}>Create request</button>
+                            <button onClick={this.createOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'Issued':'default')}>Create request</button>
                         :null}
                         {issue.status=='New'?
                             <button onClick={this.sendOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Issued':'default')}>Issue order</button>
                         :null}
                         {issue.status=='Issued'?
-                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Closed':'default')}>Close order</button>
+                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Issued':'default')}>Close order</button>
                         :null}
                     </div>
                 </div>

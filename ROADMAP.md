@@ -10,9 +10,38 @@ TODO (general)
 
 DONE
 ----
+* Dashboard spacing should be consistent
+* When a new facility is created it appears at the top of the list.
+* When a new facility is created it is automatically selected
+* Facilities, suppliers, team members are sorted alphabetically
+* When a new facility is created it now has a placeholder image
+* Fixed a problem whereby editing supplier details seem to cause program (notifications) to crash
+* Facility item now only shows contact information when a contact has been entered
+* Added issue due dates
+* When a new facility is created the "contact" information is now blank
+
 
 IN PROGRESS
 -----------
+* Need to be able to delete items (facilities, requests, users) when giving demo - otherwise the data just gets contaminated with random rubbish
+* Need a select type control (for property type for example) that matches material design (how about using a dropdown and styling label)
+* Not sure about the quality of the some of the example data being generated. Floor spinning out of control? Service request for a water pipe that has stains all over it? Perhaps its good enough for now?
+* Facility detail view should be formatted correctly and have sensible information
+* Should be able to create a facility from "all facilities" an then select which facility from a drop down list
+
+* Should press the + button to add a new team member and then enter email address. Perhaps enter the email address using the card on the right? (working on this as part of the contact list component)
+
+* When create a new workorder should have sensible placeholder images
+
+* Work order needs to show dollar amount of the work and wo#
+* Show how users can be assigned roles within a team
+
+BUGS
+----
+* When create a new facility, enter no details, reload, then select new facility... card does not appear
+
+* Editing a contractor, and then editing "your" team, nukes the previous notification, and then editing a contractor again brings it back... weird
+
 
 v0.3.0a "Demo v2"
 ------------------------------

@@ -144,7 +144,7 @@ FilterBox = React.createClass({
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
               {items.map(function(i,index){
-                if(i.sticky)
+                if(i.sticky||i.isNewItem)
                 return (
                   <div 
                     key={i._id}
@@ -159,7 +159,7 @@ FilterBox = React.createClass({
                 )
               })}
               {items.map(function(i,index){
-                if(!i.sticky)
+                if(!(i.sticky||i.isNewItem))
                 return (
                   <div 
                     key={i._id}
