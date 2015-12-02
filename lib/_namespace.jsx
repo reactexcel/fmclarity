@@ -18,29 +18,35 @@ FM.makeSchema = function(schema) {
 }
 
 FM.makeNewItemTemplate = function(schema) {
-	var n = {};
-	for(var i in schema) {
-	    var field = schema[i];
-	    if(field.defaultValue!=null) {
-	    	n[i] = field.defaultValue;
-	    }
-	    else if(field.type==String) {
-	    	n[i] = "";
-	    }
-	    else if(field.type==Number) {
-	    	n[i] = null;
-	    }
-	    else if(field.schema!=null) {
-	    	n[i] = FM.makeNewItemTemplate(field.schema);
-	    }
-	    else if(field.type==Object) {
-	    	n[i] = {};
-	    }
-	    else if(_.isArray(field.type)) {
-	    	n[i] = [];
-	    }
+	return function(item) {
+		var n = {};
+		for(var i in schema) {
+		    var field = schema[i];
+		    if(_.isFunction(field.defaultValue)) {
+		    	n[i] = field.defaultValue(item);
+		    }
+		    else if(field.defaultValue!=null) {
+		    	n[i] = field.defaultValue;
+		    }
+		    else if(field.type==String) {
+		    	n[i] = "";
+		    }
+		    else if(field.type==Number) {
+		    	n[i] = null;
+		    }
+		    else if(field.schema!=null) {
+		    	var templateFunction = FM.makeNewItemTemplate(field.schema);
+		    	n[i] = templateFunction(item);
+		    }
+		    else if(field.type==Object) {
+		    	n[i] = {};
+		    }
+		    else if(_.isArray(field.type)) {
+		    	n[i] = [];
+		    }
+		}
+		return n;
 	}
-	return n;  
 }
 
 FM.createCollection = function(name,template,shouldNotCreateSchema) {
@@ -81,7 +87,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 				name:actor.name,
 				thumb:actor.profile.thumb
 			},
-		},newItemTemplate,item);
+		},newItemTemplate(item),item);
 		console.log({
 			creating:newItem,
 			with:item,
@@ -149,6 +155,8 @@ FM.create = function(collectionName,item,callback) {
 			collectionName:collectionName,
 			_id:id
 		});
-		callback(collection.findOne({_id:id}));
+		if(callback) {
+			callback(collection.findOne({_id:id}));
+		}
 	});
 }

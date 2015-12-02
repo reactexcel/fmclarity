@@ -39,6 +39,7 @@ SuperSelect = React.createClass({
 		var items = this.props.items || [];
 		var handleClick = this.props.onChange;
 		var classes = this.props.classes || '';
+		var clearOption = this.props.clearOption;
 
 		return (
                 <span 
@@ -49,6 +50,15 @@ SuperSelect = React.createClass({
                     	{this.props.children}
                     </span>
                     <ul className="dropdown-menu dropdown-messages">
+                    {clearOption?
+	                    <span>
+	                    	<li onClick={handleClick.bind(null,null)}>
+	                        	<Card item={clearOption} />
+	                    	</li>
+	                    	<li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
+	                    </span>
+	                :null}
+
                     {items.map(function(i,idx){
 						return (
 	                    	<span key={idx}>

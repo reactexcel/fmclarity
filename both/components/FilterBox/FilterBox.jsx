@@ -10,7 +10,7 @@ FilterBox = React.createClass({
   getInitialState() {
     return {
       selectedFilterNum:0,
-      selectedSortNum:2,
+      selectedSortNum:null,
       sortDirection:1
     }
   },
@@ -29,13 +29,32 @@ FilterBox = React.createClass({
   applySort(items) {
     var headers = this.props.headers;
     if(items&&headers) {
-      var f = headers[this.state.selectedSortNum].sortFunction;
-      var modifier = this.state.sortDirection;
-      if(f) {
-        return items.sort(function(a,b){
-          return f(a,b)*modifier;
-        });
+      items.sort(function(a,b){
+        return a.createdAt - b.createdAt;
+      })
+      var sortNum,f, modifier;
+      sortNum = this.state.selectedSortNum;
+      if(sortNum) {
+        f = headers[this.state.selectedSortNum].sortFunction;
+        modifier = this.state.sortDirection;
       }
+      return items.sort(function(a,b){
+        if(a.isNewItem||a.sticky) {
+          return -1
+        }
+        else if(b.isNewItem||b.sticky) {
+          return 1;
+        }
+        else if(f) {
+          return f(a,b)*modifier;
+        }
+        else {
+          if(a.createdAt>b.createdAt) {
+            return -1;
+          }
+          return 1;
+        }
+      });
     }
     return items;
   },
@@ -144,22 +163,6 @@ FilterBox = React.createClass({
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
               {items.map(function(i,index){
-                if(i.sticky||i.isNewItem)
-                return (
-                  <div 
-                    key={i._id}
-                    style={{padding:0}}
-                    className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
-                  >
-                    <CardWrapper 
-                      item={i}
-                      itemView={$this.props.itemView}
-                    />
-                  </div>
-                )
-              })}
-              {items.map(function(i,index){
-                if(!(i.sticky||i.isNewItem))
                 return (
                   <div 
                     key={i._id}

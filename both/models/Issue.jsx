@@ -11,6 +11,23 @@ Issues = FM.createCollection('Issue',{
   status:{
     defaultValue:"New",
   },
+  costThreshold:{
+    defaultValue:500,
+  },
+  costActual:{
+  },
+  code:{
+    defaultValue:function(item) {
+      var team = Teams.findOne({_id:item._team._id});
+      return team.getNextWOCode();
+    }
+  },
+  thumb: {
+    label:"Thumbnail file",
+    defaultValue:["img/default-placeholder.png"]
+  },
+  area:{
+  },
   _team:{
     type:Object
   },

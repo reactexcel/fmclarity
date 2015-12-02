@@ -1,6 +1,35 @@
 CHANGELOG.md
 ============
 
+**v0.2.15a**
+
+* WO detail: Delineated work order summary and detail
+* WO detail: Reduced kerning and weight of heading
+* WO detail: Cost threshold in wo detail is editable
+* WO detail: Fixed the placeholders for new issues
+* WO: Fix error causing newly created work orders to disappear when title typed
+* WO detail: Can assign wo to team member
+* Can create new work order while "all facilities selected" (will have to block submission until facility chosen)
+* WO detail: Changed area selection input
+
+**v0.2.14a**
+
+* Can reselect "All facilities" from navigation dropdown
+* Added WO#, issue area and cost threshold to work order
+* Updated service test data for Kaplan demo
+
+**v0.2.13a**
+
+* Dashboard spacing should be consistent
+* When a new facility is created it appears at the top of the list.
+* When a new facility is created it is automatically selected
+* Facilities, suppliers, team members are sorted alphabetically
+* When a new facility is created it now has a placeholder image
+* Fixed a problem whereby editing supplier details seem to cause program (notifications) to crash
+* Facility item now only shows contact information when a contact has been entered
+* Added issue due dates
+* When a new facility is created the "contact" information is now blank
+
 **v0.2.12a**
 
 * Facilities area and service selector

@@ -230,6 +230,15 @@ Facilities.helpers({
   	var a = this.address;
   	return a.streetNumber+' '+a.streetName+' '+a.streetType+', '+a.city;
   },
+  getAreas() {
+  	var areas = [];
+  	for(var i in this.areas) {
+  		for(var j in this.areas[i].areas) {
+  			areas.push(this.areas[i].areas[j]);
+  		}
+  	}
+  	return areas;
+  },
   getContacts() {
     if (this._contacts&&this._contacts.length) {
     	// this is pretty fucking inefficient

@@ -1,3 +1,30 @@
+.issue-spec-area {
+
+}
+
+.issue-detail {
+	background-color:#eee;
+	padding:10px 50px 10px 20px;	
+}
+
+.issue-dynamic-area {
+	background-color:#fff;
+	box-shadow: inset 0px 1px 2px 2px #ececec;
+    border: 1px solid #ddd;
+    /* border-radius: 5px; */
+    border-top-color: #ccc;
+}
+
+.issue-icon-col {
+	text-align:center;
+	width:50px;
+	padding:0;
+	margin-right:30px;
+}
+
+.issue-icon-col > div {
+	display: inline-block;
+}
 
 .issue-nav-btn {
 	float:left;

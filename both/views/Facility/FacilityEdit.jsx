@@ -311,17 +311,9 @@ FacilityEdit = React.createClass({
 				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Documents & images">
-			   			<div className="row" style={{margin:"0 25px 0 20px"}}>
-				   			{facility.thumb.map(function(img,idx){
-				   				return (
-						        <div key={idx} className="col-lg-4" style={{padding:0}}>
-			                        <div className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-			                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={img} />
-			                        </div>
-								</div>
-								)
-				   			})}
-						</div>
+			   			<div style={{margin:"0 25px 10px 20px"}}>
+			   				<AttachmentGrid items={facility.thumb} />
+			   			</div>
 					</CollapseBox>
 			   		<CollapseBox title="Contacts">
 			   			<ContactList items={contacts} />

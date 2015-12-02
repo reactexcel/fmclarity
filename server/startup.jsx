@@ -296,6 +296,8 @@ Meteor.startup(function(){
 
         var status = ExampleIssues[i].status;
 
+        ExampleIssues[i].code = Math.floor(Math.random()*1000);
+
         ExampleIssues[i]._team = facilities[f]._team;
         ExampleIssues[i]._creator = {
             _id:members[m]._id,

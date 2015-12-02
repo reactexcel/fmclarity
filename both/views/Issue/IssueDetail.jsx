@@ -32,7 +32,7 @@ IpsoTabso = React.createClass({
                         )
                     })}
                 </div>
-                <div className="panel-body" style={{padding:0}}>
+                <div className="panel-body" style={{padding:"0 0 10px 0"}}>
                     <div className="tab-content">
                         <div className="tab-pane active">
                             {content}
@@ -57,7 +57,10 @@ IssueDetail = React.createClass({
             }
         }
         else {
-            var status = issue.status;
+            var status, facility, areas;
+            status = issue.status;
+            facility = issue.getFacility();
+            areas = facility?facility.getAreas():null;
 
             return {
                 ready:true,
@@ -66,6 +69,7 @@ IssueDetail = React.createClass({
                 status:status,
                 facility:issue.getFacility(),
                 facilities : Facilities.find({},{sort:{name:1}}).fetch(),
+                areas: areas,
                 supplier:issue.getSupplier(),
                 suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
                 services : Config.services,
@@ -149,16 +153,16 @@ IssueDetail = React.createClass({
         if(!this.data.ready) return <div />;
 
         return (
-<div>
+<div className="issue-detail">
     <div className="row">
-        <div className="col-lg-1">
+        <div className="col-lg-1 issue-icon-col">
             <div>
                 <ContactAvatarSmall item={creator} />
             </div>
             <div>
                 <span style={{top:"3px",position:"relative"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
             </div>
-            <div style={{float:"left",clear:"both"}}>
+            <div>
                 <SuperSelect 
                     items={['Scheduled','Standard','Urgent','Critical']} 
                     onChange={this.updateObjectField('priority')}
@@ -170,8 +174,8 @@ IssueDetail = React.createClass({
             </div>
         </div>
         <div className="col-lg-11" style={{marginLeft:"-25px",marginRight:"-25px",width:"95%"}}>
-            <div className="row" style={{borderBottom:"1px solid #ddd",paddingBottom:"10px",marginBottom:"10px"}}>
-                <div className="col-lg-6">
+            <div className="issue-spec-area row">
+                <div className="col-lg-6" style={{paddingLeft:"10px"}}>
                     <h2 style={{margin:0}}>
                         <input 
                             placeholder="Type issue title here"
@@ -180,17 +184,37 @@ IssueDetail = React.createClass({
                             onChange={this.updateField('name')}
                         />
                     </h2>
-                    <div style={{marginTop:"15px",marginBottom:"7px"}}>
+                    <div style={{marginTop:"7px",marginBottom:"7px"}}>
                         <SuperSelect 
                             items={this.data.facilities} 
                             itemView={ContactViewName}
-                            onChange={this.updateObjectField('facility')}
+                            onChange={this.updateObjectField('_facility')}
                         >
-                            <span style={{fontWeight:"bold",marginLeft:"4px"}} className="issue-summary-facility-col">
-                                {facility?(facility.name+' - '+facility.location):''}
-
+                            <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                                {facility?(<span>{facility.getName()} -</span>):(<span style={{color:"#999"}}>Select facility</span>)}
                             </span>
                         </SuperSelect>
+                        {facility?
+                        <SuperSelect 
+                            items={this.data.areas} 
+                            itemView={ContactViewName}
+                            onChange={this.updateObjectField('area')}
+                        >
+                            <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                                {issue.area?(<span>{issue.area.name}</span>):(<span style={{color:"#999"}}>Select area</span>)}
+                            </span>
+                        </SuperSelect>
+                        :null}
+                        <div style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                            <b>Order #</b>
+                            <span>{issue.code}</span>&nbsp;
+                            <b>Cost $</b>
+                            <span style={{display:"inline-block"}}><input 
+                                className="inline-form-control" 
+                                defaultValue={issue.costThreshold} 
+                                onChange={this.updateField('costThreshold')}
+                            /></span>
+                        </div>
                     </div>
                 </div>
                 <div className="col-lg-2">
@@ -238,12 +262,25 @@ IssueDetail = React.createClass({
                         </SuperSelect>
 
                         {!supplier?null:
-                            <div style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>
-                                <Contact3Line item={supplier}/>
-                            </div>
+                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{supplier.name}</span>
                         }
 
                     </div>
+                    :null}
+                    {issue.status&&supplier?
+                        <div style={{position:"relative",top:"15px"}}>
+                            <SuperSelect 
+                                itemView={ContactViewName}
+                                items={supplier.getMembers()}
+                                classes="absolute"
+                                onChange={this.updateObjectField('_assignee')}
+                            >
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"Select":""} assignee</span>
+                            </SuperSelect>
+                            {issue._assignee?
+                                <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue._assignee.profile?issue._assignee.profile.name:'-'}</span>
+                            :null}
+                        </div>
                     :null}
                 </div>
                 <div className="col-lg-2">
@@ -261,7 +298,7 @@ IssueDetail = React.createClass({
                 </div>
             </div>
 
-            <div className="row">
+            <div className="issue-dynamic-area row">
                 <div className="col-lg-12">
                     <span style={{paddingLeft:0}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <textarea 
@@ -276,24 +313,16 @@ IssueDetail = React.createClass({
                     <IpsoTabso tabs={[
                     {
                         tab:<span><span>Images</span><span className="label label-notification">3</span></span>,
-                        content:<div className="attachments">
-                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"left"}}>
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-"+issue.thumb+".jpg"} />
-                        </div>
-                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-1.jpg"} />
-                        </div>
-                        <div className="ibox" style={{width:"170px",padding:"10px",margin:"0 10px 10px 0",float:"left", clear:"none"}}>
-                            <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={"img/issue-2.jpg"} />
-                        </div>
-                        </div>
-                    },
-                    {
+                        content:<AttachmentGrid items={issue.thumb} />
+                    },{
                         tab:"Documents",
                         content:<FileBrowser />
-                    },                    {
+                    },{
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                         content:<IssueDiscussion items={notifications}/>
+                    },{
+                        tab:<span>Contacts</span>,
+                        content:<h1>Contacts</h1>
                     }
                     ]} />
                 </div>

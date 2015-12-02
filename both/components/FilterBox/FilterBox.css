@@ -29,7 +29,6 @@
   border-bottom:1px solid #ddd;
   padding:0;
   max-height:50px;
-  overflow:hidden;
   transition:max-height 0.750s, margin-top 0.250s, margin-bottom 0.250s;
   transition-timing-function:ease-in-out;
 }
@@ -46,13 +45,11 @@
   position:relative;
   left:0;
   right:0;
-  border-top:1px solid #ddd;
-  padding:10px 50px 10px 20px;
 }
 
 .filter-box .grid-item.gigante .card-header {
-  min-height:5px;
-  max-height:5px;
+  min-height:0px;
+  max-height:0px;
 }
 
 .filter-box .grid-item.gigante {

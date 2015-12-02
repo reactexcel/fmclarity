@@ -29,6 +29,7 @@ FacilityFilter = React.createClass({
                 items={this.data.facilities} 
                 itemView={ContactViewName}
                 onChange={this.selectFacility}
+                clearOption={{name:"All facilities"}}
             >
             {
                 facility?

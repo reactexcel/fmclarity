@@ -94,7 +94,8 @@ Teams = FM.createCollection('Team',{
     defaultWorkOrderValue: {
       type: Number,
       label: "Default value for work orders",
-      input:"dltext"
+      input:"dltext",
+      defaultValue:500
     },
     services : {
       type: [String],
@@ -186,6 +187,17 @@ Teams.helpers({
       "Critical":0,
     };
     return timeframes[priority]?timeframes[priority]:timeframes['Standard'];
+  },
+  getNextWOCode(){
+    if(!this.counters) {
+      this.counters = {};
+    }
+    if(!this.counters.WO) {
+      this.counters.WO = 999;
+    }
+    this.counters.WO = this.counters.WO + 1;
+    this.save();
+    return this.counters.WO;
   },
   addMember(item) {
     Meteor.call('Team.addMember',this,item);
