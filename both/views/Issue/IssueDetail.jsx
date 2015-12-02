@@ -57,23 +57,31 @@ IssueDetail = React.createClass({
             }
         }
         else {
-            var status, facility, areas;
-            status = issue.status;
+            var facility, areas, facilityContacts, facilityContact;
             facility = issue.getFacility();
-            areas = facility?facility.getAreas():null;
+            if(facility) {
+                areas = facility.getAreas();
+                facilityContacts = facility.getContacts();
+                facilityContact = facilityContacts?facilityContacts[0]:null;
+            }
 
             return {
                 ready:true,
-                creator:issue.getCreator(),
-                issue:issue,
-                status:status,
-                facility:issue.getFacility(),
-                facilities : Facilities.find({},{sort:{name:1}}).fetch(),
-                areas: areas,
-                supplier:issue.getSupplier(),
+
                 suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
-                services : Config.services,
-                notifications:issue.getNotifications()
+                facilities:Facilities.find({},{sort:{name:1}}).fetch(),
+
+                issue:issue,
+                facility:facility,
+
+                creator:issue.getCreator(),
+                supplier:issue.getSupplier(),
+                assignee:issue.getAssignee(),
+                facilityContact:facilityContact,
+                areas:areas,
+
+                notifications:issue.getNotifications(),
+                services:Config.services,
             }
         }
     },
@@ -113,21 +121,26 @@ IssueDetail = React.createClass({
     },
 
     sendOrder() {
-        alert('Sending work order...');
+        //alert('Sending work order...');
         this.item.status = "Issued";
         this.saveItem();
+        if(this.props.closeCallback) {
+            this.props.closeCallback()
+        }
     },
 
     closeOrder() {
-        this.item.status = "Closing...";
-
-        this.saveItem();
+        this.showModal();
     },
 
     reallyCloseOrder() {
+        this.hideModal();
         this.item.status = "Closed";
         this.item.priority = "Closed";
         this.saveItem();
+        if(this.props.closeCallback) {
+            this.props.closeCallback()
+        }
     },
 
     componentWillMount: function() {
@@ -137,23 +150,67 @@ IssueDetail = React.createClass({
 
     componentDidMount: function() {
         $(this.refs.description).elastic();
+        $(this.refs.modal).modal('hide');
+    },
+
+    showModal() {
+        $(this.refs.modal).modal('show');
+    },
+
+    hideModal() {
+        $(this.refs.modal).modal('hide');
     },
 
     render() {
-        var issue = this.item = this.data.issue;
-        var facility = this.data.facility;
-        var creator = this.data.creator;
+        var data = this.data;
+        if(!data.ready) return <div />;
+
+        var issue, facility, status, notifications;
+
+        issue = this.item = data.issue;
+        facility = data.facility;
+        status = issue.status;
+        notifications = data.notifications;
+
+        var creator,supplier,assignee,facilityContact,contacts;
+
+        creator = data.creator;
+        supplier = data.supplier;
+        assignee = data.assignee;
+        facilityContact = data.facilityContact;
+        contacts = [];
+        ['creator','supplier','assignee','facilityContact'].map(function(item){
+            if(data[item]) {
+                contacts.push(data[item]);
+            }
+        })
+
         var createdAt = moment(issue.createdAt).calendar();
-        var supplier = this.data.supplier;
-        var status = this.data.status;
-        var notifications = this.data.notifications;
+        var schema = FM.schemas['Issue'];
 
         //console.log(notifications);
 
-        if(!this.data.ready) return <div />;
-
         return (
 <div className="issue-detail">
+
+<div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
+  <div className="modal-dialog">
+    <div className="modal-content">
+      <div className="modal-header">
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 className="modal-title">All done? Great just need a few details to finalise the job.</h4>
+      </div>
+      <div className="modal-body">
+        <AutoForm item={issue} schema={schema} form={['closeDetails']} save={this.saveItem}/>
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" onClick={this.reallyCloseOrder} className="btn btn-primary">Complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div className="row">
         <div className="col-lg-1 issue-icon-col">
             <div>
@@ -275,11 +332,9 @@ IssueDetail = React.createClass({
                                 classes="absolute"
                                 onChange={this.updateObjectField('_assignee')}
                             >
-                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"Select":""} assignee</span>
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"":""} assignee</span>
                             </SuperSelect>
-                            {issue._assignee?
-                                <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue._assignee.profile?issue._assignee.profile.name:'-'}</span>
-                            :null}
+                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{assignee?assignee.getName():'-'}</span>
                         </div>
                     :null}
                 </div>
@@ -322,16 +377,13 @@ IssueDetail = React.createClass({
                         content:<IssueDiscussion items={notifications}/>
                     },{
                         tab:<span>Contacts</span>,
-                        content:<h1>Contacts</h1>
+                        content:<ContactList items={contacts} />
                     }
                     ]} />
                 </div>
             </div>
         </div>
     </div>
-    {issue.status=='Closing...'?
-        <img className="close-order-popup" src="img/close-order.PNG" onClick={this.reallyCloseOrder}/>
-    :null}
 </div>
 
 

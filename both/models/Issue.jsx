@@ -1,3 +1,30 @@
+CloseDetails = {
+    attendenceDate: {
+      label:"Attendence date",
+      size:6
+    },
+    attendenceTime: {
+      label:"Attendence time",
+      size:6
+    },
+    completionDate: {
+      label:"Completion date",
+      size:6
+    },
+    completionTime: {
+      label:"Completion time",
+      size:6
+    },
+    furtherWorkRequired: {
+      label:"Is further work required?",
+      input:"switch",
+    },
+    futureWork: {
+      label:"Enter details of future work",
+      input:"mdtextarea",
+    }
+};
+
 
 Issues = FM.createCollection('Issue',{
   name:{
@@ -15,6 +42,10 @@ Issues = FM.createCollection('Issue',{
     defaultValue:500,
   },
   costActual:{
+  },
+  closeDetails:{
+    type:Object,
+    schema:CloseDetails
   },
   code:{
     defaultValue:function(item) {
@@ -75,5 +106,10 @@ Issues.helpers({
     if(this._supplier) {
       return Teams.findOne(this._supplier._id);
     }
-  }
+  },
+  getAssignee() {
+    if(this._assignee) {
+      return Users.findOne(this._assignee._id);
+    }
+  },
 });

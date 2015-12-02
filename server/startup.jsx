@@ -284,7 +284,7 @@ Meteor.startup(function(){
     }
 
     var facilities = Facilities.find({}).fetch();
-    var contractors = Teams.find({type:"contractor"}).fetch();
+    var contractors = Teams.find({type:"contractor",name:{$ne:"Normal Contractors"}}).fetch();
     for(var i in ExampleIssues) {
         var f = Math.floor(Math.random()*facilities.length);
         var c = Math.floor(Math.random()*contractors.length);

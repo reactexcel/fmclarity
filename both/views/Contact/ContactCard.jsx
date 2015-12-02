@@ -127,10 +127,13 @@ ContactCard = React.createClass({
 	render() {
 		var contact,profile,view;
 		contact = this.props.item;
-		if(contact) {
+		if(contact&&contact.getProfile) {
 			profile = contact.getProfile();
 		}
 		else {
+			console.log({
+				'no getProfile function for':contact
+			});
 			profile = {};
 		}
 		view = this.props.view;

@@ -233,9 +233,21 @@ Facilities.helpers({
   getAreas() {
   	var areas = [];
   	for(var i in this.areas) {
-  		for(var j in this.areas[i].areas) {
+  		if(i=='Unique areas') {
   			areas.push(this.areas[i].areas[j]);
   		}
+  		else {
+	  		for(var j in this.areas[i].areas) {
+	  			areas.push({
+	  				name:('Level 1: '+this.areas[i].areas[j].name)
+	  			});
+	  		}
+	  		for(var j in this.areas[i].areas) {
+	  			areas.push({
+	  				name:('Level 2: '+this.areas[i].areas[j].name)
+	  			});
+	  		}
+	  	}
   	}
   	return areas;
   },

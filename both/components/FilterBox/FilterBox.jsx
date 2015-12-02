@@ -316,7 +316,7 @@ CardWrapper = React.createClass({
               <i className={"fa fa-compress"}></i>
             </button>
           </div>
-          <Detail item={item}/>
+          <Detail item={item} closeCallback={this.toggle}/>
         </div>:null}
       </div>
 

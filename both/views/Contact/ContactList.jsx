@@ -3,10 +3,10 @@ ContactList = React.createClass({
 		var contacts = this.props.items;
 		return (
 			<div className="row" style={{margin:"5px 30px"}}>
-			    {contacts.map(function(contact){
+			    {contacts.map(function(contact,idx){
 			        return (
 			            <div 
-			                key={contact._id}
+			                key={idx}
 			                style={{padding:0}}
 			                className={"table-row col-lg-12"}
 			            >

@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+**v0.2.16**
+
+* WO detail: Contacts tab on work order
+* WO detail: Added fake "level" info to the area selection drop down
+* WO detail: Dialog for closing out work order
+
 **v0.2.15a**
 
 * WO detail: Delineated work order summary and detail
