@@ -212,19 +212,19 @@ Meteor.startup(function(){
                 number:1,
                 areas:[
                     {
+                        name:'Conference room',
+                        location:'North',
+                        number:1
+                    },{
                         name:'Male bathroom',
                         location:'North',
                         number:1
                     },{
                         name:'Female bathroom',
-                        location:'North',
-                        number:1
-                    },{
-                        name:'Male bathroom',
                         location:'South',
                         number:1
                     },{
-                        name:'Kitchen',
+                        name:'Staff room',
                         number:1
                     },{
                         name:'Work room',
@@ -235,8 +235,10 @@ Meteor.startup(function(){
             {
                 name:'Unique areas',
                 number:1,
-                areas:[
-                    {
+                areas:[{
+                        name:'Board room',
+                        number:1
+                    },                    {
                         name:'Reception',
                         number:1
                     },{

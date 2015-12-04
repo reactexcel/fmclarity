@@ -45,11 +45,6 @@ TestUsers.portraits.female = shuffle(TestUsers.portraits.female);
             'cmail.com',
             'dmail.com',
             'email.com',
-            'notmail.com',
-            'deadwhitemail.com',
-            'hale.edu',
-            'intitute.gov.au',
-            'lively.com'
         ];
         var sillyWords = [
             'orgasmo',
@@ -82,18 +77,22 @@ TestUsers.portraits.female = shuffle(TestUsers.portraits.female);
             function firstIntialAndLast(f,l,g) {
                 return f[0]+'.'+l;
             },
+            /*
             function firstAndSilly(f,l,g) {
                 return f+'-'+getRandom(sillyWords);
             },
             function lastAndSilly(f,l,g) {
                 return l+'-'+getRandom(sillyWords);
             },
+            */
             function titleFull(f,l,g) {
                 return getRandom(titles[g])+'.'+f[0]+'.'+l;
             },
+            /*
             function sillyWordAndNumber(f,l,g) {
                 return getRandom(sillyWords)+(Math.floor(Math.random()*1000));
             },
+            */
             function lastNameAndNumber(f,l,g) {
                 return l+(Math.floor(Math.random()*1000));
             }

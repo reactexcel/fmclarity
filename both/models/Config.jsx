@@ -1,10 +1,12 @@
 Config = {
 	areaNames:[
+		"",
 		"Male bathroom",
 		"Female bathroom",
 		"Bathroom",
 		"Lift lobby",
 		"Kitchen",
+		"Staff room",
 		"Work room",
 		"Reception",
 		"Basement",

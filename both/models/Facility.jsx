@@ -80,7 +80,6 @@ Insurance = {
 	},
 	documents:{
 		label:"Insurance documents",
-		type:Object,
 		//input:"attachment",
 	},
 };
@@ -145,7 +144,6 @@ Lease = {
     },
 	documents:{
 		label:"Lease documents",
-		type:Object,
 		//input:"attachment",
 	},
     parking: {
