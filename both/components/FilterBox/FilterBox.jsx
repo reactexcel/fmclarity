@@ -17,13 +17,20 @@ FilterBox = React.createClass({
 
   applyFilter(items) {
     var filters = this.props.filters;
+    var filteredItems = items;
     if(items&&filters) {
       var filter = filters[this.state.selectedFilterNum].filter;
       if(filter) {
-        return _.filter(items,filter);
+        filteredItems = [];
+        for(var i in items) {
+          var item = items[i];
+          if(item.sticky||filter(item)) {
+            filteredItems.push(item);
+          }
+        }
       }
     }
-    return items;
+    return filteredItems;
   },
 
   applySort(items) {

@@ -83,6 +83,14 @@ UserProfileWidget= React.createClass({
 	}
 });
 
+UserProfileModal = React.createClass({
+	render() {
+		return(
+			<UserProfile item={this.props.item} /> 
+		);
+	}
+});
+
 UserProfilePage = React.createClass({
 
     mixins: [ReactMeteorData],

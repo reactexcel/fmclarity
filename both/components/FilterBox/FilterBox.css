@@ -28,7 +28,7 @@
   /*border-top:1px solid #eee;*/
   border-bottom:1px solid #ddd;
   padding:0;
-  max-height:50px;
+  max-height:51px;
   transition:max-height 0.750s, margin-top 0.250s, margin-bottom 0.250s;
   transition-timing-function:ease-in-out;
 }

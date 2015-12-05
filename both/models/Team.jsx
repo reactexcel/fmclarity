@@ -181,12 +181,13 @@ Teams.helpers({
   },
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
-      "Scheduled":24*7,
-      "Standard":24*3,
+      "Scheduled":7*24,
+      "Standard":3*24,
       "Urgent":24,
       "Critical":0,
     };
-    return timeframes[priority]?timeframes[priority]:timeframes['Standard'];
+    var timeframe =  timeframes[priority]?timeframes[priority]:timeframes['Standard'];
+    return timeframe * 60 * 60 * 1000;
   },
   getNextWOCode(){
     if(!this.counters) {

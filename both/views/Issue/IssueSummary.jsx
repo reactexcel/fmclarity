@@ -80,7 +80,7 @@ IssueSummary = React.createClass({
             {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
           <div className="issue-summary-col issue-summary-col-5">
-            {moment(issue.createdAt).add(timeframe,'hours').fromNow()}
+            {issue.dueDate?moment(issue.dueDate).fromNow():null}
           </div>
         </div>
       )

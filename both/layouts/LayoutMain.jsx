@@ -12,8 +12,10 @@
 
 
 MainLayout = React.createClass({
+
   componentDidMount() {
     // Minimalize menu when screen is less than 768px
+    /*
     $(window).bind("resize load", function () {
         if ($(this).width() < 769) {
             $('body').addClass('body-small')
@@ -42,7 +44,7 @@ MainLayout = React.createClass({
             }
         }
     });
-
+    */
 
     // SKIN OPTIONS
     // Uncomment this if you want to have different skin option:
@@ -81,6 +83,7 @@ MainLayout = React.createClass({
           {/*<Footer />*/}
         </div>
         <RightSideBar />
+        <Modal/>
       </div>
     );
   }

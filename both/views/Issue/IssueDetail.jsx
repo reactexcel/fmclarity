@@ -1,49 +1,4 @@
-IpsoTabso = React.createClass({
-    getInitialState() {
-        return {
-            active:0
-        }
-    },
 
-    selectTab(activeIndex) {
-        this.setState({
-            active:activeIndex
-        });
-    },
-
-    render() {
-        var active = this.state.active;
-        var selectTab = this.selectTab;
-        var tabs = this.props.tabs;
-        var content = tabs[active]?tabs[active].content:null;
-        return (
-            <div className="panel blank-panel">
-                <div className="panel-heading">
-                    {tabs.map(function(i,idx){
-                        return (
-                            <div 
-                                onClick={selectTab.bind(null,idx)} 
-                                className={idx==active?"issue-tab active":"issue-tab"}
-                                key={idx}
-                            >
-                                <div className="btn btn-sm btn-flat issue-nav-btn">{i.tab}</div>
-                                <div className="highlight"/>
-                            </div>
-                        )
-                    })}
-                </div>
-                <div className="panel-body" style={{padding:"0 0 10px 0"}}>
-                    <div className="tab-content">
-                        <div className="tab-pane active">
-                            {content}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-});
 
 IssueDetail = React.createClass({
 
@@ -77,11 +32,14 @@ IssueDetail = React.createClass({
                 creator:issue.getCreator(),
                 supplier:issue.getSupplier(),
                 assignee:issue.getAssignee(),
+                timeframe:issue.getTimeframe(),
                 facilityContact:facilityContact,
                 areas:areas,
 
                 notifications:issue.getNotifications(),
                 services:Config.services,
+
+                actionVerb:this.getActionVerb(issue)
             }
         }
     },
@@ -114,27 +72,81 @@ IssueDetail = React.createClass({
         this.item.save();
     },
 
-    createOrder() {
-        this.item.status = "New";
-        this.item.isNewItem = false;
-        this.saveItem();
-    },
-
-    sendOrder() {
-        //alert('Sending work order...');
-        this.item.status = "Issued";
-        this.saveItem();
-        if(this.props.closeCallback) {
-            this.props.closeCallback()
+    // this calculation to be done server side
+    getActionVerb(issue) {
+        var canCreate = (
+            issue.name&&issue.name.length&&
+            issue.description&&issue.description.length&&
+            issue._facility&&issue._facility._id&&
+            issue.area&&issue.area.name.length&&
+            issue.service&&issue.service.name.length
+        );
+        var canIssue = (canCreate&&
+            issue.subservice&&issue.subservice.name.length&&
+            issue._supplier&&issue._supplier._id
+        );
+        var canClose = (canIssue&&
+            issue._assignee&&issue._assignee._id
+        );
+        if(canClose) {
+            return 'Close';
+        }
+        else if(canIssue) {
+            return 'Issue';
+        }
+        else if(canCreate) {
+            return 'Submit';
         }
     },
 
-    closeOrder() {
-        this.showModal();
+    showModal() {
+        Modal.show({
+            title:"All done? Great just need a few details to finalise the job.",
+            onSubmit:this.reallyCloseOrder,
+            content:<AutoForm item={this.props.item} schema={FM.schemas['Issue']} form={['closeDetails']} save={this.saveItem}/>
+        })
+    },
+
+    progressOrder() {
+        var issue = this.data.issue;
+        var canCreate = (
+            issue.name&&issue.name.length&&
+            issue.description&&issue.description.length&&
+            issue._facility&&issue._facility._id&&
+            issue.area&&issue.area.name.length&&
+            issue.service&&issue.service.name.length
+        );
+        var canIssue = (canCreate&&
+            issue.subservice&&issue.subservice.name.length&&
+            issue._supplier&&issue._supplier._id
+        );
+        var canClose = (canIssue&&
+            issue._assignee&&issue._assignee._id
+        );
+        if(canClose) {
+            this.showModal();
+        }
+        else if(canIssue) {
+            var timeframe = this.data.timeframe;
+            var createdMs = issue.createdAt.getTime();
+            issue.dueDate = new Date(createdMs+timeframe);
+            issue.status = "Issued";
+            this.saveItem();
+            if(this.props.closeCallback) {
+                this.props.closeCallback()
+            }            
+        }
+        else if(canCreate) {
+            issue.status = "New";
+            issue.isNewItem = false;
+            this.saveItem();
+            if(this.props.closeCallback) {
+                this.props.closeCallback()
+            }
+        }
     },
 
     reallyCloseOrder() {
-        this.hideModal();
         this.item.status = "Closed";
         this.item.priority = "Closed";
         this.saveItem();
@@ -150,15 +162,6 @@ IssueDetail = React.createClass({
 
     componentDidMount: function() {
         $(this.refs.description).elastic();
-        $(this.refs.modal).modal('hide');
-    },
-
-    showModal() {
-        $(this.refs.modal).modal('show');
-    },
-
-    hideModal() {
-        $(this.refs.modal).modal('hide');
     },
 
     render() {
@@ -192,24 +195,6 @@ IssueDetail = React.createClass({
 
         return (
 <div className="issue-detail">
-
-<div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
-  <div className="modal-dialog">
-    <div className="modal-content">
-      <div className="modal-header">
-        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 className="modal-title">All done? Great just need a few details to finalise the job.</h4>
-      </div>
-      <div className="modal-body">
-        <AutoForm item={issue} schema={schema} form={['closeDetails']} save={this.saveItem}/>
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" onClick={this.reallyCloseOrder} className="btn btn-primary">Complete</button>
-      </div>
-    </div>
-  </div>
-</div>
 
     <div className="row">
         <div className="col-lg-1 issue-icon-col">
@@ -340,14 +325,8 @@ IssueDetail = React.createClass({
                 </div>
                 <div className="col-lg-2">
                     <div style={{float:"right"}}>
-                        {!issue.status?
-                            <button onClick={this.createOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'Issued':'default')}>Create request</button>
-                        :null}
-                        {issue.status=='New'?
-                            <button onClick={this.sendOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Issued':'default')}>Issue order</button>
-                        :null}
-                        {issue.status=='Issued'?
-                            <button onClick={this.closeOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+(supplier?'Issued':'default')}>Close order</button>
+                        {data.actionVerb?
+                            <button onClick={this.progressOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'Issued':'default')}>{data.actionVerb} order</button>
                         :null}
                     </div>
                 </div>

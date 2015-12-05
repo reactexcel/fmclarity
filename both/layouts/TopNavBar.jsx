@@ -90,7 +90,7 @@ TopNavBar = React.createClass({
         var notifications = this.data.notifications;
         return (
 
-    <div className="row border-bottom">
+    <div className="row">
         <nav className="navbar navbar-fixed-top" role="navigation" style={{marginBottom:'0'}}>
             <div className="navbar-header navbar-logo">
                 <img width="190px" src="img/logo-white.svg"/>
