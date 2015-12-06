@@ -46,7 +46,7 @@ FacilityView = React.createClass({
                     </div>
                     <div className="col-lg-6">
                         <div className="facility-thumbnail pull-left">
-                            <img style={{width:"100%"}} alt="image" src={facility.thumb[0]} />
+                            <img style={{width:"100%"}} alt="image" src={facility.getThumbUrl()} />
                             <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-1.jpg"/></a>
                             <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-2.jpg"/></a>
                             <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-3.jpg"/></a>

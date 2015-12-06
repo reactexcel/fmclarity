@@ -38,11 +38,11 @@ FM.makeNewItemTemplate = function(schema) {
 		    	var templateFunction = FM.makeNewItemTemplate(field.schema);
 		    	n[i] = templateFunction(item);
 		    }
-		    else if(field.type==Object) {
-		    	n[i] = {};
-		    }
 		    else if(_.isArray(field.type)) {
 		    	n[i] = [];
+		    }
+		    else if(field.type==Object) {
+		    	n[i] = {};
 		    }
 		}
 		return n;

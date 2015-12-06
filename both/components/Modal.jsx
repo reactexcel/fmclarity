@@ -81,10 +81,6 @@ ModalInner = React.createClass({
             <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
                 <div className="modal-dialog">
                     <div className="modal-content">
-                        <div className="modal-header">
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 className="modal-title">{this.props.title}</h4>
-                        </div>
                         <div className="modal-body">
                             {this.props.children}
                         </div>

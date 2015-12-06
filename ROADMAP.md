@@ -13,20 +13,9 @@ DONE
 IN PROGRESS
 -----------
 
-v0.3.1a
-* Pinned items ignore filter
-* Additional stage for work orders that have been requested but not approved by FM
-* WO : due date calculated when order is issued
-* WO table: can sort by due date
-* Added a modal dialog box that shows contact/tenant details when clicked on (this will be used for adding new contacts)
-
-v1.0.0b
-
 * Due dates should be colour coded
 * Include date attended, date finalised, date reviewed
-* Facilities, team: Dialog for adding team members and same dialog for adding contacts/tenants to facilities
 * SSL
-* File uploads and document/image management
 * RBAC
 * Email notifications
 * When flicking through facilities, areas and services do not update

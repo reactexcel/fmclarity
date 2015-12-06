@@ -177,9 +177,10 @@ Facilities = FM.createCollection('Facility',{
     	label: "Description",
     	input:"mdtextarea",
     },
-    thumb: {
-    	label:"Thumbnail file",
-    	defaultValue:["img/default-placeholder.png"]
+    _attachments: {
+    	type:[Object],
+    	label:"Attachments",
+    	input:"attachments"
     },
     holder: {
     	type:Object,
@@ -227,6 +228,20 @@ Facilities.helpers({
   getAddress() {
   	var a = this.address;
   	return a.streetNumber+' '+a.streetName+' '+a.streetType+', '+a.city;
+  },
+  getAttachmentUrl(index) {
+  	index=index||0;
+  	var file;
+  	if(this._attachments&&this._attachments[index]) {
+	  	file = Files.findOne(this._attachments[index]._id);
+	  	if(file) {
+	  		return file.url();
+	  	}
+	}
+	return "img/default-placeholder.png";
+  },
+  getThumbUrl() {
+  	return this.getAttachmentUrl(0);
   },
   getAreas() {
   	var areas = [];
@@ -294,7 +309,7 @@ ExampleFacilities = [
 			buildingName:"Docklands",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/370 Docklands.jpg","img/floor-plan.jpg"],
+		_attachments:["img/370 Docklands.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Hay St, Perth",
@@ -309,7 +324,7 @@ ExampleFacilities = [
 			buildingName:"Hay St, Perth",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/1525 hay.jpg","img/floor-plan.jpg"],
+		_attachments:["img/1525 hay.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"S Steyne St, Sydney",
@@ -324,7 +339,7 @@ ExampleFacilities = [
 			buildingName:"S Steyne St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
+		_attachments:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"George St, Sydney",
@@ -339,7 +354,7 @@ ExampleFacilities = [
 			buildingName:"George St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
+		_attachments:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Macquarie Park",
@@ -354,7 +369,7 @@ ExampleFacilities = [
 			buildingName:"Macquarie Park",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/4 drake.jpg","img/floor-plan.jpg"],
+		_attachments:["img/4 drake.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Goulburn St, Sydney",
@@ -369,7 +384,7 @@ ExampleFacilities = [
 			buildingName:"Goulburn St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/98-104 goulburn.jpg","img/floor-plan.jpg"],
+		_attachments:["img/98-104 goulburn.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Murdoch Institute of Technology",
@@ -384,7 +399,7 @@ ExampleFacilities = [
 			buildingName:"Murdoch Institute of Technology",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/Murdoch.jpg","img/floor-plan.jpg"],
+		_attachments:["img/Murdoch.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Osbourne Park",
@@ -400,7 +415,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/76 Hasler.jpg","img/floor-plan.jpg"],
+		_attachments:["img/76 Hasler.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Cantebury",
@@ -416,7 +431,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/21 Shierlaw.jpg","img/floor-plan.jpg"],
+		_attachments:["img/21 Shierlaw.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Launceston",
@@ -432,7 +447,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/65 cameron.jpg","img/floor-plan.jpg"],
+		_attachments:["img/65 cameron.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Hobart",
@@ -448,7 +463,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/12 Warwick.jpg","img/floor-plan.jpg"],
+		_attachments:["img/12 Warwick.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Peel St, Adelaide",
@@ -464,7 +479,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/22 Peel St, adelaide.jpg","img/floor-plan.jpg"],
+		_attachments:["img/22 Peel St, adelaide.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Spring Hill",
@@ -480,7 +495,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/252 st pauls.jpg","img/floor-plan.jpg"],
+		_attachments:["img/252 st pauls.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Cairns",
@@ -496,7 +511,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/130 MacLeod.jpg","img/floor-plan.jpg"],
+		_attachments:["img/130 MacLeod.jpg","img/floor-plan.jpg"],
 	},
 	{
 		name:"Grenfell St, Adelaide",
@@ -512,6 +527,6 @@ ExampleFacilities = [
 			buildingName:"Bradford College",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		thumb:["img/132 Grenfell St.jpg","img/floor-plan.jpg"],
+		_attachments:["img/132 Grenfell St.jpg","img/floor-plan.jpg"],
 	}
 ];

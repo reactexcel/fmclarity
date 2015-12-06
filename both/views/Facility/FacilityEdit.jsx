@@ -294,7 +294,7 @@ FacilityEdit = React.createClass({
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
-		var schema = this.data.schema;
+		var schema = FM.schemas['Facility'];
 		//console.log(config);
 
 		return (
@@ -311,9 +311,7 @@ FacilityEdit = React.createClass({
 				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Documents & images">
-			   			<div style={{margin:"0 25px 10px 20px"}}>
-			   				<AttachmentGrid items={facility.thumb} />
-			   			</div>
+				        <AutoForm item={facility} schema={schema} form={['_attachments']} save={this.save()} />
 					</CollapseBox>
 			   		<CollapseBox title="Contacts">
 			   			<ContactList items={contacts} />

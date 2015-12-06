@@ -74,6 +74,9 @@ IssueDetail = React.createClass({
 
     // this calculation to be done server side
     getActionVerb(issue) {
+        if(issue.status=='Closed') {
+            return;
+        }
         var canCreate = (
             issue.name&&issue.name.length&&
             issue.description&&issue.description.length&&
@@ -347,7 +350,8 @@ IssueDetail = React.createClass({
                     <IpsoTabso tabs={[
                     {
                         tab:<span><span>Images</span><span className="label label-notification">3</span></span>,
-                        content:<AttachmentGrid items={issue.thumb} />
+                        content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['_attachments']} save={this.saveItem} />
+
                     },{
                         tab:"Documents",
                         content:<FileBrowser />

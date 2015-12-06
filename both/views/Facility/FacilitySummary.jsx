@@ -16,7 +16,7 @@ FacilitySummary = React.createClass({
 					<input type="checkbox" />
 				</div>*/}
 				<div className="facility-thumbnail pull-left">
-				    <img style={{width:"40px"}} alt="image" src={facility.thumb[0]} />
+				    <img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />
 				 </div>
 				 <div className="facility-info">
 					<a href="#">

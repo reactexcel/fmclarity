@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v0.3.1a**
+
+* Basic file upload functionality completed
+* File upload functionality added to "images" tab of WO and "documents & images" tab of facility
+
+**v0.3.0a**
+* Pinned items ignore filter
+* Additional stage for work orders that have been requested but not approved by FM
+* WO : due date calculated when order is issued
+* WO table: can sort by due date
+* Added a modal dialog box that shows contact/tenant details when clicked on (this will be used for adding new contacts)
+
 **v0.2.16**
 
 * WO detail: Contacts tab on work order

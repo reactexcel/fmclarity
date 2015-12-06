@@ -373,6 +373,125 @@ AutoInput.date = React.createClass({
 	}
 });
 
+AutoInput.file = React.createClass({
+
+	onChange(event) {
+	    FS.Utility.eachFile(event, function(file) {
+	    	Files.insert(file, function (err, fileObj) {
+	    		/*var id=fileObj._id;
+	    		var found = Files.findOne(id);*/
+	    		console.log(fileObj);
+	    		console.log(fileObj.url({brokenIsFine: true}));
+	    	// Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP
+	    	});
+	    });
+	},
+
+	onClick() {
+		$(this.refs.input).click();
+	},
+
+	render() {
+		return (
+			<div>
+				<div style={{width:0,height:0,overflow:"hidden"}}>
+					<input ref="input" type="file" onChange={this.onChange}/>
+				</div>
+				<div onClick={this.onClick}>Fart</div>
+			</div>
+		)
+	}
+
+
+});
+
+AutoInput.file = React.createClass({
+
+	mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	var query = this.props.item;
+    	var file = Files.findOne(query);
+    	return {
+    		file:file,
+    		url:file?file.url():"img/default-placeholder.png"
+    	}
+    },
+
+	onChange(event) {
+		var component = this;
+	    FS.Utility.eachFile(event, function(file) {
+	    	Files.insert(file, function (err, newFile) {
+	    		component.props.onChange({
+	    			target:{
+	    				value:{
+			    			_id:newFile._id
+	    				}
+	    			}
+	    		});
+	    	});
+	    });
+	},
+
+	onClick() {
+		$(this.refs.input).click();
+	},
+
+	render() {
+		return(
+			<div onClick={this.onClick} className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+			    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
+				<div style={{width:0,height:0,overflow:"hidden"}}>
+					<input ref="input" type="file" onChange={this.onChange}/>
+				</div>
+			</div>
+		)
+	}
+});
+
+AutoInput.attachments = React.createClass({
+
+	onChange(index,event) {
+		console.log({
+			event:event,
+			index:index
+		});
+		var attachments = this.props.value;
+		attachments[index] = event.target.value;
+		this.props.onChange({
+			target:{
+				value:attachments
+			}
+		})
+	},
+
+	render(){
+		var attachments = this.props.value;
+		console.log(attachments);
+		var component = this;
+		var File = AutoInput.file;
+		return (
+  			<div>
+			{attachments.map(function(file,idx){
+				return (
+					<div key={idx} style={{padding:0,width:"180px",display:"inline-block"}}>
+						<File 
+							item={file}
+							onChange={component.onChange.bind(null,idx)}
+						/>
+					</div>
+				)
+			})}
+			
+				<div style={{padding:0,width:"180px",display:"inline-block"}}>
+					<File onChange={component.onChange.bind(null,attachments.length)}/>
+				</div>
+			
+			</div>
+		)
+	}
+})
+
 AutoForm = React.createClass({
 
 	getInitialState() {

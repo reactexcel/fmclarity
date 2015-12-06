@@ -57,6 +57,11 @@ Issues = FM.createCollection('Issue',{
     label:"Thumbnail file",
     defaultValue:["img/default-placeholder.png"]
   },
+  _attachments: {
+    type:[Object],
+    label:"Attachments",
+    input:"attachments"
+  },
   area:{
   },
   _team:{
@@ -92,6 +97,20 @@ Issues.helpers({
   getTimeframe() {
     var team = this.getTeam();
     return team.getTimeframe(this.priority);
+  },
+  getAttachmentUrl(index) {
+    index=index||0;
+    var file;
+    if(this._attachments&&this._attachments[index]) {
+      file = Files.findOne(this._attachments[index]._id);
+      if(file) {
+        return file.url();
+      }
+  }
+  return "img/default-placeholder.png";
+  },
+  getThumbUrl() {
+    return this.getAttachmentUrl(0);
   },
   setPriority(priority) {
     var team = this.getTeam();
