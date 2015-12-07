@@ -284,7 +284,7 @@ FacilityEdit = React.createClass({
 		}
 	},
 
-	form1 : ["name","type","size","description","address"],
+	form1 : ["name","address"],
 	form3 : ["areas","buildingServices"],
 
 	render() {

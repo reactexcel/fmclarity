@@ -1,4 +1,4 @@
-Messages = FM.createCollection('Messages',{
+Messages = FM.createCollection('Message',{
   name:{
     type:String,
     input:"mdtext",
@@ -14,14 +14,10 @@ Messages = FM.createCollection('Messages',{
     input:"vote",
     label:"Rating"
   },
-  _creator:{
-    type:Object,
-    input:"contact",
-    label:"Creator"
-  },
   _recipient:{
     type:Object,
     input:"contact",
     label:"Recipient"
-  }
+  },
+
 });

@@ -30,14 +30,14 @@ NotificationSummary = React.createClass({
             	<ContactAvatarSmall item={data.actor}/>
                 <div className="media-body">
                     <small className="pull-right">{moment(notification.time).fromNow()}</small>
-                    <strong>{data.actor.getName()}</strong> {data.action} an <strong>{notification.getObjectType()} "{object.getName()}"</strong>. <br/>
+                    {/*message - this is the subject*/}
+                    <strong>{data.actor.getName()}</strong> {data.action} {notification.getObjectType()} <strong>{object.getName()}</strong><br/>
                     <small className="text-muted">{moment(notification.time).format('MMM Do YYYY, h:mm:ss a')}</small>
-                    {object.description?<div className="well">{object.description}</div>:null}
+                    {object.description?<div>{object.description}</div>:null}
                 </div>
             </div>
 		)
 	}
-
 })
 
 NotificationsPage = React.createClass({
@@ -56,9 +56,11 @@ NotificationsPage = React.createClass({
     	return (
     		<div>
     			{this.data.notifications.map(function(n){
-    				return <div key={n._id}>
-    					<NotificationSummary item={n} />
-    				</div>
+    				return (
+                        <div key={n._id}>
+    					   <NotificationSummary item={n} />
+    				    </div>
+                    )
     			})}
     		</div>
     	)

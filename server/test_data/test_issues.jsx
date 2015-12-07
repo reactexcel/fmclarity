@@ -205,6 +205,7 @@ TestIssues.generate = function() {
 	    createdAt:randomDate(startDate, new Date()),
 	    priority:newStatus=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical']),
 	    _attachments:["img/issue-1.jpg","img/issue-2.jpg","img/issue-3.jpg"],
+	    messages:[],
 	    closeDetails:{},
 	    contact:{
 	      name:"John Smith",

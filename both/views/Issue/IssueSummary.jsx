@@ -55,6 +55,7 @@ IssueSummary = React.createClass({
         var creator = this.data.creator;
         var supplier = this.data.supplier;
         var timeframe = this.data.timeframe;
+        var dueDate = issue.dueDate?moment(issue.dueDate):null;
         return (
         <div className={"issue-summary issue-status-"+status}>
           
@@ -80,7 +81,9 @@ IssueSummary = React.createClass({
             {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
           <div className="issue-summary-col issue-summary-col-5">
-            {issue.dueDate?moment(issue.dueDate).fromNow():null}
+            {issue.dueDate?
+              <span className={dueDate.isBefore()?"text-overdue":""}>{dueDate.fromNow()}</span>
+            :null}
           </div>
         </div>
       )

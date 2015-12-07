@@ -142,10 +142,10 @@ PageRequests = React.createClass({
 	    	text:"Due",
 	    	sortFunction(a,b) {
 	    		if(!b.dueDate) {
-	    			return -1;
+	    			return 1;
 	    		}
 	    		else if(!a.dueDate) {
-	    			return 1;
+	    			return -1;
 	    		}
 	    		else {
 		    		return (a.dueDate>b.dueDate)?-1:1;

@@ -54,7 +54,7 @@ Meteor.startup(function(){
 
     function initializeUsers() {
         Users.remove({_id:{$nin:[leoId,richId]}});
-        for(var i=0;i<100;i++) {
+        for(var i=0;i<20;i++) {
             var newUser = makeRandomUser();
             var newUserId = Meteor.call('User.new',newUser);
             //FM.notify(system,"created",['User',{_id:newUserId}]);
@@ -280,7 +280,7 @@ Meteor.startup(function(){
 
     /* Create issues */
     ExampleIssues = [];
-    for(var i=0;i<100;i++) {
+    for(var i=0;i<20;i++) {
         var newIssue = TestIssues.generate();
         ExampleIssues.push(newIssue);
     }

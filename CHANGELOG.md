@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v0.3.2a**
+
+* Due dates are colour coded
+* Removed description from notifications
+* Removed description from facilities
+* Generate much fewer contacts and issues for test data
+* Create data model for messages and start to implement discussions on wos
+
 **v0.3.1a**
 
 * Basic file upload functionality completed

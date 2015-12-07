@@ -357,7 +357,10 @@ IssueDetail = React.createClass({
                         content:<FileBrowser />
                     },{
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
-                        content:<IssueDiscussion items={notifications}/>
+                        content:<div>
+                            <IssueDiscussion items={notifications}/>
+                            <Discussion items={issue.messages}/>
+                        </div>
                     },{
                         tab:<span>Contacts</span>,
                         content:<ContactList items={contacts} />

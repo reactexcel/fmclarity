@@ -53,14 +53,18 @@ Issues = FM.createCollection('Issue',{
       return team.getNextWOCode();
     }
   },
-  thumb: {
+  thumb:{
     label:"Thumbnail file",
     defaultValue:["img/default-placeholder.png"]
   },
-  _attachments: {
+  _attachments:{
     type:[Object],
     label:"Attachments",
     input:"attachments"
+  },
+  messages:{
+    type:[Object],
+    label:"Discussion"
   },
   area:{
   },

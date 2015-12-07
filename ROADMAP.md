@@ -9,33 +9,49 @@ TODO (general)
 
 DONE
 ----
+* Due dates are colour coded
+* Removed description from notifications
+* Removed description from facilities
+* Generate much fewer contacts and issues for test data
+* Create data model for messages and start to implement discussions on wos
 
 IN PROGRESS
 -----------
 
-* Due dates should be colour coded
-* Include date attended, date finalised, date reviewed
+* Remove underscore prefix from fields in models
+* Include date attended, date finalised, date reviewed in issue data
+* Style and implement date picker
+* Ability to change profile picture for users / facilities
 * SSL
 * RBAC
 * Email notifications
-* When flicking through facilities, areas and services do not update
-* Need a select type control (for property type for example) that matches material design (how about using a dropdown and styling label)
-* When create a new facility, enter no details, reload, then select new facility... card does not appear
-* Editing a contractor, and then editing "your" team, nukes the previous notification, and then editing a contractor again brings it back... weird
 * Finsh "close out work order" screen
 * Contractors filtered by service type when creating a work order
 * Conversations in work orders, make discussion component (for log an comments), hook discussions into notifications widget
 * Notifications when work orders progress
 * Add new contractor button - works the same as adding a new user
-* Browsing for contractors and adding preferred contractors to a contact list (this is contracts)
 * Dashboard reflecting real data
-* Management teams see creator and contractor team, contractor teams see creators teams and assignee
-* Validation required for form elements
+
+** Cross browser **
+
 * Cross browser / cross device compatibility
 * Settings menu doesn't work very well in minimized view - should be tabbed subselection
 
+** Bugs **
+
+* When flicking through facilities, areas and services do not update
+* Need a select type control (for property type for example) that matches material design (how about using a dropdown and styling label)
+* When create a new facility, enter no details, reload, then select new facility... card does not appear
+* Editing a contractor, and then editing "your" team, nukes the previous notification, and then editing a contractor again brings it back... weird
+
 ** Low priority **
 
+* Validation required for form elements
+* Browsing for contractors and adding preferred contractors to a contact list (this is contracts)
+
+** Very Low priority **
+
+* Management teams see creator and contractor team, contractor teams see creators teams and assignee
 * Facilities: Add issue summary to diplay card
 * Need to be able to delete items (facilities, requests, users) when giving demo - otherwise the data just gets contaminated with random rubbish
 * Team: Position title in team members list
