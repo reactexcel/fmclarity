@@ -9,11 +9,6 @@ TODO (general)
 
 DONE
 ----
-* Due dates are colour coded
-* Removed description from notifications
-* Removed description from facilities
-* Generate much fewer contacts and issues for test data
-* Create data model for messages and start to implement discussions on wos
 
 IN PROGRESS
 -----------

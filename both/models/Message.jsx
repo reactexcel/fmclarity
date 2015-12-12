@@ -21,3 +21,12 @@ Messages = FM.createCollection('Message',{
   },
 
 });
+
+if(Meteor.isServer) {
+  Meteor.publish("messages",function(){
+    return Messages.find();
+  })
+}
+else {
+  Meteor.subscribe("messages");
+}

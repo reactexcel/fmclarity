@@ -66,6 +66,11 @@ IssueDetail = React.createClass({
         }
     },
 
+    updateLikeAutoform(field,event) {
+        this.item[field] = event.target.value;
+        this.item.save();
+    },
+
     updateService(service) {
         this.item.service = service;
         this.item.subservice = 0;
@@ -359,7 +364,7 @@ IssueDetail = React.createClass({
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                         content:<div>
                             <IssueDiscussion items={notifications}/>
-                            <Discussion items={issue.messages}/>
+                            <Discussion value={issue.messages} onChange={this.updateLikeAutoform.bind(this,'messages')}/>
                         </div>
                     },{
                         tab:<span>Contacts</span>,

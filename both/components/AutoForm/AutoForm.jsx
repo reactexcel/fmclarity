@@ -1,32 +1,3 @@
-CollapseBox = React.createClass({
-
-	getInitialState() {
-		return {
-			collapsed:this.props.collapsed
-		}
-	},
-
-	toggle() {
-		this.setState({
-			collapsed:!this.state.collapsed
-		});
-	},
-
-	render() {
-		var collapsed = this.state.collapsed;
-		return (
-			<div>
-			    <h4 onClick={this.toggle} className="background" style={{margin:"10px 15px",cursor:"pointer"}}>
-			    	<span><i className={"fa fa-caret-"+(collapsed?'right':'down')}></i> {this.props.title}</span>
-			    </h4>
-			    <div className={"collapse-box "+(collapsed?'collapsed':'')} ref="collapser">
-			    	{this.props.children}
-			    </div>
-			</div>
-		)
-	}
-});
-
 
 AutoInput = {};
 
@@ -373,37 +344,6 @@ AutoInput.date = React.createClass({
 	}
 });
 
-AutoInput.file = React.createClass({
-
-	onChange(event) {
-	    FS.Utility.eachFile(event, function(file) {
-	    	Files.insert(file, function (err, fileObj) {
-	    		/*var id=fileObj._id;
-	    		var found = Files.findOne(id);*/
-	    		console.log(fileObj);
-	    		console.log(fileObj.url({brokenIsFine: true}));
-	    	// Inserted new doc with ID fileObj._id, and kicked off the data upload using HTTP
-	    	});
-	    });
-	},
-
-	onClick() {
-		$(this.refs.input).click();
-	},
-
-	render() {
-		return (
-			<div>
-				<div style={{width:0,height:0,overflow:"hidden"}}>
-					<input ref="input" type="file" onChange={this.onChange}/>
-				</div>
-				<div onClick={this.onClick}>Fart</div>
-			</div>
-		)
-	}
-
-
-});
 
 AutoInput.file = React.createClass({
 

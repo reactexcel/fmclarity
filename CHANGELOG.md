@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.3.3a**
+
+* Integrated basic discussions to WO
+
 **v0.3.2a**
 
 * Due dates are colour coded
@@ -15,6 +19,7 @@ CHANGELOG.md
 * File upload functionality added to "images" tab of WO and "documents & images" tab of facility
 
 **v0.3.0a**
+
 * Pinned items ignore filter
 * Additional stage for work orders that have been requested but not approved by FM
 * WO : due date calculated when order is issued

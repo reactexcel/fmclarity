@@ -5,7 +5,7 @@ DiscussionPost = React.createClass({
 
     getMeteorData() {
         var query, message, creator;
-        query = this.props.item;
+        query = this.props.value;
         message = Messages.findOne(query);
         if(message) {
             creator = message.getCreator()
@@ -20,7 +20,30 @@ DiscussionPost = React.createClass({
         $(this.refs.input).elastic();
     },
 
-    onChange(event) {
+    submit(event) {
+        var callback = this.props.onChange;
+        var message = this.data.message||{
+            _creator:{
+                _id:Meteor.userId()
+            }
+        };
+        message.body = event.target.value;
+        // returns reference object to save
+        Meteor.call("Message.save",message,function(err,response){
+            event.target.value = null;
+            callback({
+                target:{
+                    value:response
+                }
+            });
+        })
+    },
+
+    handleKeyPress(event) {
+        if(!event.shiftKey&&event.keyCode==13) {
+            event.preventDefault();
+            this.submit(event);
+        }
     },
 
     render() {
@@ -45,7 +68,7 @@ DiscussionPost = React.createClass({
                         placeholder="Leave a comment or question..."
                         className={"input inline-form-control "+(used?'used':'')}
                         defaultValue={message.body} 
-                        onChange={this.props.onChange}>
+                        onKeyDown={this.handleKeyPress}>
                     </textarea>
                 </div>
             </div>
@@ -56,25 +79,36 @@ DiscussionPost = React.createClass({
 Discussion = React.createClass({
 
     onChange(index,event) {
-    },
+        console.log({
+            event:event,
+            index:index
+        });
+        var messages = this.props.value||[];
+        messages[index] = event.target.value;
+        this.props.onChange({
+            target:{
+                value:messages
+            }
+        })
+    },    
 
     render(){
-        var messages = this.props.items;
+        var messages = this.props.value;
         var component = this;
         return (
-            <div>
-            {messages.map(function(file,idx){
+            <div className="feed-activity-list">
+            {messages.map(function(message,idx){
                 return (
-                    <div key={idx}>
+                    <div key={message._id} className="feed-element" style={{paddingBottom:0}}>
                         <DiscussionPost
-                            item={file}
+                            value={message}
                             onChange={component.onChange.bind(null,idx)}
                         />
                     </div>
                 )
             })}
             
-                <div>
+                <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
                     <DiscussionPost onChange={component.onChange.bind(null,messages.length)}/>
                 </div>
             

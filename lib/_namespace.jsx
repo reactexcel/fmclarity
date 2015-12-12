@@ -62,15 +62,16 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	var methods = {};
 	methods[name+'.save'] = function(item) {
 		item.isNewItem = false;
+		if(!item.createdAt) {
+			item.createdAt = moment().toDate();
+		}
 		console.log({
 			saving:item
 		});
-		collection.upsert(item._id, {$set: _.omit(item, '_id')},function(err,obj){
-			console.log({
-				error:err,
-				data:obj
-			});
-		});		
+		var response = collection.upsert(item._id, {$set: _.omit(item, '_id')});
+		return {
+			_id:response.insertedId
+		}
 	}
 	methods[name+'.destroy'] = function(item) {
 		console.log({
@@ -130,7 +131,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		    }).fetch();
 		},
 		getCreator() {
-			return Users.find(this._creator._id).fetch();
+			return Users.findOne(this._creator._id);
 		}
 	});
 

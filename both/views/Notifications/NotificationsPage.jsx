@@ -33,7 +33,7 @@ NotificationSummary = React.createClass({
                     {/*message - this is the subject*/}
                     <strong>{data.actor.getName()}</strong> {data.action} {notification.getObjectType()} <strong>{object.getName()}</strong><br/>
                     <small className="text-muted">{moment(notification.time).format('MMM Do YYYY, h:mm:ss a')}</small>
-                    {object.description?<div>{object.description}</div>:null}
+                    {/*object.description?<div>{object.description}</div>:null*/}
                 </div>
             </div>
 		)
