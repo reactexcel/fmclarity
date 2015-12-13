@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v0.3.5a**
+* Clicking away from a dropdown closes it
+* WO: Facilities appearing in drop down for new work order should are filtered by selected team
+* WO: Available areas are filtered by selected facility
+
 **v0.3.4a**
 
 * In preparation for beta release:

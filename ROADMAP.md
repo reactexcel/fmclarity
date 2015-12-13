@@ -13,6 +13,9 @@ DONE
 IN PROGRESS
 -----------
 
+* Services should be filtered according to selected facility
+* When a new facility is created it doesn't have default areas or services
+
 * Remove underscore prefix from fields in models
 * Include date attended, date finalised, date reviewed in issue data
 * Style and implement date picker
@@ -61,7 +64,5 @@ IN PROGRESS
 * Add outstanding issues to facilities card
 * Add floorplans and lease end dates
 * Advanced address picker
-
-
 
 * Should be using react-bootstrap with browserfy

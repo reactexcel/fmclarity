@@ -14,45 +14,43 @@ SuperSelect = React.createClass({
 		}
 	},
 
-	handleClick() {
+	handleClick(event) {
+		var open = !this.state.open;
+		if(open) {
+			$(document).on('click',this.handleClick);
+		}
+		else {
+			$(document).off('click',this.handleClick);
+		}
 		this.setState({
-			open:!this.state.open
-		})
+			open:open
+		});
 	},
 
-	componentDidMount() {
-		var toggleId = this.props.toggleId;
-		if(toggleId) {
-			$(document).on('click',toggleId,this.handleClick);
-		}
-	},
-
-	componentWillUnmount () {
-		var toggleId = this.props.toggleId;
-		if(toggleId) {
-			$(document).off('click',toggleId,this.handleClick);
-		}
+	handleChange(item,event) {
+		event.stopPropagation();
+		this.props.onChange(item);
 	},
 
 	render() {
+		var component = this;
 		var Card = this.props.itemView || DumbCard;
 		var items = this.props.items || [];
-		var handleClick = this.props.onChange;
+		var onChange = this.props.onChange;
 		var classes = this.props.classes || '';
 		var clearOption = this.props.clearOption;
 
 		return (
                 <span 
-                	onClick={this.handleClick}
                 	className={(this.state.open?"open ":"")+"super-select dropdown "+classes}
                 >
-                    <span className="dropdown-toggle">
+                    <span onClick={component.handleClick} className="dropdown-toggle">
                     	{this.props.children}
                     </span>
                     <ul className="dropdown-menu dropdown-messages">
                     {clearOption?
 	                    <span>
-	                    	<li onClick={handleClick.bind(null,null)}>
+	                    	<li onClick={component.handleChange.bind(null,null)}>
 	                        	<Card item={clearOption} />
 	                    	</li>
 	                    	<li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
@@ -62,7 +60,7 @@ SuperSelect = React.createClass({
                     {items.map(function(i,idx){
 						return (
 	                    	<span key={idx}>
-	                        <li onClick={handleClick.bind(null,i)}>
+	                        <li onClick={component.handleChange.bind(null,i)}>
 	                        	<Card item={i} />
 	                        </li>
 	                        <li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
