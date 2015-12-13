@@ -4,6 +4,13 @@ FM = {};
 FM.collections = {};
 FM.schemas = {};
 
+if(Meteor.isClient) {
+	FM.getSelectedTeam = function() {
+		return Meteor.user().getSelectedTeam();
+	}
+}
+
+
 FM.makeSchema = function(schema) {
 	var ss = {};
 	for(var i in schema) {
@@ -102,14 +109,22 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			});			
 		});
 	}
+	methods[name+'.getTemplate'] = function(item) {
+		return newItemTemplate(item);
+	}
 	Meteor.methods(methods);
 
 	// add collection helpers
 	collection.helpers({
 		collectionName:name,
-		save() {
+		save(extension) {
 			console.log('calling save method...');
 			var obj = this;
+			if(extension) {
+				for(var i in extension) {
+					obj[i] = extension;
+				}
+			}
 			Meteor.call(name+'.save',obj,function(){
 				FM.notify("updated",obj);
 			});

@@ -1,6 +1,24 @@
 CHANGELOG.md
 ============
 
+**v0.3.5a**
+
+* Clicking away from a dropdown closes it
+* New feature - improved facilities selector
+** WO: Facilities appearing in drop down for new work order should are filtered by selected team
+** WO: Available areas are filtered by selected facility
+* New feature - can add and remove contacts
+** Facility settings: Can add new contacts and tenants to facilities
+** Facility settings: Can remove contacts and tenanats from facilities
+** Team: Pushing (+) button brings modal to invite new or add existing user
+
+**v0.3.4a**
+
+* In preparation for beta release:
+** Changed test data generation routines 
+** Created development and master code branch
+** Added account for Brad Wilkinson
+
 **v0.3.3a**
 
 * Integrated basic discussions to WO

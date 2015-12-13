@@ -2,9 +2,26 @@ ContactList = React.createClass({
 
     showModal(selectedUser) {
         Modal.show({
-            title:selectedUser.getName(),
-            content:<UserProfile item={selectedUser} />
+            content:<UserProfile item={selectedUser} onChange={this.handleAdd} />
         })
+    },
+
+    handleModalClose() {
+    	console.log('closing modal');
+    },
+
+    handleAdd(contact) {
+    	var handleChange = this.props.onChange;
+    	var contacts = this.props.items;
+    	contacts.push(contact);
+    	handleChange(contacts);
+    },
+
+    handleRemove(index) {
+    	var handleChange = this.props.onChange;
+    	var contacts = this.props.items;
+    	contacts.splice(index,1);
+    	handleChange(contacts);
     },
 
 	render() {
@@ -18,15 +35,18 @@ ContactList = React.createClass({
 			                key={idx}
 			                style={{padding:0}}
 			                className={"col-lg-12"}
-			                onClick={component.showModal.bind(null,contact)}
 			            >
-				            <ContactCard item={contact}/>
+			            	<span onClick={component.handleRemove.bind(null,idx)} className="pull-right">delete</span>
+			            	<div onClick={component.showModal.bind(null,contact)}>
+					            <ContactCard item={contact}/>
+					        </div>
 			            </div>	
 		            )
 			    })}
 			    <div 
 			        style={{padding:0}}
 			        className={"col-lg-12"}
+			        onClick={component.showModal.bind(null,null)}
 			    >
 			        Add contact
 			    </div>	

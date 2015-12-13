@@ -44,6 +44,9 @@ Modal = React.createClass({
   	},
 
   	handleHide() {
+      if(this.props.onClose) {
+        this.props.onClose();
+      }
     	this.setState({
 	      	show:false
     	})

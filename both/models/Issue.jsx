@@ -98,6 +98,9 @@ Issues.helpers({
   getTeam() {
     return Teams.findOne({_id:this._team._id});
   },
+  getArea() {
+    return this.area;
+  },
   getTimeframe() {
     var team = this.getTeam();
     return team.getTimeframe(this.priority);

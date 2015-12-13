@@ -1,5 +1,68 @@
 
 
+IssueFacilitySelector = React.createClass({
+
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+        var issue, team, facility, area, teamFacilities, facilityAreas;
+        issue = this.props.issue;
+        if(issue) {
+            team = issue.getTeam();
+            if(team) {
+                teamFacilities = team.getFacilities();
+            }
+            facility = issue.getFacility();
+            if(facility) {
+                area = issue.getArea();
+                facilityAreas = facility.getAreas();
+            }
+        }
+        return {
+            teamFacilities:teamFacilities,
+            selectedFacility:facility,
+            facilityAreas:facilityAreas,
+            selectedArea:area,
+        }
+    },
+
+    handleChange(field,value) {
+        this.props.issue[field] = value;
+        this.props.issue.save();
+    },
+
+    render() {
+        var facility = this.data.selectedFacility;
+        var area = this.data.selectedArea;
+        return (
+            <div>
+            <SuperSelect 
+                items={this.data.teamFacilities} 
+                itemView={ContactViewName}
+                onChange={this.handleChange.bind(null,'_facility')}
+            >
+                <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                    {facility?<span>{facility.getName()} -</span>:<span style={{color:"#999"}}>Select facility</span>}
+                </span>
+            </SuperSelect>
+            {facility?
+            <SuperSelect 
+                items={this.data.facilityAreas} 
+                itemView={ContactViewName}
+                onChange={this.handleChange.bind(null,'area')}
+            >
+                <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                    {area?<span>{area.name}</span>:<span style={{color:"#999"}}>Select area</span>}
+                </span>
+            </SuperSelect>
+            :null}
+            </div>
+        )
+    }
+})
+
+
+
 IssueDetail = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -12,10 +75,9 @@ IssueDetail = React.createClass({
             }
         }
         else {
-            var facility, areas, facilityContacts, facilityContact;
+            var facility, facilityContacts, facilityContact;
             facility = issue.getFacility();
             if(facility) {
-                areas = facility.getAreas();
                 facilityContacts = facility.getContacts();
                 facilityContact = facilityContacts?facilityContacts[0]:null;
             }
@@ -24,7 +86,6 @@ IssueDetail = React.createClass({
                 ready:true,
 
                 suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
-                facilities:Facilities.find({},{sort:{name:1}}).fetch(),
 
                 issue:issue,
                 facility:facility,
@@ -34,7 +95,6 @@ IssueDetail = React.createClass({
                 assignee:issue.getAssignee(),
                 timeframe:issue.getTimeframe(),
                 facilityContact:facilityContact,
-                areas:areas,
 
                 notifications:issue.getNotifications(),
                 services:Config.services,
@@ -235,26 +295,7 @@ IssueDetail = React.createClass({
                         />
                     </h2>
                     <div style={{marginTop:"7px",marginBottom:"7px"}}>
-                        <SuperSelect 
-                            items={this.data.facilities} 
-                            itemView={ContactViewName}
-                            onChange={this.updateObjectField('_facility')}
-                        >
-                            <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
-                                {facility?(<span>{facility.getName()} -</span>):(<span style={{color:"#999"}}>Select facility</span>)}
-                            </span>
-                        </SuperSelect>
-                        {facility?
-                        <SuperSelect 
-                            items={this.data.areas} 
-                            itemView={ContactViewName}
-                            onChange={this.updateObjectField('area')}
-                        >
-                            <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
-                                {issue.area?(<span>{issue.area.name}</span>):(<span style={{color:"#999"}}>Select area</span>)}
-                            </span>
-                        </SuperSelect>
-                        :null}
+                        <IssueFacilitySelector issue={issue} />
                         <div style={{marginLeft:"4px"}} className="issue-summary-facility-col">
                             <b>Order #</b>
                             <span>{issue.code}</span>&nbsp;
@@ -364,7 +405,10 @@ IssueDetail = React.createClass({
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                         content:<div>
                             <IssueDiscussion items={notifications}/>
-                            <Discussion value={issue.messages} onChange={this.updateLikeAutoform.bind(this,'messages')}/>
+                            <Discussion 
+                                value={issue.messages} 
+                                onChange={this.updateLikeAutoform.bind(this,'messages')}
+                            />
                         </div>
                     },{
                         tab:<span>Contacts</span>,

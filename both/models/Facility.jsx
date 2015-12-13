@@ -279,6 +279,30 @@ Facilities.helpers({
     return [];
 
   },
+  getTenants() {
+    if (this._tenants&&this._tenants.length) {
+    	// this is pretty fucking inefficient
+    	// idea - store tenantIds and sometimes denormalise by making tenants as well
+    	// perhaps if tenants is empty or if it has "expired"
+    	var tenants = this._tenants;
+    	var tenantIds = [];
+    	tenants.map(function(contact){
+    		tenantIds.push(contact._id);
+    	});
+    	return Users.find({_id:{$in:tenantIds}}).fetch();
+    }
+    return [];
+
+  },
+  getPrimaryContact() {
+  	var id=0;
+  	if(this._contacts&&this._contacts.length) {
+	  	id = this._contacts[0]._id;
+	}
+  	if(id) {
+  		return Users.findOne(id);
+  	}
+  },
   getIssueCount() {
   	return Issues.find({"_facility._id":this._id}).count();
   },

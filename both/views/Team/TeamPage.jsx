@@ -21,34 +21,10 @@ TeamPage = React.createClass({
         }
     },
 
-    handleInvite(e) {
-    	var team = this.data.team;
-    	e.preventDefault();
-    	var input = this.refs.invitationEmail;
-    	var email = input.value;
-    	var re = /.+@.+\..+/i
-    	if(!re.test(email)) {
-    		alert('Please enter a valid email address');
-    	}
-    	else {
-            input.value = '';
-            team.inviteMember(email);
-	    }
-    },
-
-    handleAddFacility(e) {
-        var team = this.data.team;
-        e.preventDefault();
-        var input = this.refs.facilityName;
-        var name = input.value;
-        var re = /.*/i
-        if(!re.test(name)) {
-            alert('Please enter a valid facility name');
-        }
-        else {
-            input.value = '';
-            team.addFacility({name:name});
-        }
+    showModal(selectedUser) {
+        Modal.show({
+            content:<UserProfile />
+        })
     },
 
 	render() {
@@ -63,15 +39,9 @@ TeamPage = React.createClass({
 		          </div>
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-                    <form className="form-inline" style={{position:"absolute",zIndex:2000,margin:"7px"}}>
-                        <div className="form-group">
-                            <label>Invite users</label>
-                            <input style={{borderRadius:"30px"}} type="email" className="form-control" ref="invitationEmail" placeholder="Email address"/>
-                            <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
-                        </div>
-                    </form>
   					<FilterBox2 
 						items={this.data.members}
+						newItemCallback={this.showModal}
 						itemView={{
 							summary:ContactCard,
 							detail:UserProfileWidget

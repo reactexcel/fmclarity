@@ -1,14 +1,25 @@
 FacilitySummary = React.createClass({
 
-	getInitialState() {
-		return {
-			expanded:false
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+		var facility,contact,contactProfile;
+	    facility = this.props.item || {};
+	    if(facility) {
+		    contact = facility.getPrimaryContact();
+		    if(contact) {
+		    	contactProfile = contact.getProfile();
+		    }
 		}
-	},
+		return {
+			facility:facility,
+			contact:contactProfile
+		}
+    },
 
 	render() {
-	    var facility = this.props.item || {};
-	    var contact = facility._contacts?facility._contacts[0]:null;
+		var facility = this.data.facility;
+		var contact = this.data.contact;
 	    return (
 	    	<div>
 	    		{/*

@@ -146,7 +146,7 @@ if (Meteor.isServer) {
         }
       }
       Meteor.call("Team.addMember",item,{_id:uid});
-      return uid;
+      return user||Users.findOne(uid);
     }
   })
 }
@@ -165,8 +165,8 @@ Meteor.methods({
 });
 
 Teams.helpers({
-  inviteMember(email) {
-    return Meteor.call('Team.inviteMember',this, email)
+  inviteMember(email,callback) {
+    Meteor.call('Team.inviteMember',this, email, callback)
   },
   getProfile() {
     return this;
