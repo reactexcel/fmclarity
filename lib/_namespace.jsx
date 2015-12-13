@@ -4,6 +4,13 @@ FM = {};
 FM.collections = {};
 FM.schemas = {};
 
+if(Meteor.isClient) {
+	FM.getSelectedTeam = function() {
+		return Meteor.user().getSelectedTeam();
+	}
+}
+
+
 FM.makeSchema = function(schema) {
 	var ss = {};
 	for(var i in schema) {
@@ -101,6 +108,9 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 				data:obj
 			});			
 		});
+	}
+	methods[name+'.getTemplate'] = function(item) {
+		return newItemTemplate(item);
 	}
 	Meteor.methods(methods);
 

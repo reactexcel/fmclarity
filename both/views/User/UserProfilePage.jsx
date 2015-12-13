@@ -1,11 +1,23 @@
 
 UserProfile = React.createClass({
 
-	save() {
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	return {
+    		team:FM.getSelectedTeam()
+    	}
+    },
+
+	getInitialState() {
 		var user = this.props.item;
-		return function() {
-			user.save();
+		return {
+			user:user
 		}
+	},
+
+	save() {
+		Meteor.call('User.save',this.state.user);
 	},
 
 	form1 : {
@@ -35,15 +47,50 @@ UserProfile = React.createClass({
 		}
 	},
 
+	setUser(user) {
+		this.setState({
+			user:user
+		})
+	},
+
+	handleInvite(event) {
+    	event.preventDefault();
+    	var team,input,email,regex,component;
+    	component = this;
+		team = this.data.team;
+    	input = this.refs.invitationEmail;
+    	email = input.value;
+    	regex = /.+@.+\..+/i
+    	if(!regex.test(email)) {
+    		alert('Please enter a valid email address');
+    	}
+    	else {
+            input.value = '';
+            team.inviteMember(email, function(err,user){
+            	component.setUser(user);
+            	if(component.props.onChange) {
+            		component.props.onChange(user);
+            	}
+            });
+	    }
+    },
+
 	render() {
-		var user, profile, schema;
-		var user = this.props.item;
+		var user, profile;
+		user = this.state.user;
 		if(user) {
-			profile = user.getProfile();
-			//schema = Schema.UserProfile;
+			profile = user.profile;
 		}
 		if(!user||!profile) {
-			return <div/>
+			return (
+                <form className="form-inline">
+                    <div className="form-group">
+                        <b>Type email address to invite user:</b>
+                        <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
+                        <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
+                    </div>
+                </form>
+            )
 		}
 		return (
 		    <div className="user-profile-card">
@@ -54,7 +101,7 @@ UserProfile = React.createClass({
 			   	</div>
 			   	<div className="row">
 			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-			        	<AutoForm item={profile} schema={this.form1} save={this.save()} />
+			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			        <div className="col-lg-5">
 						<div className="contact-thumbnail">
@@ -62,7 +109,7 @@ UserProfile = React.createClass({
 						</div>
 					</div>
 			        <div className="col-lg-12">
-			        	<AutoForm item={profile} schema={this.form2} save={this.save()} />
+			        	<AutoForm item={profile} schema={this.form2} save={this.save} />
 			        </div>
 				</div>
 			</div>

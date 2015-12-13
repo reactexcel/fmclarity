@@ -263,6 +263,8 @@ FM.createTestData = function() {
             email:contact.email
         }];
 
+        ExampleFacilities[i]._tenants = [];
+
         ExampleFacilities[i]._team = {_id:teams[r]._id};
         ExampleFacilities[i].lease = {
             parking:{},

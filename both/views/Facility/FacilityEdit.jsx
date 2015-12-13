@@ -259,15 +259,13 @@ FacilityEdit = React.createClass({
 		if(facility){
 			team = facility.getTeam();
 			contacts = facility.getContacts();
-			if(team) {
-				tenants = team.getMembers();
-				return {
-					ready:true,
-					facility:facility,
-					contacts:contacts,
-					schema:schema,
-					tenants:tenants.slice(0,3),
-				}
+			tenants = facility.getTenants();
+			return {
+				ready:true,
+				facility:facility,
+				contacts:contacts,
+				schema:schema,
+				tenants:tenants
 			}
 		}
 		return {
@@ -284,10 +282,9 @@ FacilityEdit = React.createClass({
 		}
 	},
 
-	updateField(field,event) {
-		var item = this.props.item;
-		item[field] = event.target.value;
-		item.save();
+	updateField(field,value) {
+		this.props.item[field] = value;
+		this.props.item.save();
 	},
 
 	form1 : ["name","address"],
