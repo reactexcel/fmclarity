@@ -364,7 +364,10 @@ IssueDetail = React.createClass({
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                         content:<div>
                             <IssueDiscussion items={notifications}/>
-                            <Discussion value={issue.messages} onChange={this.updateLikeAutoform.bind(this,'messages')}/>
+                            <Discussion 
+                                value={issue.messages} 
+                                onChange={this.updateLikeAutoform.bind(this,'messages')}
+                            />
                         </div>
                     },{
                         tab:<span>Contacts</span>,

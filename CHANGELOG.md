@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v0.3.4a**
+
+* In preparation for beta release:
+** Changed test data generation routines 
+** Created development and master code branch
+** Added account for Brad Wilkinson
+
 **v0.3.3a**
 
 * Integrated basic discussions to WO

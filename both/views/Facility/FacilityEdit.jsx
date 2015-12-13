@@ -284,6 +284,12 @@ FacilityEdit = React.createClass({
 		}
 	},
 
+	updateField(field,event) {
+		var item = this.props.item;
+		item[field] = event.target.value;
+		item.save();
+	},
+
 	form1 : ["name","address"],
 	form3 : ["areas","buildingServices"],
 
@@ -314,10 +320,16 @@ FacilityEdit = React.createClass({
 				        <AutoForm item={facility} schema={schema} form={['_attachments']} save={this.save()} />
 					</CollapseBox>
 			   		<CollapseBox title="Contacts">
-			   			<ContactList items={contacts} />
+			   			<ContactList 
+			   				items={contacts} 
+			   				onChange={this.updateField.bind(null,'_contacts')}
+			   			/>
 					</CollapseBox>
 			   		<CollapseBox title="Tenants">
-			   			<ContactList items={tenants} />
+			   			<ContactList 
+			   				items={tenants} 
+			   				onChange={this.updateField.bind(null,'_tenants')}
+			   			/>
 					</CollapseBox>
 			   		<CollapseBox title="Facility holder" collapsed={true}>
 				        <div className="col-lg-12" style={{paddingTop:"20px"}}>

@@ -2,9 +2,14 @@ ContactList = React.createClass({
 
     showModal(selectedUser) {
         Modal.show({
-            title:selectedUser.getName(),
+            title:selectedUser?selectedUser.getName():null,
             content:<UserProfile item={selectedUser} />
         })
+    },
+
+    handleAdd(event) {
+    	this.showModal()
+    	console.log(event);
     },
 
 	render() {
@@ -27,6 +32,7 @@ ContactList = React.createClass({
 			    <div 
 			        style={{padding:0}}
 			        className={"col-lg-12"}
+			        onClick={component.handleAdd}
 			    >
 			        Add contact
 			    </div>	

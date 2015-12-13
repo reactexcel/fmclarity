@@ -107,9 +107,14 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// add collection helpers
 	collection.helpers({
 		collectionName:name,
-		save() {
+		save(extension) {
 			console.log('calling save method...');
 			var obj = this;
+			if(extension) {
+				for(var i in extension) {
+					obj[i] = extension;
+				}
+			}
 			Meteor.call(name+'.save',obj,function(){
 				FM.notify("updated",obj);
 			});
