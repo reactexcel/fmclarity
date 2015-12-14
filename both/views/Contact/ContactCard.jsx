@@ -18,7 +18,7 @@ ContactAvatarSmall = React.createClass({
 		return (
 			<div className="contact-card-avatar">
 			{profile?
-				<img alt="image" title={profile.name} data-toggle="tooltip" src={profile.thumb}/>
+				<img alt="image" title={profile.name} data-toggle="tooltip" src={contact.getThumbUrl()}/>
 			:
 				<div style={{width:"35px",height:"35px",border:"1px solid #ddd",borderRadius:"50%",backgroundColor:"#eee"}}/>
 			}

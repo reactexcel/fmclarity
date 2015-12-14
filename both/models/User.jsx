@@ -36,6 +36,7 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
+  defaultThumbUrl:"img/ProfilePlaceholderSuit.png",
   save:function(){
     Meteor.call('User.save',this);
   },
@@ -44,6 +45,21 @@ Users.helpers({
   },
   getName() {
     return this.profile.name;
+  },
+  getThumb() {
+    var thumb,profile;
+    profile = this.profile;
+    if(profile.thumb) {
+      thumb = Files.findOne(profile.thumb._id);
+    }
+    return thumb;
+  },
+  getThumbUrl() {
+    var thumb = this.getThumb();
+    if(thumb) {
+      return thumb.url();
+    }
+    return this.defaultThumbUrl;
   },
   getTeams() {
     return Teams.find({'_members':{'_id':Meteor.userId()}}).fetch();

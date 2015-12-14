@@ -1,11 +1,36 @@
-AccountEdit = React.createClass({
 
-	save() {
-		var team = this.props.item;
-		return function() {
-			team.save();
+BaseProfilePageMixin = {
+
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	return {
+    		selectedTeam:FM.getSelectedTeam()
+    	}
+    },
+
+	getInitialState() {
+		return {
+			item:this.props.item
 		}
 	},
+
+	componentWillReceiveProps(newProps) {
+		this.setItem(newProps.item);
+	},
+
+	setItem(newItem) {
+		this.setState({
+			item:newItem
+		});
+	},
+
+
+};
+
+AccountEdit = React.createClass({
+
+    mixins: [BaseProfilePageMixin],
 
 	form1 : [
 		"name",
@@ -38,36 +63,66 @@ AccountEdit = React.createClass({
 		});
 	},
 
+	handleInvite(event) {
+    	event.preventDefault();
+    	var selectedTeam,input,email,regex,component;
+    	component = this;
+		selectedTeam = this.data.selectedTeam;
+    	input = this.refs.invitationEmail;
+    	email = input.value;
+    	regex = /.+@.+\..+/i
+    	if(!regex.test(email)) {
+    		alert('Please enter a valid email address');
+    	}
+    	else {
+            input.value = '';
+            selectedTeam.inviteSupplier(email, function(err,supplier){
+            	supplier = Teams.findOne(supplier._id);
+            	component.setItem(supplier);
+            	if(component.props.onChange) {
+            		component.props.onChange(supplier);
+            	}
+            });
+	    }
+    },
+
 	render() {
-		var team,profile,schema;
-		team = this.props.item;
-		if(team) {
-			profile = team.getProfile();
-			schema = FM.schemas['Team'];
-		}
-		if(!team||!profile) {
-			return <div/>
+    	var selectedTeam,team,schema;
+    	team = this.state.item;
+    	selectedTeam = this.data.selectedTeam;
+		schema = FM.schemas['Team'];
+		if(!team) {
+			return (
+                <form className="form-inline">
+                    <div className="form-group">
+                        <b>Search for supplier:</b>
+                        <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
+                        <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
+                    </div>
+                </form>
+            )
 		}
 		return (
 		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <div className="row">
 			        <div className="col-lg-12">
-		            	<h2 className="background"><span>{profile.name}</span></h2>
+		            	<h2 className="background"><span>{team.getName()}</span></h2>
 		            </div>
 			   	</div>
 			   	<div className="row">
+			   		<div className="col-lg-12" style={{marginLeft:"15px"}}>
+			   			<span onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>Remove from team: <b>{selectedTeam.getName()}</b></span>
+			   		</div>
 			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-			        	<AutoForm item={profile} schema={schema} form={this.form1} save={this.save()} />
+			        	<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
 			        </div>
 			        <div className="col-lg-5">
-						<div className="contact-thumbnail">
-							<img style={{width:"93%"}} alt="image" src={profile.thumb}/>
-						</div>
+			        	<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
 					</div>
 				</div>
 				<div className="row">
 			        <div className="col-lg-12">
-			        	<AutoForm item={profile} schema={schema} form={this.form2} save={this.save()} />
+			        	<AutoForm item={team} schema={schema} form={this.form2} save={team.save.bind(team)} />
 		            </div>
 				</div>
 			</div>

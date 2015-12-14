@@ -17,12 +17,8 @@ AutoInput.switch = React.createClass({
 		var input = this.refs.input;
 		new Switchery(this.refs.input, {size:'small',color:'#db4437'});
 		input.onchange = function(e){
-		  	save({
-		  		target:{
-		  			value:e.target.checked
-		  		}
-		  	});
-		  }
+		  	save(e.target.checked);
+		}
 	},
 
 	render() {
@@ -53,11 +49,7 @@ AutoInput.switchbank = React.createClass({
 		  	var value = e.target.checked;
 		  	var fieldName = e.target.dataset.fieldName;
 		  	obj[fieldName] = value;
-		  	save({
-		  		target:{
-		  			value:obj
-		  		}
-		  	});
+		  	save(obj);
 		  }
 		});
 	},
@@ -109,7 +101,7 @@ AutoInput.menu = React.createClass({
 	},
 
 	onChange(event) {
-		this.props.onChange(event);
+		this.props.onChange(event.target.value);
 	},
 
 	render() {
@@ -221,6 +213,10 @@ AutoInput.dltext = React.createClass({
 
 AutoInput.mdtext = React.createClass({
 
+	handleChange(event) {
+		this.props.onChange(event.target.value);
+	},
+
 	render() {
 		var value, used;
 		value = this.props.value;
@@ -232,7 +228,7 @@ AutoInput.mdtext = React.createClass({
       			pattern=".{1,80}" 
       			className={"input "+(used?'used':'')} 
       			defaultValue={value}
-      			onChange={this.props.onChange}
+      			onChange={this.handleChange}
       		/>
       		<span className="highlight"></span>
       		<span className="bar"></span>
@@ -248,6 +244,10 @@ AutoInput.mdtextarea = React.createClass({
 		$(this.refs.input).elastic();
 	},
 
+	handleChange(event) {
+		this.props.onChange(event.target.value);
+	},
+
 	render() {
 		var value = this.props.value;
 		var used = value&&value.length;
@@ -260,7 +260,7 @@ AutoInput.mdtextarea = React.createClass({
 	          		ref="input"
 	          		className={"input inline-form-control "+(used?'used':'')}
 	          		defaultValue={value} 
-	          		onChange={this.props.onChange}>
+	          		onChange={this.handleChange}>
 	          	</textarea>
       			<span className="highlight"></span>
       			<span className="bar"></span>
@@ -274,6 +274,10 @@ AutoInput.textarea = React.createClass({
 
 	componentDidMount() {
 		$(this.refs.input).elastic();
+	},
+
+	handleChange(event) {
+		this.props.onChange(event.target.value);
 	},
 
 	render() {
@@ -291,7 +295,7 @@ AutoInput.textarea = React.createClass({
 	          		style={{margin:"0 17px",width:"97%"}}
 	          		className={"input inline-form-control "+(used?'used':'')}
 	          		defaultValue={value} 
-	          		onChange={this.props.onChange}>
+	          		onChange={this.handleChange}>
 	          	</textarea>
 	        </div>
 		)
@@ -299,6 +303,10 @@ AutoInput.textarea = React.createClass({
 });
 
 AutoInput.custom = React.createClass({
+
+	handleChange(event) {
+		this.props.onChange(event.target.value);
+	},
 
 	render() {
 		var options = this.props.options;
@@ -312,7 +320,7 @@ AutoInput.custom = React.createClass({
 	          		style={{margin:"0 17px",width:"97%"}}
 	          		className="inline-form-control" 
 	          		defaultValue={this.props.value} 
-	          		onChange={this.props.onChange}>
+	          		onChange={this.handleChange}>
 	          	</textarea>
 	        </div>
 		)
@@ -363,27 +371,13 @@ AutoForm = React.createClass({
     	})
     },
 
-    // you're a fucking idiot
-    // should just be updateField(field,subfield,event)
-    // don't need to return a function
-    // just a waste of space
-    updateField(field,subfield) {
-        var $scope = this;
+    updateField(field,value) {
         var item = this.state.item;
-        // returns a function that modifies 'field'
-        return function(event) {
-        	var value = event.target.value;
-        	if(subfield) {
-	            item[field][subfield] = value;
-        	}
-        	else {
-	            item[field] = value;
-	        }
-	        $scope.setState({
-	        	item:item
-	        })
-            $scope.saveItem();
-        }
+	    item[field] = value;
+	    this.setState({
+	        item:item
+	    })
+        this.saveItem();
     },
 
     saveItem() {
@@ -398,7 +392,7 @@ AutoForm = React.createClass({
 
 	render() {
 		if(!this.state.item) return <div/>;
-		var $scope = this;
+		var component = this;
 		var item = this.state.item;
 		var id = this.props.key||item._id;
 		var schema = this.props.schema;
@@ -420,7 +414,7 @@ AutoForm = React.createClass({
 					        		item={item[key]} 
 					        		key={id} 
 					        		schema={s.schema} 
-					        		save={$scope.props.save} 
+					        		save={component.props.save} 
 					        	/>
 					        </span>
 						)
@@ -439,7 +433,7 @@ AutoForm = React.createClass({
 						<Input
 							placeholder={placeholder}
 							value={item[key]} 
-							onChange={$scope.updateField(key)}
+							onChange={component.updateField.bind(component,key)}
 							options={s.options}
 						/>
 					</div>

@@ -116,6 +116,10 @@ Teams = FM.createCollection('Team',{
       type: [Object],
       label:"Members"
     },
+    suppliers: {
+      type: [Object],
+      label: "Suppliers"  
+    }
 },true);
 
 
@@ -138,7 +142,6 @@ if (Meteor.isServer) {
             name:name,
             email:email
           });
-          console.log()
           Accounts.sendEnrollmentEmail(uid);
         }
         else {
@@ -148,12 +151,40 @@ if (Meteor.isServer) {
       Meteor.call("Team.addMember",item,{_id:uid});
       return user||Users.findOne(uid);
     }
-  })
+  });
+
+  Meteor.methods({
+    "Team.inviteSupplier": function(item,email) {
+      var supplier, sid;
+      supplier = Teams.findOne({email:email});
+      if(supplier) {
+        sid = supplier._id;
+      }
+      else {
+        sid = Meteor.call("Team.new",{
+          type:"contractor",
+          email:email
+        });
+      }
+      Meteor.call("Team.addSupplier",item,{_id:sid});
+      return supplier||Teams.findOne(sid);
+    }
+  });
+
 }
 
 Meteor.methods({
   "Team.addMember":function(item,member) {
     Teams.update(item._id,{$push:{_members:member}});
+  },
+  "Team.removeMember":function(item,member) {
+    Teams.update(item._id,{$pull:{_members:{_id:member._id}}});
+  },
+  "Team.addSupplier":function(item,supplier) {
+    Teams.update(item._id,{$push:{suppliers:supplier}});
+  },
+  "Team.removeSupplier":function(item,supplier) {
+    Teams.update(item._id,{$pull:{suppliers:{_id:supplier._id}}});
   },
   "Team.addFacility":function(item,facilityQuery) {
     var facility = Facilities.findOne(facilityQuery);
@@ -168,14 +199,31 @@ Teams.helpers({
   inviteMember(email,callback) {
     Meteor.call('Team.inviteMember',this, email, callback)
   },
+  inviteSupplier(email,callback) {
+    Meteor.call('Team.inviteSupplier',this, email, callback)
+  },
+  removeMember(member, callback) {
+    Meteor.call('Team.removeMember',this, member, callback)
+  },
+  removeSupplier(supplier, callback) {
+    Meteor.call('Team.removeSupplier',this, supplier, callback)
+  },
   getProfile() {
     return this;
   },
   getMembers() {
-    if (this._members.length) {
+    if (this._members&&this._members.length) {
     	return Users.find({
     		$or:this._members
     	}).fetch();
+    }
+    return [];
+  },
+  getSuppliers() {
+    if (this.suppliers&&this.suppliers.length) {
+      return Teams.find({
+        $or:this.suppliers
+      }).fetch();
     }
     return [];
   },
@@ -208,7 +256,7 @@ Teams.helpers({
       return this.getContractorFacilities();
     }
     else {
-      return Facilities.find({"_team._id":this._id}).fetch();
+      return Facilities.find({"team._id":this._id}).fetch();
     }
   },
   addFacility(item) {
@@ -223,7 +271,7 @@ Teams.helpers({
       return this.getContractorIssues();
     }
     else {
-      return Issues.find({"_team._id":this._id}).fetch();
+      return Issues.find({"team._id":this._id}).fetch();
     }
   },
   getContractorIssues() {

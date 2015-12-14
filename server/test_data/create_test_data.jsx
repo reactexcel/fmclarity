@@ -76,7 +76,7 @@ FM.createTestData = function() {
             "Critical":0
         },
         _members:[{_id:brad._id},{_id:leo._id},{_id:rich._id}],
-        _contacts:[],
+        suppliers:[],
       },
       {
         type:"fm",
@@ -91,7 +91,7 @@ FM.createTestData = function() {
             "Critical":0
         },
         _members:[{_id:leo._id},{_id:rich._id}],
-        _contacts:[],
+        suppliers:[],
       },
       /*
       {
@@ -107,7 +107,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"Normal Contractors",
-        email:"xyz@abc.123",
+        email:"contractor1@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-1.png",
         _members:[{_id:leo._id},{_id:rich._id}],
@@ -116,7 +116,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"Harrison Services",
-        email:"xyz@abc.123",
+        email:"contractor2@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-2.png",
         _members:[],
@@ -125,7 +125,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"Rovo",
-        email:"xyz@abc.123",
+        email:"contractor3@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-3.png",
         _members:[],
@@ -134,7 +134,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"Shotnick",
-        email:"xyz@abc.123",
+        email:"contractor4@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-4.png",
         _members:[],
@@ -143,7 +143,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"ABC Contractors",
-        email:"xyz@abc.123",
+        email:"contractor5@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-5.png",
         _members:[],
@@ -152,7 +152,7 @@ FM.createTestData = function() {
       {
         type:"contractor",
         name:"DEF Contractors",
-        email:"xyz@abc.123",
+        email:"contractor6@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-6.png",
         _members:[],
@@ -256,16 +256,16 @@ FM.createTestData = function() {
 
         ExampleFacilities[i].services = JSON.parse(JSON.stringify(Config.services));
 
-        ExampleFacilities[i]._contacts = [{
+        ExampleFacilities[i].contacts = [{
             _id:contactId,
             name:contact.name,
             phone:contact.phone,
             email:contact.email
         }];
 
-        ExampleFacilities[i]._tenants = [];
+        ExampleFacilities[i].tenants = [];
 
-        ExampleFacilities[i]._team = {_id:teams[r]._id};
+        ExampleFacilities[i].team = {_id:teams[r]._id};
         ExampleFacilities[i].lease = {
             parking:{},
             insuranceDetails:{},
@@ -307,7 +307,7 @@ FM.createTestData = function() {
 
         ExampleIssues[i].code = Math.floor(Math.random()*1000);
 
-        ExampleIssues[i]._team = facilities[f]._team;
+        ExampleIssues[i].team = facilities[f].team;
         ExampleIssues[i]._creator = {
             _id:members[m]._id,
             name:members[m].name

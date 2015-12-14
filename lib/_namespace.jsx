@@ -6,7 +6,8 @@ FM.schemas = {};
 
 if(Meteor.isClient) {
 	FM.getSelectedTeam = function() {
-		return Meteor.user().getSelectedTeam();
+	    var selectedTeamQuery = Session.get('selectedTeam');
+	    return Teams.findOne(selectedTeamQuery);
 	}
 }
 
@@ -117,6 +118,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// add collection helpers
 	collection.helpers({
 		collectionName:name,
+		defaultThumbUrl:"img/default-placeholder.png",
 		save(extension) {
 			console.log('calling save method...');
 			var obj = this;
@@ -128,6 +130,11 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			Meteor.call(name+'.save',obj,function(){
 				FM.notify("updated",obj);
 			});
+		},
+		set(field,value) {
+			var obj = this;
+			obj[field] = value;
+			obj.save();
 		},
 		destroy(){
 			console.log('calling destroy method...');
@@ -147,7 +154,35 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		},
 		getCreator() {
 			return Users.findOne(this._creator._id);
-		}
+		},
+		getThumb() {
+			var thumb;
+			if(this.thumb) {
+				thumb = Files.findOne(this.thumb._id);
+			}
+			else if(this.attachments&&this.attachments[0]) {
+				thumb = Files.findOne(this.attachments[0]._id);
+			}
+			return thumb;
+		},
+		getAttachmentUrl(index) {
+    		index=index||0;
+		    var file;
+			if(this.attachments&&this.attachments[index]) {
+    			file = Files.findOne(this.attachments[index]._id);
+    			if(file) {
+    				return file.url();
+    			}
+    		}
+    		return this.defaultThumb;
+		},
+		getThumbUrl() {
+			var thumb = this.getThumb();
+			if(thumb) {
+				return thumb.url();
+			}
+			return this.defaultThumbUrl;
+		},
 	});
 
 	// add collection hooks

@@ -84,7 +84,7 @@ TopNavBar = React.createClass({
             return (<div/>)
         }
         var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
-        var userThumb = Meteor.user()?Meteor.user().profile.thumb:'';
+        var userThumb = Meteor.user()?Meteor.user().getThumbUrl():'';
         var setTeam = this.selectTeam;
         var selectedTeam = this.data.team;
         var notifications = this.data.notifications;

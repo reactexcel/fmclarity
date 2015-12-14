@@ -204,14 +204,8 @@ TestIssues.generate = function() {
 	    costThreshold:500,
 	    createdAt:randomDate(startDate, new Date()),
 	    priority:newStatus=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical']),
-	    _attachments:["img/issue-1.jpg","img/issue-2.jpg","img/issue-3.jpg"],
+	    attachments:[],
 	    messages:[],
-	    closeDetails:{},
-	    contact:{
-	      name:"John Smith",
-	      email:"johnny@flart.flart",
-	      phone:"0444-123-321",
-	      thumb:"a2.jpg"
-	    }
+	    closeDetails:{}
 	}
 }

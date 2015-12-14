@@ -31,11 +31,7 @@ DiscussionPost = React.createClass({
         // returns reference object to save
         Meteor.call("Message.save",message,function(err,response){
             event.target.value = null;
-            callback({
-                target:{
-                    value:response
-                }
-            });
+            callback(response);
         })
     },
 

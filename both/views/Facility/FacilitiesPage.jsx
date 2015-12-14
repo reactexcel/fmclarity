@@ -27,7 +27,7 @@ PageProperties = React.createClass({
     createNew(callback) {
     	var selectedTeam = this.data.selectedTeam;
 		FM.create("Facility",{
-    		_team:{
+    		team:{
     			_id:selectedTeam._id,
     			name:selectedTeam.name
     		}

@@ -1,23 +1,10 @@
 
 UserProfile = React.createClass({
 
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	return {
-    		team:FM.getSelectedTeam()
-    	}
-    },
-
-	getInitialState() {
-		var user = this.props.item;
-		return {
-			user:user
-		}
-	},
+    mixins: [BaseProfilePageMixin],
 
 	save() {
-		Meteor.call('User.save',this.state.user);
+		Meteor.call('User.save',this.state.item);
 	},
 
 	form1 : {
@@ -47,17 +34,11 @@ UserProfile = React.createClass({
 		}
 	},
 
-	setUser(user) {
-		this.setState({
-			user:user
-		})
-	},
-
 	handleInvite(event) {
     	event.preventDefault();
     	var team,input,email,regex,component;
     	component = this;
-		team = this.data.team;
+		team = this.data.selectedTeam;
     	input = this.refs.invitationEmail;
     	email = input.value;
     	regex = /.+@.+\..+/i
@@ -67,7 +48,7 @@ UserProfile = React.createClass({
     	else {
             input.value = '';
             team.inviteMember(email, function(err,user){
-            	component.setUser(user);
+            	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);
             	}
@@ -75,9 +56,20 @@ UserProfile = React.createClass({
 	    }
     },
 
-	render() {
+    handleThumbChange(newThumb) {
 		var user, profile;
-		user = this.state.user;
+		user = this.state.item;
+		if(user) {
+			profile = user.profile;
+		}
+		profile.thumb = newThumb;
+		this.save();
+    },
+
+	render() {
+		var user, profile, team;
+		user = this.state.item;
+		team = this.data.selectedTeam;
 		if(user) {
 			profile = user.profile;
 		}
@@ -100,13 +92,14 @@ UserProfile = React.createClass({
 		            </div>
 			   	</div>
 			   	<div className="row">
+			   		<div className="col-lg-12" style={{marginLeft:"15px"}}>
+			   			<span onClick={team.removeMember.bind(team,user)}>Remove from team: <b>{team.getName()}</b></span>
+			   		</div>
 			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			        <div className="col-lg-5">
-						<div className="contact-thumbnail">
-							<img style={{width:"100%"}} alt="image" src={profile.thumb}/>
-						</div>
+			        	<AutoInput.File item={profile.thumb} onChange={this.handleThumbChange} />
 					</div>
 			        <div className="col-lg-12">
 			        	<AutoForm item={profile} schema={this.form2} save={this.save} />

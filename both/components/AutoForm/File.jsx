@@ -1,4 +1,4 @@
-AutoInput.file = React.createClass({
+AutoInput.File = React.createClass({
 
 	mixins: [ReactMeteorData],
 
@@ -11,16 +11,12 @@ AutoInput.file = React.createClass({
     	}
     },
 
-	onChange(event) {
+	handleChange(event) {
 		var component = this;
 	    FS.Utility.eachFile(event, function(file) {
 	    	Files.insert(file, function (err, newFile) {
 	    		component.props.onChange({
-	    			target:{
-	    				value:{
-			    			_id:newFile._id
-	    				}
-	    			}
+			    	_id:newFile._id
 	    		});
 	    	});
 	    });
@@ -35,7 +31,7 @@ AutoInput.file = React.createClass({
 			<div onClick={this.onClick} className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
 			    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
 				<div style={{width:0,height:0,overflow:"hidden"}}>
-					<input ref="input" type="file" onChange={this.onChange}/>
+					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
 			</div>
 		)

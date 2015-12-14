@@ -1,17 +1,9 @@
 Discussion = React.createClass({
 
-    onChange(index,event) {
-        console.log({
-            event:event,
-            index:index
-        });
+    handleChange(index,newValue) {
         var messages = this.props.value||[];
-        messages[index] = event.target.value;
-        this.props.onChange({
-            target:{
-                value:messages
-            }
-        })
+        messages[index] = newValue;
+        this.props.onChange(messages);
     },    
 
     render(){
@@ -24,14 +16,14 @@ Discussion = React.createClass({
                     <div key={message._id} className="feed-element" style={{paddingBottom:0}}>
                         <DiscussionPost
                             value={message}
-                            onChange={component.onChange.bind(null,idx)}
+                            onChange={component.handleChange.bind(null,idx)}
                         />
                     </div>
                 )
             })}
             
                 <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
-                    <DiscussionPost onChange={component.onChange.bind(null,messages.length)}/>
+                    <DiscussionPost onChange={component.handleChange.bind(null,messages.length)}/>
                 </div>
             
             </div>

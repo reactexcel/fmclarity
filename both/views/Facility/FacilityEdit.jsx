@@ -314,18 +314,18 @@ FacilityEdit = React.createClass({
 				        </div>
 					</CollapseBox>
 			   		<CollapseBox title="Documents & images">
-				        <AutoForm item={facility} schema={schema} form={['_attachments']} save={this.save()} />
+				        <AutoForm item={facility} schema={schema} form={['attachments']} save={this.save()} />
 					</CollapseBox>
 			   		<CollapseBox title="Contacts">
 			   			<ContactList 
 			   				items={contacts} 
-			   				onChange={this.updateField.bind(null,'_contacts')}
+			   				onChange={this.updateField.bind(null,'contacts')}
 			   			/>
 					</CollapseBox>
 			   		<CollapseBox title="Tenants">
 			   			<ContactList 
 			   				items={tenants} 
-			   				onChange={this.updateField.bind(null,'_tenants')}
+			   				onChange={this.updateField.bind(null,'tenants')}
 			   			/>
 					</CollapseBox>
 			   		<CollapseBox title="Facility holder" collapsed={true}>

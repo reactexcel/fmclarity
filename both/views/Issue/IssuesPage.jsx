@@ -30,7 +30,7 @@ PageRequests = React.createClass({
         var selectedTeam = Meteor.user().getSelectedTeam();
         var issue = {}
         if(selectedTeam) {
-    		issue._team = {
+    		issue.team = {
     			_id:selectedTeam._id,
 	    		name:selectedTeam.name
 	    	}

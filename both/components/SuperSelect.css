@@ -9,6 +9,10 @@
 	top:18px;
 }
 
+.super-select .dropdown-menu {
+	max-height:303px;
+}
+
 .super-select .browse-button {
 	font-weight:bold;
 	text-align: center;

@@ -3,32 +3,26 @@ PageSuppliers = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var handle = Meteor.subscribe('contractors');
+        Meteor.subscribe('contractors');
+        var team, suppliers;
+        team = FM.getSelectedTeam();
+        if(team) {
+            suppliers = team.getSuppliers();
+        }
         return {
-            items : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
+        	team : team,
+            suppliers : suppliers
+//            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
         }
     },
 
+    showModal(selectedUser) {
+        Modal.show({
+            content:<AccountEdit />
+        })
+    },
+
 	render() {
-		// okay - so we really need to pass in a function here
-		// seeing as this class is the only one aware of the 
-		// structure of the data being sent in
-		/*
-		var filters = [
-	      {
-	        text:"All"
-	      },
-	      {
-	        text:"Expired"
-	      },
-	      {
-	        text:"Incomplete",
-	        filter(i) {
-	        	return i.clientExecuted==false;
-	        }
-	      }
-	    ];
-	    */
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
@@ -38,9 +32,10 @@ PageSuppliers = React.createClass({
 		        </div>
 		        <div className="contacts-page wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
-						items={this.data.items}
+						items={this.data.suppliers}
+						newItemCallback={this.showModal}
 						itemView={{
-							summary:ContactCard,
+							summary:Contact2LineWithAvatar,
 							detail:AccountFlipWidget
 						}}
 					/>

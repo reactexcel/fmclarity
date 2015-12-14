@@ -49,7 +49,7 @@ Issues = FM.createCollection('Issue',{
   },
   code:{
     defaultValue:function(item) {
-      var team = Teams.findOne({_id:item._team._id});
+      var team = Teams.findOne({_id:item.team._id});
       return team.getNextWOCode();
     }
   },
@@ -57,7 +57,7 @@ Issues = FM.createCollection('Issue',{
     label:"Thumbnail file",
     defaultValue:["img/default-placeholder.png"]
   },
-  _attachments:{
+  attachments:{
     type:[Object],
     label:"Attachments",
     input:"attachments"
@@ -68,7 +68,7 @@ Issues = FM.createCollection('Issue',{
   },
   area:{
   },
-  _team:{
+  team:{
     type:Object
   },
   _facility:{
@@ -96,7 +96,7 @@ Issues.helpers({
     return Users.findOne(this._creator._id);
   },
   getTeam() {
-    return Teams.findOne({_id:this._team._id});
+    return Teams.findOne({_id:this.team._id});
   },
   getArea() {
     return this.area;
@@ -104,20 +104,6 @@ Issues.helpers({
   getTimeframe() {
     var team = this.getTeam();
     return team.getTimeframe(this.priority);
-  },
-  getAttachmentUrl(index) {
-    index=index||0;
-    var file;
-    if(this._attachments&&this._attachments[index]) {
-      file = Files.findOne(this._attachments[index]._id);
-      if(file) {
-        return file.url();
-      }
-  }
-  return "img/default-placeholder.png";
-  },
-  getThumbUrl() {
-    return this.getAttachmentUrl(0);
   },
   setPriority(priority) {
     var team = this.getTeam();

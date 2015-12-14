@@ -20,8 +20,13 @@ FilterBox2 = React.createClass({
     if(filters) {
     	var filter = this.props.filters[this.state.selectedFilterNum].filter;
       if(filter) {
-		    return _.filter(items,filter);
+		    items = _.filter(items,filter);
       }
+    }
+    if(items&&items.length) {
+      items = items.sort(function(a,b){
+        return a.getName()<b.getName()?-1:1;
+      });
     }
     return items;
   },
@@ -35,12 +40,14 @@ FilterBox2 = React.createClass({
   createNewItem() {
     var component = this;
     component.setFilter(0);
-    this.props.newItemCallback(function(newItem){
-      console.log({'callback is being called - hooray!':newItem});
-      component.setState({
-        selectedItem:newItem
+    if(this.props.newItemCallback) {
+      this.props.newItemCallback(function(newItem){
+        console.log({'callback is being called - hooray!':newItem});
+        component.setState({
+          selectedItem:newItem
+        });
       });
-    });
+    }
   },
 
   toggle() {
@@ -57,16 +64,12 @@ FilterBox2 = React.createClass({
     var title = $this.props.title;
     var filters = $this.props.filters;
 
-    var selectedFilterNum = $this.state.selectedFilterNum;
-    var initialItems = $this.props.items;
+    var selectedFilterNum = this.state.selectedFilterNum;
+    var initialItems = this.props.items;
 
 
-    //console.log(initialItems);
+    var items = this.applyFilter(initialItems);
 
-    var items = $this.applyFilter(initialItems);
-    items = items.sort(function(a,b){
-      return a.getName()<b.getName()?-1:1;
-    });
 
     var numCols = parseInt(this.props.numCols) || 1;
     var colSize = Math.floor(12 / numCols);

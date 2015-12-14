@@ -14,8 +14,11 @@ DONE
 IN PROGRESS
 -----------
 
+-----------
 * Services should be filtered according to selected facility
 * When a new facility is created it doesn't have default areas or services
+* Team settings: Edit view of every member just shows current member
+
 
 * Remove underscore prefix from fields in models
 * Include date attended, date finalised, date reviewed in issue data
@@ -24,11 +27,10 @@ IN PROGRESS
 * SSL
 * RBAC
 * Email notifications
-* Finsh "close out work order" screen
+* Finish "close out work order" screen
 * Contractors filtered by service type when creating a work order
 * Conversations in work orders, make discussion component (for log an comments), hook discussions into notifications widget
 * Notifications when work orders progress
-* Add new contractor button - works the same as adding a new user
 * Dashboard reflecting real data
 
 ** Cross browser **

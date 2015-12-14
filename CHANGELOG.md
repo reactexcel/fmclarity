@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v0.3.6a**
+
+* Can scroll through service types
+* Fixed problem causing "newItemCallback not a function" error in FilterBox2
+* Fixed a bug that was causing program to crash when trying to open portfolio of contractor with no requests
+* Can now change the avatar/logo for users and teams
+* Cleaned source: Autoform component now passes new value to callback instead of needlessly simulated event structure
+* Cleaned source: Removed underscore prefix from field names in facility table
+* Suppliers: Can add new contractors in same manner as adding members to team
+* Team settings: Can remove members from team
+* Suppliers: Can remove suppliers from list
+
 **v0.3.5a**
 
 * Clicking away from a dropdown closes it

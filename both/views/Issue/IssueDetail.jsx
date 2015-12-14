@@ -109,25 +109,13 @@ IssueDetail = React.createClass({
         //Meteor.call("Issue.save",this.issue);
     },
 
-    updateField(field) {
-        var $this = this;
-        // returns a function that modifies 'field'
-        return function(event) {
-            $this.item[field] = event.target.value;
-            $this.saveItem();
-        }
-    },
-
-    updateObjectField(field) {
-        var $this = this;
-        return function(obj) {
-            $this.item[field] = obj;
-            $this.item.save();
-        }
-    },
-
-    updateLikeAutoform(field,event) {
+    updateField(field,event) {
         this.item[field] = event.target.value;
+        this.saveItem();
+    },
+
+    updateObjectField(field,obj) {
+        this.item[field] = obj;
         this.item.save();
     },
 
@@ -275,7 +263,7 @@ IssueDetail = React.createClass({
             <div>
                 <SuperSelect 
                     items={['Scheduled','Standard','Urgent','Critical']} 
-                    onChange={this.updateObjectField('priority')}
+                    onChange={this.updateObjectField.bind(this,'priority')}
                 >
                     <div style={{padding:"9px"}}>
                         <IssuePriority issue={issue} />
@@ -291,7 +279,7 @@ IssueDetail = React.createClass({
                             placeholder="Type issue title here"
                             className="inline-form-control" 
                             defaultValue={issue.name} 
-                            onChange={this.updateField('name')}
+                            onChange={this.updateField.bind(this,'name')}
                         />
                     </h2>
                     <div style={{marginTop:"7px",marginBottom:"7px"}}>
@@ -303,7 +291,7 @@ IssueDetail = React.createClass({
                             <span style={{display:"inline-block"}}><input 
                                 className="inline-form-control" 
                                 defaultValue={issue.costThreshold} 
-                                onChange={this.updateField('costThreshold')}
+                                onChange={this.updateField.bind(this,'costThreshold')}
                             /></span>
                         </div>
                     </div>
@@ -328,7 +316,7 @@ IssueDetail = React.createClass({
                                 itemView={ContactViewName}
                                 items={issue.service.subservices}
                                 classes="absolute"
-                                onChange={this.updateObjectField('subservice')}
+                                onChange={this.updateObjectField.bind(this,'subservice')}
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.subservice?"Select":""} subtype</span>
                             </SuperSelect>
@@ -346,7 +334,7 @@ IssueDetail = React.createClass({
                             itemView={ContactViewName}
                             items={this.data.suppliers} 
                             classes="absolute"
-                            onChange={this.updateObjectField('_supplier')}
+                            onChange={this.updateObjectField.bind(this,'_supplier')}
                         >
                             <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>
 
@@ -364,7 +352,7 @@ IssueDetail = React.createClass({
                                 itemView={ContactViewName}
                                 items={supplier.getMembers()}
                                 classes="absolute"
-                                onChange={this.updateObjectField('_assignee')}
+                                onChange={this.updateObjectField.bind(this,'_assignee')}
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"":""} assignee</span>
                             </SuperSelect>
@@ -389,14 +377,14 @@ IssueDetail = React.createClass({
                         placeholder="Type issue description here"
                         className="issue-description-textarea inline-form-control" 
                         defaultValue={issue.description} 
-                        onChange={this.updateField('description')}
+                        onChange={this.updateField.bind(this,'description')}
                     />
                 </div>
                 <div className="col-lg-12">
                     <IpsoTabso tabs={[
                     {
                         tab:<span><span>Images</span><span className="label label-notification">3</span></span>,
-                        content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['_attachments']} save={this.saveItem} />
+                        content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.saveItem} />
 
                     },{
                         tab:"Documents",
@@ -407,7 +395,7 @@ IssueDetail = React.createClass({
                             <IssueDiscussion items={notifications}/>
                             <Discussion 
                                 value={issue.messages} 
-                                onChange={this.updateLikeAutoform.bind(this,'messages')}
+                                onChange={this.updateObjectField.bind(this,'messages')}
                             />
                         </div>
                     },{
