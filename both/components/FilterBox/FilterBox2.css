@@ -2,6 +2,10 @@
 	background-color:#fff;
 }
 
+.card-header-summary {
+	cursor:pointer;
+}
+
 .md-skin .filter-box-2.ibox > .ibox-title {
 	background-color: transparent;
 }

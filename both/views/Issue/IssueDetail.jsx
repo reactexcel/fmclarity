@@ -41,7 +41,7 @@ IssueFacilitySelector = React.createClass({
                 itemView={ContactViewName}
                 onChange={this.handleChange.bind(null,'_facility')}
             >
-                <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                <span className="issue-summary-facility-col">
                     {facility?<span>{facility.getName()} -</span>:<span style={{color:"#999"}}>Select facility</span>}
                 </span>
             </SuperSelect>
@@ -52,7 +52,7 @@ IssueFacilitySelector = React.createClass({
                 onChange={this.handleChange.bind(null,'area')}
             >
                 <span style={{marginLeft:"4px"}} className="issue-summary-facility-col">
-                    {area?<span>{area.name}</span>:<span style={{color:"#999"}}>Select area</span>}
+                    {area?<span>{area.name}</span>:<span className="active-link-light">Select area</span>}
                 </span>
             </SuperSelect>
             :null}
@@ -89,6 +89,8 @@ IssueDetail = React.createClass({
 
                 issue:issue,
                 facility:facility,
+
+                selectedTeam: FM.getSelectedTeam(),
 
                 creator:issue.getCreator(),
                 supplier:issue.getSupplier(),
@@ -265,7 +267,7 @@ IssueDetail = React.createClass({
                     items={['Scheduled','Standard','Urgent','Critical']} 
                     onChange={this.updateObjectField.bind(this,'priority')}
                 >
-                    <div style={{padding:"9px"}}>
+                    <div style={{padding:"9px",height:0}}>
                         <IssuePriority issue={issue} />
                     </div>
                 </SuperSelect>
@@ -274,7 +276,7 @@ IssueDetail = React.createClass({
         <div className="col-lg-11" style={{marginLeft:"-25px",marginRight:"-25px",width:"95%"}}>
             <div className="issue-spec-area row">
                 <div className="col-lg-6" style={{paddingLeft:"10px"}}>
-                    <h2 style={{margin:0}}>
+                    <h2 style={{margin:0,position:"relative",top:"2px",left:"-2px"}}>
                         <input 
                             placeholder="Type issue title here"
                             className="inline-form-control" 
@@ -284,7 +286,7 @@ IssueDetail = React.createClass({
                     </h2>
                     <div style={{marginTop:"7px",marginBottom:"7px"}}>
                         <IssueFacilitySelector issue={issue} />
-                        <div style={{marginLeft:"4px"}} className="issue-summary-facility-col">
+                        <div style={{cursor:"default"}} className="issue-summary-facility-col">
                             <b>Order #</b>
                             <span>{issue.code}</span>&nbsp;
                             <b>Cost $</b>
@@ -307,7 +309,7 @@ IssueDetail = React.createClass({
                             <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.service?"Select":""} service type</span>
                         </SuperSelect>
                         {issue.service?
-                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
+                            <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
                         :null}
                     </div>
                     {issue.service&&issue.service.subservices&&issue.service.subservices.length?
@@ -321,7 +323,7 @@ IssueDetail = React.createClass({
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.subservice?"Select":""} subtype</span>
                             </SuperSelect>
                             {issue.subservice?
-                                <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{issue.subservice.name}</span>
+                                <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{issue.subservice.name}</span>
                             :null}
                         </div>
                     :null}
@@ -341,12 +343,12 @@ IssueDetail = React.createClass({
                         </SuperSelect>
 
                         {!supplier?null:
-                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{supplier.name}</span>
+                            <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{supplier.name}</span>
                         }
 
                     </div>
                     :null}
-                    {issue.status&&supplier?
+                    {issue.status&&supplier&&supplier._id==this.data.selectedTeam._id?
                         <div style={{position:"relative",top:"15px"}}>
                             <SuperSelect 
                                 itemView={ContactViewName}
@@ -356,7 +358,7 @@ IssueDetail = React.createClass({
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"":""} assignee</span>
                             </SuperSelect>
-                            <span style={{position:"relative","top":"15px",fontSize:"11px",left:"1px"}}>{assignee?assignee.getName():'-'}</span>
+                            <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{assignee?assignee.getName():'-'}</span>
                         </div>
                     :null}
                 </div>
@@ -371,7 +373,7 @@ IssueDetail = React.createClass({
 
             <div className="issue-dynamic-area row">
                 <div className="col-lg-12">
-                    <span style={{paddingLeft:0}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
+                    <span style={{paddingLeft:0,cursor:"default"}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <textarea 
                         ref="description"
                         placeholder="Type issue description here"

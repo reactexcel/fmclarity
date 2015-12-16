@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v0.3.7a**
+
+* Fixed issue where dropdown boxes were wrong size or had text overflow
+* Added "pointer" cursor style to dropdown menu items and to contacts, and other relevant locations
+* Added hover state for dropdown menu items
+* Fixed an issue where items on the left navigation where being cut off in the minimised state
+* WO: Need to be the selected supplier before you can select assignee
+
 **v0.3.6a**
 
 * Can scroll through service types

@@ -53,11 +53,13 @@ MainLayout = React.createClass({
 
     // FIXED-SIDEBAR
     // Uncomment this if you want to have fixed left navigation
+    /*
     $('body').addClass('fixed-sidebar');
      $('.sidebar-collapse').slimScroll({
          height: '100%',
          railOpacity: 0.9
      });
+    */
     
     // slim scroll for right sidebar
     $('.sidebar-container').slimScroll({

@@ -34,13 +34,13 @@ FacilityFilter = React.createClass({
             {
                 facility?
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
-                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={facility.getThumbUrl()} />
-                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">{facility.getName()}</div>
+                    <img style={{width:"40px",float:"left","borderRadius":"2px"}} alt="image" src={facility.getThumbUrl()} />
+                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 45px"}} className="nav-label">{facility.getName()}</div>
                 </div>
                 :
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
                     <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={"img/building-undefined.jpg"} />
-                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 5px"}} className="nav-label">All facilities<br/>(click to select one)</div>
+                    <div style={{"whiteSpace":"normal",width:"165px","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 45px"}} className="nav-label">All facilities<br/>(click to select one)</div>
                 </div>
             }
             </SuperSelect>
@@ -104,12 +104,12 @@ Navigation = React.createClass({
         var modules = this.data.modules;
 
     return (
-    <nav className="navbar-default navbar-static-side" role="navigation">
-        <div className="sidebar-collapse">
+    <nav className="navbar-default navbar-static-side" role="navigation" style={{height:"100%"}}>
+        <div className="sidebar-collapse" style={{marginTop:"55px"}}>
 
             <a className="close-canvas-menu"><i className="fa fa-times"></i></a>
 
-                <div style={{position:"relative",top:"20px",left:"20px"}}>
+                <div style={{position:"relative",top:"-34px",left:"20px"}}>
                     <a style={{fontWeight:"normal"}}>
                         <FacilityFilter/>
                     </a>
@@ -163,17 +163,14 @@ Navigation = React.createClass({
                     <a href={FlowRouter.path('reports')}><i className="fa fa-bar-chart-o"></i> <span className="nav-label">Reports</span></a>
                 </li>
                 }
-                <li>
-                    <a href=""><i className="fa fa-cog"></i> <span className="nav-label">Settings</span>{/*<span className="fa arrow"></span>*/}</a>
-                    <ul className="nav nav-second-level">
                         <li className={FlowRouter.getRouteName()=='account'?'active':''}>
-                            <a href={FlowRouter.path('account')}>Account</a>
+                            <a href={FlowRouter.path('account')}><i className="fa fa-cog"></i> <span className="nav-label">Account</span></a>
                         </li>
                         <li className={FlowRouter.getRouteName()=='team'?'active':''}>
-                            <a href={FlowRouter.path('team')}>Team</a>
+                            <a href={FlowRouter.path('team')}><i className="fa fa-cog"></i> <span className="nav-label">Team</span></a>
                         </li>
                         <li className={FlowRouter.getRouteName()=='profile'?'active':''}>
-                            <a href={FlowRouter.path('profile')}>Profile</a>
+                            <a href={FlowRouter.path('profile')}><i className="fa fa-cog"></i> <span className="nav-label">Profile</span></a>
                         </li>
                         {/*
                         <li className={FlowRouter.getRouteName()=='contacts'?'active':''}>
@@ -183,12 +180,10 @@ Navigation = React.createClass({
                             <a href={FlowRouter.path('induction')}>Induction</a>
                         </li>
                         */}
-                    </ul>
-                </li>
             </ul>
             <a style={{
                 position:"absolute",
-                right:"-1px",
+                right:"0px",
                 fontSize:"20px",
                 padding:"0px 5px",
                 top:"40%",

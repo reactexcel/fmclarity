@@ -36,8 +36,8 @@ ContactList = React.createClass({
 			                style={{padding:0}}
 			                className={"col-lg-12"}
 			            >
-			            	<span onClick={component.handleRemove.bind(null,idx)} className="pull-right">delete</span>
-			            	<div onClick={component.showModal.bind(null,contact)}>
+			            	<span className="active-link" onClick={component.handleRemove.bind(null,idx)} className="pull-right">delete</span>
+			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
 					            <ContactCard item={contact}/>
 					        </div>
 			            </div>	
@@ -48,7 +48,7 @@ ContactList = React.createClass({
 			        className={"col-lg-12"}
 			        onClick={component.showModal.bind(null,null)}
 			    >
-			        Add contact
+			        <span className="active-link">Add contact</span>
 			    </div>	
 			</div>
 		)

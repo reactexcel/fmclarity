@@ -1,3 +1,7 @@
+.active-link {
+	cursor: pointer;
+}
+
 .contact-card-2line {
 	text-align:left;
 }

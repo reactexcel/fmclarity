@@ -49,22 +49,16 @@ SuperSelect = React.createClass({
                     </span>
                     <ul className="dropdown-menu dropdown-messages">
                     {clearOption?
-	                    <span>
-	                    	<li onClick={component.handleChange.bind(null,null)}>
-	                        	<Card item={clearOption} />
-	                    	</li>
-	                    	<li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
-	                    </span>
+                    	<li className="dropdown-menu-item" onClick={component.handleChange.bind(null,null)}>
+                        	<Card item={clearOption} />
+                    	</li>
 	                :null}
 
                     {items.map(function(i,idx){
 						return (
-	                    	<span key={idx}>
-	                        <li onClick={component.handleChange.bind(null,i)}>
+	                        <li key={idx} className="dropdown-menu-item" onClick={component.handleChange.bind(null,i)}>
 	                        	<Card item={i} />
 	                        </li>
-	                        <li style={{clear:"both",margin:"10px 0"}} className="divider"></li>
-	                        </span>
 						)                    	
                     })}
                     {/*<li className="browse-button">Browse</li>*/}

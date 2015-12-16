@@ -15,10 +15,11 @@ IN PROGRESS
 -----------
 
 -----------
+* Button hover state is currently modified using opacity, should be set using less command background-color:darken(@color)
 * Services should be filtered according to selected facility
 * When a new facility is created it doesn't have default areas or services
 * Team settings: Edit view of every member just shows current member
-
+* Team settings: When person removed from a team they should be deselected
 
 * Remove underscore prefix from fields in models
 * Include date attended, date finalised, date reviewed in issue data
