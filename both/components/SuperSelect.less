@@ -22,7 +22,6 @@
 	float:left;
 	width:100%;
 	line-height: 20px;
-	border-bottom:1px solid #ddd;
 	background-color:#fff;
 	padding:6px;
 }
@@ -31,10 +30,23 @@
 	background-color:#eee;
 }
 
-.dropdown-toggle {
-	cursor:pointer;
+.super-select {
+	.dropdown-toggle {
+		cursor:pointer;
+	}
+
+	.dropdown-toggle:hover {
+		color:@navy;
+	}	
 }
 
-.dropdown-toggle:hover {
-	color:@navy;
+.super-select.readonly {
+	.dropdown-toggle {
+		cursor:default;
+	}
+
+	.dropdown-toggle:hover {
+		color:inherit;
+	}
 }
+

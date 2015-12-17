@@ -220,12 +220,12 @@ Teams.helpers({
     return [];
   },
   getSuppliers() {
-    if (this.suppliers&&this.suppliers.length) {
-      return Teams.find({
-        $or:this.suppliers
-      }).fetch();
-    }
-    return [];
+    var teamQuery, suppliersQuery;
+    teamQuery = Session.get("selectedTeam");
+    suppliersQuery = [teamQuery].concat(this.suppliers);
+    return Teams.find({
+      $or:suppliersQuery
+    }).fetch();
   },
   getTimeframe(priority) {
     var timeframes = this.timeframes||{

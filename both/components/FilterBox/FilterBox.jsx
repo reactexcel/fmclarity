@@ -5,10 +5,12 @@ FilterBox = React.createClass({
     this.card = this.props.card;
     this.items = this.props.items;
     this.applyFilter();
+    //$("#page-wrapper").on('click',this.toggleExpandedItem);
 	},
 
   getInitialState() {
     return {
+      expandedItem:null,
       selectedFilterNum:0,
       selectedSortNum:null,
       sortDirection:1
@@ -69,7 +71,8 @@ FilterBox = React.createClass({
   setFilter(filterNum) {
     this.setState({
       selectedFilterNum:filterNum
-    })
+    });
+    this.toggleExpandedItem();
   },
 
   setSort(sortNum) {
@@ -89,10 +92,34 @@ FilterBox = React.createClass({
       selectedSortNum:sortNum,
       sortDirection:direction
     })
+    this.toggleExpandedItem();
   },
 
   createNewItem() {
     this.props.newItemCallback();
+  },
+
+  toggleExpandedItem(item,callback) {
+    console.log({'got here':item});
+    var expandedItem,isExpanded;
+    if(
+      !item||
+      (this.state.expandedItem&&this.state.expandedItem._id==item._id)
+    ) 
+    {
+      expandedItem = null;
+      isExpanded = false;
+    }
+    else {
+      expandedItem = item;
+      isExpanded = true;
+    }
+    this.setState({
+      expandedItem:expandedItem
+    });
+    if(callback) {
+      callback(isExpanded);
+    }
   },
 
 	render() {
@@ -104,6 +131,7 @@ FilterBox = React.createClass({
     var selectedFilterNum = $this.state.selectedFilterNum;
     var selectedSortNum = this.state.selectedSortNum;
     var sortDirection = this.state.sortDirection;
+
     var initialItems = $this.props.items;
     var items = $this.applyFilter(initialItems);
     items = $this.applySort(items);
@@ -169,15 +197,17 @@ FilterBox = React.createClass({
           </div>
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
-              {items.map(function(i,index){
+              {items.map(function(item,index){
                 return (
                   <div 
-                    key={i._id}
+                    key={item._id}
                     style={{padding:0}}
                     className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
                   >
                     <CardWrapper 
-                      item={i}
+                      item={item}
+                      expanded={$this.state.expandedItem&&($this.state.expandedItem._id==item._id)}
+                      toggleSize={$this.toggleExpandedItem}
                       itemView={$this.props.itemView}
                     />
                   </div>
@@ -194,53 +224,46 @@ FilterBox = React.createClass({
 CardWrapper = React.createClass({
 
   getInitialState() {
-    return {
-      collapsed:true
-    }
-  },
-
-  deleteItem() {
-    var dom = $(ReactDOM.findDOMNode(this));
-    var parent = dom.closest('.grid-item');
-    var $this = this;
-    parent.toggleClass('diminished gigante',250,function(){
-      $this.props.item.destroy();
-      //Meteor.call("Issue.destroy",$scope.facility);
-    });
-  },    
-
-  expand() {
-    this.setState({
-      collapsed:false
-    });
-    $('html, body').animate({
-        scrollTop: $(this.refs.container).offset().top-60
-    }, 750, 'easeInOutQuart');
-  },
-
-  contract() {
-    this.setState({
-      collapsed:true
-    });
+    var collapsed;
     if(this.props.item.isNewItem) {
-      this.props.item.destroy();
+      collapsed = false;
     }
+    else {
+      collapsed = !this.props.expanded;
+    }
+    return {
+      collapsed:collapsed
+    }
+  },
+
+  componentWillReceiveProps(newProps) {
+    var collapsed;
+    if(this.props.item.isNewItem) {
+      collapsed = false;
+    }
+    else {
+      collapsed = !newProps.expanded;
+    }
+    this.setState({
+      collapsed:collapsed
+    });
   },
 
   toggle() {
-    if(this.state.collapsed) {
-      this.expand();
-    }
-    else {
-      this.contract();
-    }
-  },
-
-  componentWillMount() {
-    if(this.props.item.isNewItem) {
-      this.setState({
-        collapsed:false
-      });
+    var component, item, toggleSize;
+    container = this.refs.container;
+    item = this.props.item;
+    toggleSize = this.props.toggleSize;
+    if(toggleSize) {
+      console.log(item);
+      toggleSize(item,function(expanded){
+        console.log('calling back');
+        /*if(expanded) {
+          $('html, body').animate({
+              scrollTop: $(container).offset().top-60
+          }, 750, 'easeInOutQuart');        
+        }*/
+      })
     }
   },
 
@@ -248,14 +271,6 @@ CardWrapper = React.createClass({
     $(this.refs.iCheck).iCheck({
       checkboxClass: 'icheckbox_square-grey'
     });
-  },
-
-  componentWillReceiveProps() {
-    if(this.props.item.isNewItem) {
-      this.setState({
-        collapsed:false
-      });
-    }
   },
 
   componentDidMount() {
@@ -283,16 +298,6 @@ CardWrapper = React.createClass({
         }
       >
         <div className="card-header">
-        {/*
-          <div className="card-header-left-toolbar">
-            <div className="hide-on-hover" style={{position:"absolute",top:"7px",left:"7px"}}>
-              <ContactAvatarSmall item={creator} />
-            </div>
-            <div className="show-on-hover">
-              <input ref="iCheck" type="checkbox"/>
-            </div>
-          </div>
-        */}
           <div className="card-header-right-toolbar">
             <div
               style={{padding:"10px 5px 7px 13px",fontSize:"20px",opacity:item.sticky?1:0.1,color:item.sticky?"blue":"#000"}}
@@ -301,13 +306,6 @@ CardWrapper = React.createClass({
             >
               <i className="fa fa-thumb-tack"></i>
             </div>
-          {/*
-            <button 
-              onClick={this.toggle}
-              className="card-button expand-button pull-right"
-            >
-            </button>
-          */}
           </div>
           <div className="card-header-summary" onClick={this.toggle}>
             <Summary item={item} />
@@ -315,14 +313,6 @@ CardWrapper = React.createClass({
         </div>
       {Detail&&(!this.state.collapsed)?
         <div className="card-body">
-          <div className="card-body-right-toolbar">
-            <button 
-              onClick={this.toggle}
-              className="card-button expand-button pull-right"
-            >
-              <i className={"fa fa-compress"}></i>
-            </button>
-          </div>
           <Detail item={item} closeCallback={this.toggle}/>
         </div>:null}
       </div>

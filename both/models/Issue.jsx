@@ -124,4 +124,32 @@ Issues.helpers({
       return Users.findOne(this._assignee._id);
     }
   },
+  isNew() {
+    return this.status=="New";
+  },
+  isEditable() {
+    return this.isNew();
+  },
+  canCreate() {
+    return (
+      this.name&&this.name.length&&
+      this.description&&this.description.length&&
+      this._facility&&this._facility._id&&
+      this.area&&this.area.name.length&&
+      this.service&&this.service.name.length
+    )    
+  },
+  canIssue() {
+    return (
+      this.canCreate()&&
+      this.subservice&&this.subservice.name.length&&
+      this._supplier&&this._supplier._id
+    )   
+  },
+  canClose() {
+    return (
+      this.canIssue()&&
+      this.status=="Issued"
+    )
+  },
 });

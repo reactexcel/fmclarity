@@ -14,18 +14,23 @@ ContactList = React.createClass({
     	var handleChange = this.props.onChange;
     	var contacts = this.props.items;
     	contacts.push(contact);
-    	handleChange(contacts);
+    	if(handleChange) {
+	    	handleChange(contacts);
+	    }
     },
 
     handleRemove(index) {
     	var handleChange = this.props.onChange;
     	var contacts = this.props.items;
     	contacts.splice(index,1);
-    	handleChange(contacts);
+    	if(handleChange) {
+	    	handleChange(contacts);
+	    }
     },
 
 	render() {
 		var contacts = this.props.items;
+		var canEdit = this.props.onChange!=null;
 		var component = this;
 		return (
 			<div className="row" style={{margin:"5px 30px"}}>
@@ -36,20 +41,22 @@ ContactList = React.createClass({
 			                style={{padding:0}}
 			                className={"col-lg-12"}
 			            >
-			            	<span className="active-link" onClick={component.handleRemove.bind(null,idx)} className="pull-right">delete</span>
+			            	{canEdit?<span className="active-link" onClick={component.handleRemove.bind(null,idx)} className="pull-right">delete</span>:null}
 			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
 					            <ContactCard item={contact}/>
 					        </div>
 			            </div>	
 		            )
 			    })}
+			    {canEdit?
 			    <div 
 			        style={{padding:0}}
 			        className={"col-lg-12"}
 			        onClick={component.showModal.bind(null,null)}
 			    >
 			        <span className="active-link">Add contact</span>
-			    </div>	
+			    </div>
+			    :null}
 			</div>
 		)
 	}

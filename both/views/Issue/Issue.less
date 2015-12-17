@@ -1,7 +1,7 @@
 @import "/client/stylesheets/globals/variables.import.less";
 
 .issue-spec-area {
-
+	margin-right:-30px;
 }
 
 .text-overdue {
@@ -43,6 +43,11 @@
 	box-shadow:none;
 }
 
+
+.active-link {
+	cursor: pointer;
+}
+
 .active-link-light:hover, .issue-nav-btn:hover {
 	color:inherit;
 }
@@ -50,6 +55,16 @@
 .active-link-light {
 	color:#999;
 }
+
+.readonly {
+	.dropdown-label,.issue-nav-btn,.md-skin .btn,.active-link {
+		cursor: default!important;
+	}
+	.active-link-light,.active-link-light:hover, .issue-nav-btn:hover {
+		color:inherit;
+	}
+}
+
 
 .issue-nav-btn.active {
 	text-decoration: underline;
@@ -219,7 +234,7 @@ textarea.issue-description-textarea.inline-form-control {
 	position:static;
 	border-radius: 0;
 	margin-right:1px;
-	cursor:pointer;
+	cursor:default;
 }
 
 .dropdown-label-empty {

@@ -69,7 +69,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// add collection methods
 	var methods = {};
 	methods[name+'.save'] = function(item) {
-		item.isNewItem = false;
+		//item.isNewItem = false;
 		if(!item.createdAt) {
 			item.createdAt = moment().toDate();
 		}
@@ -130,6 +130,11 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			Meteor.call(name+'.save',obj,function(){
 				FM.notify("updated",obj);
 			});
+		},
+		isNew() {
+			// now this is a case where we should have underscore prefix
+			// ONLY have underscore prefix when variable shadowed by access function
+			return this.isNewItem;
 		},
 		set(field,value) {
 			var obj = this;

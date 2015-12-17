@@ -32,11 +32,13 @@ IssueFacilitySelector = React.createClass({
     },
 
     render() {
+        var issue = this.props.issue;
         var facility = this.data.selectedFacility;
         var area = this.data.selectedArea;
         return (
             <div>
             <SuperSelect 
+                readOnly={!issue.isEditable()}
                 items={this.data.teamFacilities} 
                 itemView={ContactViewName}
                 onChange={this.handleChange.bind(null,'_facility')}
@@ -47,6 +49,7 @@ IssueFacilitySelector = React.createClass({
             </SuperSelect>
             {facility?
             <SuperSelect 
+                readOnly={!issue.isEditable()}
                 items={this.data.facilityAreas} 
                 itemView={ContactViewName}
                 onChange={this.handleChange.bind(null,'area')}
@@ -75,6 +78,12 @@ IssueDetail = React.createClass({
             }
         }
         else {
+            var selectedTeam, suppliers;
+            selectedTeam = FM.getSelectedTeam();
+            if(selectedTeam) {
+                suppliers = selectedTeam.getSuppliers();
+            }
+
             var facility, facilityContacts, facilityContact;
             facility = issue.getFacility();
             if(facility) {
@@ -82,26 +91,29 @@ IssueDetail = React.createClass({
                 facilityContact = facilityContacts?facilityContacts[0]:null;
             }
 
+            var actionVerb = this.getActionVerb(issue);
+
             return {
                 ready:true,
 
-                suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch(),
-
                 issue:issue,
-                facility:facility,
-
-                selectedTeam: FM.getSelectedTeam(),
-
                 creator:issue.getCreator(),
-                supplier:issue.getSupplier(),
-                assignee:issue.getAssignee(),
                 timeframe:issue.getTimeframe(),
-                facilityContact:facilityContact,
-
-                notifications:issue.getNotifications(),
                 services:Config.services,
 
-                actionVerb:this.getActionVerb(issue)
+                facility:facility,
+                facilityContacts:facilityContacts,
+                facilityContact:facilityContact,
+
+                selectedTeam:selectedTeam,
+                suppliers:suppliers,
+                supplier:issue.getSupplier(),
+
+                assignee:issue.getAssignee(),
+
+                notifications:issue.getNotifications(),
+                actionVerb:actionVerb,
+                regressVerb:(issue.status=="New"?"Cancel":issue.status=="Issued"?"Reverse":null)
             }
         }
     },
@@ -132,27 +144,13 @@ IssueDetail = React.createClass({
         if(issue.status=='Closed') {
             return;
         }
-        var canCreate = (
-            issue.name&&issue.name.length&&
-            issue.description&&issue.description.length&&
-            issue._facility&&issue._facility._id&&
-            issue.area&&issue.area.name.length&&
-            issue.service&&issue.service.name.length
-        );
-        var canIssue = (canCreate&&
-            issue.subservice&&issue.subservice.name.length&&
-            issue._supplier&&issue._supplier._id
-        );
-        var canClose = (canIssue&&
-            issue._assignee&&issue._assignee._id
-        );
-        if(canClose) {
+        if(issue.canClose()) {
             return 'Close';
         }
-        else if(canIssue) {
+        else if(issue.canIssue()) {
             return 'Issue';
         }
-        else if(canCreate) {
+        else {
             return 'Submit';
         }
     },
@@ -167,24 +165,11 @@ IssueDetail = React.createClass({
 
     progressOrder() {
         var issue = this.data.issue;
-        var canCreate = (
-            issue.name&&issue.name.length&&
-            issue.description&&issue.description.length&&
-            issue._facility&&issue._facility._id&&
-            issue.area&&issue.area.name.length&&
-            issue.service&&issue.service.name.length
-        );
-        var canIssue = (canCreate&&
-            issue.subservice&&issue.subservice.name.length&&
-            issue._supplier&&issue._supplier._id
-        );
-        var canClose = (canIssue&&
-            issue._assignee&&issue._assignee._id
-        );
-        if(canClose) {
+        issue.isNewItem = false;
+        if(issue.canClose()) {
             this.showModal();
         }
-        else if(canIssue) {
+        else if(issue.canIssue()) {
             var timeframe = this.data.timeframe;
             var createdMs = issue.createdAt.getTime();
             issue.dueDate = new Date(createdMs+timeframe);
@@ -194,10 +179,23 @@ IssueDetail = React.createClass({
                 this.props.closeCallback()
             }            
         }
-        else if(canCreate) {
+        else if(issue.canCreate()) {
             issue.status = "New";
-            issue.isNewItem = false;
             this.saveItem();
+            if(this.props.closeCallback) {
+                this.props.closeCallback()
+            }
+        }
+    },
+
+    regressOrder() {
+        var issue = this.data.issue;
+        if(issue.status=="Issued") {
+            issue.status = "New";
+            this.saveItem();
+        }
+        else if(issue.status=="New") {
+            issue.destroy();
             if(this.props.closeCallback) {
                 this.props.closeCallback()
             }
@@ -265,6 +263,7 @@ IssueDetail = React.createClass({
             <div>
                 <SuperSelect 
                     items={['Scheduled','Standard','Urgent','Critical']} 
+                    readOnly={!issue.isEditable()}
                     onChange={this.updateObjectField.bind(this,'priority')}
                 >
                     <div style={{padding:"9px",height:0}}>
@@ -278,6 +277,7 @@ IssueDetail = React.createClass({
                 <div className="col-lg-6" style={{paddingLeft:"10px"}}>
                     <h2 style={{margin:0,position:"relative",top:"2px",left:"-2px"}}>
                         <input 
+                            readOnly={!issue.isEditable()}
                             placeholder="Type issue title here"
                             className="inline-form-control" 
                             defaultValue={issue.name} 
@@ -291,6 +291,7 @@ IssueDetail = React.createClass({
                             <span>{issue.code}</span>&nbsp;
                             <b>Cost $</b>
                             <span style={{display:"inline-block"}}><input 
+                                readOnly={!issue.isEditable()}
                                 className="inline-form-control" 
                                 defaultValue={issue.costThreshold} 
                                 onChange={this.updateField.bind(this,'costThreshold')}
@@ -301,6 +302,7 @@ IssueDetail = React.createClass({
                 <div className="col-lg-2">
                     <div>
                         <SuperSelect 
+                            readOnly={!issue.isEditable()}
                             itemView={ContactViewName}
                             items={this.data.services} 
                             classes="absolute"
@@ -315,6 +317,7 @@ IssueDetail = React.createClass({
                     {issue.service&&issue.service.subservices&&issue.service.subservices.length?
                         <div style={{position:"relative",top:"15px"}}>
                             <SuperSelect 
+                                readOnly={!issue.isEditable()}
                                 itemView={ContactViewName}
                                 items={issue.service.subservices}
                                 classes="absolute"
@@ -333,6 +336,7 @@ IssueDetail = React.createClass({
                     <div>
 
                         <SuperSelect 
+                            readOnly={!issue.isEditable()}
                             itemView={ContactViewName}
                             items={this.data.suppliers} 
                             classes="absolute"
@@ -365,7 +369,22 @@ IssueDetail = React.createClass({
                 <div className="col-lg-2">
                     <div style={{float:"right"}}>
                         {data.actionVerb?
-                            <button onClick={this.progressOrder} style={{margin:0}} type="button" className={"btn btn-sm btn-"+((issue.name&&issue.description)?'Issued':'default')}>{data.actionVerb} order</button>
+                            <button 
+                                onClick={this.progressOrder} 
+                                style={{margin:0,width:"100%"}} 
+                                type="button" 
+                                className={"btn btn-sm btn-"+(issue.canCreate()?'Issued':'disabled')}>
+                                    {data.actionVerb} order
+                                </button>
+                        :null}
+                        {data.regressVerb?
+                            <button 
+                                onClick={this.regressOrder} 
+                                style={{width:"100%"}} 
+                                type="button" 
+                                className="btn btn-sm btn-Issued">
+                                    {data.regressVerb} order
+                            </button>
                         :null}
                     </div>
                 </div>
@@ -375,6 +394,7 @@ IssueDetail = React.createClass({
                 <div className="col-lg-12">
                     <span style={{paddingLeft:0,cursor:"default"}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <textarea 
+                        readOnly={!issue.isEditable()}
                         ref="description"
                         placeholder="Type issue description here"
                         className="issue-description-textarea inline-form-control" 
@@ -402,7 +422,7 @@ IssueDetail = React.createClass({
                         </div>
                     },{
                         tab:<span>Contacts</span>,
-                        content:<ContactList items={contacts} />
+                        content:<ContactList items={contacts}/>
                     }
                     ]} />
                 </div>

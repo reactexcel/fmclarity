@@ -34,11 +34,22 @@ SuperSelect = React.createClass({
 
 	render() {
 		var component = this;
+		var readOnly = this.props.readOnly;
 		var Card = this.props.itemView || DumbCard;
 		var items = this.props.items || [];
 		var onChange = this.props.onChange;
 		var classes = this.props.classes || '';
 		var clearOption = this.props.clearOption;
+
+		if(readOnly) {
+			return (
+				<span className={"super-select readonly dropdown "+classes}>
+					<span className="dropdown-toggle">
+						{this.props.children}
+					</span>
+				</span>
+			)
+		}
 
 		return (
                 <span 
@@ -65,5 +76,6 @@ SuperSelect = React.createClass({
                     </ul>
 
                 </span>
-            )}
+        )
+	}
 })

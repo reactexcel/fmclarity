@@ -1,6 +1,17 @@
 CHANGELOG.md
 ============
 
+**v0.3.8a**
+
+* Removed dividers in dropdowns
+* Suppliers in work order drop down are now limited to those specified in a teams "suppliers" page
+* No longer need to assign order to close it
+* Restricted editing WO after they have been issued
+* WO: Disabled sorting for new work orders while they are being created
+* WO: Added ability to cancel/reverse new/issued work orders
+* WO: Only one work order can be expanded at the one time
+* WO: Work orders close when sort or filter activated
+
 **v0.3.7a**
 
 * Fixed issue where dropdown boxes were wrong size or had text overflow

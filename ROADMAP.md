@@ -13,6 +13,7 @@ DONE
 
 IN PROGRESS
 -----------
+* All teams are automatically listed as suppliers for themselves
 
 -----------
 * Button hover state is currently modified using opacity, should be set using less command background-color:darken(@color)
@@ -20,6 +21,7 @@ IN PROGRESS
 * When a new facility is created it doesn't have default areas or services
 * Team settings: Edit view of every member just shows current member
 * Team settings: When person removed from a team they should be deselected
+* Should be an additional action available after assignee chosen "Assign work?"
 
 * Remove underscore prefix from fields in models
 * Include date attended, date finalised, date reviewed in issue data
@@ -45,6 +47,7 @@ IN PROGRESS
 * Need a select type control (for property type for example) that matches material design (how about using a dropdown and styling label)
 * When create a new facility, enter no details, reload, then select new facility... card does not appear
 * Editing a contractor, and then editing "your" team, nukes the previous notification, and then editing a contractor again brings it back... weird
+* Suppliers : when first supplier added it dissappears, susequent suppliers seem to be added with no issue
 
 ** Low priority **
 
