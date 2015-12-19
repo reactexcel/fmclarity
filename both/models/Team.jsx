@@ -101,6 +101,9 @@ Teams = FM.createCollection('Team',{
       type: [String],
       label: "Services",
       input:"select",
+      defaultValue:function(){
+          return JSON.parse(JSON.stringify(Config.services));
+      }
     },
     areasServiced : {
       type: [String],
@@ -112,7 +115,7 @@ Teams = FM.createCollection('Team',{
       label: "Active modules",
       input:"switchbank"
     },
-    _members: {
+    members: {
       type: [Object],
       label:"Members"
     },
@@ -175,10 +178,10 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   "Team.addMember":function(item,member) {
-    Teams.update(item._id,{$push:{_members:member}});
+    Teams.update(item._id,{$push:{members:member}});
   },
   "Team.removeMember":function(item,member) {
-    Teams.update(item._id,{$pull:{_members:{_id:member._id}}});
+    Teams.update(item._id,{$pull:{members:{_id:member._id}}});
   },
   "Team.addSupplier":function(item,supplier) {
     Teams.update(item._id,{$push:{suppliers:supplier}});
@@ -212,9 +215,9 @@ Teams.helpers({
     return this;
   },
   getMembers() {
-    if (this._members&&this._members.length) {
+    if (this.members&&this.members.length) {
     	return Users.find({
-    		$or:this._members
+    		$or:this.members
     	}).fetch();
     }
     return [];
@@ -258,6 +261,19 @@ Teams.helpers({
     else {
       return Facilities.find({"team._id":this._id}).fetch();
     }
+  },
+  getAvailableServices(parent) {
+    var services = parent?parent.subservices:this.services;
+    var availableServices = [];
+    if(!services) {
+      return;
+    }
+    services.map(function(service){
+      if(service.available) {
+        availableServices.push(service);
+      }
+    });
+    return availableServices;
   },
   addFacility(item) {
     return Meteor.call('Team.addFacility',this,item);

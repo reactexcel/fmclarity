@@ -12,12 +12,35 @@ AutoInput.rating = React.createClass({
 });
 
 AutoInput.switch = React.createClass({
+
 	componentDidMount() {
+		var component = this;
 		var save = this.props.onChange;
 		var input = this.refs.input;
 		new Switchery(this.refs.input, {size:'small',color:'#db4437'});
 		input.onchange = function(e){
-		  	save(e.target.checked);
+			if(component.blockNextSave) {
+				component.blockNextSave = false;
+				return;
+			}
+			var oldValue = component.props.value;
+			var newValue = e.target.checked;
+			if(oldValue!=newValue) {
+				save(e.target.checked);
+			}
+		}
+	},
+
+	componentWillReceiveProps(newProps) {
+		var input = this.refs.input;
+		var oldValue = input.checked;
+		var newValue = newProps.value;
+		if(oldValue!=newValue) {
+			this.blockNextSave = true;
+			input.checked = newValue;
+			var event = document.createEvent('HTMLEvents');
+	        event.initEvent('change', true, true);
+	        input.dispatchEvent(event);
 		}
 	},
 
@@ -91,37 +114,49 @@ AutoInput.switchbank = React.createClass({
 });
 
 AutoInput.menu = React.createClass({
-	componentDidMount() {
-		$(this.refs.input)
-		.select2({
-			tags:true,
-			placeholder:"",
-  		})
-  		.on('change',this.onChange);
+
+	generateUid(separator) {
+	    /// <summary>
+	    ///    Creates a unique id for identification purposes.
+	    /// </summary>
+	    /// <param name="separator" type="String" optional="true">
+	    /// The optional separator for grouping the generated segmants: default "-".    
+	    /// </param>
+
+	    var delim = separator || "-";
+
+	    function S4() {
+	        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	    }
+
+	    return (S4() + S4() + delim + S4() + delim + S4() + delim + S4() + delim + S4() + S4() + S4());
 	},
 
-	onChange(event) {
+	handleChange(event) {
 		this.props.onChange(event.target.value);
 	},
 
 	render() {
 		var options = this.props.options;
 		var defaultValue = this.props.value;
-		if(defaultValue&&(options.indexOf(defaultValue)<0)) {
-			//options = [defaultValue].concat(this.props.options);
-			options.unshift(defaultValue);
-		}
+		var key = this.generateUid();
+		var id = "datalist-"+key;
+
 		return (
-			<div className="inline-select">
-				<select 
-					ref="input" 
-					defaultValue={defaultValue} 
-					className="form-control"
-				>
-					{options.map(function(i){
-						return <option key={i} value={i}>{i}</option>
-					})}
-				</select>
+			<div style={{border:"1px solid #ddd",padding:"2px 5px","borderRadius":"5px"}}>
+				<input 
+					type="text"
+					style={{border:"none"}}
+					className="inline-form-control"
+					list={id}
+					onChange={this.handleChange}
+					value={defaultValue} 
+				/>
+				<datalist id={id}>
+				{options.map(function(i){
+					return <option key={i} value={i}>{i}</option>
+				})}
+				</datalist>
 			</div>
 		)
 	}
@@ -178,7 +213,15 @@ AutoInput.select = React.createClass({
 	}
 });
 
-AutoInput.text = React.createClass({
+AutoInput.Text = React.createClass({
+
+	handleChange(event) {
+		var onChange = this.props.onChange;
+		if(onChange) {
+			onChange(event.target.value);
+		}
+	},
+
 	render() {
 		return (
 		<input 

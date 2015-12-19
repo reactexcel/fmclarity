@@ -6,13 +6,16 @@ ContactSummary = React.createClass({
 	},
 
 	render() {
-		var contact, profile;
+		var contact, profile, availableServices;
 	    contact = this.props.item;
 	    if(!contact) {
 	    	return <div/>
 	    }
 	    if(contact.getProfile) {
 	    	profile = contact.getProfile();
+	    }
+	    if(contact.getAvailableServices) {
+	    	availableServices = contact.getAvailableServices();	    	
 	    }
 	    if(profile.name) {
 			this.seed = profile.name.charCodeAt(0)+profile.name.charCodeAt(1)+profile.name.charCodeAt(2);
@@ -22,7 +25,7 @@ ContactSummary = React.createClass({
 		}
 	    var cardStyle = Math.ceil(this.random()*3);
 	    var size=this.props.size;
-	    var services = profile&&profile.services?profile.services.join(' | '):'';
+	    
 	    return (
 	    	<div className={"business-card"+" business-card-style-"+cardStyle+" "+size}>
 	    		
@@ -41,7 +44,12 @@ ContactSummary = React.createClass({
 						<b>Phone</b> {profile.phone}<br/>
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
-						{services}
+						{availableServices?
+						availableServices.map(function(service,index){
+							return <span key={service.name}>{index?' | ':''}{service.name}</span>
+						})
+						:null}
+
 					</div>
 			    </div>
 			</div>

@@ -1,6 +1,19 @@
 CHANGELOG.md
 ============
 
+**v0.3.10a**
+
+* WO: Available services and subservices are taken from facility configuration
+* Team settings: Can configure services and subservices for contractor teams
+* WO: Available contractors are determined by selected service and subservice
+
+**v0.3.9a**
+
+* Remove underscore prefix from fields in models
+* Newly created facilities have areas and services
+* Updated available areas array
+* Areas and services ui now correctly updated when changing facilities
+
 **v0.3.8a**
 
 * Removed dividers in dropdowns

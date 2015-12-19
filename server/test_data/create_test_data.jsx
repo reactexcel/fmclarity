@@ -75,7 +75,7 @@ FM.createTestData = function() {
             "Urgent":24,
             "Critical":0
         },
-        _members:[{_id:brad._id},{_id:leo._id},{_id:rich._id}],
+        members:[{_id:brad._id},{_id:leo._id},{_id:rich._id}],
         suppliers:[],
       },
       {
@@ -90,7 +90,7 @@ FM.createTestData = function() {
             "Urgent":24,
             "Critical":0
         },
-        _members:[{_id:leo._id},{_id:rich._id}],
+        members:[{_id:leo._id},{_id:rich._id}],
         suppliers:[],
       },
       /*
@@ -100,7 +100,7 @@ FM.createTestData = function() {
         email:"schturm@run.123",
         phone:"0400-223-122",
         thumb:"img/logo-placeholder.png",
-        _members:[{_id:leoId}],
+        members:[{_id:leoId}],
         _contacts:[],
       },
       */
@@ -110,7 +110,7 @@ FM.createTestData = function() {
         email:"contractor1@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-1.png",
-        _members:[{_id:leo._id},{_id:rich._id}],
+        members:[{_id:leo._id},{_id:rich._id}],
         services:["Mechanical","Fire Prevention","Electrical"]
       },
       {
@@ -119,7 +119,7 @@ FM.createTestData = function() {
         email:"contractor2@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-2.png",
-        _members:[],
+        members:[],
         services:["UPS"]
       },
       {
@@ -128,7 +128,7 @@ FM.createTestData = function() {
         email:"contractor3@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-3.png",
-        _members:[],
+        members:[],
         services:["Mechanical","Fire Prevention","Electrical"]
       },
       {
@@ -137,7 +137,7 @@ FM.createTestData = function() {
         email:"contractor4@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-4.png",
-        _members:[],
+        members:[],
         services:["Lifts","Fire Prevention","Electrical","Water Treatment"]
       },
       {
@@ -146,7 +146,7 @@ FM.createTestData = function() {
         email:"contractor5@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-5.png",
-        _members:[],
+        members:[],
         services:["UPS","Fire Prevention","Egress"]
       },
       {
@@ -155,7 +155,7 @@ FM.createTestData = function() {
         email:"contractor6@email.com",
         phone:"0400-123-123",
         thumb:"img/supplier-6.png",
-        _members:[],
+        members:[],
         services:["Generator","E&E Lighting","Water Treatment"]
       }      
     ];
@@ -196,7 +196,8 @@ FM.createTestData = function() {
     var users = Users.find().fetch();
     for(var i in users) {
         var t = Math.floor(Math.random()*ExampleTeams.length);
-        ExampleTeams[t]._members.push({_id:users[i]._id});
+        ExampleTeams[t].members.push({_id:users[i]._id});
+        ExampleTeams[t].services = JSON.parse(JSON.stringify(Config.services));
     }
 
     initializeCollections(
@@ -211,51 +212,8 @@ FM.createTestData = function() {
         var contact = makeRandomUser();
         var contactId = Meteor.call('User.new',contact);
 
-        ExampleFacilities[i].areas = [
-            {
-                name:'Standard level',
-                number:1,
-                areas:[
-                    {
-                        name:'Conference room',
-                        location:'North',
-                        number:1
-                    },{
-                        name:'Male bathroom',
-                        location:'North',
-                        number:1
-                    },{
-                        name:'Female bathroom',
-                        location:'South',
-                        number:1
-                    },{
-                        name:'Staff room',
-                        number:1
-                    },{
-                        name:'Work room',
-                        number:5
-                    }
-                ]
-            },
-            {
-                name:'Unique areas',
-                number:1,
-                areas:[{
-                        name:'Board room',
-                        number:1
-                    },                    {
-                        name:'Reception',
-                        number:1
-                    },{
-                        name:'Basement',
-                        number:1
-                    }
-                ]
-            }
-        ];
-
+        ExampleFacilities[i].areas = JSON.parse(JSON.stringify(Config.defaultAreas));
         ExampleFacilities[i].services = JSON.parse(JSON.stringify(Config.services));
-
         ExampleFacilities[i].contacts = [{
             _id:contactId,
             name:contact.name,
@@ -308,18 +266,18 @@ FM.createTestData = function() {
         ExampleIssues[i].code = Math.floor(Math.random()*1000);
 
         ExampleIssues[i].team = facilities[f].team;
-        ExampleIssues[i]._creator = {
+        ExampleIssues[i].creator = {
             _id:members[m]._id,
             name:members[m].name
         };
 
-        ExampleIssues[i]._facility = {
+        ExampleIssues[i].facility = {
             _id:facilities[f]._id,
             name:facilities[f].name
         };
 
         if(status!='New') {
-            ExampleIssues[i]._supplier = {
+            ExampleIssues[i].supplier = {
                 _id:contractors[c]._id,
                 name:contractors[c].name
             };

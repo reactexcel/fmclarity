@@ -71,35 +71,53 @@ Issues = FM.createCollection('Issue',{
   team:{
     type:Object
   },
-  _facility:{
+  facility:{
     type:Object
   },
-  _contact:{
+  supplier:{
     type:Object
   },
-  _supplier:{
-    type:Object
-  },
-  _assignee:{
+  assignee:{
     type:Object
   }
 },true);
 
 Issues.helpers({
   getFacility() {
-    return Facilities.findOne(this._facility._id);
-  },
-  getContact() {
-    return this.contact;
+    return Facilities.findOne(this.facility._id);
   },
   getCreator() {
-    return Users.findOne(this._creator._id);
+    return Users.findOne(this.creator._id);
   },
   getTeam() {
     return Teams.findOne({_id:this.team._id});
   },
   getArea() {
     return this.area;
+  },
+  getPotentialSuppliers() {
+    if(this.service&&this.service.name) {
+      var query = {};
+      var team = this.getTeam();
+      query["$or"] = [team].concat(team.suppliers);
+      query["services"] = { $elemMatch : {
+          name:this.service.name,
+          available:true
+      }};
+      if(this.subservice&&this.subservice.name) {
+        query["services.subservices"] = { $elemMatch : {
+            name:this.subservice.name,
+            available:true
+        }};
+      }
+      var teams = Teams.find(query).fetch();
+      console.log({
+              query:query,
+              teams:teams
+            });
+      return teams;
+    }
+    return null;
   },
   getTimeframe() {
     var team = this.getTeam();
@@ -111,17 +129,17 @@ Issues.helpers({
     this.timeframe = team.getTimeframe(priority);
   },
   setSupplier(supplier) {
-    this._supplier = supplier;
+    this.supplier = supplier;
     this.save();
   },
   getSupplier() {
-    if(this._supplier) {
-      return Teams.findOne(this._supplier._id);
+    if(this.supplier) {
+      return Teams.findOne(this.supplier._id);
     }
   },
   getAssignee() {
-    if(this._assignee) {
-      return Users.findOne(this._assignee._id);
+    if(this.assignee) {
+      return Users.findOne(this.assignee._id);
     }
   },
   isNew() {
@@ -134,7 +152,7 @@ Issues.helpers({
     return (
       this.name&&this.name.length&&
       this.description&&this.description.length&&
-      this._facility&&this._facility._id&&
+      this.facility&&this.facility._id&&
       this.area&&this.area.name.length&&
       this.service&&this.service.name.length
     )    
@@ -143,7 +161,7 @@ Issues.helpers({
     return (
       this.canCreate()&&
       this.subservice&&this.subservice.name.length&&
-      this._supplier&&this._supplier._id
+      this.supplier&&this.supplier._id
     )   
   },
   canClose() {

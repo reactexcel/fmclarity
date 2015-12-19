@@ -54,6 +54,9 @@ Users.helpers({
     }
     return thumb;
   },
+  getAvailableServices() {
+    return [];
+  },  
   getThumbUrl() {
     var thumb = this.getThumb();
     if(thumb) {
@@ -62,7 +65,7 @@ Users.helpers({
     return this.defaultThumbUrl;
   },
   getTeams() {
-    return Teams.find({'_members':{'_id':Meteor.userId()}}).fetch();
+    return Teams.find({'members':{'_id':Meteor.userId()}}).fetch();
   },
   getTeam(i) {
     var teams = this.getTeams();

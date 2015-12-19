@@ -30,9 +30,9 @@ FacilitySummary = React.createClass({
 				    <img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />
 				 </div>
 				 <div className="facility-info">
-					<a href="#">
+					<span>
 						{facility.getName()}
-					</a>
+					</span>
 					<br/>
 					{contact?
 					<span style={{fontSize:"11px",color:"#777"}}>

@@ -14,7 +14,7 @@ Messages = FM.createCollection('Message',{
     input:"vote",
     label:"Rating"
   },
-  _recipient:{
+  recipient:{
     type:Object,
     input:"contact",
     label:"Recipient"

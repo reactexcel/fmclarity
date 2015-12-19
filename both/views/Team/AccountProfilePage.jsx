@@ -49,9 +49,9 @@ AccountEdit = React.createClass({
 		"postcode",
 		"headline",
 		"bio",
-		"references",
-		"services",
-		"areasServiced",
+		"references"
+	],
+	form3: [
 		"defaultWorkOrderValue",
 		"modules",
 	],
@@ -113,17 +113,27 @@ AccountEdit = React.createClass({
 			   		<div className="col-lg-12" style={{marginLeft:"15px"}}>
 			   			<span onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>Remove from team: <b>{selectedTeam.getName()}</b></span>
 			   		</div>
-			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-			        	<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
-			        </div>
-			        <div className="col-lg-5">
-			        	<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
-					</div>
-				</div>
-				<div className="row">
-			        <div className="col-lg-12">
-			        	<AutoForm item={team} schema={schema} form={this.form2} save={team.save.bind(team)} />
-		            </div>
+			   		<CollapseBox title="Basic Info">
+				        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+				        	<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
+				        </div>
+				        <div className="col-lg-5">
+				        	<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
+						</div>
+				        <div className="col-lg-12">
+				        	<AutoForm item={team} schema={schema} form={this.form2} save={team.save.bind(team)} />
+			            </div>
+			        </CollapseBox>
+				   	<CollapseBox title="Config" collapsed={true}>
+					    <div className="col-lg-12">
+					       	<AutoForm item={team} schema={schema} form={this.form3} save={team.save.bind(team)} />
+				        </div>
+				    </CollapseBox>
+				   	<CollapseBox title="Services Provided" collapsed={true}>
+					    <div className="col-lg-12">
+					      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
+				        </div>		            
+					</CollapseBox>
 				</div>
 			</div>
 		)

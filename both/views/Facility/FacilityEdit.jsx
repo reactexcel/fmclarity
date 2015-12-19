@@ -7,21 +7,19 @@ FacilityAreaRow = React.createClass({
 		return (
 			<tr>
 				<td style={{width:"30px"}}>
-					<input 
-						type="text" 
-						className="inline-form-control" 
-						defaultValue={area.number}
+					<AutoInput.Text 
+						value={area.number}
 						onChange={updateField.bind(null,'number')}
 					/>
 				</td>
-				<td style={{padding:"3px",width:"60%"}}>
+				<td style={{padding:"5px 0",width:"60%"}}>
 					<Menu 
 						options={Config.areaNames} 
 						onChange={updateField.bind(null,'name')}
 						value={area.name}
 					/>
 				</td>
-					<td style={{padding:"3px"}}>
+				<td style={{padding:"5px"}}>
 					<Menu 
 						options={["","North","South","East","West"]} 
 						onChange={updateField.bind(null,'location')}
@@ -49,6 +47,12 @@ FacilityAreas = React.createClass({
 		}
 	},
 
+	componentWillReceiveProps(newProps) {
+		this.setState({
+			areaGroups:newProps.item.areas
+		});
+	},
+
 	save() {
 		var item = this.props.item;
 		item.areas = this.state.areaGroups;
@@ -59,8 +63,7 @@ FacilityAreas = React.createClass({
         this.save = _.debounce(this.save,2000);
     },
 
-	updateGroupField(groupNum,field,event) {
-		var value = event.target.value;
+	updateGroupField(groupNum,field,value) {
 		var areaGroups = this.state.areaGroups;
 		areaGroups[groupNum][field] = value;
 		this.setState({
@@ -69,8 +72,7 @@ FacilityAreas = React.createClass({
 		this.save();
 	},
 
-	updateAreaField(groupNum,areaNum,field,event) {
-		var value = event.target.value;
+	updateAreaField(groupNum,areaNum,field,value) {
 		var areaGroups = this.state.areaGroups;
 		if(!areaGroups[groupNum].areas[areaNum]){
 			areaGroups[groupNum].areas[areaNum] = {};
@@ -103,23 +105,19 @@ FacilityAreas = React.createClass({
 					return (<div key={groupNum} className="panel panel-default"> 
 					<div className="panel-heading" role="tab">
 						<h4 className="panel-title">
-							<input 
-								type="text" 
-								className="inline-form-control" 
-								style={{width:"50%"}}
-								onChange={updateGroupField.bind(null,groupNum,'name')}
-								value={group.name}
-							/>
-							<div style={{float:"right"}}>
-								<b>Number like this</b>
-								<input 
-									type="text" 
-									className="inline-form-control" 
-									style={{width:"30px",paddingLeft:"10px"}} 
+							<span style={{width:"70%",display:"inline-block"}}>
+								<AutoInput.Text 
+									onChange={updateGroupField.bind(null,groupNum,'name')}
+									value={group.name}
+								/>
+							</span>
+							<span style={{float:"right",width:"30px",paddingLeft:"10px"}}>
+								<AutoInput.Text
 									onChange={updateGroupField.bind(null,groupNum,'number')}
 									value={group.number}
 								/>
-							</div>
+							</span>
+							<b>Number like this</b>
 						</h4>
 					</div>
 					<div >
@@ -141,101 +139,6 @@ FacilityAreas = React.createClass({
 								delete={deleteArea.bind(null,groupNum,group.areas.length)}
 								update={updateAreaField.bind(null,groupNum,group.areas.length)}
 							/>
-							</tbody>
-						</table>
-					</div>
-				</div>)
-				})}
-			</div>
-		)
-	}
-})
-
-
-FacilityServices = React.createClass({
-
-	getInitialState() {
-		return {
-			services:this.props.item.services
-		}
-	},
-
-	save() {
-		var item = this.props.item;
-		item.services = this.state.services;
-		item.save();
-	},
-
-    componentWillMount: function() {
-        this.save = _.debounce(this.save,2000);
-    },
-
-	updateSubServiceField(serviceNum,subServiceNum,field,event) {
-		var value = event.target.value;
-		var services = this.state.services;
-		if(!services[serviceNum].subservices[subServiceNum]){
-			services[serviceNum].subservices[subServiceNum] = {};
-		}
-		services[serviceNum].subservices[subServiceNum][field] = value;
-		this.setState({
-			services:services
-		});
-		this.save();
-	},
-
-	render() {
-		var updateSubServiceField = this.updateSubServiceField;
-		var updateServiceField= this.updateServiceField;
-		var facility = this.props.item;
-		var Switch = AutoInput.switch;
-		var Menu = AutoInput.menu;
-		var save = this.save;
-		return(
-			<div className="panel-group" id="accordion" role="tablist" aria-multiselectable="true"> 
-				{facility.services.map(function(service,serviceIndex){
-					return (<div key={serviceIndex} className="panel panel-default"> 
-					<div className="panel-heading" role="tab" id={"heading-"+serviceIndex}>
-						<h4 className="panel-title"> 
-							<a 
-								role="button" 
-								data-toggle="collapse" 
-								data-parent="#accordion" 
-								href={"#collapse-"+serviceIndex} 
-								aria-expanded="false" 
-								aria-controls={"collapse-"+serviceIndex} 
-								className="collapsed"
-							>{service.name}</a>
-						</h4>
-					</div>
-					<div 
-						id={"collapse-"+serviceIndex}
-						className="panel-collapse collapse"
-						role="tabpanel"
-						aria-labelledby={"heading-"+serviceIndex}
-						aria-expanded="false"
-						style={{height:"0px"}}
-					>
-						<table className="table">
-							<tbody>
-							{service.subservices?service.subservices.map(function(subService,subIndex){
-								return (<tr key={subIndex}>
-									<td style={{padding:"0 0 0 5px"}}>
-										<Switch 
-											placeholder={subService.name} 
-											value={subService.available}
-											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'available')}
-										/>
-									</td>
-									<td style={{padding:"3px"}}>
-										<Menu 
-											options={Config.cycleNames} 
-											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'cycle')}
-											value={subService.cycle}
-										/>
-									</td>
-									<td style={{padding:"8px"}}>Select contractor</td>
-								</tr>)
-							}):null}
 							</tbody>
 						</table>
 					</div>
@@ -345,7 +248,7 @@ FacilityEdit = React.createClass({
 					</CollapseBox>
 			   		<CollapseBox title="Default services & suppliers" collapsed={true}>
 						<div className="col-lg-12">
-							<FacilityServices item={facility} save={this.save()} />
+							<ServicesSelector item={facility} save={this.save()} />
 						</div>
 					</CollapseBox>
 				</div>

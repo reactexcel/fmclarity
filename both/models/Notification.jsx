@@ -2,7 +2,7 @@
 Log = new Meteor.Collection('Log');
 
 LogSchema = {
-	_actor:{
+	actor:{
 		type:Object,
 		label:"Who",
 	},
@@ -10,7 +10,7 @@ LogSchema = {
 		type:Object,
 		label:"What"
 	},
-	_obj:{
+	obj:{
 		type:Date,
 		label:"When"
 	},
@@ -35,7 +35,7 @@ Meteor.methods({
 		}
 		var actor = action.actor || Meteor.user();
 		var team = Teams.findOne(action.context.team);
-		team._members.map(function(i){
+		team.members.map(function(i){
 			action.recipients.push(i);
 		});
 		var newAction = _.extend({

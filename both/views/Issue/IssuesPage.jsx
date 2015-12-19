@@ -36,7 +36,7 @@ PageRequests = React.createClass({
 	    	}
         }
         if(selectedFacility) {
-	    	issue._facility = {
+	    	issue.facility = {
 	    		_id:selectedFacility._id,
 	    		name:selectedFacility.name
 	    	}
@@ -70,48 +70,6 @@ PageRequests = React.createClass({
 	    ];
 
 	    var headers = [
-	    /*
-	    {
-	    	text:"Creator",
-	    	sortFunction(a,b){
-	    		if(!a._creator||!a._creator.name) {
-	    			return -1;
-	    		}
-	    		else if(!b._creator||!b._creator.name) {
-	    			return 1;
-	    		}
-	    		else if	(a._creator.name<b._creator.name){
-	    			return -1;
-		    	}
-		    	else if (a.cratedAt<b.createdAt) {
-		    		return -1;
-		    	}
-		    	else {
-		    		return 1;
-		    	}
-	    	},
-	    },
-	    {
-	    	text:"Supplier",
-	    	sortFunction(a,b) {
-	    		if(!a._supplier||!a._supplier.name) {
-	    			return -1;
-	    		}
-	    		else if(!b._supplier||!b._supplier.name) {
-	    			return 1;
-	    		}
-	    		else if	(a._supplier.name<b._supplier.name){
-	    			return -1;
-		    	}
-		    	else if (a.cratedAt<b.createdAt) {
-		    		return -1;
-		    	}
-		    	else {
-		    		return 1;
-		    	}
-	    	},
-	    },
-	    */
 	    {
 	    	text:"Priority",
 	    	sortFunction(a,b) {
@@ -129,7 +87,7 @@ PageRequests = React.createClass({
 	    {
 	    	text:"Facility",
 	    	sortFunction(a,b) {
-	    		return (a._facility.name<b._facility.name)?-1:1;
+	    		return (a.facility.name<b.facility.name)?-1:1;
 	    	},
 	    },
 	    {

@@ -91,7 +91,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		actor = actor||Meteor.user();
 		newItem = _.extend({
 			isNewItem:true,
-			_creator:{
+			creator:{
 				_id:actor._id,
 				name:actor.name,
 				thumb:actor.profile.thumb
@@ -158,7 +158,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		    }).fetch();
 		},
 		getCreator() {
-			return Users.findOne(this._creator._id);
+			return Users.findOne(this.creator._id);
 		},
 		getThumb() {
 			var thumb;

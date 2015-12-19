@@ -41,7 +41,7 @@ IssueFacilitySelector = React.createClass({
                 readOnly={!issue.isEditable()}
                 items={this.data.teamFacilities} 
                 itemView={ContactViewName}
-                onChange={this.handleChange.bind(null,'_facility')}
+                onChange={this.handleChange.bind(null,'facility')}
             >
                 <span className="issue-summary-facility-col">
                     {facility?<span>{facility.getName()} -</span>:<span style={{color:"#999"}}>Select facility</span>}
@@ -80,9 +80,6 @@ IssueDetail = React.createClass({
         else {
             var selectedTeam, suppliers;
             selectedTeam = FM.getSelectedTeam();
-            if(selectedTeam) {
-                suppliers = selectedTeam.getSuppliers();
-            }
 
             var facility, facilityContacts, facilityContact;
             facility = issue.getFacility();
@@ -99,14 +96,14 @@ IssueDetail = React.createClass({
                 issue:issue,
                 creator:issue.getCreator(),
                 timeframe:issue.getTimeframe(),
-                services:Config.services,
 
                 facility:facility,
                 facilityContacts:facilityContacts,
                 facilityContact:facilityContact,
+                services:facility.getAvailableServices(),
 
                 selectedTeam:selectedTeam,
-                suppliers:suppliers,
+                suppliers:issue.getPotentialSuppliers(),
                 supplier:issue.getSupplier(),
 
                 assignee:issue.getAssignee(),
@@ -304,7 +301,7 @@ IssueDetail = React.createClass({
                         <SuperSelect 
                             readOnly={!issue.isEditable()}
                             itemView={ContactViewName}
-                            items={this.data.services} 
+                            items={facility.getAvailableServices()} 
                             classes="absolute"
                             onChange={this.updateService}
                         >
@@ -319,7 +316,7 @@ IssueDetail = React.createClass({
                             <SuperSelect 
                                 readOnly={!issue.isEditable()}
                                 itemView={ContactViewName}
-                                items={issue.service.subservices}
+                                items={facility.getAvailableServices(issue.service)} 
                                 classes="absolute"
                                 onChange={this.updateObjectField.bind(this,'subservice')}
                             >
@@ -340,7 +337,7 @@ IssueDetail = React.createClass({
                             itemView={ContactViewName}
                             items={this.data.suppliers} 
                             classes="absolute"
-                            onChange={this.updateObjectField.bind(this,'_supplier')}
+                            onChange={this.updateObjectField.bind(this,'supplier')}
                         >
                             <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>
 
@@ -358,9 +355,9 @@ IssueDetail = React.createClass({
                                 itemView={ContactViewName}
                                 items={supplier.getMembers()}
                                 classes="absolute"
-                                onChange={this.updateObjectField.bind(this,'_assignee')}
+                                onChange={this.updateObjectField.bind(this,'assignee')}
                             >
-                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue._assignee?"":""} assignee</span>
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.assignee?"":""} assignee</span>
                             </SuperSelect>
                             <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{assignee?assignee.getName():'-'}</span>
                         </div>

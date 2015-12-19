@@ -210,11 +210,17 @@ Facilities = FM.createCollection('Facility',{
     	type:[Object],
     	label:"Building areas",
     	input:"select",
+    	defaultValue:function(){
+        	return JSON.parse(JSON.stringify(Config.defaultAreas));
+    	}
     },
     services: {
     	type:[Object],
     	label:"Building services",
     	input:"select",
+    	defaultValue:function(){
+        	return JSON.parse(JSON.stringify(Config.services));
+    	}
     }
 },true);
 
@@ -253,6 +259,16 @@ Facilities.helpers({
 	  	}
   	}
   	return areas;
+  },
+  getAvailableServices(parent) {
+  	var services = parent?parent.subservices:this.services;
+  	var availableServices = [];
+  	services.map(function(service){
+  		if(service.available) {
+  			availableServices.push(service);
+  		}
+  	});
+  	return availableServices;
   },
   getContacts() {
     if (this.contacts&&this.contacts.length) {

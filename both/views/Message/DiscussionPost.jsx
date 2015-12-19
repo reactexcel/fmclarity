@@ -23,7 +23,7 @@ DiscussionPost = React.createClass({
     submit(event) {
         var callback = this.props.onChange;
         var message = this.data.message||{
-            _creator:{
+            creator:{
                 _id:Meteor.userId()
             }
         };
