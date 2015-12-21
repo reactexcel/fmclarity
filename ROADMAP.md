@@ -11,16 +11,8 @@ TODO (general)
 DONE
 ----
 
-
 IN PROGRESS
 -----------
 * Upload/download documents feature
 * Include layout for uploaded file types, eg like google drive table view incl improved icons
 * View large image in popup feature
-* WO: Services are filtered according to selected facility
-
-* Can select services for new suppliers
-* Contractors filtered by selected service type when creating a work order
-
-
-* When change facility switch triggers a save - fix

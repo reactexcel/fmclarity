@@ -1,3 +1,7 @@
+.contact-list-item {
+	overflow: hidden;
+}
+
 .contact-card-2line {
 	text-align:left;
 }

@@ -204,54 +204,38 @@ FacilityEdit = React.createClass({
 		//console.log(config);
 
 		return (
-		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
-			    <div className="row">
-				    <div className="col-lg-12">
-			            <h2 className="background"><span>{facility.getName()}</span></h2>
-			        </div>
-			   	</div>
-			   	<div className="row">
-			   		<CollapseBox title="Property Details">
-				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={facility} schema={schema} form={this.form1} save={this.save()} />
-				        </div>
-					</CollapseBox>
-			   		<CollapseBox title="Documents & images">
-				        <AutoForm item={facility} schema={schema} form={['attachments']} save={this.save()} />
-					</CollapseBox>
-			   		<CollapseBox title="Contacts">
-			   			<ContactList 
-			   				items={contacts} 
-			   				onChange={this.updateField.bind(null,'contacts')}
-			   			/>
-					</CollapseBox>
-			   		<CollapseBox title="Tenants">
-			   			<ContactList 
-			   				items={tenants} 
-			   				onChange={this.updateField.bind(null,'tenants')}
-			   			/>
-					</CollapseBox>
-			   		<CollapseBox title="Facility holder" collapsed={true}>
-				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={facility} schema={schema} form={['holder']} save={this.save()} />
-				        </div>
-					</CollapseBox>
-			   		<CollapseBox title="Lease particulars" collapsed={true}>
-				        <div className="col-lg-12" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={facility} schema={schema} form={['lease']} save={this.save()} />
-				        </div>
-					</CollapseBox>
-			   		<CollapseBox title="Building areas" collapsed={true}>
-						<div className="col-lg-12">
-							<FacilityAreas item={facility} save={this.save()}/>
-						</div>
-					</CollapseBox>
-			   		<CollapseBox title="Default services & suppliers" collapsed={true}>
-						<div className="col-lg-12">
-							<ServicesSelector item={facility} save={this.save()} />
-						</div>
-					</CollapseBox>
-				</div>
+		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+			    <h2><span>{facility.getName()}</span></h2>
+				<CollapseBox title="Property Details">
+				    <AutoForm item={facility} schema={schema} form={this.form1} save={this.save()} />
+				</CollapseBox>
+				<CollapseBox title="Documents & images">
+					<AutoForm item={facility} schema={schema} form={['attachments']} save={this.save()} />
+				</CollapseBox>
+				<CollapseBox title="Contacts">
+			   		<ContactList 
+			   			items={contacts} 
+			   			onChange={this.updateField.bind(null,'contacts')}
+			   		/>
+				</CollapseBox>
+				<CollapseBox title="Tenants">
+			   		<ContactList 
+			   			items={tenants} 
+			   			onChange={this.updateField.bind(null,'tenants')}
+			   		/>
+				</CollapseBox>
+				<CollapseBox title="Facility holder" collapsed={true}>
+				    <AutoForm item={facility} schema={schema} form={['holder']} save={this.save()} />
+				</CollapseBox>
+				<CollapseBox title="Lease particulars" collapsed={true}>
+				    <AutoForm item={facility} schema={schema} form={['lease']} save={this.save()} />
+				</CollapseBox>
+				<CollapseBox title="Building areas" collapsed={true}>
+					<FacilityAreas item={facility} save={this.save()}/>
+				</CollapseBox>
+				<CollapseBox title="Default services & suppliers" collapsed={true}>
+					<ServicesSelector item={facility} save={this.save()} />
+				</CollapseBox>
 			</div>
 		)
 	}

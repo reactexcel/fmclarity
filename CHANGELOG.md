@@ -1,6 +1,16 @@
 CHANGELOG.md
 ============
 
+**v0.2.11a** 
+
+* Fixed an issue that was causing WOs to crash when detail view opened by a contractor
+* WO table: Fixed an issue that was causing sort by priorty to fail
+* WO table: Added supplier column
+* Fixed bug: "When test data is generated properties are sometimes allocated to FM Clarity team instead of Kaplan team"
+* Fixed bug: "When create a new facility, enter no details, reload, then select new facility... card does not appear"
+* Fixed an issue that was causing facilities to re-save when switching between them
+* Made some changes to css presentation of work order details, facilities form, user form and account form to make them fit better on small screens
+
 **v0.3.10a**
 
 * WO: Available services and subservices are taken from facility configuration

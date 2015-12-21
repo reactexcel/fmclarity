@@ -111,10 +111,12 @@ Issues.helpers({
         }};
       }
       var teams = Teams.find(query).fetch();
+      /*
       console.log({
               query:query,
               teams:teams
             });
+      */
       return teams;
     }
     return null;

@@ -103,38 +103,30 @@ AccountEdit = React.createClass({
             )
 		}
 		return (
-		    <div className="user-profile-card" style={{backgroundColor:"#fff"}}>
-			    <div className="row">
-			        <div className="col-lg-12">
-		            	<h2 className="background"><span>{team.getName()}</span></h2>
-		            </div>
-			   	</div>
-			   	<div className="row">
-			   		<div className="col-lg-12" style={{marginLeft:"15px"}}>
-			   			<span onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>Remove from team: <b>{selectedTeam.getName()}</b></span>
-			   		</div>
-			   		<CollapseBox title="Basic Info">
-				        <div className="col-lg-7" style={{paddingTop:"20px"}}>
-				        	<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
-				        </div>
-				        <div className="col-lg-5">
-				        	<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
-						</div>
-				        <div className="col-lg-12">
+		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+            	<h2><span>{team.getName()}</span></h2>
+		   		<div onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>
+		   			Remove from team: <b>{selectedTeam.getName()}</b>
+		   		</div>
+		   		<CollapseBox title="Basic Info">
+		   			<div className="row">
+		   				<div className="col-lg-7">
+			        		<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
+			        	</div>
+			        	<div className="col-lg-5">
+			        		<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
+			        	</div>
+			        	<div className="col-lg-12">
 				        	<AutoForm item={team} schema={schema} form={this.form2} save={team.save.bind(team)} />
-			            </div>
-			        </CollapseBox>
-				   	<CollapseBox title="Config" collapsed={true}>
-					    <div className="col-lg-12">
-					       	<AutoForm item={team} schema={schema} form={this.form3} save={team.save.bind(team)} />
 				        </div>
-				    </CollapseBox>
-				   	<CollapseBox title="Services Provided" collapsed={true}>
-					    <div className="col-lg-12">
-					      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
-				        </div>		            
-					</CollapseBox>
-				</div>
+			        </div>
+		        </CollapseBox>
+			   	<CollapseBox title="Config" collapsed={true}>
+			       	<AutoForm item={team} schema={schema} form={this.form3} save={team.save.bind(team)} />
+			    </CollapseBox>
+			   	<CollapseBox title="Services Provided" collapsed={true}>
+			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
+				</CollapseBox>
 			</div>
 		)
 	}

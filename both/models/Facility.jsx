@@ -226,7 +226,7 @@ Facilities = FM.createCollection('Facility',{
 
 Facilities.helpers({
   getIssues() {
-  	return Issues.find({"_facility._id":this._id}).fetch();
+  	return Issues.find({"facility._id":this._id}).fetch();
   },
   getTeam() {
   	return Teams.findOne(this.team);
@@ -310,7 +310,7 @@ Facilities.helpers({
   	}
   },
   getIssueCount() {
-  	return Issues.find({"_facility._id":this._id}).count();
+  	return Issues.find({"facility._id":this._id}).count();
   },
   getLocation() {
   	if(this.address) {

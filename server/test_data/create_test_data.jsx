@@ -205,10 +205,9 @@ FM.createTestData = function() {
         [ExampleTeams]        
     );
 
-    var teams = Teams.find({type:"fm"}).fetch();
+    var kaplan = Teams.findOne({name:"Kaplan Australia"});
     for(var i in ExampleFacilities) {
         //var r = Math.floor(Math.random()*teams.length);
-        var r = 0;
         var contact = makeRandomUser();
         var contactId = Meteor.call('User.new',contact);
 
@@ -223,7 +222,7 @@ FM.createTestData = function() {
 
         ExampleFacilities[i].tenants = [];
 
-        ExampleFacilities[i].team = {_id:teams[r]._id};
+        ExampleFacilities[i].team = {_id:kaplan._id};
         ExampleFacilities[i].lease = {
             parking:{},
             insuranceDetails:{},

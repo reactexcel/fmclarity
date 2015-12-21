@@ -41,9 +41,9 @@ FilterBox = React.createClass({
       items.sort(function(a,b){
         return a.createdAt - b.createdAt;
       })
-      var sortNum,f, modifier;
+      var sortNum,f,modifier;
       sortNum = this.state.selectedSortNum;
-      if(sortNum) {
+      if(sortNum!=null) {
         f = headers[this.state.selectedSortNum].sortFunction;
         modifier = this.state.sortDirection;
       }
@@ -100,7 +100,7 @@ FilterBox = React.createClass({
   },
 
   toggleExpandedItem(item,callback) {
-    console.log({'got here':item});
+    //console.log({'got here':item});
     var expandedItem,isExpanded;
     if(
       !item||
@@ -255,9 +255,9 @@ CardWrapper = React.createClass({
     item = this.props.item;
     toggleSize = this.props.toggleSize;
     if(toggleSize) {
-      console.log(item);
+      //console.log(item);
       toggleSize(item,function(expanded){
-        console.log('calling back');
+        //console.log('calling back');
         /*if(expanded) {
           $('html, body').animate({
               scrollTop: $(container).offset().top-60

@@ -442,6 +442,11 @@ AutoForm = React.createClass({
 		var form = this.props.form||Object.keys(schema);
 		return (
 			<div className="autoform row">
+				{this.props.children?
+					<div className="col-lg-12">
+						{this.props.children}
+					</div>
+				:null}
 				{form.map(function(key){
 
 					var s = schema[key];
@@ -452,13 +457,14 @@ AutoForm = React.createClass({
 					if(s.schema!=null) {
 						return (
 							<span key={id+'-'+key}>
-								{s.label?<h5 style={{padding:"7px"}}>{s.label}</h5>:null}
 					        	<AutoForm 
 					        		item={item[key]} 
 					        		key={id} 
 					        		schema={s.schema} 
 					        		save={component.props.save} 
-					        	/>
+					        	>
+								{s.label?<h5>{s.label}</h5>:null}
+					        	</AutoForm>
 					        </span>
 						)
 					}

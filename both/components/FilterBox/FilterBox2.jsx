@@ -83,7 +83,7 @@ FilterBox2 = React.createClass({
     }
     return (
     <div className="row">
-      	<div className="col-lg-6">
+      	<div className="col-lg-6" style={{paddingRight:"5px"}}>
         	<div className="filter-box-2 ibox">
         		<div className="ibox-title">
             		<button 
@@ -143,7 +143,7 @@ FilterBox2 = React.createClass({
 	        	</div>
     		</div>
     	</div>
-    	<div className="col-lg-6" style={{paddingLeft:"5px"}}>
+    	<div className="col-lg-6">
     				{this.state.selectedItem?
 			        <CardBodyWrapper
 			            item={this.state.selectedItem}

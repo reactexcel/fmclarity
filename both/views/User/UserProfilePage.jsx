@@ -85,26 +85,24 @@ UserProfile = React.createClass({
             )
 		}
 		return (
-		    <div className="user-profile-card">
-			    <div className="row">
-			        <div className="col-lg-12">
-		            	<h2 className="background"><span>{profile.name}</span></h2>
-		            </div>
-			   	</div>
-			   	<div className="row">
-			   		<div className="col-lg-12" style={{marginLeft:"15px"}}>
-			   			<span onClick={team.removeMember.bind(team,user)}>Remove from team: <b>{team.getName()}</b></span>
-			   		</div>
-			        <div className="col-lg-7" style={{paddingTop:"20px"}}>
+		    <div className="ibox-form user-profile-card">
+		    	<div className="row">
+		    		<div className="col-lg-12">
+		           		<h2><span>{profile.name}</span></h2>
+				   		<div onClick={team.removeMember.bind(team,user)}>
+				   			Remove from team: <b>{team.getName()}</b>
+				   		</div>
+				   	</div>
+				    <div className="col-lg-7">
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
-			        <div className="col-lg-5">
-			        	<AutoInput.File item={profile.thumb} onChange={this.handleThumbChange} />
-					</div>
-			        <div className="col-lg-12">
-			        	<AutoForm item={profile} schema={this.form2} save={this.save} />
-			        </div>
-				</div>
+			   		<div className="col-lg-5">
+				        <AutoInput.File item={profile.thumb} onChange={this.handleThumbChange} />
+				    </div>
+				    <div className="col-lg-12">
+				        <AutoForm item={profile} schema={this.form2} save={this.save} />
+				    </div>
+		        </div>
 			</div>
 		)
 	}

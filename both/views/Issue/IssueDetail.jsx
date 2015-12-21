@@ -100,7 +100,8 @@ IssueDetail = React.createClass({
                 facility:facility,
                 facilityContacts:facilityContacts,
                 facilityContact:facilityContact,
-                services:facility.getAvailableServices(),
+                services:facility?facility.getAvailableServices():null,
+                subservices:(facility&&issue.service)?facility.getAvailableServices(issue.service):null,
 
                 selectedTeam:selectedTeam,
                 suppliers:issue.getPotentialSuppliers(),
@@ -301,7 +302,7 @@ IssueDetail = React.createClass({
                         <SuperSelect 
                             readOnly={!issue.isEditable()}
                             itemView={ContactViewName}
-                            items={facility.getAvailableServices()} 
+                            items={this.data.services} 
                             classes="absolute"
                             onChange={this.updateService}
                         >
@@ -311,12 +312,12 @@ IssueDetail = React.createClass({
                             <span style={{position:"relative","top":"16px",fontSize:"11px",left:"1px"}}>{issue.service.name}</span>
                         :null}
                     </div>
-                    {issue.service&&issue.service.subservices&&issue.service.subservices.length?
+                    {issue.service&&this.data.subservices&&this.data.subservices.length?
                         <div style={{position:"relative",top:"15px"}}>
                             <SuperSelect 
                                 readOnly={!issue.isEditable()}
                                 itemView={ContactViewName}
-                                items={facility.getAvailableServices(issue.service)} 
+                                items={this.data.subservices} 
                                 classes="absolute"
                                 onChange={this.updateObjectField.bind(this,'subservice')}
                             >

@@ -15,7 +15,7 @@ MainLayout = React.createClass({
 
   componentDidMount() {
     // Minimalize menu when screen is less than 768px
-    /*
+    
     $(window).bind("resize load", function () {
         if ($(this).width() < 769) {
             $('body').addClass('body-small')
@@ -23,7 +23,7 @@ MainLayout = React.createClass({
             $('body').removeClass('body-small')
         }
     });
-
+    /*
     // Fix height of layout when resize, scroll and load
     $(window).bind("load resize scroll", function() {
         if(!$("body").hasClass('body-small')) {

@@ -34,8 +34,8 @@ FacilityFilter = React.createClass({
             {
                 facility?
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>
-                    <img style={{width:"40px",float:"left","borderRadius":"2px"}} alt="image" src={facility.getThumbUrl()} />
-                    <div style={{"whiteSpace":"normal",width:"165px","display":"inline-block","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 45px"}} className="nav-label">{facility.getName()}</div>
+                    <img style={{width:"40px",float:"left",display:"inline-block","borderRadius":"2px"}} alt="image" src={facility.getThumbUrl()} />
+                    <div style={{"whiteSpace":"normal",width:"165px","fontSize":"12px","lineHeight":"13px","padding":"8px 0 0 45px"}} className="nav-label">{facility.getName()}</div>
                 </div>
                 :
                 <div style={{position:"absolute",top:"-14px",left:"-8px",whiteSpace:"nowrap"}}>

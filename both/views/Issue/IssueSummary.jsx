@@ -77,13 +77,16 @@ IssueSummary = React.createClass({
             </span>
           </div>
           <div className="issue-summary-col issue-summary-col-4">
-            <span className="issue-summary-name">{issue.name}</span>
-            {/*<span className="issue-summary-description">{issue.description}</span>*/}
+            <span className="issue-summary-name">{supplier?supplier.name:''}</span>
           </div>
           <div className="issue-summary-col issue-summary-col-5">
             {issue.dueDate?
               <span className={dueDate.isBefore()?"text-overdue":""}>{dueDate.fromNow()}</span>
             :null}
+          </div>
+          <div className="issue-summary-col issue-summary-col-6">
+            <span className="issue-summary-name">{issue.name}</span>
+            {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
         </div>
       )

@@ -91,9 +91,17 @@ PageRequests = React.createClass({
 	    	},
 	    },
 	    {
-	    	text:"Issue",
+	    	text:"Supplier",
 	    	sortFunction(a,b) {
-	    		return (a.name<b.name)?-1:1;
+	    		if(!b.supplier) {
+	    			return 1;
+	    		}
+	    		else if(!a.supplier) {
+	    			return -1;
+	    		}
+	    		else {
+		    		return (a.supplier.name>b.supplier.name)?-1:1;
+		    	}
 	    	},
 	    },
 	    {
@@ -109,7 +117,14 @@ PageRequests = React.createClass({
 		    		return (a.dueDate>b.dueDate)?-1:1;
 		    	}
 	    	},
-	    }];
+	    },
+	    {
+	    	text:"Issue",
+	    	sortFunction(a,b) {
+	    		return (a.name<b.name)?-1:1;
+	    	},
+	    },
+	    ];
 		return(
 			<div>
 		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>

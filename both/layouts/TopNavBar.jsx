@@ -92,7 +92,7 @@ TopNavBar = React.createClass({
 
     <div className="row">
         <nav className="navbar navbar-fixed-top" role="navigation" style={{marginBottom:'0'}}>
-            <div className="navbar-header navbar-logo">
+            <div onClick={this.toggleLeftSideBar} className="navbar-header navbar-logo">
                 <img width="190px" src="img/logo-white.svg"/>
             </div>
             <div className="navbar-header">
