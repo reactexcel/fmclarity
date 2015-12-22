@@ -177,14 +177,6 @@ FacilityEdit = React.createClass({
 
     },
 
-    // debounce here and remove debounce from AutoForm, FacilityAreas and FacilityServices
-	save() {
-		var item = this.props.item;
-		return function() {
-			item.save();
-		}
-	},
-
 	updateField(field,value) {
 		this.props.item[field] = value;
 		this.props.item.save();
@@ -207,10 +199,10 @@ FacilityEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2><span>{facility.getName()}</span></h2>
 				<CollapseBox title="Property Details">
-				    <AutoForm item={facility} schema={schema} form={this.form1} save={this.save()} />
+				    <AutoForm item={facility} schema={schema} form={this.form1}/>
 				</CollapseBox>
 				<CollapseBox title="Documents & images">
-					<AutoForm item={facility} schema={schema} form={['attachments']} save={this.save()} />
+					<AutoForm item={facility} schema={schema} form={['attachments']}/>
 				</CollapseBox>
 				<CollapseBox title="Contacts">
 			   		<ContactList 
@@ -225,16 +217,16 @@ FacilityEdit = React.createClass({
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Facility holder" collapsed={true}>
-				    <AutoForm item={facility} schema={schema} form={['holder']} save={this.save()} />
+				    <AutoForm item={facility} schema={schema} form={['holder']}/>
 				</CollapseBox>
 				<CollapseBox title="Lease particulars" collapsed={true}>
-				    <AutoForm item={facility} schema={schema} form={['lease']} save={this.save()} />
+				    <AutoForm item={facility} schema={schema} form={['lease']}/>
 				</CollapseBox>
 				<CollapseBox title="Building areas" collapsed={true}>
-					<FacilityAreas item={facility} save={this.save()}/>
+					<FacilityAreas item={facility}/>
 				</CollapseBox>
 				<CollapseBox title="Default services & suppliers" collapsed={true}>
-					<ServicesSelector item={facility} save={this.save()} />
+					<ServicesSelector item={facility}/>
 				</CollapseBox>
 			</div>
 		)

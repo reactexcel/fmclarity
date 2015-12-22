@@ -111,18 +111,18 @@ AccountEdit = React.createClass({
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-lg-7">
-			        		<AutoForm item={team} schema={schema} form={this.form1} save={team.save.bind(team)} />
+			        		<AutoForm item={team} schema={schema} form={this.form1} />
 			        	</div>
 			        	<div className="col-lg-5">
 			        		<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
 			        	</div>
 			        	<div className="col-lg-12">
-				        	<AutoForm item={team} schema={schema} form={this.form2} save={team.save.bind(team)} />
+				        	<AutoForm item={team} schema={schema} form={this.form2} />
 				        </div>
 			        </div>
 		        </CollapseBox>
 			   	<CollapseBox title="Config" collapsed={true}>
-			       	<AutoForm item={team} schema={schema} form={this.form3} save={team.save.bind(team)} />
+			       	<AutoForm item={team} schema={schema} form={this.form3}/>
 			    </CollapseBox>
 			   	<CollapseBox title="Services Provided" collapsed={true}>
 			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>

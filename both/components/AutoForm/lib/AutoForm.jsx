@@ -223,13 +223,16 @@ AutoInput.Text = React.createClass({
 	},
 
 	render() {
+		if(this.props.readOnly) {
+			return <span>{this.props.value}</span>
+		}
 		return (
 		<input 
 			type="text"
 			placeholder={this.props.placeholder}
 			className="inline-form-control" 
 			defaultValue={this.props.value} 
-			onChange={this.props.onChange}
+			onChange={this.handleChange}
 		/>
 		)
 	}
@@ -430,7 +433,12 @@ AutoForm = React.createClass({
     	for(var i in schema) {
     		originalItem[i] = this.state.item[i];
     	}
-    	save();
+    	if(save) {
+	    	save();
+    	}
+    	else {
+	    	originalItem.save();
+	    }
     },
 
 	render() {

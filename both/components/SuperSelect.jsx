@@ -52,7 +52,7 @@ SuperSelect = React.createClass({
 		}
 
 		return (
-                <span 
+                <div 
                 	className={(this.state.open?"open ":"")+"super-select dropdown "+classes}
                 >
                     <span onClick={component.handleClick} className="dropdown-toggle">
@@ -75,7 +75,7 @@ SuperSelect = React.createClass({
                     {/*<li className="browse-button">Browse</li>*/}
                     </ul>
 
-                </span>
+                </div>
         )
 	}
 })
