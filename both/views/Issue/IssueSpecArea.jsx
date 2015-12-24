@@ -1,3 +1,37 @@
+IssueActionButtons = React.createClass({
+    render() {
+        var issue = this.props.issue;
+        var progressVerb = this.props.progressVerb;
+        var regressVerb = this.props.regressVerb;
+        var progressAction = this.props.progressAction;
+        var regressAction = this.props.regressAction;
+        var width = this.props.width||"100%";
+        return (
+            <div>
+                {progressVerb?
+                    <button 
+                        onClick={this.progressAction} 
+                        style={{margin:0,width:width}} 
+                        type="button" 
+                        className={"btn btn-sm btn-"+(issue.canCreate()?'Issued':'disabled')}>
+                        {progressVerb}
+                    </button>
+                :null}
+                {regressVerb?
+                    <button 
+                        onClick={this.regressAction} 
+                        style={{width:width}} 
+                        type="button" 
+                        className="btn btn-sm btn-Issued">
+                        {regressVerb}
+                    </button>
+                :null}
+            </div>
+        )
+    }
+});
+
+
 IssueSpecArea = React.createClass({
     mixins: [ReactMeteorData],
 
@@ -153,7 +187,7 @@ IssueSpecArea = React.createClass({
             <div className="issue-spec-area">
 
                 <div className="row">
-                    <div className="col-sm-12 col-md-1 col-lg-1">
+                    <div className="col-xs-12 col-sm-8 col-md-1">
                         <div style={{float:"left",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
                             <ContactAvatarSmall item={creator} />
                         </div>
@@ -170,14 +204,24 @@ IssueSpecArea = React.createClass({
                             </SuperSelect>
                         </div>
                     </div>
-                    <div className="col-sm-12 col-md-11 col-lg-11">
+                    <div className="visible-sm col-sm-4">
+                        <IssueActionButtons
+                            width="50%"
+                            issue={issue}
+                            progressVerb={actionVerb}
+                            progressAction={this.progressOrder}
+                            regressVerb={regressVerb}
+                            regressAction={this.regressOrder}
+                        />
+                    </div>
+                    <div className="col-xs-12 col-md-11">
                     	<div className="row">
-	                    	<div className="col-md-10 col-lg-10">
+	                    	<div className="col-md-10">
 	                    		<div className="row">
-	                    			<div className="col-lg-12">
+	                    			<div className="col-md-12">
 				                        <h2><AutoInput.Text readOnly={!issue.isEditable()} value={issue.name} onChange={this.updateItem.bind(this,'name')}/></h2>
 				                    </div>
-				                    <div className="col-md-6 col-lg-6">
+				                    <div className="col-md-6">
 			                            <IssueFacilitySelector issue={issue} />
 			                            <div style={{cursor:"default"}} className="issue-summary-facility-col">
 			                                <b>Order #</b>
@@ -191,9 +235,9 @@ IssueSpecArea = React.createClass({
 			                                /></span>
 			                            </div>
 				                    </div>{/*col*/}
-					                <div className="col-md-3 col-lg-3">
+					                <div className="col-md-3">
 					                    <div className="row">
-					                    	<div className="col-lg-12">
+					                    	<div className="col-md-12">
 						                        <SuperSelect 
 						                            readOnly={!issue.isEditable()}
 						                            itemView={ContactViewName}
@@ -209,7 +253,7 @@ IssueSpecArea = React.createClass({
 						                </div>
 					                    {issue.service&&subservices&&subservices.length?
 					                        <div className="row">
-				                            	<div className="col-lg-12">
+				                            	<div className="col-md-12">
 					                            <SuperSelect 
 					                                readOnly={!issue.isEditable()}
 					                                itemView={ContactViewName}
@@ -225,10 +269,10 @@ IssueSpecArea = React.createClass({
 					                        </div>
 					                    :null}
 					                </div>
-					                <div className="col-md-3 col-lg-3">
+					                <div className="col-md-3">
 					                    {issue.status?
 					                    <div className="row">
-					                    	<div className="col-lg-12">
+					                    	<div className="col-md-12">
 					                        <SuperSelect 
 					                            readOnly={!issue.isEditable()}
 					                            itemView={ContactViewName}
@@ -262,27 +306,16 @@ IssueSpecArea = React.createClass({
 					                </div>
 				                </div>
 		                    </div>{/*col*/}
-		                    <div className="col-md-2 col-lg-2">
-		                        {actionVerb?
-		                            <button 
-		                                onClick={this.progressOrder} 
-		                                style={{margin:0,width:"100%"}} 
-		                                type="button" 
-		                                className={"btn btn-sm btn-"+(issue.canCreate()?'Issued':'disabled')}>
-		                                {actionVerb}
-		                            </button>
-		                        :null}
-		                        {regressVerb?
-		                            <button 
-		                                onClick={this.regressOrder} 
-		                                style={{width:"100%"}} 
-		                                type="button" 
-		                                className="btn btn-sm btn-Issued">
-		       		                    {regressVerb}
-		   	                        </button>
-		                       	:null}
+		                    <div className="col-xs-12 hidden-sm col-md-2">
+                                <IssueActionButtons
+                                    issue={issue}
+                                    progressVerb={actionVerb}
+                                    progressAction={this.progressOrder}
+                                    regressVerb={regressVerb}
+                                    regressAction={this.regressOrder}
+                                />
 		                   	</div>
-		                   	<div className="col-md-12 col-lg-12">
+		                   	<div className="col-xs-12">
 		                   		{this.props.children}
 		                   	</div>
 		                </div>{/*row*/}

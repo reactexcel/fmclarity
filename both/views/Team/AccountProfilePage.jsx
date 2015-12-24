@@ -110,13 +110,13 @@ AccountEdit = React.createClass({
 		   		</div>
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
-		   				<div className="col-lg-7">
+		   				<div className="col-sm-7">
 			        		<AutoForm item={team} schema={schema} form={this.form1} />
 			        	</div>
-			        	<div className="col-lg-5">
+			        	<div className="col-sm-5">
 			        		<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
 			        	</div>
-			        	<div className="col-lg-12">
+			        	<div className="col-sm-12">
 				        	<AutoForm item={team} schema={schema} form={this.form2} />
 				        </div>
 			        </div>
@@ -204,7 +204,7 @@ AccountProfilePage = React.createClass({
 		return (
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
-		            <div className="col-lg-6 col-md-6 col-sm-6">
+		            <div className="col-lg-6">
 						<FlipWidget
 							front={AccountEdit}
 							back={AccountView}

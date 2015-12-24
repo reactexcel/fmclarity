@@ -135,15 +135,15 @@ IssueDynamicArea = React.createClass({
                         onChange={this.updateItem.bind(this,'description')}
                     />
                 </div>
-                <div className="col-lg-12">
+                <div className="col-lg-12" style={{padding:0}}>
                     <IpsoTabso tabs={[
                     {
-                        tab:<span><span>Images</span><span className="label label-notification">3</span></span>,
+                        tab:<span><span>Files</span><span className="label label-notification">3</span></span>,
                         content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.props.save} />
 
                     },{
-                        tab:"Documents",
-                        content:<FileBrowser />
+                        tab:<span>Contacts</span>,
+                        content:<ContactList items={contacts}/>
                     },{
                         tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                         content:<div>
@@ -153,9 +153,6 @@ IssueDynamicArea = React.createClass({
                                 onChange={this.updateItem.bind(this,'messages')}
                             />
                         </div>
-                    },{
-                        tab:<span>Contacts</span>,
-                        content:<ContactList items={contacts}/>
                     }
                     ]} />
                 </div>

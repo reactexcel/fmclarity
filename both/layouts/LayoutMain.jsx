@@ -18,24 +18,23 @@ MainLayout = React.createClass({
     
     $(window).bind("resize load", function () {
         if ($(this).width() < 769) {
-            $('body').addClass('body-small')
+            $('body').addClass('body-small fixed-sidebar')
         } else {
             $('body').removeClass('body-small')
         }
     });
-    /*
     // Fix height of layout when resize, scroll and load
     $(window).bind("load resize scroll", function() {
         if(!$("body").hasClass('body-small')) {
 
-            var navbarHeigh = $('nav.navbar-default').height();
-            var wrapperHeigh = $('#page-wrapper').height();
+            var navbarHeight = $('nav.navbar-default').height();
+            var wrapperHeight = $('#page-wrapper').height();
 
-            if(navbarHeigh > wrapperHeigh){
-                $('#page-wrapper').css("min-height", navbarHeigh + "px");
+            if(navbarHeight > wrapperHeight){
+                $('#page-wrapper').css("min-height", navbarHeight + "px");
             }
 
-            if(navbarHeigh < wrapperHeigh){
+            if(navbarHeight < wrapperHeight){
                 $('#page-wrapper').css("min-height", $(window).height()  + "px");
             }
 
@@ -44,7 +43,6 @@ MainLayout = React.createClass({
             }
         }
     });
-    */
 
     // SKIN OPTIONS
     // Uncomment this if you want to have different skin option:
@@ -78,10 +76,10 @@ MainLayout = React.createClass({
     return (
       <div id="wrapper">
         <Navigation />
-        <div id="page-wrapper" className="gradient-bg">
+        <div className="gradient-bg">
           {/*<div id="pattern-bg" className="pattern-bg"></div>*/}
           <TopNavBar />
-          <main>{this.props.content}</main>
+          <main id="page-wrapper">{this.props.content}</main>
           {/*<Footer />*/}
         </div>
         <RightSideBar />

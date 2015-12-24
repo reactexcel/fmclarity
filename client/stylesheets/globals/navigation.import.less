@@ -55,35 +55,6 @@
   min-height: 50px;
 }
 
-.dropdown-menu {
-  border: medium none;
-  border-radius: 3px;
-  box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
-  display: none;
-  float: left;
-  font-size: 12px;
-  left: 0;
-  list-style: none outside none;
-  padding: 0;
-  position: absolute;
-  text-shadow: none;
-  top: 100%;
-  z-index: 1000;
-}
-
-.dropdown-menu > li > a {
-  border-radius: 3px;
-  color: inherit;
-  line-height: 25px;
-  margin: 4px;
-  text-align: left;
-  font-weight: normal;
-}
-
-.dropdown-menu > li > a.font-bold {
-  font-weight: 600;
-}
-
 .navbar-top-links .dropdown-menu li {
   display: block;
 }
@@ -152,8 +123,7 @@
 }
 
 .nav > li.active {
-  border-left: 4px solid darken(@navy, 2%);
-  background: darken(@nav-bg, 3%);
+  background: #eee;
 }
 
 
@@ -334,16 +304,6 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
   background: @gray;
 }
 
-.fixed-nav #wrapper {
-  margin-top: 55px;
-}
-
-body.fixed-nav #wrapper .navbar-static-side,
-body.fixed-nav #wrapper #page-wrapper
-{
-  /*margin-top: 60px;*/
-}
-
 body.top-navigation.fixed-nav #wrapper #page-wrapper {
   margin-top: 0;
 }
@@ -370,10 +330,6 @@ body.canvas-menu .profile-element {
 
 body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .nav-second-level {
   display: none;
-}
-
-body.mini-navbar .navbar-default .nav > li > a {
-  font-size: 16px;
 }
 
 body.mini-navbar .logo-element {
@@ -407,13 +363,6 @@ body.canvas-menu.mini-navbar .footer {
   margin: 0 0 0 0;
 }
 
-body.fixed-sidebar .navbar-static-side,
-body.canvas-menu .navbar-static-side {
-  position: fixed;
-  width: @sidebar-width;
-  z-index: 2001;
-  height: 100%;
-}
 
 body.fixed-sidebar.mini-navbar .navbar-static-side {
   width: 0px;
@@ -452,21 +401,9 @@ body.canvas-menu.mini-navbar .navbar-default .nav > li > .nav-second-level li a 
   padding: 10px 10px 10px 15px;
 }
 
-.fixed-sidebar.mini-navbar .nav-second-level,
-.canvas-menu.mini-navbar .nav-second-level {
-  position: relative;
-  padding: 0;
-  font-size: 13px;
-}
-
 .fixed-sidebar.mini-navbar li.active .nav-second-level,
 .canvas-menu.mini-navbar li.active .nav-second-level {
   left: 0px
-}
-
-body.fixed-sidebar.mini-navbar .navbar-default .nav > li > a,
-body.canvas-menu.mini-navbar .navbar-default .nav > li > a {
-  font-size: 13px;
 }
 
 body.fixed-sidebar.mini-navbar .nav-label,

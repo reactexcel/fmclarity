@@ -1,7 +1,21 @@
 CHANGELOG.md
 ============
 
-**v0.2.11a** 
+**v0.3.12a**
+
+* WO: Changed the way tabs are sized to accomodate smaller views
+* Changed the way contacts with avatars are displayed on smaller screens
+* Centred the top logo so that it fits better on smaller screens and frees up the left area for a menu button
+* Simplified the notifications and settings buttons so that they collapse better on smaller screens
+* Moved the "facility selector" out of the left nav and into the pages that it is relevant to (wo and dash). This makes the layout less reliant on a persistent left nav
+* Improved the animations for opening and shutting the left nav on larger screens
+* Created a new style of "on canvas" left nav for smaller screens
+* Changed the right nav so that it is more consistent on all screens
+* Updated font and icon styles and sizes in left nav to make them more MD compliant
+* Restyled notifications window for smaller screens
+* Many other changes to WO stylesheets to improve responsiveness of layout
+
+**v0.3.11a** 
 
 * Fixed an issue that was causing WOs to crash when detail view opened by a contractor
 * WO table: Fixed an issue that was causing sort by priorty to fail

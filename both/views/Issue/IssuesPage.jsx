@@ -127,9 +127,9 @@ PageRequests = React.createClass({
 	    ];
 		return(
 			<div>
-		        <div className="row wrapper border-bottom white-bg page-heading" style={{"marginLeft":"0","height":"60px"}}>
+		        <div className="row wrapper border-bottom white-bg page-heading">
 		          <div className="col-lg-12">
-		            <h2 style={{marginTop:"20px"}}>Work Requests</h2>
+                    <FacilityFilter/>
 		          </div>
 		        </div>
 		    	{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}
