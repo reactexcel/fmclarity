@@ -39,17 +39,12 @@ AccountEdit = React.createClass({
 		"email"
 	],
 	form2 : [
-		"website",
-		"facebook",
 		"addressLine1",
 		"addressLine2",
 		"city",
 		"state",
 		"country",
 		"postcode",
-		"headline",
-		"bio",
-		"references"
 	],
 	form3: [
 		"defaultWorkOrderValue",

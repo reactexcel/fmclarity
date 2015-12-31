@@ -14,5 +14,6 @@ DONE
 IN PROGRESS
 -----------
 * Upload/download documents feature
+
 * Include layout for uploaded file types, eg like google drive table view incl improved icons
 * View large image in popup feature

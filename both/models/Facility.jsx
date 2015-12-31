@@ -33,7 +33,7 @@ Contact = {
 
 FacilityHolder = {
 	type:{
-		label:"Holder type",
+		label:"Type",
 	},
 	companyName : {
 		label:"Company name",
@@ -241,19 +241,18 @@ Facilities.helpers({
   },
   getAreas() {
   	var areas = [];
-  	for(var i in this.areas) {
-  		if(i=='Unique areas') {
-  			areas.push(this.areas[i].areas[j]);
-  		}
-  		else {
-	  		for(var j in this.areas[i].areas) {
+  	for(var areaGroupNum in this.areas) {
+  		var areaGroup = this.areas[areaGroupNum];
+  		var levelsLikeThis = parseInt(areaGroup.number);
+  		for(var level=1;level<=levelsLikeThis;level++) {
+	  		for(var areaNum in areaGroup.areas) {
+	  			var area = areaGroup.areas[areaNum];
+	  			var name = area.name;
+	  			if(levelsLikeThis>1) {
+	  				name = ('Level '+level+': ')+name;
+	  			}
 	  			areas.push({
-	  				name:('Level 1: '+this.areas[i].areas[j].name)
-	  			});
-	  		}
-	  		for(var j in this.areas[i].areas) {
-	  			areas.push({
-	  				name:('Level 2: '+this.areas[i].areas[j].name)
+	  				name:name
 	  			});
 	  		}
 	  	}
@@ -343,7 +342,7 @@ ExampleFacilities = [
 	},
 	{
 		name:"Hay St, Perth",
-		location:"Clarence Street, Sydney",
+		location:"Hay St, Perth",
 		address:{
 			streetNumber:"1525",
 			streetName:"Hay",

@@ -126,12 +126,11 @@ IssueDynamicArea = React.createClass({
             <div className="issue-dynamic-area row">
                 <div className="col-lg-12">
                     <span style={{paddingLeft:0,cursor:"default"}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
-                    <textarea 
+                    <AutoInput.Text 
+                        elastic={true}
                         readOnly={!issue.isEditable()}
-                        ref="description"
                         placeholder="Type issue description here"
-                        className="issue-description-textarea inline-form-control" 
-                        defaultValue={issue.description} 
+                        value={issue.description} 
                         onChange={this.updateItem.bind(this,'description')}
                     />
                 </div>
@@ -175,8 +174,8 @@ IssueDetail = React.createClass({
         var issue=this.props.item;
         return (
             <div className="issue-detail">
-                <IssueSpecArea item={issue} save={this.saveItem}>
-                    <IssueDynamicArea item={issue} save={this.saveItem}/>
+                <IssueSpecArea item={issue} save={this.saveItem} closeCallback={this.props.closeCallback}>
+                    <IssueDynamicArea item={issue} save={this.saveItem} closeCallback={this.props.closeCallback}/>
                 </IssueSpecArea>
             </div>
         )

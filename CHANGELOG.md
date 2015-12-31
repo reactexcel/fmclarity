@@ -1,6 +1,22 @@
 CHANGELOG.md
 ============
 
+**v0.3.13a**
+
+* Portolio - renamed Facility Holder to Facility Manager
+* Team - Removed "about me" section
+* Account - removed website, facebook, My headline, Short Bio, References fields
+* Account - changed first "address 2" field to "Address 1"
+* Medium - Edit profile/team member - First name and last name are in same row
+* Small/med - submit/cancel buttons reconfigured - too large
+* Fixed a bug that was preventing cancelling or creation of work orders
+* WO : Fixed a bug that was causing "maximum call stack exceeded" error when trying to save issue description
+* Fixed : "When first supplier added it dissappears, susequent suppliers seem to be added with no issue"
+* Disabled permanent opening of issues created but not issued. There is now now situation where multiple issues will be open. (this also addressed the bug "WO: When issuing first order it doesn't close")
+* Added autoscroll to fix "Screen should scroll to the top when clicking back on a link, eg WO from facilities. Currently it goes to the last position, eg at the end of the page."
+* Facilities : Updated areas so that levels now appear in WO as specified in facility->areas
+
+
 **v0.3.12a**
 
 * WO: Changed the way tabs are sized to accomodate smaller views

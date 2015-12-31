@@ -216,8 +216,8 @@ FacilityEdit = React.createClass({
 			   			onChange={this.updateField.bind(null,'tenants')}
 			   		/>
 				</CollapseBox>
-				<CollapseBox title="Facility holder" collapsed={true}>
-				    <AutoForm item={facility} schema={schema} form={['holder']}/>
+				<CollapseBox title="Facility manager" collapsed={true}>
+				    <AutoForm item={facility} schema={schema} form={['manager']}/>
 				</CollapseBox>
 				<CollapseBox title="Lease particulars" collapsed={true}>
 				    <AutoForm item={facility} schema={schema} form={['lease']}/>

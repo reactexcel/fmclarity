@@ -27,13 +27,6 @@ UserProfile = React.createClass({
 		}
 	},
 
-	form2 : {
-		bio:{
-			label:"About me",
-			input:"textarea"
-		}
-	},
-
 	handleInvite(event) {
     	event.preventDefault();
     	var team,input,email,regex,component;
@@ -98,9 +91,6 @@ UserProfile = React.createClass({
 			        </div>
 			   		<div className="col-sm-5">
 				        <AutoInput.File item={profile.thumb} onChange={this.handleThumbChange} />
-				    </div>
-				    <div className="col-sm-12">
-				        <AutoForm item={profile} schema={this.form2} save={this.save} />
 				    </div>
 		        </div>
 			</div>

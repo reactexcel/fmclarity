@@ -10,8 +10,8 @@ IssueActionButtons = React.createClass({
             <div>
                 {progressVerb?
                     <button 
-                        onClick={this.progressAction} 
-                        style={{margin:0,width:width}} 
+                        onClick={progressAction} 
+                        style={{margin:0,width:width,maxWidth:"400px"}} 
                         type="button" 
                         className={"btn btn-sm btn-"+(issue.canCreate()?'Issued':'disabled')}>
                         {progressVerb}
@@ -19,8 +19,8 @@ IssueActionButtons = React.createClass({
                 :null}
                 {regressVerb?
                     <button 
-                        onClick={this.regressAction} 
-                        style={{width:width}} 
+                        onClick={regressAction} 
+                        style={{width:width,maxWidth:"400px"}} 
                         type="button" 
                         className="btn btn-sm btn-Issued">
                         {regressVerb}
@@ -92,14 +92,14 @@ IssueSpecArea = React.createClass({
             var createdMs = issue.createdAt.getTime();
             issue.dueDate = new Date(createdMs+timeframe);
             issue.status = "Issued";
-            this.saveItem();
+            this.save();
             if(this.props.closeCallback) {
                 this.props.closeCallback()
             }            
         }
         else if(issue.canCreate()) {
             issue.status = "New";
-            this.saveItem();
+            this.save();
             if(this.props.closeCallback) {
                 this.props.closeCallback()
             }
@@ -128,8 +128,9 @@ IssueSpecArea = React.createClass({
     },
 
     reallyCloseOrder() {
-        this.item.status = "Closed";
-        this.item.priority = "Closed";
+        var issue = this.data.issue;
+        issue.status = "Closed";
+        issue.priority = "Closed";
         this.save();
         if(this.props.closeCallback) {
             this.props.closeCallback()

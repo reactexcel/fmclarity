@@ -73,7 +73,7 @@ IssueSummary = React.createClass({
           </div>
           <div className="issue-summary-col issue-summary-col-3">
             <span className="issue-summary-facility-name">
-              {facility?facility.location:null}
+              {facility?facility.name:null}
             </span>
           </div>
           <div className="issue-summary-col issue-summary-col-4">

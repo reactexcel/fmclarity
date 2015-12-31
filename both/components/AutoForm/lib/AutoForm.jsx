@@ -95,7 +95,7 @@ AutoInput.switchbank = React.createClass({
 	           			return (
 	           				<div 
 	           					key={label}
-	           					className={"md-switch col-lg-"+size}
+	           					className={"md-switch col-sm-"+size}
 	           				>
 								<input 
 									type="checkbox"
@@ -213,18 +213,30 @@ AutoInput.select = React.createClass({
 	}
 });
 
-AutoInput.Text = React.createClass({
-
+AutoInput.Events = {
 	handleChange(event) {
 		var onChange = this.props.onChange;
 		if(onChange) {
 			onChange(event.target.value);
 		}
-	},
+	}
+}
 
+AutoInput.Text = React.createClass({
+	mixins:[AutoInput.Events],
 	render() {
 		if(this.props.readOnly) {
-			return <span>{this.props.value}</span>
+			return <span>{this.props.value}{this.props.elastic?<br/>:''}</span>
+		}
+		if(this.props.elastic) {
+			return (
+                <textarea 
+					placeholder={this.props.placeholder}
+                    className="issue-description-textarea inline-form-control" 
+					defaultValue={this.props.value} 
+					onChange={this.handleChange}
+                />
+			)
 		}
 		return (
 		<input 
@@ -451,7 +463,7 @@ AutoForm = React.createClass({
 		return (
 			<div className="autoform row">
 				{this.props.children?
-					<div className="col-lg-12">
+					<div className="col-sm-12">
 						{this.props.children}
 					</div>
 				:null}
@@ -486,7 +498,7 @@ AutoForm = React.createClass({
 					var Input = AutoInput[s.input];
 
 					return (
-					<div key={id+'-'+key} className={"col-lg-"+s.size}>
+					<div key={id+'-'+key} className={"col-sm-"+s.size}>
 						<Input
 							placeholder={placeholder}
 							value={item[key]} 

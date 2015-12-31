@@ -25,7 +25,7 @@ PageRequests = React.createClass({
         }
     },
 
-    createNewIssue() {
+    createNewIssue(callback) {
         var selectedFacility = Meteor.user().getSelectedFacility();
         var selectedTeam = Meteor.user().getSelectedTeam();
         var issue = {}
@@ -41,7 +41,7 @@ PageRequests = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
-	    FM.create("Issue",issue);
+	    FM.create("Issue",issue,callback);
     },
 
 	render() {

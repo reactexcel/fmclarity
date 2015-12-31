@@ -96,7 +96,12 @@ FilterBox = React.createClass({
   },
 
   createNewItem() {
-    this.props.newItemCallback();
+    var component = this;
+    this.props.newItemCallback(function(newItem){
+      if(newItem) {
+        component.toggleExpandedItem(newItem);
+      }
+    });
   },
 
   toggleExpandedItem(item,callback) {
@@ -224,28 +229,14 @@ FilterBox = React.createClass({
 CardWrapper = React.createClass({
 
   getInitialState() {
-    var collapsed;
-    if(this.props.item.isNewItem) {
-      collapsed = false;
-    }
-    else {
-      collapsed = !this.props.expanded;
-    }
     return {
-      collapsed:collapsed
+      collapsed:!this.props.expanded
     }
   },
 
   componentWillReceiveProps(newProps) {
-    var collapsed;
-    if(this.props.item.isNewItem) {
-      collapsed = false;
-    }
-    else {
-      collapsed = !newProps.expanded;
-    }
     this.setState({
-      collapsed:collapsed
+      collapsed:!newProps.expanded
     });
   },
 
@@ -255,9 +246,7 @@ CardWrapper = React.createClass({
     item = this.props.item;
     toggleSize = this.props.toggleSize;
     if(toggleSize) {
-      //console.log(item);
       toggleSize(item,function(expanded){
-        //console.log('calling back');
         /*if(expanded) {
           $('html, body').animate({
               scrollTop: $(container).offset().top-60
@@ -292,7 +281,6 @@ CardWrapper = React.createClass({
       <div 
         ref="container"
         className={
-          (item.isNewItem?"new-grid-item ":'')+
           (!this.state.collapsed?"gigante ":'')+
           "grid-item"
         }

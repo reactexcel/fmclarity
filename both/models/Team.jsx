@@ -40,7 +40,7 @@ Teams = FM.createCollection('Team',{
     },
     addressLine1 :{
       type: String,
-      label: "Address line 2",
+      label: "Address line 1",
       size:6
     },
     addressLine2 :{
