@@ -220,7 +220,13 @@ IssueSpecArea = React.createClass({
 	                    	<div className="col-md-10">
 	                    		<div className="row">
 	                    			<div className="col-md-12">
-				                        <h2><AutoInput.Text readOnly={!issue.isEditable()} value={issue.name} onChange={this.updateItem.bind(this,'name')}/></h2>
+				                        <h2><AutoInput.Text
+                                                readOnly={!issue.isEditable()}
+                                                value={issue.name}
+                                                placeholder="Type issue name here"
+                                                onChange={this.updateItem.bind(this,'name')}
+                                            />
+                                        </h2>
 				                    </div>
 				                    <div className="col-md-6">
 			                            <IssueFacilitySelector issue={issue} />

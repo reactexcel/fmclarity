@@ -123,36 +123,38 @@ IssueDynamicArea = React.createClass({
             }
         });
         return (
-            <div className="issue-dynamic-area row">
+            <div className="row">
                 <div className="col-lg-12">
-                    <span style={{paddingLeft:0,cursor:"default"}} className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
-                    <AutoInput.Text 
-                        elastic={true}
-                        readOnly={!issue.isEditable()}
-                        placeholder="Type issue description here"
-                        value={issue.description} 
-                        onChange={this.updateItem.bind(this,'description')}
-                    />
+                    <div style={{borderTop:"1px solid #ccc",marginTop:"10px",paddingBottom:"10px"}}></div>
+                    <span className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
+                    <div className="issue-dynamic-area">
+                        <AutoInput.Text 
+                            elastic={true}
+                            readOnly={!issue.isEditable()}
+                            placeholder="Type issue description here"
+                            value={issue.description} 
+                            onChange={this.updateItem.bind(this,'description')}
+                        />
+                    </div>
                 </div>
-                <div className="col-lg-12" style={{padding:0}}>
+                <div className="col-lg-12" style={{marginTop:"10px"}}>
                     <IpsoTabso tabs={[
-                    {
-                        tab:<span><span>Files</span><span className="label label-notification">3</span></span>,
-                        content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.props.save} />
-
-                    },{
-                        tab:<span>Contacts</span>,
-                        content:<ContactList items={contacts}/>
-                    },{
-                        tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
-                        content:<div>
-                            <IssueDiscussion items={notifications}/>
-                            <Discussion 
-                                value={issue.messages} 
-                                onChange={this.updateItem.bind(this,'messages')}
-                            />
-                        </div>
-                    }
+                        {
+                            tab:<span><span>Files</span><span className="label label-notification">3</span></span>,
+                            content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.props.save} />
+                        },{
+                            tab:<span><span>Contacts</span></span>,
+                            content:<ContactList items={contacts}/>
+                        },{
+                            tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
+                            content:<div>
+                                <IssueDiscussion items={notifications}/>
+                                <Discussion 
+                                    value={issue.messages} 
+                                    onChange={this.updateItem.bind(this,'messages')}
+                                />
+                            </div>
+                        }
                     ]} />
                 </div>
             </div>

@@ -13,8 +13,8 @@ AutoInput.attachments = React.createClass({
   			<div>
 			{attachments.map(function(file,idx){
 				return (
-					<div key={idx} style={{padding:0,width:"180px",display:"inline-block"}}>
-						<AutoInput.File 
+					<div key={idx} style={{display:"inline-block"}}>
+						<AutoInput.Thumbnail 
 							item={file}
 							onChange={component.handleChange.bind(null,idx)}
 						/>
@@ -22,8 +22,8 @@ AutoInput.attachments = React.createClass({
 				)
 			})}
 			
-				<div style={{padding:0,width:"180px",display:"inline-block"}}>
-					<AutoInput.File onChange={component.handleChange.bind(null,attachments.length)}/>
+				<div style={{display:"inline-block"}}>
+					<AutoInput.Thumbnail onChange={component.handleChange.bind(null,attachments.length)}/>
 				</div>
 			
 			</div>

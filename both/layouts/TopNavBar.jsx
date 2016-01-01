@@ -109,22 +109,20 @@ TopNavBar = React.createClass({
                 <div className="col-xs-8" style={{textAlign:"center"}}>
                     <img style={{width:"160px",margin:"6px"}} src="img/logo-white.svg"/>
                 </div>
-                <div className="hidden-xs col-sm-1">                
-                    <div style={{float:"right"}} className="dropdown right-dropdown">
-                        <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
-                            <i className="fa fa-bell"></i>
-                            {notifications.length?
-                                <span className="label label-notification" style={{top:"10px"}}>{notifications.length}</span>
-                            :null}
-                        </span>
-                        <NotificationView items={notifications}/>
-                    </div>
-                </div>
-                <div className="col-xs-2 col-sm-1">
+                <div className="col-xs-2">
                     <div style={{float:"right"}}>
                         <UserProfileMenu>
                             <span className="topnav-icon"><i className="fa fa-cog"></i></span>
                         </UserProfileMenu>
+                    </div>
+                    <div style={{float:"right"}} className="hidden-xs dropdown right-dropdown">
+                        <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
+                            <i className="fa fa-bell"></i>
+                            {notifications.length?
+                                <span className="label label-notification">{notifications.length}</span>
+                            :null}
+                        </span>
+                        <NotificationView items={notifications}/>
                     </div>
                 </div>
             </div>
