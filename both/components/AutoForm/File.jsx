@@ -32,8 +32,19 @@ AutoInput.File = React.createClass({
 	    });
 	},
 
+	showImageInModal() {
+        Modal.show({
+            content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
+        })
+    },
+
 	onClick() {
-		$(this.refs.input).click();
+		if(this.data.file) {
+			this.showImageInModal()
+		}
+		else {
+			$(this.refs.input).click();			
+		}
 	},
 
 	render() {
@@ -86,8 +97,27 @@ AutoInput.Thumbnail = React.createClass({
 	    });
 	},
 
+	showImageInModal() {
+        Modal.show({
+            content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
+        })
+    },
+
+    downloadFile() {
+    	var win = window.open(this.data.url, '_blank');
+    	win.focus();
+    },
+
 	onClick() {
-		$(this.refs.input).click();
+		if(this.data.isImage) {
+			this.showImageInModal()
+		}
+		else if(this.data.file) {
+			this.downloadFile();
+		}
+		else {
+			$(this.refs.input).click();			
+		}
 	},
 
 	render() {
@@ -114,7 +144,7 @@ AutoInput.Thumbnail = React.createClass({
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
-				<span>Upload file</span>
+				<div style={{paddingTop:"50%"}}>Upload file</div>
 			</div>
 		)
 	}

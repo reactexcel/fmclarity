@@ -1,6 +1,19 @@
 CHANGELOG.md
 ============
 
+**v0.3.15a**
+
+* Upload/download documents feature
+* View large image in popup feature
+
+**v0.3.14a**
+
+* Move notifications closer to right corner
+* WO: Adjusted white space containers as per design elements
+* WO: Adjusted tab display in line with image
+* Tabs have animated underline as per MD
+* WO: Uploaded files show as icons, uploaded images show as thumbnails
+
 **v0.3.13a**
 
 * Portolio - renamed Facility Holder to Facility Manager

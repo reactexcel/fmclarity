@@ -103,10 +103,6 @@ IssueDynamicArea = React.createClass({
         }
     },
 
-    componentDidMount: function() {
-        $(this.refs.description).elastic();
-    },
-
     updateItem: function(field,value) {
         this.props.item[field] = value;
         this.props.save();

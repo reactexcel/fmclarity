@@ -224,6 +224,13 @@ AutoInput.Events = {
 
 AutoInput.Text = React.createClass({
 	mixins:[AutoInput.Events],
+
+	componentDidMount() {
+		if(this.props.elastic) {
+			$(this.refs.input).elastic();		
+		}
+	},
+
 	render() {
 		if(this.props.readOnly) {
 			return <span>{this.props.value}{this.props.elastic?<br/>:''}</span>
@@ -231,6 +238,7 @@ AutoInput.Text = React.createClass({
 		if(this.props.elastic) {
 			return (
                 <textarea 
+                	ref="input"
 					placeholder={this.props.placeholder}
                     className="issue-description-textarea inline-form-control" 
 					defaultValue={this.props.value} 
@@ -240,6 +248,7 @@ AutoInput.Text = React.createClass({
 		}
 		return (
 		<input 
+           	ref="input"
 			type="text"
 			placeholder={this.props.placeholder}
 			className="inline-form-control" 
