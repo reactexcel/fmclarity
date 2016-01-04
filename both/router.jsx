@@ -114,10 +114,10 @@ loggedIn.route('/requests', {
   }
 });
 
-loggedIn.route('/notifications', {
-  name: 'notifications',
+loggedIn.route('/messages', {
+  name: 'messages',
   action() {
-    ReactLayout.render(MainLayout,{content:<NotificationsPage />});
+    ReactLayout.render(MainLayout,{content:<MessagesPage />});
   }
 });
 

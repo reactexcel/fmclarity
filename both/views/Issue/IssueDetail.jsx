@@ -146,8 +146,9 @@ IssueDynamicArea = React.createClass({
                             content:<div>
                                 <IssueDiscussion items={notifications}/>
                                 <Discussion 
-                                    value={issue.messages} 
-                                    onChange={this.updateItem.bind(this,'messages')}
+                                    discussion={issue.discussion} 
+                                    watchers={contacts}
+                                    onChange={this.updateItem.bind(this,'discussion')}
                                 />
                             </div>
                         }

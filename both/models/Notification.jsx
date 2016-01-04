@@ -35,9 +35,11 @@ Meteor.methods({
 		}
 		var actor = action.actor || Meteor.user();
 		var team = Teams.findOne(action.context.team);
-		team.members.map(function(i){
-			action.recipients.push(i);
-		});
+		if(team&&team.members&&team.members.length) {
+			team.members.map(function(i){
+				action.recipients.push(i);
+			});
+		}
 		var newAction = _.extend({
 			actor:{
 				_id:actor._id,

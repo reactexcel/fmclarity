@@ -31,7 +31,9 @@ DiscussionPost = React.createClass({
         // returns reference object to save
         Meteor.call("Message.save",message,function(err,response){
             event.target.value = null;
-            callback(response);
+            if(callback) {
+                callback(response);
+            }
         })
     },
 
@@ -56,8 +58,9 @@ DiscussionPost = React.createClass({
                     <div>
                         <strong>{creator.getName()}</strong> {message.subject}<br/>
                         <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
+                        <div>{message.body}</div>
                     </div>
-                    :null}
+                    :
                     <textarea 
                         ref="input"
                         style={{width:"80%"}}
@@ -66,6 +69,7 @@ DiscussionPost = React.createClass({
                         defaultValue={message.body} 
                         onKeyDown={this.handleKeyPress}>
                     </textarea>
+                    }
                 </div>
             </div>
         )

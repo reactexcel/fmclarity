@@ -149,6 +149,13 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
+                <li className={FlowRouter.getRouteName()=='messages'?'active':''}>
+                    <a href={FlowRouter.path('messages')}>
+                        <i className="fa fa-envelope"></i>
+                        <span className="nav-label">Messages</span>
+                    </a>
+                </li>
+                {/*
                 <li className={FlowRouter.getRouteName()=='account'?'active':''}>
                     <a href={FlowRouter.path('account')}>
                         <i className="fa fa-cog"></i>
@@ -167,6 +174,7 @@ Navigation = React.createClass({
                         <span className="nav-label">Profile</span>
                     </a>
                 </li>
+                */}
             </ul>
         </div>
     </nav>

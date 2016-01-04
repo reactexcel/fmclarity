@@ -145,7 +145,7 @@ if (Meteor.isServer) {
             name:name,
             email:email
           });
-          Accounts.sendEnrollmentEmail(uid);
+          //Accounts.sendEnrollmentEmail(uid);
         }
         else {
           throw new Meteor.Error('email-blocked', 'Sorry, selected email has been blocked by the server.');
@@ -183,6 +183,23 @@ Meteor.methods({
   "Team.removeMember":function(item,member) {
     Teams.update(item._id,{$pull:{members:{_id:member._id}}});
   },
+  "Team.setMembers":function(team,members) {
+    console.log(team);
+    if(members&&members.length) {
+      var sanitisedMembers = [];
+      members.map(function(member){
+        if(member) {
+          sanitisedMembers.push({
+            _id:member._id
+          });
+        }
+      });
+      console.log(sanitisedMembers);
+      Teams.update(team._id,{$set:{members:sanitisedMembers}},function(err,data){
+        console.log({err:err,data:data})
+      });
+    }
+  },
   "Team.addSupplier":function(item,supplier) {
     Teams.update(item._id,{$push:{suppliers:supplier}});
   },
@@ -200,25 +217,36 @@ Meteor.methods({
 
 Teams.helpers({
   inviteMember(email,callback) {
-    Meteor.call('Team.inviteMember',this, email, callback)
+    Meteor.call('Team.inviteMember',this, email, callback);
   },
   inviteSupplier(email,callback) {
-    Meteor.call('Team.inviteSupplier',this, email, callback)
+    Meteor.call('Team.inviteSupplier',this, email, callback);
+  },
+  setMembers(members,callback) {
+    Meteor.call("Team.setMembers",this,members,callback);
   },
   removeMember(member, callback) {
-    Meteor.call('Team.removeMember',this, member, callback)
+    Meteor.call('Team.removeMember',this, member, callback);
   },
   removeSupplier(supplier, callback) {
-    Meteor.call('Team.removeSupplier',this, supplier, callback)
+    Meteor.call('Team.removeSupplier',this, supplier, callback);
   },
   getProfile() {
     return this;
   },
   getMembers() {
     if (this.members&&this.members.length) {
+      var users = this.members;
+      var userIds = [];
+      users.map(function(user){
+        userIds.push(user._id);
+      });
+      return Users.find({_id:{$in:userIds}}).fetch();
+      /*
     	return Users.find({
     		$or:this.members
     	}).fetch();
+      */
     }
     return [];
   },

@@ -43,6 +43,21 @@ Users.helpers({
   destroy:function() {
     Meteor.call('User.destroy',this);
   },
+  // I have a hunch this could be improved
+  // perhaps it should be in messages
+  // perhaps it should be something like sendMessage(message,recipient)
+  // advantage - don't need to load user first
+  // disadvantage - does not allow for different types of entities to receive messages differently
+  receiveMessage(message) {
+    if(!this.unreadMessages) {
+      this.unreadMessages = [];
+    }
+    // not sure about this... why not
+    // Users.update(user._id,{$push:{profile.unreadMessages:{message:_id}}});
+    // but then on the other hand - can't save check to see what has changed and only save that?
+    this.unreadMessages.push(message._id);
+    this.save();
+  },
   getName() {
     return this.profile.name;
   },
@@ -81,7 +96,9 @@ Users.helpers({
     return this.profile;
   },
   selectTeam(team) {
-    Session.set('selectedTeam',{_id:team._id});
+    if(team) {
+      Session.set('selectedTeam',{_id:team._id});
+    }
     Session.set('selectedFacility',0);
   },
   getSelectedTeam() {

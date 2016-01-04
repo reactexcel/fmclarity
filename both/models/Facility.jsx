@@ -274,12 +274,12 @@ Facilities.helpers({
     	// this is pretty fucking inefficient
     	// idea - store contactIds and sometimes denormalise by making contacts as well
     	// perhaps if contacts is empty or if it has "expired"
-    	var contacts = this.contacts;
-    	var contactIds = [];
-    	contacts.map(function(contact){
-    		contactIds.push(contact._id);
-    	});
-    	return Users.find({_id:{$in:contactIds}}).fetch();
+      var users = this.contacts;
+      var userIds = [];
+      users.map(function(user){
+        userIds.push(user._id);
+      });
+      return Users.find({_id:{$in:userIds}}).fetch();
     }
     return [];
 

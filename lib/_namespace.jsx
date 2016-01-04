@@ -73,18 +73,20 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		if(!item.createdAt) {
 			item.createdAt = moment().toDate();
 		}
+		/*
 		console.log({
 			saving:item
 		});
+		*/
 		var response = collection.upsert(item._id, {$set: _.omit(item, '_id')});
 		return {
 			_id:response.insertedId
 		}
 	}
 	methods[name+'.destroy'] = function(item) {
-		console.log({
+		/*console.log({
 			destroying:item
-		});
+		});*/
 		collection.remove(item._id);
 	}
 	methods[name+'.new'] = function(item,actor) {
@@ -97,17 +99,18 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 				thumb:actor.profile.thumb
 			},
 		},newItemTemplate(item),item);
+		/*
 		console.log({
 			creating:newItem,
 			with:item,
 			and:newItemTemplate
-		});
+		});*/
 
 		return collection.insert(newItem,function(err,obj){
-			console.log({
+			/*console.log({
 				error:err,
 				data:obj
-			});			
+			});*/			
 		});
 	}
 	methods[name+'.getTemplate'] = function(item) {

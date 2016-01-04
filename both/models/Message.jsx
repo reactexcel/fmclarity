@@ -19,13 +19,16 @@ Messages = FM.createCollection('Message',{
     input:"contact",
     label:"Recipient"
   },
-
+  commments:{
+    type:[Object],
+    defaultValue:[]
+  }
 });
 
 if(Meteor.isServer) {
   Meteor.publish("messages",function(){
     return Messages.find();
-  })
+  });
 }
 else {
   Meteor.subscribe("messages");

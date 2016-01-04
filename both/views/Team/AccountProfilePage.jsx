@@ -82,9 +82,10 @@ AccountEdit = React.createClass({
     },
 
 	render() {
-    	var selectedTeam,team,schema;
+    	var selectedTeam,team,members,schema;
     	team = this.state.item;
     	selectedTeam = this.data.selectedTeam;
+    	members = selectedTeam.getMembers()||[];
 		schema = FM.schemas['Team'];
 		if(!team) {
 			return (
@@ -116,6 +117,12 @@ AccountEdit = React.createClass({
 				        </div>
 			        </div>
 		        </CollapseBox>
+				<CollapseBox title="Members">
+			   		<ContactList 
+			   			items={members}
+			   			onChange={team.setMembers.bind(team)}
+			   		/>
+				</CollapseBox>
 			   	<CollapseBox title="Config" collapsed={true}>
 			       	<AutoForm item={team} schema={schema} form={this.form3}/>
 			    </CollapseBox>
