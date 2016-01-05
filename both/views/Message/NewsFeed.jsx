@@ -1,39 +1,48 @@
-Discussion = React.createClass({
+NewsFeed = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query,discussion;
-        query = this.props.discussion;
-        discussion = query?Discussions.findOne(query):{posts:[]};
+        var query,feed;
+        query = this.props.feed;
+        feed = query?Feeds.findOne(query):{posts:[]};
         return {
-            discussion:discussion
+            feed:feed
         }
     },
 
     updatePost(index,newPost) {
-        var discussion = this.data.discussion;
+        var feed = this.data.feed;
+        if(!feed) {
+            return;
+        }
         var onChange = this.props.onChange;
-        discussion.posts[index] = newPost;
-        Meteor.call("Discussions.save",discussion,function(err,newDiscussion){
-            if(onChange&&newDiscussion&&newDiscussion._id) {
-                console.log({'err':err,'save this motherfucker...':newDiscussion})
-                onChange({_id:newDiscussion._id});
+        feed.posts[index] = newPost;
+        Meteor.call("Feeds.save",feed,function(err,newFeed){
+            if(onChange&&newFeed&&newFeed._id) {
+                onChange({_id:newFeed._id});
             }
         });
     },    
 
     render(){
-        var discussion = this.data.discussion;
-        var watchers = this.props.watchers||[];
-        var component = this;
+        var feed, posts, watchers, component;
+        feed = this.data.feed;
+        if(feed) {
+            posts = feed.posts?feed.posts:[];
+        }
+        else {
+            posts = [];
+        }
+        watchers = this.props.watchers||[];
+        component = this;
         return (
             <div className="feed-activity-list">
-                {discussion.posts.map(function(post,idx){
+                {posts.map(function(post,idx){
                     return (
                         <div key={idx} className="feed-element">
-                            <DiscussionPost
-                                value={post}
+                            <NewsPost
+                                item={post}
                                 onChange={component.updatePost.bind(null,idx)}
                             />
                         </div>
@@ -41,8 +50,8 @@ Discussion = React.createClass({
                 })}
             
                 <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
-                    <DiscussionPost 
-                        onChange={component.updatePost.bind(null,discussion.posts.length)}
+                    <NewsPost 
+                        onChange={component.updatePost.bind(null,posts.length)}
                     />
                 </div>
             

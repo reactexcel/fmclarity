@@ -144,11 +144,10 @@ IssueDynamicArea = React.createClass({
                         },{
                             tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
                             content:<div>
-                                <IssueDiscussion items={notifications}/>
-                                <Discussion 
-                                    discussion={issue.discussion} 
-                                    watchers={contacts}
-                                    onChange={this.updateItem.bind(this,'discussion')}
+                                {/*<IssueDiscussion items={notifications}/>*/}
+                                <NewsFeed 
+                                    feed={issue.feed} 
+                                    onChange={this.updateItem.bind(this,'feed')}
                                 />
                             </div>
                         }

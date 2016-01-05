@@ -10,10 +10,6 @@ TODO (general)
 
 DONE
 ----
-* Move team into "Account settings" area
-* Move account button and profile button into top right settings area
-* Add messages button to left navigation bar
-* Make messages page in style of issue details
 
 [ 
 - Discussion [Post, Comment]: a converstion with multiple watchers that can be hosted on a node such as a work order or facility 
@@ -35,9 +31,20 @@ IN PROGRESS
 * Hook up with external email system
 * Make notifications able to send messages
 * Settings to go in left navigation on small screens
+* "Discussion" is now a "Feed"
+* "Message" is now a "Post"
+* Create a post action on the model
+* Move any action that modifies an issue into the model
+
+* Have actions that modify the issue post themselves to the issue
 
 NOTES
 -----
+* Create new "Message" model
+* Create a messaging system with functions to send to recipients (user.sendMessage(), team.sendMessage())
+* Get rid of current notification system, notifications will now consist of unread messages
+
+
 * Need a mixin that is used by both user and team which includes, among other things, a receive function that is called when the entity should receive a message
 
 BUGS

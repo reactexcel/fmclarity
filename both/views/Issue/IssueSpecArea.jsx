@@ -54,12 +54,16 @@ IssueSpecArea = React.createClass({
             }
 
             var actionVerb = this.getActionVerb(issue);
+            var supplier = issue.getSupplier();
+            var creator = issue.getCreator();
+            var assignee = issue.getAssignee();
 
+            // do we need a issue.getWatchers()?
             return {
                 ready:true,
 
                 issue:issue,
-                creator:issue.getCreator(),
+                creator:creator,
                 timeframe:issue.getTimeframe(),
 
                 facility:facility,
@@ -70,14 +74,33 @@ IssueSpecArea = React.createClass({
 
                 selectedTeam:selectedTeam,
                 suppliers:issue.getPotentialSuppliers(),
-                supplier:issue.getSupplier(),
 
-                assignee:issue.getAssignee(),
+                supplier:supplier,
+                assignee:assignee,
 
                 notifications:issue.getNotifications(),
                 actionVerb:actionVerb,
+                watchers:[creator,supplier,assignee],
                 regressVerb:(issue.status=="New"?"Cancel":issue.status=="Issued"?"Reverse":null)
             }
+        }
+    },
+
+    callbacks:{
+        onNewStatus(issue,watchers) {
+            issue.sendMessage({
+                subject:"created work request"
+            },watchers)
+        },
+        onIssuedStatus(issue,watchers) {
+            issue.sendMessage({
+                subject:"issued work order"
+            },watchers)
+        },
+        onClosedStatus(issue,watchers) {
+            issue.sendMessage({
+                subject:"closed work order"
+            },watchers)
         }
     },
 
@@ -93,6 +116,7 @@ IssueSpecArea = React.createClass({
             issue.dueDate = new Date(createdMs+timeframe);
             issue.status = "Issued";
             this.save();
+            this.callbacks.onIssuedStatus(issue,this.data.watchers);
             if(this.props.closeCallback) {
                 this.props.closeCallback()
             }            
@@ -100,6 +124,7 @@ IssueSpecArea = React.createClass({
         else if(issue.canCreate()) {
             issue.status = "New";
             this.save();
+            this.callbacks.onNewStatus(issue,this.data.watchers);
             if(this.props.closeCallback) {
                 this.props.closeCallback()
             }
@@ -132,6 +157,8 @@ IssueSpecArea = React.createClass({
         issue.status = "Closed";
         issue.priority = "Closed";
         this.save();
+        // this really should go in the model
+        this.callbacks.onClosedStatus(issue,this.data.watchers);
         if(this.props.closeCallback) {
             this.props.closeCallback()
         }

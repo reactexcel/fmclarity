@@ -58,6 +58,34 @@ Users.helpers({
     this.unreadMessages.push(message._id);
     this.save();
   },
+  getNewsFeed(callback) {
+    var user = this;
+    var onFound = function(query) {
+      var feed = Feeds.findOne(query);
+      callback(feed);
+    }
+    if(this.feed) {
+      onFound(this.feed);
+    }
+    else {
+      Meteor.call("Feeds.save",{},function(err,newFeed){
+        console.log({
+          err:err,
+          newFeed:newFeed
+        });
+        if(newFeed&&newFeed._id) {
+          user.feed = newFeed;
+          user.save();
+          onFound(newFeed);
+        }
+      });
+    }
+  },
+  sendMessage(message) {
+    this.getNewsFeed(function(feed){
+      feed.addPost(message);
+    })
+  },
   getName() {
     return this.profile.name;
   },
@@ -87,7 +115,9 @@ Users.helpers({
     return teams[i];
   },
   getNotifications() {
-    return Log.find({'recipients':{'_id':Meteor.userId()}}).fetch();    
+    //return Log.find({'recipients':{'_id':Meteor.userId()}}).fetch();    
+    var feed = this.getNewsFeed();
+    return feed.posts;
   },
   getProfile() {
     if(!this.profile._id) {

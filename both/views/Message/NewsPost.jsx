@@ -1,18 +1,18 @@
 
-DiscussionPost = React.createClass({
+NewsPost = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, creator;
-        query = this.props.value;
-        message = Messages.findOne(query);
-        if(message) {
-            creator = message.getCreator()
+        var query, post, creator;
+        query = this.props.item;
+        post = Posts.findOne(query);
+        if(post) {
+            creator = post.getCreator()
         }
         return {
             creator:creator,
-            message:message
+            post:post
         }
     },
 
@@ -22,14 +22,14 @@ DiscussionPost = React.createClass({
 
     submit(event) {
         var callback = this.props.onChange;
-        var message = this.data.message||{
+        var post = this.data.post||{
             creator:{
                 _id:Meteor.userId()
             }
         };
-        message.body = event.target.value;
+        post.body = event.target.value;
         // returns reference object to save
-        Meteor.call("Message.save",message,function(err,response){
+        Meteor.call("Posts.save",post,function(err,response){
             event.target.value = null;
             if(callback) {
                 callback(response);
@@ -45,20 +45,20 @@ DiscussionPost = React.createClass({
     },
 
     render() {
-        var message = this.data.message||{};
+        var post = this.data.post||{};
         var creator = this.data.creator||Meteor.user();
-        var createdAt = message.createdAt;
+        var createdAt = post.createdAt;
         var used = false;
         return(
             <div>
                 <ContactAvatarSmall item={creator}/>
                 <div className="media-body">
-                    <small className="pull-right">{moment(message.createdAt).fromNow()}</small>
-                    {message.body?
+                    <small className="pull-right">{moment(post.createdAt).fromNow()}</small>
+                    {post.body||post.subject?
                     <div>
-                        <strong>{creator.getName()}</strong> {message.subject}<br/>
+                        <strong>{creator.getName()}</strong> {post.subject}<br/>
                         <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
-                        <div>{message.body}</div>
+                        <div>{post.body}</div>
                     </div>
                     :
                     <textarea 
@@ -66,7 +66,7 @@ DiscussionPost = React.createClass({
                         style={{width:"80%"}}
                         placeholder="Leave a comment or question..."
                         className={"input inline-form-control "+(used?'used':'')}
-                        defaultValue={message.body} 
+                        defaultValue={post.body} 
                         onKeyDown={this.handleKeyPress}>
                     </textarea>
                     }

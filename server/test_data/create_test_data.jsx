@@ -49,6 +49,9 @@ FM.createTestData = function() {
     Messages.remove({});
     Files.remove({});
     Log.remove({});
+    Feeds.remove({});
+    Posts.remove({});
+    Users.update({},{$set:{feed:null}});
 
     function initializeUsers() {
         Users.remove({_id:{$nin:[leo._id,rich._id,brad._id]}});

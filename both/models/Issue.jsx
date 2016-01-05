@@ -62,10 +62,6 @@ Issues = FM.createCollection('Issue',{
     label:"Attachments",
     input:"attachments"
   },
-  messages:{
-    type:[Object],
-    label:"Discussion"
-  },
   area:{
   },
   team:{
@@ -94,6 +90,35 @@ Issues.helpers({
   },
   getArea() {
     return this.area;
+  },
+  getNewsFeed(callback) {
+    var issue = this;
+    var onFound = function(query) {
+      var feed = Feeds.findOne(query);
+      callback(feed);
+    }
+    if(this.feed) {
+      onFound(this.feed);
+    }
+    else {
+      Meteor.call("Feeds.save",{},function(err,newFeed){
+        if(newFeed&&newFeed._id) {
+          issue.feed = newFeed;
+          issue.save();
+          onFound(newFeed);
+        }
+      });
+    }
+  },
+  sendMessage(message,forwardTo) {
+    this.getNewsFeed(function(feed){
+      feed.addPost(message);
+    });
+    if(forwardTo&&forwardTo.length) {
+      forwardTo.map(function(recipient){
+        recipient.sendMessage(message);
+      })
+    }
   },
   getPotentialSuppliers() {
     if(this.service&&this.service.name) {

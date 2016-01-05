@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v0.3.16a**
+
+* Move team into "Account settings" area
+* Move account button and profile button into top right settings area
+* Add messages button to left navigation bar
+* Make messages page in style of issue details
+* Updated implementation of discussions to facilitate new message system
+
 **v0.3.15a**
 
 * Upload/download documents feature

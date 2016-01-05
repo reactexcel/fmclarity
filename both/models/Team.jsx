@@ -250,6 +250,30 @@ Teams.helpers({
     }
     return [];
   },
+  getNewsFeed(callback) {
+    var issue = this;
+    var onFound = function(query) {
+      var feed = Feeds.findOne(query);
+      callback(feed);
+    }
+    if(this.feed) {
+      onFound(this.feed);
+    }
+    else {
+      Meteor.call("Feeds.save",{},function(err,newFeed){
+        if(newFeed&&newFeed._id) {
+          issue.feed = newFeed;
+          issue.save();
+          onFound(newFeed);
+        }
+      });
+    }
+  },
+  sendMessage(message) {
+    this.getNewsFeed(function(feed){
+      feed.addPost(message);
+    })
+  },
   getSuppliers() {
     var teamQuery, suppliersQuery;
     teamQuery = Session.get("selectedTeam");

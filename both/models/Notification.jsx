@@ -102,11 +102,11 @@ FM.notify = function(verb,obj,recipients) {
 			query:{_id:obj._id}
 		},
 		recipients:recipients||[],
-		context:{
+		context:FlowRouter?{
 			route:FlowRouter.getRouteName(),
 			facility:Session.get('selectedFacility'),
 			team:Session.get('selectedTeam'),
-		},
+		}:null,
 		location:Geolocation.currentLocation(),
 	};
 	//console.log(newAction);
