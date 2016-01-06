@@ -57,6 +57,7 @@ IssueSpecArea = React.createClass({
             var supplier = issue.getSupplier();
             var creator = issue.getCreator();
             var assignee = issue.getAssignee();
+            var user = Meteor.user();
 
             // do we need a issue.getWatchers()?
             return {
@@ -80,7 +81,7 @@ IssueSpecArea = React.createClass({
 
                 notifications:issue.getNotifications(),
                 actionVerb:actionVerb,
-                watchers:[creator,supplier,assignee],
+                watchers:[user,creator,supplier,assignee],
                 regressVerb:(issue.status=="New"?"Cancel":issue.status=="Issued"?"Reverse":null)
             }
         }
@@ -89,17 +90,17 @@ IssueSpecArea = React.createClass({
     callbacks:{
         onNewStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"created work request"
+                subject:"created "+issue.getFeedName()
             },watchers)
         },
         onIssuedStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"issued work order"
+                subject:"issued "+issue.getFeedName()
             },watchers)
         },
         onClosedStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"closed work order"
+                subject:"closed "+issue.getFeedName()
             },watchers)
         }
     },

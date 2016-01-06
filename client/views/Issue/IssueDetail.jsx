@@ -99,6 +99,7 @@ IssueDynamicArea = React.createClass({
                 supplier:issue.getSupplier(),
                 assignee:issue.getAssignee(),
                 notifications:issue.getNotifications(),
+                messageCount:issue.getMessageCount()
             }
         }
     },
@@ -142,13 +143,10 @@ IssueDynamicArea = React.createClass({
                             tab:<span><span>Contacts</span></span>,
                             content:<ContactList items={contacts}/>
                         },{
-                            tab:<span><span>Updates</span>{notifications.length?<span className="label label-notification">{notifications.length}</span>:null}</span>,
+                            tab:<span><span>Updates</span>{this.data.messageCount?<span className="label label-notification">{this.data.messageCount}</span>:null}</span>,
                             content:<div>
                                 {/*<IssueDiscussion items={notifications}/>*/}
-                                <NewsFeed 
-                                    feed={issue.feed} 
-                                    onChange={this.updateItem.bind(this,'feed')}
-                                />
+                                <NewsFeed feedId={issue.getFeedId()} feedName={issue.getFeedName()}/>
                             </div>
                         }
                     ]} />

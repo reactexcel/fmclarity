@@ -235,6 +235,8 @@ Teams.helpers({
     return this;
   },
   getMembers() {
+    // is there something like _.omit that can be used to do this
+    // perhaps there is a function _.project?
     if (this.members&&this.members.length) {
       var users = this.members;
       var userIds = [];

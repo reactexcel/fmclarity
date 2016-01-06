@@ -203,6 +203,9 @@ AccountProfilePage = React.createClass({
 	},
 
 	render() {
+		if(!this.data.team) {
+			return <div/>
+		}
 		return (
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">

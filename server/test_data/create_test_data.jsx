@@ -49,7 +49,6 @@ FM.createTestData = function() {
     Messages.remove({});
     Files.remove({});
     Log.remove({});
-    Feeds.remove({});
     Posts.remove({});
     Users.update({},{$set:{feed:null}});
 

@@ -20,22 +20,15 @@ NewsPost = React.createClass({
         $(this.refs.input).elastic();
     },
 
-    submit(event) {
-        var callback = this.props.onChange;
-        var post = this.data.post||{
-            creator:{
-                _id:Meteor.userId()
-            }
-        };
-        post.body = event.target.value;
-        // returns reference object to save
-        Meteor.call("Posts.save",post,function(err,response){
-            event.target.value = null;
-            if(callback) {
-                callback(response);
-            }
-        })
-    },
+    submit() {
+        var input = this.refs.input;
+        Meteor.call("Posts.new",{
+            feedId:this.props.feedId,
+            subject:"posted to "+this.props.feedName,
+            body:input.value
+        });
+        input.value = null;
+    },    
 
     handleKeyPress(event) {
         if(!event.shiftKey&&event.keyCode==13) {
@@ -53,9 +46,9 @@ NewsPost = React.createClass({
             <div>
                 <ContactAvatarSmall item={creator}/>
                 <div className="media-body">
-                    <small className="pull-right">{moment(post.createdAt).fromNow()}</small>
                     {post.body||post.subject?
                     <div>
+                        <small className="pull-right">{moment(post.createdAt).fromNow()}</small>
                         <strong>{creator.getName()}</strong> {post.subject}<br/>
                         <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
                         <div>{post.body}</div>

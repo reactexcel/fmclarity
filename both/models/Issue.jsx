@@ -91,34 +91,27 @@ Issues.helpers({
   getArea() {
     return this.area;
   },
-  getNewsFeed(callback) {
-    var issue = this;
-    var onFound = function(query) {
-      var feed = Feeds.findOne(query);
-      callback(feed);
-    }
-    if(this.feed) {
-      onFound(this.feed);
-    }
-    else {
-      Meteor.call("Feeds.save",{},function(err,newFeed){
-        if(newFeed&&newFeed._id) {
-          issue.feed = newFeed;
-          issue.save();
-          onFound(newFeed);
-        }
-      });
-    }
+  getFeedId() {
+    var user = this;
+    return "IssueFeed."+this._id;
+  },
+  getFeedName() {
+    return "work order #"+this.code+' "'+this.getName()+'"';
   },
   sendMessage(message,forwardTo) {
-    this.getNewsFeed(function(feed){
-      feed.addPost(message);
-    });
+    message.feedId = this.getFeedId();
+    Meteor.call("Posts.new",message);
     if(forwardTo&&forwardTo.length) {
       forwardTo.map(function(recipient){
-        recipient.sendMessage(message);
+        if(recipient) {
+          console.log(recipient);
+          recipient.sendMessage(message);
+        }
       })
     }
+  },
+  getMessageCount() {
+    return Posts.find({feedId:this.getFeedId()}).count();
   },
   getPotentialSuppliers() {
     if(this.service&&this.service.name) {

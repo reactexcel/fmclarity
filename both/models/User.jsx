@@ -43,48 +43,28 @@ Users.helpers({
   destroy:function() {
     Meteor.call('User.destroy',this);
   },
-  // I have a hunch this could be improved
-  // perhaps it should be in messages
-  // perhaps it should be something like sendMessage(message,recipient)
-  // advantage - don't need to load user first
-  // disadvantage - does not allow for different types of entities to receive messages differently
-  receiveMessage(message) {
-    if(!this.unreadMessages) {
-      this.unreadMessages = [];
-    }
-    // not sure about this... why not
-    // Users.update(user._id,{$push:{profile.unreadMessages:{message:_id}}});
-    // but then on the other hand - can't save check to see what has changed and only save that?
-    this.unreadMessages.push(message._id);
-    this.save();
-  },
-  getNewsFeed(callback) {
+  getFeedId() {
     var user = this;
-    var onFound = function(query) {
-      var feed = Feeds.findOne(query);
-      callback(feed);
-    }
-    if(this.feed) {
-      onFound(this.feed);
-    }
-    else {
-      Meteor.call("Feeds.save",{},function(err,newFeed){
-        console.log({
-          err:err,
-          newFeed:newFeed
-        });
-        if(newFeed&&newFeed._id) {
-          user.feed = newFeed;
-          user.save();
-          onFound(newFeed);
-        }
-      });
-    }
+    return "UserFeed."+this._id;
+  },
+  getFeedName() {
+    return this.getName()+"'s"+" inbox";
   },
   sendMessage(message) {
-    this.getNewsFeed(function(feed){
-      feed.addPost(message);
-    })
+    message.feedId = this.getFeedId();
+    if(message._id) {
+      message.originalId = message._id;
+      var alreadySent = Posts.findOne({
+        feedId:message.feedId,
+        originalId:message.originalId
+      });
+      if(alreadySent) {
+        console.log('message already sent - ignoring');
+        return;
+      }
+    }
+    console.log({'sending message...':message,'to':this});
+    Meteor.call("Posts.new",message);
   },
   getName() {
     return this.profile.name;
@@ -115,9 +95,8 @@ Users.helpers({
     return teams[i];
   },
   getNotifications() {
-    //return Log.find({'recipients':{'_id':Meteor.userId()}}).fetch();    
-    var feed = this.getNewsFeed();
-    return feed.posts;
+    //return Log.find({recipients:{_id:Meteor.userId()}}).fetch();
+    return Posts.find({feedId:this.getFeedId()}).fetch();
   },
   getProfile() {
     if(!this.profile._id) {

@@ -130,9 +130,6 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 					obj[i] = extension;
 				}
 			}
-			Meteor.call(name+'.save',obj,function(){
-				FM.notify("updated",obj);
-			});
 		},
 		isNew() {
 			// now this is a case where we should have underscore prefix

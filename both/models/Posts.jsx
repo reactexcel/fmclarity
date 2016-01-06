@@ -1,0 +1,42 @@
+Posts = FM.createCollection('Posts',{
+  subject:{
+    type:String,
+  },
+  body:{
+    type:String,
+  },
+  recipient:{
+    type:Object,
+  },
+  allRecipients:{
+    type:[Object],
+    defaultValue:[]
+  },
+  read:{
+    type:Boolean,
+    defaultValue:false
+  },
+  sticky:{
+    type:Boolean,
+    defaultValue:false    
+  },
+  rating:{
+    type:Number,
+    input:"vote",
+    label:"Rating"
+  },
+  commments:{
+    type:[Object],
+    defaultValue:[]
+  }
+});
+
+// This should be feedsAndPosts
+if(Meteor.isServer) {
+  Meteor.publish("posts",function(){
+    return Posts.find();
+  });
+}
+else {
+  Meteor.subscribe("posts");
+}
