@@ -31,7 +31,7 @@ Address = {
 Contact = {
 };
 
-FacilityHolder = {
+FacilityManager = {
 	type:{
 		label:"Type",
 	},
@@ -182,9 +182,9 @@ Facilities = FM.createCollection('Facility',{
     	label:"Attachments",
     	input:"attachments"
     },
-    holder: {
+    manager: {
     	type:Object,
-    	schema:FacilityHolder
+    	schema:FacilityManager
     },
     address:{
     	type:Object,

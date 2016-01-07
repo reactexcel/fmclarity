@@ -46,11 +46,9 @@ FM.createTestData = function() {
     Facilities.remove({});
     Issues.remove({});
     Teams.remove({});
-    Messages.remove({});
     Files.remove({});
     Log.remove({});
     Posts.remove({});
-    Users.update({},{$set:{feed:null}});
 
     function initializeUsers() {
         Users.remove({_id:{$nin:[leo._id,rich._id,brad._id]}});
@@ -169,7 +167,7 @@ FM.createTestData = function() {
         var team = ExampleTeams[i];
         if(team.type=='fm') {
             ExampleTeams[i].modules = {
-                "Dashboard":true,
+                "Dashboard":false,
                 "Facilities":true,
                 "PMP":false,
                 "ABC":false,

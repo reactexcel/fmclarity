@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v0.3.17a**
+
+* Make discussions able to send messages
+* Hook messages into nofications
+* Insert check to ensure that notifications don't get sent to the same person multiple times
+* Add notifications for posts on issues
+
 **v0.3.16a**
 
 * Move team into "Account settings" area

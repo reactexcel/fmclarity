@@ -252,29 +252,22 @@ Teams.helpers({
     }
     return [];
   },
-  getNewsFeed(callback) {
-    var issue = this;
-    var onFound = function(query) {
-      var feed = Feeds.findOne(query);
-      callback(feed);
-    }
-    if(this.feed) {
-      onFound(this.feed);
-    }
-    else {
-      Meteor.call("Feeds.save",{},function(err,newFeed){
-        if(newFeed&&newFeed._id) {
-          issue.feed = newFeed;
-          issue.save();
-          onFound(newFeed);
-        }
-      });
-    }
+  getInboxName() {
+    return this.getName()+" inbox";
   },
-  sendMessage(message) {
-    this.getNewsFeed(function(feed){
-      feed.addPost(message);
-    })
+  sendMessage(message,forwardTo) {
+    forwardTo = forwardTo||this.getMembers();
+    message.inboxId = this.getInboxId();
+    Meteor.call("Posts.new",message,function(err,messageId){
+      message.originalId = message.originalId||messageId;
+      if(forwardTo&&forwardTo.length) {
+        forwardTo.map(function(recipient){
+          if(recipient) {
+            recipient.sendMessage(message);
+          }
+        })
+      }
+    });
   },
   getSuppliers() {
     var teamQuery, suppliersQuery;

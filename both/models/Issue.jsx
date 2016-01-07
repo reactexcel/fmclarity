@@ -79,6 +79,7 @@ Issues = FM.createCollection('Issue',{
 },true);
 
 Issues.helpers({
+  path:'requests',
   getFacility() {
     return Facilities.findOne(this.facility._id);
   },
@@ -91,27 +92,22 @@ Issues.helpers({
   getArea() {
     return this.area;
   },
-  getFeedId() {
-    var user = this;
-    return "IssueFeed."+this._id;
-  },
-  getFeedName() {
+  getInboxName() {
     return "work order #"+this.code+' "'+this.getName()+'"';
   },
   sendMessage(message,forwardTo) {
-    message.feedId = this.getFeedId();
-    Meteor.call("Posts.new",message);
-    if(forwardTo&&forwardTo.length) {
-      forwardTo.map(function(recipient){
-        if(recipient) {
-          console.log(recipient);
-          recipient.sendMessage(message);
-        }
-      })
-    }
-  },
-  getMessageCount() {
-    return Posts.find({feedId:this.getFeedId()}).count();
+    message.inboxId = this.getInboxId();
+    message.target = this.getInboxId();
+    Meteor.call("Posts.new",message,function(err,messageId){
+      message.originalId = messageId;
+      if(forwardTo&&forwardTo.length) {
+        forwardTo.map(function(recipient){
+          if(recipient) {
+            recipient.sendMessage(message);
+          }
+        })
+      }
+    });
   },
   getPotentialSuppliers() {
     if(this.service&&this.service.name) {

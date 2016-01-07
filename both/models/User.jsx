@@ -36,36 +36,42 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
-  defaultThumbUrl:"img/ProfilePlaceholderSuit.png",
+  defaultThumbUrl:"/img/ProfilePlaceholderSuit.png",
   save:function(){
     Meteor.call('User.save',this);
   },
   destroy:function() {
     Meteor.call('User.destroy',this);
   },
-  getFeedId() {
-    var user = this;
-    return "UserFeed."+this._id;
-  },
-  getFeedName() {
-    return this.getName()+"'s"+" inbox";
-  },
   sendMessage(message) {
-    message.feedId = this.getFeedId();
-    if(message._id) {
-      message.originalId = message._id;
+    message.inboxId = this.getInboxId();
+    if(message.originalId) {
       var alreadySent = Posts.findOne({
-        feedId:message.feedId,
+        inboxId:message.inboxId,
         originalId:message.originalId
       });
       if(alreadySent) {
-        console.log('message already sent - ignoring');
         return;
       }
     }
-    console.log({'sending message...':message,'to':this});
     Meteor.call("Posts.new",message);
   },
+  getInboxName() {
+    return this.getName()+"'s"+" inbox";
+  },
+  getInboxId() {
+    return {
+      collectionName:this.collectionName,
+      name:this.getInboxName(),
+      query:{_id:this._id}
+    }
+  },
+  getMessages() {
+    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },
+  getNotifications() {
+    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },  
   getName() {
     return this.profile.name;
   },
@@ -93,10 +99,6 @@ Users.helpers({
   getTeam(i) {
     var teams = this.getTeams();
     return teams[i];
-  },
-  getNotifications() {
-    //return Log.find({recipients:{_id:Meteor.userId()}}).fetch();
-    return Posts.find({feedId:this.getFeedId()}).fetch();
   },
   getProfile() {
     if(!this.profile._id) {

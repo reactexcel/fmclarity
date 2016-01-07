@@ -10,25 +10,32 @@ TODO (general)
 
 DONE
 ----
-* Make discussions able to send messages
-* Hook messages into nofications
-* Insert check to ensure that notifications don't get sent to the same person multiple times
-* Add notifications for posts on issues
+* WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed
+* Dashboard temporarily disabled by default - index page is portfolio
+* Added a check to prevent multiple sending of messages to individuals who have more than one role on a work order
+* New messages now get forwarded to all team members
+* Fixed a bug that was causing incorrect redirects on app entry
+* Add deep linking for issues (so that the link can be sent in an email)
 
 IN PROGRESS
 -----------
-* There is an error where chosen area does not appear until another item is also refreshed
 * Hook up with external email system
-* New invites should send a message using new message system
-* Add team messaging features
-
-* Add deep linking to issues (so that the link can be sent in an email)
+* Writing on issue updates should send a notification to all watchers
 * Add facility contact to watchers
+- watchers check moved to model
+- watchers sent to "News Feed" component
+
+* Fix up presentation of facility card
+* Add "create work order" link to facility card
+
 * Add descriptive text when inviting new users and suppliers
-* SSL
+* Nginx to move fm to port 80 (or is there a quicker way?)
 * Create development and integration instances on AWS, separate deployments
-* Put fmclarity in integration instance
 * Finish "close out work order" screen
+* Put fmclarity in integration instance
+* Contacts sometimes absent on first load of portfolio (this will be due to non subscription)
+
+* Add SSL
 
 P2
 --
@@ -43,6 +50,7 @@ P2
 
 P3
 --
+* New invites should send a message using new message system
 * Suppliers - remove from team: confirmation dialog required
 * Avatar for Leo squished as per attached screenshot
 * Change Security deposit header to security deposit/bank guarantee and insert a field to choose which it is. For SD only require the fields amount required, amount held, and held by. the other fields are for bank guarantee. This should be trackable too, ie reported on

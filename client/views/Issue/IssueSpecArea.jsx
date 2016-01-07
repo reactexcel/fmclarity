@@ -90,17 +90,17 @@ IssueSpecArea = React.createClass({
     callbacks:{
         onNewStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"created "+issue.getFeedName()
+                verb:"created"
             },watchers)
         },
         onIssuedStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"issued "+issue.getFeedName()
+                verb:"issued"
             },watchers)
         },
         onClosedStatus(issue,watchers) {
             issue.sendMessage({
-                subject:"closed "+issue.getFeedName()
+                verb:"closed"
             },watchers)
         }
     },
@@ -324,7 +324,7 @@ IssueSpecArea = React.createClass({
 					                        </div>
 					                    </div>
 					                    :null}
-					                    {issue.status&&supplier&&supplier._id==selectedTeam._id?
+					                    {issue.status&&supplier&&selectedTeam&&supplier._id==selectedTeam._id?
 					                        <div className="row">
 					                        	<div className="col-lg-12">
 					                            <SuperSelect 

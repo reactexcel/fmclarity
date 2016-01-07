@@ -1,4 +1,4 @@
-PageRequests = React.createClass({
+IssuesIndexPage = React.createClass({
 
     mixins: [ReactMeteorData],
 

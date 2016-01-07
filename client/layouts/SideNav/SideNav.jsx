@@ -86,18 +86,10 @@ Navigation = React.createClass({
                 </li>
                 }
                 {!modules['Facilities']?null:
-                <li className={FlowRouter.getRouteName()=='facilities'?'active':''}>
-                    <a href={FlowRouter.path('facilities')}>
+                <li className={FlowRouter.getRouteName()=='portfolio'?'active':''}>
+                    <a href={FlowRouter.path('portfolio')}>
                         <i className="fa fa-building"></i>
                         <span className="nav-label">Portfolio</span>
-                    </a>
-                </li>
-                }
-                {!modules['Work Requests']?null:
-                <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
-                    <a href={FlowRouter.path('requests')}>
-                        <i className="fa fa-wrench"></i>
-                        <span className="nav-label">Work Requests</span>
                     </a>
                 </li>
                 }
@@ -106,6 +98,14 @@ Navigation = React.createClass({
                     <a href={FlowRouter.path('suppliers')}>
                         <i className="fa fa-group"></i>
                         <span className="nav-label">Suppliers</span>
+                    </a>
+                </li>
+                }
+                {!modules['Work Requests']?null:
+                <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
+                    <a href={FlowRouter.path('requests')}>
+                        <i className="fa fa-wrench"></i>
+                        <span className="nav-label">Work Requests</span>
                     </a>
                 </li>
                 }

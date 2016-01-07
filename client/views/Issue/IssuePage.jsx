@@ -1,16 +1,19 @@
-MessagesPage = React.createClass({
+IssuePage = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+        Meteor.subscribe('contractors');
+        Meteor.subscribe('services');
+        Meteor.subscribe('teamsAndFacilitiesForUser');
+        Meteor.subscribe('users');
         return {
-            user:Meteor.user()
+        	issue:Issues.findOne(this.props.selected)
         }
     },
 
     render() {
-        var user = this.data.user;
-        if(!user) {
+        if(!this.data.issue) {
             return <div/>
         }
     	return (
@@ -18,8 +21,8 @@ MessagesPage = React.createClass({
                 <div className="issue-page wrapper wrapper-content animated fadeIn">
                     <div className="row">
                         <div className="col-xs-12">
-                            <div className="ibox" style={{padding:"20px"}}>
-                                <Inbox for={user} />
+                            <div className="ibox">
+                            	<IssueDetail item={this.data.issue} />
                             </div>
                         </div>
                     </div>

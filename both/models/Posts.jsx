@@ -31,7 +31,26 @@ Posts = FM.createCollection('Posts',{
   }
 });
 
-// This should be feedsAndPosts
+Posts.helpers({
+  getInbox() {
+    var inboxId = this.inboxId;
+    var collection = FM.collections[inboxId.collectionName];
+    return collection.findOne(inboxId.query);
+  },
+  getTargetName() {
+    var target = this.target?this.target:this.inboxId;
+    return target.name;
+  },
+  getTargetUrl() {
+    var target = this.target?this.target:this.inboxId;
+    //console.log(target);
+    //return FlowRouter.path(target.path,target.query);
+    if(target.path) {
+      return '/'+target.path+'/'+target.query._id;
+    }
+  }
+});
+
 if(Meteor.isServer) {
   Meteor.publish("posts",function(){
     return Posts.find();

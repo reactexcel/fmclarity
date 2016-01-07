@@ -1,44 +1,57 @@
-
-FacilityWidget= React.createClass({
-	render() {
-		return (
-			<FlipWidget
-				front={FacilityEdit}
-				back={FacilityView}
-				item={this.props.item}
-			/>
-		)
-	}
-});
-
 FacilityIndexPage = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var user, item;
+    	Meteor.subscribe('teamsAndFacilitiesForUser');
+        Meteor.subscribe('users');
+    	var user, selectedTeam, selectedFacility, facilties;
     	user = Meteor.user();
     	if(user) {
-    		item = user.getSelectedFacility();
-    	}
-		return {
-			item:item
-		}
+	        selectedTeam = user.getSelectedTeam();
+    	    if(selectedTeam) {
+	    	    selectedFacility = user.getSelectedFacility();
+	        	facilities = selectedTeam.getFacilities();
+		        return {
+		        	ready:true,
+		        	selectedTeam : selectedTeam,
+		        	selectedFacility : selectedFacility,
+		            facilities : facilities
+		        }
+	        }
+        }
+        return {
+        	ready:false
+        }
+    },
+
+    createNew(callback) {
+    	var selectedTeam = this.data.selectedTeam;
+		FM.create("Facility",{
+    		team:{
+    			_id:selectedTeam._id,
+    			name:selectedTeam.name
+    		}
+    	},callback);
+    },
+
+	componentDidMount() {
+		//console.log(Meteor.users.find());
 	},
 
 	render() {
-		return (
-		    <div className="wrapper wrapper-content animated fadeIn">
-		        <div className="row">
-		            <div className="col-lg-6 col-md-6 col-sm-6">
-						<FlipWidget
-							front={FacilityView}
-							back={FacilityEdit}
-							item={this.data.item}
-						/>
-					</div>
-				</div>
+		if(!this.data.ready) return <div/>
+		return(
+	        <div className="facility-page wrapper wrapper-content animated fadeIn">
+				<FilterBox2 
+					items={this.data.facilities}
+					itemView={{
+						summary:FacilitySummary,
+						detail:FacilityWidget
+					}}
+					newItemCallback={this.createNew}
+				/>
 			</div>
-		)
+		);
 	}
 })
