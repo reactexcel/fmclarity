@@ -2,7 +2,7 @@
   // Server authentication info
   "servers": [
     {
-      "host": "52.64.250.63",
+      "host": "52.62.6.251",
       "username": "ubuntu",
       // "password": "password"
       // or pem file (ssh based authentication)
@@ -35,7 +35,7 @@
   // Configure environment
   "env": {
     "PORT": 3000,
-    "ROOT_URL": "http://52.64.250.63/",
+    "ROOT_URL": "http://52.62.6.251:3000",
     //"MONGO_URL": "mongodb://gentlenode:password@127.0.0.1:27017/gentlenode",
     //"MONGO_OPLOG_URL": "mongodb://oplogger:password@127.0.0.1:27017/local?authSource=admin",
     "METEOR_ENV": "production"
