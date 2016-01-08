@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+**v0.3.18a**
+
+* WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed
+* Dashboard temporarily disabled by default - index page is portfolio
+* Added a check to prevent multiple sending of messages to individuals who have more than one role on a work order
+* New messages now get forwarded to all team members
+* Fixed a bug that was causing incorrect redirects on app entry
+* Add deep linking for issues (so that the link can be sent in an email)
+
 **v0.3.17a**
 
 * Make discussions able to send messages

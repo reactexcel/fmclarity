@@ -10,12 +10,6 @@ TODO (general)
 
 DONE
 ----
-* WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed
-* Dashboard temporarily disabled by default - index page is portfolio
-* Added a check to prevent multiple sending of messages to individuals who have more than one role on a work order
-* New messages now get forwarded to all team members
-* Fixed a bug that was causing incorrect redirects on app entry
-* Add deep linking for issues (so that the link can be sent in an email)
 
 IN PROGRESS
 -----------
@@ -24,6 +18,8 @@ IN PROGRESS
 * Add facility contact to watchers
 - watchers check moved to model
 - watchers sent to "News Feed" component
+
+* Exporting of work orders
 
 * Fix up presentation of facility card
 * Add "create work order" link to facility card
