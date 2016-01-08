@@ -1,0 +1,52 @@
+@import "/client/stylesheets/globals/variables.import.less";
+
+.super-select.absolute {
+	position:absolute;
+	width:96%;
+}
+
+.super-select .dropdown-menu {
+	overflow-y:auto;
+	top:18px;
+	max-height:350px;
+	padding:0;
+}
+
+.super-select .browse-button {
+	font-weight:bold;
+	text-align: center;
+}
+
+.dropdown-menu .dropdown-menu-item {
+	cursor:pointer;
+	float:left;
+	width:100%;
+	line-height: 20px;
+	background-color:#fff;
+	padding:6px;
+}
+
+.dropdown-menu .dropdown-menu-item:hover {
+	background-color:#eee;
+}
+
+.super-select {
+	.dropdown-toggle {
+		cursor:pointer;
+	}
+
+	.dropdown-toggle:hover {
+		color:@navy;
+	}	
+}
+
+.super-select.readonly {
+	.dropdown-toggle {
+		cursor:default;
+	}
+
+	.dropdown-toggle:hover {
+		color:inherit;
+	}
+}
+

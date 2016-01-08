@@ -1,6 +1,127 @@
 CHANGELOG.md
 ============
 
+**v0.3.18a**
+
+* WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed
+* Dashboard temporarily disabled by default - index page is portfolio
+* Added a check to prevent multiple sending of messages to individuals who have more than one role on a work order
+* New messages now get forwarded to all team members
+* Fixed a bug that was causing incorrect redirects on app entry
+* Add deep linking for issues (so that the link can be sent in an email)
+
+**v0.3.17a**
+
+* Make discussions able to send messages
+* Hook messages into nofications
+* Insert check to ensure that notifications don't get sent to the same person multiple times
+* Add notifications for posts on issues
+
+**v0.3.16a**
+
+* Move team into "Account settings" area
+* Move account button and profile button into top right settings area
+* Add messages button to left navigation bar
+* Make messages page in style of issue details
+* Updated implementation of discussions to facilitate new message system
+
+**v0.3.15a**
+
+* Upload/download documents feature
+* View large image in popup feature
+
+**v0.3.14a**
+
+* Move notifications closer to right corner
+* WO: Adjusted white space containers as per design elements
+* WO: Adjusted tab display in line with image
+* Tabs have animated underline as per MD
+* WO: Uploaded files show as icons, uploaded images show as thumbnails
+
+**v0.3.13a**
+
+* Portolio - renamed Facility Holder to Facility Manager
+* Team - Removed "about me" section
+* Account - removed website, facebook, My headline, Short Bio, References fields
+* Account - changed first "address 2" field to "Address 1"
+* Medium - Edit profile/team member - First name and last name are in same row
+* Small/med - submit/cancel buttons reconfigured - too large
+* Fixed a bug that was preventing cancelling or creation of work orders
+* WO : Fixed a bug that was causing "maximum call stack exceeded" error when trying to save issue description
+* Fixed : "When first supplier added it dissappears, susequent suppliers seem to be added with no issue"
+* Disabled permanent opening of issues created but not issued. There is now now situation where multiple issues will be open. (this also addressed the bug "WO: When issuing first order it doesn't close")
+* Added autoscroll to fix "Screen should scroll to the top when clicking back on a link, eg WO from facilities. Currently it goes to the last position, eg at the end of the page."
+* Facilities : Updated areas so that levels now appear in WO as specified in facility->areas
+
+
+**v0.3.12a**
+
+* WO: Changed the way tabs are sized to accomodate smaller views
+* Changed the way contacts with avatars are displayed on smaller screens
+* Centred the top logo so that it fits better on smaller screens and frees up the left area for a menu button
+* Simplified the notifications and settings buttons so that they collapse better on smaller screens
+* Moved the "facility selector" out of the left nav and into the pages that it is relevant to (wo and dash). This makes the layout less reliant on a persistent left nav
+* Improved the animations for opening and shutting the left nav on larger screens
+* Created a new style of "on canvas" left nav for smaller screens
+* Changed the right nav so that it is more consistent on all screens
+* Updated font and icon styles and sizes in left nav to make them more MD compliant
+* Restyled notifications window for smaller screens
+* Many other changes to WO stylesheets to improve responsiveness of layout
+
+**v0.3.11a** 
+
+* Fixed an issue that was causing WOs to crash when detail view opened by a contractor
+* WO table: Fixed an issue that was causing sort by priorty to fail
+* WO table: Added supplier column
+* Fixed bug: "When test data is generated properties are sometimes allocated to FM Clarity team instead of Kaplan team"
+* Fixed bug: "When create a new facility, enter no details, reload, then select new facility... card does not appear"
+* Fixed an issue that was causing facilities to re-save when switching between them
+* Made some changes to css presentation of work order details, facilities form, user form and account form to make them fit better on small screens
+
+**v0.3.10a**
+
+* WO: Available services and subservices are taken from facility configuration
+* Team settings: Can configure services and subservices for contractor teams
+* WO: Available contractors are determined by selected service and subservice
+
+**v0.3.9a**
+
+* Remove underscore prefix from fields in models
+* Newly created facilities have areas and services
+* Updated available areas array
+* Areas and services ui now correctly updated when changing facilities
+
+**v0.3.8a**
+
+* Removed dividers in dropdowns
+* Suppliers in work order drop down are now limited to those specified in a teams "suppliers" page
+* No longer need to assign order to close it
+* Restricted editing WO after they have been issued
+* WO: Disabled sorting for new work orders while they are being created
+* WO: Added ability to cancel/reverse new/issued work orders
+* WO: Only one work order can be expanded at the one time
+* WO: Work orders close when sort or filter activated
+
+**v0.3.7a**
+
+* Fixed issue where dropdown boxes were wrong size or had text overflow
+* Added "pointer" cursor style to dropdown menu items and to contacts, and other relevant locations
+* Added hover state for dropdown menu items
+* Fixed an issue where items on the left navigation where being cut off in the minimised state
+* WO: Need to be the selected supplier before you can select assignee
+
+**v0.3.6a**
+
+* Can scroll through service types
+* Fixed problem causing "newItemCallback not a function" error in FilterBox2
+* Fixed a bug that was causing program to crash when trying to open portfolio of contractor with no requests
+* Can now change the avatar/logo for users and teams
+* Cleaned source: Autoform component now passes new value to callback instead of needlessly simulated event structure
+* Cleaned source: Removed underscore prefix from field names in facility table
+* Suppliers: Can add new contractors in same manner as adding members to team
+* Team settings: Can remove members from team
+* Suppliers: Can remove suppliers from list
+
 **v0.3.5a**
 
 * Clicking away from a dropdown closes it

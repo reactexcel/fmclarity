@@ -7,7 +7,6 @@
 
   .navbar-static-side {
     z-index: 2001;
-    position: absolute;
     width: @sidebar-width;
   }
 
@@ -26,15 +25,8 @@
     min-height: 1000px;
   }
 
-  .body-small .navbar-static-side {
-    display: none;
-    z-index: 2001;
-    position: absolute;
-    width: 70px;
-  }
-
   .body-small.mini-navbar .navbar-static-side {
-    display: block;
+    width: @sidebar-width;
   }
 
   .lock-word {
@@ -62,15 +54,9 @@
     z-index: 1;
   }
 
-  .fixed-sidebar.body-small .navbar-static-side {
-    display: none;
-    z-index: 2001;
-    position: fixed;
-    width: @sidebar-width;
-  }
-
   .fixed-sidebar.body-small.mini-navbar .navbar-static-side {
-    display: block;
+    width: @sidebar-width;
+    left:0;
   }
 
   .ibox-tools {

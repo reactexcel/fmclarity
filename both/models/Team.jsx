@@ -40,7 +40,7 @@ Teams = FM.createCollection('Team',{
     },
     addressLine1 :{
       type: String,
-      label: "Address line 2",
+      label: "Address line 1",
       size:6
     },
     addressLine2 :{
@@ -101,6 +101,9 @@ Teams = FM.createCollection('Team',{
       type: [String],
       label: "Services",
       input:"select",
+      defaultValue:function(){
+          return JSON.parse(JSON.stringify(Config.services));
+      }
     },
     areasServiced : {
       type: [String],
@@ -112,10 +115,14 @@ Teams = FM.createCollection('Team',{
       label: "Active modules",
       input:"switchbank"
     },
-    _members: {
+    members: {
       type: [Object],
       label:"Members"
     },
+    suppliers: {
+      type: [Object],
+      label: "Suppliers"  
+    }
 },true);
 
 
@@ -138,8 +145,7 @@ if (Meteor.isServer) {
             name:name,
             email:email
           });
-          console.log()
-          Accounts.sendEnrollmentEmail(uid);
+          //Accounts.sendEnrollmentEmail(uid);
         }
         else {
           throw new Meteor.Error('email-blocked', 'Sorry, selected email has been blocked by the server.');
@@ -148,12 +154,57 @@ if (Meteor.isServer) {
       Meteor.call("Team.addMember",item,{_id:uid});
       return user||Users.findOne(uid);
     }
-  })
+  });
+
+  Meteor.methods({
+    "Team.inviteSupplier": function(item,email) {
+      var supplier, sid;
+      supplier = Teams.findOne({email:email});
+      if(supplier) {
+        sid = supplier._id;
+      }
+      else {
+        sid = Meteor.call("Team.new",{
+          type:"contractor",
+          email:email
+        });
+      }
+      Meteor.call("Team.addSupplier",item,{_id:sid});
+      return supplier||Teams.findOne(sid);
+    }
+  });
+
 }
 
 Meteor.methods({
   "Team.addMember":function(item,member) {
-    Teams.update(item._id,{$push:{_members:member}});
+    Teams.update(item._id,{$push:{members:member}});
+  },
+  "Team.removeMember":function(item,member) {
+    Teams.update(item._id,{$pull:{members:{_id:member._id}}});
+  },
+  "Team.setMembers":function(team,members) {
+    console.log(team);
+    if(members&&members.length) {
+      var sanitisedMembers = [];
+      members.map(function(member){
+        if(member) {
+          sanitisedMembers.push({
+            _id:member._id
+          });
+        }
+      });
+      console.log(sanitisedMembers);
+      Teams.update(team._id,{$set:{members:sanitisedMembers}},function(err,data){
+        console.log({err:err,data:data})
+      });
+    }
+  },
+  "Team.addSupplier":function(item,supplier) {
+    Teams.update(item._id,{$push:{suppliers:supplier}});
+  },
+  "Team.removeSupplier":function(item,supplier) {
+    Teams.update(item._id,{$pull:{suppliers:{_id:supplier._id}}});
   },
   "Team.addFacility":function(item,facilityQuery) {
     var facility = Facilities.findOne(facilityQuery);
@@ -166,18 +217,65 @@ Meteor.methods({
 
 Teams.helpers({
   inviteMember(email,callback) {
-    Meteor.call('Team.inviteMember',this, email, callback)
+    Meteor.call('Team.inviteMember',this, email, callback);
+  },
+  inviteSupplier(email,callback) {
+    Meteor.call('Team.inviteSupplier',this, email, callback);
+  },
+  setMembers(members,callback) {
+    Meteor.call("Team.setMembers",this,members,callback);
+  },
+  removeMember(member, callback) {
+    Meteor.call('Team.removeMember',this, member, callback);
+  },
+  removeSupplier(supplier, callback) {
+    Meteor.call('Team.removeSupplier',this, supplier, callback);
   },
   getProfile() {
     return this;
   },
   getMembers() {
-    if (this._members.length) {
+    // is there something like _.omit that can be used to do this
+    // perhaps there is a function _.project?
+    if (this.members&&this.members.length) {
+      var users = this.members;
+      var userIds = [];
+      users.map(function(user){
+        userIds.push(user._id);
+      });
+      return Users.find({_id:{$in:userIds}}).fetch();
+      /*
     	return Users.find({
-    		$or:this._members
+    		$or:this.members
     	}).fetch();
+      */
     }
     return [];
+  },
+  getInboxName() {
+    return this.getName()+" inbox";
+  },
+  sendMessage(message,forwardTo) {
+    forwardTo = forwardTo||this.getMembers();
+    message.inboxId = this.getInboxId();
+    Meteor.call("Posts.new",message,function(err,messageId){
+      message.originalId = message.originalId||messageId;
+      if(forwardTo&&forwardTo.length) {
+        forwardTo.map(function(recipient){
+          if(recipient) {
+            recipient.sendMessage(message);
+          }
+        })
+      }
+    });
+  },
+  getSuppliers() {
+    var teamQuery, suppliersQuery;
+    teamQuery = Session.get("selectedTeam");
+    suppliersQuery = [teamQuery].concat(this.suppliers);
+    return Teams.find({
+      $or:suppliersQuery
+    }).fetch();
   },
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
@@ -208,8 +306,21 @@ Teams.helpers({
       return this.getContractorFacilities();
     }
     else {
-      return Facilities.find({"_team._id":this._id}).fetch();
+      return Facilities.find({"team._id":this._id}).fetch();
     }
+  },
+  getAvailableServices(parent) {
+    var services = parent?parent.subservices:this.services;
+    var availableServices = [];
+    if(!services) {
+      return;
+    }
+    services.map(function(service){
+      if(service.available) {
+        availableServices.push(service);
+      }
+    });
+    return availableServices;
   },
   addFacility(item) {
     return Meteor.call('Team.addFacility',this,item);
@@ -223,11 +334,11 @@ Teams.helpers({
       return this.getContractorIssues();
     }
     else {
-      return Issues.find({"_team._id":this._id}).fetch();
+      return Issues.find({"team._id":this._id}).fetch();
     }
   },
   getContractorIssues() {
-    return Issues.find({"_supplier._id":this._id,status:{$ne:"New"}}).fetch();
+    return Issues.find({"supplier._id":this._id,status:{$ne:"New"}}).fetch();
   },
   getContractorFacilities() {
     var issues, facilityQueries, facilities;
@@ -235,7 +346,7 @@ Teams.helpers({
       if(issues&&issues.length) {
         facilityQueries = [];
         issues.map(function(i){
-          facilityQueries.push(i._facility);
+          facilityQueries.push(i.facility);
         });
         facilities = Facilities.find({$or:facilityQueries}).fetch();
       }

@@ -31,9 +31,9 @@ Address = {
 Contact = {
 };
 
-FacilityHolder = {
+FacilityManager = {
 	type:{
-		label:"Holder type",
+		label:"Type",
 	},
 	companyName : {
 		label:"Company name",
@@ -177,14 +177,14 @@ Facilities = FM.createCollection('Facility',{
     	label: "Description",
     	input:"mdtextarea",
     },
-    _attachments: {
+    attachments: {
     	type:[Object],
     	label:"Attachments",
     	input:"attachments"
     },
-    holder: {
+    manager: {
     	type:Object,
-    	schema:FacilityHolder
+    	schema:FacilityManager
     },
     address:{
     	type:Object,
@@ -195,10 +195,14 @@ Facilities = FM.createCollection('Facility',{
     	type:Object,
     	schema:Lease,
     },
-    _team: {
+    team: {
     	label: "Team query object",
     },
-    _tenants : {
+    contacts : {
+    	type: [Object],
+    	label: "Tenants"
+    },
+    tenants : {
     	type: [Object],
     	label: "Tenants"
     },
@@ -206,20 +210,26 @@ Facilities = FM.createCollection('Facility',{
     	type:[Object],
     	label:"Building areas",
     	input:"select",
+    	defaultValue:function(){
+        	return JSON.parse(JSON.stringify(Config.defaultAreas));
+    	}
     },
     services: {
     	type:[Object],
     	label:"Building services",
     	input:"select",
+    	defaultValue:function(){
+        	return JSON.parse(JSON.stringify(Config.services));
+    	}
     }
 },true);
 
 Facilities.helpers({
   getIssues() {
-  	return Issues.find({"_facility._id":this._id}).fetch();
+  	return Issues.find({"facility._id":this._id}).fetch();
   },
   getTeam() {
-  	return Teams.findOne(this._team);
+  	return Teams.findOne(this.team);
   },
   getName() {
   	//return this.name?(this.name+', '+this.address.city):'';
@@ -229,62 +239,57 @@ Facilities.helpers({
   	var a = this.address;
   	return a.streetNumber+' '+a.streetName+' '+a.streetType+', '+a.city;
   },
-  getAttachmentUrl(index) {
-  	index=index||0;
-  	var file;
-  	if(this._attachments&&this._attachments[index]) {
-	  	file = Files.findOne(this._attachments[index]._id);
-	  	if(file) {
-	  		return file.url();
-	  	}
-	}
-	return "img/default-placeholder.png";
-  },
-  getThumbUrl() {
-  	return this.getAttachmentUrl(0);
-  },
   getAreas() {
   	var areas = [];
-  	for(var i in this.areas) {
-  		if(i=='Unique areas') {
-  			areas.push(this.areas[i].areas[j]);
-  		}
-  		else {
-	  		for(var j in this.areas[i].areas) {
+  	for(var areaGroupNum in this.areas) {
+  		var areaGroup = this.areas[areaGroupNum];
+  		var levelsLikeThis = parseInt(areaGroup.number);
+  		for(var level=1;level<=levelsLikeThis;level++) {
+	  		for(var areaNum in areaGroup.areas) {
+	  			var area = areaGroup.areas[areaNum];
+	  			var name = area.name;
+	  			if(levelsLikeThis>1) {
+	  				name = ('Level '+level+': ')+name;
+	  			}
 	  			areas.push({
-	  				name:('Level 1: '+this.areas[i].areas[j].name)
-	  			});
-	  		}
-	  		for(var j in this.areas[i].areas) {
-	  			areas.push({
-	  				name:('Level 2: '+this.areas[i].areas[j].name)
+	  				name:name
 	  			});
 	  		}
 	  	}
   	}
   	return areas;
   },
+  getAvailableServices(parent) {
+  	var services = parent?parent.subservices:this.services;
+  	var availableServices = [];
+  	services.map(function(service){
+  		if(service.available) {
+  			availableServices.push(service);
+  		}
+  	});
+  	return availableServices;
+  },
   getContacts() {
-    if (this._contacts&&this._contacts.length) {
+    if (this.contacts&&this.contacts.length) {
     	// this is pretty fucking inefficient
     	// idea - store contactIds and sometimes denormalise by making contacts as well
     	// perhaps if contacts is empty or if it has "expired"
-    	var contacts = this._contacts;
-    	var contactIds = [];
-    	contacts.map(function(contact){
-    		contactIds.push(contact._id);
-    	});
-    	return Users.find({_id:{$in:contactIds}}).fetch();
+      var users = this.contacts;
+      var userIds = [];
+      users.map(function(user){
+        userIds.push(user._id);
+      });
+      return Users.find({_id:{$in:userIds}}).fetch();
     }
     return [];
 
   },
   getTenants() {
-    if (this._tenants&&this._tenants.length) {
+    if (this.tenants&&this.tenants.length) {
     	// this is pretty fucking inefficient
     	// idea - store tenantIds and sometimes denormalise by making tenants as well
     	// perhaps if tenants is empty or if it has "expired"
-    	var tenants = this._tenants;
+    	var tenants = this.tenants;
     	var tenantIds = [];
     	tenants.map(function(contact){
     		tenantIds.push(contact._id);
@@ -296,15 +301,15 @@ Facilities.helpers({
   },
   getPrimaryContact() {
   	var id=0;
-  	if(this._contacts&&this._contacts.length) {
-	  	id = this._contacts[0]._id;
+  	if(this.contacts&&this.contacts.length) {
+	  	id = this.contacts[0]._id;
 	}
   	if(id) {
   		return Users.findOne(id);
   	}
   },
   getIssueCount() {
-  	return Issues.find({"_facility._id":this._id}).count();
+  	return Issues.find({"facility._id":this._id}).count();
   },
   getLocation() {
   	if(this.address) {
@@ -333,11 +338,11 @@ ExampleFacilities = [
 			buildingName:"Docklands",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/370 Docklands.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Hay St, Perth",
-		location:"Clarence Street, Sydney",
+		location:"Hay St, Perth",
 		address:{
 			streetNumber:"1525",
 			streetName:"Hay",
@@ -348,7 +353,7 @@ ExampleFacilities = [
 			buildingName:"Hay St, Perth",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/1525 hay.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"S Steyne St, Sydney",
@@ -363,7 +368,7 @@ ExampleFacilities = [
 			buildingName:"S Steyne St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"George St, Sydney",
@@ -378,7 +383,7 @@ ExampleFacilities = [
 			buildingName:"George St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/30-32 S Steyne.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Macquarie Park",
@@ -393,7 +398,7 @@ ExampleFacilities = [
 			buildingName:"Macquarie Park",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/4 drake.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Goulburn St, Sydney",
@@ -408,7 +413,7 @@ ExampleFacilities = [
 			buildingName:"Goulburn St, Sydney",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/98-104 goulburn.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Murdoch Institute of Technology",
@@ -423,7 +428,7 @@ ExampleFacilities = [
 			buildingName:"Murdoch Institute of Technology",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/Murdoch.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Osbourne Park",
@@ -439,7 +444,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/76 Hasler.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Cantebury",
@@ -455,7 +460,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/21 Shierlaw.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Launceston",
@@ -471,7 +476,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/65 cameron.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Hobart",
@@ -487,7 +492,7 @@ ExampleFacilities = [
 			buildingName:"Franklin Scholar",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/12 Warwick.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Peel St, Adelaide",
@@ -503,7 +508,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/22 Peel St, adelaide.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Spring Hill",
@@ -519,7 +524,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/252 st pauls.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Cairns",
@@ -535,7 +540,7 @@ ExampleFacilities = [
 			buildingName:"Professional & International English",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/130 MacLeod.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	},
 	{
 		name:"Grenfell St, Adelaide",
@@ -551,6 +556,6 @@ ExampleFacilities = [
 			buildingName:"Bradford College",
 		},
 		description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-		_attachments:["img/132 Grenfell St.jpg","img/floor-plan.jpg"],
+		attachments:[],
 	}
 ];

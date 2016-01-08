@@ -49,7 +49,7 @@ Issues = FM.createCollection('Issue',{
   },
   code:{
     defaultValue:function(item) {
-      var team = Teams.findOne({_id:item._team._id});
+      var team = Teams.findOne({_id:item.team._id});
       return team.getNextWOCode();
     }
   },
@@ -57,67 +57,87 @@ Issues = FM.createCollection('Issue',{
     label:"Thumbnail file",
     defaultValue:["img/default-placeholder.png"]
   },
-  _attachments:{
+  attachments:{
     type:[Object],
     label:"Attachments",
     input:"attachments"
   },
-  messages:{
-    type:[Object],
-    label:"Discussion"
-  },
   area:{
   },
-  _team:{
+  team:{
     type:Object
   },
-  _facility:{
+  facility:{
     type:Object
   },
-  _contact:{
+  supplier:{
     type:Object
   },
-  _supplier:{
-    type:Object
-  },
-  _assignee:{
+  assignee:{
     type:Object
   }
 },true);
 
 Issues.helpers({
+  path:'requests',
   getFacility() {
-    return Facilities.findOne(this._facility._id);
-  },
-  getContact() {
-    return this.contact;
+    return Facilities.findOne(this.facility._id);
   },
   getCreator() {
-    return Users.findOne(this._creator._id);
+    return Users.findOne(this.creator._id);
   },
   getTeam() {
-    return Teams.findOne({_id:this._team._id});
+    return Teams.findOne({_id:this.team._id});
   },
   getArea() {
     return this.area;
   },
+  getInboxName() {
+    return "work order #"+this.code+' "'+this.getName()+'"';
+  },
+  sendMessage(message,forwardTo) {
+    message.inboxId = this.getInboxId();
+    message.target = this.getInboxId();
+    Meteor.call("Posts.new",message,function(err,messageId){
+      message.originalId = messageId;
+      if(forwardTo&&forwardTo.length) {
+        forwardTo.map(function(recipient){
+          if(recipient) {
+            recipient.sendMessage(message);
+          }
+        })
+      }
+    });
+  },
+  getPotentialSuppliers() {
+    if(this.service&&this.service.name) {
+      var query = {};
+      var team = this.getTeam();
+      query["$or"] = [team].concat(team.suppliers);
+      query["services"] = { $elemMatch : {
+          name:this.service.name,
+          available:true
+      }};
+      if(this.subservice&&this.subservice.name) {
+        query["services.subservices"] = { $elemMatch : {
+            name:this.subservice.name,
+            available:true
+        }};
+      }
+      var teams = Teams.find(query).fetch();
+      /*
+      console.log({
+              query:query,
+              teams:teams
+            });
+      */
+      return teams;
+    }
+    return null;
+  },
   getTimeframe() {
     var team = this.getTeam();
     return team.getTimeframe(this.priority);
-  },
-  getAttachmentUrl(index) {
-    index=index||0;
-    var file;
-    if(this._attachments&&this._attachments[index]) {
-      file = Files.findOne(this._attachments[index]._id);
-      if(file) {
-        return file.url();
-      }
-  }
-  return "img/default-placeholder.png";
-  },
-  getThumbUrl() {
-    return this.getAttachmentUrl(0);
   },
   setPriority(priority) {
     var team = this.getTeam();
@@ -125,17 +145,45 @@ Issues.helpers({
     this.timeframe = team.getTimeframe(priority);
   },
   setSupplier(supplier) {
-    this._supplier = supplier;
+    this.supplier = supplier;
     this.save();
   },
   getSupplier() {
-    if(this._supplier) {
-      return Teams.findOne(this._supplier._id);
+    if(this.supplier) {
+      return Teams.findOne(this.supplier._id);
     }
   },
   getAssignee() {
-    if(this._assignee) {
-      return Users.findOne(this._assignee._id);
+    if(this.assignee) {
+      return Users.findOne(this.assignee._id);
     }
+  },
+  isNew() {
+    return this.status=="New";
+  },
+  isEditable() {
+    return this.isNew();
+  },
+  canCreate() {
+    return (
+      this.name&&this.name.length&&
+      this.description&&this.description.length&&
+      this.facility&&this.facility._id&&
+      this.area&&this.area.name.length&&
+      this.service&&this.service.name.length
+    )    
+  },
+  canIssue() {
+    return (
+      this.canCreate()&&
+      this.subservice&&this.subservice.name.length&&
+      this.supplier&&this.supplier._id
+    )   
+  },
+  canClose() {
+    return (
+      this.canIssue()&&
+      this.status=="Issued"
+    )
   },
 });

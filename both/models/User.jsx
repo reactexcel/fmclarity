@@ -36,24 +36,69 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
+  defaultThumbUrl:"/img/ProfilePlaceholderSuit.png",
   save:function(){
     Meteor.call('User.save',this);
   },
   destroy:function() {
     Meteor.call('User.destroy',this);
   },
+  sendMessage(message) {
+    message.inboxId = this.getInboxId();
+    if(message.originalId) {
+      var alreadySent = Posts.findOne({
+        inboxId:message.inboxId,
+        originalId:message.originalId
+      });
+      if(alreadySent) {
+        return;
+      }
+    }
+    Meteor.call("Posts.new",message);
+  },
+  getInboxName() {
+    return this.getName()+"'s"+" inbox";
+  },
+  getInboxId() {
+    return {
+      collectionName:this.collectionName,
+      name:this.getInboxName(),
+      query:{_id:this._id}
+    }
+  },
+  getMessages() {
+    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },
+  getNotifications() {
+    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },  
   getName() {
     return this.profile.name;
   },
+  getThumb() {
+    var thumb,profile;
+    profile = this.profile;
+    if(profile.thumb) {
+      thumb = Files.findOne(profile.thumb._id);
+    }
+    return thumb;
+  },
+  getAvailableServices() {
+    return [];
+  },  
+  getThumbUrl() {
+    var thumb = this.getThumb();
+    if(thumb) {
+      return thumb.url();
+    }
+    return this.defaultThumbUrl;
+  },
   getTeams() {
-    return Teams.find({'_members':{'_id':Meteor.userId()}}).fetch();
+    return Teams.find({'members':{'_id':Meteor.userId()}}).fetch();
   },
   getTeam(i) {
     var teams = this.getTeams();
     return teams[i];
-  },
-  getNotifications() {
-    return Log.find({'recipients':{'_id':Meteor.userId()}}).fetch();    
   },
   getProfile() {
     if(!this.profile._id) {
@@ -62,7 +107,9 @@ Users.helpers({
     return this.profile;
   },
   selectTeam(team) {
-    Session.set('selectedTeam',{_id:team._id});
+    if(team) {
+      Session.set('selectedTeam',{_id:team._id});
+    }
     Session.set('selectedFacility',0);
   },
   getSelectedTeam() {

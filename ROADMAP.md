@@ -13,57 +13,60 @@ DONE
 
 IN PROGRESS
 -----------
+* Hook up with external email system
+* Writing on issue updates should send a notification to all watchers
+* Add facility contact to watchers
+- watchers check moved to model
+- watchers sent to "News Feed" component
 
-* Services should be filtered according to selected facility
-* When a new facility is created it doesn't have default areas or services
+* Exporting of work orders
 
-* Remove underscore prefix from fields in models
-* Include date attended, date finalised, date reviewed in issue data
-* Style and implement date picker
-* Ability to change profile picture for users / facilities
-* SSL
-* RBAC
-* Email notifications
-* Finsh "close out work order" screen
-* Contractors filtered by service type when creating a work order
-* Conversations in work orders, make discussion component (for log an comments), hook discussions into notifications widget
-* Notifications when work orders progress
-* Add new contractor button - works the same as adding a new user
-* Dashboard reflecting real data
+* Fix up presentation of facility card
+* Add "create work order" link to facility card
 
-** Cross browser **
+* Add descriptive text when inviting new users and suppliers
+* Nginx to move fm to port 80 (or is there a quicker way?)
+* Create development and integration instances on AWS, separate deployments
+* Finish "close out work order" screen
+* Put fmclarity in integration instance
+* Contacts sometimes absent on first load of portfolio (this will be due to non subscription)
 
-* Cross browser / cross device compatibility
-* Settings menu doesn't work very well in minimized view - should be tabbed subselection
+* Add SSL
 
-** Bugs **
+P2
+--
+* Suppliers - remove from team to be put into "actions" menu"
+* It is possible for a user to remove themselves from all team, resulting in app crash
+* Small - facilities area selector - south/north field is too compressed whereas descriptor has excess room
+* Small - Facilities services, when you select frequency, eg weekly, a second instance of weekly appears below the entered field
+* Small - Facilities services item title fields don't wrap text next to toggle, only under it
+* Small - facilities - Property contact details not fully visible, perhaps wrap to another line?
+* Small - Supplier - insert logo inserts it in between email and website
+* Small - Suppliers - All active modules not visible, default value of work orders not aligned
 
-* When flicking through facilities, areas and services do not update
-* Need a select type control (for property type for example) that matches material design (how about using a dropdown and styling label)
-* When create a new facility, enter no details, reload, then select new facility... card does not appear
-* Editing a contractor, and then editing "your" team, nukes the previous notification, and then editing a contractor again brings it back... weird
+P3
+--
+* New invites should send a message using new message system
+* Suppliers - remove from team: confirmation dialog required
+* Avatar for Leo squished as per attached screenshot
+* Change Security deposit header to security deposit/bank guarantee and insert a field to choose which it is. For SD only require the fields amount required, amount held, and held by. the other fields are for bank guarantee. This should be trackable too, ie reported on
+* Add Fields under lease detail - Lessor/managing agent and contact number and email, annual review date, review method (select Fixed %(% value)/CPI/fixed amount ($ value), market review date
+* Add detail to supplier card as per pdf screen attached
+* Link dash elements to actual activity - change ABC graph to work order type (like a vertical bar graph)
+* Notifications should clear for each user once they have viewed items for say 5 seconds, same for numbered shields on say images and updates
+* The system currently allows you to hit new facility, not enter anything and then it will save it with no details. If nothing is entered then it should discard on change of screen
+* Small - facilities - move new button left (or reconfigure in line with task 83) 
+* Small - add Work Orders header
+* WO - auto scroll to block column header
+* Settings to go in left navigation on small screens
+* Change feed to inbox
+* Change post to message
+* Include work request type, eg preventative maintenance, ad-hoc, base building, warranty, contract, no-cost - these can be top level service types
 
-** Low priority **
+NOTES
+-----
+* Need a mixin that is used by both user and team which includes, among other things, a receive function that is called when the entity should receive a message
 
-* Validation required for form elements
-* Browsing for contractors and adding preferred contractors to a contact list (this is contracts)
-
-** Very Low priority **
-
-* Management teams see creator and contractor team, contractor teams see creators teams and assignee
-* Facilities: Add issue summary to diplay card
-* Need to be able to delete items (facilities, requests, users) when giving demo - otherwise the data just gets contaminated with random rubbish
-* Team: Position title in team members list
-* Populate comments and history sections with realistic info
-* Need better quality, real world test data (for work orders and the like)
-* Should not reuse email addresses when generating user data
-* Being able to write reviews for contractors on closed work orders
-* Placeholder avatars using initials
-* Facilities have their own team which may include members from another account - be it another paid FM Clarity account, or a contractor account, a facility that is created by a member of an account, by default, has that accounts members as its team - but this can be changed after facility creation
-* Dashboard should look and feel more "cutting edge" with some cool looking D3 visualisations instead of graphs (TODO: find some examples)
-* Reformat facilities card
-* Add outstanding issues to facilities card
-* Add floorplans and lease end dates
-* Advanced address picker
-
-* Should be using react-bootstrap with browserfy
+BUGS
+----
+* When opening app on small size - large left navigation is retained and broken

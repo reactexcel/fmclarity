@@ -78,8 +78,8 @@ var admin = FlowRouter.group({
 
 if(Meteor.isClient) {
   Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin') || FlowRouter.path('dashboard');
-    if (redirect !== '/login') {
+    var redirect = Session.get('redirectAfterLogin');
+    if (redirect && redirect !== '/login') {
       Session.set('redirectAfterLogin',null)
       return FlowRouter.go(redirect);
     }
@@ -87,9 +87,10 @@ if(Meteor.isClient) {
 }
 
 loggedIn.route('/', {
-  name: 'dashboard',
+  name: 'root',
   action() {
-    ReactLayout.render(MainLayout,{content:<PageDashboard />});
+    FlowRouter.go('/portfolio');
+    //ReactLayout.render(MainLayout,{content:<FacilityIndexPage />});
   }
 });
 
@@ -110,14 +111,21 @@ loggedIn.route('/abc', {
 loggedIn.route('/requests', {
   name: 'requests',
   action() {
-    ReactLayout.render(MainLayout,{content:<PageRequests />});
+    ReactLayout.render(MainLayout,{content:<IssuesIndexPage />});
   }
 });
 
-loggedIn.route('/notifications', {
-  name: 'notifications',
+loggedIn.route('/requests/:_id', {
+  name: 'request',
+  action(params) {
+    ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});
+  }
+});
+
+loggedIn.route('/messages', {
+  name: 'messages',
   action() {
-    ReactLayout.render(MainLayout,{content:<NotificationsPage />});
+    ReactLayout.render(MainLayout,{content:<MessagesPage />});
   }
 });
 
@@ -169,10 +177,10 @@ loggedIn.route('/team', {
   }
 });
 
-loggedIn.route('/facilities', {
-  name: 'facilities',
+loggedIn.route('/portfolio', {
+  name: 'portfolio',
   action() {
-    ReactLayout.render(MainLayout,{content: <PageProperties />});
+    ReactLayout.render(MainLayout,{content: <FacilityIndexPage />});
   }
 });
 

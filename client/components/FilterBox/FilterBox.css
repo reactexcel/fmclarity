@@ -1,0 +1,221 @@
+.isotope {
+  margin-right:-20px;
+  margin-left:-20px;
+  background-color:transparent;
+}
+
+.md-skin .filter-box.ibox {
+  background-color:transparent;
+  border:0;
+  box-shadow:none;
+}
+
+.md-skin .filter-box.ibox > .ibox-title {
+  border-bottom:1px solid #ddd;
+  background-color:#eee;
+  padding:0;
+}
+
+
+.md-skin .filter-box.ibox > .ibox-content {
+  background-color:transparent;
+}
+
+.grid-item {
+  overflow:hidden;
+  background: #fff;
+  color: #262524;
+  /*border-left:5px solid #ccc;*/
+  /*border-top:1px solid #eee;*/
+  border-bottom:1px solid #ddd;
+  padding:0;
+  max-height:51px;
+  transition:max-height 0.250s, margin-top 0.250s, margin-bottom 0.250s;
+  transition-timing-function:ease-in-out;
+}
+
+.card-header {
+  overflow:hidden;
+  -webkit-user-select: none;
+  max-height:50px;
+  /*transition: max-height 0.250s;*/
+}
+
+.filter-box .card-body,
+.filter-box-2 .card-body {
+  position:relative;
+  left:0;
+  right:0;
+}
+
+.filter-box .grid-item.gigante .card-header {
+  min-height:0px;
+  max-height:0px;
+}
+
+.filter-box .grid-item.gigante {
+  background:#fff;
+  z-index:5000;
+  width:100%;
+  max-height:1000px;
+  margin-top:10px;
+  margin-bottom:40px;
+  border-left-width: 0;
+  box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
+  padding-bottom:0;
+  border-top:1px solid #bbb;
+  border-bottom:1px solid #aaa;
+}
+
+.card-table-header {
+    font-weight: bold;
+    font-size: 12px;
+    height: 48px;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    padding-top: 16px;
+    padding-left: 5px;
+    padding-right:45px;
+    color: #999;
+    overflow: hidden;
+}
+
+.card-table-header > div {
+  padding:0!important;
+  text-align:left!important;
+  border:2px solid #fff;
+  position:relative;
+  left:-2px;
+  top:-2px;
+}
+
+.grid-item:hover .card-header,
+.grid-item.active .card-header {
+  background:#eee;
+}
+
+.grid-item.active:hover .card-header {
+  background:#eee;
+}
+
+.filter-box .grid-item.gigante .card-header,
+.filter-box .grid-item.diminished .card-header {
+    background:#eee;
+}
+
+.filter-box .grid-item.diminished {
+  height:0px;
+}
+
+.card-header-summary {
+  padding:5px;
+  overflow:hidden;
+}
+
+.card-button {
+  height: 30px;
+  width: 30px;
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+  cursor: pointer;
+  outline: none;
+  padding: 0;  
+  border: none;
+  border-radius: 50%;    
+  font-size:20px;
+  position:relative;
+  box-shadow:none;
+}
+
+.new-card-button {
+  opacity:0.7;
+  background-color: #3ca773;
+  color:#fff;
+  top:9px;
+  right:9px;
+  transition:opacity 0.1s;
+}
+
+.new-card-button:hover {
+  opacity:1;
+}
+
+.expand-button {
+  background-color: transparent;
+  box-shadow: none;
+  color:#000;
+}
+
+.delete-button {
+  background-color: #aaa;
+  color:#fff;
+}
+
+
+.grid-item-select-button {
+  color:#000;
+  height:100%;
+  float:left;
+  padding:5px 5px 5px 5px;
+  cursor:pointer;
+}
+
+.grid-item-select-button-top {
+  position:relative;
+  top:5px;
+}
+
+.grid-item-select-button-bottom {
+  position:relative;
+  top:-2px;
+}
+
+.card-header-right-toolbar {
+  float:right;
+  opacity:1;
+  padding-right:9px;
+}
+
+.card-body-right-toolbar {
+  position:absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  width:50px;
+  opacity:0.3;
+}
+
+.card-body-right-toolbar:hover {
+  opacity:1;
+}
+
+.card-header-left-toolbar {
+  float:left;
+  opacity:1;
+  width:40px;
+  padding:13px;
+}
+
+.card-header-left-toolbar .show-on-hover {
+  display:none;
+}
+
+.card-header-left-toolbar .hide-on-hover {
+  display:block;
+}
+
+.card-header-left-toolbar:hover .show-on-hover {
+  display:block;
+}
+
+.card-header-left-toolbar:hover .hide-on-hover {
+  display:none;
+}
+
+.grid-item:hover .card-header-right-toolbar, 
+.grid-item.gigante .card-header-right-toolbar,
+.grid-item:hover .card-header-left-toolbar, 
+.grid-item.gigante .card-header-left-toolbar 
+{
+  /*opacity:0.3;*/
+}
+

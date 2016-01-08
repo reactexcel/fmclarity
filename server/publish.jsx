@@ -1,5 +1,5 @@
 Meteor.publish('teams', function () {
-	return Teams.find({_members:{_id:this.userId}});
+	return Teams.find({members:{_id:this.userId}});
 });
 
 Meteor.publish('config', function () {
@@ -19,13 +19,13 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 	//console.log('updating subscription');
 	var teams, facilities, issues;
 
-	teams = Teams.find({_members:{_id:this.userId}});
+	teams = Teams.find({members:{_id:this.userId}});
 	var teamIds = [];
 	teams.forEach(function(t){
 		teamIds.push(t._id);
 	});
-	facilities = Facilities.find({"_team._id":{$in:teamIds}});
-	issues = Issues.find({"_team._id":{$in:teamIds}},{sort: {createdAt: -1}});
+	facilities = Facilities.find({"team._id":{$in:teamIds}});
+	issues = Issues.find({"team._id":{$in:teamIds}},{sort: {createdAt: -1}});
 	return [teams,facilities,issues];
 });
 

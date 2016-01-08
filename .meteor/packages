@@ -24,12 +24,13 @@ momentjs:moment
 monbro:mongodb-mapreduce-aggregation
 
 twbs:bootstrap
-#tomwasd:flow-router-autoscroll
+tomwasd:flow-router-autoscroll
 zimme:active-route
 
 
 accounts-password
 #blaze-html-templates
+static-html
 check
 ejson
 email

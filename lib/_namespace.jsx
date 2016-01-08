@@ -6,7 +6,8 @@ FM.schemas = {};
 
 if(Meteor.isClient) {
 	FM.getSelectedTeam = function() {
-		return Meteor.user().getSelectedTeam();
+	    var selectedTeamQuery = Session.get('selectedTeam');
+	    return Teams.findOne(selectedTeamQuery);
 	}
 }
 
@@ -68,46 +69,29 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// add collection methods
 	var methods = {};
 	methods[name+'.save'] = function(item) {
-		item.isNewItem = false;
+		//item.isNewItem = false;
 		if(!item.createdAt) {
 			item.createdAt = moment().toDate();
 		}
-		console.log({
-			saving:item
-		});
 		var response = collection.upsert(item._id, {$set: _.omit(item, '_id')});
 		return {
 			_id:response.insertedId
 		}
 	}
 	methods[name+'.destroy'] = function(item) {
-		console.log({
-			destroying:item
-		});
 		collection.remove(item._id);
 	}
-	methods[name+'.new'] = function(item,actor) {
-		actor = actor||Meteor.user();
+	methods[name+'.new'] = function(item) {
+		var owner = Meteor.user();
 		newItem = _.extend({
 			isNewItem:true,
-			_creator:{
-				_id:actor._id,
-				name:actor.name,
-				thumb:actor.profile.thumb
+			creator:{
+				_id:owner._id,
+				name:owner.name,
+				thumb:owner.profile.thumb
 			},
 		},newItemTemplate(item),item);
-		console.log({
-			creating:newItem,
-			with:item,
-			and:newItemTemplate
-		});
-
-		return collection.insert(newItem,function(err,obj){
-			console.log({
-				error:err,
-				data:obj
-			});			
-		});
+		return collection.insert(newItem);
 	}
 	methods[name+'.getTemplate'] = function(item) {
 		return newItemTemplate(item);
@@ -117,7 +101,8 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 	// add collection helpers
 	collection.helpers({
 		collectionName:name,
-		save(extension) {
+		defaultThumbUrl:"img/default-placeholder.png",
+		save(extension,callback) {
 			console.log('calling save method...');
 			var obj = this;
 			if(extension) {
@@ -125,9 +110,17 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 					obj[i] = extension;
 				}
 			}
-			Meteor.call(name+'.save',obj,function(){
-				FM.notify("updated",obj);
-			});
+			Meteor.call(name+'.save',obj,callback);
+		},
+		isNew() {
+			// now this is a case where we should have underscore prefix
+			// ONLY have underscore prefix when variable shadowed by access function
+			return this.isNewItem;
+		},
+		set(field,value) {
+			var obj = this;
+			obj[field] = value;
+			obj.save();
 		},
 		destroy(){
 			console.log('calling destroy method...');
@@ -139,15 +132,65 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		getName(){
 			return this.name;
 		},
+		getInboxName() {
+    		return this.getName()+"'s"+" inbox";
+  		},
+		getInboxId() {
+			return {
+				collectionName:this.collectionName,
+				name:this.getInboxName(),
+				path:this.path,
+				query:{_id:this._id}
+			}
+		},
+		getMessages() {
+		    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  		},
+		getNotifications() {
+		    return Posts.find({inboxId:this.getInboxId()}).fetch();
+  		},
+		getMessageCount() {
+    		return Posts.find({inboxId:this.getInboxId()}).count();
+		},  		
+  		/*
 		getNotifications() {
 		    return Log.find({
 				"action.collectionName":name,
 				"action.query":{_id:this._id}
 		    }).fetch();
 		},
+		*/
 		getCreator() {
-			return Users.findOne(this._creator._id);
-		}
+			return Users.findOne(this.creator._id);
+		},
+		getThumb() {
+			var thumb;
+			if(this.thumb) {
+				thumb = Files.findOne(this.thumb._id);
+			}
+			else if(this.attachments&&this.attachments[0]) {
+				thumb = Files.findOne(this.attachments[0]._id);
+			}
+			return thumb;
+		},
+		getAttachmentUrl(index) {
+    		index=index||0;
+		    var file;
+			if(this.attachments&&this.attachments[index]) {
+    			file = Files.findOne(this.attachments[index]._id);
+    			if(file) {
+    				return file.url();
+    			}
+    		}
+    		return this.defaultThumb;
+		},
+		getThumbUrl() {
+			var thumb = this.getThumb();
+			if(thumb) {
+				return thumb.url();
+			}
+			return this.defaultThumbUrl;
+		},
 	});
 
 	// add collection hooks

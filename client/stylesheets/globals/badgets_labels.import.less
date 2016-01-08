@@ -22,8 +22,7 @@
 }
 
 .label.label-notification, .badge-notification {
-  position: absolute;
-  margin-top: 3px;
+  position: relative;
   border-radius: 50%;
   padding: 3px 5px;  
   background-color:#E91E63;
@@ -31,6 +30,7 @@
   height:15px;
   width:15px;
   line-height:10px;
+  float:right;
 }
 
 .priority-Scheduled {
@@ -57,6 +57,13 @@
 .label-Issued, .badge-Issued, .btn-Issued {
   background-color:#b8e986;
   color:#333;
+}
+
+.btn-disabled,.btn-disabled:hover,.btn-disabled:focus {
+  background-color:#ddd;
+  color:#999; 
+  cursor:default!important;
+  outline:none;
 }
 
 .label-Closed, .badge-Closed, .btn-Closed {

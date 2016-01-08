@@ -1,783 +1,442 @@
-Config = {
-	areaNames:[
-		"",
-		"Male bathroom",
-		"Female bathroom",
-		"Bathroom",
-		"Lift lobby",
-		"Kitchen",
-		"Staff room",
-		"Work room",
-		"Reception",
-		"Basement",
-		"Mezzanine",
-		"Lift 1",
-		"Lift 2",
-		"Lift 3",
-		"Lift 4",
-		"Seminar room",
-		"Board room",
-		"Conference room"
-	],
-	cycleNames:[
-		'Daily',
-		'Weekly',
-		'Fortnightly',
-		'Monthly',
-		'Quarterly',
-		'Half-yearly',
-		'Yearly',
-	],
-	areas:[{
-		name:"Male bathroom",
-		cycle:"Half-yearly",
-		_contractor:{},
+Config = {};
+Config.areaNames = [
+	"",
+	"Office floor",
+	"Male bathroom",
+	"Female bathroom",
+	"Disabled bathroom",
+	"Lift lobby",
+	"Kitchenette",
+	"Photocopy room",
+	"First aid room",
+	"Entrance door",
+	"Lockers",
+	"Lift 1",
+	"Lift 2",
+	"Lift 3",
+	"Lift 4",
+	"Lift 5",
+	"Lift 6",
+	"Lift 7",
+	"Lift 8",
+	"Electrical riser",
+	"Comms riser",
+	"Comms room",
+	"Stairwell",
+	"Fire cupboard",
+	"Meeting room 1",
+	"Meeting room 2",
+	"Meeting room 3",
+	"Meeting room 4",
+	"Meeting room 5",
+	"Meeting room 6",
+	"Meeting room 7",
+	"Meeting room 8",
+	"Seminar room",
+	"Board room",
+	"Conference room",
+
+	
+	"Foyer",
+	"Fire pump room",
+	"Generator room",
+	"Concierge",
+	"Reception",
+	"Café",
+	"Loading dock",
+	"Bin storage",
+	"Carpark level 0",
+	"Carpark level 1",
+	"Carpark level 2",
+	"Carpark level 3",
+	"Carpark level 4",
+	"Switch room",
+	"Cleaner’s room",
+	"Plant room 1",
+	"Plant room 2",
+	"Lift motor room",
+	"Roof",
+	"Upper façade",
+	"Lower façade",
+	"Building forecourt",
+	"Bike storage",
+	"Security office",
+	"MDF",
+	"EWIS",
+	"Fire panel",
+	"Male changerooms",
+	"Female changerooms"
+];
+
+Config.cycleNames = [
+	"",
+	"Daily",
+	"Weekly",
+	"Fortnightly",
+	"Monthly",
+	"Quarterly",
+	"Half-yearly",
+	"Yearly",
+];
+
+Config.areas = [];
+Config.areaNames.map(function(areaName){
+	Config.areas.push({
+		name:areaName,
+		cycle:"",
+		contractor:{}
+	});
+});
+
+Config.services = [{
+	name:"Air Conditioning",
+	subservices:[{
+		name:"Contract maintenance",
+		account:"#5432",
 	},{
-		name:"Female bathroom",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"R&M",
+		account:"#5432",
 	},{
-		name:"Lift lobby",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Boilers",
+		account:"#5432",
 	},{
-		name:"Kitchen",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Filters",
+		account:"#5432",
 	},{
-		name:"Workroom",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Controls",
 	},{
-		name:"Mezzanine",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Chillers",
 	},{
-		name:"Lift 1",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Water Treatment",
 	},{
-		name:"Lift 2",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Materials",
 	},{
-		name:"Lift 3",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Gas",
+	}]
+},{
+	name:"Cleaning",
+	subservices:[{
+		name:"Contract",
 	},{
-		name:"Lift 4",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"R&M",
 	},{
-		name:"Seminar room",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Carpet shampoo",
 	},{
-		name:"Board room",
-		cycle:"Half-yearly",
-		_contractor:{},
+		name:"Carpark cleaning",
 	},{
-		name:"Conference room",
-		cycle:"Half-yearly",
-		_contractor:{},
-	}],
-	services:[{
-		name:"Air Conditioning",
-		_contractor:{},
-		subservices:[{
-			name:"Contract maintenance",
-			account:"#5432",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			account:"#5432",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Boilers",
-			account:"#5432",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Filters",
-			account:"#5432",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Controls",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Chillers",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Water Treatment",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Materials",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Gas",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Cleaning",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Carpet shampoo",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Carpark cleaning",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Common area",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Equipment maintenance",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Materials",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Rubbish removal - landfill",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Rubbish removal - recycling",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sanitaries",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Exhaust fans",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Windows",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Carpark maintenance",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sweeping",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Line marking",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Security",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Signs",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Fire protection",
-		_contractor:{},
-		subservices:[{
-			name:"Call out",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Contract",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Emergency exit lights",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Emergency equip and training",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"EWIS",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Extinguishers",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Fire brigade fees",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Gasseous suppression systems",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Others",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sprinkler system",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Thermal system",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Telephone line rent",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Generator",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Fuel",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Pest control",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Plumbing",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sullage",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Repairs & Maintenance",
-		_contractor:{},
-		subservices:[{
-			name:"Auto doors",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"BMU",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Boom gates",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Carpet",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Directory board",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Electrical",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Emergency systems",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Environmental",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Equipment hire",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Foodcourt",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"General",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"General Xmas",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Glass repair",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Grafitti removal",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Hazmat",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Lamps and tubes",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Locks, keys and cards",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Painting",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Partitions",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Roller shutters",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Safety",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Signs",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Structural",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Surfaces",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Tenancy restoration",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
+		name:"Common area",
+	},{
+		name:"Equipment maintenance",
+	},{
+		name:"Materials",
+	},{
+		name:"Rubbish removal - landfill",
+	},{
+		name:"Rubbish removal - recycling",
+	},{
+		name:"Sanitaries",
+	},{
+		name:"Exhaust fans",
+	},{
+		name:"Windows",
+	},{
+		name:"Other",
+	}]
+},{
+	name:"Carpark maintenance",
+	available:true,
+	contractor:{},
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"R&M",
+	},{
+		name:"Sweeping",
+	},{
+		name:"Line marking",
+	},{
+		name:"Other",
+	},{
 		name:"Security",
-		_contractor:{},
-		subservices:[{
-			name:"Contract staff",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Access control",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"CCTV",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Patrols",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Water treatment",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Building Automation System",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Engineering",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sustainability",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
+	},{
 		name:"Signs",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Lease",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Electricity",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Cleaning",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Landscaping",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"External hire",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Internal hire",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Materials",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Miscellaneous",
-		_contractor:{},
-		subservices:[{
-			name:"Consultants",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Entertainment",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Photocopier",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Postage & deliveries",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Printing & stationery",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Subscriptions",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Sundry",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Survey & valuation",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Travel",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
+	}]
+},{
+	name:"Fire protection",
+	contractor:{},
+	subservices:[{
+		name:"Call out",
+	},{
+		name:"Contract",
+	},{
+		name:"Emergency exit lights",
+	},{
+		name:"Emergency equip and training",
+	},{
+		name:"EWIS",
+	},{
+		name:"Extinguishers",
+	},{
+		name:"Fire brigade fees",
+	},{
+		name:"Gasseous suppression systems",
+	},{
+		name:"Others",
+	},{
+		name:"R&M",
+	},{
+		name:"Sprinkler system",
+	},{
+		name:"Thermal system",
+	},{
+		name:"Telephone line rent",
+	}]
+},{
+	name:"Generator",
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"R&M",
+	},{
+		name:"Fuel",
+	}]
+},{
+	name:"Pest control",
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	}]
+},{
+	name:"Plumbing",
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	},{
+		name:"Sullage",
+	}]
+},{
+	name:"Repairs & Maintenance",
+	subservices:[{
+		name:"Auto doors",
+	},{
+		name:"BMU",
+	},{
+		name:"Boom gates",
+	},{
+		name:"Carpet",
+	},{
+		name:"Directory board",
+	},{
+		name:"Electrical",
+	},{
+		name:"Emergency systems",
+	},{
+		name:"Environmental",
+	},{
+		name:"Equipment hire",
+	},{
+		name:"Foodcourt",
+	},{
+		name:"General",
+	},{
+		name:"General Xmas",
+	},{
+		name:"Glass repair",
+	},{
+		name:"Grafitti removal",
+	},{
+		name:"Hazmat",
+	},{
+		name:"Lamps and tubes",
+	},{
+		name:"Locks, keys and cards",
+	},{
+		name:"Other",
+	},{
+		name:"Painting",
+	},{
+		name:"Partitions",
+	},{
+		name:"Roller shutters",
+	},{
+		name:"Safety",
+	},{
+		name:"Signs",
+	},{
+		name:"Structural",
+	},{
+		name:"Surfaces",
+	},{
+		name:"Tenancy restoration",
+	}]
+},{
+	name:"Security",
+	subservices:[{
+		name:"Contract staff",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	},{
+		name:"Access control",
+	},{
+		name:"CCTV",
+	},{
+		name:"Patrols",
+	}]
+},{
+	name:"Water treatment",
+	contractor:{},
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	}]
+},{
+	name:"Building Automation System",
+	contractor:{},
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	},{
+		name:"Engineering",
+	},{
 		name:"Sustainability",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Engineering",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	},
-	{
-		name:"Lifts",
-		_contractor:{},
-		subservices:[{
-			name:"Contract",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Materials",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Electricity",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"R&M",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Consultant",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Lift phone",
-			available:false,
-			cycle:"Half-yearly",
-			_contractor:{},
-		},{
-			name:"Other",
-			available:true,
-			cycle:"Half-yearly",
-			_contractor:{},
-		}]
-	}
-]}
+	}]
+},{
+	name:"Signs",
+	contractor:{},
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	},{
+		name:"Lease",
+	},{
+		name:"Electricity",
+	},{
+		name:"Cleaning",
+	}]
+},{
+	name:"Landscaping",
+	contractor:{},
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"External hire",
+	},{
+		name:"R&M",
+	},{
+		name:"Internal hire",
+	},{
+		name:"Other",
+	},{
+		name:"Materials",
+	}]
+},{
+	name:"Miscellaneous",
+	contractor:{},
+	subservices:[{
+		name:"Consultants",
+	},{
+		name:"Entertainment",
+	},{
+		name:"Photocopier",
+	},{
+		name:"Postage & deliveries",
+	},{
+		name:"Printing & stationery",
+	},{
+		name:"Subscriptions",
+	},{
+		name:"Sundry",
+	},{
+		name:"Survey & valuation",
+	},{
+		name:"Travel",
+	}]
+},{
+	name:"Sustainability",
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Other",
+	},{
+		name:"R&M",
+	},{
+		name:"Engineering",
+	}]
+},{
+	name:"Lifts",
+	subservices:[{
+		name:"Contract",
+	},{
+		name:"Materials",
+	},{
+		name:"Electricity",
+	},{
+		name:"R&M",
+	},{
+		name:"Consultant",
+	},{
+		name:"Lift phone",
+	},{
+		name:"Other",
+	}]
+}];
+
+Config.services.map(function(service){
+	service.contractor = {};
+	service.available = true;
+	service.subservices.map(function(subservice) {
+		subservice.available = true;
+	})
+});
+
+Config.defaultAreas =[ {
+    name:'Standard level',
+    number:1,
+    areas:[{
+		name:'Conference room',
+		location:'North',
+		number:1
+	},{
+		name:'Male bathroom',
+		location:'North',
+		number:1
+	},{
+		name:'Female bathroom',
+        location:'South',
+        number:1
+    },{
+    	name:'Staff room',
+		number:1
+    },{
+    	name:'Work room',
+		number:5
+	}]
+},{
+	name:'Unique areas',
+	number:1,
+	areas:[{
+    	name:'Board room',
+        number:1
+    },{
+    	name:'Reception',
+        number:1
+    },{
+    	name:'Basement',
+        number:1
+    }]
+}];
