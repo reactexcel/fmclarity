@@ -55,6 +55,29 @@ Users.helpers({
       }
     }
     Meteor.call("Posts.new",message);
+    /*
+    Email.send({
+      from:"no-reply@fmclarity.com",
+      to:this.getEmail(),
+      subject:"You have an update from FM Clarity",
+      html:"Test message",
+    });
+    */
+    SSR.compileTemplate( 'htmlEmail', Assets.getText( 'html-email.html' ) );
+
+    var emailData = {
+      name: "Doug Funny",
+      favoriteRestaurant: "Honker Burger",
+      bestFriend: "Skeeter Valentine"
+    };
+
+    Email.send({
+      to: "mrleokeith@gmail.com",
+      from: "no-reply@fmclarity.com",
+      subject: "Example Email",
+      html: SSR.render( 'htmlEmail', emailData )
+    });
+
   },
   getInboxName() {
     return this.getName()+"'s"+" inbox";
@@ -68,6 +91,9 @@ Users.helpers({
   },
   getMessages() {
     return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },
+  getEmail() {
+    return this.emails[0].address;
   },
   getNotifications() {
     return Posts.find({inboxId:this.getInboxId()}).fetch();

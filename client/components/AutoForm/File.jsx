@@ -108,6 +108,15 @@ AutoInput.Thumbnail = React.createClass({
     	win.focus();
     },
 
+    deleteFile() {
+		var message = confirm('Are you sure you want to delete this file?');
+    	if(message === true){
+	        this.data.file.remove();
+     	} else {
+		}
+		this.props.onChange(null);
+    },
+
 	onClick() {
 		if(this.data.isImage) {
 			this.showImageInModal()
@@ -123,19 +132,22 @@ AutoInput.Thumbnail = React.createClass({
 	render() {
 		if(this.data.icon) {
 			return(
-				<div className="fm-icon" onClick={this.onClick}>
-					{this.data.isImage
-					?
-						<div style={{height:"64px",overflow:"hidden"}}>
-					    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
-					    </div>
-					:
-					    <img alt="image" src={this.data.icon} />
-					}
-					<div style={{width:0,height:0,overflow:"hidden"}}>
-						<input ref="input" type="file" onChange={this.handleChange}/>
+				<div className="fm-icon">
+					<div onClick={this.onClick}>
+						{this.data.isImage
+						?
+							<div style={{height:"64px",overflow:"hidden"}}>
+						    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
+						    </div>
+						:
+						    <img alt="image" src={this.data.icon} />
+						}
+						<div style={{width:0,height:0,overflow:"hidden"}}>
+							<input ref="input" type="file" onChange={this.handleChange}/>
+						</div>
+						<span>{this.data.name}</span>
 					</div>
-					<span>{this.data.name}</span>
+					<span onClick={this.deleteFile}>Delete</span>
 				</div>
 			)
 		}

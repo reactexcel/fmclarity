@@ -46,7 +46,9 @@ UserProfile = React.createClass({
             		component.props.onChange(user);
             	}
             });
-	    }
+            this.setState({
+            	shouldShowMessage:true
+            });	    }
     },
 
     handleThumbChange(newThumb) {
@@ -59,6 +61,10 @@ UserProfile = React.createClass({
 		this.save();
     },
 
+	getInitialState() {
+		shouldShowMessage:false
+	},    
+
 	render() {
 		var user, profile, team;
 		user = this.state.item;
@@ -70,7 +76,7 @@ UserProfile = React.createClass({
 			return (
                 <form className="form-inline">
                     <div className="form-group">
-                        <b>Type email address to invite user:</b>
+                        <b>Let's search to see if this user already has an account.</b>
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
                         <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                     </div>
@@ -81,6 +87,7 @@ UserProfile = React.createClass({
 		    <div className="ibox-form user-profile-card">
 		    	<div className="row">
 		    		<div className="col-sm-12">
+                        {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}
 		           		<h2><span>{profile.name}</span></h2>
 				   		<div onClick={team.removeMember.bind(team,user)}>
 				   			Remove from team: <b>{team.getName()}</b>

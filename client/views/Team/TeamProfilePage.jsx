@@ -58,6 +58,10 @@ AccountEdit = React.createClass({
 		});
 	},
 
+	getInitialState() {
+		shouldShowMessage:false
+	},
+
 	handleInvite(event) {
     	event.preventDefault();
     	var selectedTeam,input,email,regex,component;
@@ -78,6 +82,9 @@ AccountEdit = React.createClass({
             		component.props.onChange(supplier);
             	}
             });
+            this.setState({
+            	shouldShowMessage:true
+            });
 	    }
     },
 
@@ -91,7 +98,7 @@ AccountEdit = React.createClass({
 			return (
                 <form className="form-inline">
                     <div className="form-group">
-                        <b>Search for supplier:</b>
+                        <b>Let's search to see if this contractor already has an account.</b>
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
                         <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                     </div>
@@ -100,6 +107,7 @@ AccountEdit = React.createClass({
 		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+                {this.state.shouldShowMessage?<b>Contractor not found, please enter the details to add to your contact.</b>:null}
             	<h2><span>{team.getName()}</span></h2>
 		   		<div onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>
 		   			Remove from team: <b>{selectedTeam.getName()}</b>

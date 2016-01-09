@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v0.3.19a**
+
+* Contacts sometimes absent on first load of portfolio (this will be due to non subscription)
+* Nginx to move fm to port 80
+* Create development and integration instances on AWS, separate deployments
+* WO: File tab now shows actual number of files
+* Table rows set to a consistent height of 50px
+* Added descriptive text when inviting new users and suppliers
+* Can now delete files and images
+* Initial tests for hooking up external email system
+* Initial test for exporting work orders
+
 **v0.3.18a**
 
 * WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed

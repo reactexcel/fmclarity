@@ -59,3 +59,8 @@ mdg:geolocation
 cfs:standard-packages
 cfs:filesystem
 cfs:gridfs
+
+pfafman:filesaver
+harrison:papa-parse
+
+meteorhacks:ssr

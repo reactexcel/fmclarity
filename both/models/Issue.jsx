@@ -109,6 +109,12 @@ Issues.helpers({
       }
     });
   },
+  getAttachmentCount() {
+    if(this.attachments) {
+      return this.attachments.length;
+    }
+    return 0;
+  },
   getPotentialSuppliers() {
     if(this.service&&this.service.name) {
       var query = {};
