@@ -13,14 +13,12 @@ DONE
 
 IN PROGRESS
 -----------
-* Exporting of work orders
-* Hook up with external email system
+* Finish "close out work order" screen
 
 P2
 --
 * Suppliers - remove from team to be put into "actions" menu"
 * It is possible for a user to remove themselves from all team, resulting in app crash
-* Finish "close out work order" screen
 * Small - facilities area selector - south/north field is too compressed whereas descriptor has excess room
 * Small - Facilities services, when you select frequency, eg weekly, a second instance of weekly appears below the entered field
 * Small - Facilities services item title fields don't wrap text next to toggle, only under it
@@ -28,13 +26,13 @@ P2
 * Small - Supplier - insert logo inserts it in between email and website
 * Small - Suppliers - All active modules not visible, default value of work orders not aligned
 
-* "Developer" role with access to everything
-* If developer - display version on screen
-* Interface for seeing overview of all data saved in the system
-
 P3
 --
 * Add SSL
+
+* "Developer" role with access to everything
+* If developer - display version on screen
+* Interface for seeing overview of all data saved in the system
 
 * Writing on issue updates should send a notification to all watchers
 * Add facility contact to watchers

@@ -103,7 +103,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		collectionName:name,
 		defaultThumbUrl:"img/default-placeholder.png",
 		save(extension,callback) {
-			console.log('calling save method...');
+			//console.log('calling save method...');
 			var obj = this;
 			if(extension) {
 				for(var i in extension) {

@@ -31,6 +31,23 @@ Meteor.methods({
   },
   "User.getTemplate":function(item) {
     return _.extend({},template,item);
+  },
+  "User.sendEmail":function(user,message) {
+    if(Meteor.isServer) {
+      var element = React.createElement(EmailMessageView,{item:message});
+      var html = React.renderToStaticMarkup (element);
+      if(user) {
+        var email = user.emails[0].address;
+        if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
+          Email.send({
+            to: user.displayName+" <"+email+">",
+            from: "FM Clarity <no-reply@fmclarity.com>",
+            subject: "An FM Clarity work request you are watching has changed",
+            html: html
+          });
+        }
+      }
+    }
   }
 })
 
@@ -55,6 +72,7 @@ Users.helpers({
       }
     }
     Meteor.call("Posts.new",message);
+    Meteor.call("User.sendEmail",this,message);
     /*
     Email.send({
       from:"no-reply@fmclarity.com",
@@ -63,20 +81,6 @@ Users.helpers({
       html:"Test message",
     });
     */
-    SSR.compileTemplate( 'htmlEmail', Assets.getText( 'html-email.html' ) );
-
-    var emailData = {
-      name: "Doug Funny",
-      favoriteRestaurant: "Honker Burger",
-      bestFriend: "Skeeter Valentine"
-    };
-
-    Email.send({
-      to: "mrleokeith@gmail.com",
-      from: "no-reply@fmclarity.com",
-      subject: "Example Email",
-      html: SSR.render( 'htmlEmail', emailData )
-    });
 
   },
   getInboxName() {

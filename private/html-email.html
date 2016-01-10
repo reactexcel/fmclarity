@@ -9,22 +9,23 @@
 <body itemscope itemtype="http://schema.org/EmailMessage">
   <table>
     <tr>
-      <td></td>
-      <td width="600">
-        <table width="100%" style="border: 1px solid #eee;">
-          <tr>
-            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;">Name</th>
-            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #eee;">{{name}}</td>
-          </tr>
-          <tr>
-            <th style="text-align: left; padding: 10px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;">Favorite Restaurant</th>
-            <td style="text-align: left; padding: 10px; border-bottom: 1px solid #eee;">{{favoriteRestaurant}}</td>
-          </tr>
-          <tr>
-            <th style="text-align: left; padding: 10px; border-right: 1px solid #eee;">Best Friend</th>
-            <td style="text-align: left; padding: 10px;">{{bestFriend}}</td>
-          </tr>
-        </table>
+      <td style="height:50px;background-color:#0152b5;text-align:center;color:#fff">
+        <span>FM Clarity</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="height:50px;background-color:#ddd;text-align:center;color:#333">
+        <span>You have a new notification</span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div>
+          <small className="pull-right">{{moment(message.createdAt).fromNow()}}</small>
+          <strong>{{creator.getName()}}</strong> {
+          <span>{{message.verb}} <b><a href={{message.getTargetUrl()}}>{{message.getTargetName()}}</a></b></span>
+          <small className="text-muted">{{moment(message.createdAt).format('MMM Do YYYY, h:mm:ss a')}}</small>
+        </div>
       </td>
     </tr>
   </table>

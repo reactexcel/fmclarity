@@ -116,6 +116,7 @@ IssueSpecArea = React.createClass({
             var createdMs = issue.createdAt.getTime();
             issue.dueDate = new Date(createdMs+timeframe);
             issue.status = "Issued";
+            issue.issuedAt = new Date();
             this.save();
             this.callbacks.onIssuedStatus(issue,this.data.watchers);
             if(this.props.closeCallback) {

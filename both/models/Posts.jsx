@@ -46,7 +46,16 @@ Posts.helpers({
     //console.log(target);
     //return FlowRouter.path(target.path,target.query);
     if(target.path) {
-      return '/'+target.path+'/'+target.query._id;
+      //return '/'+target.path+'/'+target.query._id;
+      return Meteor.absoluteUrl(target.path+'/'+target.query._id);
+    }
+  },
+  getAbsoluteTargetUrl() {
+    var target = this.target?this.target:this.inboxId;
+    //console.log(target);
+    //return FlowRouter.path(target.path,target.query);
+    if(target.path) {
+      return Meteor.absoluteUrl(target.path+'/'+target.query._id);
     }
   }
 });

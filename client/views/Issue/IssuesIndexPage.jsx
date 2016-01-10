@@ -54,11 +54,21 @@ IssuesIndexPage = React.createClass({
     exportIssues(issues) {
     	var projection = [];
     	issues.map(function(issue,index){
-    		var newElement = {
-    			code:issue.code,
-    			name:issue.name
-    		}
-    		projection.push(newElement);
+    		if(issue.status!="New") {
+	    		var newElement = {
+	    			code:issue.code,
+	    			name:issue.name,
+	    			facility:issue.facility.name,
+	    			description:issue.description,
+	    			amount:'$'+issue.costThreshold,
+	    			supplier:issue.supplier.name,
+	    			"date created":issue.createdAt,
+	    			"date issued":issue.issuedAt
+	    		}
+	    		projection.push(newElement);
+	    		issue.exported = true;
+	    		issue.save();
+	    	}
     	});
     	var csv = Papa.unparse(projection);
 		var blob = new Blob([csv], {type: "text/plain;charset=utf-8"});

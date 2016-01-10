@@ -10,8 +10,8 @@ CHANGELOG.md
 * Table rows set to a consistent height of 50px
 * Added descriptive text when inviting new users and suppliers
 * Can now delete files and images
-* Initial tests for hooking up external email system
-* Initial test for exporting work orders
+* Exporting of work orders
+* Hook up with external email system
 
 **v0.3.18a**
 
