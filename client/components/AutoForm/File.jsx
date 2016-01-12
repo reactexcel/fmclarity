@@ -110,11 +110,10 @@ AutoInput.Thumbnail = React.createClass({
 
     deleteFile() {
 		var message = confirm('Are you sure you want to delete this file?');
-    	if(message === true){
+    	if(message == true){
 	        this.data.file.remove();
-     	} else {
-		}
-		this.props.onChange(null);
+			this.props.onChange(null);
+     	}
     },
 
 	onClick() {
@@ -133,10 +132,10 @@ AutoInput.Thumbnail = React.createClass({
 		if(this.data.icon) {
 			return(
 				<div className="fm-icon">
-					<div onClick={this.onClick}>
+					<div title={this.data.name} onClick={this.onClick}>
 						{this.data.isImage
 						?
-							<div style={{height:"64px",overflow:"hidden"}}>
+							<div style={{width:"100%",overflow:"hidden",cursor:"pointer"}}>
 						    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
 						    </div>
 						:
@@ -145,18 +144,18 @@ AutoInput.Thumbnail = React.createClass({
 						<div style={{width:0,height:0,overflow:"hidden"}}>
 							<input ref="input" type="file" onChange={this.handleChange}/>
 						</div>
-						<span>{this.data.name}</span>
 					</div>
-					<span onClick={this.deleteFile}>Delete</span>
+					<div className="close-button" onClick={this.deleteFile}>&times;</div>
+					<div className="caption">{this.data.name}</div>
 				</div>
 			)
 		}
 		return(
-			<div className="fm-icon" onClick={this.onClick}>
+			<div className="fm-icon" style={{cursor:"pointer"}} onClick={this.onClick}>
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
-				<div style={{paddingTop:"50%"}}>Upload file</div>
+				<div style={{paddingTop:"40%"}}>Upload file</div>
 			</div>
 		)
 	}

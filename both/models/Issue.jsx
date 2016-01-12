@@ -1,26 +1,23 @@
 CloseDetails = {
-    attendenceDate: {
-      label:"Attendence date",
-      size:6
-    },
-    attendenceTime: {
-      label:"Attendence time",
+    attendanceDate: {
+      label:"Attendence date and time",
+      input:"date",
       size:6
     },
     completionDate: {
-      label:"Completion date",
-      size:6
-    },
-    completionTime: {
-      label:"Completion time",
+      label:"Completion date and time",
+      input:"date",
       size:6
     },
     furtherWorkRequired: {
-      label:"Is further work required?",
+      label:"Further work required",
       input:"switch",
     },
     futureWork: {
       label:"Enter details of future work",
+      condition(item) {
+        return item&&(item.furtherWorkRequired == true);
+      },
       input:"mdtextarea",
     }
 };
@@ -143,7 +140,9 @@ Issues.helpers({
   },
   getTimeframe() {
     var team = this.getTeam();
-    return team.getTimeframe(this.priority);
+    if(team) {
+      return team.getTimeframe(this.priority);
+    }
   },
   setPriority(priority) {
     var team = this.getTeam();

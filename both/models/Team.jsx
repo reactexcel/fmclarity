@@ -94,7 +94,6 @@ Teams = FM.createCollection('Team',{
     defaultWorkOrderValue: {
       type: Number,
       label: "Default value for work orders",
-      input:"dltext",
       defaultValue:500
     },
     services : {

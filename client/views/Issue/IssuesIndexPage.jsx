@@ -97,13 +97,15 @@ IssuesIndexPage = React.createClass({
 	        filter(i) {
 	        	return i.status=='Closed';
 	        }
-	    },
+	    }
+	    /*
 	    {
 	        text:"Not exported",
 	        filter(i) {
 	        	return !i.exported;
 	        }
 	    }
+	    */
 	    ];
 
 	    var headers = [

@@ -107,7 +107,7 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			var obj = this;
 			if(extension) {
 				for(var i in extension) {
-					obj[i] = extension;
+					obj[i] = extension[i];
 				}
 			}
 			Meteor.call(name+'.save',obj,callback);

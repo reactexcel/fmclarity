@@ -115,7 +115,7 @@ loggedIn.route('/requests', {
   }
 });
 
-loggedIn.route('/requests/:_id', {
+exposed.route('/requests/:_id', {
   name: 'request',
   action(params) {
     ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});

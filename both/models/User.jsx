@@ -42,7 +42,7 @@ Meteor.methods({
           Email.send({
             to: user.displayName+" <"+email+">",
             from: "FM Clarity <no-reply@fmclarity.com>",
-            subject: "An FM Clarity work request you are watching has changed",
+            subject: message.subject||"FM Clarity notification",
             html: html
           });
         }
@@ -82,6 +82,16 @@ Users.helpers({
     });
     */
 
+  },
+  hasRole(role) {
+    switch(role) {
+      case 'dev':
+        var email = this.emails[0].address;
+        if(email=='mrleokeith@gmail.com'||email=='mr.richo&gmail.com') {
+          return true;
+        }
+      break;
+    }
   },
   getInboxName() {
     return this.getName()+"'s"+" inbox";

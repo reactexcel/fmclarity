@@ -90,26 +90,36 @@ IssueSpecArea = React.createClass({
     callbacks:{
         onNewStatus(issue,watchers) {
             issue.sendMessage({
-                verb:"created"
+                verb:"created",
+                subject:"Work order #"+issue.code+" has been created"
             },watchers)
         },
         onIssuedStatus(issue,watchers) {
             issue.sendMessage({
-                verb:"issued"
+                verb:"issued",
+                subject:"Work order #"+issue.code+" has been issued"
             },watchers)
         },
         onClosedStatus(issue,watchers) {
             issue.sendMessage({
-                verb:"closed"
+                verb:"closed",
+                subject:"Work order #"+issue.code+" has been closed"
             },watchers)
         }
     },
 
     progressOrder() {
         var issue = this.data.issue;
+        var component = this;
         issue.isNewItem = false;
         if(issue.canClose()) {
-            this.showModal();
+            var now = new Date();
+            issue.save({closeDetails:{
+                attendanceDate:now,
+                completionDate:now
+            }},function() {
+                component.showModal();
+            });
         }
         else if(issue.canIssue()) {
             var timeframe = this.data.timeframe;
@@ -170,7 +180,14 @@ IssueSpecArea = React.createClass({
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
             onSubmit:this.reallyCloseOrder,
-            content:<AutoForm item={this.props.item} schema={FM.schemas['Issue']} form={['closeDetails']}/>
+            content:
+                <AutoForm 
+                    item={this.props.item} 
+                    schema={FM.schemas['Issue']} 
+                    form={['closeDetails']}
+                >
+                    <h2>All done? Great! We just need a few details to finalise the job.</h2>
+                </AutoForm>
         })
     },
 

@@ -65,8 +65,10 @@ ServicesSelector = React.createClass({
 											onChange={updateServiceField.bind(null,serviceIndex,'available')}
 										/>
 									</td>
-									<td style={{width:"130px",padding:"8px"}}>Service cycle</td>
-									<td style={{padding:"8px"}}>Select contractor</td>
+									{/*<td style={{width:"130px",padding:"8px"}}>{
+										(service.available&&service.subservices)?<span>Service cycle</span>:null
+									}</td>
+									<td style={{padding:"8px"}}>Select contractor</td>*/}
 								</tr>
 								{(service.available&&service.subservices)?service.subservices.map(function(subService,subIndex){
 								return (<tr key={subIndex}>
@@ -77,14 +79,14 @@ ServicesSelector = React.createClass({
 											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'available')}
 										/>
 									</td>
-									<td style={{width:"130px",padding:"5px"}}>
+									{/*<td style={{width:"130px",padding:"5px"}}>
 										<Menu 
 											options={Config.cycleNames} 
 											onChange={updateSubServiceField.bind(null,serviceIndex,subIndex,'cycle')}
 											value={subService.cycle}
 										/>
 									</td>
-									<td style={{padding:"8px"}}></td>
+									<td style={{padding:"8px"}}></td>*/}
 								</tr>)
 							}):null}
 							</tbody>

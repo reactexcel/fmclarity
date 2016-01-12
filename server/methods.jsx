@@ -51,5 +51,9 @@ Meteor.methods({
 	      subject: subject,
 	      text: text
 	    });
-	}
+	},
+
+  resetTestData() {
+    FM.resetTestData();
+  }
 });
