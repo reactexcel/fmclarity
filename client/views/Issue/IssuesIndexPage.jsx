@@ -54,7 +54,7 @@ IssuesIndexPage = React.createClass({
     exportIssues(issues) {
     	var projection = [];
     	issues.map(function(issue,index){
-    		if(issue.status!="New") {
+    		if(issue.status!="New"&&!issue.exported) {
 	    		var newElement = {
 	    			code:issue.code,
 	    			name:issue.name,

@@ -122,11 +122,12 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			obj[field] = value;
 			obj.save();
 		},
-		destroy(){
+		destroy(callback){
 			console.log('calling destroy method...');
 			var obj = this;
 			Meteor.call(name+'.destroy',obj,function(){
 				FM.notify("deleted",obj);
+				if(callback) callback(obj);
 			});
 		},
 		getName(){

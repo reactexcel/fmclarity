@@ -450,7 +450,7 @@ AutoForm = React.createClass({
     },
 
     makeState(props) {
-    	var item = this.props.item;
+    	var item = props.item;
     	var field = props.field;
     	item = field?item[field]:item;
     	return {

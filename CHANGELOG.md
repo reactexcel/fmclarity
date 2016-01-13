@@ -1,6 +1,26 @@
 CHANGELOG.md
 ============
 
+**v0.3.21a**
+
+* Closing a work order with "further work required" checked creates a follow up work order
+* Changes "step back" functionality for work orders
+- New orders can be cancelled
+- Orders issued but not exported can be deleted
+- Orders issued and exported can be reversed, reversal creates a duplicate order with negative cost that can then be exported
+
+**v0.3.20a**
+
+* Individual work order links are now exposed to anyone with the link
+* Block robots from indexing site (to protect privacy of exposed work orders)
+* All services now closed and collapsed by default
+* Supplier edit page : changed "default work order value" to material design style text input
+* Added tool tip to file icons and image thumbnails
+* Removed "not exported" filter
+* Stopped auto-generation of test data, added "reset test data" option to settings menu for developers
+* Changed appearance of file icons and image thumbnails (image full width, (x) to close, text semi transparent)
+* "Close out work order" screen now autofills date and time and saves correctly
+
 **v0.3.19a**
 
 * Contacts sometimes absent on first load of portfolio (this will be due to non subscription)

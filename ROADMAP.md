@@ -10,18 +10,21 @@ TODO (general)
 
 DONE
 ----
-* Individual work order links are now exposed to anyone with the link
-* Block robots from indexing site (to protect privacy of exposed work orders)
-* All services now closed and collapsed by default
-* Supplier edit page : changed "default work order value" to material design style text input
-* Added tool tip to file icons and image thumbnails
-* Removed "not exported" filter
-* Stopped auto-generation of test data, added "reset test data" option to settings menu for developers
-* Changed appearance of file icons and image thumbnails (image full width, (x) to close, text semi transparent)
+
+
 
 IN PROGRESS
 -----------
-* Finish "close out work order" screen
+
+* Individual files should optionally go to a "collection" (for example issue files)
+* Individual files should optionally have a caption
+* Individual files should optionally have a more traditional presentation
+
+[
+* Autoform should be moved into separate Meteor module
+* Autoform should have template option (used for things like the work order)
+* Autoform should have validation
+]
 
 P2
 --

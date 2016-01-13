@@ -53,19 +53,16 @@ IssueSpecArea = React.createClass({
                 facilityContact = facilityContacts?facilityContacts[0]:null;
             }
 
-            var actionVerb = this.getActionVerb(issue);
             var supplier = issue.getSupplier();
             var creator = issue.getCreator();
             var assignee = issue.getAssignee();
             var user = Meteor.user();
 
-            // do we need a issue.getWatchers()?
             return {
                 ready:true,
 
                 issue:issue,
                 creator:creator,
-                timeframe:issue.getTimeframe(),
 
                 facility:facility,
                 facilityContacts:facilityContacts,
@@ -80,106 +77,44 @@ IssueSpecArea = React.createClass({
                 assignee:assignee,
 
                 notifications:issue.getNotifications(),
-                actionVerb:actionVerb,
-                watchers:[user,creator,supplier,assignee],
-                regressVerb:(issue.status=="New"?"Cancel":issue.status=="Issued"?"Reverse":null)
+                actionVerb:issue.getProgressVerb(),
+                regressVerb:issue.getRegressVerb()
             }
         }
     },
 
-    callbacks:{
-        onNewStatus(issue,watchers) {
-            issue.sendMessage({
-                verb:"created",
-                subject:"Work order #"+issue.code+" has been created"
-            },watchers)
-        },
-        onIssuedStatus(issue,watchers) {
-            issue.sendMessage({
-                verb:"issued",
-                subject:"Work order #"+issue.code+" has been issued"
-            },watchers)
-        },
-        onClosedStatus(issue,watchers) {
-            issue.sendMessage({
-                verb:"closed",
-                subject:"Work order #"+issue.code+" has been closed"
-            },watchers)
+    statusDidChange(issue){
+        switch(issue.status) {
+            case "Closing":
+                this.showModal();
+            break;
+            default:
+                if(this.props.closeCallback) {
+                    this.props.closeCallback()
+                }
+            break;
         }
     },
 
     progressOrder() {
-        var issue = this.data.issue;
-        var component = this;
-        issue.isNewItem = false;
-        if(issue.canClose()) {
-            var now = new Date();
-            issue.save({closeDetails:{
-                attendanceDate:now,
-                completionDate:now
-            }},function() {
-                component.showModal();
-            });
-        }
-        else if(issue.canIssue()) {
-            var timeframe = this.data.timeframe;
-            var createdMs = issue.createdAt.getTime();
-            issue.dueDate = new Date(createdMs+timeframe);
-            issue.status = "Issued";
-            issue.issuedAt = new Date();
-            this.save();
-            this.callbacks.onIssuedStatus(issue,this.data.watchers);
-            if(this.props.closeCallback) {
-                this.props.closeCallback()
-            }            
-        }
-        else if(issue.canCreate()) {
-            issue.status = "New";
-            this.save();
-            this.callbacks.onNewStatus(issue,this.data.watchers);
-            if(this.props.closeCallback) {
-                this.props.closeCallback()
-            }
-        }
-    },
-
-    save() {
-    	if(this.props.save){
-    		this.props.save();
-    	}
+        this.data.issue.progress(this.statusDidChange);
     },
 
     regressOrder() {
-        var issue = this.data.issue;
-        var save = this.props.save;
-        if(issue.status=="Issued") {
-            issue.status = "New";
-            this.save();
-        }
-        else if(issue.status=="New") {
-            issue.destroy();
-            if(this.props.closeCallback) {
-                this.props.closeCallback()
-            }
-        }
+        this.data.issue.regress();
     },
 
-    reallyCloseOrder() {
-        var issue = this.data.issue;
-        issue.status = "Closed";
-        issue.priority = "Closed";
-        this.save();
-        // this really should go in the model
-        this.callbacks.onClosedStatus(issue,this.data.watchers);
-        if(this.props.closeCallback) {
-            this.props.closeCallback()
+    save() {
+        if(this.props.save){
+            this.props.save();
         }
     },
 
     showModal() {
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
-            onSubmit:this.reallyCloseOrder,
+            onSubmit:this.progressOrder,
+            onCancel:this.regressOrder,
             content:
                 <AutoForm 
                     item={this.props.item} 
@@ -196,22 +131,6 @@ IssueSpecArea = React.createClass({
         issue.service = service;
         issue.subservice = 0;
         this.save();
-    },
-
-    // this calculation to be done server side
-    getActionVerb(issue) {
-        if(issue.status=='Closed') {
-            return;
-        }
-        if(issue.canClose()) {
-            return 'Close';
-        }
-        else if(issue.canIssue()) {
-            return 'Issue';
-        }
-        else {
-            return 'Submit';
-        }
     },
 
     updateItem: function(field,value) {

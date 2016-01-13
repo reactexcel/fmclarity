@@ -13,8 +13,8 @@ CloseDetails = {
       label:"Further work required",
       input:"switch",
     },
-    futureWork: {
-      label:"Enter details of future work",
+    furtherWorkDescription: {
+      label:"Details of further work",
       condition(item) {
         return item&&(item.furtherWorkRequired == true);
       },
@@ -163,6 +163,13 @@ Issues.helpers({
       return Users.findOne(this.assignee._id);
     }
   },
+  getWatchers() {
+    var user = Meteor.user();
+    var creator = this.getCreator();
+    var supplier = this.getSupplier();
+    var assignee = this.getAssignee();
+    return [user,creator,supplier,assignee];
+  },
   isNew() {
     return this.status=="New";
   },
@@ -185,10 +192,170 @@ Issues.helpers({
       this.supplier&&this.supplier._id
     )   
   },
-  canClose() {
+  canStartClosure() {
     return (
       this.canIssue()&&
-      this.status=="Issued"
+      (this.status=="Issued"||this.status=="Closing")
     )
   },
+  canClose() {
+    return (
+      this.canStartClosure()&&
+      this.closeDetails&&
+      this.closeDetails.attendanceDate&&
+      this.closeDetails.completionDate
+    )
+  },
+  getProgressVerb() {
+    if(this.status=='Closed') {
+      return;
+    }
+    if(this.canStartClosure()) {
+      return 'Close';
+    }
+    else if(this.canIssue()) {
+      return 'Issue';
+    }
+    else {
+      return 'Submit';
+    }
+  },
+  getRegressVerb() {
+    if(this.status=="New") {
+      return "Cancel";
+    }
+    else if(this.status=="Issued"||this.status=="Closing") {
+      if(this.exported) {
+        return "Reverse";
+      }
+      else {
+        return "Delete";
+      }
+    }
+  },
+  close() {
+    var issue = this;
+    var watchers = issue.getWatchers();
+
+    if(issue.closeDetails.furtherWorkRequired) {
+      issue.save({
+        status:"Closed",
+        priority:"Closed"
+      });
+      FM.create("Issue",{
+        facility:issue.facility,
+        supplier:issue.supplier,
+        team:issue.team,
+        area:issue.area,
+        service:issue.service,
+        subservice:issue.subservice,
+        name:"Follow up - "+issue.name,
+        description:issue.closeDetails.furtherWorkDescription,
+      },function(newIssue){
+        newIssue.sendMessage({
+          verb:"requested",
+          subject:"Work order #"+issue.code+" has been closed and follow up #"+newIssue.code+" has been requested"
+        },watchers);
+      });
+    }
+    else {
+      issue.save({
+        status:"Closed",
+        priority:"Closed"
+      },function(){
+        issue.sendMessage({
+          verb:"closed",
+          subject:"Work order #"+issue.code+" has been closed"
+        },watchers);
+      });
+    }
+  },
+  reverse(callback) {
+    var issue = this;
+    var watchers = issue.getWatchers();
+    var newIssue = _.omit(issue,'_id');
+    _.extend(newIssue,{
+      status:"Reverse",
+      code:'R'+issue.code,
+      exported:false,
+      costThreshold:issue.costThreshold*-1,
+      name:"Reversal - "+issue.name
+    });
+    issue.save({
+      status:"Closed",
+      priority:"Closed",
+      name:"Reversed - "+issue.name,
+      reversed:true
+    });
+    FM.create("Issue",newIssue,function(newIssue){
+      newIssue.sendMessage({
+        verb:"requested",
+        subject:"Work order #"+issue.code+" has been reversed and reversal #"+newIssue.code+" has been created"
+      },watchers);
+    });
+  },
+  progress(callback) {
+    var issue = this;
+    var watchers = issue.getWatchers();
+    issue.isNewItem = false;
+    if(issue.canClose()) {
+      issue.close();
+      if(callback) callback(issue);
+    }
+    else if(issue.canStartClosure()) {
+      var now = new Date();
+      issue.save({
+        status:"Closing",
+        closeDetails:{
+          attendanceDate:now,
+          completionDate:now
+        }
+      },function(){
+        if(callback) callback(issue);                
+      });
+    }
+    else if(issue.canIssue()) {
+      var timeframe = this.getTimeframe();
+      var createdMs = issue.createdAt.getTime();
+      issue.save({
+        dueDate:new Date(createdMs+timeframe),
+        status:"Issued",
+        issuedAt:new Date()
+      },function() {
+        issue.sendMessage({
+          verb:"issued",
+          subject:"Work order #"+issue.code+" has been issued"
+        },watchers);
+        if(callback) callback(issue);
+      });
+    }
+    else if(issue.canCreate()) {
+      issue.save({status:"New"},function(){
+        issue.sendMessage({
+          verb:"created",
+          subject:"Work order #"+issue.code+" has been created"
+        },watchers);
+        if(callback) callback(issue);
+      });
+    }
+  },
+  regress(callback) {
+    if(this.status=="Closing") {
+      this.save({
+        status:"Issued",
+        closeDetails:null
+      },callback);
+    }
+    else if(this.status=="New") {
+      this.destroy(callback);
+    }
+    else if(this.status=="Issued") {
+      if(this.exported) {
+        this.reverse(callback);
+      }
+      else {
+        this.destroy(callback);
+      }
+    }
+  }  
 });
