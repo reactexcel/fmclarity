@@ -51,6 +51,30 @@ IssuesIndexPage = React.createClass({
 	    });
     },
 
+    exportIssues(issues) {
+    	var projection = [];
+    	issues.map(function(issue,index){
+    		if(issue.status!="New"&&!issue.exported) {
+	    		var newElement = {
+	    			code:issue.code,
+	    			name:issue.name,
+	    			facility:issue.facility.name,
+	    			description:issue.description,
+	    			amount:'$'+issue.costThreshold,
+	    			supplier:issue.supplier.name,
+	    			"date created":issue.createdAt,
+	    			"date issued":issue.issuedAt
+	    		}
+	    		projection.push(newElement);
+	    		issue.exported = true;
+	    		issue.save();
+	    	}
+    	});
+    	var csv = Papa.unparse(projection);
+		var blob = new Blob([csv], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, "fm-clarity-export.csv");
+    },
+
 	render() {
 		var filters = [
 	    {
@@ -74,6 +98,14 @@ IssuesIndexPage = React.createClass({
 	        	return i.status=='Closed';
 	        }
 	    }
+	    /*
+	    {
+	        text:"Not exported",
+	        filter(i) {
+	        	return !i.exported;
+	        }
+	    }
+	    */
 	    ];
 
 	    var headers = [
@@ -151,6 +183,7 @@ IssuesIndexPage = React.createClass({
 							detail:IssueDetail
 						}}
 						newItemCallback={this.createNewIssue}
+						exportCallback={this.exportIssues}
 					/>
 				</div>
 			</div>

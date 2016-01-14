@@ -103,11 +103,11 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 		collectionName:name,
 		defaultThumbUrl:"img/default-placeholder.png",
 		save(extension,callback) {
-			console.log('calling save method...');
+			//console.log('calling save method...');
 			var obj = this;
 			if(extension) {
 				for(var i in extension) {
-					obj[i] = extension;
+					obj[i] = extension[i];
 				}
 			}
 			Meteor.call(name+'.save',obj,callback);
@@ -122,11 +122,12 @@ FM.createCollection = function(name,template,shouldNotCreateSchema) {
 			obj[field] = value;
 			obj.save();
 		},
-		destroy(){
+		destroy(callback){
 			console.log('calling destroy method...');
 			var obj = this;
 			Meteor.call(name+'.destroy',obj,function(){
 				FM.notify("deleted",obj);
+				if(callback) callback(obj);
 			});
 		},
 		getName(){

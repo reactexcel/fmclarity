@@ -38,14 +38,15 @@ Modal = React.createClass({
   				show:true,
   				title:args.title,
   				content:args.content,
-  				onSubmit:args.onSubmit
+  				onSubmit:args.onSubmit,
+          onCancel:args.onCancel
   			})
   		});
   	},
 
   	handleHide() {
-      if(this.props.onClose) {
-        this.props.onClose();
+      if(this.state.onCancel) {
+        this.state.onCancel();
       }
     	this.setState({
 	      	show:false
@@ -94,6 +95,7 @@ ModalInner = React.createClass({
                         </div>
                         :null}
                     </div>
+                    <span style={{position:"absolute",right:0,top:0,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
                 </div>
             </div>
         )

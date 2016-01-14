@@ -19,7 +19,7 @@ MessagesPage = React.createClass({
                     <div className="row">
                         <div className="col-xs-12">
                             <div className="ibox" style={{padding:"20px"}}>
-                                <Inbox for={user} readOnly={true} />
+                                <Inbox for={user} />
                             </div>
                         </div>
                     </div>

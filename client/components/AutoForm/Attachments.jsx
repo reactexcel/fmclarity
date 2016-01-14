@@ -2,7 +2,12 @@ AutoInput.attachments = React.createClass({
 
 	handleChange(index,newValue) {
 		var attachments = this.props.value;
-		attachments[index] = newValue;
+		if(newValue) {
+			attachments[index] = newValue;
+		}
+		else {
+			attachments.splice(index,1);
+		}
 		this.props.onChange(attachments)
 	},
 

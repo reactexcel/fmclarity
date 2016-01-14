@@ -99,7 +99,8 @@ IssueDynamicArea = React.createClass({
                 supplier:issue.getSupplier(),
                 assignee:issue.getAssignee(),
                 notifications:issue.getNotifications(),
-                messageCount:issue.getMessageCount()
+                messageCount:issue.getMessageCount(),
+                attachmentCount:issue.getAttachmentCount()
             }
         }
     },
@@ -122,7 +123,6 @@ IssueDynamicArea = React.createClass({
         return (
             <div className="row">
                 <div className="col-lg-12">
-                    <a href={FlowRouter.path('request',{_id:issue._id})}>Link</a>
                     <div style={{borderTop:"1px solid #ccc",marginTop:"10px",paddingBottom:"10px"}}></div>
                     <span className="btn btn-sm btn-flat issue-nav-btn">Description</span><br/>
                     <div className="issue-dynamic-area">
@@ -138,7 +138,7 @@ IssueDynamicArea = React.createClass({
                 <div className="col-lg-12" style={{marginTop:"10px"}}>
                     <IpsoTabso tabs={[
                         {
-                            tab:<span><span>Files</span><span className="label label-notification">3</span></span>,
+                            tab:<span><span>Files</span>{this.data.attachmentCount?<span className="label label-notification">{this.data.attachmentCount}</span>:null}</span>,
                             content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.props.save} />
                         },{
                             tab:<span><span>Contacts</span></span>,

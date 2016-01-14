@@ -31,6 +31,23 @@ Meteor.methods({
   },
   "User.getTemplate":function(item) {
     return _.extend({},template,item);
+  },
+  "User.sendEmail":function(user,message) {
+    if(Meteor.isServer) {
+      var element = React.createElement(EmailMessageView,{item:message});
+      var html = React.renderToStaticMarkup (element);
+      if(false/*user*/) {
+        var email = user.emails[0].address;
+        if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
+          Email.send({
+            to: user.displayName+" <"+email+">",
+            from: "FM Clarity <no-reply@fmclarity.com>",
+            subject: message.subject||"FM Clarity notification",
+            html: html
+          });
+        }
+      }
+    }
   }
 })
 
@@ -55,6 +72,26 @@ Users.helpers({
       }
     }
     Meteor.call("Posts.new",message);
+    Meteor.call("User.sendEmail",this,message);
+    /*
+    Email.send({
+      from:"no-reply@fmclarity.com",
+      to:this.getEmail(),
+      subject:"You have an update from FM Clarity",
+      html:"Test message",
+    });
+    */
+
+  },
+  hasRole(role) {
+    switch(role) {
+      case 'dev':
+        var email = this.emails[0].address;
+        if(email=='mrleokeith@gmail.com'||email=='mr.richo&gmail.com') {
+          return true;
+        }
+      break;
+    }
   },
   getInboxName() {
     return this.getName()+"'s"+" inbox";
@@ -68,6 +105,9 @@ Users.helpers({
   },
   getMessages() {
     return Posts.find({inboxId:this.getInboxId()}).fetch();
+  },
+  getEmail() {
+    return this.emails[0].address;
   },
   getNotifications() {
     return Posts.find({inboxId:this.getInboxId()}).fetch();

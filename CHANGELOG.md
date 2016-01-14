@@ -1,6 +1,43 @@
 CHANGELOG.md
 ============
 
+**v0.3.22a**
+
+* Added confirmation dialog to deletions and reversals
+* Finished close work order form
+
+**v0.3.21a**
+
+* Closing a work order with "further work required" checked creates a follow up work order
+* Changes "step back" functionality for work orders
+- New orders can be cancelled
+- Orders issued but not exported can be deleted
+- Orders issued and exported can be reversed, reversal creates a duplicate order with negative cost that can then be exported
+
+**v0.3.20a**
+
+* Individual work order links are now exposed to anyone with the link
+* Block robots from indexing site (to protect privacy of exposed work orders)
+* All services now closed and collapsed by default
+* Supplier edit page : changed "default work order value" to material design style text input
+* Added tool tip to file icons and image thumbnails
+* Removed "not exported" filter
+* Stopped auto-generation of test data, added "reset test data" option to settings menu for developers
+* Changed appearance of file icons and image thumbnails (image full width, (x) to close, text semi transparent)
+* "Close out work order" screen now autofills date and time and saves correctly
+
+**v0.3.19a**
+
+* Contacts sometimes absent on first load of portfolio (this will be due to non subscription)
+* Nginx to move fm to port 80
+* Create development and integration instances on AWS, separate deployments
+* WO: File tab now shows actual number of files
+* Table rows set to a consistent height of 50px
+* Added descriptive text when inviting new users and suppliers
+* Can now delete files and images
+* Exporting of work orders
+* Hook up with external email system
+
 **v0.3.18a**
 
 * WO: Fixed a bug that was causing chosen area to not appear until another item is also refreshed

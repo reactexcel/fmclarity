@@ -398,7 +398,7 @@ Config.services = [{
 
 Config.services.map(function(service){
 	service.contractor = {};
-	service.available = true;
+	service.available = false;
 	service.subservices.map(function(subservice) {
 		subservice.available = true;
 	})

@@ -24,6 +24,10 @@ UserProfileMenu = React.createClass({
         Meteor.user().selectTeam(team);
     },
 
+    resetTestData() {
+        Meteor.call("resetTestData");
+    },
+
     render() {
         if(!this.data.user||!this.data.team) {
             return (<div/>)
@@ -58,6 +62,14 @@ UserProfileMenu = React.createClass({
                         <a href={FlowRouter.path('account')}>
                             <i className="fa fa-cog"></i>&nbsp;&nbsp;
                             <span className="nav-label">Account Settings</span>
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div className="text-center link-block">                    
+                        <a onClick={this.resetTestData}>
+                            <i className="fa fa-cog"></i>&nbsp;&nbsp;
+                            <span className="nav-label">Reset test data</span>
                         </a>
                     </div>
                 </li>

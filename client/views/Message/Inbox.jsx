@@ -17,19 +17,29 @@ Inbox = React.createClass({
     render(){
         var inbox = this.data.inbox;
         var messages = this.data.messages;
+        var readOnly = this.props.readOnly;
         return (
             <div className="feed-activity-list">
-                {messages.map(function(message,idx){
-                    return (
-                        <div key={message._id} className="feed-element">
-                            <MessageView item={message}/>
-                        </div>
-                    )
-                })}
-            
-                <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
-                    <MessageView inbox={inbox}/>
-                </div>
+                {
+                (messages&&messages.length)?
+                    messages.map(function(message,idx){
+                        return (
+                            <div key={message._id} className="feed-element">
+                                <MessageView item={message}/>
+                            </div>
+                        )
+                    })
+                :
+                    <div>
+                        No notifications
+                    </div>
+                }
+                {
+                readOnly?null:
+                    <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
+                        <MessageView inbox={inbox}/>
+                    </div>
+                }
             
             </div>
         )

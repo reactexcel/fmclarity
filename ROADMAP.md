@@ -11,27 +11,19 @@ TODO (general)
 DONE
 ----
 
+
 IN PROGRESS
 -----------
-* Hook up with external email system
-* Writing on issue updates should send a notification to all watchers
-* Add facility contact to watchers
-- watchers check moved to model
-- watchers sent to "News Feed" component
 
-* Exporting of work orders
+* Individual files should optionally go to a "collection" (for example issue files)
+* Individual files should optionally have a caption
+* Individual files should optionally have a more traditional presentation
 
-* Fix up presentation of facility card
-* Add "create work order" link to facility card
-
-* Add descriptive text when inviting new users and suppliers
-* Nginx to move fm to port 80 (or is there a quicker way?)
-* Create development and integration instances on AWS, separate deployments
-* Finish "close out work order" screen
-* Put fmclarity in integration instance
-* Contacts sometimes absent on first load of portfolio (this will be due to non subscription)
-
-* Add SSL
+[
+* Autoform should be moved into separate Meteor module
+* Autoform should have template option (used for things like the work order)
+* Autoform should have validation
+]
 
 P2
 --
@@ -46,6 +38,20 @@ P2
 
 P3
 --
+* Add SSL
+
+* "Developer" role with access to everything
+* If developer - display version on screen
+* Interface for seeing overview of all data saved in the system
+
+* Writing on issue updates should send a notification to all watchers
+* Add facility contact to watchers
+- watchers check moved to model
+- watchers sent to "News Feed" component
+
+* Fix up presentation of facility card
+* Add "create work order" link to facility card
+
 * New invites should send a message using new message system
 * Suppliers - remove from team: confirmation dialog required
 * Avatar for Leo squished as per attached screenshot
