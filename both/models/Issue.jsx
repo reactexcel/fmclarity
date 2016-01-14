@@ -9,16 +9,41 @@ CloseDetails = {
       input:"date",
       size:6
     },
+    serviceReport: {
+      label:"Service report",
+      input:"FileField",
+    },
     furtherWorkRequired: {
       label:"Further work required",
       input:"switch",
     },
     furtherWorkDescription: {
       label:"Details of further work",
+      input:"mdtextarea",
       condition(item) {
         return item&&(item.furtherWorkRequired == true);
       },
-      input:"mdtextarea",
+    },
+    furtherPriority : {
+      label:"Priority",
+      input:"Select",
+      options:["Scheduled","Standard","Urgent","Critical"],
+      condition(item) {
+        return item&&(item.furtherWorkRequired == true);
+      },
+    },
+    furtherQuote: {
+      label:"Quote",
+      input:"FileField",
+      condition(item) {
+        return item&&(item.furtherWorkRequired == true);
+      },
+    },
+    furtherQuoteValue: {
+      label:"Value of quote",
+      condition(item) {
+        return item&&(item.furtherWorkRequired == true);
+      },
     }
 };
 
@@ -216,7 +241,7 @@ Issues.helpers({
     else if(this.canIssue()) {
       return 'Issue';
     }
-    else {
+    else if(this.status=='New') {
       return 'Submit';
     }
   },
@@ -242,7 +267,7 @@ Issues.helpers({
         status:"Closed",
         priority:"Closed"
       });
-      FM.create("Issue",{
+      var newIssue = {
         facility:issue.facility,
         supplier:issue.supplier,
         team:issue.team,
@@ -251,7 +276,13 @@ Issues.helpers({
         subservice:issue.subservice,
         name:"Follow up - "+issue.name,
         description:issue.closeDetails.furtherWorkDescription,
-      },function(newIssue){
+        priority:issue.closeDetails.furtherPriority,
+        costThreshold:issue.closeDetails.furtherQuoteValue
+      };
+      if(issue.closeDetails.furtherQuote) {
+        newIssue.attachments = [issue.closeDetails.furtherQuote];
+      }
+      FM.create("Issue",newIssue,function(newIssue){
         newIssue.sendMessage({
           verb:"requested",
           subject:"Work order #"+issue.code+" has been closed and follow up #"+newIssue.code+" has been requested"
@@ -347,13 +378,25 @@ Issues.helpers({
       },callback);
     }
     else if(this.status=="New") {
+      var message = confirm('Are you sure you want to cancel this work order?');
+      if(message != true){
+        return;
+      }
       this.destroy(callback);
     }
     else if(this.status=="Issued") {
       if(this.exported) {
+        var message = confirm('Are you sure you want to reverse this work order?');
+        if(message != true){
+          return;
+        }
         this.reverse(callback);
       }
       else {
+        var message = confirm('Are you sure you want to delete this work order?');
+        if(message != true){
+          return;
+        }
         this.destroy(callback);
       }
     }

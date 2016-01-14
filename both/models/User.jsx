@@ -36,7 +36,7 @@ Meteor.methods({
     if(Meteor.isServer) {
       var element = React.createElement(EmailMessageView,{item:message});
       var html = React.renderToStaticMarkup (element);
-      if(user) {
+      if(false/*user*/) {
         var email = user.emails[0].address;
         if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
           Email.send({

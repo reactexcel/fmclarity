@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v0.3.22a**
+
+* Added confirmation dialog to deletions and reversals
+* Finished close work order form
+
 **v0.3.21a**
 
 * Closing a work order with "further work required" checked creates a follow up work order
