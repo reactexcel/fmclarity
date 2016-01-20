@@ -10,18 +10,20 @@ ContactViewName = React.createClass({
 
 ContactAvatarSmall = React.createClass({
 	render() {
-		var contact, profile;
+		var contact, profile, name, url, style = {};
 		contact = this.props.item;
 		if(contact) {
 			profile = contact.getProfile();
 		}
+		name = profile?profile.name:"";
+		url = contact?contact.getThumbUrl():"";
+		if(url) {
+			style['background'] = 'url('+url+')';
+			style['backgroundSize'] = "cover";
+		}
 		return (
 			<div className="contact-card-avatar">
-			{profile?
-				<img alt="image" title={profile.name} data-toggle="tooltip" src={contact.getThumbUrl()}/>
-			:
-				<div style={{width:"35px",height:"35px",border:"1px solid #ddd",borderRadius:"50%",backgroundColor:"#eee"}}/>
-			}
+				<div title={name} style={style}/>
 			</div>
 		)
 	}
@@ -88,7 +90,7 @@ Contact1Line = React.createClass({
 		var contact, profile;
 		contact = this.props.item;
 		if(contact) {
-			profile = contact.getProfile();
+			profile = contact.getProfile?contact.getProfile():contact;
 		}
 		if(!profile) {
 			return <div />
@@ -96,10 +98,12 @@ Contact1Line = React.createClass({
 		return (
             <span className="contact-card contact-card-1line">
               {profile.name}&nbsp;&nbsp;
+              <span className="hidden-xs">
               <i className="fa fa-envelope"></i>&nbsp;&nbsp;
               {profile.email}&nbsp;&nbsp;
               <i className="fa fa-phone"></i>&nbsp;&nbsp;
               {profile.phone}
+              </span>
             </span>
 		)
 	}

@@ -11,10 +11,12 @@ TODO (general)
 DONE
 ----
 
-
 IN PROGRESS
 -----------
+* Add conditional padding class to address new button misalignment on small screens
 
+P2
+--
 * Individual files should optionally go to a "collection" (for example issue files)
 * Individual files should optionally have a caption
 * Individual files should optionally have a more traditional presentation
@@ -25,8 +27,7 @@ IN PROGRESS
 * Autoform should have validation
 ]
 
-P2
---
+
 * Suppliers - remove from team to be put into "actions" menu"
 * It is possible for a user to remove themselves from all team, resulting in app crash
 * Small - facilities area selector - south/north field is too compressed whereas descriptor has excess room

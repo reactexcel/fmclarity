@@ -199,10 +199,9 @@ IssueSpecArea = React.createClass({
 			                                <b>Order #</b>
 			                                <span>{issue.code}</span>&nbsp;
 			                                <b>Cost $</b>
-			                                <span style={{display:"inline-block"}}><input 
+			                                <span style={{display:"inline-block"}}><AutoInput.Text
 			                                    readOnly={!issue.isEditable()}
-			                                    className="inline-form-control" 
-			                                    defaultValue={issue.costThreshold} 
+			                                    value={issue.costThreshold} 
 			                                    onChange={this.updateItem.bind(this,'costThreshold')}
 			                                /></span>
 			                            </div>

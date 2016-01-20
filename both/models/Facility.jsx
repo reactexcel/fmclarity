@@ -231,6 +231,9 @@ Facilities.helpers({
   getTeam() {
   	return Teams.findOne(this.team);
   },
+  isNew() {
+  	return this.name==null||this.name.length==0;
+  },
   getName() {
   	//return this.name?(this.name+', '+this.address.city):'';
   	return this.name;

@@ -15,6 +15,12 @@ FilterBox2 = React.createClass({
     }
   },
 
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      selectedItem:newProps.items?newProps.items[0]:null
+    })
+  },
+
   applyFilter(items) {
     var filters = this.props.filters;
     if(filters) {

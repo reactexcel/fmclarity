@@ -1,6 +1,21 @@
 CHANGELOG.md
 ============
 
+**v0.3.23a**
+
+* Suppliers page: Switching suppliers resets selected supplier
+* WO: Fixed a bug that was causing work order prices to sometimes show as [Object object]
+* Facilities page: Facilities that have been create but not edited get deleted on page change
+* Small view: Sidemenu disappears when an item is selected
+* Updated areas and services to latest
+* Added cross to close modal dialogues
+* Profile pictures are now cropped to 1:1 aspect ratio
+* Differentiated between services heading and subservices headings
+* Added confirmation dialoge for remove from team function
+* Changed to new logo with one less tier
+* Small: Suppliers - All active modules now visible
+* Small: Suppliers - Default value of work orders aligned
+
 **v0.3.22a**
 
 * Added confirmation dialog to deletions and reversals

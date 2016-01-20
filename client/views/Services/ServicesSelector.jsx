@@ -58,7 +58,7 @@ ServicesSelector = React.createClass({
 						<table className="table">
 							<tbody>
 								<tr style={{backgroundColor:"#eee"}}>
-									<td style={{padding:"0 0 0 5px",width:"220px"}}>
+									<td style={{padding:"0 0 0 5px",width:"220px",fontWeight:"bold"}}>
 										<Switch 
 											placeholder={service.name} 
 											value={service.available}
@@ -72,7 +72,7 @@ ServicesSelector = React.createClass({
 								</tr>
 								{(service.available&&service.subservices)?service.subservices.map(function(subService,subIndex){
 								return (<tr key={subIndex}>
-									<td style={{padding:"0 0 0 5px",width:"220px"}}>
+									<td style={{padding:"0 0 0 5px",width:"220px",fontWeight:"normal"}}>
 										<Switch 
 											placeholder={subService.name} 
 											value={subService.available}

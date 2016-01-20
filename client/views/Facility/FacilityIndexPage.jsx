@@ -39,6 +39,18 @@ FacilityIndexPage = React.createClass({
 		//console.log(Meteor.users.find());
 	},
 
+	componentWillUnmount() {
+		var items = this.data.facilities;
+	    if(items) {
+	    	items.map(function(item){
+	    		if(item.isNew&&item.isNew()) {
+	        		item.destroy();
+	        	}
+	      	})
+	    }
+	},
+
+
 	render() {
 		if(!this.data.ready) return <div/>
 		return(

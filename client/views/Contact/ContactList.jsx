@@ -20,12 +20,16 @@ ContactList = React.createClass({
     },
 
     handleRemove(index) {
-    	var handleChange = this.props.onChange;
     	var contacts = this.props.items;
-    	contacts.splice(index,1);
-    	if(handleChange) {
-	    	handleChange(contacts);
-	    }
+    	var contact = this.props.items[index];
+    	var handleChange = this.props.onChange;    	
+		var message = confirm("Remove "+contact.getName()+"?");
+		if(message==true) {
+	    	contacts.splice(index,1);
+	    	if(handleChange) {
+		    	handleChange(contacts);
+		    }
+		}
     },
 
 	render() {

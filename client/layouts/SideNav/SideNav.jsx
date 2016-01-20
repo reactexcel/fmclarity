@@ -67,6 +67,10 @@ Navigation = React.createClass({
         }
     },
 
+    onMenuClick() {
+        $(".body-small").toggleClass("mini-navbar");
+    },
+
     render() {
         var modules = this.data.modules;
 
@@ -76,7 +80,7 @@ Navigation = React.createClass({
 
             {/*nope - this should be data driven
             perhaps even database driven*/}
-            <ul className="nav metismenu" id="side-menu">
+            <ul className="nav metismenu" id="side-menu" onClick={this.onMenuClick}>
                 {!modules['Dashboard']?null:
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}>

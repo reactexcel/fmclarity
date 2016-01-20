@@ -65,6 +65,14 @@ UserProfile = React.createClass({
 		shouldShowMessage:false
 	},    
 
+	removeMember(team,user) {
+		var message = confirm("Remove "+user.getName()+" from "+team.getName()+"?");
+    	if(message == true){
+    		team.removeMember(user);
+     	}
+	},
+
+
 	render() {
 		var user, profile, team;
 		user = this.state.item;
@@ -89,7 +97,7 @@ UserProfile = React.createClass({
 		    		<div className="col-sm-12">
                         {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}
 		           		<h2><span>{profile.name}</span></h2>
-				   		<div onClick={team.removeMember.bind(team,user)}>
+				   		<div onClick={this.removeMember.bind(this,team,user)}>
 				   			Remove from team: <b>{team.getName()}</b>
 				   		</div>
 				   	</div>
