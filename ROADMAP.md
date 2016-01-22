@@ -13,7 +13,17 @@ DONE
 
 IN PROGRESS
 -----------
-* Add conditional padding class to address new button misalignment on small screens
+
+* Rename inconsistent items, decide on taxonomy and document it
+
+if (post.validate()) {
+  // Update document with with only the fields that have changed.
+  post.save();
+}
+
+
+* List of "Active Modules" should be stored in global config file (differentiates by role)
+* React based dropdowns with callback
 
 P2
 --

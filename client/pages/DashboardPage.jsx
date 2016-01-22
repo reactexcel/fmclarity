@@ -1,4 +1,4 @@
-PageDashboard = React.createClass({
+DashboardPage = React.createClass({
 
 	componentDidMount() {
 		//console.log(Meteor.users.find());

@@ -1,34 +1,5 @@
 
-BaseProfilePageMixin = {
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	return {
-    		selectedTeam:FM.getSelectedTeam()
-    	}
-    },
-
-	getInitialState() {
-		return {
-			item:this.props.item
-		}
-	},
-
-	componentWillReceiveProps(newProps) {
-		this.setItem(newProps.item);
-	},
-
-	setItem(newItem) {
-		this.setState({
-			item:newItem
-		});
-	},
-
-
-};
-
-AccountEdit = React.createClass({
+TeamViewEdit = React.createClass({
 
     mixins: [BaseProfilePageMixin],
 
@@ -84,7 +55,7 @@ AccountEdit = React.createClass({
             });
             this.setState({
             	shouldShowMessage:true
-            });
+            });            		
 	    }
     },
 
@@ -92,7 +63,7 @@ AccountEdit = React.createClass({
     	var selectedTeam,team,members,schema;
     	team = this.state.item;
     	selectedTeam = this.data.selectedTeam;
-    	members = selectedTeam.getMembers()||[];
+    	members = selectedTeam?selectedTeam.getMembers():[];
 		schema = FM.schemas['Team'];
 		if(!team) {
 			return (
@@ -109,9 +80,6 @@ AccountEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Contractor not found, please enter the details to add to your contact.</b>:null}
             	<h2><span>{team.getName()}</span></h2>
-		   		<div onClick={selectedTeam.removeSupplier.bind(selectedTeam,team)}>
-		   			Remove from team: <b>{selectedTeam.getName()}</b>
-		   		</div>
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-sm-7">
@@ -141,91 +109,3 @@ AccountEdit = React.createClass({
 		)
 	}
 });
-
-AccountFlipWidget= React.createClass({
-	render() {
-		return (
-			<FlipWidget
-				front={AccountView}
-				back={AccountEdit}
-				item={this.props.item}
-			/>
-		)
-	}
-});
-
-AccountView = React.createClass({
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	Meteor.subscribe('users');
-    	var team, orders;
-    	team = this.props.item;
-    	// would be nice to have a mixin to deal with this pattern
-    	// would dry up the code alot
-    	if(team) {
-    		orders = Issues.find({"_supplier._id":team._id,status:"Closed"}).fetch();
-	    }
-    	return {
-    		team:team,
-    		reviews:orders||[]
-    	}
-    },
-
-	render() {
-		var team = this.data.team;
-		var reviews = this.data.reviews;
-		return (
-			<div>
-				<ContactSummary item={team} />
-				<hr/>
-				<div style={{padding:"10px"}}>
-				{reviews.map(function(i,idx){
-					return (
-						<div className="row" key={idx}>
-							<div className="col-md-12">
-								<Message item={i} />
-							</div>
-						</div>
-					)
-				})}
-				</div>
-			</div>
-		)
-	}
-});
-
-AccountProfilePage = React.createClass({
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	var user, team;
-    	user = Meteor.user();
-    	if(user) {
-    		team = user.getSelectedTeam();
-    	}
-		return {
-			team:team
-		}
-	},
-
-	render() {
-		if(!this.data.team) {
-			return <div/>
-		}
-		return (
-		    <div className="wrapper wrapper-content animated fadeIn">
-		        <div className="row">
-		            <div className="col-lg-6">
-						<FlipWidget
-							front={AccountEdit}
-							back={AccountView}
-							item={this.data.team}
-						/>
-					</div>
-				</div>
-			</div>
-		)
-	}
-})

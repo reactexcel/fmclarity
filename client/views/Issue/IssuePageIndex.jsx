@@ -42,9 +42,6 @@ IssuesIndexPage = React.createClass({
 	    	}
 	    }
 	    FM.create("Issue",issue,function(issue){
-            issue.sendMessage({
-                subject:"created work request"
-            });
             if(callback) {
             	callback(issue);
             }	    	

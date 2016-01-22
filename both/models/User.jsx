@@ -32,6 +32,17 @@ Meteor.methods({
   "User.getTemplate":function(item) {
     return _.extend({},template,item);
   },
+  'User.markAllNotificationsAsRead':function(inboxId) {
+    Posts.update({
+      "inboxId.collectionName":inboxId.collectionName,
+      "inboxId.query":inboxId.query,
+      read:false
+    },{
+      $set:{read:true}
+    },{
+      multi:true
+    });
+  },
   "User.sendEmail":function(user,message) {
     if(Meteor.isServer) {
       var element = React.createElement(EmailMessageView,{item:message});
@@ -104,14 +115,24 @@ Users.helpers({
     }
   },
   getMessages() {
-    return Posts.find({inboxId:this.getInboxId()}).fetch();
+    return Posts.find({
+      "inboxId.collectionName":this.collectionName,
+      "inboxId.query._id":this._id
+    }).fetch();
   },
   getEmail() {
     return this.emails[0].address;
   },
   getNotifications() {
-    return Posts.find({inboxId:this.getInboxId()}).fetch();
-  },  
+    return Posts.find({
+      "inboxId.collectionName":this.collectionName,
+      "inboxId.query._id":this._id,
+      read:false
+    }).fetch();
+  },
+  markAllNotificationsAsRead() {
+    Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());
+  },
   getName() {
     return this.profile.name;
   },

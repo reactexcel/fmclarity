@@ -22,7 +22,10 @@ Modal = React.createClass({
 	statics : {
 		show(args) {
 			Dispatcher.broadcast('showModal',args);
-		}
+		},
+    //hide(args) {
+      //Dispatcher.broadcast('hideModal',args);
+    //}
 	},
 
 	getInitialState() {
@@ -42,6 +45,11 @@ Modal = React.createClass({
           onCancel:args.onCancel
   			})
   		});
+
+      //Dispatcher.subscribe('hideModal',function(args){
+      //  component.handleHide();
+      //});
+
   	},
 
   	handleHide() {

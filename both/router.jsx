@@ -122,6 +122,13 @@ exposed.route('/requests/:_id', {
   }
 });
 
+loggedIn.route('/dashboard', {
+  name: 'dashboard',
+  action() {
+    ReactLayout.render(MainLayout,{content:<DashboardPage />});
+  }
+});
+
 loggedIn.route('/messages', {
   name: 'messages',
   action() {
@@ -138,7 +145,7 @@ loggedIn.route('/contracts', {
 loggedIn.route('/suppliers', {
   name: 'suppliers',
   action() {
-    ReactLayout.render(MainLayout,{content:<PageSuppliers />});
+    ReactLayout.render(MainLayout,{content:<SupplierIndexPage />});
   }
 });
 
@@ -159,7 +166,7 @@ loggedIn.route('/settings', {
 loggedIn.route('/account', {
   name: 'account',
   action() {
-    ReactLayout.render(MainLayout,{content: <AccountProfilePage />});
+    ReactLayout.render(MainLayout,{content: <TeamProfilePage />});
   }
 });
 
@@ -173,7 +180,7 @@ loggedIn.route('/profile', {
 loggedIn.route('/team', {
   name: 'team',
   action() {
-    ReactLayout.render(MainLayout,{content: <TeamPage />});
+    ReactLayout.render(MainLayout,{content: <TeamIndexPage />});
   }
 });
 

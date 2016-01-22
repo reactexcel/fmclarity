@@ -6,7 +6,9 @@ FlipWidget= React.createClass({
 	},
 
 	toggleEdit() {
-		this.refs.card.classList.toggle("flip");
+		this.setState({
+			edit:!this.state.edit
+		})
 	},
 
 	render() {
@@ -17,7 +19,11 @@ FlipWidget= React.createClass({
 				<div className="flipper">
 					<div className="front">
 			            <div className="ibox">
-			            	<Front item={this.props.item} />
+			            	{!this.state.edit?
+			            		<Front item={this.props.item} />
+			            	:
+								<Back item={this.props.item}/>
+							}
 							<a onClick={this.toggleEdit} style={{
 								position:"absolute",
 								right:"2px",
@@ -27,21 +33,6 @@ FlipWidget= React.createClass({
 								color:"#ccc"
 							}} onClick={this.toggleEdit}>
 								<i className="fa fa-rotate-left"></i>
-							</a>
-			            </div>
-		            </div>
-					<div className="back">
-			            <div className="ibox">
-							<Back item={this.props.item}/>
-							<a onClick={this.toggleEdit} style={{
-								position:"absolute",
-								right:"2px",
-								padding:"6px",
-								top:0,
-								fontSize:"15px",
-								color:"#ccc"
-							}} onClick={this.toggleEdit}>
-								<i className="fa fa-rotate-right"></i>
 							</a>
 			            </div>
 		            </div>

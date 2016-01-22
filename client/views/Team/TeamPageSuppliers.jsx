@@ -1,4 +1,4 @@
-PageSuppliers = React.createClass({
+SupplierIndexPage = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -18,7 +18,7 @@ PageSuppliers = React.createClass({
 
     showModal(selectedUser) {
         Modal.show({
-            content:<AccountEdit />
+            content:<TeamViewEdit />
         })
     },
 
@@ -30,7 +30,7 @@ PageSuppliers = React.createClass({
 					newItemCallback={this.showModal}
 					itemView={{
 						summary:Contact2LineWithAvatar,
-						detail:AccountFlipWidget
+						detail:TeamCard
 					}}
 				/>
 			</div>

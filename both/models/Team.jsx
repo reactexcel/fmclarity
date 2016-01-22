@@ -233,9 +233,13 @@ Teams.helpers({
   getProfile() {
     return this;
   },
+  isNew() {
+    return this.name==null||this.name.length==0;
+  },
   getMembers() {
     // is there something like _.omit that can be used to do this
     // perhaps there is a function _.project?
+    // each of these should be reflected in a particular subscribe
     if (this.members&&this.members.length) {
       var users = this.members;
       var userIds = [];
@@ -250,6 +254,17 @@ Teams.helpers({
       */
     }
     return [];
+  },
+  hasMember(user) {
+    if(user) {
+      for(var i in this.members) {
+        var member = this.members[i];
+        if(user._id==member._id) {
+          return true;
+        }
+      }
+    }
+    return false;
   },
   getInboxName() {
     return this.getName()+" inbox";
@@ -305,7 +320,7 @@ Teams.helpers({
       return this.getContractorFacilities();
     }
     else {
-      return Facilities.find({"team._id":this._id}).fetch();
+      return Facilities.find({"team._id":this._id},{sort:{name:1}}).fetch();
     }
   },
   getAvailableServices(parent) {

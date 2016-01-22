@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v0.3.24a**
+
+* Add conditional padding class to address new button misalignment on small screens
+* Changed names of module switches to Repairs and Portfolio
+* Notifications now clear when notifications window is closed
+* Users can no longer remove themselves from teams
+* Teams and users have a new actions menu which must be used to: 1. Toggle between edit and view mode 2. Remove supplier/member from a team
+
 **v0.3.23a**
 
 * Suppliers page: Switching suppliers resets selected supplier

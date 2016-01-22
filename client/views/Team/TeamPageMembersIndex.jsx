@@ -1,4 +1,4 @@
-TeamPage = React.createClass({
+TeamIndexPage = React.createClass({
 
     mixins: [ReactMeteorData],
 

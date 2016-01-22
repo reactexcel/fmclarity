@@ -89,7 +89,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Facilities']?null:
+                {!modules['Portfolio']?null:
                 <li className={FlowRouter.getRouteName()=='portfolio'?'active':''}>
                     <a href={FlowRouter.path('portfolio')}>
                         <i className="fa fa-building"></i>
@@ -105,7 +105,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Work Requests']?null:
+                {!modules['Repairs']?null:
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}>
                         <i className="fa fa-wrench"></i>

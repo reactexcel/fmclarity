@@ -1,4 +1,5 @@
 var handle = Meteor.subscribe('teamsAndFacilitiesForUser');
+Meteor.subscribe('users');
 
 Tracker.autorun(function(){
 

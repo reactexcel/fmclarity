@@ -1,10 +1,4 @@
 ContactSummary = React.createClass({
-
-	random() {
-	    var x = Math.sin(this.seed++) * 10000;
-	    return x - Math.floor(x);
-	},
-
 	render() {
 		var contact, profile, availableServices;
 	    contact = this.props.item;
@@ -17,23 +11,9 @@ ContactSummary = React.createClass({
 	    if(contact.getAvailableServices) {
 	    	availableServices = contact.getAvailableServices();	    	
 	    }
-	    if(profile.name) {
-			this.seed = profile.name.charCodeAt(0)+profile.name.charCodeAt(1)+profile.name.charCodeAt(2);
-		}
-		else {
-			this.seed = 1;
-		}
-	    var cardStyle = Math.ceil(this.random()*3);
-	    var size=this.props.size;
 	    
 	    return (
-	    	<div className={"business-card"+" business-card-style-"+cardStyle+" "+size}>
-	    		
-				
-	    		{/*
-				<div style={{marginTop:"10px",width:"25px",float:"left"}}>
-					<input type="checkbox" />
-				</div>*/}
+	    	<div className="business-card">				
 				<div className="contact-thumbnail pull-left">
 				    <img alt="image" src={contact.getThumbUrl()} />
 				 </div>
