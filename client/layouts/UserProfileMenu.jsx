@@ -80,6 +80,9 @@ UserProfileMenu = React.createClass({
                         </a>
                     </div>
                 </li>
+                <li>
+                    <span style={{float:"right",fontSize:"8px",paddingRight:"5px"}}>v{FM.version}</span>
+                </li>
             </ul>
         </div>
         )

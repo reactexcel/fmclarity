@@ -48,10 +48,10 @@ FilterBox = React.createClass({
         modifier = this.state.sortDirection;
       }
       return items.sort(function(a,b){
-        if(a.isNewItem||a.sticky) {
+        if(a.isNew()||a.sticky) {
           return -1
         }
-        else if(b.isNewItem||b.sticky) {
+        else if(b.isNew()||b.sticky) {
           return 1;
         }
         else if(f) {

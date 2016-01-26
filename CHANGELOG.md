@@ -6,6 +6,7 @@ CHANGELOG.md
 * Centred notifications badge for two digit numbers
 * Prevented multiple submissions of work orders
 * Left aligned all elements in profile menu
+* Differentiated and updated test data generation routines to make live master usable for FM Clarity issue tracking
 
 **v0.3.24a**
 

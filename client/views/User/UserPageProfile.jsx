@@ -1,27 +1,21 @@
-TeamProfilePage = React.createClass({
+UserProfilePage = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var user, team;
-    	user = Meteor.user();
-    	if(user) {
-    		team = user.getSelectedTeam();
-    	}
 		return {
-			team:team
+			user:Meteor.user()
 		}
 	},
 
 	render() {
-		if(!this.data.team) {
-			return <div/>
-		}
 		return (
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6">
-						<TeamCard item={this.data.team} edit={true}/>
+		            	<div className="ibox">
+							<UserCard item={this.data.user} edit={true}/>
+						</div>
 					</div>
 				</div>
 			</div>

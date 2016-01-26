@@ -13,7 +13,7 @@ IssueActionButtons = React.createClass({
                         onClick={progressAction} 
                         style={{margin:0,width:width,maxWidth:"400px"}} 
                         type="button" 
-                        className={"btn btn-sm btn-"+(issue.canCreate()?'Issued':'disabled')}>
+                        className={"btn btn-sm btn-"+(issue.canProgress()?'Issued':'disabled')}>
                         {progressVerb}
                     </button>
                 :null}

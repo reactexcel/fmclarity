@@ -54,6 +54,7 @@ Meteor.methods({
 	},
 
   resetTestData() {
+    console.log('Resetting test data...');
     FM.resetTestData();
   }
 });
