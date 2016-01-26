@@ -3,6 +3,18 @@ BarChart = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+
+		var startMonth = parseInt(0);
+	    var endMonth = startMonth+1;
+	    issues = Issues.find({
+	        createdAt: {
+	            $gte: new Date("2016-"+startMonth+"-29T00:00:00.000Z"),
+	            $lt: new Date("2016-"+endMonth+"-01T00:00:00.000Z")
+	        }
+	    }).fetch();
+
+	    console.log(issues);
+
     	return {
     		facility:Session.get('selectedFacility')
     	}

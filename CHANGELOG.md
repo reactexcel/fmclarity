@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+**v0.3.25a**
+* Fixed bug which was causing actions menu icon to appear outside container
+* Centred notifications badge for two digit numbers
+* Prevented multiple submissions of work orders
+* Left aligned all elements in profile menu
+
 **v0.3.24a**
 
 * Add conditional padding class to address new button misalignment on small screens

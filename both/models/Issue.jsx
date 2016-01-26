@@ -1,3 +1,9 @@
+///////////////////////////////////////////////////////////
+// Issue.jsx
+// Data model for Issues / Work Request / Repairs
+///////////////////////////////////////////////////////////
+
+
 CloseDetails = {
     attendanceDate: {
       label:"Attendence date and time",
@@ -58,7 +64,7 @@ Issues = FM.createCollection('Issue',{
     input:"textarea"
   },
   status:{
-    defaultValue:"New",
+    defaultValue:"-",
   },
   costThreshold:{
     defaultValue:500,
@@ -113,6 +119,16 @@ Issues.helpers({
   },
   getArea() {
     return this.area;
+  },
+  getIssuesByDate(month) {
+    var startMonth = parseInt(month);
+    var endMonth = startMonth+1;
+    return Issues.find({
+        createdAt: {
+            $gte: ISODate("2016-"+startMonth+"-29T00:00:00.000Z"),
+            $lt: ISODate("2016-"+endMonth+"-01T00:00:00.000Z")
+        }
+    }).fetch();
   },
   getInboxName() {
     return "work order #"+this.code+' "'+this.getName()+'"';
@@ -196,7 +212,7 @@ Issues.helpers({
     return [user,creator,supplier,assignee];
   },
   isNew() {
-    return this.status=="New";
+    return this.status=="-";
   },
   isEditable() {
     return this.isNew();
@@ -241,12 +257,12 @@ Issues.helpers({
     else if(this.canIssue()) {
       return 'Issue';
     }
-    else if(this.status=='New') {
-      return 'Submit';
+    else if(this.isNew()) {
+      return 'Create';
     }
   },
   getRegressVerb() {
-    if(this.status=="New") {
+    if(this.isNew()) {
       return "Cancel";
     }
     else if(this.status=="Issued"||this.status=="Closing") {

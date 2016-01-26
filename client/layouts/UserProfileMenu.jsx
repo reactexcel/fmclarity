@@ -58,7 +58,7 @@ UserProfileMenu = React.createClass({
                 })}
                 <li className="divider"></li>
                 <li>
-                    <div className="text-center link-block">                    
+                    <div className="link-block">                    
                         <a href={FlowRouter.path('account')}>
                             <i className="fa fa-cog"></i>&nbsp;&nbsp;
                             <span className="nav-label">Account Settings</span>
@@ -66,7 +66,7 @@ UserProfileMenu = React.createClass({
                     </div>
                 </li>
                 <li>
-                    <div className="text-center link-block">                    
+                    <div className="link-block">                    
                         <a onClick={this.resetTestData}>
                             <i className="fa fa-cog"></i>&nbsp;&nbsp;
                             <span className="nav-label">Reset test data</span>
@@ -74,7 +74,7 @@ UserProfileMenu = React.createClass({
                     </div>
                 </li>
                 <li>
-                    <div className="text-center link-block">
+                    <div className="link-block">
                         <a href={FlowRouter.path('logout')}>
                             <i className="fa fa-sign-out"></i> Log out
                         </a>
