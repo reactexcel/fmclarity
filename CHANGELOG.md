@@ -1,6 +1,36 @@
 CHANGELOG.md
 ============
 
+**v0.3.25a**
+* Fixed bug which was causing actions menu icon to appear outside container
+* Centred notifications badge for two digit numbers
+* Prevented multiple submissions of work orders
+* Left aligned all elements in profile menu
+* Differentiated and updated test data generation routines to make live master usable for FM Clarity issue tracking
+
+**v0.3.24a**
+
+* Add conditional padding class to address new button misalignment on small screens
+* Changed names of module switches to Repairs and Portfolio
+* Notifications now clear when notifications window is closed
+* Users can no longer remove themselves from teams
+* Teams and users have a new actions menu which must be used to: 1. Toggle between edit and view mode 2. Remove supplier/member from a team
+
+**v0.3.23a**
+
+* Suppliers page: Switching suppliers resets selected supplier
+* WO: Fixed a bug that was causing work order prices to sometimes show as [Object object]
+* Facilities page: Facilities that have been create but not edited get deleted on page change
+* Small view: Sidemenu disappears when an item is selected
+* Updated areas and services to latest
+* Added cross to close modal dialogues
+* Profile pictures are now cropped to 1:1 aspect ratio
+* Differentiated between services heading and subservices headings
+* Added confirmation dialoge for remove from team function
+* Changed to new logo with one less tier
+* Small: Suppliers - All active modules now visible
+* Small: Suppliers - Default value of work orders aligned
+
 **v0.3.22a**
 
 * Added confirmation dialog to deletions and reversals

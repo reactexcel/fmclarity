@@ -2,7 +2,7 @@ ContactList = React.createClass({
 
     showModal(selectedUser) {
         Modal.show({
-            content:<UserProfile item={selectedUser} onChange={this.handleAdd} />
+            content:<UserCard item={selectedUser} onChange={this.handleAdd} />
         })
     },
 
@@ -20,17 +20,22 @@ ContactList = React.createClass({
     },
 
     handleRemove(index) {
-    	var handleChange = this.props.onChange;
     	var contacts = this.props.items;
-    	contacts.splice(index,1);
-    	if(handleChange) {
-	    	handleChange(contacts);
-	    }
+    	var contact = this.props.items[index];
+    	var handleChange = this.props.onChange;    	
+		var message = confirm("Remove "+contact.getName()+"?");
+		if(message==true) {
+	    	contacts.splice(index,1);
+	    	if(handleChange) {
+		    	handleChange(contacts);
+		    }
+		}
     },
 
 	render() {
 		var contacts = this.props.items;
-		var canEdit = this.props.onChange!=null;
+		var canCreate = this.props.onChange!=null;
+		var canDelete = false;
 		var component = this;
 		return (
 			<div className="contact-list">
@@ -40,14 +45,14 @@ ContactList = React.createClass({
 			            	className="contact-list-item"
 			                key={idx}
 			            >
-			            	{canEdit?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
+			            	{canDelete?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
 			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
 					            <ContactCard item={contact}/>
 					        </div>
 			            </div>	
 		            )
 			    })}
-			    {canEdit?
+			    {canCreate?
 			    <div 
 			        onClick={component.showModal.bind(null,null)}
 			    >

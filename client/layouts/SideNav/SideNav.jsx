@@ -67,6 +67,10 @@ Navigation = React.createClass({
         }
     },
 
+    onMenuClick() {
+        $(".body-small").toggleClass("mini-navbar");
+    },
+
     render() {
         var modules = this.data.modules;
 
@@ -76,7 +80,7 @@ Navigation = React.createClass({
 
             {/*nope - this should be data driven
             perhaps even database driven*/}
-            <ul className="nav metismenu" id="side-menu">
+            <ul className="nav metismenu" id="side-menu" onClick={this.onMenuClick}>
                 {!modules['Dashboard']?null:
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}>
@@ -85,7 +89,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Facilities']?null:
+                {!modules['Portfolio']?null:
                 <li className={FlowRouter.getRouteName()=='portfolio'?'active':''}>
                     <a href={FlowRouter.path('portfolio')}>
                         <i className="fa fa-building"></i>
@@ -101,7 +105,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Work Requests']?null:
+                {!modules['Repairs']?null:
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}>
                         <i className="fa fa-wrench"></i>

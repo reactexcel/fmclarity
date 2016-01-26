@@ -1,7 +1,4 @@
-
 client/lib/app.browserify.js.cached
-
 client/lib/app.browserify.js.map
 packages/
 mup.json
-server/test_data/create_test_data.jsx

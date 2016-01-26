@@ -54,7 +54,7 @@ AutoInput.switch = React.createClass({
 					type="checkbox"
 					defaultChecked={value}
 				/>
-				<label>{label}</label>
+				<span style={{marginLeft:"3px"}}>{label}</span>
 			</div>
 		)
 	}
@@ -88,7 +88,7 @@ AutoInput.switchbank = React.createClass({
 			size = options.size||6;
 		}
 		return (
-			<div className="md-switchbank md-h4-container" style={{margin:"0 -14px",height:"80px"}}>
+			<div className="md-switchbank md-h4-container" style={{margin:"0 -14px"}}>
 	           	<h4 className="background"><span>{this.props.placeholder}</span></h4>
 	           	<div className="row" style={{width:"100%",padding:"0 17px"}}>
 	           		{labels.map(function(label){
