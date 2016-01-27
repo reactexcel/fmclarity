@@ -221,9 +221,9 @@ Meteor.methods({
   },
   "Team.removeMember":function(item,member) {
     Teams.update(item._id,{$pull:{members:{_id:member._id}}});
+    console.log({removing:member});
   },
   "Team.setMembers":function(team,members) {
-    console.log(team);
     if(members&&members.length) {
       var sanitisedMembers = [];
       members.map(function(member){
@@ -233,10 +233,8 @@ Meteor.methods({
           });
         }
       });
-      console.log(sanitisedMembers);
-      Teams.update(team._id,{$set:{members:sanitisedMembers}},function(err,data){
-        console.log({err:err,data:data})
-      });
+      Teams.update(team._id,{$set:{members:sanitisedMembers}});
+      console.log('setting');
     }
   },
   "Team.addSupplier":function(item,supplier) {
@@ -346,7 +344,7 @@ Teams.helpers({
       this.counters = {};
     }
     if(!this.counters.WO) {
-      this.counters.WO = 999;
+      this.counters.WO = 0;
     }
     this.counters.WO = this.counters.WO + 1;
     this.save();

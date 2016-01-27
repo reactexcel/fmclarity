@@ -25,10 +25,23 @@ IssuesIndexPage = React.createClass({
         }
     },
 
+	componentWillUnmount() {
+		var items = this.data.issues;
+	    if(items) {
+	    	items.map(function(item){
+	    		if(item.isNew()) {
+	        		item.destroy();
+	        	}
+	      	})
+	    }
+	},    
+
     createNewIssue(callback) {
         var selectedFacility = Meteor.user().getSelectedFacility();
         var selectedTeam = Meteor.user().getSelectedTeam();
-        var issue = {}
+        var issue = {
+        	costThreshold:selectedTeam.defaultWorkOrderValue
+        }
         if(selectedTeam) {
     		issue.team = {
     			_id:selectedTeam._id,

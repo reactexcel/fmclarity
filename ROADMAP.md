@@ -10,6 +10,8 @@ TODO (general)
 
 DONE
 ----
+Question - when does removing a supplier from you team mean they should be deleted?
+Answer - Perhaps we need some kind of garbage collection model
 
 
 IN PROGRESS

@@ -16,9 +16,9 @@ SupplierIndexPage = React.createClass({
         }
     },
 
-    showModal(selectedUser) {
+    showModal(callback) {
         Modal.show({
-            content:<TeamViewEdit />
+            content:<TeamViewEdit onChange={callback} />
         })
     },
 

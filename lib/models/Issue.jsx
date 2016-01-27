@@ -323,6 +323,7 @@ Issues.helpers({
         supplier:issue.supplier,
         team:issue.team,
         area:issue.area,
+        status:"New",
         service:issue.service,
         subservice:issue.subservice,
         name:"Follow up - "+issue.name,

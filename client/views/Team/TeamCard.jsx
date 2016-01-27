@@ -37,35 +37,30 @@ TeamCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
+		//console.log(this.props.item);
 		return (
-			<div ref="card" className="flip-container">
-				<div className="flipper">
-					<div className="front">
-			            <div className="ibox">
-			            	{this.state.edit?
-			            		<TeamViewEdit item={this.props.item} />
-			            	:
-								<TeamViewDetail item={this.props.item}/>
-							}
-							<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
-								<i className="fa fa-wrench"></i>
-							</a>
-							<ul className="dropdown-menu dropdown-user" style={{
-									position:"absolute",
-								    right: 0,
-								    top: "30px",
-								    left: "auto"
-    							}}>
-    							{menu.map(function(i,idx){
-    								return (
-    									<li key={idx} onClick={i.action}><a href="#">{i.label}</a></li>
-    								)
-    							})}
-							</ul>
-			            </div>
-		            </div>
-	            </div>
-            </div>
+			<div>
+			    {this.state.edit?
+			        <TeamViewEdit item={this.props.item} />
+			    :
+					<TeamViewDetail item={this.props.item}/>
+				}
+				<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
+					<i className="fa fa-wrench"></i>
+				</a>
+				<ul className="dropdown-menu dropdown-user" style={{
+					position:"absolute",
+					right: 0,
+					top: "30px",
+					left: "auto"
+    			}}>
+    				{menu.map(function(i,idx){
+    					return (
+    						<li key={idx} onClick={i.action}><a href="#">{i.label}</a></li>
+    					)
+    				})}
+				</ul>
+			</div>
 		)
 	}
 });

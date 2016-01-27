@@ -27,7 +27,7 @@ UserCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var user = this.props.item;
-		var selectedTeam = FM.getSelectedTeam();
+		var selectedTeam = this.props.team||FM.getSelectedTeam();
 		var menu = [
 			{
 				label:(this.state.edit?"View as card":"Edit"),
@@ -41,7 +41,7 @@ UserCard = React.createClass({
 				label:"Remove from "+selectedTeam.getName(),
 				action(){
 					selectedTeam.removeMember(user);
-					Modal.hide();
+					//Modal.hide();
 				}
 			});
 		}

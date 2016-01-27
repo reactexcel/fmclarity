@@ -1,9 +1,25 @@
 ContactList = React.createClass({
 
+
+
     showModal(selectedUser) {
-        Modal.show({
-            content:<UserCard item={selectedUser} onChange={this.handleAdd} />
-        })
+    	if(selectedUser.collectionName=="Team") {
+	        Modal.show({
+	            content:<TeamCard 
+	            	item={selectedUser} 
+	            	onChange={this.handleAdd} 
+	            />
+	        })
+    	}
+    	else {
+	        Modal.show({
+	            content:<UserCard 
+	            	item={selectedUser} 
+	            	team={this.props.team}
+	            	onChange={this.handleAdd} 
+	            />
+	        })
+	    }
     },
 
     handleModalClose() {
@@ -39,7 +55,7 @@ ContactList = React.createClass({
 		var component = this;
 		return (
 			<div className="contact-list">
-			    {contacts.map(function(contact,idx){
+			    {contacts?contacts.map(function(contact,idx){
 			        return (
 			            <div 
 			            	className="contact-list-item"
@@ -51,7 +67,7 @@ ContactList = React.createClass({
 					        </div>
 			            </div>	
 		            )
-			    })}
+			    }):null}
 			    {canCreate?
 			    <div 
 			        onClick={component.showModal.bind(null,null)}

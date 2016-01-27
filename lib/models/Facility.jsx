@@ -297,7 +297,9 @@ Facilities.helpers({
       var users = this.contacts;
       var userIds = [];
       users.map(function(user){
-        userIds.push(user._id);
+        if(user&&user._id) {
+          userIds.push(user._id);
+        }
       });
       return Users.find({_id:{$in:userIds}}).fetch();
     }
@@ -312,7 +314,9 @@ Facilities.helpers({
     	var tenants = this.tenants;
     	var tenantIds = [];
     	tenants.map(function(contact){
-    		tenantIds.push(contact._id);
+        if(contact&&contact._id) {
+      		tenantIds.push(contact._id);
+        }
     	});
     	return Users.find({_id:{$in:tenantIds}}).fetch();
     }
@@ -323,7 +327,7 @@ Facilities.helpers({
   	var id=0;
   	if(this.contacts&&this.contacts.length) {
 	  	id = this.contacts[0]._id;
-	}
+    }
   	if(id) {
   		return Users.findOne(id);
   	}

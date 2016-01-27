@@ -239,7 +239,7 @@ AutoInput.Text = React.createClass({
 
 	render() {
 		if(this.props.readOnly) {
-			return <span>{this.props.value}{this.props.elastic?<br/>:''}</span>
+			return <span style={{whiteSpace:"pre-wrap"}}>{this.props.value}{this.props.elastic?<br/>:''}</span>
 		}
 		if(this.props.elastic) {
 			return (
@@ -293,7 +293,10 @@ AutoInput.mdtext = React.createClass({
 	render() {
 		var value, used;
 		value = this.props.value;
-		used = value&&value.length;
+		used = value!=null;
+		if(_.isString(value)) {
+			used = used&&value.length;
+		}
 		return (
 		<div className="md-input">      
       		<input 
