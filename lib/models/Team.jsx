@@ -1,11 +1,9 @@
-Teams = new Mongo.Collection('teams');
-
 var validEmails = {
   'gmail.com':['mrleokeith','mr.richo'],
   'fmclarity.com':'*'
 };
 
-Teams = FM.createCollection('Team',{
+TeamSchema = new ORM.Schema({
   name: {
     type: String,
     label: "Company Name",
@@ -154,6 +152,7 @@ Teams = FM.createCollection('Team',{
         }        
       }
     },
+    //these could be defined as a hasMany relationship
     members: {
       type: [Object],
       label:"Members"
@@ -162,8 +161,9 @@ Teams = FM.createCollection('Team',{
       type: [Object],
       label: "Suppliers"  
     }
-},true);
+});
 
+ORM.attachSchema(Teams,TeamSchema);
 
 if (Meteor.isServer) {
   // could define make code more dry by generating these for all collections on startup

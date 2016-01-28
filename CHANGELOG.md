@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.3.27a**
+* Refactor of Object Relational Mapping code to facilitate better calculations of monthly issues for dashboard
+* Started work on dashboard (line chart)
+
 **v0.3.26a**
 * Fixed a bug which was causing app to crash on unexpected facility contact or tenant
 * Fixed a bug which was causing selected item to change when editing

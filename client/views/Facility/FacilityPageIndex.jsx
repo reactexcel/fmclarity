@@ -59,7 +59,7 @@ FacilityIndexPage = React.createClass({
 					items={this.data.facilities}
 					itemView={{
 						summary:FacilitySummary,
-						detail:FacilityWidget
+						detail:FacilityCard
 					}}
 					newItemCallback={this.createNew}
 				/>

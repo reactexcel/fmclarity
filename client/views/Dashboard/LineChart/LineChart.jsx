@@ -3,8 +3,11 @@ LineChart = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+
     	return {
-    		facility:Session.get('selectedFacility')
+    		facility:Session.get('selectedFacility'),
+    		openSeries:[0,0,0,0,0,Issues.actions.count({status:{$nin:["Closed"]},month:1})],
+    		closedSeries:[0,0,0,0,0,Issues.actions.count({status:"Closed",month:1})],
     	}
     },
 
@@ -17,7 +20,7 @@ LineChart = React.createClass({
 
 	initChart() {
 	    var lineData = {
-	        labels: ["January", "February", "March", "April", "May", "June"],
+	        labels: ["August", "September", "October", "November", "December", "January"],
 	        datasets: [
 	            {
 	                label: "Open",
@@ -80,13 +83,9 @@ LineChart = React.createClass({
 	updateData() {
 		if(!this.state.initialised)
 			return;
-        var data = {
-        	closed:this.createRandomSet(6,10),
-        	open:this.createRandomSet(6,10)
-        }
         for(var i=0;i<6;i++) {
-	        this.chart.datasets[0].points[i].value = data.closed[i];
-	        this.chart.datasets[1].points[i].value = data.open[i];
+	        this.chart.datasets[0].points[i].value = this.data.closedSeries[i];
+	        this.chart.datasets[1].points[i].value = this.data.openSeries[i];
         }
         this.chart.update();
 	},

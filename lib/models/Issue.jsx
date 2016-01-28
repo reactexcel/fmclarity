@@ -2,162 +2,44 @@
 // Issue.jsx
 // Data model for Issues / Work Request / Repairs
 ///////////////////////////////////////////////////////////
+ORM.attachSchema(Issues,IssueSchema);
 
+Issues.actions = {
+  search(params) {
+    var q = _.omit(params,'month');
+    if(params.month) {
+      var month = parseInt(params.month);
+      var nextMonth = month+1;
+      if(month<10) {
+        month = "0"+month;
+      }
+      if(nextMonth<10) {
+        nextMonth = "0"+nextMonth;
+      }
 
-CloseDetails = {
-    attendanceDate: {
-      label:"Attendence date and time",
-      input:"date",
-      size:6
-    },
-    completionDate: {
-      label:"Completion date and time",
-      input:"date",
-      size:6
-    },
-    serviceReport: {
-      label:"Service report",
-      input:"FileField",
-    },
-    furtherWorkRequired: {
-      label:"Further work required",
-      input:"switch",
-    },
-    furtherWorkDescription: {
-      label:"Details of further work",
-      input:"mdtextarea",
-      condition(item) {
-        return item&&(item.furtherWorkRequired == true);
-      },
-    },
-    furtherPriority : {
-      label:"Priority",
-      input:"Select",
-      options:["Scheduled","Standard","Urgent","Critical"],
-      condition(item) {
-        return item&&(item.furtherWorkRequired == true);
-      },
-    },
-    furtherQuote: {
-      label:"Quote",
-      input:"FileField",
-      condition(item) {
-        return item&&(item.furtherWorkRequired == true);
-      },
-    },
-    furtherQuoteValue: {
-      label:"Value of quote",
-      condition(item) {
-        return item&&(item.furtherWorkRequired == true);
-      },
+      q.createdAt = {
+        $gte:new Date("2016-"+month+"-01"),
+        $lt:new Date("2016-"+nextMonth+"-01")
+      }
     }
+    return Issues.find(q);
+  },
+  find(params) {
+    return this.search(params).fetch();
+  },
+  count(params) {
+    return this.search(params).count();
+  }
 };
 
-
-Issues = FM.createCollection('Issue',{
-  name:{
-  },
-  priority:{
-    defaultValue:"Standard",
-  },
-  description:{
-    input:"textarea"
-  },
-  status:{
-    defaultValue:"-",
-  },
-  costThreshold:{
-    defaultValue:500,
-  },
-  costActual:{
-  },
-  closeDetails:{
-    type:Object,
-    schema:CloseDetails
-  },
-  code:{
-    defaultValue:function(item) {
-      var team, code = 0;
-      if(item&&item.team) {
-        team = Teams.findOne({_id:item.team._id});
-        code = team.getNextWOCode();
-      }      
-      return code;
-    }
-  },
-  thumb:{
-    label:"Thumbnail file",
-    defaultValue:["img/default-placeholder.png"]
-  },
-  attachments:{
-    type:[Object],
-    label:"Attachments",
-    input:"attachments"
-  },
-  area:{
-  },
-  team:{
-    type:Object
-  },
-  facility:{
-    type:Object
-  },
-  supplier:{
-    type:Object
-  },
-  assignee:{
-    type:Object
-  }
-},true);
-
 Issues.helpers({
+  // this sent to schema config
   path:'requests',
-  getFacility() {
-    return Facilities.findOne(this.facility._id);
-  },
-  getCreator() {
-    return Users.findOne(this.creator._id);
-  },
-  getTeam() {
-    return Teams.findOne({_id:this.team._id});
-  },
-  setTeam(team) {
-    this.team = {
-      _id:team._id,
-      name:team.getName()
-    }
-    this.save();
-  },
-  setCreator(creator) {
-    this.creator = {
-      _id:creator._id,
-      name:creator.getName()
-    }
-    this.save();
-  },
-  setFacility(facility) {
-    this.facility = {
-      _id:facility._id,
-      name:facility.getName()
-    }
-    this.save();
-  },
-  getArea() {
-    return this.area;
-  },
-  getIssuesByDate(month) {
-    var startMonth = parseInt(month);
-    var endMonth = startMonth+1;
-    return Issues.find({
-        createdAt: {
-            $gte: ISODate("2016-"+startMonth+"-29T00:00:00.000Z"),
-            $lt: ISODate("2016-"+endMonth+"-01T00:00:00.000Z")
-        }
-    }).fetch();
-  },
+
   getInboxName() {
     return "work order #"+this.code+' "'+this.getName()+'"';
   },
+
   sendMessage(message,forwardTo) {
     message.inboxId = this.getInboxId();
     message.target = this.getInboxId();
@@ -172,16 +54,21 @@ Issues.helpers({
       }
     });
   },
+
   getAttachmentCount() {
     if(this.attachments) {
       return this.attachments.length;
     }
     return 0;
   },
+
   getPotentialSuppliers() {
     if(this.service&&this.service.name) {
-      var query = {};
       var team = this.getTeam();
+      if(!team) {
+        return;
+      }
+      var query = {};
       query["$or"] = [team].concat(team.suppliers);
       query["services"] = { $elemMatch : {
           name:this.service.name,
@@ -204,31 +91,7 @@ Issues.helpers({
     }
     return null;
   },
-  getTimeframe() {
-    var team = this.getTeam();
-    if(team) {
-      return team.getTimeframe(this.priority);
-    }
-  },
-  setPriority(priority) {
-    var team = this.getTeam();
-    this.priority = priority;
-    this.timeframe = team.getTimeframe(priority);
-  },
-  setSupplier(supplier) {
-    this.supplier = supplier;
-    this.save();
-  },
-  getSupplier() {
-    if(this.supplier) {
-      return Teams.findOne(this.supplier._id);
-    }
-  },
-  getAssignee() {
-    if(this.assignee) {
-      return Users.findOne(this.assignee._id);
-    }
-  },
+
   getWatchers() {
     var user = Meteor.user();
     var creator = this.getCreator();
@@ -236,12 +99,15 @@ Issues.helpers({
     var assignee = this.getAssignee();
     return [user,creator,supplier,assignee];
   },
+
   isNew() {
     return this.status=="-";
   },
+
   isEditable() {
     return this.isNew()||this.status=="New";
   },
+
   canCreate() {
     return (
       this.name&&this.name.length&&
@@ -251,6 +117,7 @@ Issues.helpers({
       this.service&&this.service.name.length
     )    
   },
+
   canIssue() {
     return (
       this.canCreate()&&
@@ -258,12 +125,14 @@ Issues.helpers({
       this.supplier&&this.supplier._id
     )   
   },
+
   canStartClosure() {
     return (
       this.canIssue()&&
       (this.status=="Issued"||this.status=="Closing")
     )
   },
+
   canClose() {
     return (
       this.canStartClosure()&&
@@ -272,6 +141,7 @@ Issues.helpers({
       this.closeDetails.completionDate
     )
   },
+
   canProgress() {
     if(
       (this.isNew()&&this.canCreate())||
@@ -282,6 +152,7 @@ Issues.helpers({
     }
     return false;
   },
+
   getProgressVerb() {
     if(this.status=='Closed') {
       return;
@@ -296,6 +167,7 @@ Issues.helpers({
       return 'Create';
     }
   },
+
   getRegressVerb() {
     if(this.isNew()||this.status=="New") {
       return "Cancel";
@@ -309,6 +181,7 @@ Issues.helpers({
       }
     }
   },
+
   close() {
     var issue = this;
     var watchers = issue.getWatchers();
