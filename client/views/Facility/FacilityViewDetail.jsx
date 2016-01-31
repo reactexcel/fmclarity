@@ -17,41 +17,27 @@ FacilityViewDetail = React.createClass({
         var $this = this;
         var facility = this.facility = this.props.item;
         var createdAt = moment(this.facility.createdAt).format();
-        var contact = facility.contact;
+        var contact = facility.getPrimaryContact();
+        if(contact) {
+            contact = contact.getProfile();
+        }
         return (
-            <div className="ibox">
-                <div className="row">
-                    <div className="col-lg-12">
-                        <h2 className="background">
-                            <span>{facility.name}</span>
-                        </h2>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-lg-6" style={{paddingLeft:"30px"}}>
-                        <div className="row">
-                            <div className="col-lg-12" style={{marginBottom:"7px"}}>
-                                <b>{facility.getAddress()}</b>
-                            </div>
+            <div className="business-card">             
+                <div className="contact-thumbnail pull-left">
+                    <img alt="image" src={facility.getThumbUrl()} />
+                 </div>
+                 <div className="contact-info">
+                    <div>
+                        <h2>{facility.getName()}</h2>
+                        <b>{facility.getAddress()}</b>
+                        <div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
                         </div>
-                        <div className="row">
-                            <div className="col-lg-12">
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        {facility.description}
-                                    </div>
-                                </div>
-                            </div>
+                        {contact?
+                        <div>
+                            <b>Contact</b> {contact.name}<br/>
                         </div>
-                    </div>
-                    <div className="col-lg-6">
-                        <div className="facility-thumbnail pull-left">
-                            <img style={{width:"100%"}} alt="image" src={facility.getThumbUrl()} />
-                            <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-1.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-2.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-3.jpg"/></a>
-                            <a href=""><img style={{"width":"40px","margin":"1px"}} alt="image" src="img/building-2.jpg"/></a>
-                        </div>
+                        :null}
+
                     </div>
                 </div>
             </div>

@@ -24,16 +24,23 @@ SupplierIndexPage = React.createClass({
 
 	render() {
 		return(
-	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-				<FilterBox2 
-					items={this.data.suppliers}
-					newItemCallback={this.showModal}
-					itemView={{
-						summary:Contact2LineWithAvatar,
-						detail:TeamCard
-					}}
-				/>
-			</div>
+            <div>
+                <div className="row wrapper page-heading">
+                    <div className="col-lg-12">
+                        <span style={{color:"#333",fontWeight:"bold",fontSize:"16px",lineHeight:"40px",marginLeft:"20px"}}>Suppliers</span>
+                    </div>
+                </div>
+    	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
+    				<FilterBox2 
+    					items={this.data.suppliers}
+    					newItemCallback={this.showModal}
+    					itemView={{
+    						summary:Contact2LineWithAvatar,
+    						detail:TeamCard
+    					}}
+    				/>
+    			</div>
+            </div>
 		);
 	}
 })

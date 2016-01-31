@@ -45,21 +45,7 @@ FacilityCard = React.createClass({
 			    :
 					<FacilityViewDetail item={this.props.item}/>
 				}
-				<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
-					<i className="fa fa-wrench"></i>
-				</a>
-				<ul className="dropdown-menu dropdown-user" style={{
-					position:"absolute",
-					right: 0,
-					top: "30px",
-					left: "auto"
-    			}}>
-    				{menu.map(function(i,idx){
-    					return (
-    						<li key={idx} onClick={i.action}><a href="#">{i.label}</a></li>
-    					)
-    				})}
-				</ul>
+            	<ActionsMenu items={menu} />
 			</div>
 		)
 	}

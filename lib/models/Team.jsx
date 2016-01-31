@@ -126,7 +126,7 @@ TeamSchema = new ORM.Schema({
       defaultValue:function(item) {
         if(item.type=='fm') {
             return {
-                "Dashboard":false,
+                "Dashboard":true,
                 "Portfolio":true,
                 "PMP":false,
                 "ABC":false,

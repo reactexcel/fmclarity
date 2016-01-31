@@ -176,9 +176,9 @@ IssuesIndexPage = React.createClass({
 	    ];
 		return(
 			<div>
-		        <div className="row wrapper border-bottom white-bg page-heading">
+		        <div className="row wrapper page-heading">
 		          <div className="col-lg-12">
-                    <FacilityFilter/>
+                    <FacilityFilter title="Repairs"/>
 		          </div>
 		        </div>
 		    	{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}

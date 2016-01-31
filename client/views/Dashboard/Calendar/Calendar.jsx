@@ -8,9 +8,9 @@ Calendar = React.createClass({
 
     $('#calendar').fullCalendar({
         header: {
-            left: 'prev,next today',
+            left: 'prev',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay'
+            right: 'next'
         },
         editable: true,
         height:'auto',

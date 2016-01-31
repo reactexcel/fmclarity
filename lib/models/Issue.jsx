@@ -9,20 +9,57 @@ Issues.actions = {
     var q = _.omit(params,'month');
     if(params.month) {
       var month = parseInt(params.month);
-      var nextMonth = month+1;
-      if(month<10) {
-        month = "0"+month;
-      }
-      if(nextMonth<10) {
-        nextMonth = "0"+nextMonth;
-      }
+      var now = moment().setMonth(month);
+      var start = now.startOf('month');
+      var end = now.endOf('month');
 
       q.createdAt = {
-        $gte:new Date("2016-"+month+"-01"),
-        $lt:new Date("2016-"+nextMonth+"-01")
+        $gte:start.toDate(),
+        $lte:end.toDate()
       }
     }
     return Issues.find(q);
+  },
+  searchByDate(args) {
+    var q = args.q;
+    var config = args.config;
+
+    var groupBy = config.groupBy||'week';
+    var start = config.startDate?moment(config.startDate):moment().subtract(5,'months').startOf('month');
+    var end = config.endDate?moment(config.endDate):moment();
+    var format = config.format||'MMM';
+
+    var rs = {
+      labels:[],
+      sets:[]
+    };
+
+    //so that they are evenly distributed
+    start.startOf(groupBy);
+    end.endOf(groupBy);
+
+    var now = start.clone();
+    var lastLabel = '';
+    while(!now.isAfter(end)) {
+      var startDate = now.clone();
+      var endDate = now.clone().endOf(groupBy);
+      var label = startDate.format(format);
+      if(label!=lastLabel) {
+        lastLabel = label;
+      }
+      else {
+        label='';
+      }
+      q.createdAt = {
+        $gte:startDate.toDate(),
+        $lte:endDate.toDate()
+      }
+      rs.labels.push(label);
+      rs.sets.push(Issues.find(q).count());
+      now.add(1,groupBy);
+    }
+    //console.log(rs);
+    return rs;
   },
   find(params) {
     return this.search(params).fetch();
@@ -101,11 +138,11 @@ Issues.helpers({
   },
 
   isNew() {
-    return this.status=="-";
+    return this.status=="New";
   },
 
   isEditable() {
-    return this.isNew()||this.status=="New";
+    return this.isNew()||this.status=="Open";
   },
 
   canCreate() {
@@ -145,7 +182,7 @@ Issues.helpers({
   canProgress() {
     if(
       (this.isNew()&&this.canCreate())||
-      ((this.isNew()||this.status=="New")&&this.canIssue())||
+      ((this.isNew()||this.status=="Open")&&this.canIssue())||
       (this.status=="Issued"&&this.canStartClosure())
     ) {
       return true;
@@ -160,7 +197,7 @@ Issues.helpers({
     if(this.status=="Issued") {
       return 'Close';
     }
-    else if(this.canIssue()||this.status=="New") {
+    else if(this.canIssue()||this.status=="Open") {
       return 'Issue';
     }
     else if(this.isNew()) {
@@ -169,7 +206,7 @@ Issues.helpers({
   },
 
   getRegressVerb() {
-    if(this.isNew()||this.status=="New") {
+    if(this.isNew()||this.status=="Open") {
       return "Cancel";
     }
     else if(this.status=="Issued"||this.status=="Closing") {
@@ -196,7 +233,7 @@ Issues.helpers({
         supplier:issue.supplier,
         team:issue.team,
         area:issue.area,
-        status:"New",
+        status:"Open",
         service:issue.service,
         subservice:issue.subservice,
         name:"Follow up - "+issue.name,
@@ -286,7 +323,7 @@ Issues.helpers({
       });
     }
     else if(issue.canCreate()) {
-      issue.save({status:"New"},function(){
+      issue.save({status:"Open"},function(){
         issue.sendMessage({
           verb:"created",
           subject:"Work order #"+issue.code+" has been created"
@@ -302,7 +339,7 @@ Issues.helpers({
         closeDetails:null
       },callback);
     }
-    else if(this.status=="New"||this.status=="-") {
+    else if(this.status=="New"||this.status=="Open") {
       var message = confirm('Are you sure you want to cancel this work order?');
       if(message != true){
         return;
