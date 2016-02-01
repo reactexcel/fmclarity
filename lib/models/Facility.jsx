@@ -1,67 +1,4 @@
-
-// labels need i18n
-Address = {
-	streetNumber:{
-		label:"Street number",
-		size:3
-	},
-	streetName:{
-		label: "Street name",
-		size:6
-	},
-	streetType:{
-		label: "Street name",
-		size:3
-	},
-	city:{
-		label:"City",
-    	defaultValue: "",
-		size:6,
-	},
-	state:{
-		label:"State",
-		size:3,
-	},
-	postcode:{
-		label:"Postcode",
-		size:3
-	}
-};
-
-Contact = {
-};
-
-FacilityManager = {
-	type:{
-		label:"Type",
-	},
-	companyName : {
-		label:"Company name",
-		size:6,
-	},
-	abn:{
-		label:"ABN",
-		size:6
-	},
-	contactName: {
-		label:"Contact name",
-	},
-	phone:{
-		label:"Phone",
-		size:6
-	},
-	email:{
-		label:"Email",
-		size:6
-	},
-	address:{
-		type:Object,
-		label:"Address",
-		schema:Address,
-	},
-};
-
-Insurance = {
+Insurance = new ORM.Schema({
 	insurer:{
 		label:"Insurer",
 		size:6
@@ -82,9 +19,9 @@ Insurance = {
 		label:"Insurance documents",
 		//input:"attachment",
 	},
-};
+});
 
-SecurityDeposit = {
+SecurityDeposit = new ORM.Schema({
 	purpose:{
 		label:"Purpose",
 	},
@@ -110,9 +47,9 @@ SecurityDeposit = {
 	originalHeldBy:{
 		label:"Original held by"
 	}
-}
+})
 
-Parking = {  
+Parking = new ORM.Schema({  
     permanent:{
     	label:"Permanent",
     	size:6
@@ -121,9 +58,9 @@ Parking = {
     	label:"Temporary",
     	size:6
     },
-}
+})
 
-Lease = {
+LeaseSchema = new ORM.Schema({
     commencement: {
     	label:"Lease commencement",
     	size:6
@@ -158,9 +95,9 @@ Lease = {
     	label:"Security deposit",
     	schema:SecurityDeposit
     }
-};
+});
 
-Facilities = FM.createCollection('Facility',{
+FacilitySchema = new ORM.Schema({
     name: {
     	label: "Name",
     	defaultValue: "",
@@ -183,17 +120,14 @@ Facilities = FM.createCollection('Facility',{
     	input:"attachments"
     },
     manager: {
-    	type:Object,
-    	schema:FacilityManager
+    	schema:FacilityManagerSchema
     },
     address:{
-    	type:Object,
     	label:"Address",
-    	schema:Address,
+    	schema:AddressSchema,
     },
     lease:{
-    	type:Object,
-    	schema:Lease,
+    	schema:LeaseSchema,
     },
     team: {
     	label: "Team query object",
@@ -222,7 +156,9 @@ Facilities = FM.createCollection('Facility',{
         	return JSON.parse(JSON.stringify(Config.services));
     	}
     }
-},true);
+});
+
+ORM.attachSchema(Facilities,FacilitySchema);
 
 Facilities.helpers({
   getIssues() {
@@ -297,7 +233,9 @@ Facilities.helpers({
       var users = this.contacts;
       var userIds = [];
       users.map(function(user){
-        userIds.push(user._id);
+        if(user&&user._id) {
+          userIds.push(user._id);
+        }
       });
       return Users.find({_id:{$in:userIds}}).fetch();
     }
@@ -312,7 +250,9 @@ Facilities.helpers({
     	var tenants = this.tenants;
     	var tenantIds = [];
     	tenants.map(function(contact){
-    		tenantIds.push(contact._id);
+        if(contact&&contact._id) {
+      		tenantIds.push(contact._id);
+        }
     	});
     	return Users.find({_id:{$in:tenantIds}}).fetch();
     }
@@ -323,7 +263,7 @@ Facilities.helpers({
   	var id=0;
   	if(this.contacts&&this.contacts.length) {
 	  	id = this.contacts[0]._id;
-	}
+    }
   	if(id) {
   		return Users.findOne(id);
   	}

@@ -27,7 +27,7 @@ UserCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var user = this.props.item;
-		var selectedTeam = FM.getSelectedTeam();
+		var selectedTeam = this.props.team||FM.getSelectedTeam();
 		var menu = [
 			{
 				label:(this.state.edit?"View as card":"Edit"),
@@ -41,7 +41,7 @@ UserCard = React.createClass({
 				label:"Remove from "+selectedTeam.getName(),
 				action(){
 					selectedTeam.removeMember(user);
-					Modal.hide();
+					//Modal.hide();
 				}
 			});
 		}
@@ -57,21 +57,7 @@ UserCard = React.createClass({
 				:
 					<ContactSummary item={this.props.item}/>
 				}
-				<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
-					<i className="fa fa-wrench"></i>
-				</a>
-				<ul className="dropdown-menu dropdown-user" style={{
-					position:"absolute",
-					right: 0,
-					top: "30px",
-					left: "auto"
-				}}>
-				{menu.map(function(i,idx){
-					return (
-						<li key={idx} onClick={i.action}><a href="#">{i.label}</a></li>
-					)
-				})}
-				</ul>
+            	<ActionsMenu items={menu} />
 			</div>
 		)
 	}

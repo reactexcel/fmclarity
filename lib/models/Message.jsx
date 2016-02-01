@@ -1,4 +1,4 @@
-Posts = FM.createCollection('Posts',{
+PostSchema = new ORM.Schema({
   subject:{
     type:String,
   },
@@ -30,6 +30,8 @@ Posts = FM.createCollection('Posts',{
     defaultValue:[]
   }
 });
+
+ORM.attachSchema(Posts,PostSchema);
 
 Posts.helpers({
   getInbox() {

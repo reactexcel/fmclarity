@@ -1,14 +1,10 @@
 FilterBox2 = React.createClass({
 
 	componentDidMount() {
-	   	this.title = this.props.title;
-	    this.card = this.props.card;
-	    this.items = this.props.items;
 	    this.applyFilter();
 	},
 
 	getInitialState() {
-
     return {
     	selectedFilterNum:0,
     	selectedItem:this.props.items?this.props.items[0]:null
@@ -16,9 +12,22 @@ FilterBox2 = React.createClass({
   },
 
   componentWillReceiveProps(newProps) {
-    this.setState({
-      selectedItem:newProps.items?newProps.items[0]:null
-    })
+    if(this.state.selectedItem) {
+      //check to see if existing selected item is in the new set
+      if(newProps.items&&newProps.items.length) { 
+        for(var i in newProps.items) {
+          var newItem = newProps.items[i];
+          //if it is... we'll just keep it selected
+          if(newItem&&newItem._id&&newItem._id==this.state.selectedItem._id) {
+            return;
+          }
+        }
+      }
+      //if it isn't, we'll reset the selected item
+      this.setState({
+        selectedItem:newProps.items?newProps.items[0]:null
+      })
+    }
   },
 
   applyFilter(items) {
@@ -48,7 +57,7 @@ FilterBox2 = React.createClass({
     component.setFilter(0);
     if(this.props.newItemCallback) {
       this.props.newItemCallback(function(newItem){
-        console.log({'callback is being called - hooray!':newItem});
+        console.log({'calling back':newItem});
         component.setState({
           selectedItem:newItem
         });
@@ -56,13 +65,10 @@ FilterBox2 = React.createClass({
     }
   },
 
-  toggle() {
-  	var $this = this;
-  	return function(item) {
-	  	$this.setState({
-	  		selectedItem:item
-	  	});
-	  }
+  selectItem(item) {
+	  this.setState({
+	  	selectedItem:item
+	  });
   },
 
 	render() {
@@ -83,6 +89,14 @@ FilterBox2 = React.createClass({
     var newItemCallback = this.props.newItemCallback;
 
     var Header = $this.props.itemView.header;
+
+    var selectedItem;
+    for(var i in this.props.items) {
+      var item = this.props.items[i];
+      if(item&&this.state.selectedItem&&item._id==this.state.selectedItem._id) {
+        selectedItem = item;
+      }
+    }
 
     if(!items) {
     	return <div/>
@@ -122,8 +136,8 @@ FilterBox2 = React.createClass({
 			                    	<CardHeaderWrapper
 			                      		item={i}
 			                      		view={$this.props.itemView.summary}
-			                      		toggle={$this.toggle()}
-			                      		isSelected={$this.state.selectedItem==i}
+			                      		toggle={$this.selectItem.bind($this,i)}
+			                      		isSelected={$this.state.selectedItem&&$this.state.selectedItem._id==i._id}
 			                    	/>
 		                  		</div>	
 	                	)
@@ -139,8 +153,8 @@ FilterBox2 = React.createClass({
                             <CardHeaderWrapper
                                 item={i}
                                 view={$this.props.itemView.summary}
-                                toggle={$this.toggle()}
-                                isSelected={$this.state.selectedItem==i}
+                                toggle={$this.selectItem.bind($this,i)}
+                                isSelected={$this.state.selectedItem&&$this.state.selectedItem._id==i._id}
                             />
                           </div>  
                     )
@@ -150,9 +164,9 @@ FilterBox2 = React.createClass({
     		</div>
     	</div>
     	<div className="col-lg-6">
-    				{this.state.selectedItem?
+    				{selectedItem?
 			        <CardBodyWrapper
-			            item={this.state.selectedItem}
+			            item={selectedItem}
 			            view={this.props.itemView.detail}
 			        />
 			        :null}
@@ -185,10 +199,9 @@ CardHeaderWrapper = React.createClass({
 CardBodyWrapper = React.createClass({
 	render() {
 		var View = this.props.view;
-		this.item = this.props.item;
 		return (
-	        <div className="card-body">
-	          	<View item={this.item}/>
+	        <div className="card-body ibox">
+	          	<View item={this.props.item}/>
 	        </div>
 	    )
 	}

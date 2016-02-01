@@ -1,11 +1,9 @@
-Teams = new Mongo.Collection('teams');
-
 var validEmails = {
   'gmail.com':['mrleokeith','mr.richo'],
   'fmclarity.com':'*'
 };
 
-Teams = FM.createCollection('Team',{
+TeamSchema = new ORM.Schema({
   name: {
     type: String,
     label: "Company Name",
@@ -128,7 +126,7 @@ Teams = FM.createCollection('Team',{
       defaultValue:function(item) {
         if(item.type=='fm') {
             return {
-                "Dashboard":false,
+                "Dashboard":true,
                 "Portfolio":true,
                 "PMP":false,
                 "ABC":false,
@@ -154,6 +152,7 @@ Teams = FM.createCollection('Team',{
         }        
       }
     },
+    //these could be defined as a hasMany relationship
     members: {
       type: [Object],
       label:"Members"
@@ -162,8 +161,9 @@ Teams = FM.createCollection('Team',{
       type: [Object],
       label: "Suppliers"  
     }
-},true);
+});
 
+ORM.attachSchema(Teams,TeamSchema);
 
 if (Meteor.isServer) {
   // could define make code more dry by generating these for all collections on startup
@@ -221,9 +221,9 @@ Meteor.methods({
   },
   "Team.removeMember":function(item,member) {
     Teams.update(item._id,{$pull:{members:{_id:member._id}}});
+    console.log({removing:member});
   },
   "Team.setMembers":function(team,members) {
-    console.log(team);
     if(members&&members.length) {
       var sanitisedMembers = [];
       members.map(function(member){
@@ -233,10 +233,8 @@ Meteor.methods({
           });
         }
       });
-      console.log(sanitisedMembers);
-      Teams.update(team._id,{$set:{members:sanitisedMembers}},function(err,data){
-        console.log({err:err,data:data})
-      });
+      Teams.update(team._id,{$set:{members:sanitisedMembers}});
+      console.log('setting');
     }
   },
   "Team.addSupplier":function(item,supplier) {
@@ -346,7 +344,7 @@ Teams.helpers({
       this.counters = {};
     }
     if(!this.counters.WO) {
-      this.counters.WO = 999;
+      this.counters.WO = 0;
     }
     this.counters.WO = this.counters.WO + 1;
     this.save();

@@ -21,7 +21,9 @@ TeamProfilePage = React.createClass({
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6">
-						<TeamCard item={this.data.team} edit={true}/>
+		            	<div className="ibox">
+							<TeamCard item={this.data.team} edit={true}/>
+						</div>
 					</div>
 				</div>
 			</div>

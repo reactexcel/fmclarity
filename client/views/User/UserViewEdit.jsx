@@ -47,7 +47,8 @@ UserProfile = React.createClass({
             });
             this.setState({
             	shouldShowMessage:true
-            });	    }
+            });	    
+        }
     },
 
     handleThumbChange(newThumb) {
@@ -59,10 +60,6 @@ UserProfile = React.createClass({
 		profile.thumb = newThumb;
 		this.save();
     },
-
-	getInitialState() {
-		shouldShowMessage:false
-	},    
 
 	removeMember(team,user) {
 		var message = confirm("Remove "+user.getName()+" from "+team.getName()+"?");
@@ -96,9 +93,6 @@ UserProfile = React.createClass({
 		    		<div className="col-sm-12">
                         {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}
 		           		<h2><span>{profile.name}</span></h2>
-				   		<div onClick={this.removeMember.bind(this,team,user)}>
-				   			Remove from team: <b>{team.getName()}</b>
-				   		</div>
 				   	</div>
 				    <div className="col-sm-7">
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
