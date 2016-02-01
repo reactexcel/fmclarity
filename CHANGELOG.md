@@ -1,9 +1,13 @@
 CHANGELOG.md
 ============
 
+**v0.4.0a**
+* Dashboard linked to issue events
+
 **v0.3.27a**
 * Refactor of Object Relational Mapping code to facilitate better calculations of monthly issues for dashboard
-* Started work on dashboard (line chart)
+* Completed dashboard line chart
+* Changed status names to prevent empty (-) status for items being created
 
 **v0.3.26a**
 * Fixed a bug which was causing app to crash on unexpected facility contact or tenant

@@ -89,7 +89,7 @@ if(Meteor.isClient) {
 loggedIn.route('/', {
   name: 'root',
   action() {
-    FlowRouter.go('/portfolio');
+    FlowRouter.go('/dashboard');
     //ReactLayout.render(MainLayout,{content:<FacilityIndexPage />});
   }
 });

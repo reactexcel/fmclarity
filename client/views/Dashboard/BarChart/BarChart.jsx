@@ -2,40 +2,95 @@ BarChart = React.createClass({
 
     mixins: [ReactMeteorData],
 
+    getInitialState(){
+        var startDate = moment().subtract(2,'months').startOf('month');
+        var title = startDate.format("[since] MMMM YYYY")
+        return ({
+            startDate:startDate,
+            title:title
+        })
+    },
+
+    getMenu() {
+        var component = this;
+        return [
+            {
+                label:("Day"),
+                action(){
+                    var startDate = moment().startOf('day');
+                    var title = startDate.format("[on] dddd Do MMMM")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            },
+            {
+                label:("Week"),
+                action(){
+                    var startDate = moment().startOf('week');
+                    var title = startDate.format("[for week starting] Do MMMM")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            },
+            {
+                label:("Month"),
+                action(){
+                    var startDate = moment().startOf('month');
+                    var title = startDate.format("[for] MMMM YYYY")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            },
+            {
+                label:("3 Months"),
+                action(){
+                    var startDate = moment().subtract(2,'months').startOf('month');
+                    var title = startDate.format("[since] MMMM YYYY")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            },
+            {
+                label:("6 Months"),
+                action(){
+                    var startDate = moment().subtract(5,'months').startOf('month');
+                    var title = startDate.format("[since] MMMM YYYY")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            },
+            {
+                label:("Year"),
+                action(){
+                    var startDate = moment().startOf('year');
+                    var title = startDate.format("YYYY")
+                    component.setState({
+                        startDate:startDate,
+                        title:title
+                    })
+                }
+            }
+        ];
+    },
+
     getMeteorData() {
 
-    	var view = this.props.view;
-
-    	var query = {};
-
-    	switch(view) {
-    		case 'today':
-    			query.createdAt = {
-    				$gte:moment().startOf('day').toDate()
-    			}
-    		break;
-    		case 'this week':
-    			query.createdAt = {
-    				$gte:moment().startOf('week').toDate()
-    			}
-    		break;
-    		case 'this month':
-    			query.createdAt = {
-    				$gte:moment().startOf('month').toDate()
-    			}
-    		break;
-    		case 'this 3 months':
-    			query.createdAt = {
-    				$gte:moment().subtract(2).startOf('month').toDate()
-    			}
-    		break;
-    		case 'this 6 months':
-    			query.createdAt = {
-    				$gte:moment().subtract(5).startOf('month').toDate()
-    			}
-    		break;
-    	}
-
+        var startDate = this.state.startDate;
+        var query = {
+            createdAt:{
+                $gte:this.state.startDate.toDate()
+            }
+        }
 
     	var facility = Session.get('selectedFacility');
     	if(facility) {
@@ -68,7 +123,7 @@ BarChart = React.createClass({
     	});
 
     	return {
-    		facility:Session.get('selectedFacility'),
+    		facility:facility,
     		labels:labels,
     		set:counts
     	}
@@ -135,9 +190,19 @@ BarChart = React.createClass({
 
 	render() {
 	    return (
-	    	<div>
-	    		<canvas id="bar-chart"></canvas>
-	    	</div>
+            <div>
+                <ActionsMenu items={this.getMenu()} icon="eye" />
+                <div className="ibox-title">
+                    <h2>Types of repairs {this.state.title}</h2>
+                </div>
+                <div className="ibox-content">
+                    <div style={{margin:"0px 25px 0px 0px"}}>
+                        <div>
+                            <canvas id="bar-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 	    )
 	}
 

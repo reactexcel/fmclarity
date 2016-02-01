@@ -22,63 +22,7 @@ LineChart = React.createClass({
     		closedQuery["facility._id"] = facility._id;
     	}
 
-    	var view = this.state.view||'Week';
-    	var viewConfig;
-    	switch(view) {
-    		case 'Day':
-    			viewConfig = {
-    				format:'hA',
-    				title:"dddd Do MMMM",
-    				startDate:moment().startOf('day'),
-    				endDate:moment().endOf('day'),
-    				groupBy:'hour'
-    			}
-    		break;
-    		case 'Week':
-    			viewConfig = {
-    				format:'ddd',
-    				title:"for [week starting] Do MMMM",
-    				startDate:moment().startOf('week'),
-    				endDate:moment().endOf('week'),
-    				groupBy:'day'
-    			}
-    		break;
-    		case 'Month':
-    			viewConfig = {
-    				format:'D',
-    				title:"MMMM YYYY",
-    				startDate:moment().startOf('month'),
-    				endDate:moment().endOf('month'),
-    				groupBy:'day'
-    			}
-    		break;
-    		case '3 Months':
-    			viewConfig = {
-    				format:'MMM',
-    				title:"[since] MMMM YYYY",
-    				startDate:moment().subtract(2,'months').startOf('month'),
-    				endDate:moment().endOf('month'),
-    			}
-    		break;M
-    		case '6 Months':
-    			viewConfig = {
-    				format:'MMM',
-    				title:"[since] MMMM YYYY",
-    				startDate:moment().subtract(5,'months').startOf('month'),
-    				endDate:moment().endOf('month'),
-    			}
-    		break;
-    		case 'Year':
-    			viewConfig = {
-    				format:'MMM',
-    				title:"YYYY",
-    				startDate:moment().startOf('year'),
-    				endDate:moment().endOf('year'),
-    				groupBy:'month',
-    			}
-    		break;
-    	}
-
+    	var viewConfig = this.state.viewConfig;
 		var open = Issues.actions.searchByDate({q:openQuery,config:viewConfig});
 		var closed = Issues.actions.searchByDate({q:closedQuery,config:viewConfig});
 		var labels = open.labels;
@@ -93,58 +37,91 @@ LineChart = React.createClass({
     	}
     },
 
+    getInitialState() {
+    	return {
+			viewConfig:{
+	    		format:'MMM',
+	    		title:"[since] MMMM YYYY",
+	    		startDate:moment().subtract(2,'months').startOf('month'),
+	    		endDate:moment().endOf('month'),
+   			}
+    	}
+    },
+
 	getMenu() {
 		var component = this;
 		return [
 			{
 				label:("Day"),
 				action(){
-					component.setView('Day')
+	    			component.setState({viewConfig:{
+	    				format:'hA',
+	    				title:"dddd Do MMMM",
+	    				startDate:moment().startOf('day'),
+	    				endDate:moment().endOf('day'),
+	    				groupBy:'hour'
+	    			}});
 				}
 			},
 			{
 				label:("Week"),
 				action(){
-					component.setView('Week')
+	    			component.setState({viewConfig:{
+	    				format:'ddd',
+	    				title:"for [week starting] Do MMMM",
+	    				startDate:moment().startOf('week'),
+	    				endDate:moment().endOf('week'),
+	    				groupBy:'day'
+	    			}});
 				}
 			},
 			{
 				label:("Month"),
 				action(){
-					component.setView('Month')
+	    			component.setState({viewConfig:{
+	    				format:'D',
+	    				title:"MMMM YYYY",
+	    				startDate:moment().startOf('month'),
+	    				endDate:moment().endOf('month'),
+	    				groupBy:'day'
+	    			}});
 				}
 			},
 			{
 				label:("3 Months"),
 				action(){
-					component.setView('3 Months')
+	    			component.setState({viewConfig:{
+	    				format:'MMM',
+	    				title:"[since] MMMM YYYY",
+	    				startDate:moment().subtract(2,'months').startOf('month'),
+	    				endDate:moment().endOf('month'),
+	    			}});
 				}
 			},
 			{
 				label:("6 Months"),
 				action(){
-					component.setView('6 Months')
+	    			component.setState({viewConfig:{
+	    				format:'MMM',
+	    				title:"[since] MMMM YYYY",
+	    				startDate:moment().subtract(5,'months').startOf('month'),
+	    				endDate:moment().endOf('month'),
+	    			}});
 				}
 			},
 			{
 				label:("Year"),
 				action(){
-					component.setView('Year')
+	    			component.setState({viewConfig:{
+	    				format:'MMM',
+	    				title:"YYYY",
+	    				startDate:moment().startOf('year'),
+	    				endDate:moment().endOf('year'),
+	    				groupBy:'month',
+	    			}});
 				}
 			}
 		];
-	},
-
-	getInitialState(){
-		return {
-			view:'3 Months'
-		}
-	},
-
-	setView(newView) {
-		this.setState({
-			view:newView
-		})
 	},
 
     getChartConfiguration() {

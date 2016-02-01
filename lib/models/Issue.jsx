@@ -137,6 +137,10 @@ Issues.helpers({
     return [user,creator,supplier,assignee];
   },
 
+  getUrl() {
+    return Meteor.absoluteUrl(this.path+'/'+this._id)
+  },
+
   isNew() {
     return this.status=="New";
   },
