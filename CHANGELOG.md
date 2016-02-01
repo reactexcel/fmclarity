@@ -1,6 +1,26 @@
 CHANGELOG.md
 ============
 
+**v0.4.0a**
+* Dashboard linked to issue events
+
+**v0.3.27a**
+* Refactor of Object Relational Mapping code to facilitate better calculations of monthly issues for dashboard
+* Completed dashboard line chart
+* Changed status names to prevent empty (-) status for items being created
+
+**v0.3.26a**
+* Fixed a bug which was causing app to crash on unexpected facility contact or tenant
+* Fixed a bug which was causing selected item to change when editing
+* Work orders that have not been 
+* Description textarea now honours line breaks
+* WO: Changed notification shields to bracketed numbers
+* User edit modal: Fixed a bug that was making the "Remove from team" action always apply to the active team (even when it shouldn't)
+* WO: Fixed a bug that was causing suppliers viewed from contacts tab to appear as invite prompt
+* Suppliers/Account settings: Fixed a problem that was causing members list to not update when a member invited or removed
+* Account settings: Fixed a bug that was causing the default value to overlap text
+* Account settings: Default work order value now working
+
 **v0.3.25a**
 * Fixed bug which was causing actions menu icon to appear outside container
 * Centred notifications badge for two digit numbers

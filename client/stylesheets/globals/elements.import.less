@@ -221,12 +221,13 @@
   padding: 0 0.6em;
   position: relative;
   white-space: nowrap;
+  border-radius:0;
 }
 
 .fc-state-active {
-  background-color: @navy;
-  border-color: @navy;
-  color: #ffffff;
+  background-color: #ddd;
+  border-color: #ccc;
+  color: #333;
 }
 
 .fc-header-title h2 {
@@ -263,8 +264,15 @@
 .fc-agenda .fc-event-time,
 .fc-event a {
   padding: 4px 6px;
-  background-color: @navy; /* background color */
-  border-color: @navy; /* border color */
+  border-radius:0;
+  background-color: #70aaee; /* background color */
+  border-color: #61a2ee; /* border color */
+}
+
+.fc-unthemed .fc-today {
+  background:#ddd;
+  font-weight:bold;
+  border-color:#bbb;
 }
 
 .fc-event-time, .fc-event-title {

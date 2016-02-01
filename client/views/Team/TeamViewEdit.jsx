@@ -1,7 +1,36 @@
 
 TeamViewEdit = React.createClass({
 
-    mixins: [BaseProfilePageMixin],
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	var team,members;
+    	team = this.state.item;
+    	if(team) {
+    		members = team.getMembers();
+    	}
+    	return {
+    		selectedTeam:FM.getSelectedTeam(),
+    		team:this.state.team,
+    		members:members
+    	}
+    },
+
+	getInitialState() {
+		return {
+			item:this.props.item
+		}
+	},
+
+	componentWillReceiveProps(newProps) {
+		this.setItem(newProps.item);
+	},
+
+	setItem(newItem) {
+		this.setState({
+			item:newItem
+		});
+	},
 
 	form1 : [
 		"name",
@@ -27,10 +56,6 @@ TeamViewEdit = React.createClass({
 		elems.forEach(function(html) {
 		  var switchery = new Switchery(html, {size:'small',color:'#db4437'});
 		});
-	},
-
-	getInitialState() {
-		shouldShowMessage:false
 	},
 
 	handleInvite(event) {
@@ -62,8 +87,8 @@ TeamViewEdit = React.createClass({
 	render() {
     	var selectedTeam,team,members,schema;
     	team = this.state.item;
+    	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
-    	members = selectedTeam?selectedTeam.getMembers():[];
 		schema = FM.schemas['Team'];
 		if(!team) {
 			return (
@@ -96,6 +121,7 @@ TeamViewEdit = React.createClass({
 				<CollapseBox title="Members">
 			   		<ContactList 
 			   			items={members}
+			   			team={team}
 			   			onChange={team.setMembers.bind(team)}
 			   		/>
 				</CollapseBox>

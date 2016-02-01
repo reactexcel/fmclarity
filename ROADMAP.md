@@ -10,10 +10,16 @@ TODO (general)
 
 DONE
 ----
+Question - when does removing a supplier from you team mean they should be deleted?
+Answer - Perhaps we need some kind of garbage collection model
 
 
 IN PROGRESS
 -----------
+
+REFACTOR
+--------
+* Create mixin for card behaviour shown in Facility, User, Team
 
 * Rename inconsistent items, decide on taxonomy and document it
 
