@@ -1,9 +1,7 @@
 ContactList = React.createClass({
 
-
-
     showModal(selectedUser) {
-    	if(selectedUser.collectionName=="Team") {
+    	if(selectedUser&&selectedUser.collectionName=="Team") {
 	        Modal.show({
 	            content:<TeamCard 
 	            	item={selectedUser} 

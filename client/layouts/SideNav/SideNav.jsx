@@ -8,9 +8,7 @@ Navigation = React.createClass({
         Meteor.subscribe('teamsAndFacilitiesForUser');
         var user, team, modules;
         user = Meteor.user();
-        if(user) {
-            team = user.getSelectedTeam();
-        }
+        team = FM.getSelectedTeam();
         if(team) {
             modules = team.modules;
         }

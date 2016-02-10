@@ -9,7 +9,11 @@ ContactViewName = React.createClass({
 })
 
 ContactAvatarSmall = React.createClass({
-	render() {
+
+	mixins:[ReactMeteorData],
+
+	getMeteorData() {
+		Meteor.subscribe('File');
 		var contact, profile, name, url, style = {};
 		contact = this.props.item;
 		if(contact) {
@@ -18,16 +22,22 @@ ContactAvatarSmall = React.createClass({
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
 		if(url) {
-			style['background'] = 'url('+url+')';
+			style['background'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
 		}
+		return {
+			name:name,
+			style:style
+		}
+	},
+
+	render() {
 		return (
 			<div className="contact-card-avatar">
-				<div title={name} style={style}/>
+				<div title={this.data.name} style={this.data.style}/>
 			</div>
 		)
 	}
-
 });
 
 Contact2Line = React.createClass({

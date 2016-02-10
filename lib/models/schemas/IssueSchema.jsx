@@ -26,7 +26,7 @@ IssueSchema = new ORM.Schema({
   },
 
   status:{
-    defaultValue:"New",
+    defaultValue:"Draft",
   },
 
   costThreshold:{

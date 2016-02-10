@@ -128,7 +128,7 @@ Users.helpers({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id,
       read:false
-    }).fetch();
+    },{sort:{createdAt:-1}}).fetch();
   },
   markAllNotificationsAsRead() {
     Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());

@@ -1,15 +1,23 @@
 CHANGELOG.md
 ============
 
+**v0.4.1a**
+
+* Notifications sorted most to least recent
+* Fixed a problem what was causing the creation of tenants or contacts from facility to fail
+
 **v0.4.0a**
+
 * Dashboard linked to issue events
 
 **v0.3.27a**
+
 * Refactor of Object Relational Mapping code to facilitate better calculations of monthly issues for dashboard
 * Completed dashboard line chart
 * Changed status names to prevent empty (-) status for items being created
 
 **v0.3.26a**
+
 * Fixed a bug which was causing app to crash on unexpected facility contact or tenant
 * Fixed a bug which was causing selected item to change when editing
 * Work orders that have not been 

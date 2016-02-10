@@ -158,7 +158,7 @@ TestIssueGenerator = {
 		"It's down the hallway, second door on the right.",
 	],
 	status:[
-		"Open",
+		"New",
 		//"Issued",
 		//"Closed"
 	]

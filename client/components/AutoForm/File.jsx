@@ -2,6 +2,9 @@ AutoInput.FileField = React.createClass({
 	mixins: [ReactMeteorData],
 
     getMeteorData() {
+
+		Meteor.subscribe('File');
+
     	var query,file,url,extension,icon;
     	query = this.props.value;
     	file = Files.findOne(query);
@@ -71,6 +74,9 @@ AutoInput.File = React.createClass({
 	mixins: [ReactMeteorData],
 
     getMeteorData() {
+
+		Meteor.subscribe('File');
+
     	var query,file,url,extension,icon;
     	query = this.props.item;
     	file = Files.findOne(query);
@@ -132,6 +138,9 @@ AutoInput.Thumbnail = React.createClass({
 	mixins: [ReactMeteorData],
 
     getMeteorData() {
+
+		Meteor.subscribe('File');
+    	
     	var query,file,name,url,extension,icon,isImage;
     	query = this.props.item;
     	file = Files.findOne(query);

@@ -81,7 +81,7 @@ UserProfileMenu = React.createClass({
                     </div>
                 </li>
                 <li>
-                    <span style={{float:"right",fontSize:"8px",paddingRight:"5px"}}>v{FM.version}</span>
+                    <a style={{float:"right",fontSize:"8px",paddingRight:"5px"}} target="_blank" href="https://bitbucket.org/mrleokeith/fm-clarity/src/develop/CHANGELOG.md">v{FM.version}</a>
                 </li>
             </ul>
         </div>

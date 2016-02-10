@@ -69,6 +69,23 @@ Issues.actions = {
   }
 };
 
+// refactor - have an actions object something like
+// {
+//    verb:"create",
+//    verbPast:"created",
+//    consequentState:"New"
+//
+// }
+
+Issues.STATUS_DRAFT = "Draft";
+Issues.STATUS_NEW = "New";
+Issues.STATUS_ISSUED = "Issued";
+Issues.STATUS_ASSIGNED = "Issued";
+Issues.STATUS_CLOSING = "Closing";
+Issues.STATUS_CLOSED = "Closed";
+Issues.STATUS_REVIEWED = "Reviewed";
+Issues.STATUS_ARCHIVED = "Archived";
+
 Issues.helpers({
   // this sent to schema config
   path:'requests',
@@ -142,11 +159,11 @@ Issues.helpers({
   },
 
   isNew() {
-    return this.status=="New";
+    return this.status==Issues.STATUS_DRAFT;
   },
 
   isEditable() {
-    return this.isNew()||this.status=="Open";
+    return this.isNew()||Issues.STATUS_NEW;
   },
 
   canCreate() {
@@ -170,7 +187,7 @@ Issues.helpers({
   canStartClosure() {
     return (
       this.canIssue()&&
-      (this.status=="Issued"||this.status=="Closing")
+      (this.status==Issues.STATUS_ISSUED||this.status==Issues.STATUS_CLOSING)
     )
   },
 
@@ -186,8 +203,8 @@ Issues.helpers({
   canProgress() {
     if(
       (this.isNew()&&this.canCreate())||
-      ((this.isNew()||this.status=="Open")&&this.canIssue())||
-      (this.status=="Issued"&&this.canStartClosure())
+      ((this.isNew()||this.status==Issues.STATUS_NEW)&&this.canIssue())||
+      (this.status==Issues.STATUS_ISSUED&&this.canStartClosure())
     ) {
       return true;
     }
@@ -198,10 +215,10 @@ Issues.helpers({
     if(this.status=='Closed') {
       return;
     }
-    if(this.status=="Issued") {
+    if(this.status==Issues.STATUS_ISSUED) {
       return 'Close';
     }
-    else if(this.canIssue()||this.status=="Open") {
+    else if(this.canIssue()||this.status==Issues.STATUS_NEW) {
       return 'Issue';
     }
     else if(this.isNew()) {
@@ -210,10 +227,10 @@ Issues.helpers({
   },
 
   getRegressVerb() {
-    if(this.isNew()||this.status=="Open") {
+    if(this.isNew()||this.status==Issues.STATUS_NEW) {
       return "Cancel";
     }
-    else if(this.status=="Issued"||this.status=="Closing") {
+    else if(this.status==Issues.STATUS_ISSUED||this.status==Issues.STATUS_CLOSING) {
       if(this.exported) {
         return "Reverse";
       }
@@ -229,7 +246,7 @@ Issues.helpers({
 
     if(issue.closeDetails.furtherWorkRequired) {
       issue.save({
-        status:"Closed",
+        status:Issues.STATUS_CLOSED,
         priority:"Closed"
       });
       var newIssue = {
@@ -237,7 +254,7 @@ Issues.helpers({
         supplier:issue.supplier,
         team:issue.team,
         area:issue.area,
-        status:"Open",
+        status:Issues.STATUS_NEW,
         service:issue.service,
         subservice:issue.subservice,
         name:"Follow up - "+issue.name,
@@ -257,7 +274,7 @@ Issues.helpers({
     }
     else {
       issue.save({
-        status:"Closed",
+        status:Issues.STATUS_CLOSED,
         priority:"Closed"
       },function(){
         issue.sendMessage({
@@ -279,7 +296,7 @@ Issues.helpers({
       name:"Reversal - "+issue.name
     });
     issue.save({
-      status:"Closed",
+      status:Issues.STATUS_CLOSED,
       priority:"Closed",
       name:"Reversed - "+issue.name,
       reversed:true
@@ -302,7 +319,7 @@ Issues.helpers({
     else if(issue.canStartClosure()) {
       var now = new Date();
       issue.save({
-        status:"Closing",
+        status:Issues.STATUS_CLOSING,
         closeDetails:{
           attendanceDate:now,
           completionDate:now
@@ -316,7 +333,7 @@ Issues.helpers({
       var createdMs = issue.createdAt.getTime();
       issue.save({
         dueDate:new Date(createdMs+timeframe),
-        status:"Issued",
+        status:Issues.STATUS_ISSUED,
         issuedAt:new Date()
       },function() {
         issue.sendMessage({
@@ -327,7 +344,7 @@ Issues.helpers({
       });
     }
     else if(issue.canCreate()) {
-      issue.save({status:"Open"},function(){
+      issue.save({status:Issues.STATUS_NEW},function(){
         issue.sendMessage({
           verb:"created",
           subject:"Work order #"+issue.code+" has been created"
@@ -337,20 +354,20 @@ Issues.helpers({
     }
   },
   regress(callback) {
-    if(this.status=="Closing") {
+    if(this.status==Issues.STATUS_CLOSING) {
       this.save({
-        status:"Issued",
+        status:Issues.STATUS_ISSUED,
         closeDetails:null
       },callback);
     }
-    else if(this.status=="New"||this.status=="Open") {
+    else if(this.status==Issues.STATUS_DRAFT||this.status==Issues.STATUS_NEW) {
       var message = confirm('Are you sure you want to cancel this work order?');
       if(message != true){
         return;
       }
       this.destroy(callback);
     }
-    else if(this.status=="Issued") {
+    else if(this.status==Issues.STATUS_ISSUED) {
       if(this.exported) {
         var message = confirm('Are you sure you want to reverse this work order?');
         if(message != true){
