@@ -37,7 +37,7 @@ FacilityViewEdit = React.createClass({
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
-		var schema = FM.schemas['Facility'];
+		var schema = Facilities.getSchema();
 		//console.log(config);
 
 		return (

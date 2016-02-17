@@ -1,4 +1,4 @@
-CloseDetailsSchema = new ORM.Schema({
+CloseDetailsSchema = {
     attendanceDate: {
       label:"Attendence date and time",
       input:"date",
@@ -45,4 +45,4 @@ CloseDetailsSchema = new ORM.Schema({
         return item&&(item.furtherWorkRequired == true);
       },
     }
-})
+}

@@ -1,4 +1,4 @@
-PostSchema = new ORM.Schema({
+PostSchema = {
   subject:{
     type:String,
   },
@@ -29,7 +29,7 @@ PostSchema = new ORM.Schema({
     type:[Object],
     defaultValue:[]
   }
-});
+}
 
 ORM.attachSchema(Posts,PostSchema);
 

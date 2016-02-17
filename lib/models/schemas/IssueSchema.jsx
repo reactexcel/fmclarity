@@ -1,4 +1,4 @@
-IssueSchema = new ORM.Schema({
+IssueSchema = {
 
   name:{
   },
@@ -88,4 +88,4 @@ IssueSchema = new ORM.Schema({
     type:Object,
     inCollection:Users
   }
-});
+}

@@ -1,4 +1,4 @@
-Insurance = new ORM.Schema({
+Insurance = {
 	insurer:{
 		label:"Insurer",
 		size:6
@@ -19,9 +19,9 @@ Insurance = new ORM.Schema({
 		label:"Insurance documents",
 		//input:"attachment",
 	},
-});
+}
 
-SecurityDeposit = new ORM.Schema({
+SecurityDeposit = {
 	purpose:{
 		label:"Purpose",
 	},
@@ -47,9 +47,9 @@ SecurityDeposit = new ORM.Schema({
 	originalHeldBy:{
 		label:"Original held by"
 	}
-})
+}
 
-Parking = new ORM.Schema({  
+Parking = {  
     permanent:{
     	label:"Permanent",
     	size:6
@@ -58,9 +58,9 @@ Parking = new ORM.Schema({
     	label:"Temporary",
     	size:6
     },
-})
+}
 
-LeaseSchema = new ORM.Schema({
+LeaseSchema = {
     commencement: {
     	label:"Lease commencement",
     	size:6
@@ -95,9 +95,9 @@ LeaseSchema = new ORM.Schema({
     	label:"Security deposit",
     	schema:SecurityDeposit
     }
-});
+}
 
-FacilitySchema = new ORM.Schema({
+FacilitySchema = {
     name: {
     	label: "Name",
     	defaultValue: "",
@@ -156,7 +156,7 @@ FacilitySchema = new ORM.Schema({
         	return JSON.parse(JSON.stringify(Config.services));
     	}
     }
-});
+}
 
 ORM.attachSchema(Facilities,FacilitySchema);
 

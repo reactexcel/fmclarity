@@ -27,7 +27,7 @@ FacilityIndexPage = React.createClass({
 
     createNew(callback) {
     	var selectedTeam = this.data.selectedTeam;
-		FM.create("Facility",{
+		Facilities.create({
     		team:{
     			_id:selectedTeam._id,
     			name:selectedTeam.name

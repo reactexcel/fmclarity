@@ -1,14 +1,23 @@
 ORM = {
 
-	schemas:{},
 	collections:{},
-
-	Schema:Schema,
 
 	attachSchema(collection,schema) {
 		var name = collection._name;
-		FM.collections[name] = collection;
-		FM.schemas[name] = schema;
+		ORM.collections[name] = collection;
+
+		_.extend(collection,{
+			getSchema() {
+				return schema
+			},
+			create(item,callback) {
+				Meteor.call(name+'.new',item,null,function(err,id){
+					if(callback) {
+			            callback(collection.findOne({_id:id}));
+			    	}
+				});
+			}
+		})
 
 		createCommonCollectionMethods(name,collection,schema);
 		createAccessMethods(collection,schema);
@@ -24,56 +33,48 @@ ORM = {
 	}
 }
 
-function Schema(schema) {
-	////////////////////////////////////
-	// CollectionFactory.createConstructor
-	// Returns a function that can be called to create a new item
-	// @schema: a schema object that will be used to create an item constructor function
-	////////////////////////////////////
-	var fields = schema;
-	_.extend(this,{
-		getFields() {
-			return fields;
-		},
-		createNewItem(item) {
-			//set up flags and creator
-			var user = Meteor.user();
-			var newItem = {
-				isNewItem:true,
-				creator:user?{
-					_id:user._id,
-					name:user.getName(),
-				}:null,
-			};
-			for(var i in schema) {
-			    var field = schema[i];
-			    if(_.isFunction(field.defaultValue)) {
-			    	newItem[i] = field.defaultValue(item);
-			    }
-			    else if(field.defaultValue!=null) {
-			    	newItem[i] = field.defaultValue;
-			    }
-			    else if(field.type==String) {
-			    	newItem[i] = "";
-			    }
-			    else if(field.type==Number) {
-			    	newItem[i] = null;
-			    }
-			    else if(field.schema!=null) {
-			    	newItem[i] = field.schema.createNewItem(item);
-			    }
-			    else if(_.isArray(field.type)) {
-			    	newItem[i] = [];
-			    }
-			    else if(field.type==Object) {
-			    	newItem[i] = {};
-			    }
-			}
-			return _.extend(newItem,item);
+function createNewItemUsingSchema(schema,item,callback) {
+	//this should probably be in a method
+	// actually it is - in the "new" method
+	//set up flags and creator
+	var user = Meteor.user();
+	var newItem = {
+		isNewItem:true,
+		creator:user?{
+			_id:user._id,
+			name:user.getName(),
+		}:null,
+	};
+	for(var i in schema) {
+		var field = schema[i];
+		if(_.isFunction(field.defaultValue)) {
+		    newItem[i] = field.defaultValue(item);
 		}
-	})
-	return this;
-}
+		else if(field.defaultValue!=null) {
+		    newItem[i] = field.defaultValue;
+		}
+		else if(field.type==String) {
+		    newItem[i] = "";
+		}
+		else if(field.type==Number) {
+		    newItem[i] = null;
+		}
+		else if(field.schema!=null) {
+		    newItem[i] = createNewItemUsingSchema(field.schema,item);
+		}
+		else if(_.isArray(field.type)) {
+		    newItem[i] = [];
+		}
+		else if(field.type==Object) {
+		    newItem[i] = {};
+		}
+	}
+	_.extend(newItem,item);
+	if(callback) {
+		callback(newItem);
+	}
+	return newItem;
+};
 
 function ucfirst(string) {
    	return string.charAt(0).toUpperCase() + string.slice(1);
@@ -82,7 +83,7 @@ function ucfirst(string) {
 function createCommonCollectionMethods(name,collection,schema) {
 
 	var create = function(item) {
-		var newItem = schema.createNewItem(item);
+		var newItem = createNewItemUsingSchema(schema,item);
 		return collection.insert(newItem);
 	}
 	var destroy = function(item) {
@@ -134,7 +135,7 @@ function createAccessMethods(collection,schema) {
 	var helpers = {};
 	// this is bullshit - should put the schema in a sub object accessilble by getSchema()
 	// I'll have to evaluate the impact that this would have on Autoform
-	for(var fieldName in _.omit(schema,'createNewItem')) {
+	for(var fieldName in schema) {
 		var field = schema[fieldName];
 
 		//set up hasOne relationship

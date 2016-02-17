@@ -509,7 +509,7 @@ AutoForm = React.createClass({
 		var component = this;
 		var item = this.state.item;
 		var id = this.props.key||item._id;
-		var schema = this.props.schema.getFields();
+		var schema = this.props.schema;
 		var form = this.props.form||Object.keys(schema);
 		return (
 			<div className="autoform row">

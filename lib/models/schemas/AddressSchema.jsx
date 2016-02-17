@@ -1,4 +1,4 @@
-AddressSchema = new ORM.Schema({
+AddressSchema = {
 	streetNumber:{
 		label:"Street number",
 		size:3
@@ -24,4 +24,4 @@ AddressSchema = new ORM.Schema({
 		label:"Postcode",
 		size:3
 	}
-});
+}

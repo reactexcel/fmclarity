@@ -1,4 +1,4 @@
-FacilityManagerSchema = new ORM.Schema({
+FacilityManagerSchema = {
 	type:{
 		label:"Type",
 	},
@@ -25,4 +25,4 @@ FacilityManagerSchema = new ORM.Schema({
 		label:"Address",
 		schema:AddressSchema,
 	},
-});
+}

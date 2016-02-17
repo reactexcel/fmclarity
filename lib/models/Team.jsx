@@ -3,7 +3,7 @@ var validEmails = {
   'fmclarity.com':'*'
 };
 
-TeamSchema = new ORM.Schema({
+TeamSchema = {
   name: {
     type: String,
     label: "Company Name",
@@ -161,7 +161,7 @@ TeamSchema = new ORM.Schema({
       type: [Object],
       label: "Suppliers"  
     }
-});
+}
 
 ORM.attachSchema(Teams,TeamSchema);
 

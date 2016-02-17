@@ -23,16 +23,3 @@ else {
   		return process.env.METEOR_ENV === "production";
 	};
 }
-
-FM.create = function(collectionName,item,callback) {
-	var collection = FM.collections[collectionName];
-	Meteor.call(collectionName+'.new',item,null,function(err,id){
-		FM.notify("created",{
-			collectionName:collectionName,
-			_id:id
-		});
-		if(callback) {
-			callback(collection.findOne({_id:id}));
-		}
-	});
-}
