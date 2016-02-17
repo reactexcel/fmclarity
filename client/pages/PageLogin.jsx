@@ -24,7 +24,7 @@ Login = React.createClass({
                     break;
                 }
                 component.setState({errorMessage:errorMessage});
-                ReactDOM.findDOMNode(component.refs.email).value = '';
+                /*ReactDOM.findDOMNode(component.refs.email).value = '';*/
                 ReactDOM.findDOMNode(component.refs.password).value = '';
             }
         });
@@ -32,18 +32,13 @@ Login = React.createClass({
         return;
     },
 
-	render() {return (
-    <div className="middle-box text-center loginscreen animated fadeInDown">
+    render() {return (
+    <div className="middle-box loginscreen animated fadeInDown">
         <div>
             <div>
-                <img width="400px" src="img/logo.svg"/>
+                <img width="300px" src="img/logo-horizontal-blue.svg"/>
             </div>
-            <br/>
-            <h3>Welcome</h3>
-            <p>We understand FM. We understand an FM system needs to be simple, save you time, and be a pleasure to use. FM Clarity offers you a new, streamlined FM solution.</p>
-            <br/>
-            <div className="dialog">
-                <h3>Login in to see it in action.</h3>
+            <div style={{marginTop:"30%"}}>
                 { this.state.errorMessage &&
                     <div className="alert alert-danger alert-dismissable">
                     <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
@@ -58,14 +53,14 @@ Login = React.createClass({
                         <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
                     </div>
                     <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
-                    <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
-                    <small>Don't have an account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+                    <div>
+                        <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
+                        <small>Don't have an account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+                    </div>
                 </form>
             </div>
-            <p className="m-t">
-                <small>Small print &copy; 2015</small>
-            </p>
         </div>
     </div>
-	)}
+    )}
 });
+ 

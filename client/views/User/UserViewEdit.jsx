@@ -1,6 +1,29 @@
 UserProfile = React.createClass({
 
-    mixins: [BaseProfilePageMixin],
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	return {
+    		user:this.state.item,
+    		selectedTeam:this.props.team||FM.getSelectedTeam(),
+    	}
+    },
+
+	getInitialState() {
+		return {
+			item:this.props.item
+		}
+	},
+
+	componentWillReceiveProps(newProps) {
+		this.setItem(newProps.item);
+	},
+
+	setItem(newItem) {
+		this.setState({
+			item:newItem
+		});
+	},
 
 	save() {
 		Meteor.call('User.save',this.state.item);

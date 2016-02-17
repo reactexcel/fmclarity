@@ -53,7 +53,11 @@ UserCard = React.createClass({
 		return (
 			<div>
 				{this.state.edit?
-					<UserProfile item={this.props.item} onChange={this.props.onChange}/>
+					<UserProfile 
+						item={this.props.item} 
+						team={this.props.team}
+						onChange={this.props.onChange}
+					/>
 				:
 					<ContactSummary item={this.props.item}/>
 				}

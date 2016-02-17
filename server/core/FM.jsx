@@ -26,15 +26,23 @@ FM.resetTestData = function() {
     var kaplan = TestTeams.create({
         type:"fm",
         name:"Kaplan Australia",
-        email:"xyz@abc.123",
+        email:"kaplan@fmclarity.com",
         phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]        
+        members:[{_id:leo._id},{_id:rich._id}]
+    });
+
+    var incisive = TestTeams.create({
+        type:"fm",
+        name:"Incisive Property",
+        email:"incisive@fmclarity.com",
+        phone:"0400-123-123",
+        members:[{_id:leo._id},{_id:rich._id}]
     });
 
     var clarity = TestTeams.create({
         type:"fm",
         name:"FM Clarity",
-        email:"xyz@abc.123",
+        email:"admin@fmclarity.com",
         phone:"0400-123-123",
         members:[{_id:leo._id},{_id:rich._id}]        
     });

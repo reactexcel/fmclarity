@@ -164,7 +164,7 @@ DashboardOverview = React.createClass({
 			        <div className="row" style={{textAlign:"center",clear:"both"}}>
 						<div className="col-xs-4" style={{padding:0}}>
 							<ProgressArc 
-								title="Open Repairs" 
+								title="New Requests" 
 								thisPeriod = {results['Open'].thisPeriod}
 								lastPeriod = {results['Open'].lastPeriod}
 								color="#3ca773"
@@ -172,7 +172,7 @@ DashboardOverview = React.createClass({
 						</div>
 						<div className="col-xs-4" style={{padding:0}}>
 							<ProgressArc 
-								title="Issued Repairs" 
+								title="Issued Requests" 
 								thisPeriod = {results['Issued'].thisPeriod}
 								lastPeriod = {results['Issued'].lastPeriod}
 								color="#b8e986"
@@ -180,7 +180,7 @@ DashboardOverview = React.createClass({
 						</div>
 						<div className="col-xs-4" style={{padding:0}}>
 							<ProgressArc 
-								title="Closed Repairs" 
+								title="Closed Requests" 
 								thisPeriod = {results['Closed'].thisPeriod}
 								lastPeriod = {results['Closed'].lastPeriod}
 								color="#333333"

@@ -1,10 +1,20 @@
 CHANGELOG.md
 ============
 
+**v0.4.2a**
+
+* Fixed a bug that was causing members added to a new supplier to be incorrectly added to your team - not the suppliers
+* Restyled login page
+* Facility thumbnails now cover full height and width of thumbnails regardless of image aspect ratio
+* Facility card images now cover full height and width of thumbnails regardless of image aspect ratio
+* Fixed bug: When a new facility is created an errant label "CreateNewItem" appears (2✓)
+
 **v0.4.1a**
 
+* Version number at bottom of user profile screen now links to changelog
 * Notifications sorted most to least recent
-* Fixed a problem what was causing the creation of tenants or contacts from facility to fail
+* Fixed a problem what was causing the creation of tenants or contacts on facility to fail
+* Fixed an issue that was causing some supplier and user thumbnails to not display
 
 **v0.4.0a**
 

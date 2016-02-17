@@ -107,7 +107,7 @@ Contact1Line = React.createClass({
 		}
 		return (
             <span className="contact-card contact-card-1line">
-              {profile.name}&nbsp;&nbsp;
+              <a href="#">{profile.name}</a>&nbsp;&nbsp;
               <span className="hidden-xs">
               <i className="fa fa-envelope"></i>&nbsp;&nbsp;
               {profile.email}&nbsp;&nbsp;

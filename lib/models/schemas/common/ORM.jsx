@@ -30,7 +30,11 @@ function Schema(schema) {
 	// Returns a function that can be called to create a new item
 	// @schema: a schema object that will be used to create an item constructor function
 	////////////////////////////////////
-	_.extend(this,schema,{
+	var fields = schema;
+	_.extend(this,{
+		getFields() {
+			return fields;
+		},
 		createNewItem(item) {
 			//set up flags and creator
 			var user = Meteor.user();

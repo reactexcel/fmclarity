@@ -25,9 +25,15 @@ FacilitySummary = React.createClass({
 	    		{/*
 				<div style={{marginTop:"10px",width:"25px",float:"left"}}>
 					<input type="checkbox" />
-				</div>*/}
+				</div>*/
+
+			//style['background'] = 'url(\''+url+'\')';
+			//style['backgroundSize'] = "cover";
+
+				}
 				<div className="facility-thumbnail pull-left">
-				    <img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />
+					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+facility.getThumbUrl()+"')",backgroundSize:"cover"}}/>
+				    {/*<img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />*/}
 				 </div>
 				 <div className="facility-info">
 					<span>

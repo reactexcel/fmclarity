@@ -30,9 +30,6 @@ FacilityViewEdit = React.createClass({
 		this.props.item.save();
 	},
 
-	form1 : ["name","address"],
-	form3 : ["areas","buildingServices"],
-
 	render() {
 		var ready = this.data.ready;
 		if(!ready) return (<div/>);
@@ -47,10 +44,10 @@ FacilityViewEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2><span>{facility.getName()}</span></h2>
 				<CollapseBox title="Property Details">
-				    <AutoForm item={facility} schema={schema} form={this.form1}/>
+				    <AutoForm item={facility} schema={schema} form={["name","address"]}/>
 				</CollapseBox>
 				<CollapseBox title="Documents & images">
-					<AutoForm item={facility} schema={schema} form={['attachments']}/>
+					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
 				<CollapseBox title="Contacts">
 			   		<ContactList 

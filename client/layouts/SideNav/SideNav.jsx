@@ -60,7 +60,7 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}>
                         <i className="fa fa-wrench"></i>
-                        <span className="nav-label">Repairs</span>
+                        <span className="nav-label">Requests</span>
                     </a>
                 </li>
                 }
@@ -68,7 +68,7 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='pmp'?'active':''}>
                     <a href={FlowRouter.path('pmp')}>
                         <i className="fa fa-calendar"></i>
-                        <span className="nav-label">P.M.P.</span>
+                        <span className="nav-label">Maintenence</span>
                     </a>
                 </li>
                 }
@@ -76,7 +76,7 @@ Navigation = React.createClass({
                 <li className={FlowRouter.getRouteName()=='abc'?'active':''}>
                     <a href={FlowRouter.path('abc')}>
                         <i className="fa fa-check-square"></i>
-                        <span className="nav-label">A.B.C.</span>
+                        <span className="nav-label">Compliance</span>
                     </a>
                 </li>
                 }

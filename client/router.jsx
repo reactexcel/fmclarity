@@ -56,7 +56,10 @@ var loggedIn = FlowRouter.group({
       var route;
       if (!(Meteor.loggingIn() || Meteor.userId())) {
         route = FlowRouter.current();
-        if (route.route.name !== 'login') {
+        if (route.route.name == 'login') {
+          Session.set('redirectAfterLogin', '/');
+        }
+        else {
           Session.set('redirectAfterLogin', route.path);
         }
         redirect('/login');
@@ -133,6 +136,13 @@ loggedIn.route('/messages', {
   name: 'messages',
   action() {
     ReactLayout.render(MainLayout,{content:<MessagesPage />});
+  }
+});
+
+loggedIn.route('/roles', {
+  name: 'roles',
+  action() {
+    ReactLayout.render(MainLayout,{content:<RolesPageIndex />});
   }
 });
 

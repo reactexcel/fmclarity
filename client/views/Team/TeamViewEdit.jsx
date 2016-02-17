@@ -11,7 +11,7 @@ TeamViewEdit = React.createClass({
     	}
     	return {
     		selectedTeam:FM.getSelectedTeam(),
-    		team:this.state.team,
+    		team:this.state.item,
     		members:members
     	}
     },
