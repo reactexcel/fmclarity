@@ -1,4 +1,4 @@
-PostSchema = {
+MessageSchema = {
   subject:{
     type:String,
   },
@@ -31,9 +31,9 @@ PostSchema = {
   }
 }
 
-ORM.attachSchema(Posts,PostSchema);
+ORM.attachSchema(Messages,MessageSchema);
 
-Posts.helpers({
+Messages.helpers({
   getInbox() {
     var inboxId = this.inboxId;
     var collection = FM.collections[inboxId.collectionName];
@@ -63,10 +63,10 @@ Posts.helpers({
 });
 
 if(Meteor.isServer) {
-  Meteor.publish("posts",function(){
-    return Posts.find();
+  Meteor.publish("messages",function(){
+    return Messages.find();
   });
 }
 else {
-  Meteor.subscribe("posts");
+  Meteor.subscribe("messages");
 }

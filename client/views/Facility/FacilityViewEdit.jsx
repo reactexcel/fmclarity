@@ -6,7 +6,7 @@ FacilityViewEdit = React.createClass({
     	Meteor.subscribe('users');
 		var facility, schema, team, tenants, contacts, config;
 		facility = this.props.item;
-		schema = FM.schemas['Facility'];
+		schema = Facilities.getSchema();
 		if(facility){
 			team = facility.getTeam();
 			contacts = facility.getContacts();
@@ -37,7 +37,9 @@ FacilityViewEdit = React.createClass({
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
-		var schema = Facilities.getSchema();
+		//so why not just send the collection to the react component and autoform can do the schema
+		// Answer: because not every scema has a collection
+		var schema = this.data.schema;
 		//console.log(config);
 
 		return (

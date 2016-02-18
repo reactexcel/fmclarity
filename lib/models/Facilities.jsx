@@ -160,6 +160,8 @@ FacilitySchema = {
 
 ORM.attachSchema(Facilities,FacilitySchema);
 
+// how would it be if these went in the schema?
+// would make RBAC a lot easier
 Facilities.helpers({
   getIssues() {
   	return Issues.find({"facility._id":this._id}).fetch();

@@ -54,11 +54,7 @@ IssuesIndexPage = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
-	    FM.create("Issue",issue,function(issue){
-            if(callback) {
-            	callback(issue);
-            }	    	
-	    });
+	    Issues.create(issue,callback);
     },
 
     exportIssues(issues) {

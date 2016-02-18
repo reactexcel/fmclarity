@@ -5,7 +5,7 @@ FM.resetTestData = function() {
     Issues.remove({});
     Files.remove({});
     Log.remove({});
-    Posts.remove({});
+    Messages.remove({});
     Facilities.remove({});
 
     // create core developer accounts if they don't exist

@@ -97,7 +97,7 @@ Issues.helpers({
   sendMessage(message,forwardTo) {
     message.inboxId = this.getInboxId();
     message.target = this.getInboxId();
-    Meteor.call("Posts.new",message,function(err,messageId){
+    Meteor.call("Messages.new",message,function(err,messageId){
       message.originalId = messageId;
       if(forwardTo&&forwardTo.length) {
         forwardTo.map(function(recipient){

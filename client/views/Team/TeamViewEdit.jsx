@@ -89,7 +89,7 @@ TeamViewEdit = React.createClass({
     	team = this.state.item;
     	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
-		schema = FM.schemas['Team'];
+		schema = Teams.getSchema();
 		if(!team) {
 			return (
                 <form className="form-inline">

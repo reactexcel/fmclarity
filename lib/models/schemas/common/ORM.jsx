@@ -207,13 +207,13 @@ function createCommonDocumentMethods(name,collection) {
 			}
 		},
 		getMessages() {
-			return Posts.find({inboxId:this.getInboxId()}).fetch();
+			return Messages.find({inboxId:this.getInboxId()}).fetch();
 	  	},
 		getNotifications() {
-			return Posts.find({inboxId:this.getInboxId()}).fetch();
+			return Messages.find({inboxId:this.getInboxId()}).fetch();
 		},
 		getMessageCount() {
-	    	return Posts.find({inboxId:this.getInboxId()}).count();
+	    	return Messages.find({inboxId:this.getInboxId()}).count();
 		},
 		getCreator() {
 			return Users.findOne(this.creator._id);

@@ -5,7 +5,7 @@ NotificationSummary = React.createClass({
     getMeteorData() {
         var query, message, creator;
         query = this.props.item;
-        message = Posts.findOne(query);
+        message = Messages.findOne(query);
         if(message) {
             creator = message.getCreator()
         }

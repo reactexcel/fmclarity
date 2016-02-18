@@ -310,7 +310,7 @@ Teams.helpers({
   sendMessage(message,forwardTo) {
     forwardTo = forwardTo||this.getMembers();
     message.inboxId = this.getInboxId();
-    Meteor.call("Posts.new",message,function(err,messageId){
+    Meteor.call("Messages.new",message,function(err,messageId){
       message.originalId = message.originalId||messageId;
       if(forwardTo&&forwardTo.length) {
         forwardTo.map(function(recipient){

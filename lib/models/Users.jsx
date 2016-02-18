@@ -33,7 +33,7 @@ Meteor.methods({
     return _.extend({},template,item);
   },
   'User.markAllNotificationsAsRead':function(inboxId) {
-    Posts.update({
+    Messages.update({
       "inboxId.collectionName":inboxId.collectionName,
       "inboxId.query":inboxId.query,
       read:false
@@ -74,7 +74,7 @@ Users.helpers({
   sendMessage(message) {
     message.inboxId = this.getInboxId();
     if(message.originalId) {
-      var alreadySent = Posts.findOne({
+      var alreadySent = Messages.findOne({
         inboxId:message.inboxId,
         originalId:message.originalId
       });
@@ -82,7 +82,7 @@ Users.helpers({
         return;
       }
     }
-    Meteor.call("Posts.new",message);
+    Meteor.call("Messages.new",message);
     Meteor.call("User.sendEmail",this,message);
     /*
     Email.send({
@@ -115,7 +115,7 @@ Users.helpers({
     }
   },
   getMessages() {
-    return Posts.find({
+    return Messages.find({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id
     }).fetch();
@@ -124,7 +124,7 @@ Users.helpers({
     return this.emails[0].address;
   },
   getNotifications() {
-    return Posts.find({
+    return Messages.find({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id,
       read:false

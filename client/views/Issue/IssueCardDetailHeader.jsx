@@ -87,7 +87,7 @@ IssueSpecArea = React.createClass({
             content:
                 <AutoForm 
                     item={this.props.item} 
-                    schema={FM.schemas['Issue']} 
+                    schema={Issues.getSchema()} 
                     form={['closeDetails']}
                 >
                     <h2>All done? Great! We just need a few details to finalise the job.</h2>
