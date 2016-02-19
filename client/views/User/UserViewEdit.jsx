@@ -62,7 +62,7 @@ UserProfile = React.createClass({
     	}
     	else {
             input.value = '';
-            team.inviteMember(email, function(err,user){
+            team.inviteMember(email, {role:component.props.role}, function(err,user){
             	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);

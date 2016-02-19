@@ -1,37 +1,146 @@
+RBAC = {
+	getRole(user,item) {
+		return null;
+	}
+}
+
 ORM = {
 
-	collections:{},
+	makeCollection(name) {
 
-	attachSchema(collection,schema) {
-		var name = collection._name;
-		ORM.collections[name] = collection;
+		var collection;
+		if(_.isString(name)) {
+			collection = new Mongo.Collection(name);
+		}
+		else {
+			collection = name;
+		}
 
 		_.extend(collection,{
-			getSchema() {
-				return schema
+			attachSchema:function(schema){
+				this.schema = schema;
+				attachSchema(this,schema);
 			},
+			getSchema() {return this.schema;},
 			create(item,callback) {
 				Meteor.call(name+'.new',item,null,function(err,id){
 					if(callback) {
-			            callback(collection.findOne({_id:id}));
-			    	}
+						callback(collection.findOne({_id:id}));
+					}
 				});
+			},
+			registerMethod(functionName,method){
+				var methodName = name+'.'+functionName;
+				var methods = {};
+				var helpers = {};
+				methods[methodName] = method;
+				Meteor.methods(methods);
+				helpers[functionName] = function(item,ext,callback) {
+					Meteor.call(methodName,this,item,ext,callback);
+				}
+				collection.helpers(helpers);
+			},
+			registerActions(actionMap) {
+				var helpers = {};
+				var methods = {};
+
+				function checkAccessWrapper(action) {
+					var checkAccess = action.checkAccess;
+					return function() {
+						var user = Meteor.user();
+						var item = arguments[0]||this;
+						var role = RBAC.getRole(user,item);
+
+						console.log({
+							'checking access to':item
+						});
+
+						if(checkAccess(role,user,item,arguments)) {
+							return true;
+						}
+						return false;
+					}
+				}
+
+				function methodWrapper(action) {
+					var checkAccess = checkAccessWrapper(action);
+					var method = action.method;
+					return function() {
+						if(checkAccess.apply(arguments)) {
+							console.log('access ok');
+							response = method.apply(null,arguments);
+							if(response) {
+								return response;
+							}
+						}
+					    return FM.throwError('access-denied', 'Error 403', 'Sorry, you don\'t have the required priviledges for that action.');
+					}
+				}
+
+				function helperWrapper(methodName) {
+					return function() {
+						var oldCallback;
+						var lastArg = arguments[arguments.length-1];
+						if(_.isFunction(lastArg)){
+							oldCallback = [].pop.call(arguments);
+						}
+						function callback(err,data) {
+							if(err) {
+								toastr.error(err.details,err.reason);
+							}
+							if(oldCallback) {
+								oldCallback(err,data);
+							}
+						}
+						[].unshift.call(arguments,this);
+						Meteor.apply(methodName,arguments,null,callback);
+					}
+				}
+
+				for(var actionName in actionMap) {
+					var action = actionMap[actionName];
+					if(action.method) {
+						var methodName = name+'.'+actionName;
+						methods[methodName] = methodWrapper(action);
+						helpers[actionName] = helperWrapper(methodName);
+					}
+					if(action.checkAccess) {
+						var checkAccessActionName = 'can'+ucfirst(actionName);
+						helpers[checkAccessActionName] = checkAccessWrapper(action);
+					}
+				}
+				console.log(helpers);
+				this.helpers(helpers);
+				Meteor.methods(methods);
 			}
 		})
 
-		createCommonCollectionMethods(name,collection,schema);
-		createAccessMethods(collection,schema);
-		createCommonDocumentMethods(name,collection);
-
-		collection.before.insert(function (userId, doc) {
-			if(!doc.createdAt) {
-				doc.createdAt = moment().toDate();
-			}
-		});
-
 		return collection;
-	}
+	},
 }
+
+Teams = ORM.makeCollection("Team");
+Issues = ORM.makeCollection("Issue");
+Facilities = ORM.makeCollection("Facility");
+Messages = ORM.makeCollection("Messages");
+Users = ORM.makeCollection(Meteor.users);
+
+function attachSchema(collection,schema) {
+	var name = collection._name;
+
+	createCommonCollectionMethods(name,collection,schema);
+	createAccessMethods(collection,schema);
+	createCommonDocumentMethods(name,collection);
+
+	collection.before.insert(function (userId, doc) {
+		if(!doc.createdAt) {
+			doc.createdAt = moment().toDate();
+		}
+	});
+
+	return collection;
+}
+
 
 function createNewItemUsingSchema(schema,item,callback) {
 	//this should probably be in a method
@@ -109,55 +218,135 @@ function createCommonCollectionMethods(name,collection,schema) {
 }
 
 // create a function that can be used to access a related item
-function makeGetter(collection,fieldName) {
-	return function() {
+function makeHasOneGetter(functions,collection,fieldName,relatedCollection) {
+	var funcName = "get"+ucfirst(fieldName);
+	functions.helpers[funcName] = function() {
 		var item = this[fieldName];
 		if(item&&item._id) {
-			return collection.findOne({_id:item._id})
+			return relatedCollection.findOne({_id:item._id})
 		}
 	}
 }
 
 // create a function that can be used to save a related item
-function makeSetter(fieldName) {
-	return function(item) {
+function makeHasOneSetter(functions,collection,fieldName,relatedCollection) {
+	var funcName = "set"+ucfirst(fieldName);
+	functions.helpers[funcName] = function(item) {
 		var newObject = {};
-		newObject[fieldName] = {
-			_id:item._id,
-			name:item.getName()
-		}
+		newObject[fieldName] = item;
 		this.save(newObject);					
 	}			
 }
 
+// create a function that can be used to access a related item
+function getMany(functions,collection,fieldName,relatedCollection) {
+	var funcName = "get"+ucfirst(fieldName);
+	functions.helpers[funcName] = function(ext) {
+	    if (this[fieldName]&&this[fieldName].length) {
+	      var members = this[fieldName];
+	      var ids = [];
+	      members.map(function(member){
+	        if(member&&member._id) {
+	        	if(!ext||!member.role||member.role==ext.role) {
+		        	ids.push(member._id);
+		        }
+	        }
+	      });
+	      return relatedCollection.find({_id:{$in:ids}}).fetch();
+	    }
+	    return [];
+	}
+}
+
+// create a function that can be used to save a related item
+function makeHasManySet(functions,collection,fieldName,relatedCollection) {
+	collection.registerMethod("set"+ucfirst(fieldName), function(item,obj){
+		var newObject = {};
+		newObject[fieldName] = obj;
+		collection.update(item._id,{$set:newObject});
+	});
+}
+
+function addOne(functions,collection,fieldName,relatedCollection) {
+
+	collection.registerMethod("add"+ucfirst(fieldName.slice(0,-1)), function(item,obj,ext){
+		var newObject = {};
+		newObject[fieldName] = _.extend({},ext,{
+			_id:obj._id,
+			//lastUpdate:now
+			profile:obj
+		});
+		collection.update(item._id,{$push:newObject});
+	});
+}
+
+function makeHasManyRemove(functions,collection,fieldName,relatedCollecton) {
+
+	collection.registerMethod("remove"+ucfirst(fieldName.slice(0,-1)), function(item,obj){
+		var newObject = {};
+		newObject[fieldName] = {_id:obj._id};
+	    collection.update(item._id,{$pull:newObject});
+	});
+}
+
+function makeHasManyCheck(functions,collection,fieldName,relatedCollection) {
+	var singularFieldName = fieldName.slice(0,-1);
+	var funcName = "has"+ucfirst(singularFieldName);
+	functions.helpers[funcName] = function(item) {
+    	var members = this[fieldName];
+    	if(item&&members&&members.length) {
+    		for(var i in members) {
+	    		var member = members[i];
+	    		if(item._id==member._id) {
+	        		return true;
+	        	}
+	        }
+      	}
+	    return false;
+    }
+}
+
 function createAccessMethods(collection,schema) {
 
-	var helpers = {};
-	// this is bullshit - should put the schema in a sub object accessilble by getSchema()
-	// I'll have to evaluate the impact that this would have on Autoform
+	var functions = {
+		helpers:{},
+		methods:{}
+	};
+
 	for(var fieldName in schema) {
 		var field = schema[fieldName];
 
 		//set up hasOne relationship
-		if(field.inCollection) {
-			var getterName = "get"+ucfirst(fieldName);
-			var setterName = "set"+ucfirst(fieldName);
-			helpers[getterName] = makeGetter(field.inCollection,fieldName);
-			helpers[setterName] = makeSetter(fieldName);
+		if(field.relationship) {
+			if(field.relationship.hasOne) {
+				var relatedCollection = field.relationship.hasOne;
+				makeHasOneGetter(functions,collection,fieldName,relatedCollection);
+				makeHasOneSetter(functions,collection,fieldName,relatedCollection);
+			}
+			else if(field.relationship.hasMany) {
+				var relatedCollection = field.relationship.hasMany;
+				getMany(functions,collection,fieldName,relatedCollection);
+				makeHasManySet(functions,collection,fieldName,relatedCollection);
+				addOne(functions,collection,fieldName,relatedCollection);
+				makeHasManyCheck(functions,collection,fieldName,relatedCollection);
+				makeHasManyRemove(functions,collection,fieldName,relatedCollection);
+			}
 		}
 		// otherwise create adhoc access functions
 		else {
 			if(field.getter&&_.isFunction(field.getter)) {
 				var getterName = "get"+ucfirst(fieldName);
-				helpers[getterName] = field.getter;
+				functions.helpers[getterName] = field.getter;
 			}
 			if(field.setter&&_.isFunction(field.setter)) {
 				var setterName = "set"+ucfirst(fieldName);
-				helpers[setterName] = field.setter;
+				functions.helpers[setterName] = field.setter;
 			}
 		}
 	}
-	collection.helpers(helpers);
+
+	collection.helpers(functions.helpers);
+	Meteor.methods(functions.methods);
 }
 
 function createCommonDocumentMethods(name,collection) {
@@ -178,6 +367,12 @@ function createCommonDocumentMethods(name,collection) {
 			// now this is a case where we should have underscore prefix
 			// ONLY have underscore prefix when variable shadowed by access function
 			return this.isNewItem;
+		},
+		eq(item) {
+			return item!=null && item._id==this._id;
+		},
+		getRole(user) {
+			return null;
 		},
 		set(field,value) {
 			var obj = this;

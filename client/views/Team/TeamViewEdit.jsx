@@ -71,7 +71,7 @@ TeamViewEdit = React.createClass({
     	}
     	else {
             input.value = '';
-            selectedTeam.inviteSupplier(email, function(err,supplier){
+            selectedTeam.inviteSupplier(email, null, function(err,supplier){
             	supplier = Teams.findOne(supplier._id);
             	component.setItem(supplier);
             	if(component.props.onChange) {
@@ -122,7 +122,7 @@ TeamViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={members}
 			   			team={team}
-			   			onChange={team.setMembers.bind(team)}
+			   			onChange={team.canInviteMember()?team.setMembers.bind(team):null}
 			   		/>
 				</CollapseBox>
 			   	<CollapseBox title="Config" collapsed={true}>

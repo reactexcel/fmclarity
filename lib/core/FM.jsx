@@ -5,6 +5,29 @@ FM = {
 	schemas:{}
 }
 
+function ucfirst(string) {
+   	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+FM.isValidEmail = function(email) {
+    var temp = email.split('@');
+    var name = temp[0];
+    var server = temp[1];
+    var validEmails = Config.validEmails;
+	if(validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0))) {
+		return ucfirst(name);
+	}
+}
+
+FM.throwError = function(error, reason, details) {  
+	var meteorError = new Meteor.Error(error, reason, details);
+	if (Meteor.isClient) {
+		return meteorError;
+	} else if (Meteor.isServer) {
+		throw meteorError;
+	}
+}
+
 if(Meteor.isClient) {
 	FM.getSelectedTeam = function() {
 	    var selectedTeamQuery = Session.get('selectedTeam');

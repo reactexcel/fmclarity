@@ -27,31 +27,38 @@ FM.resetTestData = function() {
         type:"fm",
         name:"Kaplan Australia",
         email:"kaplan@fmclarity.com",
-        phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]
+        phone:"0400-123-123"
     });
+
+    kaplan.addMember(leo,{role:"support"});
+    kaplan.addMember(rich,{role:"support"});
 
     var incisive = TestTeams.create({
         type:"fm",
         name:"Incisive Property",
         email:"incisive@fmclarity.com",
-        phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]
+        phone:"0400-123-123"
     });
+
+    incisive.addMember(leo,{role:"manager"});
+    incisive.addMember(rich,{role:"manager"});
+
 
     var clarity = TestTeams.create({
         type:"fm",
         name:"FM Clarity",
         email:"admin@fmclarity.com",
-        phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]        
+        phone:"0400-123-123"
     });
+
+    clarity.addMember(leo,{role:"manager"});
+    clarity.addMember(rich,{role:"manager"});
 
     KaplanFacilities.map(function(facilityData){
         var newFacility = TestFacilities.create(facilityData);
         newFacility.setTeam(kaplan);
         if(FM.inDevelopment()) {
-            newFacility.addContact(TestUsers.create());        
+            newFacility.addMember(TestUsers.create(),{role:"contact"});
         }
     })
 
@@ -59,21 +66,25 @@ FM.resetTestData = function() {
 
         TestUsers.createUsers(10);
 
-        TestTeams.create({
+        var normal = TestTeams.create({
             type:"contractor",
             name:"Normal Contractors",
             email:"contractor1@email.com",
-            phone:"0400-123-123",
-            members:[{_id:leo._id},{_id:rich._id}],
+            phone:"0400-123-123"
         });
 
-        TestTeams.create({
+        normal.addMember(leo,{role:"manager"});
+        normal.addMember(rich,{role:"manager"});
+
+        var abnormal = TestTeams.create({
             type:"contractor",
             name:"Abnormal Contractors",
             email:"contractor2@email.com",
-            phone:"0400-123-123",
-            members:[{_id:leo._id},{_id:rich._id}],
+            phone:"0400-123-123"
         });
+
+        abnormal.addMember(leo,{role:"manager"});
+        abnormal.addMember(rich,{role:"manager"});
 
         for(var i=0;i<30;i++) {
             TestIssues.create({

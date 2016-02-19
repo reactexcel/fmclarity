@@ -1,4 +1,3 @@
-Users = Meteor.users;
 
 var template = {
   profile:{
@@ -155,7 +154,7 @@ Users.helpers({
     return this.defaultThumbUrl;
   },
   getTeams() {
-    return Teams.find({'members':{'_id':Meteor.userId()}}).fetch();
+    return Teams.find({"members._id":Meteor.userId()}).fetch();
   },
   getTeam(i) {
     var teams = this.getTeams();

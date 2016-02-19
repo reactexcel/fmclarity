@@ -16,14 +16,15 @@ TeamCard = React.createClass({
 		var component = this;
 		var item = this.props.item;
 		var selectedTeam = FM.getSelectedTeam();
-		var menu = [
-			{
+		var menu = [];
+		if(item&&item.canEdit()) {
+			menu.push({
 				label:(this.state.edit?"View as card":"Edit"),
 				action(){
 					component.toggleEdit()
 				}
-			}
-		];
+			});
+		}
 		if(selectedTeam._id!=item._id) {
 			menu.push({
 				label:"Remove supplier from your team",

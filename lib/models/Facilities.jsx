@@ -132,13 +132,26 @@ FacilitySchema = {
     team: {
     	label: "Team query object",
     },
+    members : {
+      label: "Members",
+      type: [Object],
+      relationship:{
+        "hasMany":Users
+      },
+    },
     contacts : {
+      label: "Contacts",
     	type: [Object],
-    	label: "Tenants"
+      relationship:{
+        "hasMany":Users
+      },
     },
     tenants : {
+      label: "Tenants",
     	type: [Object],
-    	label: "Tenants"
+      relationship:{
+        "hasMany":Users
+      },
     },
     areas: {
     	type:[Object],
@@ -158,7 +171,7 @@ FacilitySchema = {
     }
 }
 
-ORM.attachSchema(Facilities,FacilitySchema);
+Facilities.attachSchema(FacilitySchema);
 
 // how would it be if these went in the schema?
 // would make RBAC a lot easier
@@ -218,57 +231,11 @@ Facilities.helpers({
   	});
   	return availableServices;
   },
-  addContact(contact) {
-  	this.contacts.push({
-        _id:contact._id,
-        name:contact.name,
-        phone:contact.phone,
-        email:contact.email
-  	});
-  	this.save();
-  },
-  getContacts() {
-    if (this.contacts&&this.contacts.length) {
-    	// this is pretty fucking inefficient
-    	// idea - store contactIds and sometimes denormalise by making contacts as well
-    	// perhaps if contacts is empty or if it has "expired"
-      var users = this.contacts;
-      var userIds = [];
-      users.map(function(user){
-        if(user&&user._id) {
-          userIds.push(user._id);
-        }
-      });
-      return Users.find({_id:{$in:userIds}}).fetch();
-    }
-    return [];
-
-  },
-  getTenants() {
-    if (this.tenants&&this.tenants.length) {
-    	// this is pretty fucking inefficient
-    	// idea - store tenantIds and sometimes denormalise by making tenants as well
-    	// perhaps if tenants is empty or if it has "expired"
-    	var tenants = this.tenants;
-    	var tenantIds = [];
-    	tenants.map(function(contact){
-        if(contact&&contact._id) {
-      		tenantIds.push(contact._id);
-        }
-    	});
-    	return Users.find({_id:{$in:tenantIds}}).fetch();
-    }
-    return [];
-
-  },
   getPrimaryContact() {
-  	var id=0;
-  	if(this.contacts&&this.contacts.length) {
-	  	id = this.contacts[0]._id;
+    var contacts = this.getMembers({role:"contact"});
+  	if(contacts&&contacts.length) {
+      return contacts[0]
     }
-  	if(id) {
-  		return Users.findOne(id);
-  	}
   },
   getIssueCount() {
   	return Issues.find({"facility._id":this._id}).count();

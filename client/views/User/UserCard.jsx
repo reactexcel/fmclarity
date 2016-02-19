@@ -56,6 +56,7 @@ UserCard = React.createClass({
 					<UserProfile 
 						item={this.props.item} 
 						team={this.props.team}
+						role={this.props.role}
 						onChange={this.props.onChange}
 					/>
 				:

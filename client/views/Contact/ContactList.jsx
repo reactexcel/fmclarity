@@ -14,6 +14,7 @@ ContactList = React.createClass({
 	            content:<UserCard 
 	            	item={selectedUser} 
 	            	team={this.props.team}
+	            	role={this.props.role}
 	            	onChange={this.handleAdd} 
 	            />
 	        })
@@ -25,12 +26,18 @@ ContactList = React.createClass({
     },
 
     handleAdd(contact) {
-    	var handleChange = this.props.onChange;
-    	var contacts = this.props.items;
-    	contacts.push(contact);
-    	if(handleChange) {
-	    	handleChange(contacts);
-	    }
+    	//todo: Implement the onAdd
+    	if(this.props.onAdd) {
+    		this.props.onAdd(contact);
+    	}
+    	else {
+	    	var handleChange = this.props.onChange;
+	    	var contacts = this.props.items;
+	    	contacts.push(contact);
+	    	if(this.props.onChange) {
+		    	this.props.onChange(contacts);
+		    }
+		}
     },
 
     handleRemove(index) {

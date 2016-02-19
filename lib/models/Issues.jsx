@@ -1,8 +1,4 @@
-///////////////////////////////////////////////////////////
-// Issue.jsx
-// Data model for Issues / Work Request / Repairs
-///////////////////////////////////////////////////////////
-ORM.attachSchema(Issues,IssueSchema);
+Issues.attachSchema(IssueSchema);
 
 Issues.actions = {
   search(params) {

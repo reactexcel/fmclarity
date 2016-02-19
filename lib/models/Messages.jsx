@@ -31,7 +31,7 @@ MessageSchema = {
   }
 }
 
-ORM.attachSchema(Messages,MessageSchema);
+Messages.attachSchema(MessageSchema);
 
 Messages.helpers({
   getInbox() {

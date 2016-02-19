@@ -29,7 +29,7 @@ UserProfileMenu = React.createClass({
     },
 
     render() {
-        if(!this.data.user||!this.data.team) {
+        if(!this.data.user) {
             return (<div/>)
         }
         var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
@@ -48,14 +48,14 @@ UserProfileMenu = React.createClass({
                         <ContactCard item={this.data.user}/>
                     </a>
                 </li>
-                <li className="divider"></li>
-                {this.data.teams.map(function(team){
+                {this.data.teams&&this.data.teams.length?<li className="divider"></li>:null}
+                {this.data.teams&&this.data.teams.length?this.data.teams.map(function(team){
                     return (
-                        <li key={team._id} className={team.name==selectedTeam.name?"active":''} onClick={component.selectTeam.bind(component,team)}>
+                        <li key={team._id} className={team.eq(selectedTeam)?"active":''} onClick={component.selectTeam.bind(component,team)}>
                             <a>{team.name}</a>
                         </li>
                     )
-                })}
+                }):null}
                 <li className="divider"></li>
                 <li>
                     <a href={FlowRouter.path('account')}>

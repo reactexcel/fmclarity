@@ -9,13 +9,16 @@ FacilityViewEdit = React.createClass({
 		schema = Facilities.getSchema();
 		if(facility){
 			team = facility.getTeam();
-			contacts = facility.getContacts();
-			tenants = facility.getTenants();
+			//contacts = facility.getContacts();
+			//tenants = facility.getTenants();
+
+			contacts = facility.getMembers({role:"contact"});
+			tenants = facility.getMembers({role:"tenant"});
 			return {
 				ready:true,
 				facility:facility,
-				contacts:contacts,
 				schema:schema,
+				contacts:contacts,
 				tenants:tenants
 			}
 		}
@@ -30,6 +33,10 @@ FacilityViewEdit = React.createClass({
 		this.props.item.save();
 	},
 
+	addMember(ext,member) {
+		this.data.facility.addMember(member,ext);
+	},
+
 	render() {
 		var ready = this.data.ready;
 		if(!ready) return (<div/>);
@@ -37,10 +44,8 @@ FacilityViewEdit = React.createClass({
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
-		//so why not just send the collection to the react component and autoform can do the schema
-		// Answer: because not every scema has a collection
+		var members = this.data.members;
 		var schema = this.data.schema;
-		//console.log(config);
 
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
@@ -53,14 +58,20 @@ FacilityViewEdit = React.createClass({
 				</CollapseBox>
 				<CollapseBox title="Contacts">
 			   		<ContactList 
-			   			items={contacts} 
-			   			onChange={this.updateField.bind(null,'contacts')}
+			   			items={contacts}
+			   			//items={members}
+			   			role="contact"
+			   			onAdd={this.addMember.bind(null,{role:"contact"})}
+			   			onChange={facility.setContacts.bind(facility)}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Tenants">
 			   		<ContactList 
 			   			items={tenants} 
-			   			onChange={this.updateField.bind(null,'tenants')}
+			   			//items={members}
+			   			role="tenant"
+			   			onAdd={this.addMember.bind(null,{role:"tenant"})}
+			   			onChange={facility.setTenants.bind(facility)}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Lease particulars" collapsed={true}>
