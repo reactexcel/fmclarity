@@ -55,9 +55,10 @@ ContactList = React.createClass({
 
 	render() {
 		var contacts = this.props.items;
-		var canCreate = this.props.onChange!=null;
+		var canCreate = !(this.props.onChange==null&&this.props.onAdd==null);
 		var canDelete = false;
 		var component = this;
+		var team = this.props.team;
 		return (
 			<div className="contact-list">
 			    {contacts?contacts.map(function(contact,idx){
@@ -68,7 +69,7 @@ ContactList = React.createClass({
 			            >
 			            	{canDelete?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
 			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
-					            <ContactCard item={contact}/>
+					            <ContactCard item={contact} team={team}/>
 					        </div>
 			            </div>	
 		            )

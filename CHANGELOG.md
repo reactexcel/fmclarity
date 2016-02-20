@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.4.3a**
+
+* RBAC for facilities, teams
+
 **v0.4.2a**
 
 * Fixed a bug that was causing members added to a new supplier to be incorrectly added to your team - not the suppliers

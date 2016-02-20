@@ -122,7 +122,7 @@ TeamViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={members}
 			   			team={team}
-			   			onChange={team.canInviteMember()?team.setMembers.bind(team):null}
+			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
 			   		/>
 				</CollapseBox>
 			   	<CollapseBox title="Config" collapsed={true}>

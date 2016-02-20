@@ -26,13 +26,8 @@ FacilityIndexPage = React.createClass({
     },
 
     createNew(callback) {
-    	var selectedTeam = this.data.selectedTeam;
-		Facilities.create({
-    		team:{
-    			_id:selectedTeam._id,
-    			name:selectedTeam.name
-    		}
-    	},callback);
+    	//callback not working for some reason
+    	this.data.selectedTeam.addFacility({},callback);
     },
 
 	componentDidMount() {
@@ -52,6 +47,7 @@ FacilityIndexPage = React.createClass({
 
 
 	render() {
+		var team = this.data.selectedTeam;
 		if(!this.data.ready) return <div/>
 		return(		        
 			<div>
@@ -67,7 +63,7 @@ FacilityIndexPage = React.createClass({
 							summary:FacilitySummary,
 							detail:FacilityCard
 						}}
-						newItemCallback={this.createNew}
+						newItemCallback={team.canAddFacility()?this.createNew:null}
 					/>
 				</div>
 			</div>

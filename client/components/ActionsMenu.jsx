@@ -2,7 +2,7 @@ ActionsMenu = React.createClass({
 
 	render() {
 		var icon = this.props.icon||'wrench';
-		if(!this.props.items) {
+		if(!(this.props.items&&this.props.items.length)) {
 			return <div/>
 		}
 		return (

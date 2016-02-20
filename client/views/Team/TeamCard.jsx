@@ -17,9 +17,17 @@ TeamCard = React.createClass({
 		var item = this.props.item;
 		var selectedTeam = FM.getSelectedTeam();
 		var menu = [];
-		if(item&&item.canEdit()) {
+		if(item&&this.state.edit) {
 			menu.push({
-				label:(this.state.edit?"View as card":"Edit"),
+				label:"View as card",
+				action(){
+					component.toggleEdit()
+				}
+			});
+		}
+		if(item&&!this.state.edit&&item.canEdit()) {
+			menu.push({
+				label:"Edit",
 				action(){
 					component.toggleEdit()
 				}

@@ -17,6 +17,7 @@ FacilityViewEdit = React.createClass({
 			return {
 				ready:true,
 				facility:facility,
+				team:facility.getTeam(),
 				schema:schema,
 				contacts:contacts,
 				tenants:tenants
@@ -46,6 +47,7 @@ FacilityViewEdit = React.createClass({
 		var contacts = this.data.contacts;
 		var members = this.data.members;
 		var schema = this.data.schema;
+		var team = this.data.team;
 
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
@@ -61,8 +63,7 @@ FacilityViewEdit = React.createClass({
 			   			items={contacts}
 			   			//items={members}
 			   			role="contact"
-			   			onAdd={this.addMember.bind(null,{role:"contact"})}
-			   			onChange={facility.setContacts.bind(facility)}
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"contact"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Tenants">
@@ -70,8 +71,7 @@ FacilityViewEdit = React.createClass({
 			   			items={tenants} 
 			   			//items={members}
 			   			role="tenant"
-			   			onAdd={this.addMember.bind(null,{role:"tenant"})}
-			   			onChange={facility.setTenants.bind(facility)}
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Lease particulars" collapsed={true}>

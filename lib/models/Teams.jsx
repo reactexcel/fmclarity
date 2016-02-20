@@ -5,21 +5,38 @@ Teams.registerActions({
   inviteMember:{
     method:inviteMember,
     checkAccess(role,user,team,args){
+      console.log(user.profile.name+" is a "+role+" in "+team.name);
+      if(role=="manager") {
+        return true;
+      }
       return false;
     }
   },
   inviteSupplier:{
     method:inviteSupplier,
     checkAccess(role,user,team,args){
-      return true;
+      console.log(user.profile.name+" is a "+role+" in "+team.name);
+      if(role=="manager") {
+        return true;
+      }
+      return false;
+    }
+  },
+  addFacility:{
+    method:addFacility,
+    checkAccess(role,user,team,args) {
+      console.log(user.profile.name+" is a "+role+" in "+team.name);
+      if(role=="manager") {
+        return true;
+      }
+      return false;
     }
   },
   edit:{
     checkAccess(role,user,team,args) {
-      for(var i in team.members) {
-        if(user._id==team.members[i]._id) {
-          return true;
-        }
+      console.log(user.profile.name+" is a "+role+" in "+team.name);
+      if(role=="manager") {
+        return true;
       }
       return false;
     }
@@ -41,10 +58,15 @@ function inviteMember(team,email,ext) {
           name:name,
           email:email
         });
-        //Accounts.sendEnrollmentEmail(id);
+        try {
+          //Accounts.sendEnrollmentEmail(id);
+        }
+        catch(err) {
+          //FM.throwWarning('email-server-error','Email server error:',"Email server not responding. Invitation not sent.")
+        }
       }
       else {
-        return FM.throwError('email-blocked', 'Error 403', 'Sorry, that email address has been blocked.');
+        return FM.throwError('email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.');
       }
     }
     Meteor.call("Team.addMember",team,{_id:id},ext);
@@ -68,15 +90,15 @@ function inviteSupplier(team,email,ext) {
   return supplier||Teams.findOne(id);
 }
 
-Meteor.methods({
-  "Team.addFacility":function(item,facilityQuery) {
-    var facility = Facilities.findOne(facilityQuery);
-    if(facility) {
-      Team.update(item._id,{$push:{_facilities:{_id:facility._id}}});
-      return facility._id;
-    }
-  }
-});
+function addFacility(team,facility) {
+  var newFacility = _.extend({},facility,{
+    team:{
+      _id:team._id,
+      name:team.name
+    }    
+  })
+  return Facilities.create(newFacility);
+}
 
 Teams.helpers({
   sendMessage(message,forwardTo) {

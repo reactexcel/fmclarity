@@ -28,6 +28,10 @@ FM.throwError = function(error, reason, details) {
 	}
 }
 
+FM.throwWarning = function(warning, reason, details) {
+	
+}
+
 if(Meteor.isClient) {
 	FM.getSelectedTeam = function() {
 	    var selectedTeamQuery = Session.get('selectedTeam');

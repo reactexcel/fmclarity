@@ -1,6 +1,11 @@
 RBAC = {
-	getRole(user,item) {
-		return null;
+	getRole(member,item) {
+		for(var i in item.members) {
+			var currentMember = item.members[i];
+			if(currentMember._id==member._id) {
+				return currentMember.role;
+			}
+		}
 	}
 }
 
@@ -51,10 +56,6 @@ ORM = {
 						var item = arguments[0]||this;
 						var role = RBAC.getRole(user,item);
 
-						console.log({
-							'checking access to':item
-						});
-
 						if(checkAccess(role,user,item,arguments)) {
 							return true;
 						}
@@ -62,18 +63,16 @@ ORM = {
 					}
 				}
 
-				function methodWrapper(action) {
+				function methodWrapper(action,actionName) {
 					var checkAccess = checkAccessWrapper(action);
 					var method = action.method;
 					return function() {
-						if(checkAccess.apply(arguments)) {
+						if(checkAccess.apply(null,arguments)) {
 							console.log('access ok');
 							response = method.apply(null,arguments);
-							if(response) {
-								return response;
-							}
+							return response;
 						}
-					    return FM.throwError('access-denied', 'Error 403', 'Sorry, you don\'t have the required priviledges for that action.');
+					    return FM.throwError('access-denied', 'Access denied:', 'Sorry, you don\'t have the required priviledges for that action.');
 					}
 				}
 
@@ -88,7 +87,7 @@ ORM = {
 							if(err) {
 								toastr.error(err.details,err.reason);
 							}
-							if(oldCallback) {
+							else if(oldCallback) {
 								oldCallback(err,data);
 							}
 						}
@@ -101,7 +100,7 @@ ORM = {
 					var action = actionMap[actionName];
 					if(action.method) {
 						var methodName = name+'.'+actionName;
-						methods[methodName] = methodWrapper(action);
+						methods[methodName] = methodWrapper(action,actionName);
 						helpers[actionName] = helperWrapper(methodName);
 					}
 					if(action.checkAccess) {
@@ -109,7 +108,6 @@ ORM = {
 						helpers[checkAccessActionName] = checkAccessWrapper(action);
 					}
 				}
-				console.log(helpers);
 				this.helpers(helpers);
 				Meteor.methods(methods);
 			}
@@ -218,7 +216,7 @@ function createCommonCollectionMethods(name,collection,schema) {
 }
 
 // create a function that can be used to access a related item
-function makeHasOneGetter(functions,collection,fieldName,relatedCollection) {
+function o2oGet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "get"+ucfirst(fieldName);
 	functions.helpers[funcName] = function() {
 		var item = this[fieldName];
@@ -229,7 +227,7 @@ function makeHasOneGetter(functions,collection,fieldName,relatedCollection) {
 }
 
 // create a function that can be used to save a related item
-function makeHasOneSetter(functions,collection,fieldName,relatedCollection) {
+function o2oSet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "set"+ucfirst(fieldName);
 	functions.helpers[funcName] = function(item) {
 		var newObject = {};
@@ -239,15 +237,16 @@ function makeHasOneSetter(functions,collection,fieldName,relatedCollection) {
 }
 
 // create a function that can be used to access a related item
-function getMany(functions,collection,fieldName,relatedCollection) {
+function m2nGet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "get"+ucfirst(fieldName);
-	functions.helpers[funcName] = function(ext) {
+	functions.helpers[funcName] = function(filter) {
 	    if (this[fieldName]&&this[fieldName].length) {
 	      var members = this[fieldName];
 	      var ids = [];
 	      members.map(function(member){
 	        if(member&&member._id) {
-	        	if(!ext||!member.role||member.role==ext.role) {
+	        	//filter by role as specified in filter
+	        	if(!filter||!member.role||member.role==filter.role) {
 		        	ids.push(member._id);
 		        }
 	        }
@@ -259,7 +258,7 @@ function getMany(functions,collection,fieldName,relatedCollection) {
 }
 
 // create a function that can be used to save a related item
-function makeHasManySet(functions,collection,fieldName,relatedCollection) {
+function m2nSet(functions,collection,fieldName,relatedCollection) {
 	collection.registerMethod("set"+ucfirst(fieldName), function(item,obj){
 		var newObject = {};
 		newObject[fieldName] = obj;
@@ -267,20 +266,26 @@ function makeHasManySet(functions,collection,fieldName,relatedCollection) {
 	});
 }
 
-function addOne(functions,collection,fieldName,relatedCollection) {
+function m2nInsert(functions,collection,fieldName,relatedCollection) {
 
-	collection.registerMethod("add"+ucfirst(fieldName.slice(0,-1)), function(item,obj,ext){
+	collection.registerMethod("add"+ucfirst(fieldName.slice(0,-1)), function(item,obj,options){
 		var newObject = {};
-		newObject[fieldName] = _.extend({},ext,{
+		var role = options&&options.role?options.role:"contact";
+		newObject[fieldName] = _.extend({},{
 			_id:obj._id,
-			//lastUpdate:now
-			profile:obj
+			role:role,
+			profile:obj.getProfile?obj.getProfile():obj
 		});
 		collection.update(item._id,{$push:newObject});
+
+		//set role within saved object
+		//var q = {};
+		//q['roles.'+item._id] = role;
+		//relatedCollection.update(obj._id,{$set:q});
 	});
 }
 
-function makeHasManyRemove(functions,collection,fieldName,relatedCollecton) {
+function m2nRemove(functions,collection,fieldName,relatedCollecton) {
 
 	collection.registerMethod("remove"+ucfirst(fieldName.slice(0,-1)), function(item,obj){
 		var newObject = {};
@@ -289,7 +294,7 @@ function makeHasManyRemove(functions,collection,fieldName,relatedCollecton) {
 	});
 }
 
-function makeHasManyCheck(functions,collection,fieldName,relatedCollection) {
+function m2nCheck(functions,collection,fieldName,relatedCollection) {
 	var singularFieldName = fieldName.slice(0,-1);
 	var funcName = "has"+ucfirst(singularFieldName);
 	functions.helpers[funcName] = function(item) {
@@ -320,16 +325,20 @@ function createAccessMethods(collection,schema) {
 		if(field.relationship) {
 			if(field.relationship.hasOne) {
 				var relatedCollection = field.relationship.hasOne;
-				makeHasOneGetter(functions,collection,fieldName,relatedCollection);
-				makeHasOneSetter(functions,collection,fieldName,relatedCollection);
+				o2oGet(functions,collection,fieldName,relatedCollection);
+				o2oSet(functions,collection,fieldName,relatedCollection);
 			}
 			else if(field.relationship.hasMany) {
 				var relatedCollection = field.relationship.hasMany;
-				getMany(functions,collection,fieldName,relatedCollection);
-				makeHasManySet(functions,collection,fieldName,relatedCollection);
-				addOne(functions,collection,fieldName,relatedCollection);
-				makeHasManyCheck(functions,collection,fieldName,relatedCollection);
-				makeHasManyRemove(functions,collection,fieldName,relatedCollection);
+				m2nGet(functions,collection,fieldName,relatedCollection);
+				//m2nSet(functions,collection,fieldName,relatedCollection);
+				m2nInsert(functions,collection,fieldName,relatedCollection);
+				m2nCheck(functions,collection,fieldName,relatedCollection);
+				m2nRemove(functions,collection,fieldName,relatedCollection);
+			}
+			else if(field.relationship.belongsTo) {
+				var relatedCollection = field.relationship.belongsTo;
+				//...?//
 			}
 		}
 		// otherwise create adhoc access functions
