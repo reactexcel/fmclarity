@@ -119,24 +119,24 @@ Issues.helpers({
         return;
       }
       var query = {};
-      query["$or"] = [team].concat(team.suppliers);
-      query["services"] = { $elemMatch : {
+      var ids = [];
+      team.suppliers.map(function(supplier){
+        ids.push(supplier._id);
+      })
+      query = {
+        _id:{$in:ids},
+        services:{$elemMatch:{
           name:this.service.name,
           available:true
-      }};
+        }}
+      };
       if(this.subservice&&this.subservice.name) {
-        query["services.subservices"] = { $elemMatch : {
+        query['services.subservices'] = { $elemMatch : {
             name:this.subservice.name,
             available:true
         }};
       }
       var teams = Teams.find(query).fetch();
-      /*
-      console.log({
-              query:query,
-              teams:teams
-            });
-      */
       return teams;
     }
     return null;

@@ -5,7 +5,6 @@ Teams.registerActions({
   inviteMember:{
     method:inviteMember,
     checkAccess(role,user,team,args){
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }
@@ -15,7 +14,6 @@ Teams.registerActions({
   inviteSupplier:{
     method:inviteSupplier,
     checkAccess(role,user,team,args){
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }
@@ -25,7 +23,6 @@ Teams.registerActions({
   addFacility:{
     method:addFacility,
     checkAccess(role,user,team,args) {
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }
@@ -34,7 +31,6 @@ Teams.registerActions({
   },
   edit:{
     checkAccess(role,user,team,args) {
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }
@@ -89,7 +85,6 @@ function inviteSupplier(team,email,ext) {
   Meteor.call("Team.addSupplier",team,{_id:id},ext);
   return supplier||Teams.findOne(id);
 }
-
 function addFacility(team,facility) {
   var newFacility = _.extend({},facility,{
     team:{
@@ -99,6 +94,28 @@ function addFacility(team,facility) {
   })
   return Facilities.create(newFacility);
 }
+/*
+RBAC.method('addFacility',{
+  authentication(role,user,team,facility) {
+    console.log(user.profile.name+" is a "+role+" in "+team.name);
+    if(role=="manager") {
+      return true;
+    }
+    return false;
+  },
+  validation(role,user,team,facility) {
+    return true;
+  },
+  method(team,facility) {
+    return Facilities.create({
+      team:{
+        _id:team._id,
+        name:team.name
+      }
+    });
+  }
+},Teams);
+*/
 
 Teams.helpers({
   sendMessage(message,forwardTo) {

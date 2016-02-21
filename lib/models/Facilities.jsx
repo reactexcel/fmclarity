@@ -9,7 +9,6 @@ Facilities.registerActions({
     checkAccess(role,user,facility,args) {
       var team = Teams.findOne(facility.team._id);
       var role = RBAC.getRole(user,team);
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }
@@ -20,7 +19,6 @@ Facilities.registerActions({
     checkAccess(role,user,facility,args) {
       var team = Teams.findOne(facility.team._id);
       var role = RBAC.getRole(user,team);
-      console.log(user.profile.name+" is a "+role+" in "+team.name);
       if(role=="manager") {
         return true;
       }

@@ -27,7 +27,15 @@ FacilityIndexPage = React.createClass({
 
     createNew(callback) {
     	//callback not working for some reason
-    	this.data.selectedTeam.addFacility({},callback);
+    	this.data.selectedTeam.addFacility({},function(response){
+    		var newItem = Facilities.findOne(response._id);
+    		if(callback) {
+    			callback(response);
+    		}
+    		Modal.show({
+            	content:<FacilityViewEdit item={newItem} />
+            });
+        })
     },
 
 	componentDidMount() {

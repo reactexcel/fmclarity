@@ -5,6 +5,7 @@ IssueSpecArea = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+        var handle = Meteor.subscribe("contractors");
         var issue = this.props.item;
         if(!issue) {
             return {

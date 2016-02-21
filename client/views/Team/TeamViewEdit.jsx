@@ -71,7 +71,7 @@ TeamViewEdit = React.createClass({
     	}
     	else {
             input.value = '';
-            selectedTeam.inviteSupplier(email, null, function(err,supplier){
+            selectedTeam.inviteSupplier(email, null, function(supplier){
             	supplier = Teams.findOne(supplier._id);
             	component.setItem(supplier);
             	if(component.props.onChange) {

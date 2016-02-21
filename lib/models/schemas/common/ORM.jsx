@@ -1,11 +1,107 @@
+var authenticators = {};
+var validators = {};
+var methods = {};
+
+function authWrapper(f) {
+	return function() {
+		var user = Meteor.user();
+		var item = arguments[0]||this;
+		var role = RBAC.getRole(user,item);
+
+		console.log(user.profile.name+' is a '+role+' in '+item.name);
+
+		if(f(role,user,item,arguments)) {
+			return true;
+		}
+		return false;
+	}
+}
+
+function methodWrapper(methodName,f) {
+	return function() {
+		[].unshift.call(arguments,methodName);
+		//console.log(arguments);
+		if(!RBAC.authenticate.apply(null,arguments)) {
+			return throwError('access-denied','Access Denied:','Sorry, you do not have permission to do that');
+		}
+		else if(!RBAC.validate.apply(null,arguments)) {
+			return throwError('validation-error','Validation Error:','Some of the information you provided is invalid');
+		}
+		else {
+			[].shift.call(arguments);
+			return f.apply(null,arguments);
+		}
+	}
+}
+
+function throwError(error, reason, details) {  
+	var meteorError = new Meteor.Error(error, reason, details);
+	if (Meteor.isClient) {
+		return meteorError;
+	} else if (Meteor.isServer) {
+		throw meteorError;
+	}
+}
+
+function getRole(member,item) {
+	for(var i in item.members) {
+		var currentMember = item.members[i];
+		if(currentMember._id==member._id) {
+			return currentMember.role;
+		}
+	}
+}
+
 RBAC = {
-	getRole(member,item) {
-		for(var i in item.members) {
-			var currentMember = item.members[i];
-			if(currentMember._id==member._id) {
-				return currentMember.role;
+	getRole:getRole,
+	addMethod(methodName,f) {
+		var obj = {};
+		obj[methodName] = methodWrapper(methodName,f);
+		Meteor.methods(obj);
+	},	
+	addAuthentication(methodName,f,collection) {
+		authenticators[methodName] = authWrapper(f);
+		if(collection) {
+			var tmp = methodName.split('.');
+			var fName = tmp[1];
+			var validatorName = 'can'+ucfirst(fName);
+			var obj = {};
+			obj[validatorName] = f;
+			collection.helpers(obj);
+		}
+	},
+	addValidation(methodName,f) {
+		validators[methodName] = authWrapper(f);
+	},
+	method(methodName,functions,collection){
+		for(var i in functions) {
+			var f = functions[i];
+			if(i=='authentication'){
+				this.addAuthentication(methodName,f,collection);
+			}
+			else if(i=='validation'){
+				this.addValidation(methodName,f,collection);
+			}
+			else if(i=='method'){
+				this.addMethod(methodName,f,collection);
 			}
 		}
+	},
+	authenticate() {
+		var methodName = [].shift.call(arguments);
+		var checker = authenticators[methodName];
+		if(checker) {
+			return checker.apply(null,arguments);
+		}
+		return false;
+	},
+	validate() {
+		var methodName = [].shift.call(arguments);
+		var checker = validators[methodName];
+		if(checker) {
+			return checker.apply(null,arguments);
+		}
+		return false;
 	}
 }
 
@@ -27,12 +123,10 @@ ORM = {
 				attachSchema(this,schema);
 			},
 			getSchema() {return this.schema;},
-			create(item,callback) {
-				Meteor.call(name+'.new',item,null,function(err,id){
-					if(callback) {
-						callback(collection.findOne({_id:id}));
-					}
-				});
+			create(item) {
+				var newItem = createNewItemUsingSchema(this.schema,item);
+				var id = collection.insert(newItem);
+				return collection.findOne(id);
 			},
 			registerMethod(functionName,method){
 				var methodName = name+'.'+functionName;
@@ -41,7 +135,11 @@ ORM = {
 				methods[methodName] = method;
 				Meteor.methods(methods);
 				helpers[functionName] = function(item,ext,callback) {
-					Meteor.call(methodName,this,item,ext,callback);
+					Meteor.call(methodName,this,item,ext,function(err,data){
+						if(callback) {
+							callback(data);
+						}
+					});
 				}
 				collection.helpers(helpers);
 			},
@@ -68,7 +166,6 @@ ORM = {
 					var method = action.method;
 					return function() {
 						if(checkAccess.apply(null,arguments)) {
-							console.log('access ok');
 							response = method.apply(null,arguments);
 							return response;
 						}
@@ -88,7 +185,7 @@ ORM = {
 								toastr.error(err.details,err.reason);
 							}
 							else if(oldCallback) {
-								oldCallback(err,data);
+								oldCallback(data);
 							}
 						}
 						[].unshift.call(arguments,this);
@@ -175,6 +272,9 @@ function createNewItemUsingSchema(schema,item,callback) {
 		else if(field.type==Object) {
 		    newItem[i] = {};
 		}
+		else {
+		    newItem[i] = "";
+		}
 	}
 	_.extend(newItem,item);
 	if(callback) {
@@ -191,7 +291,8 @@ function createCommonCollectionMethods(name,collection,schema) {
 
 	var create = function(item) {
 		var newItem = createNewItemUsingSchema(schema,item);
-		return collection.insert(newItem);
+		var id = collection.insert(newItem);
+		return id;
 	}
 	var destroy = function(item) {
 		collection.remove(item._id);
@@ -276,7 +377,7 @@ function m2nInsert(functions,collection,fieldName,relatedCollection) {
 			role:role,
 			profile:obj.getProfile?obj.getProfile():obj
 		});
-		collection.update(item._id,{$push:newObject});
+		var response = collection.update(item._id,{$push:newObject});
 
 		//set role within saved object
 		//var q = {};
