@@ -4,7 +4,6 @@ FM.resetTestData = function() {
     Teams.remove({});
     Issues.remove({});
     Files.remove({});
-    Log.remove({});
     Messages.remove({});
     Facilities.remove({});
 

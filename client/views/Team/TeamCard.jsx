@@ -15,7 +15,7 @@ TeamCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var item = this.props.item;
-		var selectedTeam = FM.getSelectedTeam();
+		var selectedTeam = Session.getSelectedTeam();
 		var menu = [];
 		if(item&&this.state.edit) {
 			menu.push({

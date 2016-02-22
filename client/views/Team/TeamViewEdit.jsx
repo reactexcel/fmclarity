@@ -10,7 +10,7 @@ TeamViewEdit = React.createClass({
     		members = team.getMembers();
     	}
     	return {
-    		selectedTeam:FM.getSelectedTeam(),
+    		selectedTeam:Session.getSelectedTeam(),
     		team:this.state.item,
     		members:members
     	}
@@ -89,7 +89,7 @@ TeamViewEdit = React.createClass({
     	team = this.state.item;
     	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
-		schema = Teams.getSchema();
+		schema = Teams.schema();
 		if(!team) {
 			return (
                 <form className="form-inline">

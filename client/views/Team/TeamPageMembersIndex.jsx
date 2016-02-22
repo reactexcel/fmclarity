@@ -8,7 +8,7 @@ TeamIndexPage = React.createClass({
         var user,team,members,facilities;
         user = Meteor.user();
         if(user) {
-            team = user.getSelectedTeam();
+            team = Session.getSelectedTeam();
             if(team) {
                 members = team.getMembers();
                 facilities = team.getFacilities();

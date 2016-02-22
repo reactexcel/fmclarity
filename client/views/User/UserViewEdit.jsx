@@ -5,7 +5,7 @@ UserProfile = React.createClass({
     getMeteorData() {
     	return {
     		user:this.state.item,
-    		selectedTeam:this.props.team||FM.getSelectedTeam(),
+    		selectedTeam:this.props.team||Session.getSelectedTeam(),
     	}
     },
 
@@ -26,7 +26,7 @@ UserProfile = React.createClass({
 	},
 
 	save() {
-		Meteor.call('User.save',this.state.item);
+		Meteor.call('Users.save',this.state.item);
 	},
 
 	form1 : {

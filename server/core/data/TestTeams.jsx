@@ -5,7 +5,7 @@ TestTeams = {
     create(profile,shouldAddUsers) {
         var team = Teams.findOne({name:profile.name});
         if(!team) {
-            Meteor.call('Team.new',profile);
+            Meteor.call('Teams.new',profile);
 	        team = Teams.findOne({name:profile.name});
         }
         return team;
@@ -13,7 +13,7 @@ TestTeams = {
     createContractors(num){
         for(var i=0;i<num;i++) {
             var newUser = makeRandomUser();
-            Meteor.call('User.new',newUser);
+            Meteor.call('Users.new',newUser);
         }
     },
     getRandomMember(team) {

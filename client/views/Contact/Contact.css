@@ -8,7 +8,9 @@
 }
 
 .contact-card-2line-text {
-	display:inline-block;
+	/*display:inline-block;*/
+	display:block;
+
 	padding:3px 0;
 	white-space:nowrap;
 	line-height: 15px;

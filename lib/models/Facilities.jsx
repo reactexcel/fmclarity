@@ -1,31 +1,23 @@
-Facilities.attachSchema(FacilitySchema);
+Facilities.schema(FacilitySchema);
 
-
-Facilities.registerActions({
-  wipeout:{
-    method:function(facility){
-      Facilities.remove(facility._id);
-    },
-    checkAccess(role,user,facility,args) {
-      var team = Teams.findOne(facility.team._id);
-      var role = RBAC.getRole(user,team);
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
+Facilities.methods({
+  new:{
+    authentication:AuthHelpers.userIsFacilityTeamManager,
+    method:RBAC.lib.create.bind(Facilities)
   },
-  edit:{
-    checkAccess(role,user,facility,args) {
-      var team = Teams.findOne(facility.team._id);
-      var role = RBAC.getRole(user,team);
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
-  }
-});
+  save:{
+    authentication:AuthHelpers.userIsFacilityTeamManager,
+    method:RBAC.lib.save.bind(Facilities)
+  },
+  destroy:{
+    authentication:AuthHelpers.userIsFacilityTeamManager,
+    method:RBAC.lib.destroy.bind(Facilities)
+  },
+  addMember:{
+    authentication:AuthHelpers.userIsFacilityTeamManager,
+    method:RBAC.lib.addMember(Facilities,'members')
+  },
+})
 
 // how would it be if these went in the schema?
 // would make RBAC a lot easier

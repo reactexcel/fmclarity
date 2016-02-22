@@ -6,7 +6,7 @@ TeamProfilePage = React.createClass({
     	var user, team;
     	user = Meteor.user();
     	if(user) {
-    		team = user.getSelectedTeam();
+    		team = Session.getSelectedTeam();
     	}
 		return {
 			team:team

@@ -1,121 +1,106 @@
 
-Teams.attachSchema(TeamSchema);
+Teams.schema(TeamSchema);
 
-Teams.registerActions({
-  inviteMember:{
-    method:inviteMember,
-    checkAccess(role,user,team,args){
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
+Teams.methods({
+  new:{
+    authentication:true, //how to handle when creating a supplier?
+    method:RBAC.lib.create.bind(Teams)
   },
-  inviteSupplier:{
-    method:inviteSupplier,
-    checkAccess(role,user,team,args){
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
-  },
-  addFacility:{
-    method:addFacility,
-    checkAccess(role,user,team,args) {
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
+  save:{
+    authentication:true, //how to handle when creating a supplier?
+    method:RBAC.lib.save.bind(Teams)
   },
   edit:{
-    checkAccess(role,user,team,args) {
-      if(role=="manager") {
-        return true;
-      }
-      return false;
-    }
+    authentication:true,
+  },
+  destroy:{
+    authentication:["manager"],
+    method:RBAC.lib.destroy.bind(Teams)
+  },
+  addMember:{
+    authentication:["manager"],
+    method:RBAC.lib.addMember(Teams,'members')
+  },
+  removeMember:{
+    authentication:["manager"],
+    method:RBAC.lib.removeMember(Teams,'members')
+  },
+  addSupplier:{
+    authentication:["manager"],
+    method:RBAC.lib.addMember(Teams,'suppliers')
+  },
+  removeSupplier:{
+    authentication:["manager"],
+    method:RBAC.lib.removeMember(Teams,'suppliers')
+  },
+  inviteMember:{
+    authentication:["manager"],
+    method:inviteMember,
+  },
+  inviteSupplier:{
+    authentication:["manager"],
+    method:inviteSupplier,
+  },
+  addFacility:{
+    authentication:["manager"],
+    method:addFacility,
+  },
+  destroyFacility:{
+    authentication:["manager"],
+    method:destroyFacility,
+  },
+  editFacility:{
+    authentication:["manager","support"],
   }
 });
 
 function inviteMember(team,email,ext) {
   var user,id;
-  if(Meteor.isServer) {
-    user = Accounts.findUserByEmail(email);
-    if(user) {
-      id = user._id;
+  //user = Accounts.findUserByEmail(email);
+  user = Users.findOne({emails:{$elemMatch:{address:email}}});
+  if(!user) {
+    var name = FM.isValidEmail(email); // this could be moved to RBAC, or Schema, general purpose validation function
+    if(name) {
+      if(Meteor.isServer) {
+        //Accounts.sendEnrollmentEmail(id);
+        user = Meteor.call("Users.new",{name:name,email:email});
+      }
     }
     else {
-      var name = FM.isValidEmail(email);
-      console.log(name);
-      if(name) {
-        id = Meteor.call("User.new",{
-          name:name,
-          email:email
-        });
-        try {
-          //Accounts.sendEnrollmentEmail(id);
-        }
-        catch(err) {
-          //FM.throwWarning('email-server-error','Email server error:',"Email server not responding. Invitation not sent.")
-        }
-      }
-      else {
-        return FM.throwError('email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.');
-      }
+      return RBAC.error('email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.');
     }
-    Meteor.call("Team.addMember",team,{_id:id},ext);
-    return user||Users.findOne(id);
+  }
+  if(user) {
+    Meteor.call("Teams.addMember",team,{_id:user._id},ext);
+    return user;
   }
 }
 
 function inviteSupplier(team,email,ext) {
-  var supplier, id;
+  var supplier;
   supplier = Teams.findOne({email:email});
-  if(supplier) {
-    id = supplier._id;
-  }
-  else {
-    id = Meteor.call("Team.new",{
+  if(!supplier) {
+    supplier = Meteor.call("Teams.new",{
       type:"contractor",
       email:email
     });
   }
-  Meteor.call("Team.addSupplier",team,{_id:id},ext);
-  return supplier||Teams.findOne(id);
+  Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
+  return supplier;
 }
+
 function addFacility(team,facility) {
-  var newFacility = _.extend({},facility,{
+  return Facilities.create({
     team:{
       _id:team._id,
       name:team.name
-    }    
-  })
-  return Facilities.create(newFacility);
-}
-/*
-RBAC.method('addFacility',{
-  authentication(role,user,team,facility) {
-    console.log(user.profile.name+" is a "+role+" in "+team.name);
-    if(role=="manager") {
-      return true;
     }
-    return false;
-  },
-  validation(role,user,team,facility) {
-    return true;
-  },
-  method(team,facility) {
-    return Facilities.create({
-      team:{
-        _id:team._id,
-        name:team.name
-      }
-    });
-  }
-},Teams);
-*/
+  });
+}
+
+function destroyFacility(team,facility) {
+  return Facilities.remove(facility._id);
+}
 
 Teams.helpers({
   sendMessage(message,forwardTo) {

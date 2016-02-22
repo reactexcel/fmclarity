@@ -9,7 +9,7 @@ IssuesIndexPage = React.createClass({
         Meteor.subscribe('users');
 	    var issues;
     	if(Meteor.user()) {
-	        var facility = Meteor.user().getSelectedFacility();
+	        var facility = Session.getSelectedFacility();
 	        if(facility) {
 	        	issues = facility.getIssues();
 	        }
@@ -38,7 +38,7 @@ IssuesIndexPage = React.createClass({
 
     createNewIssue(callback) {
         var selectedFacility = Meteor.user().getSelectedFacility();
-        var selectedTeam = Meteor.user().getSelectedTeam();
+        var selectedTeam = Session.getSelectedTeam();
         var issue = {
         	costThreshold:selectedTeam.defaultWorkOrderValue
         }
@@ -54,7 +54,7 @@ IssuesIndexPage = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
-	    Meteor.call('Issue.new',issue,function(err,id){
+	    Meteor.call('Issues.new',issue,function(err,id){
 	    	if(callback) {
 	    		var newItem = Issues.findOne(id);
 	    		callback(newItem);

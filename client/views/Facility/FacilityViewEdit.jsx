@@ -6,7 +6,7 @@ FacilityViewEdit = React.createClass({
     	Meteor.subscribe('users');
 		var facility, schema, team, tenants, contacts, config;
 		facility = this.props.item;
-		schema = Facilities.getSchema();
+		schema = Facilities.schema();
 		if(facility){
 			team = facility.getTeam();
 			//contacts = facility.getContacts();

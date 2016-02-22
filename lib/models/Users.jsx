@@ -1,36 +1,33 @@
+Users.methods({
+  new:{
+    authentication:true,
+    method:createUser
+  },
+  save:{
+    authentication:true,//AuthHelpers.userIsUser,
+    method:RBAC.lib.save.bind(Users)
+  },
+  destroy:{
+    authentication:true,//AuthHelpers.userIsManagerofMembersTeam,
+    method:RBAC.lib.destroy.bind(Users)
+  },
+})
 
-var template = {
-  profile:{
-    name:"",
-    firstName:"",
-    lastName:""
-  }
+function createUser(item,password) {
+    if(Meteor.isServer) {
+      var user = {
+        email:item.email,
+        name:item.name,
+        profile:_.extend({
+          thumb:"img/ProfilePlaceholderSuit.png"
+        },item)
+      }
+      var id = Accounts.createUser(user);
+      return Users.findOne(id);
+    }
 }
 
 Meteor.methods({
-  "User.save": function(item) {
-    item.isNewItem = false;
-    Users.upsert(item._id, {$set: _.omit(item, '_id')});
-  },
-  "User.destroy":function(item) {
-    Users.remove(item._id);
-  },
-  "User.new":function(item,password) {
-    var user = {
-      email:item.email,
-      name:item.name,
-      profile:_.extend({
-        thumb:"img/ProfilePlaceholderSuit.png"
-      },item)
-    }
-    if(password) {
-      user.password = password;
-    }
-    return Accounts.createUser(user);
-  },
-  "User.getTemplate":function(item) {
-    return _.extend({},template,item);
-  },
   'User.markAllNotificationsAsRead':function(inboxId) {
     Messages.update({
       "inboxId.collectionName":inboxId.collectionName,
@@ -42,7 +39,7 @@ Meteor.methods({
       multi:true
     });
   },
-  "User.sendEmail":function(user,message) {
+  'User.sendEmail':function(user,message) {
     if(Meteor.isServer&&FM.inProduction()) {
       var element = React.createElement(EmailMessageView,{item:message});
       var html = React.renderToStaticMarkup (element);
@@ -64,12 +61,6 @@ Meteor.methods({
 Users.helpers({
   collectionName:'users',
   defaultThumbUrl:"/img/ProfilePlaceholderSuit.png",
-  save:function(){
-    Meteor.call('User.save',this);
-  },
-  destroy:function() {
-    Meteor.call('User.destroy',this);
-  },
   sendMessage(message) {
     message.inboxId = this.getInboxId();
     if(message.originalId) {

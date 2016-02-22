@@ -137,25 +137,11 @@ FacilitySchema = {
       }*/
     },
     members : {
-      label: "Members",
-      type: [Object],
-      relationship:{
-        "hasMany":Users
-      },
-    },
-    contacts : {
-      label: "Contacts",
-    	type: [Object],
-      relationship:{
-        "hasMany":Users
-      },
-    },
-    tenants : {
-      label: "Tenants",
-    	type: [Object],
-      relationship:{
-        "hasMany":Users
-      },
+        label: "Members",
+        type: [Object],
+        relationship:{
+            "hasMany":Users
+        },
     },
     areas: {
     	type:[Object],

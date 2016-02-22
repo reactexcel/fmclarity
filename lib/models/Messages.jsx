@@ -1,37 +1,19 @@
-MessageSchema = {
-  subject:{
-    type:String,
-  },
-  body:{
-    type:String,
-  },
-  recipient:{
-    type:Object,
-  },
-  allRecipients:{
-    type:[Object],
-    defaultValue:[]
-  },
-  read:{
-    type:Boolean,
-    defaultValue:false
-  },
-  sticky:{
-    type:Boolean,
-    defaultValue:false    
-  },
-  rating:{
-    type:Number,
-    input:"vote",
-    label:"Rating"
-  },
-  commments:{
-    type:[Object],
-    defaultValue:[]
-  }
-}
+Messages.schema(MessageSchema);
 
-Messages.attachSchema(MessageSchema);
+Messages.methods({
+  new:{
+    authentication:true,
+    method:RBAC.lib.create.bind(Messages)
+  },
+  save:{
+    authentication:true,
+    method:RBAC.lib.save.bind(Messages)
+  },
+  destroy:{
+    authentication:true,
+    method:RBAC.lib.destroy.bind(Messages)
+  }
+})
 
 Messages.helpers({
   getInbox() {

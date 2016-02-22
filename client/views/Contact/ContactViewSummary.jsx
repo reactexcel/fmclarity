@@ -82,7 +82,7 @@ Contact2LineWithAvatar = React.createClass({
 					<ContactAvatarSmall item={contact} />
 				</span>
 				<span className="contact-card-2line-text">
-		        	{profile.name}<br/>
+		        	{profile.name} {profile.role?<span className="label label-default pull-right">{profile.role}</span>:null}<br/>
 		        	<span style={{fontSize:"11px",color:"#777"}}>
 		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 		            	{profile.email}&nbsp;&nbsp;
@@ -152,16 +152,21 @@ ContactCard = React.createClass({
 			});
 			profile = {};
 		}
+		var role;
+		if(this.props.team) {
+			role = RBAC.getRole(contact,this.props.team);
+			profile.role = role;
+		}
 		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (
-				<ContactAvatarSmall item={contact} />
+				<ContactAvatarSmall item={contact}/>
 			);
 			case '1-line':return (
-				<Contact1Line item={contact} />
+				<Contact1Line item={contact}/>
 			);
 			default:return (
-				<Contact2LineWithAvatar item={contact} />
+				<Contact2LineWithAvatar item={contact}/>
 	        );
 		}
 	}

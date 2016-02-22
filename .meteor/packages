@@ -5,6 +5,9 @@
 # but you can also edit it by hand.
 
 
+fmc:rbac
+fmc:orm
+
 #aldeed:collection2
 abpetkov:switchery
 cosmos:browserify
@@ -64,4 +67,3 @@ pfafman:filesaver
 harrison:papa-parse
 
 meteorhacks:ssr
-chrismbeckett:toastr

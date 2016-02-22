@@ -8,7 +8,7 @@ UserProfileMenu = React.createClass({
         var user, team, teams, notifications;
         user = Meteor.user();
         if(user) {
-            team = user.getSelectedTeam();
+            team = Session.getSelectedTeam();
             teams = user.getTeams();
             notifications = user.getNotifications();
         }

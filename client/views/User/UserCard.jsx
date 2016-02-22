@@ -27,7 +27,7 @@ UserCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var user = this.props.item;
-		var selectedTeam = this.props.team||FM.getSelectedTeam();
+		var selectedTeam = this.props.team||Session.getSelectedTeam();
 		var menu = [
 			{
 				label:(this.state.edit?"View as card":"Edit"),

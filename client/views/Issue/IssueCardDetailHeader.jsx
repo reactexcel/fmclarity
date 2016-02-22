@@ -14,12 +14,12 @@ IssueSpecArea = React.createClass({
         }
         else {
             var selectedTeam, suppliers;
-            selectedTeam = FM.getSelectedTeam();
+            selectedTeam = Session.getSelectedTeam();
 
             var facility, facilityContacts, facilityContact;
             facility = issue.getFacility();
             if(facility) {
-                facilityContacts = facility.getContacts();
+                facilityContacts = facility.getMembers({role:'contact'});
                 facilityContact = facilityContacts?facilityContacts[0]:null;
             }
 
@@ -88,7 +88,7 @@ IssueSpecArea = React.createClass({
             content:
                 <AutoForm 
                     item={this.props.item} 
-                    schema={Issues.getSchema()} 
+                    schema={Issues.schema()} 
                     form={['closeDetails']}
                 >
                     <h2>All done? Great! We just need a few details to finalise the job.</h2>

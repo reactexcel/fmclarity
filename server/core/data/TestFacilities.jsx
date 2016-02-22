@@ -5,7 +5,7 @@ TestFacilities = {
     create(profile,team) {
         var item = Facilities.findOne({name:profile.name});
         if(!item) {
-            Meteor.call('Facility.new',profile);
+            Meteor.call('Facilities.new',profile);
 	        item = Facilities.findOne({name:profile.name});
         }
         return item;

@@ -5,7 +5,7 @@ SupplierIndexPage = React.createClass({
     getMeteorData() {
         Meteor.subscribe('contractors');
         var team, suppliers;
-        team = FM.getSelectedTeam();
+        team = Session.getSelectedTeam();
         if(team) {
             suppliers = team.getSuppliers();
         }

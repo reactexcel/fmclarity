@@ -1,4 +1,35 @@
-Issues.attachSchema(IssueSchema);
+Issues.schema(IssueSchema);
+
+Issues.methods({
+  new:{
+    authentication:true,
+    method:RBAC.lib.create.bind(Issues)
+  },
+  save:{
+    authentication:true,
+    method:RBAC.lib.save.bind(Issues)
+  },
+  destroy:{
+    authentication:true,
+    method:RBAC.lib.destroy.bind(Issues)
+  },
+  setFacility:{
+    authentication:true,
+    method:RBAC.lib.setItem(Issues,'facility')
+  },
+  setTeam:{
+    authentication:true,
+    method:RBAC.lib.setItem(Issues,'team')
+  },
+  setSupplier:{
+    authentication:true,
+    method:RBAC.lib.setItem(Issues,'supplier')
+  },
+  setAssignee:{
+    authentication:true,
+    method:RBAC.lib.setItem(Issues,'assignee')
+  }
+})
 
 Issues.actions = {
   search(params) {
