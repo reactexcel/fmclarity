@@ -242,5 +242,5 @@ TestIssueGenerator.generate = function(extension) {
 			name:team.getName()
 		}
 	}
-	return Issues.findOne(Meteor.call('Issues.new',issueData));
+	return Issues.findOne(Meteor.call('Issues.create',issueData));
 }

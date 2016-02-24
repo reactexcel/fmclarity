@@ -54,9 +54,9 @@ IssuesIndexPage = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
-	    Meteor.call('Issues.new',issue,function(err,id){
+	    Meteor.call('Issues.create',issue,function(err,response){
 	    	if(callback) {
-	    		var newItem = Issues.findOne(id);
+	    		var newItem = Issues.findOne(response._id);
 	    		callback(newItem);
 	    	}
 	    });

@@ -101,6 +101,11 @@ TeamViewEdit = React.createClass({
                 </form>
             )
 		}
+		else if(!team.canSave()) {
+			return (
+				<TeamViewDetail item={team} />
+			)
+		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Contractor not found, please enter the details to add to your contact.</b>:null}

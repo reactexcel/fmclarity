@@ -39,7 +39,7 @@ FM.resetTestData = function() {
         phone:"0400-123-123"
     });
 
-    incisive.addMember(leo,{role:"manager"});
+    incisive.addMember(leo,{role:"staff"});
     incisive.addMember(rich,{role:"manager"});
 
 
@@ -63,7 +63,13 @@ FM.resetTestData = function() {
 
     if(FM.inDevelopment()) {
 
-        TestUsers.createUsers(10);
+        //TestUsers.createUsers(10);
+
+        kaplan.addMember(TestUsers.create(),{role:"staff"});
+        kaplan.addMember(TestUsers.create(),{role:"staff"});
+
+        incisive.addMember(TestUsers.create(),{role:"staff"});
+        incisive.addMember(TestUsers.create(),{role:"staff"});
 
         var normal = TestTeams.create({
             type:"contractor",
@@ -74,6 +80,8 @@ FM.resetTestData = function() {
 
         normal.addMember(leo,{role:"manager"});
         normal.addMember(rich,{role:"manager"});
+        normal.addMember(TestUsers.create(),{role:"staff"});
+        normal.addMember(TestUsers.create(),{role:"staff"});
 
         var abnormal = TestTeams.create({
             type:"contractor",
@@ -82,8 +90,8 @@ FM.resetTestData = function() {
             phone:"0400-123-123"
         });
 
-        abnormal.addMember(leo,{role:"manager"});
-        abnormal.addMember(rich,{role:"manager"});
+        abnormal.addMember(TestUsers.create(),{role:"manager"});
+        abnormal.addMember(TestUsers.create(),{role:"staff"});
 
         for(var i=0;i<30;i++) {
             TestIssues.create({

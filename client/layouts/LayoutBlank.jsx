@@ -4,6 +4,7 @@ BlankLayout = React.createClass({
 	    //$('body').prepend('<div id="pattern-bg" class="pattern-bg"/>');
 	},
 	componentWillUnmount() {
+	    //$('body').removeClass('md-skin');
 	    //$('body').removeClass('gradient-bg');
 	    //$('#pattern-bg').remove();
 	},

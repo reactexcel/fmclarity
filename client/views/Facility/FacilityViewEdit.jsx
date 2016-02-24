@@ -49,6 +49,14 @@ FacilityViewEdit = React.createClass({
 		var schema = this.data.schema;
 		var team = this.data.team;
 
+		if(!facility&&facility.canCreate()) {
+			//show facility creation information
+		}
+		else if(!facility.canSave()) {
+			return (
+				<FacilityViewDetail item={facility} />
+			)			
+		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2><span>{facility.getName()}</span></h2>

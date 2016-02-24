@@ -1,10 +1,10 @@
 Users.methods({
-  new:{
+  create:{
     authentication:true,
     method:createUser
   },
   save:{
-    authentication:true,//AuthHelpers.userIsUser,
+    authentication:AuthHelpers.currentUserOrCreator,
     method:RBAC.lib.save.bind(Users)
   },
   destroy:{
@@ -14,17 +14,25 @@ Users.methods({
 })
 
 function createUser(item,password) {
-    if(Meteor.isServer) {
-      var user = {
-        email:item.email,
-        name:item.name,
-        profile:_.extend({
-          thumb:"img/ProfilePlaceholderSuit.png"
-        },item)
-      }
-      var id = Accounts.createUser(user);
-      return Users.findOne(id);
+  if(Meteor.isServer) {
+    var creator = Meteor.user();
+    var user = {
+      email:item.email,
+      name:item.name,
+      profile:_.extend({
+        thumb:"img/ProfilePlaceholderSuit.png"
+      },item)
     }
+    var id = Accounts.createUser(user);
+    var user = Users.findOne(id);
+    Users.update(id,{$set:{
+      creator:{
+        _id:creator._id,
+        name:creator.name
+      }
+    }});
+    return user;
+  }
 }
 
 Meteor.methods({
@@ -72,7 +80,7 @@ Users.helpers({
         return;
       }
     }
-    Meteor.call("Messages.new",message);
+    Meteor.call("Messages.create",message);
     Meteor.call("User.sendEmail",this,message);
     /*
     Email.send({

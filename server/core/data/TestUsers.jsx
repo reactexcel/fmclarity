@@ -12,7 +12,7 @@ TestUsers = {
         }
         if(!user) {
             password = password||'fm1q2w3e';
-            Meteor.call('Users.new',profile,password);
+            Meteor.call('Users.create',profile,password);
             user = Accounts.findUserByEmail(profile.email);
         }
         return user;
@@ -20,7 +20,7 @@ TestUsers = {
     createUsers(num){
         for(var i=0;i<num;i++) {
             var newUser = makeRandomUser();
-            Meteor.call('Users.new',newUser);
+            Meteor.call('Users.create',newUser);
         }
     }
 

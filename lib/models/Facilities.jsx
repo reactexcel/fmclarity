@@ -1,22 +1,26 @@
 Facilities.schema(FacilitySchema);
 
 Facilities.methods({
-  new:{
-    authentication:AuthHelpers.userIsFacilityTeamManager,
+  create:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.create.bind(Facilities)
   },
   save:{
-    authentication:AuthHelpers.userIsFacilityTeamManager,
+    authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.save.bind(Facilities)
   },
   destroy:{
-    authentication:AuthHelpers.userIsFacilityTeamManager,
+    authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.destroy.bind(Facilities)
   },
   addMember:{
-    authentication:AuthHelpers.userIsFacilityTeamManager,
+    authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.addMember(Facilities,'members')
   },
+  removeMember:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:RBAC.lib.removeMember(Facilities,'members')
+  }
 })
 
 // how would it be if these went in the schema?
@@ -25,6 +29,9 @@ Facilities.helpers({
   getIssues() {
   	return Issues.find({"facility._id":this._id}).fetch();
   },
+  getTeam() {
+    return Teams.findOne(this.team._id);
+  },  
   setTeam(team) {
   	this.save({
   		team:{
@@ -32,9 +39,6 @@ Facilities.helpers({
   			name:team.name
   		}
   	})
-  },
-  getTeam() {
-  	return Teams.findOne(this.team._id);
   },
   isNew() {
   	return this.name==null||this.name.length==0;
@@ -44,8 +48,14 @@ Facilities.helpers({
   	return this.name;
   },
   getAddress() {
+    var str = '';
   	var a = this.address;
-  	return a.streetNumber+' '+a.streetName+' '+a.streetType+', '+a.city;
+    if(a) {
+      str = a.streetNumber+
+      ' '+a.streetName+
+      ' '+a.streetType+
+      (a.city?(', '+a.city):null);
+    }
   },
   getAreas() {
   	var areas = [];

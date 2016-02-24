@@ -1,15 +1,3 @@
-UserProfileWidget= React.createClass({
-	render() {
-		return (
-			<FlipWidget
-				front={ContactSummary}
-				back={UserProfile}
-				item={this.props.item}
-			/>
-		)
-	}
-});
-
 UserCard = React.createClass({
 
 	getInitialState() {
@@ -28,14 +16,17 @@ UserCard = React.createClass({
 		var component = this;
 		var user = this.props.item;
 		var selectedTeam = this.props.team||Session.getSelectedTeam();
-		var menu = [
-			{
-				label:(this.state.edit?"View as card":"Edit"),
+		var menu = [];
+
+		if(user&&user.canSave()) {
+			menu.push({
+				label:this.state.edit?"View as card":"Edit",
 				action(){
 					component.toggleEdit()
 				}
-			}
-		];
+			});
+		}
+
 		if(selectedTeam&&selectedTeam.hasMember(user)&&!user.isLoggedIn()) {
 			menu.push({
 				label:"Remove from "+selectedTeam.getName(),
@@ -50,17 +41,18 @@ UserCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
+		var user = this.props.item;
 		return (
 			<div>
-				{this.state.edit?
+				{(!user||user.canSave())&&this.state.edit?
 					<UserProfile 
-						item={this.props.item} 
+						item={user} 
 						team={this.props.team}
 						role={this.props.role}
 						onChange={this.props.onChange}
 					/>
 				:
-					<ContactSummary item={this.props.item}/>
+					<ContactSummary item={user}/>
 				}
             	<ActionsMenu items={menu} />
 			</div>

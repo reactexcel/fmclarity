@@ -2,55 +2,73 @@
 Teams.schema(TeamSchema);
 
 Teams.methods({
-  new:{
-    authentication:true, //how to handle when creating a supplier?
+  create:{
+    authentication:true,
     method:RBAC.lib.create.bind(Teams)
   },
+  /*read:{
+    //or should we use something that can be passed to subscription?
+    Meteor.publish("userData", function () {
+      return Meteor.users.find({_id: this.userId},
+        {fields: {'other': 1, 'things': 1}});
+    });
+
+    fields(role,user,query){
+      if(role=="unauthorised") {
+        return {
+          sensitiveField1:0,
+          sensitiveField2:0
+        }
+      }
+    }
+  },*/
+  //update?
   save:{
-    authentication:true, //how to handle when creating a supplier?
+    authentication:AuthHelpers.managerOrCreator,
     method:RBAC.lib.save.bind(Teams)
   },
-  edit:{
-    authentication:true,
-  },
+  //delete?
   destroy:{
-    authentication:["manager"],
+    authentication:false,
     method:RBAC.lib.destroy.bind(Teams)
   },
+
+  inviteMember:{
+    authentication:AuthHelpers.managerOrCreator,
+    method:inviteMember,
+  },
   addMember:{
-    authentication:["manager"],
+    authentication:AuthHelpers.managerOrCreator,
     method:RBAC.lib.addMember(Teams,'members')
   },
   removeMember:{
-    authentication:["manager"],
+    authentication:AuthHelpers.managerOrCreator,
     method:RBAC.lib.removeMember(Teams,'members')
   },
+
+  inviteSupplier:{
+    authentication:AuthHelpers.manager,
+    method:inviteSupplier,
+  },
   addSupplier:{
-    authentication:["manager"],
+    authentication:AuthHelpers.manager,
     method:RBAC.lib.addMember(Teams,'suppliers')
   },
   removeSupplier:{
-    authentication:["manager"],
+    authentication:AuthHelpers.manager,
     method:RBAC.lib.removeMember(Teams,'suppliers')
   },
-  inviteMember:{
-    authentication:["manager"],
-    method:inviteMember,
-  },
-  inviteSupplier:{
-    authentication:["manager"],
-    method:inviteSupplier,
-  },
+
   addFacility:{
-    authentication:["manager"],
+    authentication:AuthHelpers.manager,
     method:addFacility,
   },
   destroyFacility:{
-    authentication:["manager"],
+    authentication:AuthHelpers.manager,
     method:destroyFacility,
   },
   editFacility:{
-    authentication:["manager","support"],
+    authentication:AuthHelpers.manager,
   }
 });
 
@@ -63,7 +81,7 @@ function inviteMember(team,email,ext) {
     if(name) {
       if(Meteor.isServer) {
         //Accounts.sendEnrollmentEmail(id);
-        user = Meteor.call("Users.new",{name:name,email:email});
+        user = Meteor.call("Users.create",{name:name,email:email});
       }
     }
     else {
@@ -80,7 +98,7 @@ function inviteSupplier(team,email,ext) {
   var supplier;
   supplier = Teams.findOne({email:email});
   if(!supplier) {
-    supplier = Meteor.call("Teams.new",{
+    supplier = Meteor.call("Teams.create",{
       type:"contractor",
       email:email
     });
@@ -106,7 +124,7 @@ Teams.helpers({
   sendMessage(message,forwardTo) {
     forwardTo = forwardTo||this.getMembers();
     message.inboxId = this.getInboxId();
-    Meteor.call("Messages.new",message,function(err,messageId){
+    Meteor.call("Messages.create",message,function(err,messageId){
       message.originalId = message.originalId||messageId;
       if(forwardTo&&forwardTo.length) {
         forwardTo.map(function(recipient){

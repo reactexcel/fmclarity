@@ -51,7 +51,6 @@ AutoInput.FileField = React.createClass({
 
 	render() {
 		var file = this.data.file;
-		console.log(this.props.value);
 		if(file) {
 			return (
 				<div>
@@ -141,11 +140,12 @@ AutoInput.Thumbnail = React.createClass({
 
 		Meteor.subscribe('File');
     	
-    	var query,file,name,url,extension,icon,isImage;
+    	var query,file,name,url,extension,icon,isImage,progress;
     	query = this.props.item;
     	file = Files.findOne(query);
     	if(file) {
     		url = file.url();
+    		progress = file.uploadProgress();
     		extension = file.extension();
     		name = file.name();
     		isImage = file.isImage();
@@ -205,13 +205,46 @@ AutoInput.Thumbnail = React.createClass({
 		}
 	},
 
+	componentDidMount() {
+		$(this.refs.progress).knob({
+        	readOnly:true,
+			format:function (value) {
+     			return value + '%';
+  			}
+        });
+	},
+
+	componentDidUpdate() {
+		//console.log('updating');
+		if(this.data.file&&!this.data.file.isUploaded()) {
+			//console.log('rendering');
+			$(this.refs.progress)
+				.val(this.data.file.uploadProgress())
+				.trigger("change");
+		}
+	},	
+
 	render() {
-		if(this.data.icon) {
+		if(this.data.file) {
 			return(
 				<div className="fm-icon">
 					<div title={this.data.name} onClick={this.onClick}>
-						{this.data.isImage
-						?
+						{
+						!this.data.file.isUploaded()?
+							<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
+
+									<input 
+										ref="progress" 
+										type="text" 
+										defaultValue={0}
+										data-max={100} 
+										className="dial m-r-sm" 
+										data-fgcolor="#3ca773"
+										data-width="80" 
+										data-height="80" 
+									/>
+						    </div>
+						:this.data.isImage?
 							<div style={{width:"100%",overflow:"hidden",cursor:"pointer"}}>
 						    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
 						    </div>

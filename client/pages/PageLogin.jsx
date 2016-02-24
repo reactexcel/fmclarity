@@ -6,11 +6,15 @@ Login = React.createClass({
         }
     },
 
+    componentWillMount() {
+        Meteor.logout();
+    },
+
     handleSubmit (e) {
         e.preventDefault();
         var component = this;
-        var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
-        var password = ReactDOM.findDOMNode(this.refs.password).value.trim();
+        var email = this.refs.email.value.trim();
+        var password = this.refs.password.value.trim();
         if (!email) {//} || !password) {
             return;
         }
@@ -25,7 +29,7 @@ Login = React.createClass({
                 }
                 component.setState({errorMessage:errorMessage});
                 /*ReactDOM.findDOMNode(component.refs.email).value = '';*/
-                ReactDOM.findDOMNode(component.refs.password).value = '';
+                component.refs.password.value = '';
             }
         });
         // TODO: send request to the server

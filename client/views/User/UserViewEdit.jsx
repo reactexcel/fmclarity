@@ -63,6 +63,7 @@ UserProfile = React.createClass({
     	else {
             input.value = '';
             team.inviteMember(email, {role:component.props.role}, function(user){
+            	user = Users.findOne(user._id);
             	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);
@@ -91,8 +92,8 @@ UserProfile = React.createClass({
      	}
 	},
 
-
 	render() {
+		console.log('whaaa?');
 		var user, profile, team;
 		user = this.state.item;
 		team = this.data.selectedTeam;
@@ -109,6 +110,14 @@ UserProfile = React.createClass({
                     </div>
                 </form>
             )
+		}
+		else if(!user.canSave()) {
+			return (
+				<div>
+					<h1>FUCK!</h1>
+					<UserViewDetail item={user} />
+				</div>
+			)
 		}
 		return (
 		    <div className="ibox-form user-profile-card">

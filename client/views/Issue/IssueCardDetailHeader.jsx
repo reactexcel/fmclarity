@@ -54,6 +54,7 @@ IssueSpecArea = React.createClass({
     },
 
     statusDidChange(issue){
+        //console.log({'callback status change':issue});
         switch(issue.status) {
             case "Closing":
                 this.showModal();
@@ -81,10 +82,11 @@ IssueSpecArea = React.createClass({
     },
 
     showModal() {
+        console.log(this.props.item);
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
             onSubmit:this.progressOrder,
-            onCancel:this.regressOrder,
+            //onCancel:this.regressOrder,
             content:
                 <AutoForm 
                     item={this.props.item} 

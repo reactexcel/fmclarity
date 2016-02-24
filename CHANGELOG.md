@@ -4,6 +4,15 @@ CHANGELOG.md
 **v0.4.3a**
 
 * RBAC for facilities, teams
+* Rewrote core data access models to include server-side authentication and validation
+* Included saving of a users role into ORM
+* Wrote exception handling system with toast error notifications server side
+* Consolidated RBAC ainto separate package
+* Consolidated ORM into separate package
+* Updated all models (Teams, Users, Issues, Facilities) to include authentication functions for every sensitive action
+* Fixed an error which was causing no redirect after login
+* Fixed an error which was causing unepected login page style after logging out
+* Progress indicator on file upload
 
 **v0.4.2a**
 

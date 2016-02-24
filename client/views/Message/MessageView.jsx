@@ -24,7 +24,7 @@ MessageView = React.createClass({
     submit() {
         var input = this.refs.input;
         var inboxId = this.data.inbox.getInboxId();
-        Meteor.call("Messages.new",{
+        Meteor.call("Messages.create",{
             inboxId:inboxId,
             verb:"sent a message to",
             body:input.value

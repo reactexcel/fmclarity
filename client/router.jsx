@@ -56,10 +56,7 @@ var loggedIn = FlowRouter.group({
       var route;
       if (!(Meteor.loggingIn() || Meteor.userId())) {
         route = FlowRouter.current();
-        if (route.route.name == 'login') {
-          Session.set('redirectAfterLogin', '/');
-        }
-        else {
+        if (route.route.name != 'login') {
           Session.set('redirectAfterLogin', route.path);
         }
         redirect('/login');
@@ -81,11 +78,9 @@ var admin = FlowRouter.group({
 
 if(Meteor.isClient) {
   Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin');
-    if (redirect && redirect !== '/login') {
-      Session.set('redirectAfterLogin',null)
-      return FlowRouter.go(redirect);
-    }
+    var redirect = Session.get('redirectAfterLogin')||'/';
+    Session.set('redirectAfterLogin',null)
+    return FlowRouter.go(redirect);
   });
 }
 
@@ -93,7 +88,6 @@ loggedIn.route('/', {
   name: 'root',
   action() {
     FlowRouter.go('/dashboard');
-    //ReactLayout.render(MainLayout,{content:<FacilityIndexPage />});
   }
 });
 
@@ -211,24 +205,11 @@ loggedIn.route('/contacts', {
 loggedIn.route('/logout', {
   name: 'logout',
   action() {
-    return Meteor.logout(function() {
+    Meteor.logout(function() {
       return FlowRouter.go('/');
     });
   }
 });
-/*
-FlowRouter.route('/', {
-  action() {
-    ReactLayout.render(BlankLayout, { content: <Landing /> });
-  }
-});
-
-loggedIn.route('/about', {
-  action() {
-    ReactLayout.render(MainLayout, { content: <About /> });
-  }
-});
-*/
 FlowRouter.notFound = {
   action() {
     ReactLayout.render(BlankLayout, { content: <NotFound /> });

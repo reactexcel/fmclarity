@@ -1,7 +1,7 @@
 Messages.schema(MessageSchema);
 
 Messages.methods({
-  new:{
+  create:{
     authentication:true,
     method:RBAC.lib.create.bind(Messages)
   },
