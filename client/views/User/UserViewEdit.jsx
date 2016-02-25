@@ -1,9 +1,32 @@
 UserProfile = React.createClass({
 
-    mixins: [BaseProfilePageMixin],
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	return {
+    		user:this.state.item,
+    		selectedTeam:this.props.team||Session.getSelectedTeam(),
+    	}
+    },
+
+	getInitialState() {
+		return {
+			item:this.props.item
+		}
+	},
+
+	componentWillReceiveProps(newProps) {
+		this.setItem(newProps.item);
+	},
+
+	setItem(newItem) {
+		this.setState({
+			item:newItem
+		});
+	},
 
 	save() {
-		Meteor.call('User.save',this.state.item);
+		Meteor.call('Users.save',this.state.item);
 	},
 
 	form1 : {
@@ -39,7 +62,8 @@ UserProfile = React.createClass({
     	}
     	else {
             input.value = '';
-            team.inviteMember(email, function(err,user){
+            team.inviteMember(email, {role:component.props.role}, function(user){
+            	user = Users.findOne(user._id);
             	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);
@@ -68,8 +92,8 @@ UserProfile = React.createClass({
      	}
 	},
 
-
 	render() {
+		console.log('whaaa?');
 		var user, profile, team;
 		user = this.state.item;
 		team = this.data.selectedTeam;
@@ -86,6 +110,14 @@ UserProfile = React.createClass({
                     </div>
                 </form>
             )
+		}
+		else if(!user.canSave()) {
+			return (
+				<div>
+					<h1>FUCK!</h1>
+					<UserViewDetail item={user} />
+				</div>
+			)
 		}
 		return (
 		    <div className="ibox-form user-profile-card">

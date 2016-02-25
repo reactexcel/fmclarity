@@ -10,7 +10,7 @@ BaseProfilePageMixin = {
 
     getMeteorData() {
     	return {
-    		selectedTeam:FM.getSelectedTeam()
+    		selectedTeam:Session.getSelectedTeam()
     	}
     },
 

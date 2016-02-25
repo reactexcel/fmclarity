@@ -1,18 +1,33 @@
 Schema = {};
 FM = {
-	version:"0.3.26a",
+	version:"0.5.0a",
 	collections:{},
 	schemas:{}
 }
 
+function ucfirst(string) {
+   	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// should be moved to schema based validation
+FM.isValidEmail = function(email) {
+    var temp = email.split('@');
+    var name = temp[0];
+    var server = temp[1];
+    var validEmails = Config.validEmails;
+	if(validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0))) {
+		return ucfirst(name);
+	}
+}
+
 if(Meteor.isClient) {
-	FM.getSelectedTeam = function() {
+	Session.getSelectedTeam = function() {
 	    var selectedTeamQuery = Session.get('selectedTeam');
 	    return Teams.findOne(selectedTeamQuery);
 	}
-	FM.getSelectedFacility = function() {
+	Session.getSelectedFacility = function() {
 	    var selectedFacilityQuery = Session.get('selectedFacility');
-	    return Facility.findOne(selectedFacilityQuery);
+	    return Facilities.findOne(selectedFacilityQuery);
 	}
 }
 else {
@@ -22,17 +37,4 @@ else {
 	FM.inProduction = function () {
   		return process.env.METEOR_ENV === "production";
 	};
-}
-
-FM.create = function(collectionName,item,callback) {
-	var collection = FM.collections[collectionName];
-	Meteor.call(collectionName+'.new',item,null,function(err,id){
-		FM.notify("created",{
-			collectionName:collectionName,
-			_id:id
-		});
-		if(callback) {
-			callback(collection.findOne({_id:id}));
-		}
-	});
 }

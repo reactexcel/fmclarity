@@ -106,10 +106,9 @@ FilterBox2 = React.createClass({
       	<div className="col-lg-6 sm-gutter-right-5px">
         	<div className="filter-box-2 ibox">
         		<div className="ibox-title">
-            		<button 
-              			onClick={this.createNewItem} 
-              			className="card-button new-card-button pull-right"
-            		>+</button>
+                {this.props.newItemCallback==null?null:
+              		<button onClick={this.createNewItem} className="card-button new-card-button pull-right">+</button>
+                }
             		{title?<h5>{title}</h5>:null}
             		{!filters?null:
             			<ol id="filters" className="breadcrumb" style={{backgroundColor:"transparent",padding:"15px 0 15px 20px"}}>

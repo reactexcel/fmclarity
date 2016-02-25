@@ -15,10 +15,10 @@ NotificationList = React.createClass({
                         )
                     })
                 :
-                    <li style={{padding:"0 0 10px 10px",borderBottom:"1px solid #ddd"}}>No new notifications</li>
+                    <li style={{padding:"10px 18px",borderBottom:"1px solid #ddd"}}>No new notifications</li>
                 }
                 <li className="browse-button">
-                    <a style={{paddingBottom:0,marginBottom:0}} href={FlowRouter.path('messages')}>View all</a>
+                    <a href={FlowRouter.path('messages')}>View all</a>
                 </li>
             </ul>
         )

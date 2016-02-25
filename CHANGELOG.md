@@ -1,15 +1,50 @@
 CHANGELOG.md
 ============
 
+**v0.5.0a**
+
+* RBAC completed
+
+**v0.4.3a**
+
+* RBAC for facilities, teams
+* Rewrote core data access models to include server-side authentication and validation
+* Included saving of a users role into ORM
+* Wrote exception handling system with toast error notifications server side
+* Consolidated RBAC ainto separate package
+* Consolidated ORM into separate package
+* Updated all models (Teams, Users, Issues, Facilities) to include authentication functions for every sensitive action
+* Fixed an error which was causing no redirect after login
+* Fixed an error which was causing unepected login page style after logging out
+* Progress indicator on file upload
+
+**v0.4.2a**
+
+* Fixed a bug that was causing members added to a new supplier to be incorrectly added to your team - not the suppliers
+* Restyled login page
+* Facility thumbnails now cover full height and width of thumbnails regardless of image aspect ratio
+* Facility card images now cover full height and width of thumbnails regardless of image aspect ratio
+* Fixed bug: When a new facility is created an errant label "CreateNewItem" appears (2✓)
+
+**v0.4.1a**
+
+* Version number at bottom of user profile screen now links to changelog
+* Notifications sorted most to least recent
+* Fixed a problem what was causing the creation of tenants or contacts on facility to fail
+* Fixed an issue that was causing some supplier and user thumbnails to not display
+
 **v0.4.0a**
+
 * Dashboard linked to issue events
 
 **v0.3.27a**
+
 * Refactor of Object Relational Mapping code to facilitate better calculations of monthly issues for dashboard
 * Completed dashboard line chart
 * Changed status names to prevent empty (-) status for items being created
 
 **v0.3.26a**
+
 * Fixed a bug which was causing app to crash on unexpected facility contact or tenant
 * Fixed a bug which was causing selected item to change when editing
 * Work orders that have not been 

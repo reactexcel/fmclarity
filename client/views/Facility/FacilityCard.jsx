@@ -14,21 +14,24 @@ FacilityCard = React.createClass({
 
 	getMenu() {
 		var component = this;
-		var item = this.props.item;
-		var selectedTeam = FM.getSelectedTeam();
-		var menu = [
-			{
-				label:(this.state.edit?"View as card":"Edit"),
+		var facility = this.props.item;
+
+		var menu = [];
+
+		if(facility&&facility.canSave()) {
+			menu.push({
+				label:this.state.edit?"View as card":"Edit",
 				action(){
 					component.toggleEdit()
 				}
-			}
-		];
-		if(selectedTeam._id!=item._id) {
+			});
+		}
+
+		if(facility.canDestroy()) {
 			menu.push({
 				label:"Delete Facility",
 				action(){
-					item.destroy()
+					facility.destroy();
 				}
 			});
 		}
@@ -37,13 +40,13 @@ FacilityCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
-		//console.log(this.props.item);
+		var item = this.props.item;
 		return (
 			<div>
-			    {this.state.edit?
-			        <FacilityViewEdit item={this.props.item} />
+			    {item.canSave()&&this.state.edit?
+			        <FacilityViewEdit item={item} />
 			    :
-					<FacilityViewDetail item={this.props.item}/>
+					<FacilityViewDetail item={item}/>
 				}
             	<ActionsMenu items={menu} />
 			</div>

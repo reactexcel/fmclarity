@@ -7,7 +7,7 @@ Tracker.autorun(function(){
 	if(handle.ready()){
 		//console.log('checking team');
 		var user = Meteor.user();
-		if(user&&!user.getSelectedTeam()) {
+		if(user&&!Session.getSelectedTeam()) {
 			team = user.getTeam(0);
 			user.selectTeam(team);
 		}

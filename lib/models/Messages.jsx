@@ -1,39 +1,21 @@
-PostSchema = new ORM.Schema({
-  subject:{
-    type:String,
+Messages.schema(MessageSchema);
+
+Messages.methods({
+  create:{
+    authentication:true,
+    method:RBAC.lib.create.bind(Messages)
   },
-  body:{
-    type:String,
+  save:{
+    authentication:true,
+    method:RBAC.lib.save.bind(Messages)
   },
-  recipient:{
-    type:Object,
-  },
-  allRecipients:{
-    type:[Object],
-    defaultValue:[]
-  },
-  read:{
-    type:Boolean,
-    defaultValue:false
-  },
-  sticky:{
-    type:Boolean,
-    defaultValue:false    
-  },
-  rating:{
-    type:Number,
-    input:"vote",
-    label:"Rating"
-  },
-  commments:{
-    type:[Object],
-    defaultValue:[]
+  destroy:{
+    authentication:true,
+    method:RBAC.lib.destroy.bind(Messages)
   }
-});
+})
 
-ORM.attachSchema(Posts,PostSchema);
-
-Posts.helpers({
+Messages.helpers({
   getInbox() {
     var inboxId = this.inboxId;
     var collection = FM.collections[inboxId.collectionName];
@@ -63,10 +45,10 @@ Posts.helpers({
 });
 
 if(Meteor.isServer) {
-  Meteor.publish("posts",function(){
-    return Posts.find();
+  Meteor.publish("messages",function(){
+    return Messages.find();
   });
 }
 else {
-  Meteor.subscribe("posts");
+  Meteor.subscribe("messages");
 }

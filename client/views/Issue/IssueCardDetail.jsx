@@ -1,7 +1,7 @@
 IssueDetail = React.createClass({
 
     saveItem() {
-        Meteor.call('Issue.save',this.props.item);
+        Meteor.call('Issues.save',this.props.item);
     },
 
     componentWillMount: function() {

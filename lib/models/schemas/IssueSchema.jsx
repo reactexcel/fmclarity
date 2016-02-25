@@ -1,4 +1,4 @@
-IssueSchema = new ORM.Schema({
+IssueSchema = {
 
   name:{
   },
@@ -26,7 +26,7 @@ IssueSchema = new ORM.Schema({
   },
 
   status:{
-    defaultValue:"New",
+    defaultValue:"Draft",
   },
 
   costThreshold:{
@@ -71,21 +71,29 @@ IssueSchema = new ORM.Schema({
 
   team:{
     type:Object,
-    inCollection:Teams
+    relationship:{
+      hasOne:Teams
+    }
   },
 
   facility:{
     type:Object,
-    inCollection:Facilities
+    relationship:{
+      hasOne:Facilities
+    }
   },
 
   supplier:{
     type:Object,
-    inCollection:Teams
+    relationship:{
+      hasOne:Teams
+    }
   },
 
   assignee:{
     type:Object,
-    inCollection:Users
+    relationship:{
+      hasOne:Users
+    }
   }
-});
+}

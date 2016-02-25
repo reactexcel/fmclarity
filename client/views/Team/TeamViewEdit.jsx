@@ -10,8 +10,8 @@ TeamViewEdit = React.createClass({
     		members = team.getMembers();
     	}
     	return {
-    		selectedTeam:FM.getSelectedTeam(),
-    		team:this.state.team,
+    		selectedTeam:Session.getSelectedTeam(),
+    		team:this.state.item,
     		members:members
     	}
     },
@@ -71,7 +71,7 @@ TeamViewEdit = React.createClass({
     	}
     	else {
             input.value = '';
-            selectedTeam.inviteSupplier(email, function(err,supplier){
+            selectedTeam.inviteSupplier(email, null, function(supplier){
             	supplier = Teams.findOne(supplier._id);
             	component.setItem(supplier);
             	if(component.props.onChange) {
@@ -89,7 +89,7 @@ TeamViewEdit = React.createClass({
     	team = this.state.item;
     	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
-		schema = FM.schemas['Team'];
+		schema = Teams.schema();
 		if(!team) {
 			return (
                 <form className="form-inline">
@@ -100,6 +100,11 @@ TeamViewEdit = React.createClass({
                     </div>
                 </form>
             )
+		}
+		else if(!team.canSave()) {
+			return (
+				<TeamViewDetail item={team} />
+			)
 		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
@@ -122,7 +127,7 @@ TeamViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={members}
 			   			team={team}
-			   			onChange={team.setMembers.bind(team)}
+			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
 			   		/>
 				</CollapseBox>
 			   	<CollapseBox title="Config" collapsed={true}>

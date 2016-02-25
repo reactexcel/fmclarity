@@ -8,7 +8,7 @@ FacilityIndexPage = React.createClass({
     	var user, selectedTeam, selectedFacility, facilties;
     	user = Meteor.user();
     	if(user) {
-	        selectedTeam = user.getSelectedTeam();
+	        selectedTeam = Session.getSelectedTeam();
     	    if(selectedTeam) {
 	    	    selectedFacility = user.getSelectedFacility();
 	        	facilities = selectedTeam.getFacilities();
@@ -26,13 +26,12 @@ FacilityIndexPage = React.createClass({
     },
 
     createNew(callback) {
-    	var selectedTeam = this.data.selectedTeam;
-		FM.create("Facility",{
-    		team:{
-    			_id:selectedTeam._id,
-    			name:selectedTeam.name
-    		}
-    	},callback);
+    	this.data.selectedTeam.addFacility(function(response){
+    		var newItem = Facilities.findOne(response._id);
+    		Modal.show({
+            	content:<FacilityViewEdit item={newItem} />
+            });
+        })
     },
 
 	componentDidMount() {
@@ -52,6 +51,7 @@ FacilityIndexPage = React.createClass({
 
 
 	render() {
+		var team = this.data.selectedTeam;
 		if(!this.data.ready) return <div/>
 		return(		        
 			<div>
@@ -67,7 +67,7 @@ FacilityIndexPage = React.createClass({
 							summary:FacilitySummary,
 							detail:FacilityCard
 						}}
-						newItemCallback={this.createNew}
+						newItemCallback={team.canAddFacility()?this.createNew:null}
 					/>
 				</div>
 			</div>

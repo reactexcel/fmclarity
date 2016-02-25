@@ -5,7 +5,7 @@ SupplierIndexPage = React.createClass({
     getMeteorData() {
         Meteor.subscribe('contractors');
         var team, suppliers;
-        team = FM.getSelectedTeam();
+        team = Session.getSelectedTeam();
         if(team) {
             suppliers = team.getSuppliers();
         }
@@ -23,6 +23,7 @@ SupplierIndexPage = React.createClass({
     },
 
 	render() {
+        var team = this.data.team;
 		return(
             <div>
                 <div className="row wrapper page-heading">
@@ -33,7 +34,7 @@ SupplierIndexPage = React.createClass({
     	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
     				<FilterBox2 
     					items={this.data.suppliers}
-    					newItemCallback={this.showModal}
+    					newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
     					itemView={{
     						summary:Contact2LineWithAvatar,
     						detail:TeamCard

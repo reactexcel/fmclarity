@@ -1,4 +1,10 @@
 Config = {};
+
+Config.validEmails = {
+  'gmail.com':['mrleokeith','mr.richo'],
+  'fmclarity.com':'*'
+};
+
 Config.areaNames = [
 	"",
 	"Office floor",

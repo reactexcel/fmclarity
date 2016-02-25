@@ -9,7 +9,11 @@ ContactViewName = React.createClass({
 })
 
 ContactAvatarSmall = React.createClass({
-	render() {
+
+	mixins:[ReactMeteorData],
+
+	getMeteorData() {
+		Meteor.subscribe('File');
 		var contact, profile, name, url, style = {};
 		contact = this.props.item;
 		if(contact) {
@@ -18,16 +22,22 @@ ContactAvatarSmall = React.createClass({
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
 		if(url) {
-			style['background'] = 'url('+url+')';
+			style['background'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
 		}
+		return {
+			name:name,
+			style:style
+		}
+	},
+
+	render() {
 		return (
 			<div className="contact-card-avatar">
-				<div title={name} style={style}/>
+				<div title={this.data.name} style={this.data.style}/>
 			</div>
 		)
 	}
-
 });
 
 Contact2Line = React.createClass({
@@ -72,7 +82,7 @@ Contact2LineWithAvatar = React.createClass({
 					<ContactAvatarSmall item={contact} />
 				</span>
 				<span className="contact-card-2line-text">
-		        	{profile.name}<br/>
+		        	{profile.name} {profile.role?<span className="label label-default pull-right">{profile.role}</span>:null}<br/>
 		        	<span style={{fontSize:"11px",color:"#777"}}>
 		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 		            	{profile.email}&nbsp;&nbsp;
@@ -97,7 +107,7 @@ Contact1Line = React.createClass({
 		}
 		return (
             <span className="contact-card contact-card-1line">
-              {profile.name}&nbsp;&nbsp;
+              <a href="#">{profile.name}</a>&nbsp;&nbsp;
               <span className="hidden-xs">
               <i className="fa fa-envelope"></i>&nbsp;&nbsp;
               {profile.email}&nbsp;&nbsp;
@@ -142,16 +152,21 @@ ContactCard = React.createClass({
 			});
 			profile = {};
 		}
+		var role;
+		if(this.props.team) {
+			role = RBAC.getRole(contact,this.props.team);
+			profile.role = role;
+		}
 		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (
-				<ContactAvatarSmall item={contact} />
+				<ContactAvatarSmall item={contact}/>
 			);
 			case '1-line':return (
-				<Contact1Line item={contact} />
+				<Contact1Line item={contact}/>
 			);
 			default:return (
-				<Contact2LineWithAvatar item={contact} />
+				<Contact2LineWithAvatar item={contact}/>
 	        );
 		}
 	}

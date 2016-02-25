@@ -1,9 +1,7 @@
 ContactList = React.createClass({
 
-
-
     showModal(selectedUser) {
-    	if(selectedUser.collectionName=="Team") {
+    	if(selectedUser&&selectedUser.collectionName=="Team") {
 	        Modal.show({
 	            content:<TeamCard 
 	            	item={selectedUser} 
@@ -16,6 +14,7 @@ ContactList = React.createClass({
 	            content:<UserCard 
 	            	item={selectedUser} 
 	            	team={this.props.team}
+	            	role={this.props.role}
 	            	onChange={this.handleAdd} 
 	            />
 	        })
@@ -27,12 +26,18 @@ ContactList = React.createClass({
     },
 
     handleAdd(contact) {
-    	var handleChange = this.props.onChange;
-    	var contacts = this.props.items;
-    	contacts.push(contact);
-    	if(handleChange) {
-	    	handleChange(contacts);
-	    }
+    	//todo: Implement the onAdd
+    	if(this.props.onAdd) {
+    		this.props.onAdd(contact);
+    	}
+    	else {
+	    	var handleChange = this.props.onChange;
+	    	var contacts = this.props.items;
+	    	contacts.push(contact);
+	    	if(this.props.onChange) {
+		    	this.props.onChange(contacts);
+		    }
+		}
     },
 
     handleRemove(index) {
@@ -50,9 +55,9 @@ ContactList = React.createClass({
 
 	render() {
 		var contacts = this.props.items;
-		var canCreate = this.props.onChange!=null;
-		var canDelete = false;
 		var component = this;
+		var team = this.props.team;
+		var canCreate = this.props.onChange||this.props.onAdd;
 		return (
 			<div className="contact-list">
 			    {contacts?contacts.map(function(contact,idx){
@@ -61,9 +66,9 @@ ContactList = React.createClass({
 			            	className="contact-list-item"
 			                key={idx}
 			            >
-			            	{canDelete?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
+			            	{false&&team.canRemoveMember()?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
 			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
-					            <ContactCard item={contact}/>
+					            <ContactCard item={contact} team={team}/>
 					        </div>
 			            </div>	
 		            )

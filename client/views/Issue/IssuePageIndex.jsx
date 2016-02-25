@@ -9,7 +9,7 @@ IssuesIndexPage = React.createClass({
         Meteor.subscribe('users');
 	    var issues;
     	if(Meteor.user()) {
-	        var facility = Meteor.user().getSelectedFacility();
+	        var facility = Session.getSelectedFacility();
 	        if(facility) {
 	        	issues = facility.getIssues();
 	        }
@@ -38,7 +38,7 @@ IssuesIndexPage = React.createClass({
 
     createNewIssue(callback) {
         var selectedFacility = Meteor.user().getSelectedFacility();
-        var selectedTeam = Meteor.user().getSelectedTeam();
+        var selectedTeam = Session.getSelectedTeam();
         var issue = {
         	costThreshold:selectedTeam.defaultWorkOrderValue
         }
@@ -54,11 +54,13 @@ IssuesIndexPage = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
-	    FM.create("Issue",issue,function(issue){
-            if(callback) {
-            	callback(issue);
-            }	    	
+	    Meteor.call('Issues.create',issue,function(err,response){
+	    	if(callback) {
+	    		var newItem = Issues.findOne(response._id);
+	    		callback(newItem);
+	    	}
 	    });
+	    //Issues.create(issue,callback);
     },
 
     exportIssues(issues) {
@@ -178,7 +180,7 @@ IssuesIndexPage = React.createClass({
 			<div>
 		        <div className="row wrapper page-heading">
 		          <div className="col-lg-12">
-                    <FacilityFilter title="Repairs"/>
+                    <FacilityFilter title="Requests"/>
 		          </div>
 		        </div>
 		    	{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}

@@ -5,7 +5,7 @@ FacilityFilter = React.createClass({
     getMeteorData() {
         var user = Meteor.user();
         if(user) {
-            var team = Meteor.user().getSelectedTeam();
+            var team = Session.getSelectedTeam();
             if(team) {
                 return {
                     user : user,

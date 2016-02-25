@@ -6,16 +6,20 @@ FacilityViewEdit = React.createClass({
     	Meteor.subscribe('users');
 		var facility, schema, team, tenants, contacts, config;
 		facility = this.props.item;
-		schema = FM.schemas['Facility'];
+		schema = Facilities.schema();
 		if(facility){
 			team = facility.getTeam();
-			contacts = facility.getContacts();
-			tenants = facility.getTenants();
+			//contacts = facility.getContacts();
+			//tenants = facility.getTenants();
+
+			contacts = facility.getMembers({role:"contact"});
+			tenants = facility.getMembers({role:"tenant"});
 			return {
 				ready:true,
 				facility:facility,
-				contacts:contacts,
+				team:facility.getTeam(),
 				schema:schema,
+				contacts:contacts,
 				tenants:tenants
 			}
 		}
@@ -30,8 +34,9 @@ FacilityViewEdit = React.createClass({
 		this.props.item.save();
 	},
 
-	form1 : ["name","address"],
-	form3 : ["areas","buildingServices"],
+	addMember(ext,member) {
+		this.data.facility.addMember(member,ext);
+	},
 
 	render() {
 		var ready = this.data.ready;
@@ -40,28 +45,41 @@ FacilityViewEdit = React.createClass({
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
 		var contacts = this.data.contacts;
-		var schema = FM.schemas['Facility'];
-		//console.log(config);
+		var members = this.data.members;
+		var schema = this.data.schema;
+		var team = this.data.team;
 
+		if(!facility&&facility.canCreate()) {
+			//show facility creation information
+		}
+		else if(!facility.canSave()) {
+			return (
+				<FacilityViewDetail item={facility} />
+			)			
+		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2><span>{facility.getName()}</span></h2>
 				<CollapseBox title="Property Details">
-				    <AutoForm item={facility} schema={schema} form={this.form1}/>
+				    <AutoForm item={facility} schema={schema} form={["name","address"]}/>
 				</CollapseBox>
 				<CollapseBox title="Documents & images">
-					<AutoForm item={facility} schema={schema} form={['attachments']}/>
+					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
 				<CollapseBox title="Contacts">
 			   		<ContactList 
-			   			items={contacts} 
-			   			onChange={this.updateField.bind(null,'contacts')}
+			   			items={contacts}
+			   			//items={members}
+			   			role="contact"
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"contact"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Tenants">
 			   		<ContactList 
 			   			items={tenants} 
-			   			onChange={this.updateField.bind(null,'tenants')}
+			   			//items={members}
+			   			role="tenant"
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Lease particulars" collapsed={true}>

@@ -70,7 +70,9 @@ MainLayout = React.createClass({
     // Uncomment this if you want to have boxed layout
     // $('body').addClass('boxed-layout');
 
-
+  },
+  componentWillUnmount() {
+     $('body').removeClass('md-skin');
   },
   render() {
     return (

@@ -15,15 +15,18 @@ TeamCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var item = this.props.item;
-		var selectedTeam = FM.getSelectedTeam();
-		var menu = [
-			{
-				label:(this.state.edit?"View as card":"Edit"),
+		var selectedTeam = Session.getSelectedTeam();
+		var menu = [];
+		
+		if(item&&item.canSave()) {
+			menu.push({
+				label:this.state.edit?"View as card":"Edit",
 				action(){
 					component.toggleEdit()
 				}
-			}
-		];
+			});
+		}
+
 		if(selectedTeam._id!=item._id) {
 			menu.push({
 				label:"Remove supplier from your team",
@@ -37,13 +40,13 @@ TeamCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
-		//console.log(this.props.item);
+		var item = this.props.item;
 		return (
 			<div>
-			    {this.state.edit?
-			        <TeamViewEdit item={this.props.item} />
+			    {item.canSave()&&this.state.edit?
+			        <TeamViewEdit item={item} />
 			    :
-					<TeamViewDetail item={this.props.item}/>
+					<TeamViewDetail item={item}/>
 				}
             	<ActionsMenu items={menu} />
 			</div>

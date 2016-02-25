@@ -6,7 +6,7 @@ MessageView = React.createClass({
     getMeteorData() {
         var query, message, creator;
         query = this.props.item;
-        message = Posts.findOne(query);
+        message = Messages.findOne(query);
         if(message) {
             creator = message.getCreator()
         }
@@ -24,7 +24,7 @@ MessageView = React.createClass({
     submit() {
         var input = this.refs.input;
         var inboxId = this.data.inbox.getInboxId();
-        Meteor.call("Posts.new",{
+        Meteor.call("Messages.create",{
             inboxId:inboxId,
             verb:"sent a message to",
             body:input.value

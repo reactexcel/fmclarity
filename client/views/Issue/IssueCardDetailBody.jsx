@@ -11,12 +11,12 @@ IssueDynamicArea = React.createClass({
         }
         else {
             var selectedTeam, suppliers;
-            selectedTeam = FM.getSelectedTeam();
+            selectedTeam = Session.getSelectedTeam();
 
             var facility, facilityContacts, facilityContact;
             facility = issue.getFacility();
             if(facility) {
-                facilityContacts = facility.getContacts();
+                facilityContacts = facility.getMembers({role:'contact'});
                 facilityContact = facilityContacts?facilityContacts[0]:null;
             }
 
@@ -68,7 +68,7 @@ IssueDynamicArea = React.createClass({
                     <IpsoTabso tabs={[
                         {
                             tab:<span><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
-                            content:<AutoForm item={issue} schema={FM.schemas['Issue']} form={['attachments']} save={this.props.save} />
+                            content:<AutoForm item={issue} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
                         },{
                             tab:<span><span>Contacts</span></span>,
                             content:<ContactList items={contacts}/>

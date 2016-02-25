@@ -4,8 +4,7 @@ FM.resetTestData = function() {
     Teams.remove({});
     Issues.remove({});
     Files.remove({});
-    Log.remove({});
-    Posts.remove({});
+    Messages.remove({});
     Facilities.remove({});
 
     // create core developer accounts if they don't exist
@@ -26,46 +25,73 @@ FM.resetTestData = function() {
     var kaplan = TestTeams.create({
         type:"fm",
         name:"Kaplan Australia",
-        email:"xyz@abc.123",
-        phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]        
+        email:"kaplan@fmclarity.com",
+        phone:"0400-123-123"
     });
+
+    kaplan.addMember(leo,{role:"support"});
+    kaplan.addMember(rich,{role:"support"});
+
+    var incisive = TestTeams.create({
+        type:"fm",
+        name:"Incisive Property",
+        email:"incisive@fmclarity.com",
+        phone:"0400-123-123"
+    });
+
+    incisive.addMember(leo,{role:"staff"});
+    incisive.addMember(rich,{role:"manager"});
+
 
     var clarity = TestTeams.create({
         type:"fm",
         name:"FM Clarity",
-        email:"xyz@abc.123",
-        phone:"0400-123-123",
-        members:[{_id:leo._id},{_id:rich._id}]        
+        email:"admin@fmclarity.com",
+        phone:"0400-123-123"
     });
+
+    clarity.addMember(leo,{role:"manager"});
+    clarity.addMember(rich,{role:"manager"});
 
     KaplanFacilities.map(function(facilityData){
         var newFacility = TestFacilities.create(facilityData);
         newFacility.setTeam(kaplan);
         if(FM.inDevelopment()) {
-            newFacility.addContact(TestUsers.create());        
+            newFacility.addMember(TestUsers.create(),{role:"contact"});
         }
     })
 
     if(FM.inDevelopment()) {
 
-        TestUsers.createUsers(10);
+        //TestUsers.createUsers(10);
 
-        TestTeams.create({
+        kaplan.addMember(TestUsers.create(),{role:"staff"});
+        kaplan.addMember(TestUsers.create(),{role:"staff"});
+
+        incisive.addMember(TestUsers.create(),{role:"staff"});
+        incisive.addMember(TestUsers.create(),{role:"staff"});
+
+        var normal = TestTeams.create({
             type:"contractor",
             name:"Normal Contractors",
             email:"contractor1@email.com",
-            phone:"0400-123-123",
-            members:[{_id:leo._id},{_id:rich._id}],
+            phone:"0400-123-123"
         });
 
-        TestTeams.create({
+        normal.addMember(leo,{role:"manager"});
+        normal.addMember(rich,{role:"manager"});
+        normal.addMember(TestUsers.create(),{role:"staff"});
+        normal.addMember(TestUsers.create(),{role:"staff"});
+
+        var abnormal = TestTeams.create({
             type:"contractor",
             name:"Abnormal Contractors",
             email:"contractor2@email.com",
-            phone:"0400-123-123",
-            members:[{_id:leo._id},{_id:rich._id}],
+            phone:"0400-123-123"
         });
+
+        abnormal.addMember(TestUsers.create(),{role:"manager"});
+        abnormal.addMember(TestUsers.create(),{role:"staff"});
 
         for(var i=0;i<30;i++) {
             TestIssues.create({

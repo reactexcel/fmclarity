@@ -158,7 +158,7 @@ TestIssueGenerator = {
 		"It's down the hallway, second door on the right.",
 	],
 	status:[
-		"Open",
+		"New",
 		//"Issued",
 		//"Closed"
 	]
@@ -242,5 +242,5 @@ TestIssueGenerator.generate = function(extension) {
 			name:team.getName()
 		}
 	}
-	return Issues.findOne(Meteor.call('Issue.new',issueData));
+	return Issues.findOne(Meteor.call('Issues.create',issueData));
 }

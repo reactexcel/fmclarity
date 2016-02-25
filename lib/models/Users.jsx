@@ -1,22 +1,21 @@
-Users = Meteor.users;
-
-var template = {
-  profile:{
-    name:"",
-    firstName:"",
-    lastName:""
-  }
-}
-
-Meteor.methods({
-  "User.save": function(item) {
-    item.isNewItem = false;
-    Users.upsert(item._id, {$set: _.omit(item, '_id')});
+Users.methods({
+  create:{
+    authentication:true,
+    method:createUser
   },
-  "User.destroy":function(item) {
-    Users.remove(item._id);
+  save:{
+    authentication:AuthHelpers.currentUserOrCreator,
+    method:RBAC.lib.save.bind(Users)
   },
-  "User.new":function(item,password) {
+  destroy:{
+    authentication:true,//AuthHelpers.userIsManagerofMembersTeam,
+    method:RBAC.lib.destroy.bind(Users)
+  },
+})
+
+function createUser(item,password) {
+  if(Meteor.isServer) {
+    var creator = Meteor.user();
     var user = {
       email:item.email,
       name:item.name,
@@ -24,16 +23,21 @@ Meteor.methods({
         thumb:"img/ProfilePlaceholderSuit.png"
       },item)
     }
-    if(password) {
-      user.password = password;
-    }
-    return Accounts.createUser(user);
-  },
-  "User.getTemplate":function(item) {
-    return _.extend({},template,item);
-  },
+    var id = Accounts.createUser(user);
+    var user = Users.findOne(id);
+    Users.update(id,{$set:{
+      creator:{
+        _id:creator._id,
+        name:creator.name
+      }
+    }});
+    return user;
+  }
+}
+
+Meteor.methods({
   'User.markAllNotificationsAsRead':function(inboxId) {
-    Posts.update({
+    Messages.update({
       "inboxId.collectionName":inboxId.collectionName,
       "inboxId.query":inboxId.query,
       read:false
@@ -43,7 +47,7 @@ Meteor.methods({
       multi:true
     });
   },
-  "User.sendEmail":function(user,message) {
+  'User.sendEmail':function(user,message) {
     if(Meteor.isServer&&FM.inProduction()) {
       var element = React.createElement(EmailMessageView,{item:message});
       var html = React.renderToStaticMarkup (element);
@@ -65,16 +69,10 @@ Meteor.methods({
 Users.helpers({
   collectionName:'users',
   defaultThumbUrl:"/img/ProfilePlaceholderSuit.png",
-  save:function(){
-    Meteor.call('User.save',this);
-  },
-  destroy:function() {
-    Meteor.call('User.destroy',this);
-  },
   sendMessage(message) {
     message.inboxId = this.getInboxId();
     if(message.originalId) {
-      var alreadySent = Posts.findOne({
+      var alreadySent = Messages.findOne({
         inboxId:message.inboxId,
         originalId:message.originalId
       });
@@ -82,7 +80,7 @@ Users.helpers({
         return;
       }
     }
-    Meteor.call("Posts.new",message);
+    Meteor.call("Messages.create",message);
     Meteor.call("User.sendEmail",this,message);
     /*
     Email.send({
@@ -115,7 +113,7 @@ Users.helpers({
     }
   },
   getMessages() {
-    return Posts.find({
+    return Messages.find({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id
     }).fetch();
@@ -124,11 +122,11 @@ Users.helpers({
     return this.emails[0].address;
   },
   getNotifications() {
-    return Posts.find({
+    return Messages.find({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id,
       read:false
-    }).fetch();
+    },{sort:{createdAt:-1}}).fetch();
   },
   markAllNotificationsAsRead() {
     Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());
@@ -155,7 +153,7 @@ Users.helpers({
     return this.defaultThumbUrl;
   },
   getTeams() {
-    return Teams.find({'members':{'_id':Meteor.userId()}}).fetch();
+    return Teams.find({"members._id":Meteor.userId()}).fetch();
   },
   getTeam(i) {
     var teams = this.getTeams();
