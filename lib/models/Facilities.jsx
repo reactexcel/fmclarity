@@ -80,11 +80,11 @@ Facilities.helpers({
   getAvailableServices(parent) {
   	var services = parent?parent.subservices:this.services;
   	var availableServices = [];
-  	services.map(function(service){
+  	services?services.map(function(service){
   		if(service.available) {
   			availableServices.push(service);
   		}
-  	});
+  	}):null;
   	return availableServices;
   },
   getPrimaryContact() {
