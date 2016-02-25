@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.5.0a**
+
+* RBAC completed
+
 **v0.4.3a**
 
 * RBAC for facilities, teams

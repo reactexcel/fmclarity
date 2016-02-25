@@ -47,32 +47,21 @@ IssueSpecArea = React.createClass({
                 assignee:assignee,
 
                 notifications:issue.getNotifications(),
-                actionVerb:issue.getProgressVerb(),
-                regressVerb:issue.getRegressVerb()
             }
         }
     },
 
-    statusDidChange(issue){
+    handleStatusChange(request){
         //console.log({'callback status change':issue});
-        switch(issue.status) {
-            case "Closing":
-                this.showModal();
-            break;
-            default:
-                if(this.props.closeCallback) {
-                    this.props.closeCallback()
-                }
-            break;
+        if(!request) {
+            //handleDestroy
         }
-    },
-
-    progressOrder() {
-        this.data.issue.progress(this.statusDidChange);
-    },
-
-    regressOrder() {
-        this.data.issue.regress();
+        else if(request.status=="Closing") {
+            this.showModal();
+        }
+        else if(this.props.closeCallback) {
+            this.props.closeCallback()
+        }
     },
 
     save() {
@@ -148,11 +137,8 @@ IssueSpecArea = React.createClass({
                     <div className="visible-sm col-sm-4">
                         <IssueActionButtons
                             width="50%"
-                            issue={issue}
-                            progressVerb={actionVerb}
-                            progressAction={this.progressOrder}
-                            regressVerb={regressVerb}
-                            regressAction={this.regressOrder}
+                            item={issue}
+                            onStatusChange={this.handleStatusChange}
                         />
                     </div>
                     <div className="col-xs-12 col-md-11">
@@ -175,7 +161,7 @@ IssueSpecArea = React.createClass({
 			                                <span>{issue.code}</span>&nbsp;
 			                                <b>Cost $</b>
 			                                <span style={{display:"inline-block"}}><AutoInput.Text
-			                                    readOnly={!issue.isEditable()}
+			                                    readOnly={!issue.canSetCost()}
 			                                    value={issue.costThreshold} 
 			                                    onChange={this.updateItem.bind(this,'costThreshold')}
 			                                /></span>
@@ -185,7 +171,7 @@ IssueSpecArea = React.createClass({
 					                    <div className="row">
 					                    	<div className="col-md-12">
 						                        <SuperSelect 
-						                            readOnly={!issue.isEditable()}
+						                            readOnly={!issue.canSetService()}
 						                            itemView={ContactViewName}
 						                            items={services} 
 						                            onChange={this.updateService}
@@ -201,7 +187,7 @@ IssueSpecArea = React.createClass({
 					                        <div className="row">
 				                            	<div className="col-md-12">
 					                            <SuperSelect 
-					                                readOnly={!issue.isEditable()}
+					                                readOnly={!issue.canSetSubService()}
 					                                itemView={ContactViewName}
 					                                items={subservices} 
 					                                onChange={this.updateItem.bind(this,'subservice')}
@@ -216,11 +202,11 @@ IssueSpecArea = React.createClass({
 					                    :null}
 					                </div>
 					                <div className="col-md-3">
-					                    {issue.status?
+					                    {issue.status&&issue.canSetSupplier()?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 					                        <SuperSelect 
-					                            readOnly={!issue.isEditable()}
+					                            readOnly={!issue.canSetSupplier()}
 					                            itemView={ContactViewName}
 					                            items={suppliers} 
 					                            onChange={this.updateItem.bind(this,'supplier')}
@@ -235,10 +221,11 @@ IssueSpecArea = React.createClass({
 					                        </div>
 					                    </div>
 					                    :null}
-					                    {issue.status&&supplier&&selectedTeam&&supplier._id==selectedTeam._id?
+					                    {issue.status&&supplier&&selectedTeam&&issue.canSetAssignee()?
 					                        <div className="row">
 					                        	<div className="col-lg-12">
 					                            <SuperSelect 
+                                                    readOnly={!issue.canSetAssignee()}
 					                                itemView={ContactViewName}
 					                                items={supplier.getMembers()}
 					                                onChange={this.updateItem.bind(this,'assignee')}
@@ -254,11 +241,8 @@ IssueSpecArea = React.createClass({
 		                    </div>{/*col*/}
 		                    <div className="col-xs-12 hidden-sm col-md-2">
                                 <IssueActionButtons
-                                    issue={issue}
-                                    progressVerb={actionVerb}
-                                    progressAction={this.progressOrder}
-                                    regressVerb={regressVerb}
-                                    regressAction={this.regressOrder}
+                                    item={issue}
+                                    onStatusChange={this.handleStatusChange}
                                 />
 		                   	</div>
 		                   	<div className="col-xs-12">
