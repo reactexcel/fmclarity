@@ -82,10 +82,13 @@ IssueSpecArea = React.createClass({
     },
 
     showModal() {
+        var request = this.props.item;
         console.log(this.props.item);
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
-            onSubmit:this.progressOrder,
+            onSubmit:function(){
+                request.close();
+            },
             //onCancel:this.regressOrder,
             content:
                 <AutoForm 
