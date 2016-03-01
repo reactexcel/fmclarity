@@ -27,12 +27,20 @@ exposed.route('/enroll-account/:token', {
   name: 'enroll',
   action(params,queryParams) {
     var token = params.token;
-    Accounts.resetPassword(token,'fart');
+    Accounts.resetPassword(token,'fm1q2w3e');
     Accounts.verifyEmail(token);
     FlowRouter.go('/login');
   }
 });
 
+//probably better called request/:_id
+//also... token required
+exposed.route('/requests/:_id', {
+  name: 'request',
+  action(params) {
+    ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});
+  }
+});
 
 /*
 exposed.route('/register', {
@@ -87,7 +95,7 @@ if(Meteor.isClient) {
 loggedIn.route('/', {
   name: 'root',
   action() {
-    FlowRouter.go('/dashboard');
+    ReactLayout.render(MainLayout,{content:<LandingPage />});
   }
 });
 
@@ -112,13 +120,6 @@ loggedIn.route('/requests', {
   }
 });
 
-exposed.route('/requests/:_id', {
-  name: 'request',
-  action(params) {
-    ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});
-  }
-});
-
 loggedIn.route('/dashboard', {
   name: 'dashboard',
   action() {
@@ -130,13 +131,6 @@ loggedIn.route('/messages', {
   name: 'messages',
   action() {
     ReactLayout.render(MainLayout,{content:<MessagesPage />});
-  }
-});
-
-loggedIn.route('/roles', {
-  name: 'roles',
-  action() {
-    ReactLayout.render(MainLayout,{content:<RolesPageIndex />});
   }
 });
 
@@ -210,6 +204,7 @@ loggedIn.route('/logout', {
     });
   }
 });
+
 FlowRouter.notFound = {
   action() {
     ReactLayout.render(BlankLayout, { content: <NotFound /> });

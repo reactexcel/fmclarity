@@ -57,7 +57,7 @@ IssueDynamicArea = React.createClass({
                     <div className="issue-dynamic-area">
                         <AutoInput.Text 
                             elastic={true}
-                            readOnly={!issue.isEditable()}
+                            readOnly={!issue.canSetDescription()}
                             placeholder="Type issue description here"
                             value={issue.description} 
                             onChange={this.updateItem.bind(this,'description')}

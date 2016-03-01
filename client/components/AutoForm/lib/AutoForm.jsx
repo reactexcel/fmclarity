@@ -245,6 +245,7 @@ AutoInput.Text = React.createClass({
 			return (
                 <textarea 
                 	ref="input"
+                	readOnly={this.props.readOnly}
 					placeholder={this.props.placeholder}
                     className="issue-description-textarea inline-form-control" 
 					defaultValue={this.props.value} 
@@ -256,6 +257,7 @@ AutoInput.Text = React.createClass({
 		<input 
            	ref="input"
 			type="text"
+           	readOnly={this.props.readOnly}
 			placeholder={this.props.placeholder}
 			className="inline-form-control" 
 			defaultValue={this.props.value} 
@@ -511,6 +513,7 @@ AutoForm = React.createClass({
 		var id = this.props.key||item._id;
 		var schema = this.props.schema;
 		var form = this.props.form||Object.keys(schema);
+		
 		return (
 			<div className="autoform row">
 				{this.props.children?
@@ -521,21 +524,18 @@ AutoForm = React.createClass({
 				{form.map(function(key){
 
 					var s = schema[key];
-					var condition = s.condition;
-					if(condition&&!condition(item)) {
+
+					if(!s) {
+						throw new Meteor.Error("schema-field-does-not-exist","Schema field doesn't exist","You have tried to access a nonexistent schema field.")
+					}
+
+					//check to see field conditions met
+					if(s.condition&&!s.condition(item)) {
 						return;
 					}
 
-					var autoValue = s.autoValue;
-					var value = item[key];
-					if(autoValue) {
-						value = autoValue(item);
-					}
-					var placeholder = 
-						(s.label || key.charAt(0).toUpperCase()+key.slice(1))+
-						(s.required?'*':'');
-
-					if(s.schema!=null) {
+					//if item is another schema create new AutoForm with item
+					if(s.schema) {
 						return (
 							<span key={id+'-'+key}>
 					        	<AutoForm 
@@ -549,24 +549,33 @@ AutoForm = React.createClass({
 					        </span>
 						)
 					}
+					else {
 
-					s = _.extend({
-						input:"mdtext",
-						size:12,
-						options:{}
-					},s);
+						//calculate default placeholder
+						var placeholder = 
+							(s.label || key.charAt(0).toUpperCase()+key.slice(1))+
+							(s.required?'*':'');
 
-					var Input = AutoInput[s.input];
-					return (
-						<div key={id+'-'+key} className={"col-sm-"+s.size}>
-							<Input
-								placeholder={placeholder}
-								value={item[key]} 
-								onChange={component.updateField.bind(component,key)}
-								options={s.options}
-							/>
-						</div>
-					)
+						//add default values to schema
+						s = _.extend({
+							input:"mdtext",
+							size:12,
+							options:{}
+						},s);
+
+						var Input = AutoInput[s.input];
+						return (
+							<div key={id+'-'+key} className={"col-sm-"+s.size}>
+								<Input
+									placeholder={placeholder}
+									value={item[key]} 
+									onChange={component.updateField.bind(component,key)}
+									options={s.options}
+								/>
+							</div>
+						)
+
+					}
 				})}
 			</div>
 		)

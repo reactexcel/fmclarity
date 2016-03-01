@@ -60,11 +60,9 @@ IssueActionButtons = React.createClass({
         var request = this.props.item;
 
         if(request.canStartClosure()) {
-            console.log('starting closure');
             Meteor.call('Issues.startClosure',request,this.handleStatusChange);
         }
         else if(request.canIssue()) {
-            console.log('issuing');
             Meteor.call('Issues.issue',request,this.handleStatusChange);
         }
         else if(request.canOpen()) {

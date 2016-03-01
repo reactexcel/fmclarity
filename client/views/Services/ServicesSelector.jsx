@@ -20,10 +20,11 @@ ServicesSelector = React.createClass({
 		item.save();
 	},
 
+	/*
     componentWillMount: function() {
         this.save = _.debounce(this.save,2000);
     },
-
+	*/
 	updateServiceField(serviceNum,field,value) {
 		var services = this.state.services;
 		services[serviceNum][field] = value;
@@ -35,10 +36,10 @@ ServicesSelector = React.createClass({
 
 	updateSubServiceField(serviceNum,subServiceNum,field,value) {
 		var services = this.state.services;
-		if(!services[serviceNum].subservices[subServiceNum]){
-			services[serviceNum].subservices[subServiceNum] = {};
+		if(!services[serviceNum].children[subServiceNum]){
+			services[serviceNum].children[subServiceNum] = {};
 		}
-		services[serviceNum].subservices[subServiceNum][field] = value;
+		services[serviceNum].children[subServiceNum][field] = value;
 		this.setState({
 			services:services
 		});
@@ -66,11 +67,11 @@ ServicesSelector = React.createClass({
 										/>
 									</td>
 									{/*<td style={{width:"130px",padding:"8px"}}>{
-										(service.available&&service.subservices)?<span>Service cycle</span>:null
+										(service.available&&service.children)?<span>Service cycle</span>:null
 									}</td>
 									<td style={{padding:"8px"}}>Select contractor</td>*/}
 								</tr>
-								{(service.available&&service.subservices)?service.subservices.map(function(subService,subIndex){
+								{(service.available&&service.children)?service.children.map(function(subService,subIndex){
 								return (<tr key={subIndex}>
 									<td style={{padding:"0 0 0 5px",width:"220px",fontWeight:"normal"}}>
 										<Switch 

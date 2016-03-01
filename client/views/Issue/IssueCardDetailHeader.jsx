@@ -72,7 +72,6 @@ IssueSpecArea = React.createClass({
 
     showModal() {
         var request = this.props.item;
-        console.log(this.props.item);
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
             onSubmit:function(){
@@ -147,7 +146,7 @@ IssueSpecArea = React.createClass({
 	                    		<div className="row">
 	                    			<div className="col-md-12">
 				                        <h2><AutoInput.Text
-                                                readOnly={!issue.isEditable()}
+                                                readOnly={!issue.canSetName()}
                                                 value={issue.name}
                                                 placeholder="Type issue name here"
                                                 onChange={this.updateItem.bind(this,'name')}
@@ -202,7 +201,7 @@ IssueSpecArea = React.createClass({
 					                    :null}
 					                </div>
 					                <div className="col-md-3">
-					                    {issue.status&&issue.canSetSupplier()?
+					                    {issue.status&&(supplier||issue.canSetSupplier())?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 					                        <SuperSelect 

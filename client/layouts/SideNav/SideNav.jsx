@@ -6,16 +6,22 @@ Navigation = React.createClass({
 
     getMeteorData() {
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var user, team, modules;
+        var user,team,role,modules;
         user = Meteor.user();
         team = Session.getSelectedTeam();
         if(team) {
-            modules = team.modules;
+            role = team.getRole(user);
+            modules = Config.modules[team.type][role];
         }
+
         return {
             team:team,
-            modules:modules||{}
+            modules:modules||[]
         }
+    },
+
+    isActive(mod) {
+        return this.data.modules.indexOf(mod)>=0;
     },
 
     onMenuClick() {
@@ -32,7 +38,7 @@ Navigation = React.createClass({
             {/*nope - this should be data driven
             perhaps even database driven*/}
             <ul className="nav metismenu" id="side-menu" onClick={this.onMenuClick}>
-                {!modules['Dashboard']?null:
+                {!this.isActive('dashboard')?null:
                 <li className={FlowRouter.getRouteName()=='dashboard'?'active':''}>
                     <a href={FlowRouter.path('dashboard')}>
                         <i className="fa fa-newspaper-o"></i>
@@ -40,7 +46,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Portfolio']?null:
+                {!this.isActive('portfolio')?null:
                 <li className={FlowRouter.getRouteName()=='portfolio'?'active':''}>
                     <a href={FlowRouter.path('portfolio')}>
                         <i className="fa fa-building"></i>
@@ -48,7 +54,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Suppliers']?null:
+                {!this.isActive('suppliers')?null:
                 <li className={FlowRouter.getRouteName()=='suppliers'?'active':''}>
                     <a href={FlowRouter.path('suppliers')}>
                         <i className="fa fa-group"></i>
@@ -56,7 +62,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Repairs']?null:
+                {!this.isActive('requests')?null:
                 <li className={FlowRouter.getRouteName()=='requests'?'active':''}>
                     <a href={FlowRouter.path('requests')}>
                         <i className="fa fa-wrench"></i>
@@ -64,7 +70,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['PMP']?null:
+                {!this.isActive('pmp')?null:
                 <li className={FlowRouter.getRouteName()=='pmp'?'active':''}>
                     <a href={FlowRouter.path('pmp')}>
                         <i className="fa fa-calendar"></i>
@@ -72,7 +78,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['ABC']?null:
+                {!this.isActive('abc')?null:
                 <li className={FlowRouter.getRouteName()=='abc'?'active':''}>
                     <a href={FlowRouter.path('abc')}>
                         <i className="fa fa-check-square"></i>
@@ -80,7 +86,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Sustainability']?null:
+                {!this.isActive('sustainability')?null:
                 <li className={FlowRouter.getRouteName()=='sustainability'?'active':''}>
                     <a href={FlowRouter.path('sustainability')}>
                         <i className="fa fa-leaf"></i>
@@ -88,7 +94,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Contracts']?null:
+                {!this.isActive('contracts')?null:
                 <li className={FlowRouter.getRouteName()=='contracts'?'active':''}>
                     <a href={FlowRouter.path('contracts')}>
                         <i className="fa fa-file-text-o"></i>
@@ -96,7 +102,7 @@ Navigation = React.createClass({
                     </a>
                 </li>
                 }
-                {!modules['Reports']?null:
+                {!this.isActive('reports')?null:
                 <li className={FlowRouter.getRouteName()=='reports'?'active':''}>
                     <a href={FlowRouter.path('reports')}>
                         <i className="fa fa-bar-chart-o"></i>

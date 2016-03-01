@@ -15,6 +15,7 @@ Login = React.createClass({
         var component = this;
         var email = this.refs.email.value.trim();
         var password = this.refs.password.value.trim();
+        console.log({email:email,password:password});
         if (!email) {//} || !password) {
             return;
         }

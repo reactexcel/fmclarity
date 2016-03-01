@@ -35,20 +35,11 @@ TeamViewEdit = React.createClass({
 	form1 : [
 		"name",
 		"abn",
-		"contactName",
 		"email"
 	],
 	form2 : [
-		"addressLine1",
-		"addressLine2",
-		"city",
-		"state",
-		"country",
-		"postcode",
-	],
-	form3: [
-		"defaultWorkOrderValue",
-		"modules",
+		"address",
+		"defaultWorkOrderValue"
 	],
 
 	componentDidMount() {
@@ -130,9 +121,6 @@ TeamViewEdit = React.createClass({
 			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
 			   		/>
 				</CollapseBox>
-			   	<CollapseBox title="Config" collapsed={true}>
-			       	<AutoForm item={team} schema={schema} form={this.form3}/>
-			    </CollapseBox>
 			   	<CollapseBox title="Services Provided" collapsed={true}>
 			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
 				</CollapseBox>
