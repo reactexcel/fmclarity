@@ -137,6 +137,15 @@ function destroyFacility(team,facility) {
 }
 
 Teams.helpers({
+
+  //this is just used for new and sticky
+  //perhaps it should be in the view?
+  //I don't like it in the model
+  isNew() {
+    return this.name==null||this.name.length==0;
+  },
+
+
   sendMessage(message,forwardTo) {
     forwardTo = forwardTo||this.getMembers();
     message.inboxId = this.getInboxId();
@@ -152,9 +161,6 @@ Teams.helpers({
     });
   },
 
-  isNew() {
-    return this.name==null||this.name.length==0;
-  },
   getProfile() {
     return this;
   },
@@ -201,7 +207,7 @@ Teams.helpers({
     }
   },
   getAvailableServices(parent) {
-    var services = parent?parent.subservices:this.services;
+    var services = parent?parent.children:this.services;
     var availableServices = [];
     if(!services) {
       return;

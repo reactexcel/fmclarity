@@ -143,7 +143,6 @@ FacilitySchema = {
     areas: {
     	type:[Object],
     	label:"Building areas",
-    	input:"select",
     	defaultValue:function(){
         	return JSON.parse(JSON.stringify(Config.defaultAreas));
     	}
@@ -151,7 +150,6 @@ FacilitySchema = {
     services: {
     	type:[Object],
     	label:"Building services",
-    	input:"select",
     	defaultValue:function(){
         	return JSON.parse(JSON.stringify(Config.services));
     	}

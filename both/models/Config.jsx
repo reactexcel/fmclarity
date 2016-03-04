@@ -406,9 +406,9 @@ Config.services = [{
 
 Config.services.map(function(service){
 	service.contractor = {};
-	service.available = false;
+	service.hasChildren = true;
 	service.children.map(function(subservice) {
-		subservice.available = true;
+		subservice.active = true;
 	})
 });
 
