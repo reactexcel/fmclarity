@@ -1,6 +1,15 @@
 
 AutoInput = {};
 
+AutoInput.Events = {
+	handleChange(event) {
+		var onChange = this.props.onChange;
+		if(onChange) {
+			onChange(event.target.value);
+		}
+	}
+}
+
 AutoForm = React.createClass({
 
 	getInitialState() {

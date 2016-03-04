@@ -1,3 +1,41 @@
+FacilityAreas = React.createClass({
+	//this is stupid - save should be hosted here instead
+	showModal() {
+		Modal.show({
+	        content:<ConfigBlockModal 
+	        	item={this.props.item}
+	        	field="areas"
+	        />
+	     })
+	},
+
+	render() {
+		var services = this.props.item.services;
+		return (
+			<div onClick={this.showModal}>
+				{/*}
+				<table className="table" style={{marginBottom:0}}>
+					<tbody>
+					{services?services.map(function(service,idx){
+						if(service.active) {
+							return (
+								<tr key={idx}>
+									<th>{service.name}</th>
+									<td>{service.data&&service.data.supplier?service.data.supplier.name:null}</td>
+								</tr>
+							)
+						}
+					}):null}
+					</tbody>
+				</table>*/}
+				<span className="btn btn-primary pull-right">Edit areas</span>
+			</div>
+		)
+		
+	}
+
+})
+
 FacilityAreaRow = React.createClass({
 	render() {
 		var area = this.props.area;
@@ -39,7 +77,7 @@ FacilityAreaRow = React.createClass({
 })
 
 
-FacilityAreas = React.createClass({
+FacilityAreasOld = React.createClass({
 
 	getInitialState() {
 		return {

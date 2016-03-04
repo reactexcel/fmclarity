@@ -406,45 +406,52 @@ Config.services = [{
 
 Config.services.map(function(service){
 	service.contractor = {};
-	service.hasChildren = true;
+	service.active = false;
+	service.hasChildren = false;
 	service.children.map(function(subservice) {
 		subservice.active = true;
 	})
 });
 
-Config.defaultAreas =[ {
-    name:'Standard level',
-    number:1,
-    areas:[{
-		name:'Conference room',
-		location:'North',
-		number:1
+Config.defaultAreas =[{
+    name:'Standard Level Type A',
+    data:{
+    	number:2
+    },
+    children:[{
+		name:'Conference room'
 	},{
-		name:'Male bathroom',
-		location:'North',
-		number:1
+		name:'Male bathroom'
 	},{
-		name:'Female bathroom',
-        location:'South',
-        number:1
+		name:'Female bathroom'
     },{
-    	name:'Staff room',
-		number:1
+    	name:'Staff room'
     },{
-    	name:'Work room',
-		number:5
+    	name:'Work room'
+	}]
+},{
+    name:'Standard Level Type B',
+    data:{
+    	number:2
+    },
+    children:[{
+		name:'Conference room'
+	},{
+		name:'Male bathroom'
+	},{
+		name:'Female bathroom'
+    },{
+    	name:'Staff room'
+    },{
+    	name:'Work room'
 	}]
 },{
 	name:'Unique areas',
-	number:1,
-	areas:[{
-    	name:'Board room',
-        number:1
+	children:[{
+    	name:'Board room'
     },{
-    	name:'Reception',
-        number:1
+    	name:'Reception'
     },{
-    	name:'Basement',
-        number:1
+    	name:'Basement'
     }]
 }];

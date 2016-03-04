@@ -389,13 +389,13 @@ function getPotentialSuppliers() {
       _id:{$in:ids},
       services:{$elemMatch:{
         name:this.service.name,
-        available:true
+        active:true
       }}
     };
     if(this.subservice&&this.subservice.name) {
       query['services.subservices'] = { $elemMatch : {
           name:this.subservice.name,
-          available:true
+          active:true
       }};
     }
     var teams = Teams.find(query).fetch();

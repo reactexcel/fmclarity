@@ -41,7 +41,11 @@ AutoInput.switch = React.createClass({
 					type="checkbox"
 					defaultChecked={value}
 				/>
-				<span className="switch-label">{label}</span>
+				{label?
+					<span className="switch-label">{label}</span>
+				:
+					<span className="switch-label">{this.props.children}</span>
+				}
 			</div>
 		)
 	}

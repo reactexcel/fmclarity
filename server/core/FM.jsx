@@ -92,8 +92,8 @@ FM.resetTestData = function() {
 
     //fix up Kaplan data first
     var kaplan = TestTeams.create(TeamsData['kaplan']);
-    kaplan.addMember(leo,{role:"support"});
-    kaplan.addMember(rich,{role:"support"});
+    kaplan.addMember(leo,{role:"manager"});
+    kaplan.addMember(rich,{role:"manager"});
     kaplan.addFacilities(KaplanFacilities);
 
     if(FM.inDevelopment()) {

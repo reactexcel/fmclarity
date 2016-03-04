@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+**v0.5.2a**
+
+* MD style select
+* Updated services selector for properties
+* Supplier selected in facility service configuration screen is now the default when a request is created with that service
+
 **v0.5.1a**
 
 * Added option to delete profile thumbnail

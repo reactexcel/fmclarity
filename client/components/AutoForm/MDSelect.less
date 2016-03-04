@@ -1,0 +1,49 @@
+@import "/client/stylesheets/globals/variables.import.less";
+
+.md-input .dropdown-menu .dropdown-menu-item {
+	cursor:pointer;
+	float:left;
+	width:100%;
+	line-height: 20px;
+	background-color:#fff;
+	padding:10px;
+	font-size:inherit;
+}
+
+.md-input .dropdown-menu .dropdown-menu-item:hover {
+	background-color:#eee;
+}
+
+.md-input .dropdown-menu {
+	padding:0;
+	top:25px;
+	font-size:inherit;
+}
+
+.md-input {
+	.dropdown-toggle {
+		cursor:pointer;
+	}
+
+	.close-button {
+		display:none;
+	}
+}
+
+.md-input:hover {
+	.close-button {
+		display:block;
+		opacity:0.8;
+	}	
+}
+
+.md-input.readonly {
+	.dropdown-toggle {
+		cursor:default;
+	}
+
+	.dropdown-toggle:hover {
+		color:inherit;
+	}
+}
+

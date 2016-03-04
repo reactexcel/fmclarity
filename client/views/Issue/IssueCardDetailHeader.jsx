@@ -92,6 +92,9 @@ IssueSpecArea = React.createClass({
     updateService(service) {
     	var issue = this.props.item;
         issue.service = service;
+        if(issue.service.data&&issue.service.data.supplier) {
+            issue.supplier = issue.service.data.supplier;
+        }
         issue.subservice = 0;
         this.save();
     },

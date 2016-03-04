@@ -17,7 +17,7 @@ AutoInput.mdtext = React.createClass({
       			type="text" 
       			pattern=".{1,80}" 
       			className={"input "+(used?'used':'')} 
-      			defaultValue={value}
+      			value={value}
       			onChange={this.handleChange}
       		/>
       		<span className="highlight"></span>

@@ -61,10 +61,10 @@ Facilities.helpers({
   	var areas = [];
   	for(var areaGroupNum in this.areas) {
   		var areaGroup = this.areas[areaGroupNum];
-  		var levelsLikeThis = parseInt(areaGroup.number);
+  		var levelsLikeThis = parseInt(areaGroup.data?areaGroup.data.number:1);
   		for(var level=1;level<=levelsLikeThis;level++) {
-	  		for(var areaNum in areaGroup.areas) {
-	  			var area = areaGroup.areas[areaNum];
+	  		for(var areaNum in areaGroup.children) {
+	  			var area = areaGroup.children[areaNum];
 	  			var name = area.name;
 	  			if(levelsLikeThis>1) {
 	  				name = ('Level '+level+': ')+name;
@@ -78,10 +78,10 @@ Facilities.helpers({
   	return areas;
   },
   getAvailableServices(parent) {
-  	var services = parent?parent.subservices:this.services;
+  	var services = parent?parent.children:this.services;
   	var availableServices = [];
   	services?services.map(function(service){
-  		if(service.available) {
+  		if(service.active) {
   			availableServices.push(service);
   		}
   	}):null;

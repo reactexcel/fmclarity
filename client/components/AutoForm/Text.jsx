@@ -1,6 +1,11 @@
 AutoInput.Text = React.createClass({
 	mixins:[AutoInput.Events],
 
+
+	propTypes:{
+		onChange:React.PropTypes.func.isRequired
+	},
+
 	componentDidMount() {
 		if(this.props.elastic) {
 			$(this.refs.input).elastic();		
@@ -18,7 +23,7 @@ AutoInput.Text = React.createClass({
                 	readOnly={this.props.readOnly}
 					placeholder={this.props.placeholder}
                     className="issue-description-textarea inline-form-control" 
-					defaultValue={this.props.value} 
+					value={this.props.value} 
 					onChange={this.handleChange}
                 />
 			)
@@ -30,7 +35,7 @@ AutoInput.Text = React.createClass({
            	readOnly={this.props.readOnly}
 			placeholder={this.props.placeholder}
 			className="inline-form-control" 
-			defaultValue={this.props.value} 
+			value={this.props.value} 
 			onChange={this.handleChange}
 		/>
 		)
