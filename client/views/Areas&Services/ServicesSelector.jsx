@@ -13,7 +13,7 @@ ServicesSelector = React.createClass({
 	render() {
 		var services = this.props.item.services;
 		return (
-			<div onClick={this.showModal}>
+			<div style={{cursor:"pointer"}} onClick={this.showModal}>
 				<table className="table" style={{marginBottom:0}}>
 					<tbody>
 					{services?services.map(function(service,idx){
@@ -28,12 +28,10 @@ ServicesSelector = React.createClass({
 					}):null}
 					</tbody>
 				</table>
-				<span className="btn btn-primary pull-right">Edit services</span>
+				<span className="btn btn-primary">Edit services</span>
 			</div>
 		)
-		
 	}
-
 })
 
 ServiceDetail = React.createClass({
@@ -71,25 +69,57 @@ ServiceDetail = React.createClass({
 		}
 	},
 
+	componentWillMount() {
+		this.autoSelect = true;
+	},
+
 	render() {
+		var item = this.props.item;
+		var Switch = AutoInput.switch;
+		var supplier = item&&item.data?item.data.supplier:null;
 		var service = this.props.item;
+		var autoSelect = this.autoSelect;
+		this.autoSelect = false;
 		return (
-			<div className="row">
-				<div className="col-md-6">
-					<AutoInput.mdtext
-						placeholder="Service name"
-				    	value={service.name} 
-					    onChange={this.updateField.bind(this,'name')}
-					/>
+			<div>
+				<div className="row">
+					<div className="col-md-6">
+						<AutoInput.mdtext
+							placeholder="Service name"
+					    	value={service.name} 
+					    	autoSelect={autoSelect}
+						    onChange={this.updateField.bind(this,'name')}
+						/>
+					</div>
+					<div className="col-md-6">
+						<AutoInput.MDSelect 
+							items={this.data.suppliers} 
+							selectedItem={service.data?service.data.supplier:null}
+							itemView={ContactViewName}
+							onChange={this.updateSupplier}
+							placeholder="Default Supplier"
+						/>
+					</div>
 				</div>
-				<div className="col-md-6">
-					<AutoInput.MDSelect 
-						items={this.data.suppliers} 
-						selectedItem={service.data?service.data.supplier:null}
-						itemView={ContactViewName}
-						onChange={this.updateSupplier}
-						placeholder="Default Supplier"
-					/>
+				<div className="row">
+					<div className="col-md-12">
+						<Switch 
+							value={item.active}
+							onChange={this.updateField.bind(this,'active')}
+						>
+							<b>Active</b>
+						</Switch>
+					</div>
+				</div>
+				<div className="row" style={{backgroundColor:"#eee"}}>
+					<div className="col-md-12">
+						<Switch 
+							value={item.hasChildren}
+							onChange={this.updateField.bind(this,'hasChildren')}
+						>
+							<b>Show details</b>
+						</Switch>
+					</div>
 				</div>
 			</div>
 		)

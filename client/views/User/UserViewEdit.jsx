@@ -93,7 +93,6 @@ UserProfile = React.createClass({
 	},
 
 	render() {
-		console.log('whaaa?');
 		var user, profile, team;
 		user = this.state.item;
 		team = this.data.selectedTeam;

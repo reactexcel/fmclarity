@@ -5,9 +5,12 @@ IpsoTabso = React.createClass({
         }
     },
 
-    selectTab(activeIndex) {
+    selectTab(idx) {
+        if(this.props.tabs[idx].onClick) {
+            idx = this.props.tabs[idx].onClick();
+        }
         this.setState({
-            active:activeIndex
+            active:idx
         });
     },
 

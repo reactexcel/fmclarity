@@ -1,4 +1,9 @@
-
+/*
+Tracker.autorun(function(computation) {
+   var docs = Posts.find({}); // and also try with opts
+   console.log('collection changed', docs);
+});
+*/
 TeamViewEdit = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -7,11 +12,12 @@ TeamViewEdit = React.createClass({
     	var team,members;
     	team = this.state.item;
     	if(team) {
+	    	console.log('reactively doing something (dependency)');
     		members = team.getMembers();
     	}
     	return {
     		selectedTeam:Session.getSelectedTeam(),
-    		team:this.state.item,
+    		team:team,
     		members:members
     	}
     },
@@ -81,6 +87,7 @@ TeamViewEdit = React.createClass({
     	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
 		schema = Teams.schema();
+		console.log({'rendering':members});
 		if(!team) {
 			return (
                 <form className="form-inline">

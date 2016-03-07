@@ -19,10 +19,12 @@ function createUser(item,password) {
     var user = {
       email:item.email,
       name:item.name,
-      password:password,
       profile:_.extend({
         thumb:"img/ProfilePlaceholderSuit.png"
       },item)
+    }
+    if(password) {
+      user.password = password;
     }
     var id = Accounts.createUser(user);
     var user = Users.findOne(id);

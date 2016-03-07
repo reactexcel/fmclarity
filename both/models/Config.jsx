@@ -415,6 +415,7 @@ Config.services.map(function(service){
 
 Config.defaultAreas =[{
     name:'Standard Level Type A',
+	hasChildren:true,
     data:{
     	number:2
     },
@@ -431,6 +432,7 @@ Config.defaultAreas =[{
 	}]
 },{
     name:'Standard Level Type B',
+	hasChildren:true,
     data:{
     	number:2
     },
@@ -447,6 +449,7 @@ Config.defaultAreas =[{
 	}]
 },{
 	name:'Unique areas',
+	hasChildren:true,
 	children:[{
     	name:'Board room'
     },{

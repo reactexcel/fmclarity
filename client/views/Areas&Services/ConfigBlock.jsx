@@ -1,6 +1,5 @@
 ConfigBlock = React.createClass({
 
-
 	updateField(field,value) {
 		var item = this.props.item;
 		item[field] = value;
@@ -16,6 +15,20 @@ ConfigBlock = React.createClass({
 		this.handleChange();
 	},
 
+	insertChildAfter(idx,value) {
+		this.props.item.children.splice(idx+1,0,{
+			active:true
+		});
+		this.lastChild = idx+1;
+		this.handleChange();
+	},
+
+	removeChild(idx) {
+		this.props.item.children.splice(idx,1);
+		this.lastChild = idx-1;
+		this.handleChange();
+	},
+
 	handleChange() {
 		this.props.onChange(this.props.item);
 	},
@@ -25,31 +38,12 @@ ConfigBlock = React.createClass({
 		var component = this;
 		var item = this.props.item;
 		var Switch = AutoInput.switch;
-		var supplier = item&&item.data?item.data.supplier:null;
+		var lastChild = this.lastChild;
+		this.lastChild = null;
 
 		return (
 			<div>
 				{this.props.children}
-				<div className="row">
-					<div className="col-md-12">
-						<Switch 
-							value={item.active}
-							onChange={component.updateField.bind(component,'active')}
-						>
-							<b>Active</b>
-						</Switch>
-					</div>
-				</div>
-				<div className="row" style={{backgroundColor:"#eee"}}>
-					<div className="col-md-12">
-						<Switch 
-							value={item.hasChildren}
-							onChange={component.updateField.bind(component,'hasChildren')}
-						>
-							<b>Show details</b>
-						</Switch>
-					</div>
-				</div>
 				<table className="table table-responsive" style={{marginBottom:0}}>
 					<tbody>					
 						{(item.hasChildren&&item.children)?item.children.map(function(child,idx){
@@ -63,7 +57,10 @@ ConfigBlock = React.createClass({
 										<AutoInput.Text
 											className="inline-form-control" 
 											value={child.name}
+											autoFocus={idx==lastChild}
 											onChange={component.updateChildField.bind(component,idx,'name')}
+											onEnter={component.insertChildAfter.bind(component,idx)}
+											onClear={component.removeChild.bind(component,idx)}
 										/>
 									</span>
 								</Switch>
@@ -113,6 +110,24 @@ ConfigBlockModal = React.createClass({
 		this.save(items);
 	},
 
+	addItem() {
+		var items = this.state.items;
+		items.push({
+			name:"New item",
+			active:true,
+			hasChildren:true,
+			data:{},
+			children:[{
+				active:true
+			}]
+		});
+		this.setState({
+			items:items
+		});
+		this.save(items);
+		return items.length-1;	
+	},
+
 	save() {
 		var field = this.props.field;
 		var items = this.props.item[field];
@@ -144,6 +159,10 @@ ConfigBlockModal = React.createClass({
 				</div>
 			})
 		});
+		tabs.push({
+			tab:<span style={{color:"#aaa"}} className="items-selector-tab"><i>New</i></span>,
+			onClick:component.addItem
+		})
 		return(
 			<div className="items-selector">
 				<IpsoTabso tabs={tabs}/>

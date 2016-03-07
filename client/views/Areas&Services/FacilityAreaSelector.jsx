@@ -5,6 +5,7 @@ FacilityAreas = React.createClass({
 	        content:<ConfigBlockModal 
 	        	item={this.props.item}
 	        	field="areas"
+	        	view={AreaDetail}
 	        />
 	     })
 	},
@@ -28,12 +29,45 @@ FacilityAreas = React.createClass({
 					}):null}
 					</tbody>
 				</table>*/}
-				<span className="btn btn-primary pull-right">Edit areas</span>
+				<span className="btn btn-primary">Edit areas</span>
 			</div>
 		)
 		
 	}
 
+})
+
+AreaDetail = React.createClass({
+
+	updateField(field,value) {
+		var item = this.props.item;
+		item[field] = value;
+		this.props.onChange(item);
+	},
+
+	componentWillMount() {
+		this.autoSelect = true;
+	},
+
+	render() {
+		var item = this.props.item;
+		var autoSelect = this.autoSelect;
+		this.autoSelect = false;
+		return (
+			<div>
+				<div className="row">
+					<div className="col-md-6">
+						<AutoInput.mdtext
+							placeholder="Area name"
+					    	value={item.name} 
+					    	autoSelect={autoSelect}
+						    onChange={this.updateField.bind(this,'name')}
+						/>
+					</div>
+				</div>
+			</div>
+		)
+	}
 })
 
 FacilityAreaRow = React.createClass({

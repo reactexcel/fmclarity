@@ -2,6 +2,24 @@
 AutoInput = {};
 
 AutoInput.Events = {
+	checkKey(event) {
+		var value = event.target.value;
+		if(event.key=='Enter') {
+			var onEnter = this.props.onEnter;
+			if(onEnter) {
+				event.preventDefault();
+				onEnter(event);
+			}
+		}
+		else if(value==''&&event.key=='Backspace') {
+			var onClear = this.props.onClear;
+			if(onClear) {
+				event.preventDefault();
+				onClear(event);
+			}
+		}
+	},
+
 	handleChange(event) {
 		var onChange = this.props.onChange;
 		if(onChange) {

@@ -4,6 +4,26 @@ AutoInput.mdtext = React.createClass({
 		this.props.onChange(event.target.value);
 	},
 
+	componentDidMount() {
+		var input = $(this.refs.input);
+		if(this.props.autoFocus) {
+			input.focus();
+		}
+		else if(this.props.autoSelect) {
+			input.select();
+		}
+	},
+
+	componentDidUpdate() {
+		var input = $(this.refs.input);
+		if(this.props.autoFocus) {
+			input.focus();
+		}
+		else if(this.props.autoSelect) {
+			input.select();
+		}
+	},
+
 	render() {
 		var value, used;
 		value = this.props.value;
@@ -14,6 +34,7 @@ AutoInput.mdtext = React.createClass({
 		return (
 		<div className="md-input">      
       		<input 
+      			ref="input"
       			type="text" 
       			pattern=".{1,80}" 
       			className={"input "+(used?'used':'')} 
