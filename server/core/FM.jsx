@@ -148,6 +148,13 @@ FM.resetTestData = function() {
                 facility:TestFacilities.getRandom(),
                 shouldAssignRandomCreator:true
             });
+            var chance = Math.random();
+            if(chance<0.66) {
+                //progress to issued
+                if(change<0.33) {
+                    //progress to closed
+                }
+            }
         }
     }
 }

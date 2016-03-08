@@ -33,6 +33,12 @@ Teams.methods({
     method:RBAC.lib.destroy.bind(Teams)
   },
 
+  uploadThumbnail:{
+    authentication:AuthHelpers.managerOrCreator,
+    method:uploadThumbnail
+  },
+ 
+
   inviteMember:{
     authentication:AuthHelpers.managerOrCreator,
     method:inviteMember,
@@ -130,6 +136,19 @@ function addFacilities(team,facilities) {
   facilities.map(function(f){
     team.addFacility(f);
   })
+}
+
+function uploadThumbnail(url) {
+  var team = this;
+  Files.insert(url, function (error, fileObj) {
+    if(!error) {
+      team.save({
+        thumb:{
+          _id:fileObj._id
+        }
+      })
+    }
+  });
 }
 
 function destroyFacility(team,facility) {

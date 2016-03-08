@@ -4,8 +4,9 @@ CHANGELOG.md
 **v0.5.2a**
 
 * MD style select
-* Updated services selector for properties
+* Updated services selector
 * Supplier selected in facility service configuration screen is now the default when a request is created with that service
+* Updated areas selector
 
 **v0.5.1a**
 

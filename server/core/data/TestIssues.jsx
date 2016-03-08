@@ -49,6 +49,17 @@ function randomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
 
+function getRandomLevelAndArea(facility) {
+
+}
+
+function getRandomServiceAndSubservice(facility) {
+
+}
+
+function selectRandomContractor(issue) {
+
+}
 
 TestIssueGenerator = {
 	objects:[
@@ -159,8 +170,8 @@ TestIssueGenerator = {
 	],
 	status:[
 		"New",
-		//"Issued",
-		//"Closed"
+		/*"Issued",
+		"Closed"*/
 	]
 };
 
@@ -212,16 +223,19 @@ TestIssueGenerator.generate = function(extension) {
 		startDate = new Date(2015,6,1);
 	}
 	else {
-		startDate = new Date(2015,10,1);
+		startDate = new Date();
 	}
 
 	var newStatus = getRandom(this.status);
+
+
+	var costThreshold = (Math.floor(Math.random()*50)*10;
 
 	var issueData = {
 	    name:capitalize(title),
 	    description:capitalize(description),
 	    status:newStatus,
-	    costThreshold:500,
+	    costThreshold:costThreshold,
 	    createdAt:randomDate(startDate, new Date()),
 	    priority:newStatus=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical']),
 	    attachments:[],

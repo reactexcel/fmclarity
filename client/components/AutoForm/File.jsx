@@ -98,12 +98,8 @@ AutoInput.File = React.createClass({
 		var component = this;
 	    FS.Utility.eachFile(event, function(file) {
       		var newFile = new FS.File(file);
-	    	console.log(newFile.name());
-	    	console.log(newFile.url());
      		var name = file.name.replace(/[^A-Za-z0-9 _\-\.]/g,'');
       		newFile.name(name);
-	    	console.log(newFile.name());
-	    	console.log(newFile.url());
 	    	Files.insert(newFile, function (err, newFile) {
 	    		component.props.onChange({
 			    	_id:newFile._id

@@ -23,9 +23,7 @@ TestUsers = {
             Meteor.call('Users.create',newUser);
         }
     }
-
 }
-
 
 function shuffle(array) {
 	array = array.slice(0);

@@ -28,7 +28,9 @@ AutoInput.attachments = React.createClass({
 			})}
 			
 				<div style={{display:"inline-block"}}>
-					<AutoInput.Thumbnail onChange={component.handleChange.bind(null,attachments.length)}/>
+					<AutoInput.Thumbnail 
+						onChange={component.handleChange.bind(null,attachments.length)}
+					/>
 				</div>
 			
 			</div>

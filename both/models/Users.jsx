@@ -97,6 +97,18 @@ Users.helpers({
     */
 
   },
+  uploadThumbnail(url) {
+    var user = this;
+    Files.insert(url, function (error, fileObj) {
+      if(!error) {
+        user.save({
+          thumb:{
+            _id:fileObj._id
+          }
+        })
+      }
+    });
+  }
   hasRole(role) {
     switch(role) {
       case 'dev':
