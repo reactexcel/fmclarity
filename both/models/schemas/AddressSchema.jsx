@@ -1,6 +1,6 @@
 AddressSchema = {
 	streetNumber:{
-		label:"Street number",
+		label:"Number",
 		size:3
 	},
 	streetName:{
@@ -8,7 +8,7 @@ AddressSchema = {
 		size:6
 	},
 	streetType:{
-		label: "Street type",
+		label: "Type",
 		size:3
 	},
 	city:{

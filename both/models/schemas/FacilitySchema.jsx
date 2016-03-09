@@ -140,6 +140,13 @@ FacilitySchema = {
             "hasMany":Users
         },
     },
+    levels: {
+        type:[Object],
+        label:"Building levels",
+        defaultValue:function(){
+            return JSON.parse(JSON.stringify(Config.defaultLevels));
+        }
+    },    
     areas: {
     	type:[Object],
     	label:"Building areas",

@@ -16,6 +16,24 @@ TestIssues = {
             issue.setCreator(creator);
 		}
 		return issue;
+    },
+    getRandomCreationDate() {
+		var startDate;
+		var chance = Math.random();
+		if(chance<0.1) {
+			startDate = new Date(2014,0,1);
+		}
+		else if(chance<0.3) {
+			startDate = new Date(2015,11,1);
+		}
+		else {
+			startDate = new Date(2016,3,1);
+		}
+		return randomDate(startDate, new Date());
+    },
+    getRandomTitleAndDescription:getRandomTitleAndDescription,
+    getRandomPriority:function(request) {
+		return request.status=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical'])
     }
 }
 
@@ -175,11 +193,11 @@ TestIssueGenerator = {
 	]
 };
 
-TestIssueGenerator.generate = function(extension) {
-	var object = getRandom(this.objects);
-	var location = getRandom(this.locations);
-	var title = getRandom(this.title);
-	var descriptions = shuffle(this.description);
+function getRandomTitleAndDescription() {
+	var object = getRandom(TestIssueGenerator.objects);
+	var location = getRandom(TestIssueGenerator.locations);
+	var title = getRandom(TestIssueGenerator.title);
+	var descriptions = shuffle(TestIssueGenerator.description);
 	var numDescriptionLines = Math.floor(Math.random()*8)+2;
 	var descriptionLines = [];
 	for(var i=0;i<numDescriptionLines;i++) {
@@ -191,7 +209,7 @@ TestIssueGenerator.generate = function(extension) {
 	//descriptionLines = descriptionLines.reverse();
 	//var descriptionPart2 = descriptionLines.join(' ');
 	var description = descriptionPart1;//+"\n\n"+descriptionPart2;
-	var problems = shuffle(this.problems);
+	var problems = shuffle(TestIssueGenerator.problems);
 	var problem1 = problems[0];
 	var problem2 = problems[1];
 	var problem3 = problems[2];
@@ -214,47 +232,8 @@ TestIssueGenerator.generate = function(extension) {
 		return Math.floor(Math.random()*10)+2;
 	});
 
-	var startDate;
-	var chance = Math.random();
-	if(chance<0.1) {
-		startDate = new Date(2014,0,1);
+	return {
+		name:capitalize(title),
+		description:capitalize(description)
 	}
-	else if(chance<0.3) {
-		startDate = new Date(2015,6,1);
-	}
-	else {
-		startDate = new Date();
-	}
-
-	var newStatus = getRandom(this.status);
-
-
-	var costThreshold = (Math.floor(Math.random()*50)*10;
-
-	var issueData = {
-	    name:capitalize(title),
-	    description:capitalize(description),
-	    status:newStatus,
-	    costThreshold:costThreshold,
-	    createdAt:randomDate(startDate, new Date()),
-	    priority:newStatus=='Closed'?'Closed':getRandom(['Scheduled','Standard','Urgent','Critical']),
-	    attachments:[],
-	    messages:[],
-	    closeDetails:{}
-	};
-
-	if(extension.facility) {
-		var facility = extension.facility;
-		var team = facility.getTeam();
-
-		issueData.facility = {
-			_id:facility._id,
-			name:facility.getName()
-		}
-		issueData.team = {
-			_id:team._id,
-			name:team.getName()
-		}
-	}
-	return Issues.findOne(Meteor.call('Issues.create',issueData));
 }

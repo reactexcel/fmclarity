@@ -1,7 +1,5 @@
 
-Files = new FS.Collection("File", {
-  stores: [new FS.Store.GridFS("master")]
-});
+
 
 
 if(Meteor.isServer){

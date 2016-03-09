@@ -1,3 +1,9 @@
+
+DocThumb.register(Users,{
+  repo:Files,
+  defaultThumb:"/img/ProfilePlaceholderSuit.png"
+});
+
 Users.methods({
   create:{
     authentication:true,
@@ -19,9 +25,7 @@ function createUser(item,password) {
     var user = {
       email:item.email,
       name:item.name,
-      profile:_.extend({
-        thumb:"img/ProfilePlaceholderSuit.png"
-      },item)
+      profile:_.extend({},item)
     }
     if(password) {
       user.password = password;
@@ -73,7 +77,6 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
-  defaultThumbUrl:"/img/ProfilePlaceholderSuit.png",
   sendMessage(message) {
     message.inboxId = this.getInboxId();
     if(message.originalId) {
@@ -97,18 +100,6 @@ Users.helpers({
     */
 
   },
-  uploadThumbnail(url) {
-    var user = this;
-    Files.insert(url, function (error, fileObj) {
-      if(!error) {
-        user.save({
-          thumb:{
-            _id:fileObj._id
-          }
-        })
-      }
-    });
-  }
   hasRole(role) {
     switch(role) {
       case 'dev':
@@ -151,24 +142,9 @@ Users.helpers({
   getName() {
     return this.profile.name;
   },
-  getThumb() {
-    var thumb,profile;
-    profile = this.profile;
-    if(profile.thumb) {
-      thumb = Files.findOne(profile.thumb._id);
-    }
-    return thumb;
-  },
   getAvailableServices() {
     return [];
   },  
-  getThumbUrl() {
-    var thumb = this.getThumb();
-    if(thumb) {
-      return thumb.url();
-    }
-    return this.defaultThumbUrl;
-  },
   getTeams() {
     return Teams.find({"members._id":Meteor.userId()}).fetch();
   },

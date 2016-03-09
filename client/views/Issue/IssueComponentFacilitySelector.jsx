@@ -35,7 +35,7 @@ IssueFacilitySelector = React.createClass({
         var area = this.data.selectedArea;
         return (
             <div className="row">
-            <div className="col-lg-6">
+            <div className="col-lg-12">
                 <SuperSelect 
                     readOnly={!issue.canSetFacility()}
                     items={this.data.teamFacilities} 
@@ -47,6 +47,7 @@ IssueFacilitySelector = React.createClass({
                     </span>
                 </SuperSelect>
             </div>
+            {/*
             <div className="col-lg-6">
                 {facility&&issue.canSetArea()?
                 <SuperSelect 
@@ -61,6 +62,7 @@ IssueFacilitySelector = React.createClass({
                 </SuperSelect>
                 :null}
             </div>
+            */}
             </div>
         )
     }

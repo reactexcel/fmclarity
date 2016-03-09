@@ -159,7 +159,7 @@ Config.services = [{
 		name:"Other",
 	}]
 },{
-	name:"Carpark maintenance",
+	name:"Carparks",
 	children:[{
 		name:"Contract",
 	},{
@@ -232,7 +232,7 @@ Config.services = [{
 		name:"Sullage",
 	}]
 },{
-	name:"Repairs & Maintenance",
+	name:"R&M",
 	children:[{
 		name:"Auto doors",
 	},{
@@ -311,7 +311,7 @@ Config.services = [{
 		name:"R&M",
 	}]
 },{
-	name:"Building Automation System",
+	name:"BAS",
 	children:[{
 		name:"Contract",
 	},{
@@ -406,8 +406,8 @@ Config.services = [{
 
 Config.services.map(function(service){
 	service.contractor = {};
-	service.active = false;
-	service.hasChildren = false;
+	service.active = true;
+	service.hasChildren = true;
 	service.children.map(function(subservice) {
 		subservice.active = true;
 	})
@@ -415,6 +415,7 @@ Config.services.map(function(service){
 
 Config.defaultAreas =[{
     name:'Standard Level Type A',
+    active:true,
 	hasChildren:true,
     data:{
     	number:2
@@ -432,6 +433,7 @@ Config.defaultAreas =[{
 	}]
 },{
     name:'Standard Level Type B',
+    active:true,
 	hasChildren:true,
     data:{
     	number:2
@@ -448,13 +450,23 @@ Config.defaultAreas =[{
     	name:'Work room'
 	}]
 },{
-	name:'Unique areas',
-	hasChildren:true,
-	children:[{
-    	name:'Board room'
-    },{
-    	name:'Reception'
-    },{
-    	name:'Basement'
-    }]
+	name:'Unique area',
+    hidden:true
+}];
+
+Config.defaultLevels = [{
+	name:"Level 1",
+	type:Config.defaultAreas[0],
+},{
+	name:"Level 2",
+	type:Config.defaultAreas[1],
+},{
+	name:"Board room",
+	type:Config.defaultAreas[2],
+},{
+	name:"Reception",
+	type:Config.defaultAreas[2],
+},{
+	name:"Basement",
+	type:Config.defaultAreas[2],
 }];

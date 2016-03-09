@@ -1,5 +1,7 @@
 Facilities.schema(FacilitySchema);
 
+DocThumb.register(Facilities,Files);
+
 Facilities.methods({
   create:{
     authentication:AuthHelpers.managerOfRelatedTeam,

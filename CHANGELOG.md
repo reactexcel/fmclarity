@@ -7,6 +7,10 @@ CHANGELOG.md
 * Updated services selector
 * Supplier selected in facility service configuration screen is now the default when a request is created with that service
 * Updated areas selector
+* Updated level selector
+* Updated wo input for level and area selection
+* Updated test data generation to include all wo elements
+* Updated test data generation to include images and suppliers
 
 **v0.5.1a**
 

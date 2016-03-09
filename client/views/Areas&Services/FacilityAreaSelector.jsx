@@ -10,29 +10,77 @@ FacilityAreas = React.createClass({
 	     })
 	},
 
+	updateLevelField(idx,val) {	
+		var item = this.props.item;
+		item.levels[idx] = item.levels[idx]||{};
+		item.levels[idx].name = val;
+		item.save();
+	},
+
+	insertLevelAfter(idx) {	
+		var item = this.props.item;
+		item.levels.splice(idx+1,0,{});
+		item.save();
+	},
+
+	removeLevel(idx) {	
+		var item = this.props.item;
+		item.levels.splice(idx,1);
+		item.save();
+	},
+
+	updateType(idx,obj) {
+		console.log(obj);
+		var item = this.props.item;
+		item.levels[idx] = item.levels[idx]||{};
+		item.levels[idx].type = obj;
+		item.save();
+	},
+
 	render() {
-		var services = this.props.item.services;
+		var item = this.props.item;
+		var levels = this.props.item.levels;
+		if(!levels||!levels.length) {
+			levels = [{}];
+		}
+		var component = this;
 		return (
-			<div onClick={this.showModal}>
-				{/*}
+			<div style={{minHeight:"200px"}}>
 				<table className="table" style={{marginBottom:0}}>
 					<tbody>
-					{services?services.map(function(service,idx){
-						if(service.active) {
-							return (
-								<tr key={idx}>
-									<th>{service.name}</th>
-									<td>{service.data&&service.data.supplier?service.data.supplier.name:null}</td>
-								</tr>
-							)
-						}
+					<tr>
+						<th style={{width:"50%"}}>Level</th>
+						<th style={{width:"50%"}}>Type</th>
+					</tr>
+					{levels?levels.map(function(level,idx){
+						return (
+							<tr key={idx}>
+								<td style={{padding:"10px"}}>
+									<AutoInput.Text
+										className="inline-form-control" 
+										value={level.name}
+										onChange={component.updateLevelField.bind(component,idx)}
+										onEnter={component.insertLevelAfter.bind(component,idx)}
+										onClear={component.removeLevel.bind(component,idx)}
+									/>
+								</td>
+								<td style={{padding:0}}>
+									<AutoInput.MDSelect 
+										items={item.areas} 
+										selectedItem={level.type}
+										itemView={ContactViewName}
+										onChange={component.updateType.bind(component,idx)}
+										placeholder="Default Supplier"
+									/>
+								</td>
+							</tr>
+						)
 					}):null}
 					</tbody>
-				</table>*/}
-				<span className="btn btn-primary">Edit areas</span>
+				</table>
+				<span onClick={this.showModal} className="btn btn-primary">Edit area types</span>
 			</div>
 		)
-		
 	}
 
 })

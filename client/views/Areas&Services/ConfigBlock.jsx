@@ -141,23 +141,25 @@ ConfigBlockModal = React.createClass({
 		var tabs = [];
 		var DetailComponent = this.props.view;
 		this.state.items.map(function(item,index){
-			tabs.push({
-				tab:<span className="items-selector-tab">
-					<span style={{opacity:!item.active?0.6:1}}>{item.name}</span>
-					<span className="items-selector-close" onClick={component.removeItem.bind(component,index)}>&times;</span>
-				</span>,
-				content:<div style={{padding:"15px",paddingBottom:0}}>
-					<ConfigBlock 
-						item={item} 
-						onChange={component.updateItem.bind(component,index)}
-					>
-						{DetailComponent?<DetailComponent
+			if(!item.hidden) {
+				tabs.push({
+					tab:<span className="items-selector-tab">
+						<span style={{opacity:!item.active?0.6:1}}>{item.name}</span>
+						<span className="items-selector-close" onClick={component.removeItem.bind(component,index)}>&times;</span>
+					</span>,
+					content:<div style={{padding:"15px",paddingBottom:0}}>
+						<ConfigBlock 
 							item={item} 
 							onChange={component.updateItem.bind(component,index)}
-						/>:null}
-					</ConfigBlock>
-				</div>
-			})
+						>
+							{DetailComponent?<DetailComponent
+								item={item} 
+								onChange={component.updateItem.bind(component,index)}
+							/>:null}
+						</ConfigBlock>
+					</div>
+				})
+			}
 		});
 		tabs.push({
 			tab:<span style={{color:"#aaa"}} className="items-selector-tab"><i>New</i></span>,

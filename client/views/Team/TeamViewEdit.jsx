@@ -12,7 +12,6 @@ TeamViewEdit = React.createClass({
     	var team,members;
     	team = this.state.item;
     	if(team) {
-	    	console.log('reactively doing something (dependency)');
     		members = team.getMembers();
     	}
     	return {
@@ -87,7 +86,6 @@ TeamViewEdit = React.createClass({
     	members = this.data.members;
     	selectedTeam = this.data.selectedTeam;
 		schema = Teams.schema();
-		console.log({'rendering':members});
 		if(!team) {
 			return (
                 <form className="form-inline">
@@ -114,7 +112,7 @@ TeamViewEdit = React.createClass({
 			        		<AutoForm item={team} schema={schema} form={this.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
+			        		<AutoInput.File item={team.thumb} onChange={team.setThumb.bind(team)} />
 			        	</div>
 			        	<div className="col-sm-12">
 				        	<AutoForm item={team} schema={schema} form={this.form2} />

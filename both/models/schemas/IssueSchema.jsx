@@ -52,18 +52,18 @@ IssueSchema = {
     }
   },
 
-  thumb:{
-    label:"Thumbnail file",
-    defaultValue:["img/default-placeholder.png"]
-  },
-
   attachments:{
     type:[Object],
     label:"Attachments",
     input:"attachments"
   },
+  
+  level:{
+    type:Object,
+  },
 
   area:{
+    type:Object,
     getter() {
       return this.area;
     }

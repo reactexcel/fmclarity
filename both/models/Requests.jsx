@@ -137,6 +137,14 @@ Issues.methods({
       )
     },
   },  
+  setLevel:{
+    authentication:function(role,user,request) {
+      return (
+        isEditable(request)&&
+        AuthHelpers.memberOfRelatedTeam(role,user,request)
+      )
+    },
+  },
   setArea:{
     authentication:function(role,user,request) {
       return (
@@ -393,7 +401,7 @@ function getPotentialSuppliers() {
       }}
     };
     if(this.subservice&&this.subservice.name) {
-      query['services.subservices'] = { $elemMatch : {
+      query['services.children'] = { $elemMatch : {
           name:this.subservice.name,
           active:true
       }};

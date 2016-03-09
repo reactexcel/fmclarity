@@ -1,5 +1,6 @@
-
 Teams.schema(TeamSchema);
+
+DocThumb.register(Teams,{repo:Files});
 
 Teams.methods({
   create:{
@@ -33,11 +34,10 @@ Teams.methods({
     method:RBAC.lib.destroy.bind(Teams)
   },
 
-  uploadThumbnail:{
-    authentication:AuthHelpers.managerOrCreator,
-    method:uploadThumbnail
+  createRequest:{
+    authentication:AuthHelpers.manager,
+    method:createRequest,    
   },
- 
 
   inviteMember:{
     authentication:AuthHelpers.managerOrCreator,
@@ -81,6 +81,18 @@ Teams.methods({
     authentication:AuthHelpers.manager,
   }
 });
+
+function createRequest(team,options) {
+  team = Teams._transform(team);
+  var data = _.extend({},options,{
+    team:{
+      _id:team._id,
+      name:team.getName()
+    }
+  })
+  var result = Issues.create(data);
+  return Issues._transform(result);
+}
 
 function inviteMember(team,email,ext) {
   var user,id;
@@ -138,19 +150,6 @@ function addFacilities(team,facilities) {
   })
 }
 
-function uploadThumbnail(url) {
-  var team = this;
-  Files.insert(url, function (error, fileObj) {
-    if(!error) {
-      team.save({
-        thumb:{
-          _id:fileObj._id
-        }
-      })
-    }
-  });
-}
-
 function destroyFacility(team,facility) {
   return Facilities.remove(facility._id);
 }
@@ -163,7 +162,6 @@ Teams.helpers({
   isNew() {
     return this.name==null||this.name.length==0;
   },
-
 
   sendMessage(message,forwardTo) {
     forwardTo = forwardTo||this.getMembers();

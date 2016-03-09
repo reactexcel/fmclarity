@@ -99,6 +99,13 @@ IssueSpecArea = React.createClass({
         this.save();
     },
 
+    updateLevel(level) {
+        var issue = this.props.item;
+        issue.level = level;
+        issue.area = 0;
+        this.save();
+    },
+
     updateItem: function(field,value) {
         this.props.item[field] = value;
         this.save();
@@ -156,19 +163,57 @@ IssueSpecArea = React.createClass({
                                             />
                                         </h2>
 				                    </div>
-				                    <div className="col-md-6">
+				                    <div className="col-md-3">
 			                            <IssueFacilitySelector issue={issue} />
 			                            <div style={{cursor:"default"}} className="issue-summary-facility-col">
+                                        
 			                                <b>Order #</b>
-			                                <span>{issue.code}</span>&nbsp;
+			                                <span>{issue.code}</span><br/>
+
 			                                <b>Cost $</b>
-			                                <span style={{display:"inline-block"}}><AutoInput.Text
-			                                    readOnly={!issue.canSetCost()}
-			                                    value={issue.costThreshold} 
-			                                    onChange={this.updateItem.bind(this,'costThreshold')}
-			                                /></span>
+			                                <span style={{display:"inline-block",width:"40px"}}>
+                                                <AutoInput.Text
+    			                                    readOnly={!issue.canSetCost()}
+    			                                    value={issue.costThreshold} 
+    			                                    onChange={this.updateItem.bind(this,'costThreshold')}
+                                                />
+                                            </span>
 			                            </div>
 				                    </div>{/*col*/}
+                                    <div className="col-md-3">
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <SuperSelect 
+                                                    readOnly={!issue.canSetLevel()}
+                                                    itemView={ContactViewName}
+                                                    items={this.data.facility.levels} 
+                                                    onChange={this.updateLevel}
+                                                >
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} level</span>
+                                                </SuperSelect>
+                                                {issue.level?
+                                                    <div style={{clear:"both"}}>{issue.level.name}</div>
+                                                :null}
+                                            </div>
+                                        </div>
+                                        {issue.level&&issue.level.type&&issue.level.type.children&&issue.level.type.children.length?
+                                            <div className="row">
+                                                <div className="col-md-12">
+                                                <SuperSelect 
+                                                    readOnly={!issue.canSetArea()}
+                                                    itemView={ContactViewName}
+                                                    items={issue.level.type.children} 
+                                                    onChange={this.updateItem.bind(this,'area')}
+                                                >
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} area</span>
+                                                </SuperSelect>
+                                                {issue.area?
+                                                    <div style={{clear:"both"}}>{issue.area.name}</div>
+                                                :null}
+                                                </div>
+                                            </div>
+                                        :null}
+                                    </div>                                    
 					                <div className="col-md-3">
 					                    <div className="row">
 					                    	<div className="col-md-12">

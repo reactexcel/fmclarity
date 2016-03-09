@@ -1,5 +1,21 @@
 ServicesSelector = React.createClass({
 	//this is stupid - save should be hosted here instead
+
+	mixins:[ReactMeteorData],
+
+	getMeteorData() {
+        Meteor.subscribe('contractors');
+		var team, suppliers;
+		team = Session.getSelectedTeam();
+		if(team) {
+			suppliers = team.getSuppliers();
+		}
+		return {
+			team:team,
+			suppliers:suppliers
+		}
+	},
+
 	showModal() {
 		Modal.show({
 	        content:<ConfigBlockModal 
@@ -10,25 +26,50 @@ ServicesSelector = React.createClass({
 	     })
 	},
 
+	updateSupplier(idx,newSupplier) {
+		if(newSupplier) {
+			var service = this.props.item.services[idx];
+			service.data = service.data||{};
+			service.data.supplier = {
+				_id:newSupplier._id,
+				name:newSupplier.getName()
+			}
+			this.props.item.save();
+			//this.props.onChange(service);
+		}
+	},
+
 	render() {
 		var services = this.props.item.services;
+		var component = this;
 		return (
-			<div style={{cursor:"pointer"}} onClick={this.showModal}>
+			<div>
 				<table className="table" style={{marginBottom:0}}>
 					<tbody>
+					<tr>
+						<th style={{width:"50%"}}>Service</th>
+						<th style={{width:"50%"}}>Default Supplier</th>
+					</tr>
 					{services?services.map(function(service,idx){
 						if(service.active) {
 							return (
 								<tr key={idx}>
-									<th>{service.name}</th>
-									<td>{service.data&&service.data.supplier?service.data.supplier.name:null}</td>
+									<td style={{padding:"10px"}}>{service.name}</td>
+									<td style={{padding:0}}><AutoInput.MDSelect 
+										items={component.data.suppliers} 
+										selectedItem={service.data?service.data.supplier:null}
+										itemView={ContactViewName}
+										onChange={component.updateSupplier.bind(component,idx)}
+										placeholder="Default Supplier"
+									/></td>
+									{/*<td>{service.data&&service.data.supplier?service.data.supplier.name:null}</td>*/}
 								</tr>
 							)
 						}
 					}):null}
 					</tbody>
 				</table>
-				<span className="btn btn-primary">Edit services</span>
+				<span onClick={this.showModal} className="btn btn-primary">Edit services</span>
 			</div>
 		)
 	}

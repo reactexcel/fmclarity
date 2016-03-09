@@ -7,6 +7,7 @@
 
 fmc:rbac
 fmc:orm
+fmc:document-thumbs
 
 #aldeed:collection2
 abpetkov:switchery

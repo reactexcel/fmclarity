@@ -67,6 +67,12 @@ UsersData = {
     }
 }
 
+function getRandom(items) {
+    var i = Math.floor(Math.random()*items.length);
+    return items[i];
+}
+
+
 FM.resetTestData = function() {
 
     //destroy existing data
@@ -75,6 +81,10 @@ FM.resetTestData = function() {
     Files.remove({});
     Messages.remove({});
     Facilities.remove({});
+
+    TestUsers.makeThumbs();
+    TestTeams.makeThumbs();
+    TestFacilities.makeThumbs();
 
     //create core developer accounts if they don't exist
     var brad = TestUsers.create(UsersData['brad']);
@@ -92,9 +102,16 @@ FM.resetTestData = function() {
 
     //fix up Kaplan data first
     var kaplan = TestTeams.create(TeamsData['kaplan']);
+
     kaplan.addMember(leo,{role:"manager"});
     kaplan.addMember(rich,{role:"manager"});
+
+    KaplanFacilities.map(function(f){
+        f.thumb = getRandom(TestFacilities.thumbs);
+    })
     kaplan.addFacilities(KaplanFacilities);
+
+    kaplan.addSupplier(kaplan);
 
     if(FM.inDevelopment()) {
         kaplan.addMember(TestUsers.create(),{role:"staff"});
@@ -143,16 +160,52 @@ FM.resetTestData = function() {
         abnormal.addMember(TestUsers.create(),{role:"manager"});
         abnormal.addMember(TestUsers.create(),{role:"staff"});
 
-        for(var i=0;i<100;i++) {
-            TestIssues.create({
-                facility:TestFacilities.getRandom(),
-                shouldAssignRandomCreator:true
+        kaplan.addSupplier(normal);
+        kaplan.addSupplier(abnormal);
+
+        kaplan = Teams.findOne(kaplan._id);
+
+        var kaplanFacilities = kaplan.getFacilities();
+        for(var i=0;i<50;i++) {
+            var facility = getRandom(kaplanFacilities);
+            var creator = getRandom(kaplan.getMembers());
+            var request = kaplan.createRequest({
+                facility:{
+                    _id:facility._id,
+                    name:facility.getName()
+                },
+                creator:{
+                    _id:creator._id,
+                    name:creator.getName()
+                },
+                createdAt:TestIssues.getRandomCreationDate()
             });
+            var basicDetails = TestIssues.getRandomTitleAndDescription();
+            request.name = basicDetails.name;
+            request.description = basicDetails.description;
+            request.priority = TestIssues.getRandomPriority(request);
+            request.costThreshold = (Math.floor(Math.random()*50)*10);
+            request.service = getRandom(facility.services);
+            request.subservice = getRandom(request.service.children);
+            request.save();
+            request.open();
             var chance = Math.random();
             if(chance<0.66) {
-                //progress to issued
-                if(change<0.33) {
-                    //progress to closed
+                var supplier = getRandom(request.getPotentialSuppliers());
+                var level = getRandom(facility.levels);
+                var area = level.type.children?getRandom(level.type.children):null;
+                _.extend(request,{
+                    supplier:{
+                        _id:supplier._id,
+                        name:supplier.name
+                    },
+                    level:level,
+                    area:area
+                });
+                request.save();
+                request.issue();
+                if(chance<0.33) {
+                    request.close();
                 }
             }
         }
