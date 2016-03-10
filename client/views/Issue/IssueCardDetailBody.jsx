@@ -57,7 +57,7 @@ IssueDynamicArea = React.createClass({
                     <div className="issue-dynamic-area">
                         <AutoInput.Text 
                             elastic={true}
-                            readOnly={!issue.isEditable()}
+                            readOnly={!issue.canSetDescription()}
                             placeholder="Type issue description here"
                             value={issue.description} 
                             onChange={this.updateItem.bind(this,'description')}
@@ -68,13 +68,17 @@ IssueDynamicArea = React.createClass({
                     <IpsoTabso tabs={[
                         {
                             tab:<span><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
-                            content:<AutoForm item={issue} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
+                            content:<div style={{padding:"15px"}}>
+                                <AutoForm item={issue} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
+                            </div>
                         },{
                             tab:<span><span>Contacts</span></span>,
-                            content:<ContactList items={contacts}/>
+                            content:<div style={{padding:"15px"}}>
+                                <ContactList items={contacts}/>
+                            </div>
                         },{
                             tab:<span><span>Updates</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
-                            content:<div>
+                            content:<div style={{padding:"15px"}}>
                                 <Inbox for={issue} />
                             </div>
                         }

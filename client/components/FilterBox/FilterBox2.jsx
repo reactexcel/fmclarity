@@ -57,7 +57,6 @@ FilterBox2 = React.createClass({
     component.setFilter(0);
     if(this.props.newItemCallback) {
       this.props.newItemCallback(function(newItem){
-        console.log({'calling back':newItem});
         component.setState({
           selectedItem:newItem
         });

@@ -23,12 +23,22 @@ MessageView = React.createClass({
 
     submit() {
         var input = this.refs.input;
-        var inboxId = this.data.inbox.getInboxId();
+        var creator = Meteor.user();
+        var inbox = this.data.inbox;
+        var inboxId = inbox.getInboxId();
+        console.log(inbox);
+        inbox.sendMessage({
+            verb:creator.getName()+" sent a message to "+inbox.getName(),
+            subject:creator.getName()+" sent a message to "+inbox.getName(),
+            body:input.value
+        });
+        /*
         Meteor.call("Messages.create",{
             inboxId:inboxId,
             verb:"sent a message to",
             body:input.value
         });
+        */
         input.value = null;
     },    
 

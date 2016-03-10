@@ -5,9 +5,12 @@ IpsoTabso = React.createClass({
         }
     },
 
-    selectTab(activeIndex) {
+    selectTab(idx) {
+        if(this.props.tabs[idx].onClick) {
+            idx = this.props.tabs[idx].onClick();
+        }
         this.setState({
-            active:activeIndex
+            active:idx
         });
     },
 
@@ -20,13 +23,13 @@ IpsoTabso = React.createClass({
             <div className="panel blank-panel tab-panel">
                 <div className="panel-heading">
                     <div className="row" style={{margin:0}}>
-                        <div className="col-xs-12 col-sm-7 col-md-5">
+                        <div className="col-xs-12 col-sm-7 col-md-12">
                             <div className="row">
                                 {tabs.map(function(i,idx){
                                     return (
                                         <div 
                                             onClick={selectTab.bind(null,idx)} 
-                                            className={"col-xs-4 "+(idx==active?"ipso-tab active":"ipso-tab")}
+                                            className={(idx==active?"ipso-tab active":"ipso-tab")}
                                             key={idx}
                                         >
                                             <div className="btn btn-sm btn-flat issue-nav-btn">{i.tab}</div>

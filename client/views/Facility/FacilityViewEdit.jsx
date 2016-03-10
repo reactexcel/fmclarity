@@ -61,7 +61,14 @@ FacilityViewEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2><span>{facility.getName()}</span></h2>
 				<CollapseBox title="Property Details">
-				    <AutoForm item={facility} schema={schema} form={["name","address"]}/>
+					<div className="row">
+						<div className="col-sm-7">
+							<AutoForm item={facility} schema={schema} form={["name","address"]}/>
+						</div>
+			        	<div className="col-sm-5">
+			        		<AutoInput.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
+			        	</div>
+			        </div>
 				</CollapseBox>
 				<CollapseBox title="Documents & images">
 					<AutoForm item={facility} schema={schema} form={["attachments"]}/>

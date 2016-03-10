@@ -1,6 +1,30 @@
 CHANGELOG.md
 ============
 
+**v0.5.2a**
+
+* MD style select
+* Updated services selector
+* Supplier selected in facility service configuration screen is now the default when a request is created with that service
+* Updated areas selector
+* Updated level selector
+* Updated wo input for level and area selection
+* Updated test data generation to include all wo elements
+* Updated test data generation to include images and suppliers
+
+**v0.5.1a**
+
+* Added option to delete profile thumbnail
+* Fixed a bug which was causing images with an apostrophe in their filename to display incorrectly
+* Messages written in updates section of a request no send notification to all request watchers
+* Closed issues no longer appear in "All" view
+* Automatic adding of test data to incisive
+* Made changes to test data generation routines to improve testing
+* Cleaned up images folder, removed default images left from previous versions
+* Tightened security of edits on "public" links to requests
+* Changed the way active modules/navigations items are handled to improve role-based accounts
+* Began restructuring services and area model
+
 **v0.5.0a**
 
 * RBAC completed

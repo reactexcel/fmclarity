@@ -6,7 +6,7 @@ DashboardOverview = React.createClass({
 
     	var baseQuery = {};
     	var queries = {
-    		Open:{},
+    		New:{},
     		Issued:{},
     		Closed:{},
     	};
@@ -165,8 +165,8 @@ DashboardOverview = React.createClass({
 						<div className="col-xs-4" style={{padding:0}}>
 							<ProgressArc 
 								title="New Requests" 
-								thisPeriod = {results['Open'].thisPeriod}
-								lastPeriod = {results['Open'].lastPeriod}
+								thisPeriod = {results['New'].thisPeriod}
+								lastPeriod = {results['New'].lastPeriod}
 								color="#3ca773"
 							/>
 						</div>
@@ -186,6 +186,32 @@ DashboardOverview = React.createClass({
 								color="#333333"
 							/>
 						</div>
+                        {/*
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Open Quotes" 
+                                thisPeriod = {4}
+                                lastPeriod = {3}
+                                color="#999999"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Expired Insurance" 
+                                thisPeriod = {5}
+                                lastPeriod = {0}
+                                color="#666666"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Supplier Reviews" 
+                                thisPeriod = {10}
+                                lastPeriod = {11}
+                                color="#333333"
+                            />
+                        </div>
+                        */}
 				    </div>
 				</div>
 			</div>

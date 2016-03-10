@@ -1,4 +1,9 @@
-
+/*
+Tracker.autorun(function(computation) {
+   var docs = Posts.find({}); // and also try with opts
+   console.log('collection changed', docs);
+});
+*/
 TeamViewEdit = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -11,7 +16,7 @@ TeamViewEdit = React.createClass({
     	}
     	return {
     		selectedTeam:Session.getSelectedTeam(),
-    		team:this.state.item,
+    		team:team,
     		members:members
     	}
     },
@@ -35,20 +40,11 @@ TeamViewEdit = React.createClass({
 	form1 : [
 		"name",
 		"abn",
-		"contactName",
 		"email"
 	],
 	form2 : [
-		"addressLine1",
-		"addressLine2",
-		"city",
-		"state",
-		"country",
-		"postcode",
-	],
-	form3: [
-		"defaultWorkOrderValue",
-		"modules",
+		"address",
+		"defaultWorkOrderValue"
 	],
 
 	componentDidMount() {
@@ -116,7 +112,7 @@ TeamViewEdit = React.createClass({
 			        		<AutoForm item={team} schema={schema} form={this.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={team.thumb} onChange={team.set.bind(team,"thumb")} />
+			        		<AutoInput.File item={team.thumb} onChange={team.setThumb.bind(team)} />
 			        	</div>
 			        	<div className="col-sm-12">
 				        	<AutoForm item={team} schema={schema} form={this.form2} />
@@ -130,9 +126,6 @@ TeamViewEdit = React.createClass({
 			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
 			   		/>
 				</CollapseBox>
-			   	<CollapseBox title="Config" collapsed={true}>
-			       	<AutoForm item={team} schema={schema} form={this.form3}/>
-			    </CollapseBox>
 			   	<CollapseBox title="Services Provided" collapsed={true}>
 			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
 				</CollapseBox>

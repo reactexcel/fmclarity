@@ -93,7 +93,6 @@ UserProfile = React.createClass({
 	},
 
 	render() {
-		console.log('whaaa?');
 		var user, profile, team;
 		user = this.state.item;
 		team = this.data.selectedTeam;
@@ -114,7 +113,6 @@ UserProfile = React.createClass({
 		else if(!user.canSave()) {
 			return (
 				<div>
-					<h1>FUCK!</h1>
 					<UserViewDetail item={user} />
 				</div>
 			)
@@ -130,7 +128,7 @@ UserProfile = React.createClass({
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			   		<div className="col-sm-5">
-				        <AutoInput.File item={profile.thumb} onChange={this.handleThumbChange} />
+				        <AutoInput.File item={user.thumb} onChange={user.setThumb.bind(user)} />
 				    </div>
 		        </div>
 			</div>

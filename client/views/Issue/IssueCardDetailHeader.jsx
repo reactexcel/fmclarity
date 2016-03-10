@@ -72,7 +72,6 @@ IssueSpecArea = React.createClass({
 
     showModal() {
         var request = this.props.item;
-        console.log(this.props.item);
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
             onSubmit:function(){
@@ -93,7 +92,17 @@ IssueSpecArea = React.createClass({
     updateService(service) {
     	var issue = this.props.item;
         issue.service = service;
+        if(issue.service.data&&issue.service.data.supplier) {
+            issue.supplier = issue.service.data.supplier;
+        }
         issue.subservice = 0;
+        this.save();
+    },
+
+    updateLevel(level) {
+        var issue = this.props.item;
+        issue.level = level;
+        issue.area = 0;
         this.save();
     },
 
@@ -147,26 +156,64 @@ IssueSpecArea = React.createClass({
 	                    		<div className="row">
 	                    			<div className="col-md-12">
 				                        <h2><AutoInput.Text
-                                                readOnly={!issue.isEditable()}
+                                                readOnly={!issue.canSetName()}
                                                 value={issue.name}
                                                 placeholder="Type issue name here"
                                                 onChange={this.updateItem.bind(this,'name')}
                                             />
                                         </h2>
 				                    </div>
-				                    <div className="col-md-6">
+				                    <div className="col-md-3">
 			                            <IssueFacilitySelector issue={issue} />
 			                            <div style={{cursor:"default"}} className="issue-summary-facility-col">
+                                        
 			                                <b>Order #</b>
-			                                <span>{issue.code}</span>&nbsp;
+			                                <span>{issue.code}</span><br/>
+
 			                                <b>Cost $</b>
-			                                <span style={{display:"inline-block"}}><AutoInput.Text
-			                                    readOnly={!issue.canSetCost()}
-			                                    value={issue.costThreshold} 
-			                                    onChange={this.updateItem.bind(this,'costThreshold')}
-			                                /></span>
+			                                <span style={{display:"inline-block",width:"40px"}}>
+                                                <AutoInput.Text
+    			                                    readOnly={!issue.canSetCost()}
+    			                                    value={issue.costThreshold} 
+    			                                    onChange={this.updateItem.bind(this,'costThreshold')}
+                                                />
+                                            </span>
 			                            </div>
 				                    </div>{/*col*/}
+                                    <div className="col-md-3">
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <SuperSelect 
+                                                    readOnly={!issue.canSetLevel()}
+                                                    itemView={ContactViewName}
+                                                    items={this.data.facility.levels} 
+                                                    onChange={this.updateLevel}
+                                                >
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} level</span>
+                                                </SuperSelect>
+                                                {issue.level?
+                                                    <div style={{clear:"both"}}>{issue.level.name}</div>
+                                                :null}
+                                            </div>
+                                        </div>
+                                        {issue.level&&issue.level.type&&issue.level.type.children&&issue.level.type.children.length?
+                                            <div className="row">
+                                                <div className="col-md-12">
+                                                <SuperSelect 
+                                                    readOnly={!issue.canSetArea()}
+                                                    itemView={ContactViewName}
+                                                    items={issue.level.type.children} 
+                                                    onChange={this.updateItem.bind(this,'area')}
+                                                >
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} area</span>
+                                                </SuperSelect>
+                                                {issue.area?
+                                                    <div style={{clear:"both"}}>{issue.area.name}</div>
+                                                :null}
+                                                </div>
+                                            </div>
+                                        :null}
+                                    </div>                                    
 					                <div className="col-md-3">
 					                    <div className="row">
 					                    	<div className="col-md-12">
@@ -202,7 +249,7 @@ IssueSpecArea = React.createClass({
 					                    :null}
 					                </div>
 					                <div className="col-md-3">
-					                    {issue.status&&issue.canSetSupplier()?
+					                    {issue.status&&(supplier||issue.canSetSupplier())?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 					                        <SuperSelect 

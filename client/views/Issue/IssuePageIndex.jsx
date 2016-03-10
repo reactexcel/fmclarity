@@ -90,7 +90,10 @@ IssuesIndexPage = React.createClass({
 	render() {
 		var filters = [
 	    {
-	        text:"All"
+	        text:"All",
+	        filter(i) {
+	        	return i.status!='Closed';
+	        }
 	    },
 	    {
 	        text:"New",

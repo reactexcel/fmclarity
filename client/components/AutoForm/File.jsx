@@ -97,13 +97,23 @@ AutoInput.File = React.createClass({
 	handleChange(event) {
 		var component = this;
 	    FS.Utility.eachFile(event, function(file) {
-	    	Files.insert(file, function (err, newFile) {
+      		var newFile = new FS.File(file);
+     		var name = file.name.replace(/[^A-Za-z0-9 _\-\.]/g,'');
+      		newFile.name(name);
+	    	Files.insert(newFile, function (err, newFile) {
 	    		component.props.onChange({
 			    	_id:newFile._id
 	    		});
 	    	});
 	    });
 	},
+
+    deleteFile() {
+		var message = confirm('Are you sure you want to delete this file?');
+    	if(message == true){
+	        this.data.file.remove();
+     	}
+    },
 
 	showImageInModal() {
         Modal.show({
@@ -122,11 +132,16 @@ AutoInput.File = React.createClass({
 
 	render() {
 		return(
-			<div onClick={this.onClick} className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-			    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
-				<div style={{width:0,height:0,overflow:"hidden"}}>
-					<input ref="input" type="file" onChange={this.handleChange}/>
+			<div style={{position:"relative"}}>
+				<div onClick={this.onClick} className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
+				    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.file?this.data.url:"img/default-placeholder.png"} />
+					<div style={{width:0,height:0,overflow:"hidden"}}>
+						<input ref="input" type="file" onChange={this.handleChange}/>
+					</div>
 				</div>
+			    {this.data.file?
+					<div className="close-button" onClick={this.deleteFile}>&times;</div>
+				:null}
 			</div>
 		)
 	}

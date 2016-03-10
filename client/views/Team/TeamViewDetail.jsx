@@ -21,7 +21,7 @@ TeamViewDetail = React.createClass({
 				 	<div>
 						<h2>{contact.getName()}</h2>
 						<b>Email</b> {profile.email}<br/>
-						<b>Phone</b> {profile.phone}<br/>
+						{profile.phone?<span><b>Phone</b> {profile.phone}<br/></span>:null}
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
 						{availableServices?

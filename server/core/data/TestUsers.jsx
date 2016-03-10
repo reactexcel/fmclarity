@@ -1,4 +1,28 @@
+
+
 TestUsers = {
+    thumbs:[],
+    currentThumb:-1,
+    makeThumbs() {
+        this.thumbs.length = 0;
+        for(var i=1;i<=17;i++) {
+            var url = Meteor.absoluteUrl()+'test/users/'+i+'.jpg';
+            Files.insert(url, function (error, fileObj) {
+                if(!error) {
+                    TestUsers.thumbs.push({
+                        _id:fileObj._id
+                    });
+                }
+            });
+        }
+    },
+    getThumb() {
+        this.currentThumb++;
+        if(this.currentThumb>this.thumbs.length) {
+            this.currentThumb = 0;
+        }
+        return this.thumbs[this.currentThumb];
+    },    
     clear(excludeIds) {
         Users.remove({_id:{$nin:excludeIds}});
     },
@@ -15,6 +39,8 @@ TestUsers = {
             Meteor.call('Users.create',profile,password);
             user = Accounts.findUserByEmail(profile.email);
         }
+        user.thumb = this.getThumb();
+        user.save();
         return user;
     },
     createUsers(num){
@@ -23,9 +49,7 @@ TestUsers = {
             Meteor.call('Users.create',newUser);
         }
     }
-
 }
-
 
 function shuffle(array) {
 	array = array.slice(0);
@@ -142,7 +166,13 @@ ExampleUsers.portraits.female = shuffle(ExampleUsers.portraits.female);
         //return 'a'+first+'.jpg';
         //var gender = user.gender=='male'?'men/':'women/';
         //return 'http://api.randomuser.me/portraits/'+gender+first+'.jpg';
-        return ExampleUsers.portraits[user.gender].pop();
+        //return ExampleUsers.portraits[user.gender].pop();
+
+
+        var thumb = getRandom(TestUsers.thumbs);
+        return {
+            _id:thumb._id
+        }        
     }
 
     makeRandomUser = function() {
@@ -313,7 +343,6 @@ ExampleUsers.portraits.female = shuffle(ExampleUsers.portraits.female);
         user.lastName = getRandom(surnames);
         user.name = user.firstName+' '+user.lastName;
         user.phone = makeRandomPhoneNumber();
-        user.thumb = makeRandomThumbnail(user);
         user.email = makeRandomEmailAddress(user);
         return user;
     }
