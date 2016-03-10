@@ -5,10 +5,11 @@ function getRandom(items) {
 
 TestFacilities = {
     thumbs:[],
+    currentThumb:-1,
     makeThumbs() {
         this.thumbs.length = 0;
         for(var i=1;i<=25;i++) {
-            var url = Meteor.absoluteUrl()+'/test/facilities/'+i+'.jpg';
+            var url = Meteor.absoluteUrl()+'test/facilities/'+i+'.jpg';
             Files.insert(url, function (error, fileObj) {
                 if(!error) {
                     TestFacilities.thumbs.push({
@@ -18,6 +19,13 @@ TestFacilities = {
             });
         }
     }, 
+    getThumb() {
+        this.currentThumb++;
+        if(this.currentThumb>this.thumbs.length) {
+            this.currentThumb = 0;
+        }
+        return this.thumbs[this.currentThumb];
+    },
     clear(excludeIds) {
         Facilities.remove({_id:{$nin:excludeIds}});
     },

@@ -186,6 +186,32 @@ DashboardOverview = React.createClass({
 								color="#333333"
 							/>
 						</div>
+                        {/*
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Open Quotes" 
+                                thisPeriod = {4}
+                                lastPeriod = {3}
+                                color="#999999"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Expired Insurance" 
+                                thisPeriod = {5}
+                                lastPeriod = {0}
+                                color="#666666"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Supplier Reviews" 
+                                thisPeriod = {10}
+                                lastPeriod = {11}
+                                color="#333333"
+                            />
+                        </div>
+                        */}
 				    </div>
 				</div>
 			</div>

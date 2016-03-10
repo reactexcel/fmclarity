@@ -400,12 +400,13 @@ function getPotentialSuppliers() {
         active:true
       }}
     };
+    /*
     if(this.subservice&&this.subservice.name) {
       query['services.children'] = { $elemMatch : {
           name:this.subservice.name,
           active:true
       }};
-    }
+    }*/
     var teams = Teams.find(query).fetch();
     return teams;
   }

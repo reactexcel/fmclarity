@@ -5,10 +5,11 @@ function getRandom(items) {
 
 TestTeams = {
     thumbs:[],
+    currentThumb:-1,
     makeThumbs() {
         this.thumbs.length = 0;
         for(var i=1;i<=11;i++) {
-            var url = Meteor.absoluteUrl()+'/test/logos/'+i+'.png';
+            var url = Meteor.absoluteUrl()+'test/logos/'+i+'.png';
             Files.insert(url, function (error, fileObj) {
                 if(!error) {
                     TestTeams.thumbs.push({
@@ -17,14 +18,21 @@ TestTeams = {
                 }
             });
         }
-    },    
+    },
+    getThumb() {
+        this.currentThumb++;
+        if(this.currentThumb>this.thumbs.length) {
+            this.currentThumb = 0;
+        }
+        return this.thumbs[this.currentThumb];
+    },
     clear(excludeIds) {
         Teams.remove({_id:{$nin:excludeIds}});
     },
     create(profile,shouldAddUsers) {
         var team = Teams.findOne({name:profile.name});
         if(!team) {
-            profile.thumb = getRandom(TestTeams.thumbs);
+            profile.thumb = this.getThumb();
             Meteor.call('Teams.create',profile);
 	        team = Teams.findOne({name:profile.name});
         }

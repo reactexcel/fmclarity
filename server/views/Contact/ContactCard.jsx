@@ -45,8 +45,7 @@ Contact2Line = React.createClass({
 		        	<span style={{fontSize:"11px",color:"#777"}}>
 		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 		            	{profile.email}&nbsp;&nbsp;
-		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
-		            	{profile.phone}
+		            	{profile.phone?<span><i className="fa fa-phone"></i>&nbsp;&nbsp;{profile.phone}</span>:null}
 		            </span>
 		       	</div>
 	        </div>
@@ -74,8 +73,7 @@ Contact2LineWithAvatar = React.createClass({
 		        	<span style={{fontSize:"11px",color:"#777"}}>
 		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
 		            	{profile.email}&nbsp;&nbsp;
-		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
-		            	{profile.phone}
+		            	{profile.phone&&profile.phone.length?<span><i className="fa fa-phone"></i>&nbsp;&nbsp;{profile.phone}</span>:null}
 		            </span>
 		       	</span>
 	        </div>

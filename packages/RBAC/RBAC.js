@@ -26,7 +26,7 @@ function getRole(member,item) {
 	//then we can always check permissions against the selected team
 	for(var i in item.members) {
 		var currentMember = item.members[i];
-		if(currentMember._id==member._id) {
+		if(currentMember&&currentMember._id==member&&member._id) {
 			return currentMember.role;
 		}
 	}

@@ -22,7 +22,7 @@ ContactAvatarSmall = React.createClass({
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
 		if(url) {
-			style['background'] = 'url(\''+url+'\')';
+			style['backgroundImage'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
 		}
 		return {

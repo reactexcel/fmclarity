@@ -27,7 +27,7 @@ TestIssues = {
 			startDate = new Date(2015,11,1);
 		}
 		else {
-			startDate = new Date(2016,3,1);
+			startDate = new Date(2016,0,1);
 		}
 		return randomDate(startDate, new Date());
     },

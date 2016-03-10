@@ -2,10 +2,11 @@
 
 TestUsers = {
     thumbs:[],
+    currentThumb:-1,
     makeThumbs() {
         this.thumbs.length = 0;
-        for(var i=1;i<=15;i++) {
-            var url = Meteor.absoluteUrl()+'/test/users/'+i+'.jpg';
+        for(var i=1;i<=17;i++) {
+            var url = Meteor.absoluteUrl()+'test/users/'+i+'.jpg';
             Files.insert(url, function (error, fileObj) {
                 if(!error) {
                     TestUsers.thumbs.push({
@@ -15,6 +16,13 @@ TestUsers = {
             });
         }
     },
+    getThumb() {
+        this.currentThumb++;
+        if(this.currentThumb>this.thumbs.length) {
+            this.currentThumb = 0;
+        }
+        return this.thumbs[this.currentThumb];
+    },    
     clear(excludeIds) {
         Users.remove({_id:{$nin:excludeIds}});
     },
@@ -31,7 +39,7 @@ TestUsers = {
             Meteor.call('Users.create',profile,password);
             user = Accounts.findUserByEmail(profile.email);
         }
-        user.thumb = makeRandomThumbnail(user);
+        user.thumb = this.getThumb();
         user.save();
         return user;
     },

@@ -21,6 +21,7 @@ Navigation = React.createClass({
     },
 
     isActive(mod) {
+        //return true;
         return this.data.modules.indexOf(mod)>=0;
     },
 
