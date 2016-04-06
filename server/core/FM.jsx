@@ -187,7 +187,7 @@ FM.resetTestData = function() {
     })
 
 
-    if(FM.inDevelopment()) {
+    //if(FM.inDevelopment()) {
 
         incisive.addSupplier(incisive);
         incisive.addSupplier(expert);
@@ -197,7 +197,7 @@ FM.resetTestData = function() {
 
         incisive = Teams.findOne(incisive._id);
         var incisiveFacilities = incisive.getFacilities();
-        for(var i=0;i<100;i++) {
+        for(var i=0;i<50;i++) {
             var facility = getRandom(incisiveFacilities);
             var creator = getRandom(incisive.getMembers());
             var request = incisive.createRequest({
@@ -240,7 +240,7 @@ FM.resetTestData = function() {
                 }
             }
         }
-    }
+    //}
 
     //set up buildcost
     var buildcost = TestTeams.create(TeamsData['buildcost']);
