@@ -3,6 +3,13 @@ CHANGELOG.md
 
 **v0.5.2a**
 
+* Includes hotfix that addresses issue of program crashing when request created for "All facilities"
+* Fixed a problem that was causing "close request" form to be concealed
+* Added area identifiers to model and identifier drop down to request form
+* Updated test data to include more Kaplan info - removed all factilities except docklands, entered areas for level 3
+
+**v0.5.2a**
+
 * MD style select
 * Updated services selector
 * Supplier selected in facility service configuration screen is now the default when a request is created with that service

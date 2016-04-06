@@ -414,30 +414,81 @@ Config.services.map(function(service){
 });
 
 Config.defaultAreas =[{
-    name:'Standard Level Type A',
+    name:'Level Type 3',
     active:true,
 	hasChildren:true,
-    data:{
-    	number:2
-    },
+    data:{},
     children:[{
-		name:'Conference room'
+		name:'Classroom',
+		identifiers:[{name:'301'}]
 	},{
-		name:'Male bathroom'
+		name:'Office',
+		identifiers:[
+			{name:'1'},
+			{name:'2'},
+			{name:'3'},
+			{name:'4'},
+			{name:'5'}
+		]
 	},{
-		name:'Female bathroom'
+		name:'Male Bathroom',
+		identifiers:[
+			{name:'Front'},
+			{name:'Rear'}
+		]
     },{
-    	name:'Staff room'
+		name:'Female Bathroom',
+		identifiers:[
+			{name:'Front'},
+			{name:'Rear'}
+		]
     },{
-    	name:'Work room'
+		name:'Accessible Bathroom',
+		identifiers:[
+			{name:'Front'},
+			{name:'Rear'}
+		]
+    },{
+    	name:'Lift lobby'
+    },{
+    	name:'Kitchen'
+	},{
+		name:'Reception'
+	},{
+		name:'Lockers',
+	},{
+		name:'Electrical Riser',
+	},{
+		name:'Comms Riser',
+	},{
+		name:'Comms Room',
+	},{
+		name:'Stairwell',
+		identifiers:[
+			{name:'Left'},
+			{name:'Right'}
+		]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[
+			{name:'Left'},
+			{name:'Right'}
+		]
+	},{
+		name:'Meeting Room',
+		identifiers:[
+			{name:'1'},
+			{name:'2'}
+		]
+	},
+	{
+		name:'Server Room'
 	}]
 },{
-    name:'Standard Level Type B',
+    name:'Standard Level Type 4',
     active:true,
 	hasChildren:true,
-    data:{
-    	number:2
-    },
+    data:{},
     children:[{
 		name:'Conference room'
 	},{
@@ -455,18 +506,15 @@ Config.defaultAreas =[{
 }];
 
 Config.defaultLevels = [{
-	name:"Level 1",
+	name:"Level 3",
 	type:Config.defaultAreas[0],
 },{
-	name:"Level 2",
-	type:Config.defaultAreas[1],
+	name:"Level 4",
+	type:Config.defaultAreas[0],
 },{
-	name:"Board room",
-	type:Config.defaultAreas[2],
+	name:"Level 5",
+	type:Config.defaultAreas[0],
 },{
-	name:"Reception",
-	type:Config.defaultAreas[2],
-},{
-	name:"Basement",
-	type:Config.defaultAreas[2],
+	name:"Level 6",
+	type:Config.defaultAreas[0],
 }];

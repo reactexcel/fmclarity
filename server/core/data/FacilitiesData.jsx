@@ -87,6 +87,7 @@ KaplanFacilities = [
 			buildingName:"Docklands",
 		}
 	},
+	/*
 	{
 		name:"Hay St, Perth",
 		location:"Hay St, Perth",
@@ -269,4 +270,5 @@ KaplanFacilities = [
 			buildingName:"Bradford College",
 		}
 	}
+	*/
 ];
