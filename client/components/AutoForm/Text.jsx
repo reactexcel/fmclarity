@@ -33,7 +33,7 @@ AutoInput.Text = React.createClass({
                 	readOnly={this.props.readOnly}
 					placeholder={this.props.placeholder}
                     className="issue-description-textarea inline-form-control" 
-					value={this.props.value}
+					defaultValue={this.props.value}
 					onChange={this.handleChange}
 					onKeyDown={this.checkKey}
                 />
@@ -46,7 +46,7 @@ AutoInput.Text = React.createClass({
            	readOnly={this.props.readOnly}
 			placeholder={this.props.placeholder}
 			className="inline-form-control" 
-			value={this.props.value} 
+			defaultValue={this.props.value} 
 			onChange={this.handleChange}
 			onKeyDown={this.checkKey}
 		/>

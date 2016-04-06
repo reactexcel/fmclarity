@@ -111,6 +111,10 @@ IssueSpecArea = React.createClass({
         this.save();
     },
 
+    componentWillMount: function() {
+        this.updateItem = _.debounce(this.updateItem,500);
+    },
+
     render() {
         var issue = this.props.item;
         var supplier = this.data.supplier;
@@ -181,6 +185,7 @@ IssueSpecArea = React.createClass({
 			                            </div>
 				                    </div>{/*col*/}
                                     <div className="col-md-3">
+                                        {this.data.facility?
                                         <div className="row">
                                             <div className="col-md-12">
                                                 <SuperSelect 
@@ -196,6 +201,7 @@ IssueSpecArea = React.createClass({
                                                 :null}
                                             </div>
                                         </div>
+                                        :null}
                                         {issue.level&&issue.level.type&&issue.level.type.children&&issue.level.type.children.length?
                                             <div className="row">
                                                 <div className="col-md-12">

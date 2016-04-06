@@ -203,7 +203,7 @@ function readyToOpen(request) {
     request.name&&request.name.length&&
     request.description&&request.description.length&&
     request.facility&&request.facility._id&&
-    request.area&&request.area.name.length&&
+    request.area&&request.area.name&&request.area.name.length&&
     request.service&&request.service.name.length
   )        
 }
@@ -214,7 +214,7 @@ function readyToOpen(request) {
 function readyToIssue(request) {
   return (
     (request.status==Issues.STATUS_NEW||readyToOpen(request))&&
-    request.subservice&&request.subservice.name.length&&
+    request.subservice&&request.subservice.name&&request.subservice.name.length&&
     request.supplier&&request.supplier._id
   )   
 }
