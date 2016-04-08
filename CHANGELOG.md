@@ -1,6 +1,12 @@
 CHANGELOG.md
 ============
 
+**v0.5.3a**
+
+* Added prompt for confirmation when removing supplier from team
+* Added services to Kaplan suppliers
+* Added services to Kaplan
+
 **v0.5.2a**
 
 * Includes hotfix that addresses issue of program crashing when request created for "All facilities"

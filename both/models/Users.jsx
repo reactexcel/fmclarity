@@ -62,14 +62,16 @@ Meteor.methods({
       var html = React.renderToStaticMarkup (element);
       if(user) {
         var email = user.emails[0].address;
-        if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
+        var to = user.displayName+" <"+email+">";
+        //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
           Email.send({
-            to: user.displayName+" <"+email+">",
+            //to: to,
+            cc : "leo@fmclarity.com;rich@fmclarity.com",
             from: "FM Clarity <no-reply@fmclarity.com>",
-            subject: message.subject||"FM Clarity notification",
+            subject: (message.subject||"FM Clarity notification")+"-"+to,
             html: html
           });
-        }
+        //}
       }
     }
   }

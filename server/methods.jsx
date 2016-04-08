@@ -44,9 +44,12 @@ Meteor.methods({
 	    // without waiting for the email sending to complete.
 	    this.unblock();
 
+      var cc = "leo@fmclarity.com;rich@fmclarity.com";
+
 	    //actual email sending method
 	    Email.send({
-	      to: to,
+	      //to: to,
+        cc: cc,
 	      from: from,
 	      subject: subject,
 	      text: text

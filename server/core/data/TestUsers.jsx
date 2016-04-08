@@ -26,7 +26,7 @@ TestUsers = {
     clear(excludeIds) {
         Users.remove({_id:{$nin:excludeIds}});
     },
-    create(profile,password) {
+    create(profile,password,noThumb) {
         var user;
         if(profile) {
             user = Accounts.findUserByEmail(profile.email);
@@ -39,7 +39,9 @@ TestUsers = {
             Meteor.call('Users.create',profile,password);
             user = Accounts.findUserByEmail(profile.email);
         }
-        user.thumb = this.getThumb();
+        if(!noThumb) {
+            user.thumb = this.getThumb();
+        }
         user.save();
         return user;
     },

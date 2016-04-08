@@ -30,6 +30,7 @@ UserCard = React.createClass({
 		if(selectedTeam&&selectedTeam.hasMember(user)&&!user.isLoggedIn()) {
 			menu.push({
 				label:"Remove from "+selectedTeam.getName(),
+				shouldConfirm:true,
 				action(){
 					selectedTeam.removeMember(user);
 					//Modal.hide();
