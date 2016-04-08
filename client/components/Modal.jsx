@@ -130,13 +130,13 @@ ModalInner = React.createClass({
       <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
         <div className="modal-dialog">
           <div className="modal-content">
-            {this.props.children}
-              {this.props.handleSubmit?
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Submit</button>
-                </div>
-              :null}
+            <div>{this.props.children}</div>
+            {this.props.handleSubmit?
+              <div className="modal-footer">
+                <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Submit</button>
+              </div>
+            :null}
             </div>
           <span style={{position:"absolute",right:0,top:0,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
         </div>

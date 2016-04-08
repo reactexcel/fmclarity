@@ -1,6 +1,19 @@
 CHANGELOG.md
 ============
 
+**v0.5.3a**
+
+* Added prompt for confirmation when removing supplier from team
+* Added services to Kaplan suppliers
+* Added services to Kaplan
+
+**v0.5.2a**
+
+* Includes hotfix that addresses issue of program crashing when request created for "All facilities"
+* Fixed a problem that was causing "close request" form to be concealed
+* Added area identifiers to model and identifier drop down to request form
+* Updated test data to include more Kaplan info - removed all factilities except docklands, entered areas for level 3
+
 **v0.5.2a**
 
 * MD style select

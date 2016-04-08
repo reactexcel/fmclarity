@@ -3,7 +3,12 @@ TeamsData = {
         type:"fm",
         name:"Kaplan Australia",
         email:"kaplan@fmclarity.com",
-        phone:"0400-123-123"        
+        phone:"0400-123-123",
+        services:[{
+            name:"General Repairs",            
+        },{
+            name:"OHS"
+        }]
     },
     buildcost:{
         type:"fm",
@@ -110,6 +115,259 @@ function getRandom(items) {
     return items[i];
 }
 
+function addKaplanContractor(kaplan,details) {
+
+    console.log(details.name);
+
+    for(var i in details.services) {
+        details.services[i].active = true;
+    }
+
+    var supplierDetails = {
+        name:details.name,
+        type:"contractor",
+        email:details.email,
+        phone:details.phone,
+        phone2:details.phone2,
+        services:details.services
+    }
+
+    var supplier = Teams.findOne({name:supplierDetails.name});
+    if(!supplier) {
+        Meteor.call('Teams.create',supplierDetails);
+        supplier = Teams.findOne({name:supplierDetails.name});
+    }
+
+    if(details.manager&&details.email&&details.manager.length) {
+        var temp = details.manager.split(' ');
+        var managerDetails = {
+            name:manager,
+            firstName:temp[0],
+            lastName:temp[1],
+            email:details.email,
+            phone:details.phone,
+            phone2:details.phone2
+        }
+
+        var manager = TestUsers.create(managerDetails,null,true);
+        supplier.addMember(manager,{role:"manager"});
+    }
+
+    kaplan.addSupplier(supplier);
+}
+
+function makeKaplanContractors(kaplan) {
+    //should go in a single structure in KaplanData.jsx
+    addKaplanContractor(kaplan,{
+        name:"OPIndustries",
+        manager:"Michelle Cooper",
+        email:"mcooper@opmelbourne.com.au",
+        phone:"(03)98748555",
+        phone2:"1300553395",
+        services:[{name:"Air Conditioning"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Emerson",
+        manager:"Natalie Mahomet",
+        email:"Natalie.Mahomet@Emerson.com",
+        phone:"(02)99142248",
+        services:[{name:"Air Conditioning"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Sharper Cleaning",
+        manager:"Nitish Aserigadu",
+        email:"nitish@sharperclearning.com.au",
+        phone:"0487878728",
+        services:[{name:"Cleaning"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Initial (Rentokil)",
+        manager:"Paul James",
+        email:"paul.james@rentokil-initial.com",
+        phone:"0424014066",
+        phone2:"(03)99443300",
+        services:[{name:"Cleaning"},{name:"Pest Control"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Chubb",
+        manager:"Brooke Hardwick",
+        email:"Brooke.Hardwick@chubb.com.au",
+        phone:"0401771760",
+        phone2:"(03)92649850",
+        services:[{name:"Emergency Management Planning"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"AESM",
+        manager:"Christine Hocking",
+        email:"Christine@aesm.com.au",
+        phone:"(03)97634799",
+        services:[{name:"Fire Protection"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Stokes Safety",
+        manager:"Kim Whelan",
+        email:"kim@stokessafety.com.au",
+        phone:"1800058342",
+        services:[{name:"Essential Safety Measures"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"TBM",
+        manager:"Simon O'Farrell",
+        email:"tbmelec@bigpond.net.au",
+        phone:" 0400226703",
+        services:[{name:"Electrical"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Rutherford Electrical",
+        manager:"Paul Rutherford",
+        email:"p.rutherford@bigpond.com",
+        phone:" 0408106033",
+        services:[{name:"Electrical"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Thermoscan",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"R W Gill",
+        manager:"Trudi ",
+        email:"plumbing@rwgill.com.au",
+        phone:"(03)94280100",
+        phone2:"0417135427",
+        services:[{name:"Plumbing"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Butlers",
+        manager:"Doug Butler",
+        email:"butler.douglas@hotmail.com",
+        phone:"0418533679",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Dorma",
+        phone:"1800675411",
+        services:[{name:"Door Maintenence"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Ottis",
+        manager:"Allistair ",
+        email:"",
+        phone:"0466469958",
+        services:[{name:"Lifts"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Wilson Security",
+        manager:"",
+        email:"",
+        phone:"1300945766",
+        services:[{name:"Security"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Royal Eagle",
+        manager:"Bethany ",
+        email:"security@ress.com.au",
+        phone:"(03) 9696 3199",
+        services:[{name:"Access Control"},{name:"Security"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Monjon - Panic Switches",
+        manager:"",
+        email:"monjon@monjon.com.au",
+        phone:"(03)95219676",
+        phone2:"0417666566",
+        services:[{name:"Security"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Transpacific",
+        manager:"",
+        email:"CLWYAUCustomerService.MelbourneIndustrial@transpac.com.au",
+        phone:"131339",
+        services:[{name:"Rubbish Removal"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Quench",
+        manager:"",
+        email:"www.quench.com.au",
+        phone:"(03)95557771",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Aqua Clear",
+        manager:"Kylie Worcester",
+        email:"kylie@aquaclear.com.au",
+        phone:"97413131",
+        services:[{name:"Water Coolers"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Merit Interiors",
+        manager:"Andrew Campion",
+        email:"andrew@meritinteriors.com.au",
+        phone:"(03)52276100",
+        phone2:"0439011209",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Zircon",
+        manager:"Tristan Weeks",
+        email:"tristan@corporatebusinessfurniture.com.au",
+        phone:"0448012997",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Corporate Business Furniture",
+        manager:"Tristan Weeks",
+        email:"tristan@corporatebusinessfurniture.com.au",
+        phone:"0448012997",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Interman",
+        manager:"Andrew Blake",
+        email:"a.blake@intermain.com.au",
+        phone:"(02)93182272",
+        phone2:"0434770307",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Cortrols",
+        manager:"Neol Dean",
+        email:"neol@cortrols.com.au",
+        phone:"98506155",
+        phone2:"0407040478",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Esafe",
+        manager:"Hamish McWhirr",
+        email:"service@esafeservices.com.au",
+        phone:"(08)83421127",
+        phone2:"0401147903",
+        services:[{name:"Kitchen Equipment"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Ambuis",
+        manager:"Jackie Graham",
+        email:"jackie.graham@ambius.com",
+        phone:"0431995270",
+        phone2:"(03)99443333",
+        services:[{name:"Plants"}]
+    });
+    addKaplanContractor(kaplan,{
+        name:"Integal",
+        manager:"Matt Currie",
+        email:"MCurrie@eintegral.com.au",
+        phone:"0439393002",
+        services:[]
+    });
+    addKaplanContractor(kaplan,{
+        name:"JLL",
+        manager:"",
+        email:"",
+        phone:"",
+        phone2:"",
+        services:[{name:"High Access"}]
+    });
+}
 
 FM.resetTestData = function() {
 
@@ -155,6 +413,8 @@ FM.resetTestData = function() {
     kaplan.addFacilities(KaplanFacilities);
     kaplan.addSupplier(kaplan);
 
+    makeKaplanContractors(kaplan);
+
     //set up fmclarity
     var clarity = TestTeams.create(TeamsData['clarity']);
     clarity.addMember(leo,{role:"manager"});
@@ -162,11 +422,11 @@ FM.resetTestData = function() {
 
     //set up contractors
     var normal = TestTeams.create(TeamsData['normal']);
-    normal.addMember(contractor,{role:"manager"});
-    normal.addMember(fixer,{role:"staff"});
+    //normal.addMember(contractor,{role:"manager"});
+    //normal.addMember(fixer,{role:"staff"});
     var abnormal = TestTeams.create(TeamsData['abnormal']);
-    abnormal.addMember(TestUsers.create(),{role:"manager"});
-    abnormal.addMember(TestUsers.create(),{role:"staff"});
+    //abnormal.addMember(TestUsers.create(),{role:"manager"});
+    //abnormal.addMember(TestUsers.create(),{role:"staff"});
     var expert = TestTeams.create(TeamsData['expert']);
     var aperture = TestTeams.create(TeamsData['aperture']);
     var clearway = TestTeams.create(TeamsData['clearway']);
@@ -176,15 +436,15 @@ FM.resetTestData = function() {
     incisive.addMember(leo,{role:"staff"});
     incisive.addMember(rich,{role:"manager"});
     incisive.addFacilities(IncisiveFacilities);
-    incisive.addMember(TestUsers.create(),{role:"staff"});
-    incisive.addMember(TestUsers.create(),{role:"staff"});
+    //incisive.addMember(TestUsers.create(),{role:"staff"});
+    //incisive.addMember(TestUsers.create(),{role:"staff"});
     var facilities = incisive.getFacilities();
-    facilities[0].addMember(tenant,{role:"tenant"});
-    facilities[1].addMember(contact,{role:"contact"});
-    facilities.map(function(f){
-        f.addMember(TestUsers.create(),{role:"contact"});
-        f.addMember(TestUsers.create(),{role:"tenanant"});
-    })
+    //facilities[0].addMember(tenant,{role:"tenant"});
+    //facilities[1].addMember(contact,{role:"contact"});
+    //facilities.map(function(f){
+        //f.addMember(TestUsers.create(),{role:"contact"});
+        //f.addMember(TestUsers.create(),{role:"tenanant"});
+    //})
 
 
     //if(FM.inDevelopment()) {

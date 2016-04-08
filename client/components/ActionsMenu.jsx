@@ -1,7 +1,18 @@
 ActionsMenu = React.createClass({
 
+	runAction(item,event) {
+		if(item.shouldConfirm) {
+			var message = confirm(item.label+". Are you sure?");
+			if(message != true){
+				return;
+     		}
+		}
+		item.action(event);
+	},
+
 	render() {
 		var icon = this.props.icon||'wrench';
+		var component = this;
 		if(!(this.props.items&&this.props.items.length)) {
 			return <div/>
 		}
@@ -18,7 +29,7 @@ ActionsMenu = React.createClass({
 		    	}}>
 		    		{this.props.items.map(function(i,idx){
 		    			return (
-		    				<li key={idx} onClick={i.action}><a href="#">{i.label}</a></li>
+		    				<li key={idx} onClick={component.runAction.bind(null,i)}><a href="#">{i.label}</a></li>
 		    			)
 		    		})}
 				</ul>

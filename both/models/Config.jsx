@@ -19,95 +19,6 @@ Config.validEmails = {
   'fmclarity.com':'*'
 };
 
-Config.areaNames = [
-	"",
-	"Office floor",
-	"Male bathroom",
-	"Female bathroom",
-	"Disabled bathroom",
-	"Lift lobby",
-	"Kitchenette",
-	"Photocopy room",
-	"First aid room",
-	"Entrance door",
-	"Lockers",
-	"Electrical riser",
-	"Comms riser",
-	"Comms room",
-	"Stairwell",
-	"Fire cupboard",
-	"Meeting room 1",
-	"Meeting room 2",
-	"Meeting room 3",
-	"Meeting room 4",
-	"Meeting room 5",
-	"Meeting room 6",
-	"Meeting room 7",
-	"Meeting room 8",
-	"Seminar room",
-	"Board room",
-	"Conference room",
-
-	
-	"Lift 1",
-	"Lift 2",
-	"Lift 3",
-	"Lift 4",
-	"Lift 5",
-	"Lift 6",
-	"Lift 7",
-	"Lift 8",
-	"Foyer",
-	"Fire pump room",
-	"Generator room",
-	"Concierge",
-	"Reception",
-	"Café",
-	"Loading dock",
-	"Bin storage",
-	"Carpark level 0",
-	"Carpark level 1",
-	"Carpark level 2",
-	"Carpark level 3",
-	"Carpark level 4",
-	"Switch room",
-	"Cleaner’s room",
-	"Plant room 1",
-	"Plant room 2",
-	"Lift motor room",
-	"Roof",
-	"Upper façade",
-	"Lower façade",
-	"Building forecourt",
-	"Bike storage",
-	"Security office",
-	"MDF",
-	"EWIS",
-	"Fire panel",
-	"Male changerooms",
-	"Female changerooms"
-];
-
-Config.cycleNames = [
-	"",
-	"Daily",
-	"Weekly",
-	"Fortnightly",
-	"Monthly",
-	"Quarterly",
-	"Half-yearly",
-	"Yearly",
-];
-
-Config.areas = [];
-Config.areaNames.map(function(areaName){
-	Config.areas.push({
-		name:areaName,
-		cycle:"",
-		contractor:{}
-	});
-});
-
 Config.services = [{
 	name:"Air Conditioning",
 	children:[{
@@ -414,40 +325,212 @@ Config.services.map(function(service){
 });
 
 Config.defaultAreas =[{
-    name:'Standard Level Type A',
+    name:'Level Type 3',
     active:true,
 	hasChildren:true,
-    data:{
-    	number:2
-    },
+    data:{},
     children:[{
-		name:'Conference room'
-	},{
-		name:'Male bathroom'
-	},{
-		name:'Female bathroom'
+		name:'Male Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
     },{
-    	name:'Staff room'
+		name:'Female Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
     },{
-    	name:'Work room'
+		name:'Accessible Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+    	name:'Lift lobby'
+	},{
+		name:'Reception'
+	},{
+		name:'Lockers',
+	},{
+		name:'Electrical Riser',
+	},{
+		name:'Comms Riser',
+	},{
+		name:'Comms Room',
+	},{
+		name:'Stairwell',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},
+
+    {
+		name:'Classroom',
+		identifiers:[{name:'301'}]
+	},{
+		name:'Office',
+		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
+	},{
+		name:'Meeting Room',
+		identifiers:[{name:'1'},{name:'2'}]
+	},{
+		name:'Server Room'
+    },{
+    	name:'Kitchen'
 	}]
 },{
-    name:'Standard Level Type B',
+    name:'Standard Level Type 4',
     active:true,
 	hasChildren:true,
-    data:{
-    	number:2
-    },
+    data:{},
     children:[{
-		name:'Conference room'
-	},{
-		name:'Male bathroom'
-	},{
-		name:'Female bathroom'
+		name:'Male Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
     },{
-    	name:'Staff room'
+		name:'Female Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
     },{
-    	name:'Work room'
+		name:'Accessible Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+    	name:'Lift lobby'
+	},{
+		name:'Reception'
+	},{
+		name:'Lockers',
+	},{
+		name:'Electrical Riser',
+	},{
+		name:'Comms Riser',
+	},{
+		name:'Comms Room',
+	},{
+		name:'Stairwell',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},
+
+	{
+		name:'Classroom',
+		identifiers:[{name:'405'},{name:'406'},{name:'407'},{name:'408'},{name:'410'},{name:'411'},{name:'412'}]
+	},{
+		name:'Office',
+		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
+	},{
+		name:'Computer Lab',
+		identifiers:[{name:'409'},{name:'413'}]
+	},{
+		name:'Library',
+	},{
+		name:'Common Area',
+	},{
+		name:'Academic Desks',
+	},{
+		name:'Student Services',
+	},{
+		name:'Lecture Hall',
+	},{
+    	name:'Kitchen'
+	}]
+},{
+    name:'Standard Level Type 5',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Male Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+		name:'Female Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+		name:'Accessible Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+    	name:'Lift lobby'
+	},{
+		name:'Reception'
+	},{
+		name:'Lockers',
+	},{
+		name:'Electrical Riser',
+	},{
+		name:'Comms Riser',
+	},{
+		name:'Comms Room',
+	},{
+		name:'Stairwell',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},
+
+	{
+		name:'Classroom',
+		identifiers:[{name:'502'},{name:'503'},{name:'504'},{name:'505'},{name:'506'},{name:'507'},{name:'509'},{name:'510'},{name:'511'},{name:'512'},{name:'513'},{name:'515'},{name:'516'}]
+	},{
+		name:'Office',
+		identifiers:[{name:'1'},{name:'2'},{name:'3'}]
+	},{
+		name:'Computer Lab',
+		identifiers:[{name:'409'},{name:'413'}]
+	},{
+		name:'Lecture Hall',
+	},{
+		name:'Computer Lab',
+	},{
+		name:'Common Area',
+	},{
+		name:'Teacher Staffroom',
+	}]
+},{
+    name:'Standard Level Type 6',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Male Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+		name:'Female Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+		name:'Accessible Bathroom',
+		identifiers:[{name:'Front'},{name:'Rear'}]
+    },{
+    	name:'Lift lobby'
+	},{
+		name:'Reception'
+	},{
+		name:'Lockers',
+	},{
+		name:'Electrical Riser',
+	},{
+		name:'Comms Riser',
+	},{
+		name:'Comms Room',
+	},{
+		name:'Stairwell',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},
+
+	{
+		name:'Classroom',
+		identifiers:[{name:'601'},{name:'602'},{name:'603'},{name:'604'},{name:'605'},{name:'606'},{name:'607'},{name:'608'},{name:'KP Training Room'}]
+	},{
+		name:'Office',
+		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'}]
+	},{
+		name:'Computer Lab',
+		identifiers:[{name:'KP Exam Room'},{name:'600b'}]
+	},{
+		name:'Board Room',
+	},{
+		name:'Lecture Hall',
+	},{
+		name:'Common Area',
+	},{
+		name:'Shared Services Area',
 	}]
 },{
 	name:'Unique area',
@@ -455,18 +538,15 @@ Config.defaultAreas =[{
 }];
 
 Config.defaultLevels = [{
-	name:"Level 1",
+	name:"Level 3",
 	type:Config.defaultAreas[0],
 },{
-	name:"Level 2",
+	name:"Level 4",
 	type:Config.defaultAreas[1],
 },{
-	name:"Board room",
+	name:"Level 5",
 	type:Config.defaultAreas[2],
 },{
-	name:"Reception",
-	type:Config.defaultAreas[2],
-},{
-	name:"Basement",
-	type:Config.defaultAreas[2],
+	name:"Level 6",
+	type:Config.defaultAreas[3],
 }];

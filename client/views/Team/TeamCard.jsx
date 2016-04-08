@@ -30,6 +30,7 @@ TeamCard = React.createClass({
 		if(selectedTeam._id!=item._id) {
 			menu.push({
 				label:"Remove supplier from your team",
+				shouldConfirm:true,
 				action(){
 					selectedTeam.removeSupplier(item);
 				}

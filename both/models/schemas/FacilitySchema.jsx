@@ -146,7 +146,8 @@ FacilitySchema = {
         defaultValue:function(){
             return JSON.parse(JSON.stringify(Config.defaultLevels));
         }
-    },    
+    },
+    //this is really levelTypes, areas is a most confusing name for it
     areas: {
     	type:[Object],
     	label:"Building areas",

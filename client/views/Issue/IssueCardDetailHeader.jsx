@@ -90,19 +90,27 @@ IssueSpecArea = React.createClass({
     },
 
     updateService(service) {
-    	var issue = this.props.item;
-        issue.service = service;
-        if(issue.service.data&&issue.service.data.supplier) {
-            issue.supplier = issue.service.data.supplier;
+    	var request = this.props.item;
+        request.service = service;
+        if(request.service.data&&request.service.data.supplier) {
+            request.supplier = request.service.data.supplier;
         }
-        issue.subservice = 0;
+        request.subservice = 0;
+        this.save();
+    },
+
+    updateIdentifier(identifier) {
+        var request = this.props.item;
+        if(request.area) {
+            request.area.identifier = identifier;
+        }
         this.save();
     },
 
     updateLevel(level) {
-        var issue = this.props.item;
-        issue.level = level;
-        issue.area = 0;
+        var request = this.props.item;
+        request.level = level;
+        request.area = 0;
         this.save();
     },
 
@@ -219,8 +227,26 @@ IssueSpecArea = React.createClass({
                                                 </div>
                                             </div>
                                         :null}
+                                        {issue.area&&issue.area.identifiers&&issue.area.identifiers.length?
+                                            <div className="row">
+                                                <div className="col-md-12">
+                                                <SuperSelect 
+                                                    readOnly={!issue.canSetArea()}
+                                                    itemView={ContactViewName}
+                                                    items={issue.area.identifiers} 
+                                                    onChange={this.updateIdentifier}
+                                                >
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area.identifier?"Select":""} identifier</span>
+                                                </SuperSelect>
+                                                {issue.area.identifier?
+                                                    <div style={{clear:"both"}}>{issue.area.identifier.name}</div>
+                                                :null}
+                                                </div>
+                                            </div>
+                                        :null}
                                     </div>                                    
 					                <div className="col-md-3">
+                                        {this.data.facility?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 						                        <SuperSelect 
@@ -236,6 +262,7 @@ IssueSpecArea = React.createClass({
 						                        :null}
 						                    </div>
 						                </div>
+                                        :null}
 					                    {issue.service&&subservices&&subservices.length?
 					                        <div className="row">
 				                            	<div className="col-md-12">
