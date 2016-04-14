@@ -186,13 +186,13 @@ Teams.helpers({
   },
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
-      "Scheduled":7*24,
-      "Standard":3*24,
-      "Urgent":24,
+      "Scheduled":7*24*3600,
+      "Standard":3*24*3600,
+      "Urgent":24*3600,
       "Critical":0,
     };
     var timeframe =  timeframes[priority]?timeframes[priority]:timeframes['Standard'];
-    return timeframe * 60 * 60 * 1000;
+    return timeframe;
   },
   getNextWOCode(){
     if(!this.counters) {
@@ -208,7 +208,7 @@ Teams.helpers({
   getRole(user) {
     for(var i in this.members) {
       var currentMember = this.members[i];
-      if(currentMember._id==user._id) {
+      if(currentMember&&user&&currentMember._id==user._id) {
         return currentMember.role;
       }
     }
@@ -257,7 +257,7 @@ Teams.helpers({
       if(issues&&issues.length) {
         facilityQueries = [];
         issues.map(function(i){
-          facilityQueries.push(i.facility);
+          facilityQueries.push({_id:i.facility._id});
         });
         facilities = Facilities.find({$or:facilityQueries}).fetch();
       }

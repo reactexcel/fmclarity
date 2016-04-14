@@ -1,7 +1,7 @@
 TeamsData = {
     kaplan:{
         type:"fm",
-        name:"Kaplan Australia",
+        name:"Kaplan Australia Australia Pty Ltd",
         email:"kaplan@fmclarity.com",
         phone:"0400-123-123",
         services:[{
@@ -74,11 +74,15 @@ TeamsData = {
 UsersData = {
     brad:{
         name:'Brad',
-        email:'fake@test.com'        
+        email:'Brad.Wilkinson@kaplan.edu.au'        
     },
     leo:{
         name:'Leo',
         email:'mrleokeith@gmail.com'
+    },
+    admin:{
+        name:'Admin',
+        email:'admin@fmclarity.com'
     },
     rich:{
         name:'Rich',
@@ -141,7 +145,7 @@ function addKaplanContractor(kaplan,details) {
     if(details.manager&&details.email&&details.manager.length) {
         var temp = details.manager.split(' ');
         var managerDetails = {
-            name:manager,
+            name:details.manager,
             firstName:temp[0],
             lastName:temp[1],
             email:details.email,
@@ -249,7 +253,7 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Door Maintenence"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Ottis",
+        name:"Otis",
         manager:"Allistair ",
         email:"",
         phone:"0466469958",
@@ -321,7 +325,7 @@ function makeKaplanContractors(kaplan) {
         services:[]
     });
     addKaplanContractor(kaplan,{
-        name:"Interman",
+        name:"Intermain",
         manager:"Andrew Blake",
         email:"a.blake@intermain.com.au",
         phone:"(02)93182272",
@@ -345,7 +349,7 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Kitchen Equipment"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Ambuis",
+        name:"Ambius",
         manager:"Jackie Graham",
         email:"jackie.graham@ambius.com",
         phone:"0431995270",
@@ -353,7 +357,7 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Plants"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Integal",
+        name:"Integral",
         manager:"Matt Currie",
         email:"MCurrie@eintegral.com.au",
         phone:"0439393002",
@@ -393,11 +397,12 @@ FM.resetTestData = function() {
     //create core developer accounts if they don't exist
     var brad = TestUsers.create(UsersData['brad'],'fm1q2w3e');
     var leo = TestUsers.create(UsersData['leo'],'fm1q2w3e');
+    var admin = TestUsers.create(UsersData['admin'],'fm1q2w3e');
     var rich = TestUsers.create(UsersData['rich'],'fm1q2w3e');
     var dan = TestUsers.create(UsersData['dan'],'fm1q2w3e');
 
     //and remove all of the others
-    Users.remove({_id:{$nin:[leo._id,rich._id,brad._id,dan._id]}});
+    Users.remove({_id:{$nin:[leo._id,rich._id,brad._id,dan._id,admin._id]}});
 
     //create users
     var contractor = TestUsers.create(UsersData['contractor']);
@@ -457,7 +462,7 @@ FM.resetTestData = function() {
 
         incisive = Teams.findOne(incisive._id);
         var incisiveFacilities = incisive.getFacilities();
-        for(var i=0;i<50;i++) {
+        for(var i=0;i<2;i++) {
             var facility = getRandom(incisiveFacilities);
             var creator = getRandom(incisive.getMembers());
             var request = incisive.createRequest({

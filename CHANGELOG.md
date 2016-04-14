@@ -1,6 +1,21 @@
 CHANGELOG.md
 ============
 
+**v0.5.4a** 
+
+* No need to include subservice in order to issue
+* Added some test stubs around notifications
+* Added contractor email work orders routines
+* Corrected spelling of Kaplan suppliers
+* Fixed a bug that was showing incorrect timeframes for issued tasks
+* Completed password reset and password change pages and routines
+* Fixed an issue that was causing the app to pause while emails being sent
+* Entered remaining Kaplan areas
+* Fixed an error that was causing page to redirect to /dashboard when clicking on email link
+* Fixed an error that was causing work orders to be hidden when not logged in
+* Changed contractor access routines to a secure, token based login
+* Created new layout for single page work request / contractor view
+
 **v0.5.3a**
 
 * Added prompt for confirmation when removing supplier from team

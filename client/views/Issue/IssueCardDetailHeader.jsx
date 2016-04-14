@@ -52,7 +52,7 @@ IssueSpecArea = React.createClass({
     },
 
     handleStatusChange(request){
-        //console.log({'callback status change':issue});
+        //console.log({'callback status change':request});
         if(!request) {
             //handleDestroy
         }
@@ -139,16 +139,16 @@ IssueSpecArea = React.createClass({
 
                 <div className="row">
                     <div className="col-xs-12 col-sm-8 col-md-1">
-                        <div style={{float:"left",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
                             <ContactAvatarSmall item={creator} />
                         </div>
-                        <div style={{float:"left",width:"45px",height:"45px",paddingTop:"15px",textAlign:"center"}}>
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingTop:"15px",textAlign:"center"}}>
                             <span style={{display:"inline-block"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
                         </div>
-                        <div style={{float:"left",width:"45px",height:"45px",paddingTop:"9px",textAlign:"center"}}>
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingTop:"9px",textAlign:"center"}}>
                             <SuperSelect 
                                 items={['Scheduled','Standard','Urgent','Critical']} 
-                                readOnly={!issue.isEditable()}
+                                readOnly={!issue.canSetPriority()}
                                 onChange={this.updateItem.bind(this,'priority')}
                             >
                                 <IssuePriority issue={issue} />

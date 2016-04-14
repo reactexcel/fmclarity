@@ -1,55 +1,47 @@
 LostPassword = React.createClass({
 
+    getInitialState() {
+        return {
+            errorMessage:null
+        }
+    },
 
     handleSubmit(e) {
         e.preventDefault();
-        var email = React.findDOMNode(this.refs.email).value.trim();
+        var email = this.refs.email.value.trim();
         var user = Meteor.users.find({email:email});
         if(!user) {
-
+            this.setState({errorMessage:<span>Sorry, that email address is not registered on our system. If you think it should be please contact <a href="mailto:admin@fmclarity.com">admin@fmclarity.com</a>.</span>})
         }
         else {
-            Accounts.sendResetPasswordEmail(user._id);
+            this.setState({errorMessage:<span>A password reset link has been sent to your registered email. Click the email link.</span>})
+            Accounts.forgotPassword({email:email});
         }
         return;
     },
 
 	render() {return (
-    <div className="passwordBox animated fadeInDown">
-        <div className="row">
+    <div className="middle-box loginscreen animated fadeInDown">
+        <div>
+            <div>
+                <img width="300px" src="img/logo-horizontal-blue.svg"/>
+            </div>
+            <div style={{marginTop:"30%"}}>
+            <h2>Forgotten Password</h2>
+                <p>Enter your email address and your password will be reset and emailed to you.</p>
 
-            <div className="col-md-12">
-                <div className="ibox-content">
-
-                    <h2 className="font-bold">Forgot password</h2>
-
-                    <p>
-                        Enter your email address and your password will be reset and emailed to you.
-                    </p>
-
-                    <div className="row">
-
-                        <div className="col-lg-12">
-                            <form className="m-t" role="form" onSubmit={this.handleSubmit}>
-                                <div className="form-group">
-                                    <input ref="email" type="email" className="form-control" placeholder="Email address" required=""/>
-                                </div>
-
-                                <button type="submit" className="btn btn-primary block full-width m-b">Send new password</button>
-
-                            </form>
-                        </div>
+                <form className="m-t" role="form" onSubmit={this.handleSubmit}>
+                    <div className="form-group">
+                        <input ref="email" type="email" className="form-control" placeholder="Email address" required=""/>
                     </div>
-                </div>
-            </div>
-        </div>
-        <hr/>
-        <div className="row">
-            <div className="col-md-6">
-                Copyright Example Company
-            </div>
-            <div className="col-md-6 text-right">
-                <small>© 2014-2015</small>
+                    <button type="submit" className="btn btn-primary block full-width m-b">Reset Password</button>
+                </form>
+                { this.state.errorMessage &&
+                    <div className="alert alert-danger alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
+                    {this.state.errorMessage}
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -113,6 +113,15 @@ Issues.methods({
     },
     method:RBAC.lib.setItem(Issues,'facility'),
   },
+  setPriority:{
+    authentication:function(role,user,request) {
+      return (
+        isEditable(request)&&
+        AuthHelpers.memberOfRelatedTeam(role,user,request)
+      )
+    },
+    method:RBAC.lib.setItem(Issues,'priority'),
+  },
   setService:{
     authentication:function(role,user,request) {
       return (
@@ -214,7 +223,6 @@ function readyToOpen(request) {
 function readyToIssue(request) {
   return (
     (request.status==Issues.STATUS_NEW||readyToOpen(request))&&
-    request.subservice&&request.subservice.name&&request.subservice.name.length&&
     request.supplier&&request.supplier._id
   )   
 }
@@ -245,40 +253,82 @@ function readyToCancel(request) {
 /**
  *
  */
-function open (issue) {
-  var response = Meteor.call('Issues.save',issue,{status:Issues.STATUS_NEW});
-  issue = Issues.findOne(response._id);
+function open (request) {
+  var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+  request = Issues.findOne(response._id);
 
-  issue.sendMessage({
+  request.sendMessage({
     verb:"created",
     subject:"Work order #"+response.code+" has been created"
   });
 
-  return issue;
+  return request;
 }
 
 /**
  *
  */
-function issue(issue) {
+function issue(request) {
 
-  var team = Teams.findOne(issue.team._id);
-  var timeframe = team.timeframes[issue.priority];
-  var createdMs = issue.createdAt.getTime();
+  var team = Teams.findOne(request.team._id);
+  var timeframe = team.timeframes[request.priority]*1000;
+  var createdMs = request.createdAt.getTime();
 
-  var response = Meteor.call('Issues.save',issue,{
+  var response = Meteor.call('Issues.save',request,{
     dueDate:new Date(createdMs+timeframe),
     status:Issues.STATUS_ISSUED,
     issuedAt:new Date()
   });
-  var issue = Issues.findOne(response._id);
+  var request = Issues.findOne(response._id);
 
-  issue.sendMessage({
+  // this needs to not block
+  request.sendMessage({
     verb:"issued",
-    subject:"Work order #"+issue.code+" has been issued",
+    subject:"Work order #"+request.code+" has been issued",
   });
 
-  return issue;
+  sendSupplierEmail(request);
+
+  return request;
+}
+
+//should this just be a standard message sent using "sendMessage"?
+function sendSupplierEmail(request){
+
+  var tester = Meteor.user();
+  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
+
+    request = Issues._transform(request);
+    var team = request.getTeam();
+    var supplier = request.getSupplier();
+    //console.log(supplier.name);
+    var members = supplier.getMembers({role:"manager"});
+    for(var i in members) {
+      //console.log(members[i].emails[0].address);
+    }
+    var user = members[0];    
+    if(user) {
+      var email = user.emails[0].address;
+      var to = user.name?(user.name+" <"+email+">"):email;
+      var testerEmail = tester.emails[0].address;
+
+
+      var stampedLoginToken = Accounts._generateStampedLoginToken();
+      Accounts._insertLoginToken(user._id, stampedLoginToken);
+      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:stampedLoginToken.token});
+      var html = ReactDOMServer.renderToStaticMarkup(element);
+
+      //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
+        Email.send({
+          //to: "leo@fmclarity.com",
+          cc : [testerEmail],//,"rich@fmclarity.com"],
+          from: "FM Clarity <no-reply@fmclarity.com>",
+          subject: ("to:"+to+", ")+("New work request from "+" "+team.getName()),
+          html: html
+        });
+      //}
+    }
+  })}  
 }
 
 /**
@@ -428,6 +478,9 @@ Issues.helpers({
   getUrl() {
     return Meteor.absoluteUrl(this.path+'/'+this._id)
   },
+  getEncodedPath() {
+    return encodeURIComponent(Base64.encode(this.path+'/'+this._id));
+  }
 });
 
 
@@ -453,11 +506,16 @@ Issues.helpers({
     }
   },
 
-  sendMessage(message) {
+  sendMessage(message,cc) {
     var cc = this.getWatchers();
+    var user = Meteor.user();
 
     message.inboxId = this.getInboxId();
     message.target = this.getInboxId();
+    message.creator = {
+      _id:user._id,
+      name:user.getName()
+    }
 
     Meteor.call("Messages.create",message,function(err,messageId){
       message.originalId = messageId;

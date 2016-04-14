@@ -57,23 +57,25 @@ Meteor.methods({
     });
   },
   'User.sendEmail':function(user,message) {
-    if(Meteor.isServer&&FM.inProduction()) {
+    var tester = Meteor.user();
+    if(Meteor.isServer/*&&FM.inProduction()*/) {Meteor.defer(function(){
       var element = React.createElement(EmailMessageView,{item:message});
-      var html = React.renderToStaticMarkup (element);
+      var html = ReactDOMServer.renderToStaticMarkup (element);
       if(user) {
         var email = user.emails[0].address;
-        var to = user.displayName+" <"+email+">";
+        var to = user.name?(user.name+" <"+email+">"):email;
+        var testerEmail = tester.emails[0].address;
         //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
           Email.send({
-            //to: to,
-            cc : "leo@fmclarity.com;rich@fmclarity.com",
+            //to: "leo@fmclarity.com",
+            cc : [testerEmail],//,"rich@fmclarity.com"],
             from: "FM Clarity <no-reply@fmclarity.com>",
-            subject: (message.subject||"FM Clarity notification")+"-"+to,
+            subject: ("to:"+to+", ")+(message.subject||"FM Clarity notification"),
             html: html
           });
         //}
       }
-    }
+    })}
   }
 })
 

@@ -37,10 +37,10 @@ IssueActionButtons = React.createClass({
             return "Cancel";
         }
         else if(request.status==Issues.STATUS_ISSUED||request.status==Issues.STATUS_CLOSING) {
-            if(request.exported) {
+            if(request.exported&&request.canReverse()) {
                 return "Reverse";
             }
-            else {
+            else if(request.canDestroy()){
                 return "Delete";
             }
         }

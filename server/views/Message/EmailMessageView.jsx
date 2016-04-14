@@ -20,6 +20,7 @@ EmailMessageView = React.createClass({
     render() {
         var message = this.data.message||{};
         var creator = this.data.creator||Meteor.user();
+        var creatorName = creator.getName?creator.getName():'';
         var createdAt = message.createdAt;
         var used = false;
         return(

@@ -43,12 +43,6 @@ Login = React.createClass({
                 <img width="300px" src="img/logo-horizontal-blue.svg"/>
             </div>
             <div style={{marginTop:"30%"}}>
-                { this.state.errorMessage &&
-                    <div className="alert alert-danger alert-dismissable">
-                    <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
-                    {this.state.errorMessage}
-                    </div>
-                }
                 <form className="m-t" role="form" onSubmit={this.handleSubmit}>
                     <div className="form-group">
                         <input type="email" ref="email" className="form-control" placeholder="Email Address" required=""/>
@@ -57,6 +51,12 @@ Login = React.createClass({
                         <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
                     </div>
                     <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
+                    { this.state.errorMessage &&
+                        <div className="alert alert-danger alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
+                        {this.state.errorMessage}
+                        </div>
+                    }
                     <div>
                         <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
                         <small>Don't have an account? <a href={FlowRouter.path('register')}>Sign Up</a></small>

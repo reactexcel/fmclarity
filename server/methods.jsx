@@ -3,8 +3,13 @@ Accounts.emailTemplates.from = "no-reply@fmclarity.com";
 Accounts.emailTemplates.enrollAccount.subject = function (user) {
     return "Welcome to FM Clarity, " + user.profile.name;
 };
+
 Accounts.urls.enrollAccount = function (token) {
-    return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"http://fmclarity.com:3000"});
+    return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"http://52.62.6.251:3000"});
+};
+
+Accounts.urls.resetPassword = function (token) {
+    return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"http://52.62.6.251:3000"});
 };
 
 

@@ -325,7 +325,46 @@ Config.services.map(function(service){
 });
 
 Config.defaultAreas =[{
-    name:'Level Type 3',
+    name:'Ground',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+    	name:'Foyer'
+	},{
+		name:'Fire Pump Room'
+	},{
+		name:'Loading Bay',
+	},{
+		name:'Bin Storage',
+	},{
+		name:'Switch Room',
+	},{
+		name:'Cleaner\'s Room',
+	},{
+		name:'Stairwell',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},{
+		name:'Fire Cupboard',
+		identifiers:[{name:'Left'},{name:'Right'}]
+	},
+
+    {
+		name:'Classroom',
+		identifiers:[{name:'301'}]
+	},{
+		name:'Office',
+		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
+	},{
+		name:'Meeting Room',
+		identifiers:[{name:'1'},{name:'2'}]
+	},{
+		name:'Server Room'
+    },{
+    	name:'Kitchen'
+	}]
+},{
+    name:'Level 3',
     active:true,
 	hasChildren:true,
     data:{},
@@ -373,7 +412,7 @@ Config.defaultAreas =[{
     	name:'Kitchen'
 	}]
 },{
-    name:'Standard Level Type 4',
+    name:'Level 4',
     active:true,
 	hasChildren:true,
     data:{},
@@ -429,7 +468,7 @@ Config.defaultAreas =[{
     	name:'Kitchen'
 	}]
 },{
-    name:'Standard Level Type 5',
+    name:'Level 5',
     active:true,
 	hasChildren:true,
     data:{},
@@ -481,7 +520,7 @@ Config.defaultAreas =[{
 		name:'Teacher Staffroom',
 	}]
 },{
-    name:'Standard Level Type 6',
+    name:'Level 6',
     active:true,
 	hasChildren:true,
     data:{},
@@ -533,20 +572,84 @@ Config.defaultAreas =[{
 		name:'Shared Services Area',
 	}]
 },{
-	name:'Unique area',
-    hidden:true
+    name:'Roof',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Plant Room 1',
+    },{
+		name:'Roof',
+    }]
+},{
+    name:'External',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Facade',
+    },{
+		name:'Building Forecourt',
+    },{
+		name:'Bike Storage',
+    },{
+		name:'Security Office',
+    },{
+		name:'MDF',
+    },{
+		name:'EWIS',
+    },{
+		name:'Fire Panel',
+    }]
+},{
+    name:'Lifts',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Lift 1',
+    },{
+		name:'Lift 2',
+    },{
+		name:'Lift 3',
+    }]
+},{
+    name:'Car Parks',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Level 1',
+    },{
+		name:'Level 2',
+    }]
 }];
 
 Config.defaultLevels = [{
-	name:"Level 3",
+	name:"Ground",
 	type:Config.defaultAreas[0],
 },{
-	name:"Level 4",
+	name:"Level 3",
 	type:Config.defaultAreas[1],
 },{
-	name:"Level 5",
+	name:"Level 4",
 	type:Config.defaultAreas[2],
 },{
-	name:"Level 6",
+	name:"Level 5",
 	type:Config.defaultAreas[3],
+},{
+	name:"Level 6",
+	type:Config.defaultAreas[4],
+},{
+	name:"Roof",
+	type:Config.defaultAreas[5],
+},{
+	name:"External",
+	type:Config.defaultAreas[6],
+},{
+	name:"Lifts",
+	type:Config.defaultAreas[7],
+},{
+	name:"Car Parks",
+	type:Config.defaultAreas[8]
 }];

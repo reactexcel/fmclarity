@@ -61,7 +61,7 @@ function createNewItemUsingSchema(schema,item,callback,usingSubSchema) {
 	if(!usingSubSchema) {
 		var user = Meteor.user();
 		newItem.isNewItem = true;
-		if(user) {
+		if(user&&!item.creator) {
 			newItem.creator = {
 				_id:user._id,
 				name:user.getName(),
@@ -226,7 +226,9 @@ function createCommonDocumentMethods(collection) {
 		//document-owners?
 		//or just added to custom?
 		getCreator:function() {
-			return Users.findOne(this.creator._id);
+			if(this.creator) {
+				return Users.findOne(this.creator._id);
+			}
 		},
 		setCreator:function(creator) {
 			this.creator = {

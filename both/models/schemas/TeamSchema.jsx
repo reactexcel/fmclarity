@@ -66,9 +66,9 @@ TeamSchema = {
     label:"Time frames",
     defaultValue:function() {
       return {
-        "Scheduled":24*7,
-        "Standard":24*3,
-        "Urgent":24,
+        "Scheduled":24*7*3600,
+        "Standard":24*3*3600,
+        "Urgent":24*3600,
         "Critical":0
       }        
     }
