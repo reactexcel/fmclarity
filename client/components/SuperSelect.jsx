@@ -40,6 +40,7 @@ SuperSelect = React.createClass({
 		var onChange = this.props.onChange;
 		var classes = this.props.classes || '';
 		var clearOption = this.props.clearOption;
+		var handleMore = this.props.onMore;
 
 		if(readOnly) {
 			return (
@@ -72,7 +73,7 @@ SuperSelect = React.createClass({
 	                        </li>
 						)                    	
                     })}
-                    {/*<li className="browse-button">Browse</li>*/}
+                    {handleMore?<li onClick={handleMore} className="browse-button">More</li>:null}
                     </ul>
 
                 </div>

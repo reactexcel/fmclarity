@@ -111,8 +111,13 @@ function o2oGet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "get"+ucfirst(fieldName);
 	functions.helpers[funcName] = function() {
 		var item = this[fieldName];
-		if(item&&item._id) {
-			return relatedCollection.findOne({_id:item._id})
+		if(item) {
+			if(item._id) {
+				return relatedCollection.findOne({_id:item._id})
+			}
+			else if(item.name) {
+				return relatedCollection.findOne({name:item.name})
+			}
 		}
 	}
 }

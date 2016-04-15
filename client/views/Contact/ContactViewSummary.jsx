@@ -14,19 +14,54 @@ ContactAvatarSmall = React.createClass({
 
 	getMeteorData() {
 		Meteor.subscribe('File');
-		var contact, profile, name, url, style = {};
+		var contact, profile, name, url, style = {}, initials='';
+		var colours = [
+			"#000",
+			"#f00",
+			"#0f0",
+			"#00f",
+			"#ff0",
+			"#0ff",
+		];
+		var placeholderStyle = {
+			backgroundColor:"#000",
+			color:"#fff",
+			textAlign:"center",
+			fontWeight:"bold",
+			fontSize:"15px",
+			paddingTop:"7px"
+		};
 		contact = this.props.item;
 		if(contact) {
 			profile = contact.getProfile();
 		}
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
-		if(url) {
+		if(url!="img/default-placeholder.jpg") {
 			style['backgroundImage'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
+			style['color'] = "transparent";
+		}
+		else {
+			var names = name.split(' ');
+			if(names.length==2) {
+				initials = names[0][0]+names[1][0];
+			}
+			else if(names.length==3) {
+				initials = names[0][0]+names[1][0]+names[2][0];
+			}
+			else {
+				initials = names[0][0]+names[0][1]+names[0][2]
+			}
+			var r = (name.charCodeAt(name.length-3)%25)*10;
+			var g = (name.charCodeAt(name.length-2)%25)*10;
+			var b = (name.charCodeAt(name.length-1)%25)*10;
+			style=placeholderStyle;
+			style['backgroundColor'] = 'rgb('+r+','+g+','+b+')';
 		}
 		return {
 			name:name,
+			initials:initials,
 			style:style
 		}
 	},
@@ -34,7 +69,7 @@ ContactAvatarSmall = React.createClass({
 	render() {
 		return (
 			<div className="contact-card-avatar">
-				<div title={this.data.name} style={this.data.style}/>
+				<div title={this.data.name} style={this.data.style}>{this.data.initials}</div>
 			</div>
 		)
 	}

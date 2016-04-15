@@ -1,6 +1,27 @@
 CHANGELOG.md
 ============
 
+**v0.5.6a**
+
+* Fixed:Adding new user, even though found dialog says not found
+* Added an option to the users menu to remove members from a selected facility
+* When changing the view on Type of Requests on the dash the screen stays in the same location
+* Reduced size of dropdown so as to remove hidden overflow problem
+* Services, subservices, areas and sub areas sorted by alphabetical order
+* Blank avatars now show as initials
+
+**v0.5.5a**
+
+* Fixed:When a subtype and supplier is selected and the service changed the supplier should clear (or auto populate) but it remains
+* Fixed default Kaplan suppliers
+* Work order priority timeframe for critical to be changed to 1 hour, urgent to 2 hours, standard to 24 hours
+* Fixed:Portfolio main image being cropped (this is maybe a duplicate task)
+* Fixed defects in Kaplan area data entry
+* Follow up work order now replicates location
+* Contact name should go on supplier cards
+* Second phone number on supplier cards
+* Amount always editable by manager - until work order is closed
+
 **v0.5.4a** 
 
 * No need to include subservice in order to issue

@@ -62,16 +62,18 @@ UserProfile = React.createClass({
     	}
     	else {
             input.value = '';
-            team.inviteMember(email, {role:component.props.role}, function(user){
-            	user = Users.findOne(user._id);
+            team.inviteMember(email, {role:component.props.role}, function(response){
+            	var user = Users.findOne(response.user._id);
+            	if(!response.found) {
+		            this.setState({
+            			shouldShowMessage:true
+            		});	    
+            	}
             	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);
             	}
             });
-            this.setState({
-            	shouldShowMessage:true
-            });	    
         }
     },
 

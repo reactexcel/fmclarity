@@ -77,6 +77,7 @@ FacilityViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={contacts}
 			   			//items={members}
+			   			facility={facility}
 			   			role="contact"
 			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"contact"}):null}
 			   		/>
@@ -85,6 +86,7 @@ FacilityViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={tenants} 
 			   			//items={members}
+			   			facility={facility}
 			   			role="tenant"
 			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
 			   		/>

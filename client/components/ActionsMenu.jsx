@@ -29,7 +29,7 @@ ActionsMenu = React.createClass({
 		    	}}>
 		    		{this.props.items.map(function(i,idx){
 		    			return (
-		    				<li key={idx} onClick={component.runAction.bind(null,i)}><a href="#">{i.label}</a></li>
+		    				<li key={idx} onClick={component.runAction.bind(null,i)}><a>{i.label}</a></li>
 		    			)
 		    		})}
 				</ul>

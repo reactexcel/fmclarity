@@ -141,7 +141,7 @@ Issues.methods({
   setCost:{
     authentication:function(role,user,request) {
       return (
-        isEditable(request)&&
+        (isEditable(request)||request.status==Issues.STATUS_ISSUED)&&
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
@@ -210,7 +210,7 @@ function readyToOpen(request) {
   return (
     request.status==Issues.STATUS_DRAFT&&
     request.name&&request.name.length&&
-    request.description&&request.description.length&&
+    //request.description&&request.description.length&&
     request.facility&&request.facility._id&&
     request.area&&request.area.name&&request.area.name.length&&
     request.service&&request.service.name.length
@@ -223,7 +223,7 @@ function readyToOpen(request) {
 function readyToIssue(request) {
   return (
     (request.status==Issues.STATUS_NEW||readyToOpen(request))&&
-    request.supplier&&request.supplier._id
+    request.supplier&&(request.supplier._id||request.supplier.name)
   )   
 }
 
@@ -364,6 +364,8 @@ function close(issue) {
       facility:issue.facility,
       supplier:issue.supplier,
       team:issue.team,
+
+      level:issue.level,
       area:issue.area,
       status:Issues.STATUS_NEW,
       service:issue.service,
@@ -457,7 +459,7 @@ function getPotentialSuppliers() {
           active:true
       }};
     }*/
-    var teams = Teams.find(query).fetch();
+    var teams = Teams.find(query,{sort:{name:1}}).fetch();
     return teams;
   }
   return null;

@@ -25,7 +25,15 @@ Teams.methods({
   },*/
   //update?
   save:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:function(role,user,team){
+      if(team.selfManaged) {
+        return AuthHelpers.managerOrCreator(role,user,team);
+      }
+      else {
+        return true;
+        //return AuthHelpers.managerOfRelatedTeam(role,user,team);
+      }
+    },
     method:RBAC.lib.save.bind(Teams)
   },
   //delete?
@@ -96,9 +104,13 @@ function createRequest(team,options) {
 
 function inviteMember(team,email,ext) {
   var user,id;
+  var found = false;
   //user = Accounts.findUserByEmail(email);
   user = Users.findOne({emails:{$elemMatch:{address:email}}});
-  if(!user) {
+  if(user) {
+    found = true;
+  }
+  else {
     var name = FM.isValidEmail(email); // this could be moved to RBAC, or Schema, general purpose validation function
     if(name) {
       if(Meteor.isServer) {
@@ -112,7 +124,11 @@ function inviteMember(team,email,ext) {
   }
   if(user) {
     Meteor.call("Teams.addMember",team,{_id:user._id},ext);
-    return user;
+    //return user;
+    return {
+      user:user,
+      found:found
+    }
   }
 }
 
@@ -187,9 +203,9 @@ Teams.helpers({
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
       "Scheduled":7*24*3600,
-      "Standard":3*24*3600,
-      "Urgent":24*3600,
-      "Critical":0,
+      "Standard":24*3600,
+      "Urgent":2*3600,
+      "Critical":1,
     };
     var timeframe =  timeframes[priority]?timeframes[priority]:timeframes['Standard'];
     return timeframe;

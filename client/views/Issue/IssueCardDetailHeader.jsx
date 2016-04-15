@@ -64,6 +64,10 @@ IssueSpecArea = React.createClass({
         }
     },
 
+    handleMoreSuppliers() {
+        alert('loading more suppliers');
+    },
+
     save() {
         if(this.props.save){
             this.props.save();
@@ -95,7 +99,19 @@ IssueSpecArea = React.createClass({
         if(request.service.data&&request.service.data.supplier) {
             request.supplier = request.service.data.supplier;
         }
+        else {
+            request.supplier = 0;
+        }
         request.subservice = 0;
+        this.save();
+    },
+
+    updateSubService(subservice) {
+        var request = this.props.item;
+        request.subservice = subservice;
+        if(request.subservice.data&&request.subservice.data.supplier) {
+            request.supplier = request.subservice.data.supplier;
+        }
         this.save();
     },
 
@@ -270,7 +286,7 @@ IssueSpecArea = React.createClass({
 					                                readOnly={!issue.canSetSubService()}
 					                                itemView={ContactViewName}
 					                                items={subservices} 
-					                                onChange={this.updateItem.bind(this,'subservice')}
+					                                onChange={this.updateSubService}
 					                            >
 					                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.subservice?"Select":""} subtype</span>
 					                            </SuperSelect>
@@ -289,6 +305,7 @@ IssueSpecArea = React.createClass({
 					                            readOnly={!issue.canSetSupplier()}
 					                            itemView={ContactViewName}
 					                            items={suppliers} 
+                                                onMore={this.handleMoreSuppliers}
 					                            onChange={this.updateItem.bind(this,'supplier')}
 					                        >
 					                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>

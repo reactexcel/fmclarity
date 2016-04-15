@@ -16,6 +16,7 @@ UserCard = React.createClass({
 		var component = this;
 		var user = this.props.item;
 		var selectedTeam = this.props.team||Session.getSelectedTeam();
+		var selectedFacility = this.props.facility;
 		var menu = [];
 
 		if(user&&user.canSave()) {
@@ -37,6 +38,18 @@ UserCard = React.createClass({
 				}
 			});
 		}
+
+		if(selectedFacility&&selectedFacility.hasMember(user)) {
+			menu.push({
+				label:"Remove from "+selectedFacility.getName(),
+				shouldConfirm:true,
+				action(){
+					selectedFacility.removeMember(user);
+					//Modal.hide();
+				}
+			});
+		}
+
 		return menu;
 	},
 
@@ -49,6 +62,7 @@ UserCard = React.createClass({
 					<UserProfile 
 						item={user} 
 						team={this.props.team}
+						facility={this.props.facility}
 						role={this.props.role}
 						onChange={this.props.onChange}
 					/>

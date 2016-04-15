@@ -341,27 +341,6 @@ Config.defaultAreas =[{
 		name:'Switch Room',
 	},{
 		name:'Cleaner\'s Room',
-	},{
-		name:'Stairwell',
-		identifiers:[{name:'Left'},{name:'Right'}]
-	},{
-		name:'Fire Cupboard',
-		identifiers:[{name:'Left'},{name:'Right'}]
-	},
-
-    {
-		name:'Classroom',
-		identifiers:[{name:'301'}]
-	},{
-		name:'Office',
-		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
-	},{
-		name:'Meeting Room',
-		identifiers:[{name:'1'},{name:'2'}]
-	},{
-		name:'Server Room'
-    },{
-    	name:'Kitchen'
 	}]
 },{
     name:'Level 3',
@@ -409,6 +388,8 @@ Config.defaultAreas =[{
 	},{
 		name:'Server Room'
     },{
+		name:'Cleaner\'s Room',
+	},{
     	name:'Kitchen'
 	}]
 },{
@@ -465,7 +446,8 @@ Config.defaultAreas =[{
 	},{
 		name:'Lecture Hall',
 	},{
-    	name:'Kitchen'
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
     name:'Level 5',
@@ -513,11 +495,12 @@ Config.defaultAreas =[{
 	},{
 		name:'Lecture Hall',
 	},{
-		name:'Computer Lab',
-	},{
 		name:'Common Area',
 	},{
 		name:'Teacher Staffroom',
+	},{
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
     name:'Level 6',
@@ -570,6 +553,12 @@ Config.defaultAreas =[{
 		name:'Common Area',
 	},{
 		name:'Shared Services Area',
+	},{
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
+	},{
+		name:'Meeting Room',
+		identifiers:[{name:'1'}]
 	}]
 },{
     name:'Roof',
@@ -625,31 +614,42 @@ Config.defaultAreas =[{
     }]
 }];
 
+function ascendingAlpha(a,b){
+	return (a.name<b.name)?-1:1;
+}
+
+Config.defaultAreas.sort(ascendingAlpha);
+for(var i in Config.defaultAreas) {
+	if(Config.defaultAreas[i].children) {
+		Config.defaultAreas[i].children.sort(ascendingAlpha)
+	}
+}
+
 Config.defaultLevels = [{
-	name:"Ground",
+	name:"Car Parks",
 	type:Config.defaultAreas[0],
 },{
-	name:"Level 3",
+	name:"External",
 	type:Config.defaultAreas[1],
 },{
-	name:"Level 4",
+	name:"Ground",
 	type:Config.defaultAreas[2],
 },{
-	name:"Level 5",
+	name:"Level 3",
 	type:Config.defaultAreas[3],
 },{
-	name:"Level 6",
+	name:"Level 4",
 	type:Config.defaultAreas[4],
 },{
-	name:"Roof",
+	name:"Level 5",
 	type:Config.defaultAreas[5],
 },{
-	name:"External",
+	name:"Level 6",
 	type:Config.defaultAreas[6],
 },{
 	name:"Lifts",
 	type:Config.defaultAreas[7],
 },{
-	name:"Car Parks",
+	name:"Roof",
 	type:Config.defaultAreas[8]
 }];

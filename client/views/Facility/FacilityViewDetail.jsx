@@ -24,8 +24,8 @@ FacilityViewDetail = React.createClass({
         return (
             <div className="business-card">             
                 <div className="contact-thumbnail pull-left">
-                    {/*<img alt="image" src={facility.getThumbUrl()} />*/}
-                    <div style={{width:"100%",minHeight:"230px",backgroundImage:"url('"+facility.getThumbUrl()+"')",backgroundSize:"cover"}}/>
+                    <img alt="image" src={facility.getThumbUrl()} />
+                    {/*<div style={{width:"100%",minHeight:"230px",backgroundImage:"url('"+facility.getThumbUrl()+"')",backgroundSize:"cover"}}/>*/}
                  </div>
                  <div className="contact-info">
                     <div>

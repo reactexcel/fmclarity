@@ -14,6 +14,7 @@ ContactList = React.createClass({
 	            content:<UserCard 
 	            	item={selectedUser} 
 	            	team={this.props.team}
+	            	facility={this.props.facility}
 	            	role={this.props.role}
 	            	onChange={this.handleAdd} 
 	            />

@@ -1,7 +1,7 @@
 TeamsData = {
     kaplan:{
         type:"fm",
-        name:"Kaplan Australia Australia Pty Ltd",
+        name:"Kaplan Australia Pty Ltd",
         email:"kaplan@fmclarity.com",
         phone:"0400-123-123",
         services:[{
@@ -74,7 +74,9 @@ TeamsData = {
 UsersData = {
     brad:{
         name:'Brad',
-        email:'Brad.Wilkinson@kaplan.edu.au'        
+        email:'brad.wilkinson@kaplan.edu.au',
+        phone:'0424187601',
+        phone2:'(03)96264549'
     },
     leo:{
         name:'Leo',
@@ -133,7 +135,8 @@ function addKaplanContractor(kaplan,details) {
         email:details.email,
         phone:details.phone,
         phone2:details.phone2,
-        services:details.services
+        services:details.services,
+        selfManaged:false
     }
 
     var supplier = Teams.findOne({name:supplierDetails.name});
@@ -150,7 +153,8 @@ function addKaplanContractor(kaplan,details) {
             lastName:temp[1],
             email:details.email,
             phone:details.phone,
-            phone2:details.phone2
+            phone2:details.phone2,
+            selfManaged:false
         }
 
         var manager = TestUsers.create(managerDetails,null,true);
@@ -185,7 +189,7 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Cleaning"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Initial (Rentokil)",
+        name:"Rentokil Initial",
         manager:"Paul James",
         email:"paul.james@rentokil-initial.com",
         phone:"0424014066",
@@ -230,7 +234,7 @@ function makeKaplanContractors(kaplan) {
     });
     addKaplanContractor(kaplan,{
         name:"Thermoscan",
-        services:[]
+        services:[{name:"Air Conditioning"},{name:"Heating"}]
     });
     addKaplanContractor(kaplan,{
         name:"R W Gill",
@@ -245,7 +249,7 @@ function makeKaplanContractors(kaplan) {
         manager:"Doug Butler",
         email:"butler.douglas@hotmail.com",
         phone:"0418533679",
-        services:[]
+        services:[{name:"Cleaning"}]
     });
     addKaplanContractor(kaplan,{
         name:"Dorma",
@@ -274,7 +278,7 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Access Control"},{name:"Security"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Monjon - Panic Switches",
+        name:"Monjon",
         manager:"",
         email:"monjon@monjon.com.au",
         phone:"(03)95219676",
@@ -293,7 +297,7 @@ function makeKaplanContractors(kaplan) {
         manager:"",
         email:"www.quench.com.au",
         phone:"(03)95557771",
-        services:[]
+        services:[{name:"Water Coolers"}]
     });
     addKaplanContractor(kaplan,{
         name:"Aqua Clear",
@@ -308,21 +312,21 @@ function makeKaplanContractors(kaplan) {
         email:"andrew@meritinteriors.com.au",
         phone:"(03)52276100",
         phone2:"0439011209",
-        services:[]
+        services:[{name:"Interiors"}]
     });
     addKaplanContractor(kaplan,{
         name:"Zircon",
         manager:"Tristan Weeks",
         email:"tristan@corporatebusinessfurniture.com.au",
         phone:"0448012997",
-        services:[]
+        services:[{name:"Scanning"}]
     });
     addKaplanContractor(kaplan,{
         name:"Corporate Business Furniture",
         manager:"Tristan Weeks",
         email:"tristan@corporatebusinessfurniture.com.au",
         phone:"0448012997",
-        services:[]
+        services:[{name:"Furniture"}]
     });
     addKaplanContractor(kaplan,{
         name:"Intermain",
@@ -330,7 +334,7 @@ function makeKaplanContractors(kaplan) {
         email:"a.blake@intermain.com.au",
         phone:"(02)93182272",
         phone2:"0434770307",
-        services:[]
+        services:[{name:"Fitouts"}]
     });
     addKaplanContractor(kaplan,{
         name:"Cortrols",
@@ -338,10 +342,10 @@ function makeKaplanContractors(kaplan) {
         email:"neol@cortrols.com.au",
         phone:"98506155",
         phone2:"0407040478",
-        services:[]
+        services:[{name:"Air Conditioning"},{name:"Heating"}]
     });
     addKaplanContractor(kaplan,{
-        name:"Esafe",
+        name:"eSafe",
         manager:"Hamish McWhirr",
         email:"service@esafeservices.com.au",
         phone:"(08)83421127",
@@ -361,7 +365,7 @@ function makeKaplanContractors(kaplan) {
         manager:"Matt Currie",
         email:"MCurrie@eintegral.com.au",
         phone:"0439393002",
-        services:[]
+        services:[{name:"Cleaning"}]
     });
     addKaplanContractor(kaplan,{
         name:"JLL",
