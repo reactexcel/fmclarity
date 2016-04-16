@@ -3,28 +3,28 @@ NotificationViewSummary = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, creator;
+        var query, message, owner;
         query = this.props.item;
         message = Messages.findOne(query);
         if(message) {
-            creator = message.getCreator()
+            owner = message.getOwner()
         }
         return {
-            creator:creator,
+            owner:owner,
             message:message
         }
     },
 
 	render() {
         var message = this.data.message||{};
-        var creator = this.data.creator||Meteor.user();
+        var owner = this.data.owner||Meteor.user();
         var createdAt = message.createdAt;
 		return (
             <div>
-            	<ContactAvatarSmall item={creator}/>
+            	<ContactAvatarSmall item={owner}/>
                 <small>{moment(message.createdAt).fromNow()}</small>
                 <div>
-                    <strong>{creator.getName()}</strong> {
+                    <strong>{owner.getName()}</strong> {
                     message.verb?
                         <span>{message.verb} <b><a href={message.getTargetUrl()}>{message.getTargetName()}</a></b></span>
                     :

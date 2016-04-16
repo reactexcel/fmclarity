@@ -65,7 +65,7 @@ UserProfile = React.createClass({
             team.inviteMember(email, {role:component.props.role}, function(response){
             	var user = Users.findOne(response.user._id);
             	if(!response.found) {
-		            this.setState({
+		            component.setState({
             			shouldShowMessage:true
             		});	    
             	}
@@ -101,7 +101,7 @@ UserProfile = React.createClass({
 		if(user) {
 			profile = user.profile;
 		}
-		if(!user||!profile||!team) {
+		if(!user||!profile) {
 			return (
                 <form className="form-inline">
                     <div className="form-group">

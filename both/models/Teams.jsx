@@ -25,15 +25,7 @@ Teams.methods({
   },*/
   //update?
   save:{
-    authentication:function(role,user,team){
-      if(team.selfManaged) {
-        return AuthHelpers.managerOrCreator(role,user,team);
-      }
-      else {
-        return true;
-        //return AuthHelpers.managerOfRelatedTeam(role,user,team);
-      }
-    },
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.save.bind(Teams)
   },
   //delete?
@@ -48,15 +40,15 @@ Teams.methods({
   },
 
   inviteMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:inviteMember,
   },
   addMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.addMember(Teams,'members')
   },
   removeMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.removeMember(Teams,'members')
   },
 

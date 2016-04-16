@@ -37,10 +37,14 @@ TeamSchema = {
     type: String,
     label: "ABN",
   },
-  bio : {
-    type: String,
-    label: "Short bio",
+  description: {
+    label: "Description",
     input:"mdtextarea",
+  },
+  attachments: {
+    type:[Object],
+    label:"Attachments",
+    input:"attachments"
   },
 
   address:{
@@ -67,9 +71,9 @@ TeamSchema = {
     defaultValue:function() {
       return {
         "Scheduled":24*7*3600,
-        "Standard":24*3*3600,
-        "Urgent":24*3600,
-        "Critical":0
+        "Standard":24*3600,
+        "Urgent":2*3600,
+        "Critical":1*3600
       }        
     }
   },

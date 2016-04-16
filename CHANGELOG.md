@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v0.5.7a**
+
+* More button shows all suppliers in dropdown
+* Avatar:Fixed issue that was causing some initials to show as undefined
+* Managers are able to edit suppliers who are not self managed
+* Fixed:Accessing work order from email, unable to close work order (greyed out)
+* Remove default work order value from suppliers profile
+
 **v0.5.6a**
 
 * Fixed:Adding new user, even though found dialog says not found

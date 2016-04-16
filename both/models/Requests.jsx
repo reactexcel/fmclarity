@@ -302,7 +302,7 @@ function sendSupplierEmail(request){
     var team = request.getTeam();
     var supplier = request.getSupplier();
     //console.log(supplier.name);
-    var members = supplier.getMembers({role:"manager"});
+    var members = supplier.getMembers(/*{role:"manager"}*/);
     for(var i in members) {
       //console.log(members[i].emails[0].address);
     }
@@ -467,10 +467,10 @@ function getPotentialSuppliers() {
 
 function getWatchers() {
   var user = Meteor.user();
-  var creator = this.getCreator();
+  var owner = this.getOwner();
   var supplier = this.getSupplier();
   var assignee = this.getAssignee();
-  return [user,creator,supplier,assignee];
+  return [user,owner,supplier,assignee];
 }
 
 Issues.helpers({
@@ -514,7 +514,7 @@ Issues.helpers({
 
     message.inboxId = this.getInboxId();
     message.target = this.getInboxId();
-    message.creator = {
+    message.owner = {
       _id:user._id,
       name:user.getName()
     }

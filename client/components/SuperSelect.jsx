@@ -10,7 +10,8 @@ SuperSelect = React.createClass({
 
 	getInitialState() {
 		return this.props.initialState||{
-			open:false
+			open:false,
+			more:false
 		}
 	},
 
@@ -28,19 +29,28 @@ SuperSelect = React.createClass({
 	},
 
 	handleChange(item,event) {
+		this.setState({
+			open:false
+		});
 		event.stopPropagation();
 		this.props.onChange(item);
+	},
+
+	toggleMore() {
+		this.setState({
+			more:!this.state.more,
+			open:true,
+		});
 	},
 
 	render() {
 		var component = this;
 		var readOnly = this.props.readOnly;
 		var Card = this.props.itemView || DumbCard;
-		var items = this.props.items || [];
+		var items = this.state.more?this.props.moreItems:(this.props.items || []);
 		var onChange = this.props.onChange;
 		var classes = this.props.classes || '';
 		var clearOption = this.props.clearOption;
-		var handleMore = this.props.onMore;
 
 		if(readOnly) {
 			return (
@@ -73,7 +83,9 @@ SuperSelect = React.createClass({
 	                        </li>
 						)                    	
                     })}
-                    {handleMore?<li onClick={handleMore} className="browse-button">More</li>:null}
+                    {this.props.moreItems?
+                    	<li onClick={this.toggleMore} className="browse-button">{this.state.more?<span>Less</span>:<span>More</span>}</li>
+                    :null}
                     </ul>
 
                 </div>

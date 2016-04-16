@@ -12,7 +12,7 @@ IssueSummary = React.createClass({
       }
     }
     else {
-      // note: in order to reduce the overhead of loading the creator
+      // note: in order to reduce the overhead of loading the owner
       // supplier etc - we should denormalise the tables
       // that is to say - any field we want to use in this context
       // get saved directly in the issue doucment (thumbnail etc)
@@ -20,7 +20,7 @@ IssueSummary = React.createClass({
         ready:true,
         issue:issue,
         facility:issue.getFacility(),
-        creator:issue.getCreator(),
+        owner:issue.getOwner(),
         supplier:issue.getSupplier(),
         status:issue.status,
         timeframe:issue.getTimeframe()
@@ -41,7 +41,7 @@ IssueSummary = React.createClass({
       if(this.data.ready) {
         var issue = this.item = this.data.issue;
         var facility = this.data.facility;
-        var creator = this.data.creator;
+        var owner = this.data.owner;
         var supplier = this.data.supplier;
         var timeframe = this.data.timeframe;
         var dueDate = issue.dueDate?moment(issue.dueDate):null;
@@ -50,7 +50,7 @@ IssueSummary = React.createClass({
           
           <div className="issue-summary-col issue-summary-col-1">
             <IssuePriority issue={issue} />
-            {/*<ContactAvatarSmall item={creator} />*/}
+            {/*<ContactAvatarSmall item={owner} />*/}
           </div>
           {/*}
           <div className="issue-summary-col issue-summary-col-2">

@@ -24,15 +24,17 @@ IssueSpecArea = React.createClass({
             }
 
             var supplier = issue.getSupplier();
-            var creator = issue.getCreator();
+            var owner = issue.getOwner();
             var assignee = issue.getAssignee();
             var user = Meteor.user();
+            var team = issue.getTeam();
 
             return {
                 ready:true,
 
                 issue:issue,
-                creator:creator,
+                team:team,
+                owner:owner,
 
                 facility:facility,
                 facilityContacts:facilityContacts,
@@ -42,6 +44,7 @@ IssueSpecArea = React.createClass({
 
                 selectedTeam:selectedTeam,
                 suppliers:issue.getPotentialSuppliers(),
+                allSuppliers:team?team.getSuppliers():null,
 
                 supplier:supplier,
                 assignee:assignee,
@@ -62,10 +65,6 @@ IssueSpecArea = React.createClass({
         else if(this.props.closeCallback) {
             this.props.closeCallback()
         }
-    },
-
-    handleMoreSuppliers() {
-        alert('loading more suppliers');
     },
 
     save() {
@@ -142,7 +141,7 @@ IssueSpecArea = React.createClass({
     render() {
         var issue = this.props.item;
         var supplier = this.data.supplier;
-        var creator = this.data.creator;
+        var owner = this.data.owner;
         var services = this.data.services;
         var suppliers = this.data.suppliers;
         var subservices = this.data.subservices;
@@ -156,7 +155,7 @@ IssueSpecArea = React.createClass({
                 <div className="row">
                     <div className="col-xs-12 col-sm-8 col-md-1">
                         <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
-                            <ContactAvatarSmall item={creator} />
+                            <ContactAvatarSmall item={owner} />
                         </div>
                         <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingTop:"15px",textAlign:"center"}}>
                             <span style={{display:"inline-block"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
@@ -305,7 +304,7 @@ IssueSpecArea = React.createClass({
 					                            readOnly={!issue.canSetSupplier()}
 					                            itemView={ContactViewName}
 					                            items={suppliers} 
-                                                onMore={this.handleMoreSuppliers}
+                                                moreItems={this.data.allSuppliers}
 					                            onChange={this.updateItem.bind(this,'supplier')}
 					                        >
 					                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>

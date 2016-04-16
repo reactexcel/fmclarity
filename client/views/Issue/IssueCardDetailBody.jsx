@@ -23,7 +23,7 @@ IssueDynamicArea = React.createClass({
             return {
                 ready:true,
                 issue:issue,
-                creator:issue.getCreator(),
+                owner:issue.getOwner(),
                 facilityContact:facilityContact,
                 supplier:issue.getSupplier(),
                 assignee:issue.getAssignee(),
@@ -44,7 +44,7 @@ IssueDynamicArea = React.createClass({
         var notifications = this.data.notifications;
         var contacts = [];
         var data = this.data;
-        ['creator','supplier','assignee','facilityContact'].map(function(item){
+        ['owner','supplier','assignee','facilityContact'].map(function(item){
             if(data[item]) {
                 contacts.push(data[item]);
             }

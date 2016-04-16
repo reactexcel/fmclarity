@@ -279,7 +279,7 @@ CardWrapper = React.createClass({
   render() {
     var $this = this;
     var item = this.item = this.props.item;
-    var creator = this.item.getCreator?this.item.getCreator():{};
+    var owner = this.item.getOwner?this.item.getOwner():{};
     var Summary = this.props.itemView.summary;
     var Detail = this.props.itemView.detail;
     return (

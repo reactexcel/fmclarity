@@ -15,14 +15,7 @@ ContactAvatarSmall = React.createClass({
 	getMeteorData() {
 		Meteor.subscribe('File');
 		var contact, profile, name, url, style = {}, initials='';
-		var colours = [
-			"#000",
-			"#f00",
-			"#0f0",
-			"#00f",
-			"#ff0",
-			"#0ff",
-		];
+
 		var placeholderStyle = {
 			backgroundColor:"#000",
 			color:"#fff",
@@ -37,13 +30,13 @@ ContactAvatarSmall = React.createClass({
 		}
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
-		if(url!="img/default-placeholder.jpg") {
+		if(url!="/img/default-placeholder.jpg") {
 			style['backgroundImage'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
 			style['color'] = "transparent";
 		}
 		else {
-			var names = name.split(' ');
+			var names = name.trim().split(' ');
 			if(names.length==2) {
 				initials = names[0][0]+names[1][0];
 			}

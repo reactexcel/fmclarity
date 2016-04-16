@@ -4,14 +4,14 @@ EmailMessageView = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, creator;
+        var query, message, owner;
         query = this.props.item;
         message = Messages.findOne(query);
         if(message) {
-            creator = message.getCreator()
+            owner = message.getOwner()
         }
         return {
-            creator:creator,
+            owner:owner,
             inbox:this.props.inbox,
             message:message
         }
@@ -19,8 +19,8 @@ EmailMessageView = React.createClass({
 
     render() {
         var message = this.data.message||{};
-        var creator = this.data.creator||Meteor.user();
-        var creatorName = creator.getName?creator.getName():'';
+        var owner = this.data.owner||Meteor.user();
+        var ownerName = owner.getName?owner.getName():'';
         var createdAt = message.createdAt;
         var used = false;
         return(
@@ -34,7 +34,7 @@ EmailMessageView = React.createClass({
                 <div className="media-body">
                     {message.body||message.subject||message.verb?
                     <div style={{padding:"20px"}}>
-                        <strong>{creator.getName()}</strong> {
+                        <strong>{owner.getName()}</strong> {
                         message.verb?
                             <span>{message.verb} <b><a style={{textDecoration:"none"}} href={message.getAbsoluteTargetUrl()}>{message.getTargetName()}</a></b></span>
                         :

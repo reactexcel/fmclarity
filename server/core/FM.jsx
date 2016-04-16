@@ -136,7 +136,11 @@ function addKaplanContractor(kaplan,details) {
         phone:details.phone,
         phone2:details.phone2,
         services:details.services,
-        selfManaged:false
+        owner:{
+            type:"team",
+            name:kaplan.getName(),
+            _id:kaplan._id
+        }
     }
 
     var supplier = Teams.findOne({name:supplierDetails.name});
@@ -154,7 +158,11 @@ function addKaplanContractor(kaplan,details) {
             email:details.email,
             phone:details.phone,
             phone2:details.phone2,
-            selfManaged:false
+            owner:{
+                type:"team",
+                name:kaplan.getName(),
+                _id:kaplan._id
+            }
         }
 
         var manager = TestUsers.create(managerDetails,null,true);
@@ -468,15 +476,15 @@ FM.resetTestData = function() {
         var incisiveFacilities = incisive.getFacilities();
         for(var i=0;i<2;i++) {
             var facility = getRandom(incisiveFacilities);
-            var creator = getRandom(incisive.getMembers());
+            var owner = getRandom(incisive.getMembers());
             var request = incisive.createRequest({
                 facility:{
                     _id:facility._id,
                     name:facility.getName()
                 },
-                creator:{
-                    _id:creator._id,
-                    name:creator.getName()
+                owner:{
+                    _id:owner._id,
+                    name:owner.getName()
                 },
                 createdAt:TestIssues.getRandomCreationDate()
             });

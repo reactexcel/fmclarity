@@ -4,14 +4,14 @@ MessageView = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, creator;
+        var query, message, owner;
         query = this.props.item;
         message = Messages.findOne(query);
         if(message) {
-            creator = message.getCreator()
+            owner = message.getOwner()
         }
         return {
-            creator:creator,
+            owner:owner,
             inbox:this.props.inbox,
             message:message
         }
@@ -23,13 +23,14 @@ MessageView = React.createClass({
 
     submit() {
         var input = this.refs.input;
-        var creator = Meteor.user();
+        var owner = Meteor.user();
         var inbox = this.data.inbox;
         var inboxId = inbox.getInboxId();
-        console.log(inbox);
+        //console.log(inbox);
         inbox.sendMessage({
-            verb:creator.getName()+" sent a message to "+inbox.getName(),
-            subject:creator.getName()+" sent a message to "+inbox.getName(),
+            type:"comment",
+            verb:owner.getName()+" sent a message to "+inbox.getName(),
+            subject:owner.getName()+" sent a message to "+inbox.getName(),
             body:input.value
         });
         /*
@@ -51,17 +52,30 @@ MessageView = React.createClass({
 
     render() {
         var message = this.data.message||{};
-        var creator = this.data.creator||Meteor.user();
+        var owner = this.data.owner||Meteor.user();
         var createdAt = message.createdAt;
         var used = false;
-        return(
-            <div>
-                <ContactAvatarSmall item={creator}/>
+        if(message.type=="comment") {
+            return (<div>
+                <ContactAvatarSmall item={owner}/>
                 <div className="media-body">
-                    {message.body||message.subject||message.verb?
                     <div>
-                        <small className="pull-right">{moment(message.createdAt).fromNow()}</small>
-                        <strong>{creator.getName()}</strong> {
+                        <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        <div style={{width:"90%"}}>
+                            {/*<a style={{fontWeight:"bold"}}>{owner.getName()}</a> */}{message.body}
+                        {/*<small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>*/}
+                        </div>
+                    </div>
+                </div>
+            </div>)
+        }
+        else if(message.body||message.subject||message.verb) {
+            return (<div>
+                <ContactAvatarSmall item={owner}/>
+                <div className="media-body">
+                    <div>
+                        <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                         message.verb?
                             <span>{message.verb} <b><a href={message.getTargetUrl()}>{message.getTargetName()}</a></b></span>
                         :
@@ -70,7 +84,13 @@ MessageView = React.createClass({
                         <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
                         <div>{message.body}</div>
                     </div>
-                    :
+                </div>
+            </div>)
+        }
+        else {
+            return (<div>
+                <ContactAvatarSmall item={owner}/>
+                <div className="media-body">
                     <textarea 
                         ref="input"
                         style={{width:"80%"}}
@@ -79,9 +99,8 @@ MessageView = React.createClass({
                         defaultValue={message.body} 
                         onKeyDown={this.handleKeyPress}>
                     </textarea>
-                    }
                 </div>
-            </div>
-        )
+            </div>)
+        }
     }
 });

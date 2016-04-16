@@ -56,13 +56,13 @@ ORM = {
 function createNewItemUsingSchema(schema,item,callback,usingSubSchema) {
 	//this should probably be in a method
 	// actually it is - in the "new" method
-	//set up flags and creator
+	//set up flags and owner
 	var newItem = {};
 	if(!usingSubSchema) {
 		var user = Meteor.user();
 		newItem.isNewItem = true;
-		if(user&&!item.creator) {
-			newItem.creator = {
+		if(user&&!item.owner) {
+			newItem.owner = {
 				_id:user._id,
 				name:user.getName(),
 			};
@@ -137,7 +137,7 @@ function m2nGet(functions,collection,fieldName,relatedCollection) {
 		        }
 	        }
 	      });
-	      return relatedCollection.find({_id:{$in:ids}}).fetch();
+	      return relatedCollection.find({_id:{$in:ids}},{sort:{name:1}}).fetch();
 	    }
 	    return [];
 	}
@@ -230,15 +230,15 @@ function createCommonDocumentMethods(collection) {
 
 		//document-owners?
 		//or just added to custom?
-		getCreator:function() {
-			if(this.creator) {
-				return Users.findOne(this.creator._id);
+		getOwner:function() {
+			if(this.owner) {
+				return Users.findOne(this.owner._id);
 			}
 		},
-		setCreator:function(creator) {
-			this.creator = {
-				_id:creator._id,
-				name:creator.getName()
+		setOwner:function(owner) {
+			this.owner = {
+				_id:owner._id,
+				name:owner.getName()
 	    	}
 			this.save();
 		},		

@@ -10,7 +10,7 @@ Users.methods({
     method:createUser
   },
   save:{
-    authentication:AuthHelpers.currentUserOrCreator,
+    authentication:AuthHelpers.currentUserOrOwner,
     method:RBAC.lib.save.bind(Users)
   },
   destroy:{
@@ -21,7 +21,10 @@ Users.methods({
 
 function createUser(item,password) {
   if(Meteor.isServer) {
-    var creator = Meteor.user();
+    var owner = item.owner||{
+      _id:Meteor.user()._id,
+      name:Meteor.user().name
+    }
     var user = {
       email:item.email,
       name:item.name,
@@ -32,12 +35,9 @@ function createUser(item,password) {
     }
     var id = Accounts.createUser(user);
     var user = Users.findOne(id);
-    if(creator) {
+    if(owner) {
       Users.update(id,{$set:{
-        creator:{
-          _id:creator._id,
-          name:creator.name
-        }
+        owner:owner
       }});
     }
     return user;
