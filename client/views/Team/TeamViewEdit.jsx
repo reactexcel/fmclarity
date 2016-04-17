@@ -140,9 +140,11 @@ TeamViewEdit = React.createClass({
 			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
 			   		/>
 				</CollapseBox>
+				{/*
 			   	<CollapseBox title="Services Provided" collapsed={true}>
 			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
 				</CollapseBox>
+				*/}
 			</div>
 		)
 	}
