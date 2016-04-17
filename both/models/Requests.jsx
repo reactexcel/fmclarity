@@ -364,7 +364,7 @@ function sendSupplierEmail(request){
       }
 
       if(FM.inProduction()) {
-        //message.to = to;
+        message.to = to;
       }
       else {
         message.subject = "[to:"+to+"]"+message.subject;

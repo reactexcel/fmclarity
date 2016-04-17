@@ -68,12 +68,12 @@ Meteor.methods({
 
       if(user) {
 
-        var element = React.createElement(EmailMessageView,{item:message});
+        var element = React.createElement(EmailMessageView,{user:user,item:message});
         var html = ReactDOMServer.renderToStaticMarkup (element);
-        var email = user.emails[0].address;
-        var to = user.name?(user.name+" <"+email+">"):email;
+        var address = user.emails[0].address;
+        var to = user.name?(user.name+" <"+address+">"):address;
 
-        var message = {
+        var email = {
             bcc :["leo@fmclarity.com","rich@fmclarity.com"],
             from:"FM Clarity <no-reply@fmclarity.com>",
             subject:(message.subject||"FM Clarity notification"),
@@ -81,12 +81,12 @@ Meteor.methods({
         }
 
         if(FM.inProduction()) {
-          //message.to = to;
+          message.to = to;
         }
         else {
-          message.subject = "[to:"+to+"]"+message.subject;
+          email.subject = "[to:"+to+"]"+email.subject;
         }
-        Email.send(message);
+        Email.send(email);
       }
     })}
   }

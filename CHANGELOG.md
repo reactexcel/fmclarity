@@ -1,7 +1,7 @@
 CHANGELOG.md
 ============
 
-**v0.6.0a**
+**v0.6.1a**
 
 * Activated emails on production version
 
