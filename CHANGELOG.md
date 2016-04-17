@@ -1,6 +1,16 @@
 CHANGELOG.md
 ============
 
+**v0.6.0a**
+
+* Activated emails on production version
+
+**v0.5.9a**
+
+* Fixed a problem which was causing suppliers to be blocked by RBAC when attempting to create follow up
+* Fixed a problem which was preventing icons to show for supplier file upload
+* Updated look of notifications to match supplier email
+
 **v0.5.8a**
 
 * Changed "Level" drop down to "Area" and "Area" to "Subarea"
@@ -19,13 +29,7 @@ CHANGELOG.md
 * Added user phone2 to user details card
 * Added phone1 and phone2 to team and user edit view
 * Added contacts for facilities - (Brad for Docklands)
-
 * Added FMClarity as a supplier to use for demos
-
-* Recurrent notifications required for overdue work orders including to suppliers
-* Suppliers are being blocked by RBAC when attempting to create follow up
-
-* Remaining notifications
 
 **v0.5.7a**
 

@@ -58,7 +58,7 @@ KaplanServices = [{
 		name:"Sanitaries",
 		data:{
 			supplier:{
-				name:"Initial Rentokil"
+				name:"Rentokil Initial"
 			}
 		}
 	},{
@@ -66,7 +66,7 @@ KaplanServices = [{
 		name:"Windows",
 		data:{
 			supplier:{
-				name:"Sharper"
+				name:"Sharper Cleaning"
 			}
 		}
 	},{
@@ -359,7 +359,7 @@ KaplanServices = [{
 	name:"Pest Control",
 	data:{
 		supplier:{
-			name:"Intial Rentokil"
+			name:"Rentokil Intitial"
 		}
 	}
 },{

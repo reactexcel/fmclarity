@@ -38,6 +38,10 @@ Teams.methods({
     authentication:AuthHelpers.manager,
     method:createRequest,    
   },
+  incrementWOCode:{
+    authentication:true,
+    method:incrementWOCode
+  },
 
   inviteMember:{
     authentication:AuthHelpers.managerOrOwner,
@@ -122,6 +126,10 @@ function inviteMember(team,email,ext) {
       found:found
     }
   }
+}
+
+function incrementWOCode(){
+  console.log("I'm supposed to increase it");
 }
 
 function inviteSupplier(team,email,ext) {
@@ -210,7 +218,8 @@ Teams.helpers({
       this.counters.WO = 0;
     }
     this.counters.WO = this.counters.WO + 1;
-    this.save();
+    Teams.update({_id:this._id},{$inc:{"counters.WO":1}});
+    //this.save();
     return this.counters.WO;
   },
   getRole(user) {
@@ -249,12 +258,12 @@ Teams.helpers({
     return facilities[i];
   },
   getIssues() {
-    if(this.type=="contractor") {
-      return this.getContractorIssues();
-    }
-    else {
-      return Issues.find({"team._id":this._id}).fetch();
-    }
+    //if(this.type=="contractor") {
+    //      return this.getContractorIssues();
+    //}
+    //else {
+    return Issues.find({$or:[{"team._id":this._id},{"supplier._id":this._id}]}).fetch();
+    //}
   },
   getContractorIssues() {
     return Issues.find({"supplier._id":this._id,status:{$ne:"New"}}).fetch();

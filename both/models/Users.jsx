@@ -57,23 +57,36 @@ Meteor.methods({
     });
   },
   'User.sendEmail':function(user,message) {
-    var tester = Meteor.user();
-    if(Meteor.isServer/*&&FM.inProduction()*/) {Meteor.defer(function(){
-      var element = React.createElement(EmailMessageView,{item:message});
-      var html = ReactDOMServer.renderToStaticMarkup (element);
+    if(Meteor.isServer) {Meteor.defer(function(){
+
+      if(!FM.inProduction()) {
+        console.log('development');
+      }
+      else {
+        console.log('production');
+      }
+
       if(user) {
+
+        var element = React.createElement(EmailMessageView,{item:message});
+        var html = ReactDOMServer.renderToStaticMarkup (element);
         var email = user.emails[0].address;
         var to = user.name?(user.name+" <"+email+">"):email;
-        var testerEmail = tester.emails[0].address;
-        //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
-          Email.send({
-            //to: "leo@fmclarity.com",
-            cc : [testerEmail],//,"rich@fmclarity.com"],
-            from: "FM Clarity <no-reply@fmclarity.com>",
-            subject: ("to:"+to+", ")+(message.subject||"FM Clarity notification"),
-            html: html
-          });
-        //}
+
+        var message = {
+            bcc :["leo@fmclarity.com","rich@fmclarity.com"],
+            from:"FM Clarity <no-reply@fmclarity.com>",
+            subject:(message.subject||"FM Clarity notification"),
+            html:html
+        }
+
+        if(FM.inProduction()) {
+          //message.to = to;
+        }
+        else {
+          message.subject = "[to:"+to+"]"+message.subject;
+        }
+        Email.send(message);
       }
     })}
   }

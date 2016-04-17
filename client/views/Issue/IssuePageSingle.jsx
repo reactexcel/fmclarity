@@ -10,6 +10,7 @@ IssuePage = React.createClass({
         Meteor.subscribe('teamsAndFacilitiesForUser');
         Meteor.subscribe('users');
         Meteor.subscribe('singleRequest',id);
+        Meteor.subscribe('allTeams');
         var issue, facility;
         issue = Issues.findOne(id);
         if(issue) {

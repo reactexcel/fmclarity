@@ -8,7 +8,7 @@ EmailMessageView = React.createClass({
         query = this.props.item;
         message = Messages.findOne(query);
         if(message) {
-            owner = message.getOwner()
+            owner = message.getOwner();
         }
         return {
             owner:owner,
@@ -25,11 +25,13 @@ EmailMessageView = React.createClass({
         var used = false;
         return(
             <div>
-                <div style={{width:"100%",height:"50px",textAlign:"center",backgroundColor:"#0152b5",color:"#fff"}}>
-                    <span style={{fontSize:"20px",lineHeight:"45px"}}>FM Clarity</span>
+                <div>
+                    <p>Hi {owner.getName()},</p>
+                    <p>An FM Clarity work order you are involved with has changed. If you were previously emailed an access link, click that link to see the updates. If you have an FM Clarity account <a href={message.getAbsoluteTargetUrl()}>click here</a>.</p>
                 </div>
-                <div style={{width:"100%",textAlign:"center",backgroundColor:"#ddd",color:"#333"}}>
-                    <span>An FM Clarity work request you are watching has changed...</span>
+
+                <div style={{width:"100%",textAlign:"center",backgroundColor:"#0152b5",color:"#fff"}}>
+                    <span>Updates</span>
                 </div>
                 <div className="media-body">
                     {message.body||message.subject||message.verb?
@@ -41,6 +43,7 @@ EmailMessageView = React.createClass({
                             <span>{message.subject}</span>
                         }<br/>
                         <div>{message.body}</div>
+                        <div><small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small></div>
                     </div>
                     :null}
                 </div>

@@ -83,12 +83,12 @@ AutoInput.File = React.createClass({
     		url = file.url();
     		extension = file.extension();
     		if(extension) {
-    			icon = "icons/"+extension+"-icon-128x128.png";
+    			icon = "/icons/"+extension+"-icon-128x128.png";
     		}
 	    }
     	return {
     		file:file,
-    		url:file?file.url():"img/default-placeholder.png",
+    		url:file?file.url():"/img/default-placeholder.png",
     		extension:extension,
     		icon:icon
     	}
@@ -201,7 +201,7 @@ AutoInput.Thumbnail = React.createClass({
     		name = file.name();
     		isImage = file.isImage()&&extension!='tif';
     		if(extension) {
-    			icon = "icons/48px/"+extension+".png";
+    			icon = "/icons/48px/"+extension+".png";
     		}
 	    }
     	return {

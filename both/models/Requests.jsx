@@ -174,7 +174,6 @@ Issues.methods({
   setAssignee:{
     authentication:function(role,user,request) {
       return (
-        request.status==Issues.STATUS_ISSUED&&
         AuthHelpers.memberOfSuppliersTeam(role,user,request)
       )
     },
@@ -287,35 +286,37 @@ function issue(request) {
     subject:"Work order #"+request.code+" has been issued",
   });
 
+  //sendNotifications(request);
   sendSupplierEmail(request);
 
   return request;
 }
 
-//should this just be a standard message sent using "sendMessage"?
-function sendSupplierEmail(request){
+function sendNotifications(request) {
 
   var tester = Meteor.user();
   if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
 
     request = Issues._transform(request);
+    var owner = request.getOwner();
     var team = request.getTeam();
     var supplier = request.getSupplier();
-    //console.log(supplier.name);
-    var members = supplier.getMembers(/*{role:"manager"}*/);
-    for(var i in members) {
-      //console.log(members[i].emails[0].address);
+    var supplierMembers = supplier.getMembers(/*{role:"manager"}*/);
+    var teamMembers = team.getMembers();
+    var recipients = [];
+
+    recipients.push(supplierMembers[0]);
+    for(var i in teamMembers) {
+      recipients.push(teamMembers[i])
     }
+
     var user = members[0];    
     if(user) {
       var email = user.emails[0].address;
       var to = user.name?(user.name+" <"+email+">"):email;
       var testerEmail = tester.emails[0].address;
 
-
-      var stampedLoginToken = Accounts._generateStampedLoginToken();
-      Accounts._insertLoginToken(user._id, stampedLoginToken);
-      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:stampedLoginToken.token});
+      var element = React.createElement(EmailMessageView,{item:{_id:request._id}});
       var html = ReactDOMServer.renderToStaticMarkup(element);
 
       //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
@@ -327,6 +328,49 @@ function sendSupplierEmail(request){
           html: html
         });
       //}
+    }
+  })}  
+
+}
+
+//should this just be a standard message sent using "sendMessage"?
+function sendSupplierEmail(request){
+
+  var tester = Meteor.user();
+  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
+
+    request = Issues._transform(request);
+    var team = request.getTeam();
+    var supplier = request.getSupplier();
+    var members = supplier.getMembers(/*{role:"manager"}*/);
+    /*for(var i in members) {
+      console.log(members[i].emails[0].address);
+    }*/
+    var user = members[0];    
+    if(user) {
+      var email = user.emails[0].address;
+      var to = user.name?(user.name+" <"+email+">"):email;
+
+      var stampedLoginToken = Accounts._generateStampedLoginToken();
+      Accounts._insertLoginToken(user._id, stampedLoginToken);
+      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:stampedLoginToken.token});
+      var html = ReactDOMServer.renderToStaticMarkup(element);
+
+      var message = {
+        bcc :["leo@fmclarity.com","rich@fmclarity.com"],
+        from:"FM Clarity <no-reply@fmclarity.com>",
+        subject:("New work request from "+" "+team.getName()),
+        html:html
+      }
+
+      if(FM.inProduction()) {
+        //message.to = to;
+      }
+      else {
+        message.subject = "[to:"+to+"]"+message.subject;
+      }
+      Email.send(message);
+
     }
   })}  
 }
@@ -371,7 +415,7 @@ function close(issue) {
       service:issue.service,
       subservice:issue.subservice,
       name:"Follow up - "+issue.name,
-      description:issue.closeDetails.furtherWorkDescription,
+      //description:issue.closeDetails.furtherWorkDescription,
       priority:issue.closeDetails.furtherPriority||'Scheduled',
       costThreshold:issue.closeDetails.furtherQuoteValue
     };

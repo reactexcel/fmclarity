@@ -5,9 +5,11 @@ TeamsData = {
         email:"kaplan@fmclarity.com",
         phone:"0400-123-123",
         services:[{
-            name:"General Repairs",            
+            name:"General R&M",
+            active:true,
         },{
-            name:"OHS"
+            name:"OHS",
+            active:true
         }]
     },
     buildcost:{
@@ -45,7 +47,8 @@ TeamsData = {
         name:"Expert Systems",
         email:"tech@expertsystems.com.au",
         services:[{
-            name:"Air Conditioning"
+            name:"Air Conditioning",
+            active:true,
         }]
     },
     aperture:{
@@ -53,13 +56,16 @@ TeamsData = {
         name:"Aperture Electrical",
         email:"admin@aperturelighting.com.au",
         services:[{
-            name:"Electrical"
+            name:"Electrical",
+            active:true
         },
         {
-            name:"Data"
+            name:"Data",
+            active:true
         },
         {
-            name:"Lightning protection"
+            name:"Lightning protection",
+            active:true
         }]
     },
     clearway:{
@@ -67,7 +73,8 @@ TeamsData = {
         name:"Clearway plumbing",
         email:"sales@clearway.com.au",
         services:[{
-            name:"Plumbing"
+            name:"Plumbing",
+            active:true
         }]
     }
 }
@@ -309,6 +316,13 @@ function makeKaplanContractors(kaplan) {
         services:[{name:"Water Coolers"}]
     });
     addKaplanContractor(kaplan,{
+        name:"Neverfail",
+        manager:"",
+        email:"",
+        phone:"",
+        services:[{name:"Water Coolers"}]
+    });
+    addKaplanContractor(kaplan,{
         name:"Aqua Clear",
         manager:"Kylie Worcester",
         email:"kylie@aquaclear.com.au",
@@ -446,6 +460,7 @@ FM.resetTestData = function() {
 
     //set up contractors
     var normal = TestTeams.create(TeamsData['normal']);
+    normal.addMember(leo,{role:"manager"});
     //normal.addMember(contractor,{role:"manager"});
     //normal.addMember(fixer,{role:"staff"});
     var abnormal = TestTeams.create(TeamsData['abnormal']);
