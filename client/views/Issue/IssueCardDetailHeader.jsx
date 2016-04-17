@@ -217,7 +217,7 @@ IssueSpecArea = React.createClass({
                                                     items={this.data.facility.levels} 
                                                     onChange={this.updateLevel}
                                                 >
-                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} level</span>
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} area</span>
                                                 </SuperSelect>
                                                 {issue.level?
                                                     <div style={{clear:"both"}}>{issue.level.name}</div>
@@ -234,7 +234,7 @@ IssueSpecArea = React.createClass({
                                                     items={issue.level.type.children} 
                                                     onChange={this.updateItem.bind(this,'area')}
                                                 >
-                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} area</span>
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} sub-area</span>
                                                 </SuperSelect>
                                                 {issue.area?
                                                     <div style={{clear:"both"}}>{issue.area.name}</div>
@@ -297,7 +297,7 @@ IssueSpecArea = React.createClass({
 					                    :null}
 					                </div>
 					                <div className="col-md-3">
-					                    {issue.status&&(supplier||issue.canSetSupplier())?
+					                    {issue.status&&issue.service&&(supplier||issue.canSetSupplier())?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 					                        <SuperSelect 
@@ -305,6 +305,7 @@ IssueSpecArea = React.createClass({
 					                            itemView={ContactViewName}
 					                            items={suppliers} 
                                                 moreItems={this.data.allSuppliers}
+                                                clearOption={{name:"None"}}
 					                            onChange={this.updateItem.bind(this,'supplier')}
 					                        >
 					                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>

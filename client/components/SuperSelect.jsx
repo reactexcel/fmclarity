@@ -72,7 +72,7 @@ SuperSelect = React.createClass({
                     <ul className="dropdown-menu dropdown-messages">
                     {clearOption?
                     	<li className="dropdown-menu-item" onClick={component.handleChange.bind(null,null)}>
-                        	<Card item={clearOption} />
+                        	<i><Card item={clearOption} /></i>
                     	</li>
 	                :null}
 
@@ -84,7 +84,7 @@ SuperSelect = React.createClass({
 						)                    	
                     })}
                     {this.props.moreItems?
-                    	<li onClick={this.toggleMore} className="browse-button">{this.state.more?<span>Less</span>:<span>More</span>}</li>
+                    	<li onClick={this.toggleMore} style={{cursor:"pointer"}} className="browse-button">{this.state.more?<span>Less</span>:<span>More</span>}</li>
                     :null}
                     </ul>
 

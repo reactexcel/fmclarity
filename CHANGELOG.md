@@ -1,6 +1,32 @@
 CHANGELOG.md
 ============
 
+**v0.5.8a**
+
+* Changed "Level" drop down to "Area" and "Area" to "Subarea"
+* Closed items no longer have due dates, now hidden calendar
+* Changed colour of password reset notification tp green
+* Put in exception which states that tif & csv are not images
+* Supplier contact should be first manager on list, not just first person
+* Work orders supplier view has address of property at top
+* Increased left padding of comments
+* WO:Added "No supplier" option to supplier dd
+* WO Suplier dd: Changed cursor to pointer
+* Multiple attachments in close work order details
+* Facility contact details displayed on facility card
+* Added team phone2 to table
+* Added user phone2 to table
+* Added user phone2 to user details card
+* Added phone1 and phone2 to team and user edit view
+* Added contacts for facilities - (Brad for Docklands)
+
+* Added FMClarity as a supplier to use for demos
+
+* Recurrent notifications required for overdue work orders including to suppliers
+* Suppliers are being blocked by RBAC when attempting to create follow up
+
+* Remaining notifications
+
 **v0.5.7a**
 
 * More button shows all suppliers in dropdown

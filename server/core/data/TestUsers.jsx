@@ -40,7 +40,7 @@ TestUsers = {
             user = Accounts.findUserByEmail(profile.email);
         }
         if(!noThumb) {
-            user.thumb = this.getThumb();
+            //user.thumb = this.getThumb();
         }
         user.save();
         return user;

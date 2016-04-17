@@ -11,6 +11,7 @@ Calendar = React.createClass({
             if(facility) {
                 query["facility._id"] = facility._id;
             }
+            query.$or = [{status:Issues.STATUS_NEW},{status:Issues.STATUS_ISSUED}];
             query.createdAt = {
                 $gte:moment().startOf('month').toDate(),
                 $lte:moment().endOf('month').toDate()

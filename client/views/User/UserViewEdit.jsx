@@ -46,6 +46,9 @@ UserProfile = React.createClass({
 		},
 		phone:{
 			label:"Phone number",
+		},
+		phone2:{
+			label:"Phone number 2",
 		}
 	},
 

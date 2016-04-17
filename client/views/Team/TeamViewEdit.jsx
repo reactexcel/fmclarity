@@ -15,7 +15,9 @@ TeamViewEdit = React.createClass({
 		var form1 = [
 			"name",
 			"abn",
-			"email"
+			"email",
+			"phone",
+			"phone2"
 		];
 		var form2 = [];
 

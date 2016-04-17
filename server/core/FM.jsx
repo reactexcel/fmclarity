@@ -25,7 +25,8 @@ TeamsData = {
         type:"fm",
         name:"FM Clarity",
         email:"admin@fmclarity.com",
-        phone:"0400-123-123"        
+        phone:"0400-123-123",
+        services:KaplanServices        
     },
     normal:{
         type:"contractor",
@@ -425,10 +426,14 @@ FM.resetTestData = function() {
 
     //set up kaplan
     var kaplan = TestTeams.create(TeamsData['kaplan']);
+    kaplan.addMember(brad,{role:"manager"});
     kaplan.addMember(leo,{role:"manager"});
     kaplan.addMember(rich,{role:"manager"});
     kaplan.addFacilities(KaplanFacilities);
     kaplan.addSupplier(kaplan);
+
+    var docklands = Facilities.findOne({name:"Docklands"});
+    docklands.addMember(brad,{role:"contact"});
 
     makeKaplanContractors(kaplan);
 
@@ -436,6 +441,8 @@ FM.resetTestData = function() {
     var clarity = TestTeams.create(TeamsData['clarity']);
     clarity.addMember(leo,{role:"manager"});
     clarity.addMember(rich,{role:"manager"});
+
+    kaplan.addSupplier(clarity);
 
     //set up contractors
     var normal = TestTeams.create(TeamsData['normal']);

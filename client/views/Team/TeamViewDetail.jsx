@@ -11,7 +11,7 @@ TeamViewDetail = React.createClass({
 	    if(team.getAvailableServices) {
 	    	availableServices = team.getAvailableServices();	    	
 	    }
-	    var members = team.getMembers();
+	    var members = team.getMembers({role:"manager"});
 	    if(members&&members.length) {
 	    	contact = members[0];
 	    }

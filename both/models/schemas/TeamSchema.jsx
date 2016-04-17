@@ -33,6 +33,10 @@ TeamSchema = {
     type: String,
     label: "Phone",
   },
+  phone2: {
+    type: String,
+    label: "Phone 2",
+  },
   abn: {
     type: String,
     label: "ABN",

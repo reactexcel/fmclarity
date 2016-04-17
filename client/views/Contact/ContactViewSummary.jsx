@@ -83,10 +83,13 @@ Contact2Line = React.createClass({
 				<div className="contact-card-2line-text">
 		        	{profile.name}<br/>
 		        	<span style={{fontSize:"11px",color:"#777"}}>
-		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
-		            	{profile.email}&nbsp;&nbsp;
-		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
-		            	{profile.phone}
+
+		            	{profile.email?
+		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            	:null}
+		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
+		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
+
 		            </span>
 		       	</div>
 	        </div>
@@ -112,10 +115,13 @@ Contact2LineWithAvatar = React.createClass({
 				<span className="contact-card-2line-text">
 		        	{profile.name} {profile.role?<span className="label label-default pull-right">{profile.role}</span>:null}<br/>
 		        	<span style={{fontSize:"11px",color:"#777"}}>
-		            	<i className="fa fa-envelope"></i>&nbsp;&nbsp;
-		            	{profile.email}&nbsp;&nbsp;
-		            	<i className="fa fa-phone"></i>&nbsp;&nbsp;
-		            	{profile.phone}
+
+		            	{profile.email?
+		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            	:null}
+		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
+		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
+
 		            </span>
 		       	</span>
 	        </div>
@@ -137,10 +143,13 @@ Contact1Line = React.createClass({
             <span className="contact-card contact-card-1line">
               <a href="#">{profile.name}</a>&nbsp;&nbsp;
               <span className="hidden-xs">
-              <i className="fa fa-envelope"></i>&nbsp;&nbsp;
-              {profile.email}&nbsp;&nbsp;
-              <i className="fa fa-phone"></i>&nbsp;&nbsp;
-              {profile.phone}
+
+		            	{profile.email?
+		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            	:null}
+		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
+		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
+		            	
               </span>
             </span>
 		)
@@ -159,9 +168,16 @@ Contact3Line = React.createClass({
 		}
 		return (
             <div className="contact-card contact-card-1line">
-              <div style={{color:"#000"}}>{profile.name}</div>
-              <div style={{color:"#777"}}><i className="fa fa-envelope"></i>&nbsp;&nbsp;{profile.email}<br/>
-              <i className="fa fa-phone"></i>&nbsp;&nbsp;{profile.phone}</div>
+            	<div style={{color:"#000"}}>{profile.name}</div>
+              	<div style={{color:"#777"}}>
+
+		            	{profile.email?
+		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            	:null}
+		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
+		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
+
+            	</div>
             </div>
 		)
 	}

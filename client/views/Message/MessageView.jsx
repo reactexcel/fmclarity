@@ -58,7 +58,7 @@ MessageView = React.createClass({
         if(message.type=="comment") {
             return (<div>
                 <ContactAvatarSmall item={owner}/>
-                <div className="media-body">
+                <div className="media-body" style={{paddingLeft:"5px"}}>
                     <div>
                         <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
                         <div style={{width:"90%"}}>
@@ -72,7 +72,7 @@ MessageView = React.createClass({
         else if(message.body||message.subject||message.verb) {
             return (<div>
                 <ContactAvatarSmall item={owner}/>
-                <div className="media-body">
+                <div className="media-body" style={{paddingLeft:"5px"}}>
                     <div>
                         <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
                         <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {

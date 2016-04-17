@@ -199,7 +199,7 @@ AutoInput.Thumbnail = React.createClass({
     		progress = file.uploadProgress();
     		extension = file.extension();
     		name = file.name();
-    		isImage = file.isImage();
+    		isImage = file.isImage()&&extension!='tif';
     		if(extension) {
     			icon = "icons/48px/"+extension+".png";
     		}

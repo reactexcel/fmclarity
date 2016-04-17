@@ -58,6 +58,7 @@ Facilities.helpers({
       ' '+a.streetType+
       (a.city?(', '+a.city):null);
     }
+    return str;
   },
   getAreas() {
   	var areas = [];
