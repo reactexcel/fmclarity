@@ -55,7 +55,10 @@ IssuesIndexPage = React.createClass({
 	    	}
 	    }
 	    Meteor.call('Issues.create',issue,function(err,response){
-	    	if(callback) {
+	    	if(err) {
+	    		console.log(err);
+	    	}
+	    	if(callback&&response) {
 	    		var newItem = Issues.findOne(response._id);
 	    		callback(newItem);
 	    	}
@@ -90,7 +93,7 @@ IssuesIndexPage = React.createClass({
 	render() {
 		var filters = [
 	    {
-	        text:"All",
+	        text:"Open",
 	        filter(i) {
 	        	return i.status!='Closed';
 	        }

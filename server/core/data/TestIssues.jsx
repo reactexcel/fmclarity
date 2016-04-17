@@ -3,17 +3,17 @@ TestIssues = {
         Issues.remove({_id:{$nin:excludeIds}});
     },
     create(args) {
-    	var facility,shouldAssignRandomCreator;
+    	var facility,shouldAssignRandomOwner;
     	facility = args.facility;
-    	shouldAssignRandomCreator = args.shouldAssignRandomCreator;
+    	shouldAssignRandomOwner = args.shouldAssignRandomOwner;
 
     	issue = TestIssueGenerator.generate({
     		facility:facility
     	});
 
-		if(facility&&shouldAssignRandomCreator) {
-            var creator = TestTeams.getRandomMember(facility.getTeam());
-            issue.setCreator(creator);
+		if(facility&&shouldAssignRandomOwner) {
+            var owner = TestTeams.getRandomMember(facility.getTeam());
+            issue.setOwner(owner);
 		}
 		return issue;
     },

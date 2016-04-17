@@ -25,7 +25,7 @@ Teams.methods({
   },*/
   //update?
   save:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.save.bind(Teams)
   },
   //delete?
@@ -38,17 +38,21 @@ Teams.methods({
     authentication:AuthHelpers.manager,
     method:createRequest,    
   },
+  incrementWOCode:{
+    authentication:true,
+    method:incrementWOCode
+  },
 
   inviteMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:inviteMember,
   },
   addMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.addMember(Teams,'members')
   },
   removeMember:{
-    authentication:AuthHelpers.managerOrCreator,
+    authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.removeMember(Teams,'members')
   },
 
@@ -96,9 +100,13 @@ function createRequest(team,options) {
 
 function inviteMember(team,email,ext) {
   var user,id;
+  var found = false;
   //user = Accounts.findUserByEmail(email);
   user = Users.findOne({emails:{$elemMatch:{address:email}}});
-  if(!user) {
+  if(user) {
+    found = true;
+  }
+  else {
     var name = FM.isValidEmail(email); // this could be moved to RBAC, or Schema, general purpose validation function
     if(name) {
       if(Meteor.isServer) {
@@ -112,8 +120,16 @@ function inviteMember(team,email,ext) {
   }
   if(user) {
     Meteor.call("Teams.addMember",team,{_id:user._id},ext);
-    return user;
+    //return user;
+    return {
+      user:user,
+      found:found
+    }
   }
+}
+
+function incrementWOCode(){
+  console.log("I'm supposed to increase it");
 }
 
 function inviteSupplier(team,email,ext) {
@@ -186,13 +202,13 @@ Teams.helpers({
   },
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
-      "Scheduled":7*24,
-      "Standard":3*24,
-      "Urgent":24,
-      "Critical":0,
+      "Scheduled":7*24*3600,
+      "Standard":24*3600,
+      "Urgent":2*3600,
+      "Critical":1,
     };
     var timeframe =  timeframes[priority]?timeframes[priority]:timeframes['Standard'];
-    return timeframe * 60 * 60 * 1000;
+    return timeframe;
   },
   getNextWOCode(){
     if(!this.counters) {
@@ -202,13 +218,14 @@ Teams.helpers({
       this.counters.WO = 0;
     }
     this.counters.WO = this.counters.WO + 1;
-    this.save();
+    Teams.update({_id:this._id},{$inc:{"counters.WO":1}});
+    //this.save();
     return this.counters.WO;
   },
   getRole(user) {
     for(var i in this.members) {
       var currentMember = this.members[i];
-      if(currentMember._id==user._id) {
+      if(currentMember&&user&&currentMember._id==user._id) {
         return currentMember.role;
       }
     }
@@ -241,12 +258,12 @@ Teams.helpers({
     return facilities[i];
   },
   getIssues() {
-    if(this.type=="contractor") {
-      return this.getContractorIssues();
-    }
-    else {
-      return Issues.find({"team._id":this._id}).fetch();
-    }
+    //if(this.type=="contractor") {
+    //      return this.getContractorIssues();
+    //}
+    //else {
+    return Issues.find({$or:[{"team._id":this._id},{"supplier._id":this._id}]}).fetch();
+    //}
   },
   getContractorIssues() {
     return Issues.find({"supplier._id":this._id,status:{$ne:"New"}}).fetch();
@@ -257,7 +274,7 @@ Teams.helpers({
       if(issues&&issues.length) {
         facilityQueries = [];
         issues.map(function(i){
-          facilityQueries.push(i.facility);
+          facilityQueries.push({_id:i.facility._id});
         });
         facilities = Facilities.find({$or:facilityQueries}).fetch();
       }

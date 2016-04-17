@@ -10,7 +10,7 @@ Users.methods({
     method:createUser
   },
   save:{
-    authentication:AuthHelpers.currentUserOrCreator,
+    authentication:AuthHelpers.currentUserOrOwner,
     method:RBAC.lib.save.bind(Users)
   },
   destroy:{
@@ -21,7 +21,10 @@ Users.methods({
 
 function createUser(item,password) {
   if(Meteor.isServer) {
-    var creator = Meteor.user();
+    var owner = item.owner||{
+      _id:Meteor.user()._id,
+      name:Meteor.user().name
+    }
     var user = {
       email:item.email,
       name:item.name,
@@ -32,12 +35,9 @@ function createUser(item,password) {
     }
     var id = Accounts.createUser(user);
     var user = Users.findOne(id);
-    if(creator) {
+    if(owner) {
       Users.update(id,{$set:{
-        creator:{
-          _id:creator._id,
-          name:creator.name
-        }
+        owner:owner
       }});
     }
     return user;
@@ -57,23 +57,38 @@ Meteor.methods({
     });
   },
   'User.sendEmail':function(user,message) {
-    if(Meteor.isServer&&FM.inProduction()) {
-      var element = React.createElement(EmailMessageView,{item:message});
-      var html = React.renderToStaticMarkup (element);
-      if(user) {
-        var email = user.emails[0].address;
-        var to = user.displayName+" <"+email+">";
-        //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
-          Email.send({
-            //to: to,
-            cc : "leo@fmclarity.com;rich@fmclarity.com",
-            from: "FM Clarity <no-reply@fmclarity.com>",
-            subject: (message.subject||"FM Clarity notification")+"-"+to,
-            html: html
-          });
-        //}
+    if(Meteor.isServer) {Meteor.defer(function(){
+
+      if(!FM.inProduction()) {
+        console.log('development');
       }
-    }
+      else {
+        console.log('production');
+      }
+
+      if(user) {
+
+        var element = React.createElement(EmailMessageView,{item:message});
+        var html = ReactDOMServer.renderToStaticMarkup (element);
+        var email = user.emails[0].address;
+        var to = user.name?(user.name+" <"+email+">"):email;
+
+        var message = {
+            bcc :["leo@fmclarity.com","rich@fmclarity.com"],
+            from:"FM Clarity <no-reply@fmclarity.com>",
+            subject:(message.subject||"FM Clarity notification"),
+            html:html
+        }
+
+        if(FM.inProduction()) {
+          //message.to = to;
+        }
+        else {
+          message.subject = "[to:"+to+"]"+message.subject;
+        }
+        Email.send(message);
+      }
+    })}
   }
 })
 

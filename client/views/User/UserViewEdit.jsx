@@ -46,6 +46,9 @@ UserProfile = React.createClass({
 		},
 		phone:{
 			label:"Phone number",
+		},
+		phone2:{
+			label:"Phone number 2",
 		}
 	},
 
@@ -62,16 +65,18 @@ UserProfile = React.createClass({
     	}
     	else {
             input.value = '';
-            team.inviteMember(email, {role:component.props.role}, function(user){
-            	user = Users.findOne(user._id);
+            team.inviteMember(email, {role:component.props.role}, function(response){
+            	var user = Users.findOne(response.user._id);
+            	if(!response.found) {
+		            component.setState({
+            			shouldShowMessage:true
+            		});	    
+            	}
             	component.setItem(user);
             	if(component.props.onChange) {
             		component.props.onChange(user);
             	}
             });
-            this.setState({
-            	shouldShowMessage:true
-            });	    
         }
     },
 
@@ -99,7 +104,7 @@ UserProfile = React.createClass({
 		if(user) {
 			profile = user.profile;
 		}
-		if(!user||!profile||!team) {
+		if(!user||!profile) {
 			return (
                 <form className="form-inline">
                     <div className="form-group">

@@ -9,10 +9,17 @@ CloseDetailsSchema = {
       input:"date",
       size:6
     },
+    /*
     serviceReport: {
       label:"Service report",
       input:"FileField",
     },
+    */
+    attachments: {
+      type:[Object],
+      label:"Attachments",
+      input:"attachments"
+    },    
     furtherWorkRequired: {
       label:"Further work required",
       input:"switch",

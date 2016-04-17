@@ -113,6 +113,15 @@ Issues.methods({
     },
     method:RBAC.lib.setItem(Issues,'facility'),
   },
+  setPriority:{
+    authentication:function(role,user,request) {
+      return (
+        isEditable(request)&&
+        AuthHelpers.memberOfRelatedTeam(role,user,request)
+      )
+    },
+    method:RBAC.lib.setItem(Issues,'priority'),
+  },
   setService:{
     authentication:function(role,user,request) {
       return (
@@ -132,7 +141,7 @@ Issues.methods({
   setCost:{
     authentication:function(role,user,request) {
       return (
-        isEditable(request)&&
+        (isEditable(request)||request.status==Issues.STATUS_ISSUED)&&
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
@@ -165,7 +174,6 @@ Issues.methods({
   setAssignee:{
     authentication:function(role,user,request) {
       return (
-        request.status==Issues.STATUS_ISSUED&&
         AuthHelpers.memberOfSuppliersTeam(role,user,request)
       )
     },
@@ -201,7 +209,7 @@ function readyToOpen(request) {
   return (
     request.status==Issues.STATUS_DRAFT&&
     request.name&&request.name.length&&
-    request.description&&request.description.length&&
+    //request.description&&request.description.length&&
     request.facility&&request.facility._id&&
     request.area&&request.area.name&&request.area.name.length&&
     request.service&&request.service.name.length
@@ -214,8 +222,7 @@ function readyToOpen(request) {
 function readyToIssue(request) {
   return (
     (request.status==Issues.STATUS_NEW||readyToOpen(request))&&
-    request.subservice&&request.subservice.name&&request.subservice.name.length&&
-    request.supplier&&request.supplier._id
+    request.supplier&&(request.supplier._id||request.supplier.name)
   )   
 }
 
@@ -245,40 +252,127 @@ function readyToCancel(request) {
 /**
  *
  */
-function open (issue) {
-  var response = Meteor.call('Issues.save',issue,{status:Issues.STATUS_NEW});
-  issue = Issues.findOne(response._id);
+function open (request) {
+  var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+  request = Issues.findOne(response._id);
 
-  issue.sendMessage({
+  request.sendMessage({
     verb:"created",
     subject:"Work order #"+response.code+" has been created"
   });
 
-  return issue;
+  return request;
 }
 
 /**
  *
  */
-function issue(issue) {
+function issue(request) {
 
-  var team = Teams.findOne(issue.team._id);
-  var timeframe = team.timeframes[issue.priority];
-  var createdMs = issue.createdAt.getTime();
+  var team = Teams.findOne(request.team._id);
+  var timeframe = team.timeframes[request.priority]*1000;
+  var createdMs = request.createdAt.getTime();
 
-  var response = Meteor.call('Issues.save',issue,{
+  var response = Meteor.call('Issues.save',request,{
     dueDate:new Date(createdMs+timeframe),
     status:Issues.STATUS_ISSUED,
     issuedAt:new Date()
   });
-  var issue = Issues.findOne(response._id);
+  var request = Issues.findOne(response._id);
 
-  issue.sendMessage({
+  // this needs to not block
+  request.sendMessage({
     verb:"issued",
-    subject:"Work order #"+issue.code+" has been issued",
+    subject:"Work order #"+request.code+" has been issued",
   });
 
-  return issue;
+  //sendNotifications(request);
+  sendSupplierEmail(request);
+
+  return request;
+}
+
+function sendNotifications(request) {
+
+  var tester = Meteor.user();
+  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
+
+    request = Issues._transform(request);
+    var owner = request.getOwner();
+    var team = request.getTeam();
+    var supplier = request.getSupplier();
+    var supplierMembers = supplier.getMembers(/*{role:"manager"}*/);
+    var teamMembers = team.getMembers();
+    var recipients = [];
+
+    recipients.push(supplierMembers[0]);
+    for(var i in teamMembers) {
+      recipients.push(teamMembers[i])
+    }
+
+    var user = members[0];    
+    if(user) {
+      var email = user.emails[0].address;
+      var to = user.name?(user.name+" <"+email+">"):email;
+      var testerEmail = tester.emails[0].address;
+
+      var element = React.createElement(EmailMessageView,{item:{_id:request._id}});
+      var html = ReactDOMServer.renderToStaticMarkup(element);
+
+      //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
+        Email.send({
+          //to: "leo@fmclarity.com",
+          cc : [testerEmail],//,"rich@fmclarity.com"],
+          from: "FM Clarity <no-reply@fmclarity.com>",
+          subject: ("to:"+to+", ")+("New work request from "+" "+team.getName()),
+          html: html
+        });
+      //}
+    }
+  })}  
+
+}
+
+//should this just be a standard message sent using "sendMessage"?
+function sendSupplierEmail(request){
+
+  var tester = Meteor.user();
+  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
+
+    request = Issues._transform(request);
+    var team = request.getTeam();
+    var supplier = request.getSupplier();
+    var members = supplier.getMembers(/*{role:"manager"}*/);
+    /*for(var i in members) {
+      console.log(members[i].emails[0].address);
+    }*/
+    var user = members[0];    
+    if(user) {
+      var email = user.emails[0].address;
+      var to = user.name?(user.name+" <"+email+">"):email;
+
+      var stampedLoginToken = Accounts._generateStampedLoginToken();
+      Accounts._insertLoginToken(user._id, stampedLoginToken);
+      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:stampedLoginToken.token});
+      var html = ReactDOMServer.renderToStaticMarkup(element);
+
+      var message = {
+        bcc :["leo@fmclarity.com","rich@fmclarity.com"],
+        from:"FM Clarity <no-reply@fmclarity.com>",
+        subject:("New work request from "+" "+team.getName()),
+        html:html
+      }
+
+      if(FM.inProduction()) {
+        //message.to = to;
+      }
+      else {
+        message.subject = "[to:"+to+"]"+message.subject;
+      }
+      Email.send(message);
+
+    }
+  })}  
 }
 
 /**
@@ -314,12 +408,14 @@ function close(issue) {
       facility:issue.facility,
       supplier:issue.supplier,
       team:issue.team,
+
+      level:issue.level,
       area:issue.area,
       status:Issues.STATUS_NEW,
       service:issue.service,
       subservice:issue.subservice,
       name:"Follow up - "+issue.name,
-      description:issue.closeDetails.furtherWorkDescription,
+      //description:issue.closeDetails.furtherWorkDescription,
       priority:issue.closeDetails.furtherPriority||'Scheduled',
       costThreshold:issue.closeDetails.furtherQuoteValue
     };
@@ -407,7 +503,7 @@ function getPotentialSuppliers() {
           active:true
       }};
     }*/
-    var teams = Teams.find(query).fetch();
+    var teams = Teams.find(query,{sort:{name:1}}).fetch();
     return teams;
   }
   return null;
@@ -415,10 +511,10 @@ function getPotentialSuppliers() {
 
 function getWatchers() {
   var user = Meteor.user();
-  var creator = this.getCreator();
+  var owner = this.getOwner();
   var supplier = this.getSupplier();
   var assignee = this.getAssignee();
-  return [user,creator,supplier,assignee];
+  return [user,owner,supplier,assignee];
 }
 
 Issues.helpers({
@@ -428,6 +524,9 @@ Issues.helpers({
   getUrl() {
     return Meteor.absoluteUrl(this.path+'/'+this._id)
   },
+  getEncodedPath() {
+    return encodeURIComponent(Base64.encode(this.path+'/'+this._id));
+  }
 });
 
 
@@ -453,11 +552,16 @@ Issues.helpers({
     }
   },
 
-  sendMessage(message) {
+  sendMessage(message,cc) {
     var cc = this.getWatchers();
+    var user = Meteor.user();
 
     message.inboxId = this.getInboxId();
     message.target = this.getInboxId();
+    message.owner = {
+      _id:user._id,
+      name:user.getName()
+    }
 
     Meteor.call("Messages.create",message,function(err,messageId){
       message.originalId = messageId;

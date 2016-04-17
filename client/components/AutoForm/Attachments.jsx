@@ -1,7 +1,7 @@
 AutoInput.attachments = React.createClass({
 
 	handleChange(index,newValue) {
-		var attachments = this.props.value;
+		var attachments = this.props.value||[];
 		if(newValue) {
 			attachments[index] = newValue;
 		}
@@ -12,7 +12,7 @@ AutoInput.attachments = React.createClass({
 	},
 
 	render(){
-		var attachments = this.props.value;
+		var attachments = this.props.value||[];
 		var component = this;
 		return (
   			<div>

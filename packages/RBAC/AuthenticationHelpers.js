@@ -1,7 +1,16 @@
 // I wonder what the benefits of caching these results would be?
 AuthHelpers = {
-  creator:function(role,user,item) {
-    return item&&item.creator&&(item.creator._id==user._id);
+  owner:function(role,user,item) {
+    if(item&&item.owner) {
+      if(item.owner.type=="team") {
+        var team = Teams.findOne(item.owner._id);
+        var role = RBAC.getRole(user,team);
+        return role=="manager";
+      }
+      else {
+        return item.owner._id==user._id;
+      }
+    }
   },
   dev:function(role,user){
     return user.role=="dev";
@@ -9,8 +18,8 @@ AuthHelpers = {
   manager:function(role) {
     return role=="manager"||role=="support";
   },
-  managerOrCreator:function(role,user,team) {
-    return AuthHelpers.manager(role,user,team)||AuthHelpers.creator(role,user,team)
+  managerOrOwner:function(role,user,team) {
+    return AuthHelpers.manager(role,user,team)||AuthHelpers.owner(role,user,team)
   },
   managerOfRelatedTeam:function (role,user,item) {
     var team = Teams.findOne(item.team._id);
@@ -27,19 +36,28 @@ AuthHelpers = {
     return team.count()>0;
   },
   memberOfSuppliersTeam:function (role,user,request) {
-    var supplier = Teams.find({
-      _id:request.supplier._id,
-      members:{$elemMatch:{
+    var supplier = request.supplier;
+    if(supplier) {
+
+      var query = {members:{$elemMatch:{
         _id:user._id
-      }}
-    });
-    return supplier.count()>0;
+      }}};
+
+      if(supplier._id) {
+        query._id = supplier._id;
+      }
+      else if(supplier.name) {
+        query.name = supplier.name;
+      }
+
+      return Teams.find(query).count()>0;
+    }
   },
   currentUser:function(role,loggedUser,itemUser) {
     return loggedUser._id==itemUser._id;
   },
-  currentUserOrCreator:function(role,loggedUser,itemUser) {
-    return AuthHelpers.currentUser(role,loggedUser,itemUser)||AuthHelpers.creator(role,loggedUser,itemUser)
+  currentUserOrOwner:function(role,loggedUser,itemUser) {
+    return AuthHelpers.currentUser(role,loggedUser,itemUser)||AuthHelpers.owner(role,loggedUser,itemUser)
   },
   managerofMembersTeam:function(role,user,item) {
     //not sure this one is valid?

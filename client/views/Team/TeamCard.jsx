@@ -42,6 +42,7 @@ TeamCard = React.createClass({
 	render() {
 		var menu = this.getMenu();
 		var item = this.props.item;
+
 		return (
 			<div>
 			    {item.canSave()&&this.state.edit?

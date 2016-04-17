@@ -325,7 +325,25 @@ Config.services.map(function(service){
 });
 
 Config.defaultAreas =[{
-    name:'Level Type 3',
+    name:'Ground',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+    	name:'Foyer'
+	},{
+		name:'Fire Pump Room'
+	},{
+		name:'Loading Bay',
+	},{
+		name:'Bin Storage',
+	},{
+		name:'Switch Room',
+	},{
+		name:'Cleaner\'s Room',
+	}]
+},{
+    name:'Level 3',
     active:true,
 	hasChildren:true,
     data:{},
@@ -370,10 +388,12 @@ Config.defaultAreas =[{
 	},{
 		name:'Server Room'
     },{
+		name:'Cleaner\'s Room',
+	},{
     	name:'Kitchen'
 	}]
 },{
-    name:'Standard Level Type 4',
+    name:'Level 4',
     active:true,
 	hasChildren:true,
     data:{},
@@ -426,10 +446,11 @@ Config.defaultAreas =[{
 	},{
 		name:'Lecture Hall',
 	},{
-    	name:'Kitchen'
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
-    name:'Standard Level Type 5',
+    name:'Level 5',
     active:true,
 	hasChildren:true,
     data:{},
@@ -474,14 +495,15 @@ Config.defaultAreas =[{
 	},{
 		name:'Lecture Hall',
 	},{
-		name:'Computer Lab',
-	},{
 		name:'Common Area',
 	},{
 		name:'Teacher Staffroom',
+	},{
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
-    name:'Standard Level Type 6',
+    name:'Level 6',
     active:true,
 	hasChildren:true,
     data:{},
@@ -531,22 +553,103 @@ Config.defaultAreas =[{
 		name:'Common Area',
 	},{
 		name:'Shared Services Area',
+	},{
+    	name:'Kitchen',
+		identifiers:[{name:'Staff'},{name:'Student'}]
+	},{
+		name:'Meeting Room',
+		identifiers:[{name:'1'}]
 	}]
 },{
-	name:'Unique area',
-    hidden:true
+    name:'Roof',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Plant Room 1',
+    },{
+		name:'Roof',
+    }]
+},{
+    name:'External',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Facade',
+    },{
+		name:'Building Forecourt',
+    },{
+		name:'Bike Storage',
+    },{
+		name:'Security Office',
+    },{
+		name:'MDF',
+    },{
+		name:'EWIS',
+    },{
+		name:'Fire Panel',
+    }]
+},{
+    name:'Lifts',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Lift 1',
+    },{
+		name:'Lift 2',
+    },{
+		name:'Lift 3',
+    }]
+},{
+    name:'Car Parks',
+    active:true,
+	hasChildren:true,
+    data:{},
+    children:[{
+		name:'Level 1',
+    },{
+		name:'Level 2',
+    }]
 }];
 
+function ascendingAlpha(a,b){
+	return (a.name<b.name)?-1:1;
+}
+
+Config.defaultAreas.sort(ascendingAlpha);
+for(var i in Config.defaultAreas) {
+	if(Config.defaultAreas[i].children) {
+		Config.defaultAreas[i].children.sort(ascendingAlpha)
+	}
+}
+
 Config.defaultLevels = [{
-	name:"Level 3",
+	name:"Car Parks",
 	type:Config.defaultAreas[0],
 },{
-	name:"Level 4",
+	name:"External",
 	type:Config.defaultAreas[1],
 },{
-	name:"Level 5",
+	name:"Ground",
 	type:Config.defaultAreas[2],
 },{
-	name:"Level 6",
+	name:"Level 3",
 	type:Config.defaultAreas[3],
+},{
+	name:"Level 4",
+	type:Config.defaultAreas[4],
+},{
+	name:"Level 5",
+	type:Config.defaultAreas[5],
+},{
+	name:"Level 6",
+	type:Config.defaultAreas[6],
+},{
+	name:"Lifts",
+	type:Config.defaultAreas[7],
+},{
+	name:"Roof",
+	type:Config.defaultAreas[8]
 }];

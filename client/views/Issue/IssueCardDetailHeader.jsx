@@ -24,15 +24,17 @@ IssueSpecArea = React.createClass({
             }
 
             var supplier = issue.getSupplier();
-            var creator = issue.getCreator();
+            var owner = issue.getOwner();
             var assignee = issue.getAssignee();
             var user = Meteor.user();
+            var team = issue.getTeam();
 
             return {
                 ready:true,
 
                 issue:issue,
-                creator:creator,
+                team:team,
+                owner:owner,
 
                 facility:facility,
                 facilityContacts:facilityContacts,
@@ -42,6 +44,7 @@ IssueSpecArea = React.createClass({
 
                 selectedTeam:selectedTeam,
                 suppliers:issue.getPotentialSuppliers(),
+                allSuppliers:team?team.getSuppliers():null,
 
                 supplier:supplier,
                 assignee:assignee,
@@ -52,7 +55,7 @@ IssueSpecArea = React.createClass({
     },
 
     handleStatusChange(request){
-        //console.log({'callback status change':issue});
+        //console.log({'callback status change':request});
         if(!request) {
             //handleDestroy
         }
@@ -95,7 +98,19 @@ IssueSpecArea = React.createClass({
         if(request.service.data&&request.service.data.supplier) {
             request.supplier = request.service.data.supplier;
         }
+        else {
+            request.supplier = 0;
+        }
         request.subservice = 0;
+        this.save();
+    },
+
+    updateSubService(subservice) {
+        var request = this.props.item;
+        request.subservice = subservice;
+        if(request.subservice.data&&request.subservice.data.supplier) {
+            request.supplier = request.subservice.data.supplier;
+        }
         this.save();
     },
 
@@ -126,7 +141,7 @@ IssueSpecArea = React.createClass({
     render() {
         var issue = this.props.item;
         var supplier = this.data.supplier;
-        var creator = this.data.creator;
+        var owner = this.data.owner;
         var services = this.data.services;
         var suppliers = this.data.suppliers;
         var subservices = this.data.subservices;
@@ -139,16 +154,16 @@ IssueSpecArea = React.createClass({
 
                 <div className="row">
                     <div className="col-xs-12 col-sm-8 col-md-1">
-                        <div style={{float:"left",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
-                            <ContactAvatarSmall item={creator} />
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
+                            <ContactAvatarSmall item={owner} />
                         </div>
-                        <div style={{float:"left",width:"45px",height:"45px",paddingTop:"15px",textAlign:"center"}}>
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingTop:"15px",textAlign:"center"}}>
                             <span style={{display:"inline-block"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
                         </div>
-                        <div style={{float:"left",width:"45px",height:"45px",paddingTop:"9px",textAlign:"center"}}>
+                        <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingTop:"9px",textAlign:"center"}}>
                             <SuperSelect 
                                 items={['Scheduled','Standard','Urgent','Critical']} 
-                                readOnly={!issue.isEditable()}
+                                readOnly={!issue.canSetPriority()}
                                 onChange={this.updateItem.bind(this,'priority')}
                             >
                                 <IssuePriority issue={issue} />
@@ -202,7 +217,7 @@ IssueSpecArea = React.createClass({
                                                     items={this.data.facility.levels} 
                                                     onChange={this.updateLevel}
                                                 >
-                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} level</span>
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.level?"Select":""} area</span>
                                                 </SuperSelect>
                                                 {issue.level?
                                                     <div style={{clear:"both"}}>{issue.level.name}</div>
@@ -219,7 +234,7 @@ IssueSpecArea = React.createClass({
                                                     items={issue.level.type.children} 
                                                     onChange={this.updateItem.bind(this,'area')}
                                                 >
-                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} area</span>
+                                                    <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.area?"Select":""} sub-area</span>
                                                 </SuperSelect>
                                                 {issue.area?
                                                     <div style={{clear:"both"}}>{issue.area.name}</div>
@@ -270,7 +285,7 @@ IssueSpecArea = React.createClass({
 					                                readOnly={!issue.canSetSubService()}
 					                                itemView={ContactViewName}
 					                                items={subservices} 
-					                                onChange={this.updateItem.bind(this,'subservice')}
+					                                onChange={this.updateSubService}
 					                            >
 					                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!issue.subservice?"Select":""} subtype</span>
 					                            </SuperSelect>
@@ -282,13 +297,15 @@ IssueSpecArea = React.createClass({
 					                    :null}
 					                </div>
 					                <div className="col-md-3">
-					                    {issue.status&&(supplier||issue.canSetSupplier())?
+					                    {issue.status&&issue.service&&(supplier||issue.canSetSupplier())?
 					                    <div className="row">
 					                    	<div className="col-md-12">
 					                        <SuperSelect 
 					                            readOnly={!issue.canSetSupplier()}
 					                            itemView={ContactViewName}
 					                            items={suppliers} 
+                                                moreItems={this.data.allSuppliers}
+                                                clearOption={{name:"None"}}
 					                            onChange={this.updateItem.bind(this,'supplier')}
 					                        >
 					                            <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!supplier?"Select":""} Supplier</span>

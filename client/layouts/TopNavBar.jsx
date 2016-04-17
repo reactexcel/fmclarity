@@ -21,7 +21,9 @@ TopNavBar = React.createClass({
         
         var component = this;
         $(this.refs.notifications).on('hidden.bs.dropdown', function () {
-            component.data.user.markAllNotificationsAsRead();
+            if(component.data.user) {
+                component.data.user.markAllNotificationsAsRead();
+            }
         })
     },
 
@@ -63,5 +65,6 @@ TopNavBar = React.createClass({
                 </div>
             </nav>
         </div>
+        
     )}
 });

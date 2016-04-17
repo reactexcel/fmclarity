@@ -20,8 +20,9 @@ ContactSummary = React.createClass({
 				 <div className="contact-info">
 				 	<div>
 						<h2>{contact.getName()}</h2>
-						<b>Email</b> {profile.email}<br/>
-						<b>Phone</b> {profile.phone}<br/>
+						{profile.email?<span><b>Email</b> {profile.email}<br/></span>:null}
+						{profile.phone||profile.phone2?<span><b>Phone</b> {profile.phone}<br/></span>:null}
+						{profile.phone2?<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>:null}
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
 						{availableServices?

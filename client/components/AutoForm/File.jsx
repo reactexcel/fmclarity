@@ -83,12 +83,12 @@ AutoInput.File = React.createClass({
     		url = file.url();
     		extension = file.extension();
     		if(extension) {
-    			icon = "icons/"+extension+"-icon-128x128.png";
+    			icon = "/icons/"+extension+"-icon-128x128.png";
     		}
 	    }
     	return {
     		file:file,
-    		url:file?file.url():"img/default-placeholder.png",
+    		url:file?file.url():"/img/default-placeholder.png",
     		extension:extension,
     		icon:icon
     	}
@@ -130,14 +130,50 @@ AutoInput.File = React.createClass({
 		}
 	},
 
+	componentDidMount() {
+		$(this.refs.progress).knob({
+        	readOnly:true,
+			format:function (value) {
+     			return value + '%';
+  			}
+        });
+	},
+
+	componentDidUpdate() {
+		//console.log('updating');
+		if(this.data.file&&!this.data.file.isUploaded()) {
+			//console.log('rendering');
+			$(this.refs.progress)
+				.val(this.data.file.uploadProgress())
+				.trigger("change");
+		}
+	},	
+
+
 	render() {
 		return(
 			<div style={{position:"relative"}}>
 				<div onClick={this.onClick} className="ibox" style={{margin:"5px 0 0 5px",padding:"5px"}}>
-				    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.file?this.data.url:"img/default-placeholder.png"} />
-					<div style={{width:0,height:0,overflow:"hidden"}}>
-						<input ref="input" type="file" onChange={this.handleChange}/>
-					</div>
+
+					{this.data.file&&!this.data.file.isUploaded()?
+						<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
+							<input 
+								ref="progress" 
+								type="text" 
+								defaultValue={0}
+								data-max={100} 
+								className="dial m-r-sm" 
+								data-fgcolor="#3ca773"
+								data-width="80" 
+								data-height="80" 
+							/>
+						</div>:<div>
+					    <img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.file?this.data.url:"img/default-placeholder.png"} />
+						<div style={{width:0,height:0,overflow:"hidden"}}>
+							<input ref="input" type="file" onChange={this.handleChange}/>
+						</div>
+						</div>
+					}
 				</div>
 			    {this.data.file?
 					<div className="close-button" onClick={this.deleteFile}>&times;</div>
@@ -163,9 +199,9 @@ AutoInput.Thumbnail = React.createClass({
     		progress = file.uploadProgress();
     		extension = file.extension();
     		name = file.name();
-    		isImage = file.isImage();
+    		isImage = file.isImage()&&extension!='tif';
     		if(extension) {
-    			icon = "icons/"+extension+"-icon-64x64.png";
+    			icon = "/icons/48px/"+extension+".png";
     		}
 	    }
     	return {
@@ -264,7 +300,7 @@ AutoInput.Thumbnail = React.createClass({
 						    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
 						    </div>
 						:
-						    <img alt="image" src={this.data.icon} />
+						    <img style={{marginTop:"20px"}} alt="image" src={this.data.icon} />
 						}
 						<div style={{width:0,height:0,overflow:"hidden"}}>
 							<input ref="input" type="file" onChange={this.handleChange}/>

@@ -1,6 +1,80 @@
 CHANGELOG.md
 ============
 
+**v0.6.0a**
+
+* Activated emails on production version
+
+**v0.5.9a**
+
+* Fixed a problem which was causing suppliers to be blocked by RBAC when attempting to create follow up
+* Fixed a problem which was preventing icons to show for supplier file upload
+* Updated look of notifications to match supplier email
+
+**v0.5.8a**
+
+* Changed "Level" drop down to "Area" and "Area" to "Subarea"
+* Closed items no longer have due dates, now hidden calendar
+* Changed colour of password reset notification tp green
+* Put in exception which states that tif & csv are not images
+* Supplier contact should be first manager on list, not just first person
+* Work orders supplier view has address of property at top
+* Increased left padding of comments
+* WO:Added "No supplier" option to supplier dd
+* WO Suplier dd: Changed cursor to pointer
+* Multiple attachments in close work order details
+* Facility contact details displayed on facility card
+* Added team phone2 to table
+* Added user phone2 to table
+* Added user phone2 to user details card
+* Added phone1 and phone2 to team and user edit view
+* Added contacts for facilities - (Brad for Docklands)
+* Added FMClarity as a supplier to use for demos
+
+**v0.5.7a**
+
+* More button shows all suppliers in dropdown
+* Avatar:Fixed issue that was causing some initials to show as undefined
+* Managers are able to edit suppliers who are not self managed
+* Fixed:Accessing work order from email, unable to close work order (greyed out)
+* Remove default work order value from suppliers profile
+
+**v0.5.6a**
+
+* Fixed:Adding new user, even though found dialog says not found
+* Added an option to the users menu to remove members from a selected facility
+* When changing the view on Type of Requests on the dash the screen stays in the same location
+* Reduced size of dropdown so as to remove hidden overflow problem
+* Services, subservices, areas and sub areas sorted by alphabetical order
+* Blank avatars now show as initials
+
+**v0.5.5a**
+
+* Fixed:When a subtype and supplier is selected and the service changed the supplier should clear (or auto populate) but it remains
+* Fixed default Kaplan suppliers
+* Work order priority timeframe for critical to be changed to 1 hour, urgent to 2 hours, standard to 24 hours
+* Fixed:Portfolio main image being cropped (this is maybe a duplicate task)
+* Fixed defects in Kaplan area data entry
+* Follow up work order now replicates location
+* Contact name should go on supplier cards
+* Second phone number on supplier cards
+* Amount always editable by manager - until work order is closed
+
+**v0.5.4a** 
+
+* No need to include subservice in order to issue
+* Added some test stubs around notifications
+* Added contractor email work orders routines
+* Corrected spelling of Kaplan suppliers
+* Fixed a bug that was showing incorrect timeframes for issued tasks
+* Completed password reset and password change pages and routines
+* Fixed an issue that was causing the app to pause while emails being sent
+* Entered remaining Kaplan areas
+* Fixed an error that was causing page to redirect to /dashboard when clicking on email link
+* Fixed an error that was causing work orders to be hidden when not logged in
+* Changed contractor access routines to a secure, token based login
+* Created new layout for single page work request / contractor view
+
 **v0.5.3a**
 
 * Added prompt for confirmation when removing supplier from team

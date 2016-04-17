@@ -33,16 +33,6 @@ exposed.route('/enroll-account/:token', {
   }
 });
 
-//probably better called request/:_id
-//also... token required
-exposed.route('/requests/:_id', {
-  name: 'request',
-  action(params) {
-    ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});
-  }
-});
-
-/*
 exposed.route('/register', {
   name: 'register',
   action() {
@@ -56,7 +46,15 @@ exposed.route('/lost-password', {
     ReactLayout.render(BlankLayout,{content:<LostPassword />});
   }
 });
-*/
+
+exposed.route('/reset-password/:token', {
+  name: 'reset-password',
+  action(params,queryParams) {
+    var token = params.token;
+    Session.set('redirectAfterLogin','/change-password');
+    Accounts.resetPassword(token,'fm1q2w3e');
+  }
+});
 
 var loggedIn = FlowRouter.group({
   triggersEnter: [
@@ -64,7 +62,10 @@ var loggedIn = FlowRouter.group({
       var route;
       if (!(Meteor.loggingIn() || Meteor.userId())) {
         route = FlowRouter.current();
-        if (route.route.name != 'login') {
+        if (route.route.name == 'login') {
+          Session.set('redirectAfterLogin', '/');          
+        }
+        else {
           Session.set('redirectAfterLogin', route.path);
         }
         redirect('/login');
@@ -72,7 +73,7 @@ var loggedIn = FlowRouter.group({
     }
   ]
 });
-
+/*
 var admin = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
@@ -83,12 +84,14 @@ var admin = FlowRouter.group({
     }
   ]
 });
-
+*/
 if(Meteor.isClient) {
   Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin')||'/';
-    Session.set('redirectAfterLogin',null)
-    return FlowRouter.go(redirect);
+    var redirect = Session.get('redirectAfterLogin');
+    if(redirect) {
+      Session.set('redirectAfterLogin',null)
+      return FlowRouter.go(redirect);
+    }
   });
 }
 
@@ -98,6 +101,40 @@ loggedIn.route('/', {
     ReactLayout.render(MainLayout,{content:<LandingPage />});
   }
 });
+
+// should not go to 'IssuePage', instead should go to 'logging in' page
+exposed.route('/t/:token/:redirect', {
+  name: 'loginWithToken',
+  action(params) {
+    //console.log(params);
+    var redirect = Base64.decode(decodeURIComponent(params.redirect));
+    redirect = String.fromCharCode.apply(null, redirect);
+    //console.log(redirect);
+    Meteor.loginWithToken(params.token,function(err){
+      if(err) {
+        console.log(err);
+      }
+      //console.log('going to '+redirect);
+      FlowRouter.go('/'+redirect);
+    });
+  }
+});
+
+//probably better called request/:_id
+//also... token required
+loggedIn.route('/requests/:_id', {
+  name: 'request',
+  action(params) {
+    ReactLayout.render(LayoutBare,{content:<IssuePage selected={params._id} />});
+  }
+});
+
+loggedIn.route('/change-password',{
+  name:'change-password',
+  action() {
+    ReactLayout.render(BlankLayout,{content:<PageChangePassword />});    
+  }
+})
 
 loggedIn.route('/pmp', {
   name: 'pmp',

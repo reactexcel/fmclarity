@@ -11,13 +11,32 @@ TeamViewEdit = React.createClass({
     getMeteorData() {
     	var team,members;
     	team = this.state.item;
+
+		var form1 = [
+			"name",
+			"abn",
+			"email",
+			"phone",
+			"phone2"
+		];
+		var form2 = [];
+
     	if(team) {
     		members = team.getMembers();
+    		if(team.type=="fm") {
+    			form2.push("address")
+    			form2.push("defaultWorkOrderValue");
+    		}
+    		else {
+    			form2.push("description");
+    		}
     	}
     	return {
     		selectedTeam:Session.getSelectedTeam(),
     		team:team,
-    		members:members
+    		members:members,
+    		form1:form1,
+    		form2:form2
     	}
     },
 
@@ -36,16 +55,6 @@ TeamViewEdit = React.createClass({
 			item:newItem
 		});
 	},
-
-	form1 : [
-		"name",
-		"abn",
-		"email"
-	],
-	form2 : [
-		"address",
-		"defaultWorkOrderValue"
-	],
 
 	componentDidMount() {
 		var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
@@ -109,16 +118,21 @@ TeamViewEdit = React.createClass({
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-sm-7">
-			        		<AutoForm item={team} schema={schema} form={this.form1} />
+			        		<AutoForm item={team} schema={schema} form={this.data.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
 			        		<AutoInput.File item={team.thumb} onChange={team.setThumb.bind(team)} />
 			        	</div>
 			        	<div className="col-sm-12">
-				        	<AutoForm item={team} schema={schema} form={this.form2} />
+				        	<AutoForm item={team} schema={schema} form={this.data.form2} />
 				        </div>
 			        </div>
 		        </CollapseBox>
+		        {team.type=="contractor"?
+				<CollapseBox title="Documents & images">
+					<AutoForm item={team} schema={schema} form={["attachments"]}/>
+				</CollapseBox>
+				:null}
 				<CollapseBox title="Members">
 			   		<ContactList 
 			   			items={members}

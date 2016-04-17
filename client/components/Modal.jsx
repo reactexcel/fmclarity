@@ -35,7 +35,7 @@ Modal = React.createClass({
     	}
   },
 
-  componentDidMount() {
+  componentWillMount() {
   	var component = this;
   	Dispatcher.subscribe('showModal',function(args){
       var queue = component.state.queue;

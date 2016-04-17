@@ -24,6 +24,9 @@ var validators = {};
 function getRole(member,item) {
 	//perhaps the selected team should actually be saved in the user model
 	//then we can always check permissions against the selected team
+	if(!item||!item.members||!item.members.length) {
+		return null;
+	}
 	for(var i in item.members) {
 		var currentMember = item.members[i];
 		if(currentMember&&member&&currentMember._id==member._id) {
@@ -101,6 +104,11 @@ function addAuthentication(methodName,f) {
 	authenticators[methodName] = function() {
 		// create the paramater that will be used to call the authentication function
 		var user = Meteor.user();
+
+		if(!user) {
+			return false;
+		}
+
 		var item = arguments[0];
 		var role = getRole(user,item);
 
