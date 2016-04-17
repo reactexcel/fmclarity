@@ -486,7 +486,7 @@ FM.resetTestData = function() {
     //})
 
 
-    //if(FM.inDevelopment()) {
+    if(FM.inDevelopment()) {
 
         incisive.addSupplier(incisive);
         incisive.addSupplier(expert);
@@ -539,7 +539,7 @@ FM.resetTestData = function() {
                 }
             }
         }
-    //}
+    }
 
     //set up buildcost
     var buildcost = TestTeams.create(TeamsData['buildcost']);

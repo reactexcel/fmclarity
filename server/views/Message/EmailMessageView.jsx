@@ -4,13 +4,16 @@ EmailMessageView = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, owner;
+        var query, message, user, owner;
         query = this.props.item;
+
+        user = Users.findOne(this.props.user._id);
         message = Messages.findOne(query);
         if(message) {
             owner = message.getOwner();
         }
         return {
+            user:user,
             owner:owner,
             inbox:this.props.inbox,
             message:message
@@ -19,14 +22,13 @@ EmailMessageView = React.createClass({
 
     render() {
         var message = this.data.message||{};
-        var owner = this.data.owner||Meteor.user();
-        var ownerName = owner.getName?owner.getName():'';
+        var owner = this.data.owner;
+        var user = this.data.user;
         var createdAt = message.createdAt;
-        var used = false;
         return(
             <div>
                 <div>
-                    <p>Hi {owner.getName()},</p>
+                    <p>Hi {user.getName()},</p>
                     <p>An FM Clarity work order you are involved with has changed. If you were previously emailed an access link, click that link to see the updates. If you have an FM Clarity account <a href={message.getAbsoluteTargetUrl()}>click here</a>.</p>
                 </div>
 
