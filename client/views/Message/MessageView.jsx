@@ -81,8 +81,8 @@ MessageView = React.createClass({
                         :
                             <span>{message.subject}</span>
                         }<br/>
-                        <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
                         <div>{message.body}</div>
+                        <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
                     </div>
                 </div>
             </div>)

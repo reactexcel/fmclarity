@@ -404,6 +404,8 @@ function close(issue) {
 
   if(issue.closeDetails.furtherWorkRequired) {
 
+    var closer = Meteor.user();
+
     var newIssue = {
       facility:issue.facility,
       supplier:issue.supplier,
@@ -415,7 +417,7 @@ function close(issue) {
       service:issue.service,
       subservice:issue.subservice,
       name:"Follow up - "+issue.name,
-      //description:issue.closeDetails.furtherWorkDescription,
+      description:issue.closeDetails.furtherWorkDescription,
       priority:issue.closeDetails.furtherPriority||'Scheduled',
       costThreshold:issue.closeDetails.furtherQuoteValue
     };
@@ -424,11 +426,18 @@ function close(issue) {
       newIssue.attachments = [issue.closeDetails.furtherQuote];
     }
 
-    var newIssueResponse = Meteor.call('Issues.create',newIssue);
+    var response = Meteor.call('Issues.create',newIssue);
+    var newIssue = Issues._transform(response);
 
     issue.sendMessage({
       verb:"requested",
-      subject:"Work order #"+issue.code+" has been closed and follow up #"+newIssueResponse.code+" has been requested"
+      subject:"Work order #"+issue.code+" has been closed and follow up #"+newIssue.code+" has been requested"
+    });
+
+    newIssue.sendMessage({
+      verb:"requested a follow up to "+issue.getName(),
+      subject:closer.getName()+" requested a follow up to "+issue.getName(),
+      body:newIssue.description
     });
 
   }
