@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.6.1a-04**
+
+* Change root url for password reset
+
 **v0.6.1a-03**
 
 * Unblock non fmclarity emails
