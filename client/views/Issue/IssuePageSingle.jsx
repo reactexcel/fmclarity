@@ -11,21 +11,22 @@ IssuePage = React.createClass({
         Meteor.subscribe('users');
         Meteor.subscribe('singleRequest',id);
         Meteor.subscribe('allTeams');
-        var issue, facility;
-        issue = Issues.findOne(id);
-        if(issue) {
-            facility = issue.getFacility();
+        var request, facility;
+        request = Issues.findOne(id);
+        if(request) {
+            facility = request.getFacility();
         }
         return {
-        	issue:issue,
+        	request:request,
             facility:facility
         }
     },
 
     render() {
-        var issue = this.data.issue;
+        var request = this.data.request;
         var facility = this.data.facility;
-        if(!issue) {
+        var dueDate = moment(request.dueDate).format('MMMM Do YYYY, h:mm:ss a');
+        if(!request) {
             return <div/>
         }
     	return (
@@ -33,13 +34,14 @@ IssuePage = React.createClass({
                 <div className="issue-page wrapper wrapper-content animated fadeIn">
                     <div className="row">
                         <div className="col-xs-12">
-                            <h3>{issue.team.name}<br/>
-                            Work Request #{issue.code}<br/>
-                            {facility.getAddress()}</h3>
+                            <h3>{request.team.name}<br/>
+                            Work Request #{request.code}<br/>
+                            {facility.getAddress()}<br/>
+                            Due {dueDate}</h3>
                         </div>
                         <div className="col-xs-12">
                             <div className="ibox">
-                            	<IssueDetail item={issue} />
+                            	<IssueDetail item={request} />
                             </div>
                         </div>
                     </div>
