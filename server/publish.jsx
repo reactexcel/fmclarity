@@ -46,5 +46,5 @@ Meteor.publish("singleRequest",function(id){
 });
 
 Meteor.publish("contractors",function() {
-	return Teams.find({type:"contractor"});
+	return Teams.find(/*{type:"contractor"}*/);
 });
