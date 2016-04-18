@@ -1,6 +1,6 @@
 Schema = {};
 FM = {
-	version:"0.6.1a-03",
+	version:"0.6.1a-04",
 	collections:{},
 	schemas:{}
 }
