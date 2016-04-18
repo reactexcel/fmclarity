@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v0.6.1a-02**
+
+* Added due date so single work order view
+* Follow up description goes as comment on new order
+
 **v0.6.1a**
 
 * Activated emails on production version
