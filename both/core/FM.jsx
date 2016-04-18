@@ -1,6 +1,6 @@
 Schema = {};
 FM = {
-	version:"0.6.1a",
+	version:"0.6.1a-03",
 	collections:{},
 	schemas:{}
 }
@@ -14,10 +14,10 @@ FM.isValidEmail = function(email) {
     var temp = email.split('@');
     var name = temp[0];
     var server = temp[1];
-    var validEmails = Config.validEmails;
-	if(validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0))) {
+    //var validEmails = Config.validEmails;
+	//if(validEmails[server]&&((validEmails[server]=='*')||(validEmails[server].indexOf(name)>=0))) {
 		return ucfirst(name);
-	}
+	//}
 }
 
 if(Meteor.isClient) {

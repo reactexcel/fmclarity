@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v0.6.1a-03**
+
+* Unblock non fmclarity emails
+
 **v0.6.1a-02**
 
 * Added due date so single work order view
