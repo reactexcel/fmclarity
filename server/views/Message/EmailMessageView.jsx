@@ -24,11 +24,12 @@ EmailMessageView = React.createClass({
         var message = this.data.message||{};
         var owner = this.data.owner;
         var user = this.data.user;
+        var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName()
         var createdAt = message.createdAt;
         return(
             <div>
                 <div>
-                    <p>Hi {user.getName()},</p>
+                    <p>Hi {userName},</p>
                     <p>An FM Clarity work order you are involved with has changed. If you were previously emailed an access link, click that link to see the updates. If you have an FM Clarity account <a href={message.getAbsoluteTargetUrl()}>click here</a>.</p>
                 </div>
 

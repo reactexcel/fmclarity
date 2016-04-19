@@ -99,6 +99,7 @@ UserProfile = React.createClass({
 
 	render() {
 		var user, profile, team;
+		var viewer = Meteor.user();
 		user = this.state.item;
 		team = this.data.selectedTeam;
 		if(user) {
@@ -115,10 +116,10 @@ UserProfile = React.createClass({
                 </form>
             )
 		}
-		else if(!user.canSave()) {
+		else if(!viewer.canSave()) {
 			return (
 				<div>
-					<UserViewDetail item={user} />
+					<ContactSummary item={user} />
 				</div>
 			)
 		}

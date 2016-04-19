@@ -31,6 +31,13 @@ TopNavBar = React.createClass({
         $('body').toggleClass("mini-navbar");
     },
 
+    componentDidUpdate() {
+        //var audio = new Audio('audio.mp3');
+        //audio.addEventListener('canplaythrough', function() {
+        //audio.play();
+        //});
+    },
+
     render() {
         var notifications = this.data.notifications;
         return (

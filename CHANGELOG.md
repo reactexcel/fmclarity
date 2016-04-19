@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v0.6.1a-05**
+
+* Disabled autodeletion of drafts
+* Users own notification pre-marked as read
+* Users own notifications not emailed
+* Users own notifications not show as alerts
+* Removed "no notifications" textf from wo comment box
+* Fixed a bug which concealed comments on some comments in small view
+* Added an action to promote/demote members of a team
+* Supplier email now uses just first name if available
+* Supplier does not get two emails when request is issued (just the invitation email)
+
 **v0.6.1a-04**
 
 * Change root url for password reset
