@@ -105,8 +105,15 @@ Users.helpers({
         return;
       }
     }
+    //console.log(message.owner);
+    if(this._id&&message.owner._id&&this._id==message.owner._id) {
+      message = _.extend({},message,{read:true});
+      //message.read = true;
+    }
     Meteor.call("Messages.create",message);
-    Meteor.call("User.sendEmail",this,message);
+    if(!message.read) {
+      Meteor.call("User.sendEmail",this,message);
+    }
     /*
     Email.send({
       from:"no-reply@fmclarity.com",
@@ -146,12 +153,17 @@ Users.helpers({
   getEmail() {
     return this.emails[0].address;
   },
-  getNotifications() {
-    return Messages.find({
+  getNotifications(opts) {
+    var hideOwn = opts?opts.hideOwn:false;
+    var q = {
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id,
       read:false
-    },{sort:{createdAt:-1}}).fetch();
+    };
+    if(hideOwn) {
+      q["$ne"] = {"owner._id":this._id};
+    }
+    return Messages.find(q,{sort:{createdAt:-1}}).fetch();
   },
   markAllNotificationsAsRead() {
     Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());

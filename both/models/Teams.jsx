@@ -55,6 +55,13 @@ Teams.methods({
     authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.removeMember(Teams,'members')
   },
+  setMemberRole:{
+    authentication:function(role,user,team,args){
+      var victim = args[1];
+      return role=="manager"&&user._id!=victim._id;
+    },
+    method:setMemberRole
+  },
 
   inviteSupplier:{
     authentication:AuthHelpers.manager,
@@ -126,6 +133,21 @@ function inviteMember(team,email,ext) {
       found:found
     }
   }
+}
+
+function setMemberRole(team,user,role) {
+  Teams.update({_id:team._id,"members._id":user._id},{$set:{"members.$.role":role}});
+  /*
+  for(var i in team.members) {
+    var member = team.members[i];
+    if(member&&user&&member._id==user._id) {
+      team.members[i].role = role;//member.role = role;
+      Teams.update(team._id,{$set:{"members":team.members}});
+      //team.save();
+      return member;
+    }
+  }
+  */
 }
 
 function incrementWOCode(){
@@ -224,9 +246,9 @@ Teams.helpers({
   },
   getRole(user) {
     for(var i in this.members) {
-      var currentMember = this.members[i];
-      if(currentMember&&user&&currentMember._id==user._id) {
-        return currentMember.role;
+      var member = this.members[i];
+      if(member&&user&&member._id==user._id) {
+        return member.role;
       }
     }
   },

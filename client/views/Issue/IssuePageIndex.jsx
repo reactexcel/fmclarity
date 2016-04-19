@@ -30,7 +30,7 @@ IssuesIndexPage = React.createClass({
 	    if(items) {
 	    	items.map(function(item){
 	    		if(item.isNew()) {
-	        		item.destroy();
+	        		//item.destroy();
 	        	}
 	      	})
 	    }
