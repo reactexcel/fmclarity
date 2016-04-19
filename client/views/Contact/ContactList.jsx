@@ -55,7 +55,9 @@ ContactList = React.createClass({
     },
 
 	render() {
-		var contacts = this.props.items;
+		var contacts = _.uniq(this.props.items,false,function(i){
+			return i._id;
+		});
 		var component = this;
 		var team = this.props.team;
 		var canCreate = this.props.onChange||this.props.onAdd;

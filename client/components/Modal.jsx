@@ -8,11 +8,9 @@ Dispatcher = {
 	},
 
 	broadcast(event,args) {
-		for(var i in this.events) {
-			this.events[i].map(function(callback){
-				callback(args);
-			});
-		}
+  	this.events[event].map(function(callback){
+			callback(args);
+		});
 	}
 }
 
@@ -23,9 +21,9 @@ Modal = React.createClass({
 		show(args) {
 			Dispatcher.broadcast('showModal',args);
 		},
-    //hide(args) {
-      //Dispatcher.broadcast('hideModal',args);
-    //}
+    hide(args) {
+      Dispatcher.broadcast('hideModal',args);
+    }
 	},
 
 	getInitialState() {
@@ -51,19 +49,20 @@ Modal = React.createClass({
   	});
 
 
-    //Dispatcher.subscribe('hideModal',function(args){
-    //  component.handleHide();
-    //});
+    Dispatcher.subscribe('hideModal',function(args){
+      component.handleHide();
+    });
 
   },
 
   handleHide() {
+    ///*
     if(this.state.onCancel) {
       this.state.onCancel();
     }
     var queue = this.state.queue;
     queue.pop();
-    if(queue.length) {
+    if(queue.length>0) {
       var current = queue[queue.length-1];
       this.setState({
         show:true,
@@ -82,21 +81,22 @@ Modal = React.createClass({
       })
       return true;
     }
-
+    //*/
     /*
     this.setState({
 	      show:false,
-        queue:queue
+        queue:[]
     })
-    */
+    //*/
   },
 
   render() {
     var queue = this.state.queue;
-    if(!this.state.show) return <div/>
+    //if(!this.state.show) return <div/>
       return (
         <ModalInner
           title={this.state.title}
+          show={this.state.show}
           handleSubmit={this.state.onSubmit}
           handleHide={this.handleHide}>
           {
@@ -114,8 +114,25 @@ Modal = React.createClass({
 ModalInner = React.createClass({
 
   componentDidMount() {
-    $(this.refs.modal).modal('show');
-    $(this.refs.modal).on('hide.bs.modal', this.props.handleHide);
+    if(this.props.show) {
+      $(this.refs.modal).modal('show');
+    }
+    $(this.refs.modal).on('hidden.bs.modal', this.handleHide);
+  },
+
+  componentDidUpdate() {
+    if(this.props.show) {
+      $(this.refs.modal).modal('show');
+    }
+    else {
+      $(this.refs.modal).modal('hide');
+    }
+  },
+
+  handleHide() {
+    if(this.props.handleHide) {
+      this.props.handleHide();
+    }
   },
 
   handleSubmit() {

@@ -281,10 +281,14 @@ function issue(request) {
   var request = Issues.findOne(response._id);
 
   // this needs to not block
+  var watchers = request.getWatchers();
+  watchers[2] = null;
   request.sendMessage({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  });
+  },watchers);
+
+  /*maybe have a createMessage and separate sendMessage?*/
 
   //sendNotifications(request);
   sendSupplierEmail(request);
@@ -429,17 +433,18 @@ function close(issue) {
     var response = Meteor.call('Issues.create',newIssue);
     var newIssue = Issues._transform(response);
 
-    issue.sendMessage({
-      verb:"requested",
-      subject:"Work order #"+issue.code+" has been closed and follow up #"+newIssue.code+" has been requested"
+    newIssue.sendMessage({
+      verb:"closed "+issue.getName()+" and requested follow up",
+      subject:"Work order #"+issue.code+" has been closed and a follow up has been requested"
     });
 
+    /*
     newIssue.sendMessage({
       verb:"requested a follow up to "+issue.getName(),
       subject:closer.getName()+" requested a follow up to "+issue.getName(),
       body:newIssue.description
     });
-
+    */
   }
   else {
 
@@ -523,6 +528,7 @@ function getWatchers() {
   var owner = this.getOwner();
   var supplier = this.getSupplier();
   var assignee = this.getAssignee();
+  //and facilityContact?
   return [user,owner,supplier,assignee];
 }
 
@@ -562,7 +568,7 @@ Issues.helpers({
   },
 
   sendMessage(message,cc) {
-    var cc = this.getWatchers();
+    cc = cc||this.getWatchers();
     var user = Meteor.user();
 
     message.inboxId = this.getInboxId();

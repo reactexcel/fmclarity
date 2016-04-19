@@ -5,11 +5,21 @@ Accounts.emailTemplates.enrollAccount.subject = function (user) {
 };
 
 Accounts.urls.enrollAccount = function (token) {
-    return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"https://app.fmclarity.com"});
+    if(FM.inProduction()) {
+      return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"https://app.fmclarity.com"});
+    }
+    else {
+      return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"http://52.62.6.251:3000"});
+    }
 };
 
 Accounts.urls.resetPassword = function (token) {
-    return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"https://app.fmclarity.com"});
+    if(FM.inProduction()) {
+      return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"https://app.fmclarity.com"});
+    }
+    else {
+      return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"http://52.62.6.251:3000"});
+    }
 };
 
 

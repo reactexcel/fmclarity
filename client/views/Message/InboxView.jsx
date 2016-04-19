@@ -29,10 +29,7 @@ Inbox = React.createClass({
                             </div>
                         )
                     })
-                :
-                    <div>
-                        No notifications
-                    </div>
+                :null
                 }
                 {
                 readOnly?null:

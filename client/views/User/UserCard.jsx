@@ -28,15 +28,31 @@ UserCard = React.createClass({
 			});
 		}
 
-		if(selectedTeam&&selectedTeam.hasMember(user)&&!user.isLoggedIn()) {
-			menu.push({
-				label:"Remove from "+selectedTeam.getName(),
-				shouldConfirm:true,
-				action(){
-					selectedTeam.removeMember(user);
-					//Modal.hide();
-				}
-			});
+		if(selectedTeam&&selectedTeam.hasMember(user)) {
+
+			if(!user.isLoggedIn()) {
+				menu.push({
+					label:"Remove from "+selectedTeam.getName(),
+					shouldConfirm:true,
+					action(){
+						selectedTeam.removeMember(user);
+						//Modal.hide();
+					}
+				});
+			}
+
+			if(selectedTeam.canSetMemberRole(user)) {
+				var role = selectedTeam.getRole(user);
+				var newRole = (role=='manager')?'staff':'manager';
+				menu.push({
+					label:(newRole=='manager')?'Promote to manager':'Demote to staff',
+					shouldConfirm:true,
+					action(){
+						selectedTeam.setMemberRole(user,newRole);
+						Modal.hide();
+					}
+				})
+			}
 		}
 
 		if(selectedFacility&&selectedFacility.hasMember(user)) {
@@ -67,7 +83,7 @@ UserCard = React.createClass({
 						onChange={this.props.onChange}
 					/>
 				:
-					<ContactSummary item={user}/>
+					<ContactSummary item={user} role={this.props.role}/>
 				}
             	<ActionsMenu items={menu} />
 			</div>
