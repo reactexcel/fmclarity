@@ -45,15 +45,23 @@ function setItem(collection,fieldName) {
 
 function addMember(collection,fieldName) {
 	return function(item,obj,options){
+		if(!_.isArray(obj)) {
+			obj = [obj];
+		}
+
 		var newObject = {};
-		var role = options&&options.role?options.role:"contact";
-		newObject[fieldName] = _.extend({},{
-			_id:obj._id,
-			role:role,
-			name:obj.name
-			//profile:obj.getProfile?obj.getProfile():obj
-		});
-		collection.update(item._id,{$push:newObject});
+		var role = options&&options.role?options.role:"staff";
+
+		obj.map(function(o){
+			newObject[fieldName] = _.extend({},{
+				_id:o._id,
+				role:role,
+				name:o.profile?o.profile.name:o.name
+				//profile:obj.getProfile?obj.getProfile():obj
+			});
+			collection.update(item._id,{$push:newObject});			
+		})
+
 		return newObject;
 	}
 }
@@ -61,7 +69,7 @@ function addMember(collection,fieldName) {
 function removeMember(collection,fieldName) {
 	return function(item,obj){
 		var newObject = {};
-		newObject[fieldName] = {_id:obj._id};
+		newObject[fieldName] = obj._id?{_id:obj._id}:obj;
 	    collection.update(item._id,{$pull:newObject});
 	}
 }

@@ -36,12 +36,12 @@ UserCard = React.createClass({
 					shouldConfirm:true,
 					action(){
 						selectedTeam.removeMember(user);
-						//Modal.hide();
+						Modal.hide();
 					}
 				});
 			}
 
-			if(selectedTeam.canSetMemberRole(user)) {
+			if(selectedTeam.canSetMemberRole&&selectedTeam.canSetMemberRole(user)) {
 				var role = selectedTeam.getRole(user);
 				var newRole = (role=='manager')?'staff':'manager';
 				menu.push({
@@ -61,7 +61,7 @@ UserCard = React.createClass({
 				shouldConfirm:true,
 				action(){
 					selectedFacility.removeMember(user);
-					//Modal.hide();
+					Modal.hide();
 				}
 			});
 		}

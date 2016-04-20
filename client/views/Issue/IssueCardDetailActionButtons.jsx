@@ -34,7 +34,9 @@ IssueActionButtons = React.createClass({
         var request = this.props.item;
 
         if(request.status==Issues.STATUS_DRAFT||request.status==Issues.STATUS_NEW) {
-            return "Cancel";
+            if(request.canDestroy()){
+                return "Cancel";
+            }
         }
         else if(request.status==Issues.STATUS_ISSUED||request.status==Issues.STATUS_CLOSING) {
             if(request.exported&&request.canReverse()) {
@@ -74,7 +76,7 @@ IssueActionButtons = React.createClass({
 
         var request = this.props.item;
 
-        if(request.canCancel()) {
+        if(request.canDestroy()) {
             var message = confirm('Are you sure you want to cancel this work order?');
             if(message == true){
                 Meteor.call('Issues.destroy',request,this.handleStatusChange);

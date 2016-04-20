@@ -2,7 +2,7 @@ NotificationList = React.createClass({
 
     render() {
         return (
-            <ul className="dropdown-menu dropdown-messages">
+            <ul className="dropdown-menu dropdown-messages" style={{maxHeight:"500px"}}>
                 {
                 this.props.items&&this.props.items.length?
                 	this.props.items.map(function(n){

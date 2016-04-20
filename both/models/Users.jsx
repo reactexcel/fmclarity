@@ -59,13 +59,14 @@ Meteor.methods({
   'User.sendEmail':function(user,message) {
     if(Meteor.isServer) {Meteor.defer(function(){
 
+      /*
       if(!FM.inProduction()) {
         console.log('development');
       }
       else {
         console.log('production');
       }
-
+      */
       if(user) {
 
         var element = React.createElement(EmailMessageView,{user:user,item:message});
@@ -94,7 +95,8 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
-  sendMessage(message) {
+  sendMessage(message,opts) {
+    var doNotEmail = opts?opts.doNotEmail:false;
     message.inboxId = this.getInboxId();
     if(message.originalId) {
       var alreadySent = Messages.findOne({
@@ -111,7 +113,7 @@ Users.helpers({
       //message.read = true;
     }
     Meteor.call("Messages.create",message);
-    if(!message.read) {
+    if(!message.read&&!doNotEmail) {
       Meteor.call("User.sendEmail",this,message);
     }
     /*
@@ -144,11 +146,11 @@ Users.helpers({
       query:{_id:this._id}
     }
   },
-  getMessages() {
+  getMessages(opts) {
     return Messages.find({
       "inboxId.collectionName":this.collectionName,
       "inboxId.query._id":this._id
-    }).fetch();
+    },opts).fetch();
   },
   getEmail() {
     return this.emails[0].address;

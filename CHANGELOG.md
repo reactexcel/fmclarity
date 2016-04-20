@@ -1,6 +1,21 @@
 CHANGELOG.md
 ============
 
+**v1.0.0b**
+
+* Suppliers now receive notification of issue, just not second notification email
+* User modal closed when user is removed from team or facility
+* Default role for new members is staff
+* Made some changes to the way notifications are handled in preparation for notification settings selector
+* WO:Contacts now show each members role
+* Managers recieve notifications of new orders created by staff
+* Notification alert window now scrolls when there is overflow
+* Comments can include newlines
+* Writing on own wall temporarily disabled
+* Wall comments sorted reverse chronological
+* WO comments sorted chronological
+* Added "show older messages" feature
+
 **v0.6.1a-05**
 
 * Disabled autodeletion of drafts

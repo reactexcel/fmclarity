@@ -40,7 +40,7 @@ IssueFacilitySelector = React.createClass({
                     readOnly={!issue.canSetFacility()}
                     items={this.data.teamFacilities} 
                     itemView={ContactViewName}
-                    onChange={this.handleChange.bind(null,'facility')}
+                    onChange={issue.setFacility.bind(issue)}
                 >
                     <span className="issue-summary-facility-col">
                         {facility?<span>{facility.getName()} -</span>:<span style={{color:"#999"}}>Select facility</span>}

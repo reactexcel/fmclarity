@@ -258,8 +258,9 @@ function createCommonDocumentMethods(collection) {
 		getMessages:function() {
 			return Messages.find({inboxId:this.getInboxId()}).fetch();
 	  	},
-		getNotifications:function() {
-			return Messages.find({inboxId:this.getInboxId()}).fetch();
+		getNotifications:function(options) {
+			options = options||{sort:{createdAt:1}};
+			return Messages.find({inboxId:this.getInboxId()},options).fetch();
 		},
 		getMessageCount:function() {
 	    	return Messages.find({inboxId:this.getInboxId()}).count();

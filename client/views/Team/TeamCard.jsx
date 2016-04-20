@@ -27,7 +27,7 @@ TeamCard = React.createClass({
 			});
 		}
 
-		if(selectedTeam._id!=item._id) {
+		if(selectedTeam.canRemoveSupplier&&selectedTeam.canRemoveSupplier()&&selectedTeam._id!=item._id) {
 			menu.push({
 				label:"Remove supplier from your team",
 				shouldConfirm:true,

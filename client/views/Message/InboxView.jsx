@@ -6,7 +6,7 @@ Inbox = React.createClass({
         var inbox, messages;
         inbox = this.props.for;
         if(inbox) {
-            messages = inbox.getMessages();
+            messages = inbox.getMessages(this.props.options);
         }
         return {
             inbox:inbox,
@@ -14,20 +14,39 @@ Inbox = React.createClass({
         }
     },
 
+    getInitialState() {
+        return {
+            truncate:this.props.truncate||false
+        }
+    },
+
+    untruncate() {
+        this.setState({truncate:false});
+    },
+
     render(){
         var inbox = this.data.inbox;
         var messages = this.data.messages;
         var readOnly = this.props.readOnly;
+        var truncated = this.state.truncate;
+        var numberTruncated = messages.length-5;
         return (
             <div className="feed-activity-list">
+                {truncated&&numberTruncated>0?
+                <div onClick={this.untruncate} className="feed-element" style={{textAlign:"center",backgroundColor:"#f6f6f6",color:"#aaa",padding:"0px",cursor:"pointer"}}>
+                    <small>Show {numberTruncated} older comment{numberTruncated>1?"s":""}</small>
+                </div>
+                :null}
                 {
                 (messages&&messages.length)?
                     messages.map(function(message,idx){
-                        return (
-                            <div key={message._id} className="feed-element">
-                                <MessageView item={message}/>
-                            </div>
-                        )
+                        if(idx>messages.length-6||!truncated) {
+                            return (
+                                <div key={message._id} className="feed-element">
+                                    <MessageView item={message}/>
+                                </div>
+                            )
+                        }
                     })
                 :null
                 }
