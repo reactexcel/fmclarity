@@ -12,16 +12,8 @@ Issues.STATUS_ARCHIVED = "Archived";
 //maybe actions it better terminology?
 Issues.methods({
   create:{
+    authentication:true,//AuthHelpers.all
     method:RBAC.lib.create.bind(Issues),
-    authentication:true,
-  },
-  cancel:{
-    authentication:function(role,user,request) {
-      return (
-        readyToCancel(request)&&
-        AuthHelpers.managerOfRelatedTeam(role,user,request)
-      )
-    }
   },
   reverse:{
     method:reverse,
@@ -29,18 +21,18 @@ Issues.methods({
       return (
         request.exported&&request.status==Issues.STATUS_ISSUED&&
         AuthHelpers.managerOfRelatedTeam(role,user,request)
-        
       )
     },
   },
   open:{
-    method:open,
     authentication:function (role,user,request) {
       return (
         readyToOpen(request)&&
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
-    }
+    },
+    method:actionOpen,
+    notification:notificationOpen
   },
   issue:{
     method:issue,
@@ -80,8 +72,13 @@ Issues.methods({
     method:RBAC.lib.save.bind(Issues)
   },
   destroy:{
-    authentication:AuthHelpers.managerOfRelatedTeam,
-    method:RBAC.lib.destroy.bind(Issues)
+    method:RBAC.lib.destroy.bind(Issues),
+    authentication:function(role,user,request) {
+      return (
+        readyToCancel(request)&&
+        (role=="owner"||AuthHelpers.managerOfRelatedTeam(role,user,request))
+      )
+    },
   },
 
 
@@ -111,7 +108,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:RBAC.lib.setItem(Issues,'facility'),
+    method:setFacility,
   },
   setPriority:{
     authentication:function(role,user,request) {
@@ -129,6 +126,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
+    method:setService
   },
   setSubService:{
     authentication:function(role,user,request) {
@@ -137,6 +135,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
+    method:setSubService
   },
   setCost:{
     authentication:function(role,user,request) {
@@ -162,6 +161,15 @@ Issues.methods({
       )
     },
   },
+  addMember:{
+    authentication:true,
+    method:RBAC.lib.addMember(Issues,'members')
+  },
+  removeMember:{
+    authentication:false,
+    method:RBAC.lib.removeMember(Issues,'members')
+  },
+
   setSupplier:{
     authentication:function(role,user,request) {
       return (
@@ -169,7 +177,7 @@ Issues.methods({
         AuthHelpers.managerOfRelatedTeam(role,user,request)
       )
     },
-    method:RBAC.lib.setItem(Issues,'supplier')
+    method:setSupplier
   },
   setAssignee:{
     authentication:function(role,user,request) {
@@ -177,21 +185,112 @@ Issues.methods({
         AuthHelpers.memberOfSuppliersTeam(role,user,request)
       )
     },
-    method:RBAC.lib.setItem(Issues,'assignee')
-  }
+    method:setAssignee
+  },
 })
 
-Issues.helpers({
-  //determines when to set stick and/or when to delete on page change
-  isNew:function() {
-    return this.status==Issues.STATUS_DRAFT;
-  },
-  isEditable:function() {
-    return this.isNew()||Issues.STATUS_NEW;
-  },
-  getPotentialSuppliers:getPotentialSuppliers,
-  getWatchers:getWatchers
-});
+function setSupplier(request,supplier) {
+  if(!request) {
+    return;
+  }
+
+  Issues.update(request._id,{$pull:{members:{role:"supplier manager"}}});
+
+  if(!supplier) {
+
+    Issues.update(request._id,{$set:{supplier:null}});
+
+  }
+  else {
+
+    Issues.update(request._id,{$set:{
+      supplier:{
+        _id:supplier._id,
+        name:supplier.name
+      }
+    }});
+
+    request = Issues._transform(request);
+    supplier = request.getSupplier(supplier);
+    var supplierMembers = supplier.getMembers({role:"manager"});
+    request.addMember(supplierMembers,{role:"supplier manager"});
+  }
+
+}
+
+function getSupplier(query) {
+  query = query||this.supplier;
+  if(query&&(query._id||query.name)) {
+    var q = query._id?{_id:query._id}:
+      query.name?{name:query.name}:
+      query;
+    return Teams.findOne(q);
+  }
+}
+
+function setService(request,service) {
+  request = Issues._transform(request);
+  Issues.update(request._id,{$set:{
+    service:service,
+    subservice:null
+  }});
+  if(request.canSetSupplier()) {
+    if(service.data&&service.data.supplier) {
+      request.setSupplier(service.data.supplier);
+    }
+    else {
+      request.setSupplier(null);
+    }
+  }
+}
+
+function setSubService(request,subservice) {
+  request = Issues._transform(request);
+  Issues.update(request._id,{$set:{subservice:subservice}});
+  if(request.canSetSupplier()) {
+    if(subservice.data&&subservice.data.supplier) {
+      request.setSupplier(subservice.data.supplier);
+    }
+    else {
+      request.setSupplier(null);
+    }
+  }
+}
+
+function setFacility(request,facility) {
+  request = Issues._transform(request);
+  facility = Facilities._transform(facility);
+  Issues.update(request._id,{$set:{
+    facility:{
+      _id:facility._id,
+      name:facility.name
+    }
+  }});
+  Issues.update(request._id,{$pull:{members:{role:"facility manager"}}});
+  //request.removeMember({role:"facility manager"});
+  var facilityMembers = facility.getMembers({role:"manager"});
+  request.addMember(facilityMembers,{role:"facility manager"});
+}
+
+function getFacility() {
+  return this.facility?Facilities.findOne(this.facility._id):null;
+}
+
+function setAssignee(request,assignee) {
+  Issues.update(request._id,{$set:{
+    assignee:{
+      _id:assignee._id,
+      name:assignee.profile.name
+    }
+  }});
+  request = Issues._transform(request);
+  Issues.update(request._id,{$pull:{members:{role:"assignee"}}});
+  request.addMember(assignee,{role:"assignee"});
+}
+
+function getAssignee() {
+  return this.assignee?Users.findOne(this.assignee._id):null;
+}
 
 /**
  *
@@ -211,7 +310,7 @@ function readyToOpen(request) {
     request.name&&request.name.length&&
     //request.description&&request.description.length&&
     request.facility&&request.facility._id&&
-    request.area&&request.area.name&&request.area.name.length&&
+    //request.area&&request.area.name&&request.area.name.length&&
     request.service&&request.service.name.length
   )        
 }
@@ -252,16 +351,21 @@ function readyToCancel(request) {
 /**
  *
  */
-function open (request) {
+function actionOpen (request) {
   var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
-  request = Issues.findOne(response._id);
+  return Issues.findOne(response._id);
+}
 
+function notificationOpen(request,user,role,methodName,before) {
+  //var members = request.getMembers();
+  /*console.log({
+    request:request,
+    members:members
+  });*/
   request.sendMessage({
     verb:"created",
-    subject:"Work order #"+response.code+" has been created"
+    subject:"Work order #"+request.code+" has been created"
   });
-
-  return request;
 }
 
 /**
@@ -282,11 +386,25 @@ function issue(request) {
 
   // this needs to not block
   var watchers = request.getWatchers();
-  watchers[2] = null;
+
+  console.log(watchers);
+
   request.sendMessage({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  },watchers);
+  });
+
+  /*
+  notifications = request.makeNotifications({
+    verb:"issued",
+    subject:""
+  })
+
+  notifications.map(function(n){
+
+    n.sendAsEmail();
+  })
+  */
 
   /*maybe have a createMessage and separate sendMessage?*/
 
@@ -294,47 +412,6 @@ function issue(request) {
   sendSupplierEmail(request);
 
   return request;
-}
-
-function sendNotifications(request) {
-
-  var tester = Meteor.user();
-  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
-
-    request = Issues._transform(request);
-    var owner = request.getOwner();
-    var team = request.getTeam();
-    var supplier = request.getSupplier();
-    var supplierMembers = supplier.getMembers(/*{role:"manager"}*/);
-    var teamMembers = team.getMembers();
-    var recipients = [];
-
-    recipients.push(supplierMembers[0]);
-    for(var i in teamMembers) {
-      recipients.push(teamMembers[i])
-    }
-
-    var user = members[0];    
-    if(user) {
-      var email = user.emails[0].address;
-      var to = user.name?(user.name+" <"+email+">"):email;
-      var testerEmail = tester.emails[0].address;
-
-      var element = React.createElement(EmailMessageView,{item:{_id:request._id}});
-      var html = ReactDOMServer.renderToStaticMarkup(element);
-
-      //if(email=="mrleokeith@gmail.com"||email=="mr.richo@gmail.com") {
-        Email.send({
-          //to: "leo@fmclarity.com",
-          cc : [testerEmail],//,"rich@fmclarity.com"],
-          from: "FM Clarity <no-reply@fmclarity.com>",
-          subject: ("to:"+to+", ")+("New work request from "+" "+team.getName()),
-          html: html
-        });
-      //}
-    }
-  })}  
-
 }
 
 //should this just be a standard message sent using "sendMessage"?
@@ -346,7 +423,7 @@ function sendSupplierEmail(request){
     request = Issues._transform(request);
     var team = request.getTeam();
     var supplier = request.getSupplier();
-    var members = supplier.getMembers(/*{role:"manager"}*/);
+    var members = supplier.getMembers({role:"manager"});
     /*for(var i in members) {
       console.log(members[i].emails[0].address);
     }*/
@@ -526,10 +603,11 @@ function getPotentialSuppliers() {
 function getWatchers() {
   var user = Meteor.user();
   var owner = this.getOwner();
+  var team = this.getTeam();
   var supplier = this.getSupplier();
   var assignee = this.getAssignee();
   //and facilityContact?
-  return [user,owner,supplier,assignee];
+  return [user,owner,supplier,team,assignee];
 }
 
 Issues.helpers({
@@ -544,6 +622,21 @@ Issues.helpers({
   }
 });
 
+
+Issues.helpers({
+  //determines when to set stick and/or when to delete on page change
+  isNew:function() {
+    return this.status==Issues.STATUS_DRAFT;
+  },
+  isEditable:function() {
+    return this.isNew()||Issues.STATUS_NEW;
+  },
+  getPotentialSuppliers:getPotentialSuppliers,
+  getWatchers:getWatchers,
+  getAssignee:getAssignee,
+  getFacility:getFacility,
+  getSupplier:getSupplier
+});
 
 Issues.helpers({
   /**
@@ -567,7 +660,7 @@ Issues.helpers({
     }
   },
 
-  sendMessage(message,cc) {
+  sendMessage(message,cc,opts) {
     cc = cc||this.getWatchers();
     var user = Meteor.user();
 
@@ -583,7 +676,12 @@ Issues.helpers({
       if(cc&&cc.length) {
         cc.map(function(recipient){
           if(recipient) {
-            recipient.sendMessage(message);
+            if(message.verb=="issued"&&recipient.type=="contractor") {
+              recipient.sendMessage(message,null,{doNotEmail:true});
+            }
+            else {
+              recipient.sendMessage(message,null,opts);
+            }
           }
         })
       }

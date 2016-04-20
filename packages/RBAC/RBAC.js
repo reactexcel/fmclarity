@@ -13,6 +13,7 @@ RBAC = {
 
 var authenticators = {};
 var validators = {};
+var notifiers = {};
 
 /**
  * @method getRole
@@ -61,6 +62,19 @@ function validate(/*methodName, [args]*/) {
 }
 
 /**
+ * @method notify
+ * @summary Helper method that calls the registered notification routine for the given method
+ * @param {String} methodName The name of the method
+ * @param {Object} [args] Arguments taken which vary depending on the method call
+ */
+function notify(/*methodName, [args]*/) {
+	//extract the methodName from the argument list
+	var methodName = [].shift.call(arguments);
+	var f = notifiers[methodName];
+	return f?f.apply(null,arguments):true;
+}
+
+/**
  * @method addMethod
  * @summary Wraps a given function with authentication and validation and then packages it as a Meteor.method.
  * @param {String} methodName The name of the method
@@ -86,7 +100,12 @@ function addMethod(methodName,f,collection) {
 		else {
 			// then remove it again to call the method
 			[].shift.call(arguments);
-			return f.apply(null,arguments);
+			var response = f.apply(null,arguments);
+			// then add it again with the response to call the notifier??
+			// there has to be a better way
+			[].unshift.call(arguments,methodName,response);
+			notify.apply(null,arguments);
+			return response;
 		}
 	}
 	Meteor.methods(obj);
@@ -145,6 +164,27 @@ function addValidation(methodName,f) {
 		var role = getRole(user,item);
 
 		if(f(role,user,item,arguments)) {
+			return true;
+		}
+		return false;
+	}
+}
+
+/**
+ * @method addNotification
+ * @summary Wraps a given function as an notifier and stores is locally
+ * @param {String} methodName The name of the method
+ * @param {function} f The method function
+ */
+function addNotification(methodName,f) {
+	notifiers[methodName] = function() {
+		// create the paramater that will be used to call the validation function
+		var user = Meteor.user();
+		var after = arguments[0];
+		var before = arguments[1];
+		var role = getRole(user,before);
+
+		if(f(after,user,role,methodName,before,arguments)) {
 			return true;
 		}
 		return false;
@@ -234,6 +274,9 @@ function method(methodName,functions,collection){
 		}
 		else if(i=='validation'){
 			addValidation(methodName,f);
+		}
+		else if(i=='notification'){
+			addNotification(methodName,f);
 		}
 		else if(i=='method'){
 			addMethod(methodName,f,collection);

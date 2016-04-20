@@ -78,22 +78,48 @@ IssueSchema = {
 
   facility:{
     type:Object,
-    relationship:{
+    /*relationship:{
       hasOne:Facilities
-    }
+    }*/
   },
 
   supplier:{
     type:Object,
-    relationship:{
+    /*relationship:{
       hasOne:Teams
-    }
+    }*/
   },
 
   assignee:{
     type:Object,
-    relationship:{
+    /*relationship:{
       hasOne:Users
+    }*/
+  },
+
+  members: {
+    type: [Object],
+    relationship:{
+      hasMany:Users
+    },
+    label:"Members",
+    defaultValue(item) {
+      var owner = Meteor.user();
+      var team = Teams.findOne(item.team._id);
+      var teamMembers = team.getMembers({role:"manager"});
+      var members = [{
+        _id:owner._id,
+        name:owner.profile.name,
+        role:"owner"
+      }];
+      teamMembers.map(function(m){
+        members.push({
+          _id:m._id,
+          name:m.profile.name,
+          role:"team manager"
+        })
+      });
+      return members;
     }
   }
 }

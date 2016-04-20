@@ -42,13 +42,19 @@ IssueDynamicArea = React.createClass({
     render() {
         var issue = this.props.item;
         var notifications = this.data.notifications;
-        var contacts = [];
-        var data = this.data;
-        ['owner','supplier','assignee','facilityContact'].map(function(item){
-            if(data[item]) {
-                contacts.push(data[item]);
-            }
-        });
+        var contacts;
+        if(issue.members) {
+            contacts = issue.getMembers();
+        }
+        else {
+            contacts = [];
+            var data = this.data;
+            ['owner','supplier','assignee','facilityContact'].map(function(item){
+                if(data[item]) {
+                    contacts.push(data[item]);
+                }
+            });
+        }
         return (
             <div className="row">
             {/*
@@ -71,7 +77,7 @@ IssueDynamicArea = React.createClass({
                         {
                             tab:<span><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
                             content:<div style={{padding:"15px"}}>
-                                <Inbox for={issue} />
+                                <Inbox for={issue} truncate={true}/>
                             </div>
                         },{
                             tab:<span><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
@@ -81,7 +87,7 @@ IssueDynamicArea = React.createClass({
                         },{
                             tab:<span><span>Contacts</span></span>,
                             content:<div style={{padding:"15px"}}>
-                                <ContactList items={contacts}/>
+                                <ContactList items={contacts} team={issue}/>
                             </div>
                         }
                     ]} />

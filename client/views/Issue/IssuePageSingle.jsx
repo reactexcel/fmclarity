@@ -11,13 +11,15 @@ IssuePage = React.createClass({
         Meteor.subscribe('users');
         Meteor.subscribe('singleRequest',id);
         Meteor.subscribe('allTeams');
-        var request, facility;
+        var request, facility, dueDate;
         request = Issues.findOne(id);
         if(request) {
             facility = request.getFacility();
+            dueDate = moment(request.dueDate).format('MMMM Do YYYY, h:mm:ss a');
         }
         return {
         	request:request,
+            dueDate:dueDate,
             facility:facility
         }
     },
@@ -25,7 +27,7 @@ IssuePage = React.createClass({
     render() {
         var request = this.data.request;
         var facility = this.data.facility;
-        var dueDate = moment(request.dueDate).format('MMMM Do YYYY, h:mm:ss a');
+        var dueDate = this.data.dueDate;
         if(!request) {
             return <div/>
         }

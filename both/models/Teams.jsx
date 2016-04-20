@@ -58,7 +58,7 @@ Teams.methods({
   setMemberRole:{
     authentication:function(role,user,team,args){
       var victim = args[1];
-      return role=="manager"&&user._id!=victim._id;
+      return AuthHelpers.managerOrOwner(role,user,team)&&user._id!=victim._id;
     },
     method:setMemberRole
   },
@@ -201,15 +201,15 @@ Teams.helpers({
     return this.name==null||this.name.length==0;
   },
 
-  sendMessage(message,forwardTo) {
-    forwardTo = forwardTo||this.getMembers();
+  sendMessage(message,cc,opts) {
+    cc = cc||this.getMembers({role:"manager"});
     message.inboxId = this.getInboxId();
     Meteor.call("Messages.create",message,function(err,messageId){
       message.originalId = message.originalId||messageId;
-      if(forwardTo&&forwardTo.length) {
-        forwardTo.map(function(recipient){
+      if(cc&&cc.length) {
+        cc.map(function(recipient){
           if(recipient) {
-            recipient.sendMessage(message);
+            recipient.sendMessage(message,opts);
           }
         })
       }
