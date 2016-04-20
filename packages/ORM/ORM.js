@@ -255,9 +255,11 @@ function createCommonDocumentMethods(collection) {
 				query:{_id:this._id}
 			}
 		},
-		getMessages:function() {
-			return Messages.find({inboxId:this.getInboxId()}).fetch();
+		getMessages:function(options) {
+			options = options||{sort:{createdAt:1}};
+			return Messages.find({inboxId:this.getInboxId()},options).fetch();
 	  	},
+	  	//why???
 		getNotifications:function(options) {
 			options = options||{sort:{createdAt:1}};
 			return Messages.find({inboxId:this.getInboxId()},options).fetch();
