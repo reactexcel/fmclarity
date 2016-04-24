@@ -29,8 +29,8 @@ MessageView = React.createClass({
         //console.log(inbox);
         inbox.sendMessage({
             type:"comment",
-            verb:owner.getName()+" sent a message to "+inbox.getName(),
-            subject:owner.getName()+" sent a message to "+inbox.getName(),
+            verb:"commented on",
+            subject:owner.getName()+" commented on \""+inbox.getName()+"\"",
             body:input.value
         });
         /*

@@ -387,7 +387,7 @@ function issue(request) {
   // this needs to not block
   var watchers = request.getWatchers();
 
-  console.log(watchers);
+  //console.log(watchers);
 
   request.sendMessage({
     verb:"issued",
@@ -432,9 +432,11 @@ function sendSupplierEmail(request){
       var email = user.emails[0].address;
       var to = user.name?(user.name+" <"+email+">"):email;
 
-      var stampedLoginToken = Accounts._generateStampedLoginToken();
-      Accounts._insertLoginToken(user._id, stampedLoginToken);
-      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:stampedLoginToken.token});
+      //var stampedLoginToken = Accounts._generateStampedLoginToken();
+      //Accounts._insertLoginToken(user._id, stampedLoginToken);
+      var expiry = moment(request.dueDate).add({days:3}).toDate();
+      var token = FMCLogin.generateLoginToken(user,expiry);
+      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:token});
       var html = ReactDOMServer.renderToStaticMarkup(element);
 
       var message = {
@@ -510,18 +512,16 @@ function close(issue) {
     var response = Meteor.call('Issues.create',newIssue);
     var newIssue = Issues._transform(response);
 
-    newIssue.sendMessage({
-      verb:"closed "+issue.getName()+" and requested follow up",
+    issue.sendMessage({
+      verb:"closed",
       subject:"Work order #"+issue.code+" has been closed and a follow up has been requested"
     });
 
-    /*
     newIssue.sendMessage({
       verb:"requested a follow up to "+issue.getName(),
       subject:closer.getName()+" requested a follow up to "+issue.getName(),
       body:newIssue.description
     });
-    */
   }
   else {
 

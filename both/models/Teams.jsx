@@ -1,3 +1,6 @@
+// this is the controller
+
+
 Teams.schema(TeamSchema);
 
 DocThumb.register(Teams,{repo:Files});

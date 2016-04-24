@@ -48,6 +48,7 @@ ejson@1.0.7
 email@1.0.8
 fastclick@1.0.7
 fmc:document-thumbs@0.0.1
+fmc:login-tokens@0.0.1
 fmc:orm@0.0.1
 fmc:rbac@0.0.1
 fortawesome:fontawesome@4.5.0

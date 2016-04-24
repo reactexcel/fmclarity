@@ -63,7 +63,7 @@ FacilityViewEdit = React.createClass({
 				<CollapseBox title="Property Details">
 					<div className="row">
 						<div className="col-sm-7">
-							<AutoForm item={facility} schema={schema} form={["name","address"]}/>
+							<AutoForm item={facility} schema={schema} form={["name","address","operatingTimes"]}/>
 						</div>
 			        	<div className="col-sm-5">
 			        		<AutoInput.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />

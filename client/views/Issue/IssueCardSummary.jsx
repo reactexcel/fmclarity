@@ -39,17 +39,18 @@ IssueSummary = React.createClass({
 
   render() {
       if(this.data.ready) {
-        var issue = this.item = this.data.issue;
+        var request = this.item = this.data.issue;
         var facility = this.data.facility;
         var owner = this.data.owner;
         var supplier = this.data.supplier;
         var timeframe = this.data.timeframe;
-        var dueDate = issue.dueDate?moment(issue.dueDate):null;
+        var dueDate = request.dueDate?moment(request.dueDate):null;
+        var issuedDate = request.issuedAt?moment(request.issuedAt):null;
         return (
         <div className={"issue-summary issue-status-"+status}>
           
           <div className="issue-summary-col issue-summary-col-1">
-            <IssuePriority issue={issue} />
+            <IssuePriority issue={request} />
             {/*<ContactAvatarSmall item={owner} />*/}
           </div>
           {/*}
@@ -58,7 +59,7 @@ IssueSummary = React.createClass({
           </div>
           */}
           <div className="issue-summary-col issue-summary-col-2">
-            <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+issue.status}>{issue.status}</span>
+            <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+request.status}>{request.status}</span>
           </div>
           <div className="issue-summary-col issue-summary-col-3">
             <span className="issue-summary-facility-name">
@@ -69,12 +70,17 @@ IssueSummary = React.createClass({
             <span className="issue-summary-name">{supplier?supplier.name:''}</span>
           </div>
           <div className="issue-summary-col issue-summary-col-5">
-            {issue.dueDate&&issue.status!=Issues.STATUS_CLOSED?
+            {dueDate&&request.status!=Issues.STATUS_CLOSED?
               <span className={dueDate.isBefore()?"text-overdue":""}>{dueDate.fromNow()}</span>
             :null}
-          </div>
+          </div>          
           <div className="issue-summary-col issue-summary-col-6">
-            <span className="issue-summary-name">{issue.name}</span>
+            {issuedDate&&request.status!=Issues.STATUS_CLOSED?
+              <span className={issuedDate.isBefore()?"text-overdue":""}>{issuedDate.fromNow()}</span>
+            :null}
+          </div>
+          <div className="issue-summary-col issue-summary-col-7">
+            <span className="issue-summary-name">{request.name}</span>
             {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
         </div>

@@ -79,10 +79,6 @@ LeaseSchema = {
     	input:"switch",
     	size:6
     },
-	documents:{
-		label:"Lease documents",
-		//input:"attachment",
-	},
     parking: {
     	label:"Parking",
     	schema:Parking,
@@ -122,6 +118,9 @@ FacilitySchema = {
     address:{
     	label:"Address",
     	schema:AddressSchema,
+    },
+    operatingTimes:{
+        label:"Operating times"
     },
     lease:{
     	schema:LeaseSchema,

@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v1.0.1b**
+
+* Added "send email invitation" to user actions menu
+* Added field in portfolio for building operating times
+* Added issued date to wo table
+* Upgraded link based authentication system
+
 **v1.0.0b**
 
 * Suppliers now receive notification of issue, just not second notification email

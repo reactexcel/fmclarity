@@ -17,55 +17,15 @@ UserCard = React.createClass({
 		var user = this.props.item;
 		var selectedTeam = this.props.team||Session.getSelectedTeam();
 		var selectedFacility = this.props.facility;
-		var menu = [];
-
+		var menu = UserActions.getMenu(user,{team:selectedTeam,facility:selectedFacility});
 		if(user&&user.canSave()) {
-			menu.push({
+			menu.unshift({
 				label:this.state.edit?"View as card":"Edit",
 				action(){
 					component.toggleEdit()
 				}
 			});
 		}
-
-		if(selectedTeam&&selectedTeam.hasMember(user)) {
-
-			if(!user.isLoggedIn()) {
-				menu.push({
-					label:"Remove from "+selectedTeam.getName(),
-					shouldConfirm:true,
-					action(){
-						selectedTeam.removeMember(user);
-						Modal.hide();
-					}
-				});
-			}
-
-			if(selectedTeam.canSetMemberRole&&selectedTeam.canSetMemberRole(user)) {
-				var role = selectedTeam.getRole(user);
-				var newRole = (role=='manager')?'staff':'manager';
-				menu.push({
-					label:(newRole=='manager')?'Promote to manager':'Demote to staff',
-					shouldConfirm:true,
-					action(){
-						selectedTeam.setMemberRole(user,newRole);
-						Modal.hide();
-					}
-				})
-			}
-		}
-
-		if(selectedFacility&&selectedFacility.hasMember(user)) {
-			menu.push({
-				label:"Remove from "+selectedFacility.getName(),
-				shouldConfirm:true,
-				action(){
-					selectedFacility.removeMember(user);
-					Modal.hide();
-				}
-			});
-		}
-
 		return menu;
 	},
 
