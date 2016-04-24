@@ -11,6 +11,7 @@ PageChangePassword = React.createClass({
     },
 
     handleSubmit (e) {
+        console.log(Meteor.user());
         e.preventDefault();
         var component = this;
         var password = this.refs.password.value.trim();

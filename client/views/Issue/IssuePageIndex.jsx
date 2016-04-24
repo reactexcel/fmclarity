@@ -176,6 +176,20 @@ IssuesIndexPage = React.createClass({
 	    	},
 	    },
 	    {
+	    	text:"Issued",
+	    	sortFunction(a,b) {
+	    		if(!b.issuedAt) {
+	    			return 1;
+	    		}
+	    		else if(!a.issuedAt) {
+	    			return -1;
+	    		}
+	    		else {
+		    		return (a.issuedAt>b.issuedAt)?-1:1;
+		    	}
+	    	},
+	    },	    
+	    {
 	    	text:"Issue",
 	    	sortFunction(a,b) {
 	    		return (a.name<b.name)?-1:1;
@@ -196,7 +210,6 @@ IssuesIndexPage = React.createClass({
 						filters={filters} 
 						headers={headers}
 						itemView={{
-							header:IssueHeader,
 							summary:IssueSummary,
 							detail:IssueDetail
 						}}

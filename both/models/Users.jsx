@@ -56,6 +56,11 @@ Meteor.methods({
       multi:true
     });
   },
+  'User.sendInvite':function(userId) {
+    if(Meteor.isServer) {
+      Accounts.sendEnrollmentEmail(userId);
+    }
+  },
   'User.sendEmail':function(user,message) {
     if(Meteor.isServer) {Meteor.defer(function(){
 
@@ -95,6 +100,9 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
+  sendInvite() {
+    Meteor.call('User.sendInvite',this._id);
+  },
   sendMessage(message,opts) {
     var doNotEmail = opts?opts.doNotEmail:false;
     message.inboxId = this.getInboxId();

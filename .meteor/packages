@@ -8,6 +8,7 @@
 fmc:rbac
 fmc:orm
 fmc:document-thumbs
+fmc:login-tokens
 
 #aldeed:collection2
 abpetkov:switchery

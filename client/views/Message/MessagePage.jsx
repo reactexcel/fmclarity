@@ -21,7 +21,7 @@ MessagesPage = React.createClass({
                             <div className="ibox" style={{padding:"20px"}}>
                                 <Inbox 
                                     for={user} 
-                                    readonly={true}
+                                    readOnly={true}
                                     options={{sort:{createdAt:-1}}}
                                 />
                             </div>

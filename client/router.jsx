@@ -28,8 +28,14 @@ exposed.route('/enroll-account/:token', {
   action(params,queryParams) {
     var token = params.token;
     Accounts.resetPassword(token,'fm1q2w3e');
-    Accounts.verifyEmail(token);
-    FlowRouter.go('/login');
+    FlowRouter.go('/change-password');
+  }
+});
+
+exposed.route('/403', {
+  name: '403',
+  action() {
+    ReactLayout.render(BlankLayout,{content: <Page403 />});
   }
 });
 
@@ -73,18 +79,29 @@ var loggedIn = FlowRouter.group({
     }
   ]
 });
-/*
-var admin = FlowRouter.group({
+
+admin = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
       var route;
-      if (!(Roles.userIsInRole(Meteor.user(),['admin']))) {
-        return FlowRouter.go('/dashboard');
+      var user = Meteor.user();
+      //console.log(user);
+      if(Meteor.loggingIn()||(user&&user.role=='dev')) {
+        return;
       }
+      FlowRouter.go('/');
+      //if (!(Roles.userIsInRole(Meteor.user(),['admin']))) {
     }
   ]
 });
-*/
+
+admin.route('/admin',{
+  name: 'admin',
+  action() {
+    ReactLayout.render(MainLayout,{content:<AdminPage />});
+  }
+});
+
 if(Meteor.isClient) {
   Accounts.onLogin(function() {
     var redirect = Session.get('redirectAfterLogin');
@@ -116,6 +133,27 @@ exposed.route('/t/:token/:redirect', {
       }
       //console.log('going to '+redirect);
       FlowRouter.go('/'+redirect);
+    });
+  }
+});
+
+// should not go to 'IssuePage', instead should go to 'logging in' page
+exposed.route('/u/:token/:redirect', {
+  name: 'loginWithToken',
+  action(params) {
+    //console.log(params);
+    var redirect = Base64.decode(decodeURIComponent(params.redirect));
+    redirect = String.fromCharCode.apply(null, redirect);
+    //console.log(redirect);
+    FMCLogin.loginWithToken(params.token,function(err){
+      if(err) {
+        console.log(err);
+        FlowRouter.go('/403');
+      }
+      else {
+        //console.log('going to '+redirect);
+        FlowRouter.go('/'+redirect);
+      }
     });
   }
 });

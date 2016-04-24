@@ -106,6 +106,9 @@ function ucfirst(string) {
    	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// these access functions to be migrated out to RBAC
+
+
 // create a function that can be used to access a related item
 function o2oGet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "get"+ucfirst(fieldName);
