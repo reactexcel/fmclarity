@@ -144,6 +144,8 @@ Users.helpers({
       break;
     }
   },
+
+
   getInboxName() {
     return this.getName()+"'s"+" inbox";
   },
@@ -178,6 +180,9 @@ Users.helpers({
   markAllNotificationsAsRead() {
     Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());
   },
+
+
+  
   getName() {
     return this.profile.name;
   },

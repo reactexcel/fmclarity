@@ -76,7 +76,7 @@ IssueSummary = React.createClass({
           </div>          
           <div className="issue-summary-col issue-summary-col-6">
             {issuedDate&&request.status!=Issues.STATUS_CLOSED?
-              <span className={issuedDate.isBefore()?"text-overdue":""}>{issuedDate.fromNow()}</span>
+              <span>{issuedDate.format("MMM Do, h:mm a")}</span>
             :null}
           </div>
           <div className="issue-summary-col issue-summary-col-7">

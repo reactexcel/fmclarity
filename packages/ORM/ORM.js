@@ -173,8 +173,14 @@ function createAccessMethods(collection,schema) {
 	for(var fieldName in schema) {
 		var field = schema[fieldName];
 
+		if(field.helpers) {
+			_.extend(functions.helpers,field.helpers);
+		}
+		if(field.actions) {
+			collection.methods(field.actions);
 		//set up hasOne relationship
-		if(field.relationship) {
+		}
+		else if(field.relationship) {
 			if(field.relationship.hasOne) {
 				var relatedCollection = field.relationship.hasOne;
 				o2oGet(functions,collection,fieldName,relatedCollection);
@@ -193,15 +199,17 @@ function createAccessMethods(collection,schema) {
 			}
 		}
 		// otherwise create adhoc access functions
+		// should these be encapsulated in methods? I would say so
+		// perhaps this can be overridden in RBAC to create access methods?
 		else {
 			if(field.getter&&_.isFunction(field.getter)) {
 				var getterName = "get"+ucfirst(fieldName);
 				functions.helpers[getterName] = field.getter;
 			}
-			if(field.setter&&_.isFunction(field.setter)) {
+			/*if(field.setter&&_.isFunction(field.setter)) {
 				var setterName = "set"+ucfirst(fieldName);
 				functions.helpers[setterName] = field.setter;
-			}
+			}*/
 		}
 	}
 

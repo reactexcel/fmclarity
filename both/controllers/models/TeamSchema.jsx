@@ -94,18 +94,43 @@ TeamSchema = {
     },
     label:"Members"
   },
-  contacts: {
-    type: [Object],
-    relationship:{
-      hasMany:Users
-    },
-    label:"Contacts"
-  },
   suppliers: {
     type: [Object],
-    relationship:{
-      hasMany:Teams
+    label: "Suppliers",
+    helpers: {
+      getSuppliers:RBAC.lib.getMembers(Teams,'suppliers'),
     },
-    label: "Suppliers"  
+    actions:{
+      /*
+      getSuppliers:{
+        helper:RBAC.lib.getMembers(Teams,'suppliers'),
+      },
+      */
+      inviteSupplier:{
+        authentication:AuthHelpers.manager,
+        method:inviteSupplier
+      },
+      addSupplier:{
+        authentication:AuthHelpers.manager,
+        method:RBAC.lib.addMember(Teams,'suppliers'),
+      },
+      removeSupplier:{
+        authentication:AuthHelpers.manager,
+        method:RBAC.lib.removeMember(Teams,'suppliers'),
+      },
+    }
   }
+}
+
+function inviteSupplier(team,email,ext) {
+  var supplier;
+  supplier = Teams.findOne({email:email});
+  if(!supplier) {
+    supplier = Meteor.call("Teams.create",{
+      type:"contractor",
+      email:email
+    });
+  }
+  Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
+  return supplier;
 }

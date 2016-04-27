@@ -8,7 +8,7 @@ RBAC = {
 	addAuthentication:addAuthentication,
 	addValidation:addValidation,
 	error:error,
-	warning:warning
+	warning:warning,
 }
 
 var authenticators = {};
@@ -109,6 +109,14 @@ function addMethod(methodName,f,collection) {
 		}
 	}
 	Meteor.methods(obj);
+}
+
+// not working at the moment
+function addHelper(methodName,f,collection) {
+	var helpers = [];
+	console.log(f);
+	helpers[methodName] = f;
+	collection.helpers(helpers);
 }
 
 /**
@@ -263,7 +271,10 @@ function makeHelpers(collection,methodName) {
  * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
  */
 function method(methodName,functions,collection){
-	if(collection) {
+	if(functions.helper) {
+		addHelper(methodName,functions.helper,collection);
+	}
+	else if(collection) {
 		methodName = ucfirst(collection._name)+'.'+methodName;
 		makeHelpers(collection,methodName);
 	}

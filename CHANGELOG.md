@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+**v1.0.2b**
+
+* WO table: Issue date no longer red
+* "FOLLOW UP" text on follow up wos now in caps
+* Suppliers can now see their own requests and facilities from main account
+* Single request page no shows navigation and settings controls
+* WO table shows real issued date, not relative date
+(follow up with direct links for open wos on wo page!!)
+
 **v1.0.1b**
 
 * Added "send email invitation" to user actions menu

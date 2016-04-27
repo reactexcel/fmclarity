@@ -3,9 +3,8 @@
 TODO:
 
 - consolidate PageLogin et al into one file or component
-- package this component
-- package router/navigation component
-- flowchart for router
+- package router/navigation component together as fmc:navigation
+- flowchart for router??
 
 ## Visual components
 
@@ -46,3 +45,7 @@ TODO:
 - Had a weird bug just now. Was previously logged in as Royal Eagle, logged out then back in again as me. Opened on Portfolio, navigated to the dash, then suppliers where there was only kaplan as a supplier. I checked the settings dropdown and then all the other suppliers appeared
 - Management teams see creator and contractor team, contractor teams see creators teams and assignee
 
+## ORM
+
+- Standardise process for setters and getters: perhaps in schema? I don't know - analyse
+- Mode access functions out of ORM?

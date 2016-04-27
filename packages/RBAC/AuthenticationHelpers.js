@@ -1,4 +1,5 @@
 // I wonder what the benefits of caching these results would be?
+// Should simply be called RBAC.helpers, or RBAC.lib
 AuthHelpers = {
   owner:function(role,user,item) {
     if(item&&item.owner) {

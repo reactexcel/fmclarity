@@ -1,4 +1,4 @@
-Login = React.createClass({
+PageLogin = React.createClass({
 
     getInitialState() {
         return {

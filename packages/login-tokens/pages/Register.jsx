@@ -1,4 +1,4 @@
-Register = React.createClass({
+PageRegister = React.createClass({
 
 
     handleSubmit: function(e) {

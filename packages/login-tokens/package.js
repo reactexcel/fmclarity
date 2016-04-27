@@ -4,9 +4,32 @@ Package.describe({
 	summary: 'Login token system used in FM Clarity'
 });
 
+//TODO - mode actual pages into this package
+
 Package.onUse(function(api) { 
-	//api.use(['chrismbeckett:toastr'],'client');
-	api.use(['accounts-base','base64']);
-	api.addFiles('LoginTokens.js');
-	api.export('FMCLogin');
+
+	api.use([
+		'kadira:flow-router@2.4.0',
+		'kadira:react-layout'
+	],'client');
+
+	api.use([
+		'react',
+		'accounts-base',
+		'base64'
+	]);
+
+	api.addFiles([
+		'LoginTokens.js'
+	]);
+
+	api.addFiles([
+		'Routes.jsx',
+		'pages/403.jsx',
+		'pages/Login.jsx',
+		'pages/LostPassword.jsx',
+		'pages/Register.jsx'
+	],'client');
+
+	api.export(['FMCLogin']);
 });

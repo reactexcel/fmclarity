@@ -1,5 +1,8 @@
 IssueActionButtons = React.createClass({
 
+    // all of this should be moved into controller
+    // -- or rather, into a new subcontroller called RequestWorkflow
+
     canProgress() {
 
         var request = this.props.item;

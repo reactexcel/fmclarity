@@ -1,4 +1,4 @@
-LostPassword = React.createClass({
+PageLostPassword = React.createClass({
 
     getInitialState() {
         return {

@@ -6,7 +6,10 @@ Package.describe({
 
 Package.onUse(function(api) { 
 	api.use(['chrismbeckett:toastr'],'client');
-	api.use(['react','dburles:collection-helpers']);
+	api.use([
+		'react',
+		'dburles:collection-helpers'
+	]);
 	api.addFiles('DocumentThumbs.jsx');
 	api.export('DocThumb');
 });

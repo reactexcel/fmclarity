@@ -1,5 +1,21 @@
 Config = {};
 
+// a bit more configuration here wouldn't go astray
+//eg:
+/*
+
+	fm:{
+		manager:[{
+			name:"Dashboard",
+			route:"dashboard"
+		},
+		{
+			name:"Portfolio",
+			route:"portfolio"
+		}]
+	}
+
+*/
 Config.modules = {
 	fm:{
 		manager:['dashboard','portfolio','suppliers','requests'],
@@ -9,8 +25,8 @@ Config.modules = {
 		contact:[],
 	},
 	contractor:{
-		manager:['portfolio','requests'],
-		staff:['portfolio','requests'],
+		manager:['portfolio','suppliers','requests'],
+		staff:['portfolio','suppliers','requests'],
 	}
 }
 

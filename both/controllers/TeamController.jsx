@@ -41,10 +41,6 @@ Teams.methods({
     authentication:AuthHelpers.manager,
     method:createRequest,    
   },
-  incrementWOCode:{
-    authentication:true,
-    method:incrementWOCode
-  },
 
   inviteMember:{
     authentication:AuthHelpers.managerOrOwner,
@@ -65,7 +61,7 @@ Teams.methods({
     },
     method:setMemberRole
   },
-
+/*
   inviteSupplier:{
     authentication:AuthHelpers.manager,
     method:inviteSupplier,
@@ -78,6 +74,8 @@ Teams.methods({
     authentication:AuthHelpers.manager,
     method:RBAC.lib.removeMember(Teams,'suppliers')
   },
+*/
+
 
   addFacility:{
     authentication:AuthHelpers.manager,
@@ -138,36 +136,9 @@ function inviteMember(team,email,ext) {
   }
 }
 
+// this moved to same location as other member functionality
 function setMemberRole(team,user,role) {
   Teams.update({_id:team._id,"members._id":user._id},{$set:{"members.$.role":role}});
-  /*
-  for(var i in team.members) {
-    var member = team.members[i];
-    if(member&&user&&member._id==user._id) {
-      team.members[i].role = role;//member.role = role;
-      Teams.update(team._id,{$set:{"members":team.members}});
-      //team.save();
-      return member;
-    }
-  }
-  */
-}
-
-function incrementWOCode(){
-  console.log("I'm supposed to increase it");
-}
-
-function inviteSupplier(team,email,ext) {
-  var supplier;
-  supplier = Teams.findOne({email:email});
-  if(!supplier) {
-    supplier = Meteor.call("Teams.create",{
-      type:"contractor",
-      email:email
-    });
-  }
-  Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
-  return supplier;
 }
 
 function addFacility(team,facility) {
@@ -219,6 +190,15 @@ Teams.helpers({
     });
   },
 
+  getRole(user) {
+    for(var i in this.members) {
+      var member = this.members[i];
+      if(member&&user&&member._id==user._id) {
+        return member.role;
+      }
+    }
+  },
+
   getProfile() {
     return this;
   },
@@ -247,24 +227,6 @@ Teams.helpers({
     //this.save();
     return this.counters.WO;
   },
-  getRole(user) {
-    for(var i in this.members) {
-      var member = this.members[i];
-      if(member&&user&&member._id==user._id) {
-        return member.role;
-      }
-    }
-  },
-  getFacilities() {
-    //possibly this can be done in the subscription stage
-    //then we can use the hasMany relationship to define the facility connection functions
-    if(this.type=="contractor") {
-      return this.getContractorFacilities();
-    }
-    else {
-      return Facilities.find({"team._id":this._id},{sort:{name:1}}).fetch();
-    }
-  },
   getAvailableServices(parent) {
     var services = parent?parent.children:this.services;
     var availableServices = [];
@@ -278,24 +240,19 @@ Teams.helpers({
     });
     return availableServices;
   },
-  getFacility(i) {
-    var facilities = this.getFacilities();
-    return facilities[i];
-  },
-  getIssues() {
-    //if(this.type=="contractor") {
-    //      return this.getContractorIssues();
-    //}
-    //else {
-    return Issues.find({$or:[{"team._id":this._id},{"supplier._id":this._id}]}).fetch();
-    //}
-  },
-  getContractorIssues() {
-    return Issues.find({"supplier._id":this._id,status:{$ne:"New"}}).fetch();
+  getFacilities() {
+    //possibly this can be done in the subscription stage
+    //then we can use the hasMany relationship to define the facility connection functions
+    if(this.type=="contractor") {
+      return this.getContractorFacilities();
+    }
+    else {
+      return Facilities.find({"team._id":this._id},{sort:{name:1}}).fetch();
+    }
   },
   getContractorFacilities() {
     var issues, facilityQueries, facilities;
-      issues = this.getContractorIssues();
+      issues = this.getIssues();
       if(issues&&issues.length) {
         facilityQueries = [];
         issues.map(function(i){
@@ -304,5 +261,19 @@ Teams.helpers({
         facilities = Facilities.find({$or:facilityQueries}).fetch();
       }
       return facilities;
+  },
+  getFacility(i) {
+    var facilities = this.getFacilities();
+    return facilities[i];
+  },
+  getIssues() {
+    //this is vulnerable to error - what if the name changes
+    //of course if we only have the name then we need to add the id at some point
+    return Issues.find({$or:[
+      {"team._id":this._id},
+      {"supplier._id":this._id},
+      {"team.name":this.name},
+      {"supplier.name":this.name}
+    ]}).fetch();
   },
 });

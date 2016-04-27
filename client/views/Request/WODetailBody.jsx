@@ -76,17 +76,17 @@ IssueDynamicArea = React.createClass({
                     <IpsoTabso tabs={[
                         {
                             tab:<span><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
-                            content:<div style={{padding:"15px"}}>
+                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
                                 <Inbox for={issue} truncate={true}/>
                             </div>
                         },{
                             tab:<span><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
-                            content:<div style={{padding:"15px"}}>
+                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
                                 <AutoForm item={issue} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
                             </div>
                         },{
                             tab:<span><span>Contacts</span></span>,
-                            content:<div style={{padding:"15px"}}>
+                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
                                 <ContactList items={contacts} team={issue}/>
                             </div>
                         }
