@@ -16,17 +16,70 @@ Config = {};
 	}
 
 */
+
+var navFM = [{
+	path:"dashboard",		
+	label:"Dashboard",
+	icon:"fa fa-newspaper-o"
+},{
+	path:"portfolio",		
+	label:"Portfolio",
+	icon:"fa fa-building"
+},{
+	path:"suppliers",		
+	label:"Suppliers",
+	icon:"fa fa-group"
+},{
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
+}];
+
+var navFMStaff = [{
+	path:"dashboard",		
+	label:"Dashboard",
+	icon:"fa fa-newspaper-o"
+},{
+	path:"portfolio",		
+	label:"Portfolio",
+	icon:"fa fa-building"
+},{
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
+}];
+
+var navSupplier = [{
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
+},{
+	path:"portfolio",		
+	label:"Sites",
+	icon:"fa fa-building"
+},{
+	path:"suppliers",		
+	label:"Clients",
+	icon:"fa fa-group"
+}];
+
+var navTenant = [{
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
+}];
+
 Config.modules = {
 	fm:{
-		manager:['dashboard','portfolio','suppliers','requests'],
-		support:['dashboard','portfolio','suppliers','requests'],
-		staff:['dashboard','portfolio','suppliers','requests'],
-		tenant:['requests'],
+		manager:navFM,
+		support:navFM,
+		staff:navFMStaff,
+		tenant:navTenant,
 		contact:[],
 	},
 	contractor:{
-		manager:['portfolio','suppliers','requests'],
-		staff:['portfolio','suppliers','requests'],
+		manager:navSupplier,
+		staff:navSupplier
 	}
 }
 

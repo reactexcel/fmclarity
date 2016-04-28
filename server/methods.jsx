@@ -1,5 +1,5 @@
 Accounts.emailTemplates.siteName = "FM Clarity";
-Accounts.emailTemplates.from = "no-reply@fmclarity.com";
+Accounts.emailTemplates.from = "FM Clarity<no-reply@fmclarity.com>";
 Accounts.emailTemplates.enrollAccount.subject = function (user) {
     return "Welcome to FM Clarity, " + user.profile.name;
 };
@@ -30,7 +30,7 @@ Meteor.startup(function(){
     var smtpUsername = "AKIAIPJKWHGNFC75EL3Q";
     var smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
 
-	process.env.ROOT_URL = 'http://htpc:3000';
+	process.env.ROOT_URL = 'https://app.fmclarity.com';
     process.env.MAIL_URL = "smtp://"+smtpUsername+":"+
     encodeURIComponent(smtpPassword)+
     "@email-smtp.us-west-2.amazonaws.com:465/";

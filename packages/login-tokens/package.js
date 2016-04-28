@@ -28,8 +28,12 @@ Package.onUse(function(api) {
 		'pages/403.jsx',
 		'pages/Login.jsx',
 		'pages/LostPassword.jsx',
+		'pages/ChangePassword.jsx',
 		'pages/Register.jsx'
 	],'client');
 
-	api.export(['FMCLogin']);
+	api.export([
+		'FMCLogin',
+		'PageChangePassword'
+	]);
 });

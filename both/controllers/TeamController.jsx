@@ -5,6 +5,32 @@ Teams.schema(TeamSchema);
 
 DocThumb.register(Teams,{repo:Files});
 
+DocMessages.register(Teams,{
+  sendMessage(message,cc,opts) {
+
+
+    // implement a this.getWatchers() function and we can move this
+    // functionality into the base package
+    cc = cc||this.getMembers({role:"manager"});
+
+
+    message.inboxId = this.getInboxId();
+    Meteor.call("Messages.create",message,function(err,messageId){
+      message.originalId = message.originalId||messageId;
+      if(cc&&cc.length) {
+        cc.map(function(recipient){
+          if(recipient) {
+            recipient.sendMessage(message,opts);
+          }
+        })
+      }
+    });
+  },  
+  getInboxName() {
+    return this.getName()+" inbox";
+  },  
+});
+
 Teams.methods({
   create:{
     authentication:true,
@@ -166,6 +192,7 @@ function destroyFacility(team,facility) {
   return Facilities.remove(facility._id);
 }
 
+
 Teams.helpers({
 
   //this is just used for new and sticky
@@ -175,20 +202,6 @@ Teams.helpers({
     return this.name==null||this.name.length==0;
   },
 
-  sendMessage(message,cc,opts) {
-    cc = cc||this.getMembers({role:"manager"});
-    message.inboxId = this.getInboxId();
-    Meteor.call("Messages.create",message,function(err,messageId){
-      message.originalId = message.originalId||messageId;
-      if(cc&&cc.length) {
-        cc.map(function(recipient){
-          if(recipient) {
-            recipient.sendMessage(message,opts);
-          }
-        })
-      }
-    });
-  },
 
   getRole(user) {
     for(var i in this.members) {
@@ -202,9 +215,7 @@ Teams.helpers({
   getProfile() {
     return this;
   },
-  getInboxName() {
-    return this.getName()+" inbox";
-  },
+
   getTimeframe(priority) {
     var timeframes = this.timeframes||{
       "Scheduled":7*24*3600,
@@ -243,6 +254,13 @@ Teams.helpers({
   getFacilities() {
     //possibly this can be done in the subscription stage
     //then we can use the hasMany relationship to define the facility connection functions
+
+
+    //need to get rid of this distinction between fm and contractor here
+    //if need to include all of the facilities we have added for ourselves
+    //as well as all the facilities of any issue assigned to us
+    //...in the one place
+
     if(this.type=="contractor") {
       return this.getContractorFacilities();
     }
@@ -270,10 +288,17 @@ Teams.helpers({
     //this is vulnerable to error - what if the name changes
     //of course if we only have the name then we need to add the id at some point
     return Issues.find({$or:[
-      {"team._id":this._id},
-      {"supplier._id":this._id},
-      {"team.name":this.name},
-      {"supplier.name":this.name}
+      {$or:[
+        {"team._id":this._id},
+        {"team.name":this.name}
+      ]},
+      {$and:[
+        {$or:[
+          {"supplier._id":this._id},
+          {"supplier.name":this.name}
+        ]},
+        {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+      ]}
     ]}).fetch();
   },
 });

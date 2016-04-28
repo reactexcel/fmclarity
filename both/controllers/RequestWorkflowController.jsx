@@ -78,8 +78,7 @@ Issues.methods({
         readyToCancel(request)&&
         (role=="owner"||AuthHelpers.managerOfRelatedTeam(role,user,request))
       )
-    },
-    notification:generalRequestNotification("deleted")
+    }
   },
 })
 
@@ -315,6 +314,13 @@ function close(issue) {
       subject:"Work order #"+issue.code+" has been closed"
     });
 
+  }
+
+  if(issue.closeDetails.attachments) {
+    issue.closeDetails.attachments.map(function(a){
+      issue.attachments.push(a);
+      issue.save();
+    });
   }
 
   return issue;

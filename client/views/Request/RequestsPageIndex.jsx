@@ -95,25 +95,25 @@ IssuesIndexPage = React.createClass({
 	    {
 	        text:"Open",
 	        filter(i) {
-	        	return i.status!='Closed';
+	        	return i.status=='Draft'||i.status!='Closed';
 	        }
 	    },
 	    {
 	        text:"New",
 	        filter(i) {
-	        	return i.status=='New';
+	        	return i.status=='Draft'||i.status=='New';
 	        }
 	    },
 	    {
 	        text:"Issued",
 	        filter(i) {
-	        	return i.status=='Issued';
+	        	return i.status=='Draft'||i.status=='Issued';
 	        }
 	    },
 	    {
 	        text:"Closed",
 	        filter(i) {
-	        	return i.status=='Closed';
+	        	return i.status=='Draft'||i.status=='Closed';
 	        }
 	    }
 	    /*

@@ -11,7 +11,7 @@ PageChangePassword = React.createClass({
     },
 
     handleSubmit (e) {
-        console.log(Meteor.user());
+        //console.log(Meteor.user());
         e.preventDefault();
         var component = this;
         var password = this.refs.password.value.trim();
@@ -28,7 +28,7 @@ PageChangePassword = React.createClass({
         }
         else {
             Accounts.changePassword('fm1q2w3e',password);//really???
-            FlowRouter.go('/dashboard');
+            FlowRouter.go('/');
         }
         return;
     },

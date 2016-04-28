@@ -6,6 +6,7 @@ Package.describe({
 
 Package.onUse(function(api) { 
 	//api.use(['chrismbeckett:toastr','dburles:collection-helpers'],'client');
+	api.use(['underscore','matb33:collection-hooks']);
 	api.addFiles('ORM.js');
 	api.export('ORM');
 });

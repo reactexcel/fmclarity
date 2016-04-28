@@ -33,10 +33,14 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 	});
 	//find all of the issues that are for those teams, either as a creator or a supplier
 	issues = Issues.find({$or:[
-		{"team._id":{$in:teamIds}},
-		{"supplier._id":{$in:teamIds}},
-		{"team.name":{$in:teamNames}},
-		{"supplier.name":{$in:teamNames}},
+		{$or:[
+			{"team._id":{$in:teamIds}},
+			{"team.name":{$in:teamNames}}
+		]},
+		{$and:[
+			{$or:[{"supplier._id":{$in:teamIds}},{"supplier.name":{$in:teamNames}}]},
+			{status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+		]}
 	]},{sort: {createdAt: -1}});
 
 	var facilityIds = [];

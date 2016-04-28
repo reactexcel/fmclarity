@@ -254,31 +254,6 @@ function createCommonDocumentMethods(collection) {
 			this.save();
 		},		
 
-		//should go in document-messages
-		getInboxName:function() {
-	    	return this.getName()+"'s"+" inbox";
-	  	},
-		getInboxId:function() {
-			return {
-				collectionName:collection._name,
-				name:this.getInboxName(),
-				path:this.path,
-				query:{_id:this._id}
-			}
-		},
-		getMessages:function(options) {
-			options = options||{sort:{createdAt:1}};
-			return Messages.find({inboxId:this.getInboxId()},options).fetch();
-	  	},
-	  	//why???
-		getNotifications:function(options) {
-			options = options||{sort:{createdAt:1}};
-			return Messages.find({inboxId:this.getInboxId()},options).fetch();
-		},
-		getMessageCount:function() {
-	    	return Messages.find({inboxId:this.getInboxId()}).count();
-		},
-
 		//again this should go in it's own package document-thumbnails
 		getAttachmentUrl:function(index) {
 	    	index=index||0;

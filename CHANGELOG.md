@@ -8,7 +8,14 @@ CHANGELOG.md
 * Suppliers can now see their own requests and facilities from main account
 * Single request page no shows navigation and settings controls
 * WO table shows real issued date, not relative date
-(follow up with direct links for open wos on wo page!!)
+* Supplier menu has labels "Clients" and "Sites" instead of "Suppliers" and "Portfolio"
+* Fixed a problem that was causing redirect to dashboard after password reset (even for suppliers)
+* System emails now sent from FM Clarity<no-reply@fmclarity.com>
+* Work orders only visilble to contractors when issued
+* Staff no longer see suppliers tab on left navigation bar
+* Facility contact be changed to staff (need to change roles in Kaplan after deploy!!)
+* WO Drafts always appear irrespective of filter status
+* Files added when closing a work order are added to closed issue files
 
 **v1.0.1b**
 

@@ -1,3 +1,5 @@
+// move this to messages package
+
 MessageSchema = {
   subject:{
     type:String,

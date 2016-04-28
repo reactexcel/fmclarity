@@ -1,8 +1,33 @@
+// move to own package fmc:users
 
 DocThumb.register(Users,{
   repo:Files,
   defaultThumb:"/img/ProfilePlaceholderSuit.png"
 });
+
+
+DocMessages.register(Users,{
+  sendMessage:function(message,opts) {
+    var doNotEmail = opts?opts.doNotEmail:false;
+    message.inboxId = this.getInboxId();
+    if(message.originalId) {
+      var alreadySent = Messages.findOne({
+        inboxId:message.inboxId,
+        originalId:message.originalId
+      });
+      if(alreadySent) {
+        return;
+      }
+    }
+    if(this._id&&message.owner._id&&this._id==message.owner._id) {
+      message = _.extend({},message,{read:true});
+    }
+    Meteor.call("Messages.create",message);
+    if(!message.read&&!doNotEmail) {
+      Meteor.call("User.sendEmail",this,message);
+    }
+  }
+})
 
 Users.methods({
   create:{
@@ -100,41 +125,10 @@ Meteor.methods({
 
 Users.helpers({
   collectionName:'users',
-  sendInvite() {
+  sendInvite:function() {
     Meteor.call('User.sendInvite',this._id);
   },
-  sendMessage(message,opts) {
-    var doNotEmail = opts?opts.doNotEmail:false;
-    message.inboxId = this.getInboxId();
-    if(message.originalId) {
-      var alreadySent = Messages.findOne({
-        inboxId:message.inboxId,
-        originalId:message.originalId
-      });
-      if(alreadySent) {
-        return;
-      }
-    }
-    //console.log(message.owner);
-    if(this._id&&message.owner._id&&this._id==message.owner._id) {
-      message = _.extend({},message,{read:true});
-      //message.read = true;
-    }
-    Meteor.call("Messages.create",message);
-    if(!message.read&&!doNotEmail) {
-      Meteor.call("User.sendEmail",this,message);
-    }
-    /*
-    Email.send({
-      from:"no-reply@fmclarity.com",
-      to:this.getEmail(),
-      subject:"You have an update from FM Clarity",
-      html:"Test message",
-    });
-    */
-
-  },
-  hasRole(role) {
+  hasRole:function(role) {
     switch(role) {
       case 'dev':
         var email = this.emails[0].address;
@@ -144,78 +138,43 @@ Users.helpers({
       break;
     }
   },
-
-
-  getInboxName() {
-    return this.getName()+"'s"+" inbox";
-  },
-  getInboxId() {
-    return {
-      collectionName:this.collectionName,
-      name:this.getInboxName(),
-      query:{_id:this._id}
-    }
-  },
-  getMessages(opts) {
-    return Messages.find({
-      "inboxId.collectionName":this.collectionName,
-      "inboxId.query._id":this._id
-    },opts).fetch();
-  },
-  getEmail() {
-    return this.emails[0].address;
-  },
-  getNotifications(opts) {
-    var hideOwn = opts?opts.hideOwn:false;
-    var q = {
-      "inboxId.collectionName":this.collectionName,
-      "inboxId.query._id":this._id,
-      read:false
-    };
-    if(hideOwn) {
-      q["$ne"] = {"owner._id":this._id};
-    }
-    return Messages.find(q,{sort:{createdAt:-1}}).fetch();
-  },
-  markAllNotificationsAsRead() {
-    Meteor.call('User.markAllNotificationsAsRead',this.getInboxId());
-  },
-
-
   
-  getName() {
+  getName:function() {
     return this.profile.name;
   },
-  getAvailableServices() {
+  getEmail:function() {
+    return this.emails[0].address;
+  },
+  getAvailableServices:function() {
     return [];
   },  
-  getTeams() {
+  getTeams:function() {
     return Teams.find({"members._id":Meteor.userId()}).fetch();
   },
-  getTeam(i) {
+  getTeam:function(i) {
     var teams = this.getTeams();
     return teams[i];
   },
-  getProfile() {
+  getProfile:function() {
     if(!this.profile._id) {
       this.profile._id = this._id;
     }
     return this.profile;
   },
-  selectTeam(team) {
+  selectTeam:function(team) {
     if(team) {
       Session.set('selectedTeam',{_id:team._id});
     }
     Session.set('selectedFacility',0);
   },
-  getSelectedTeam() {
+  getSelectedTeam:function() {
     var selectedTeamQuery = Session.get('selectedTeam');
     return Teams.findOne(selectedTeamQuery);
   },
-  selectFacility(facility) {
+  selectFacility:function(facility) {
     Session.set('selectedFacility',{_id:facility._id});
   },
-  getSelectedFacility() {
+  getSelectedFacility:function() {
     return Facilities.findOne(Session.get('selectedFacility'));
   },
   isLoggedIn: function() {
