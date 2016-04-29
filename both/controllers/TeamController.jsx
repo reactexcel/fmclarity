@@ -6,29 +6,9 @@ Teams.schema(TeamSchema);
 DocThumb.register(Teams,{repo:Files});
 
 DocMessages.register(Teams,{
-  sendMessage(message,cc,opts) {
-
-
-    // implement a this.getWatchers() function and we can move this
-    // functionality into the base package
-    cc = cc||this.getMembers({role:"manager"});
-
-
-    message.inboxId = this.getInboxId();
-    Meteor.call("Messages.create",message,function(err,messageId){
-      message.originalId = message.originalId||messageId;
-      if(cc&&cc.length) {
-        cc.map(function(recipient){
-          if(recipient) {
-            recipient.sendMessage(message,opts);
-          }
-        })
-      }
-    });
-  },  
-  getInboxName() {
-    return this.getName()+" inbox";
-  },  
+  getWatchers:function() {
+    return this.getMembers({role:"manager"});
+  }  
 });
 
 Teams.methods({
@@ -226,6 +206,7 @@ Teams.helpers({
     var timeframe =  timeframes[priority]?timeframes[priority]:timeframes['Standard'];
     return timeframe;
   },
+  
   getNextWOCode(){
     if(!this.counters) {
       this.counters = {};
@@ -238,6 +219,7 @@ Teams.helpers({
     //this.save();
     return this.counters.WO;
   },
+
   getAvailableServices(parent) {
     var services = parent?parent.children:this.services;
     var availableServices = [];
@@ -251,39 +233,31 @@ Teams.helpers({
     });
     return availableServices;
   },
+
   getFacilities() {
-    //possibly this can be done in the subscription stage
-    //then we can use the hasMany relationship to define the facility connection functions
-
-
-    //need to get rid of this distinction between fm and contractor here
-    //if need to include all of the facilities we have added for ourselves
-    //as well as all the facilities of any issue assigned to us
-    //...in the one place
-
-    if(this.type=="contractor") {
-      return this.getContractorFacilities();
+    //return all facilities in my currently selected team
+    //and all the facilities in the issues allocated to my team
+    var issues,facilityIds = [];
+    issues = this.getIssues();
+    if(issues&&issues.length) {
+      issues.map(function(i){
+        if(i.facility) {
+          facilityIds.push(i.facility._id);
+        }
+      })
     }
-    else {
-      return Facilities.find({"team._id":this._id},{sort:{name:1}}).fetch();
-    }
+
+    return Facilities.find({$or:[
+      {"team._id":this._id},
+      {_id:{$in:facilityIds}}
+    ]},{sort:{name:1}}).fetch();
   },
-  getContractorFacilities() {
-    var issues, facilityQueries, facilities;
-      issues = this.getIssues();
-      if(issues&&issues.length) {
-        facilityQueries = [];
-        issues.map(function(i){
-          facilityQueries.push({_id:i.facility._id});
-        });
-        facilities = Facilities.find({$or:facilityQueries}).fetch();
-      }
-      return facilities;
-  },
+
   getFacility(i) {
     var facilities = this.getFacilities();
     return facilities[i];
   },
+
   getIssues() {
     //this is vulnerable to error - what if the name changes
     //of course if we only have the name then we need to add the id at some point

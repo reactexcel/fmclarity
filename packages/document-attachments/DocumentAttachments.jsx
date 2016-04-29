@@ -1,14 +1,14 @@
 
 //should be called docthumbs
-DocThumb = {
+DocAttachments = {
 	register:registerCollection,
-	File:File
+	FileExplorer:FileExplorer
 }
 
-var Thumbs = null;
+var Attachments = null;
 
 function registerCollection(collection,opts) {
-	Thumbs = opts.repo;
+	Attachments = opts.repo;
 
 	collection.helpers({
 		defaultThumbUrl:(opts.defaultThumbUrl||"/img/default-placeholder.jpg"),
@@ -28,7 +28,7 @@ function registerCollection(collection,opts) {
 }
 
 function uploadThumb(doc,url) {
-	Thumbs.insert(url, function (error, fileObj) {
+	Attachments.insert(url, function (error, fileObj) {
 	    if(!error) {
 	    	doc.setThumb(fileObj);
 	    }
@@ -38,7 +38,7 @@ function uploadThumb(doc,url) {
 function getThumb(doc) {
 	var thumb;
 	if(doc.thumb) {
-		thumb = Thumbs.findOne(doc.thumb._id);
+		thumb = Attachments.findOne(doc.thumb._id);
 	}
 	return thumb;
 }

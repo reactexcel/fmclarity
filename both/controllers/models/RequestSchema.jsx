@@ -55,7 +55,7 @@ IssueSchema = {
   attachments:{
     type:[Object],
     label:"Attachments",
-    input:"attachments"
+    input:DocAttachments.FileExplorer
   },
   
   level:{

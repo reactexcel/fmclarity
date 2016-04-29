@@ -5,30 +5,6 @@ DocThumb.register(Users,{
   defaultThumb:"/img/ProfilePlaceholderSuit.png"
 });
 
-
-DocMessages.register(Users,{
-  sendMessage:function(message,opts) {
-    var doNotEmail = opts?opts.doNotEmail:false;
-    message.inboxId = this.getInboxId();
-    if(message.originalId) {
-      var alreadySent = Messages.findOne({
-        inboxId:message.inboxId,
-        originalId:message.originalId
-      });
-      if(alreadySent) {
-        return;
-      }
-    }
-    if(this._id&&message.owner._id&&this._id==message.owner._id) {
-      message = _.extend({},message,{read:true});
-    }
-    Meteor.call("Messages.create",message);
-    if(!message.read&&!doNotEmail) {
-      Meteor.call("User.sendEmail",this,message);
-    }
-  }
-})
-
 Users.methods({
   create:{
     authentication:true,
@@ -70,57 +46,11 @@ function createUser(item,password) {
 }
 
 Meteor.methods({
-  'User.markAllNotificationsAsRead':function(inboxId) {
-    Messages.update({
-      "inboxId.collectionName":inboxId.collectionName,
-      "inboxId.query":inboxId.query,
-      read:false
-    },{
-      $set:{read:true}
-    },{
-      multi:true
-    });
-  },
   'User.sendInvite':function(userId) {
     if(Meteor.isServer) {
       Accounts.sendEnrollmentEmail(userId);
     }
   },
-  'User.sendEmail':function(user,message) {
-    if(Meteor.isServer) {Meteor.defer(function(){
-
-      /*
-      if(!FM.inProduction()) {
-        console.log('development');
-      }
-      else {
-        console.log('production');
-      }
-      */
-      if(user) {
-
-        var element = React.createElement(EmailMessageView,{user:user,item:message});
-        var html = ReactDOMServer.renderToStaticMarkup (element);
-        var address = user.emails[0].address;
-        var to = user.name?(user.name+" <"+address+">"):address;
-
-        var email = {
-            bcc :["leo@fmclarity.com","rich@fmclarity.com"],
-            from:"FM Clarity <no-reply@fmclarity.com>",
-            subject:(message.subject||"FM Clarity notification"),
-            html:html
-        }
-
-        if(FM.inProduction()) {
-          message.to = to;
-        }
-        else {
-          email.subject = "[to:"+to+"]"+email.subject;
-        }
-        Email.send(email);
-      }
-    })}
-  }
 })
 
 Users.helpers({

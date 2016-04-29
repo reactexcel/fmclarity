@@ -19,6 +19,7 @@ ORM = {
 				}
 			},
 			methods:function(functions) {
+				// would like to get rid of this to remove dependency or ORM on RBAC
 				return RBAC.methods(functions,collection)
 			},
 			registerMethod:function(functionName,method){

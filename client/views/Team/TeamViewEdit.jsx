@@ -121,7 +121,7 @@ TeamViewEdit = React.createClass({
 			        		<AutoForm item={team} schema={schema} form={this.data.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={team.thumb} onChange={team.setThumb.bind(team)} />
+			        		<DocThumb.File item={team.thumb} onChange={team.setThumb.bind(team)} />
 			        	</div>
 			        	<div className="col-sm-12">
 				        	<AutoForm item={team} schema={schema} form={this.data.form2} />

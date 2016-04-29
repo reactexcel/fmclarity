@@ -1,6 +1,17 @@
 CHANGELOG.md
 ============
 
+**v1.0.3b**
+
+* Staff no longer see dash or suppliers
+* Calendar events color coded by priority
+* Calendar and bar chart increased in height to accomodate more events and larger service names
+* Moved messages notifications out to separate package
+* Dashboard: Added team notifications widget
+* Dashboard: Added responsive sizing to line and bar graph on
+* All portfolios now show both added facilities and the facilities attached to wos issues to team
+* All suppliers/clients screens show both added suppliers and teams who have assigned issues
+
 **v1.0.2b**
 
 * WO table: Issue date no longer red

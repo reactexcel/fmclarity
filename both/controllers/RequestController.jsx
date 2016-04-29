@@ -1,45 +1,18 @@
 Issues.schema(IssueSchema);
 
 DocMessages.register(Issues,{
-  /**
-   * Would be nice to put this (email functionality) in a separate package
-   * Then abstract it down to it's own api and optimise/refactor
-   */
-
-  // I reckon trash getInboxName and make getInboxId explicit in each class that uses it
-  // furthermore could make a package with a factory that enables this
-  // The package could also include the model and view for Messages!
-  getInboxName() {
+  getInboxName:function() {
     return "work order #"+this.code+' "'+this.getName()+'"';
   },
-
-  sendMessage(message,cc,opts) {
-    cc = cc||this.getWatchers();
+  getWatchers:function() {
     var user = Meteor.user();
-
-    message.inboxId = this.getInboxId();
-    message.target = this.getInboxId();
-    message.owner = {
-      _id:user._id,
-      name:user.getName()
-    }
-
-    Meteor.call("Messages.create",message,function(err,messageId){
-      message.originalId = messageId;
-      if(cc&&cc.length) {
-        cc.map(function(recipient){
-          if(recipient) {
-            if(message.verb=="issued"&&recipient.type=="contractor") {
-              recipient.sendMessage(message,null,{doNotEmail:true});
-            }
-            else {
-              recipient.sendMessage(message,null,opts);
-            }
-          }
-        })
-      }
-    })
-  },
+    var owner = this.getOwner();
+    var team = this.getTeam();
+    var supplier = this.getSupplier();
+    var assignee = this.getAssignee();
+    //and facilityContact?
+    return [user,owner,supplier,team,assignee];
+  }
 });
 
 var accessForTeamMembers = function(role,user,request) {
@@ -235,16 +208,6 @@ function getPotentialSuppliers() {
   return null;
 }
 
-function getWatchers() {
-  var user = Meteor.user();
-  var owner = this.getOwner();
-  var team = this.getTeam();
-  var supplier = this.getSupplier();
-  var assignee = this.getAssignee();
-  //and facilityContact?
-  return [user,owner,supplier,team,assignee];
-}
-
 Issues.helpers({
   // this sent to schema config
   // or put in another package document-urls
@@ -267,7 +230,6 @@ Issues.helpers({
     return this.isNew()||Issues.STATUS_NEW;
   },
   getPotentialSuppliers:getPotentialSuppliers,
-  getWatchers:getWatchers,
   getAssignee:getAssignee,
   getSupplier:getSupplier
 });

@@ -18,7 +18,7 @@ CloseDetailsSchema = {
     attachments: {
       type:[Object],
       label:"Attachments",
-      input:"attachments"
+      input:DocAttachments.FileExplorer
     },    
     furtherWorkRequired: {
       label:"Further work required",

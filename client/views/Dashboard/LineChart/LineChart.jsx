@@ -219,7 +219,7 @@ LineChart = React.createClass({
 			        	<div className="col-sm-12">
 			            	<div style={{margin:"0px 25px 30px 10px"}}>
 								<div id="line-chart-wrapper">
-								    <canvas id="line-chart"></canvas>
+								    <canvas id="line-chart" height="250"></canvas>
 								</div>
 					        </div>
 				        </div>

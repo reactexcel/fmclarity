@@ -34,7 +34,7 @@ Inbox = React.createClass({
             <div className="feed-activity-list">
                 {truncated&&numberTruncated>0?
                 <div onClick={this.untruncate} className="feed-element" style={{textAlign:"center",backgroundColor:"#f6f6f6",color:"#aaa",padding:"0px",cursor:"pointer"}}>
-                    <small>Show {numberTruncated} older comment{numberTruncated>1?"s":""}</small>
+                    <small>Show {numberTruncated} older item{numberTruncated>1?"s":""}</small>
                 </div>
                 :null}
                 {

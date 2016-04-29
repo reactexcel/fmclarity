@@ -55,34 +55,42 @@ MessageView = React.createClass({
         var owner = this.data.owner||Meteor.user();
         var createdAt = message.createdAt;
         var used = false;
-        if(message.type=="comment") {
+        {/*if(message.type=="comment") {
             return (<div>
                 <ContactAvatarSmall item={owner}/>
                 <div className="media-body" style={{paddingLeft:"5px",whiteSpace:"pre-wrap"}}>
                     <div>
                         <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
                         <div style={{width:"90%"}}>
-                            {/*<a style={{fontWeight:"bold"}}>{owner.getName()}</a> */}{message.body}
-                        {/*<small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>*/}
+                            {message.body}
                         </div>
                     </div>
                 </div>
             </div>)
         }
-        else if(message.body||message.subject||message.verb) {
+        else */}
+        if(message.body||message.subject||message.verb) {
             return (<div>
                 <ContactAvatarSmall item={owner}/>
-                <div className="media-body" style={{paddingLeft:"5px",whiteSpace:"pre-wrap"}}>
+                <div className={"media-body message-type-"+message.type} style={{paddingLeft:"5px",whiteSpace:"pre-wrap"}}>
                     <div>
-                        <small className="pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
-                        <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
-                        message.verb?
-                            <span>{message.verb} <b><a href={message.getTargetUrl()}>{message.getTargetName()}</a></b></span>
-                        :
-                            <span>{message.subject}</span>
-                        }<br/>
-                        <div>{message.body}</div>
-                        <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
+                        <small className="message-timestamp pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        <div className="message-subject">
+                            <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
+                            message.verb?
+                                <span>{message.verb} <b><a href={message.getTargetUrl()}>{message.getTargetName()}</a></b></span>
+                            :
+                                <span>{message.subject}</span>
+                            }
+                        </div>
+
+                        <div className="message-body">
+                            {message.body}
+                        </div>
+
+                        <div className="message-footer">
+                            <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
+                        </div>
                     </div>
                 </div>
             </div>)
@@ -93,7 +101,7 @@ MessageView = React.createClass({
                 <div className="media-body">
                     <textarea 
                         ref="input"
-                        style={{width:"80%"}}
+                        style={{width:"80%",paddingLeft:"4px"}}
                         placeholder="Leave a comment or question..."
                         className={"input inline-form-control "+(used?'used':'')}
                         defaultValue={message.body} 

@@ -145,7 +145,7 @@ function actionOpen (request) {
  */
 function generalRequestNotification(verb) {
 	return function(request) {
-		request.sendMessage({
+		request.sendNotification({
 			verb:verb,
 			subject:"Work order #"+request.code+" has been "+verb
 		})
@@ -168,31 +168,17 @@ function issue(request) {
   });
   var request = Issues.findOne(response._id);
 
-  // this needs to not block
-  var watchers = request.getWatchers();
-
-  //console.log(watchers);
-
-  request.sendMessage({
+  request.sendNotification({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  });
+  });//might also call sendMessage depending on state of notification options
 
-  /*
-  notifications = request.makeNotifications({
-    verb:"issued",
-    subject:""
-  })
+  //var supplier = request.getSupplier();
+  //a parellel functionality to sendNotification
+  //EmailTemplates.supplierIssued(request) is a function which returns a function which
+  //  takes a user as an argument and is mapped to watchers
+  //supplier.sendMessage(EmailTemplates.supplierIssued(request));
 
-  notifications.map(function(n){
-
-    n.sendAsEmail();
-  })
-  */
-
-  /*maybe have a createMessage and separate sendMessage?*/
-
-  //sendNotifications(request);
   sendSupplierEmail(request);
 
   return request;
@@ -296,12 +282,12 @@ function close(issue) {
     var response = Meteor.call('Issues.create',newIssue);
     var newIssue = Issues._transform(response);
 
-    issue.sendMessage({
+    issue.sendNotification({
       verb:"closed",
       subject:"Work order #"+issue.code+" has been closed and a follow up has been requested"
     });
 
-    newIssue.sendMessage({
+    newIssue.sendNotification({
       verb:"requested a follow up to "+issue.getName(),
       subject:closer.getName()+" requested a follow up to "+issue.getName(),
       body:newIssue.description
@@ -309,7 +295,7 @@ function close(issue) {
   }
   else {
 
-    issue.sendMessage({
+    issue.sendNotification({
       verb:"closed",
       subject:"Work order #"+issue.code+" has been closed"
     });
@@ -351,7 +337,7 @@ function reverse(request) {
   var response = Meteor.call('Issues.create',newRequest);
 
   request = Issues.findOne(request._id);
-  request.sendMessage({
+  request.sendNotification({
     verb:"requested",
     subject:"Work order #"+request.code+" has been reversed and reversal #"+newRequest.code+" has been created"    
   });

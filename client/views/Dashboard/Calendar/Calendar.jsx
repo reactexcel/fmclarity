@@ -28,12 +28,21 @@ Calendar = React.createClass({
         if(!this.data.issues)
             return;
 
+        var colors = {
+            "Scheduled":"#70aaee",
+            "Standard":"#0152b5",
+            "Urgent":"#f5a623",
+            "Critical":"#d0021b",
+            "Closed":"#000000"
+        };
+
         var events = this.events.events;
         events.length = 0;
         this.data.issues.map(function(i){
             if(i.dueDate) {
                 events.push({
                     title:"#"+i.code+" due",
+                    color:colors[i.priority],
                     start:i.dueDate,
                     allDay:true,
                     url:i.getUrl()
@@ -49,6 +58,7 @@ Calendar = React.createClass({
             events:[]
         };
         $(this.refs.calendar).fullCalendar({
+            height:500,
             header: {
                 left:'',
                 center: 'title',

@@ -173,6 +173,7 @@ BarChart = React.createClass({
         }
 	    this.chart.scale.xLabels = this.data.labels;
         this.chart.update();
+        //this.chart.reDraw();
 	},	
 
 	componentDidMount() {
@@ -180,6 +181,7 @@ BarChart = React.createClass({
 	},
 
 	componentDidUpdate() {
+        // ???
 		if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
 			this.updateChart();
 		}
@@ -198,7 +200,7 @@ BarChart = React.createClass({
                 <div className="ibox-content">
                     <div style={{margin:"0px 25px 0px 0px"}}>
                         <div>
-                            <canvas id="bar-chart"></canvas>
+                            <canvas id="bar-chart" height="250"></canvas>
                         </div>
                     </div>
                 </div>

@@ -6,28 +6,26 @@
 
 
 Package.describe({  
-	name: 'fmc:document-thumbs',
+	name: 'fmc:doc-attachments',
 	version: '0.0.1',
-	summary: 'Document thumbnails helper for Meteor+React'
+	summary: 'Document attachments helper for Meteor+React'
 });
 
 Package.onUse(function(api) { 
 
 	api.use([
-		'chrismbeckett:toastr'
-	],'client');
-
-	api.use([
 		'react',
-		'dburles:collection-helpers'
+		'less',
 	]);
 
 	api.addFiles([
 		'FileView.jsx',
-		'DocumentThumbs.jsx'
+		'FileExplorerView.jsx',
+		'style.less',
+		'DocumentAttachments.jsx'
 	]);
 
 	api.export([
-		'DocThumb'
+		'DocAttachments'
 	]);
 });

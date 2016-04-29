@@ -66,7 +66,7 @@ FacilityViewEdit = React.createClass({
 							<AutoForm item={facility} schema={schema} form={["name","address","operatingTimes"]}/>
 						</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
+			        		<DocThumb.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
 			        	</div>
 			        </div>
 				</CollapseBox>
@@ -78,8 +78,8 @@ FacilityViewEdit = React.createClass({
 			   			items={staff}
 			   			//items={members}
 			   			facility={facility}
-			   			role="contact"
-			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"contact"}):null}
+			   			role="staff"
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Tenants">

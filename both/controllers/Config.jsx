@@ -36,17 +36,13 @@ var navFM = [{
 }];
 
 var navFMStaff = [{
-	path:"dashboard",		
-	label:"Dashboard",
-	icon:"fa fa-newspaper-o"
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
 },{
 	path:"portfolio",		
 	label:"Portfolio",
 	icon:"fa fa-building"
-},{
-	path:"requests",		
-	label:"Requests",
-	icon:"fa fa-wrench"
 }];
 
 var navSupplier = [{

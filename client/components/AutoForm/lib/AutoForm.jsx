@@ -141,7 +141,9 @@ AutoForm = React.createClass({
 							options:{}
 						},s);
 
-						var Input = AutoInput[s.input];
+						//If it is a string take it from the autoinput package
+						//if it isn't then consider it a component
+						var Input = _.isString(s.input)?AutoInput[s.input]:s.input;
 						return (
 							<div key={id+'-'+key} className={"col-sm-"+s.size}>
 								<Input

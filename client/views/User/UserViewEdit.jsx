@@ -134,7 +134,7 @@ UserProfile = React.createClass({
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			   		<div className="col-sm-5">
-				        <AutoInput.File item={user.thumb} onChange={user.setThumb.bind(user)} />
+				        <DocThumb.File item={user.thumb} onChange={user.setThumb.bind(user)} />
 				    </div>
 		        </div>
 			</div>

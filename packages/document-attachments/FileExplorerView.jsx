@@ -1,4 +1,4 @@
-AutoInput.attachments = React.createClass({
+FileExplorer = React.createClass({
 
 	handleChange(index,newValue) {
 		var attachments = this.props.value||[];
@@ -19,7 +19,7 @@ AutoInput.attachments = React.createClass({
 			{attachments.map(function(file,idx){
 				return (
 					<div key={idx} style={{display:"inline-block"}}>
-						<AutoInput.Thumbnail 
+						<File
 							item={file}
 							onChange={component.handleChange.bind(null,idx)}
 						/>
@@ -28,7 +28,7 @@ AutoInput.attachments = React.createClass({
 			})}
 			
 				<div style={{display:"inline-block"}}>
-					<AutoInput.Thumbnail 
+					<File
 						onChange={component.handleChange.bind(null,attachments.length)}
 					/>
 				</div>

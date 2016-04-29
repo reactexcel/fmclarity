@@ -48,7 +48,7 @@ TeamSchema = {
   attachments: {
     type:[Object],
     label:"Attachments",
-    input:"attachments"
+    input:DocAttachments.FileExplorer
   },
 
   address:{
@@ -98,7 +98,7 @@ TeamSchema = {
     type: [Object],
     label: "Suppliers",
     helpers: {
-      getSuppliers:RBAC.lib.getMembers(Teams,'suppliers'),
+      getSuppliers:getSuppliers
     },
     actions:{
       /*
@@ -120,6 +120,27 @@ TeamSchema = {
       },
     }
   }
+}
+
+function getSuppliers() {
+  var ids=[];
+
+  if(this.suppliers&&this.suppliers.length) {
+    this.suppliers.map(function(s){
+      ids.push(s._id);
+    })
+  }
+
+  var issues = this.getIssues();
+  if(issues&&issues.length) {
+    issues.map(function(i){
+      if(i.team) {
+        ids.push(i.team._id);
+      }
+    })
+  }
+
+  return Teams.find({_id:{$in:ids}},{sort:{name:1}}).fetch();
 }
 
 function inviteSupplier(team,email,ext) {
