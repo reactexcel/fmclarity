@@ -4,22 +4,22 @@ FacilityViewEdit = React.createClass({
 
     getMeteorData() {
     	Meteor.subscribe('users');
-		var facility, schema, team, tenants, contacts, config;
+		var facility, schema, team, tenants, staff, config;
 		facility = this.props.item;
 		schema = Facilities.schema();
 		if(facility){
 			team = facility.getTeam();
-			//contacts = facility.getContacts();
+			//staff = facility.getContacts();
 			//tenants = facility.getTenants();
 
-			contacts = facility.getMembers({role:"contact"});
+			staff = facility.getMembers({role:"staff"});
 			tenants = facility.getMembers({role:"tenant"});
 			return {
 				ready:true,
 				facility:facility,
 				team:facility.getTeam(),
 				schema:schema,
-				contacts:contacts,
+				staff:staff,
 				tenants:tenants
 			}
 		}
@@ -44,7 +44,7 @@ FacilityViewEdit = React.createClass({
 
 		var facility = this.data.facility;
 		var tenants = this.data.tenants;
-		var contacts = this.data.contacts;
+		var staff = this.data.staff;
 		var members = this.data.members;
 		var schema = this.data.schema;
 		var team = this.data.team;
@@ -66,20 +66,20 @@ FacilityViewEdit = React.createClass({
 							<AutoForm item={facility} schema={schema} form={["name","address","operatingTimes"]}/>
 						</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
+			        		<DocThumb.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
 			        	</div>
 			        </div>
 				</CollapseBox>
 				<CollapseBox title="Documents & images">
 					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
-				<CollapseBox title="Contacts">
+				<CollapseBox title="Staff">
 			   		<ContactList 
-			   			items={contacts}
+			   			items={staff}
 			   			//items={members}
 			   			facility={facility}
-			   			role="contact"
-			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"contact"}):null}
+			   			role="staff"
+			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Tenants">

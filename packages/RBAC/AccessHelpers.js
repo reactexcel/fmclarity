@@ -1,10 +1,29 @@
+//these have nothing to do with RBAC and should go in ORM.helpers
+
 RBAC.lib = {
 	save:save,
 	destroy:destroy,
 	create:create,
 	addMember:addMember,
 	removeMember:removeMember,
+	getMembers:getMembers,
 	setItem:setItem
+}
+
+function getMembers(collection,fieldName) {
+	return function(item) {
+	    item = item||this;
+	    var ids = [];
+	    var names = [];
+	    item[fieldName].map(function(i){
+	    	ids.push(i._id);
+	    	names.push(i.name);
+	    })
+	    return collection.find({$or:[
+	    	{_id:{$in:ids}},
+	    	{name:{$in:names}}
+	    ]},{sort:{name:1}}).fetch();
+	}
 }
 
 function create(item) {

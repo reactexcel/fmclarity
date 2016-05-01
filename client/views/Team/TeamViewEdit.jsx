@@ -99,7 +99,7 @@ TeamViewEdit = React.createClass({
 			return (
                 <form className="form-inline">
                     <div className="form-group">
-                        <b>Let's search to see if this contractor already has an account.</b>
+                        <b>Let's search to see if this team already has an account.</b>
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
                         <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                     </div>
@@ -113,7 +113,7 @@ TeamViewEdit = React.createClass({
 		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
-                {this.state.shouldShowMessage?<b>Contractor not found, please enter the details to add to your contact.</b>:null}
+                {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
             	<h2><span>{team.getName()}</span></h2>
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
@@ -121,7 +121,7 @@ TeamViewEdit = React.createClass({
 			        		<AutoForm item={team} schema={schema} form={this.data.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<AutoInput.File item={team.thumb} onChange={team.setThumb.bind(team)} />
+			        		<DocThumb.File item={team.thumb} onChange={team.setThumb.bind(team)} />
 			        	</div>
 			        	<div className="col-sm-12">
 				        	<AutoForm item={team} schema={schema} form={this.data.form2} />

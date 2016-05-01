@@ -15,7 +15,7 @@ UserCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var user = this.props.item;
-		var selectedTeam = this.props.team||Session.getSelectedTeam();
+		var selectedTeam = this.props.team;
 		var selectedFacility = this.props.facility;
 		var menu = UserActions.getMenu(user,{team:selectedTeam,facility:selectedFacility});
 		if(user&&user.canSave()) {

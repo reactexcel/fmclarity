@@ -5,8 +5,23 @@ Package.describe({
 });
 
 Package.onUse(function(api) { 
-	api.use(['chrismbeckett:toastr'],'client');
-	api.use(['dburles:collection-helpers']);
-	api.addFiles(['RBAC.js','AccessHelpers.js','AuthenticationHelpers.js']);
-	api.export(['RBAC','AuthHelpers']);
+	api.use([
+		'chrismbeckett:toastr'
+	],'client');
+
+	api.use([
+		'underscore',
+		'dburles:collection-helpers'
+	]);
+
+	api.addFiles([
+		'RBAC.js',
+		'AccessHelpers.js',
+		'AuthenticationHelpers.js'
+	]);
+
+	api.export([
+		'RBAC',
+		'AuthHelpers'
+	]);
 });

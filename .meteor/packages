@@ -4,11 +4,12 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-
 fmc:rbac
 fmc:orm
 fmc:document-thumbs
+fmc:doc-attachments
 fmc:login-tokens
+fmc:document-messages
 
 #aldeed:collection2
 abpetkov:switchery
@@ -61,6 +62,7 @@ tracker
 
 npm-container
 mdg:geolocation
+
 cfs:standard-packages
 cfs:filesystem
 cfs:gridfs
@@ -70,3 +72,4 @@ harrison:papa-parse
 
 meteorhacks:ssr
 base64
+

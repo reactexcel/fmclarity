@@ -60,6 +60,7 @@ ContactList = React.createClass({
 		});
 		var component = this;
 		var team = this.props.team;
+		var facility = this.props.facility;
 		var canCreate = this.props.onChange||this.props.onAdd;
 		return (
 			<div className="contact-list">
@@ -71,7 +72,7 @@ ContactList = React.createClass({
 			            >
 			            	{false&&team.canRemoveMember()?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
 			            	<div className="active-link" onClick={component.showModal.bind(null,contact)}>
-					            <ContactCard item={contact} team={team}/>
+					            <ContactCard item={contact} team={team} facility={facility}/>
 					        </div>
 			            </div>	
 		            )

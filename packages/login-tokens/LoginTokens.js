@@ -1,3 +1,6 @@
+// can we include all login functionality in this package?
+// including the login forms and the rest?
+
 FMCLogin = {
 	generateLoginToken:generateLoginToken,
 	loginWithToken:loginWithToken,

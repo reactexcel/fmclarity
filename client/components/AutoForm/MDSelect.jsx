@@ -1,3 +1,11 @@
+PlainCard = React.createClass({
+	render() {
+		return (
+			<span>{this.props.item}</span>
+		)
+	}
+})
+
 
 AutoInput.MDSelect = React.createClass({
 
@@ -33,13 +41,16 @@ AutoInput.MDSelect = React.createClass({
 
 	render() {
 		var component = this;
+		var options = this.props.options||{};
+
 		var readOnly = this.props.readOnly;
-		var Card = this.props.itemView || DumbCard;
-		var items = this.props.items || [];
+
+		var Card = this.props.itemView||options.view||PlainCard;
+		var items = this.props.items||options.items||[];
 		var onChange = this.props.onChange;
-		var classes = this.props.classes || '';
-		var clearOption = this.props.clearOption;
-		var selectedItem = this.props.selectedItem;
+		var classes = this.props.classes||options.classes||'';
+		var clearOption = this.props.clearOption||options.clearOption;
+		var selectedItem = this.props.value||this.props.selectedItem;
 
 		if(readOnly) {
 			return (

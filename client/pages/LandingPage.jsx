@@ -11,7 +11,7 @@ LandingPage = React.createClass({
     	}
         if(role) {
             var modules = Config.modules[team.type][role];
-            var landing = modules&&modules.length?modules[0]:null;
+            var landing = modules&&modules.length?modules[0].path:null;
             if(landing) {
                 FlowRouter.go('/'+landing);
             }

@@ -23,13 +23,40 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 	//console.log('updating subscription');
 	var teams, facilities, issues;
 
+	//compile an array of the ids of all of the teams that the current member is in
 	teams = Teams.find({"members._id":this.userId});
 	var teamIds = [];
+	var teamNames = [];
 	teams.forEach(function(t){
 		teamIds.push(t._id);
+		teamNames.push(t.name);
 	});
-	facilities = Facilities.find({"team._id":{$in:teamIds}});
-	issues = Issues.find({$or:[{"team._id":{$in:teamIds}},{"supplier._id":{$in:teamIds}}]},{sort: {createdAt: -1}});
+	//find all of the issues that are for those teams, either as a creator or a supplier
+	issues = Issues.find({$or:[
+		{$or:[
+			{"team._id":{$in:teamIds}},
+			{"team.name":{$in:teamNames}}
+		]},
+		{$and:[
+			{$or:[{"supplier._id":{$in:teamIds}},{"supplier.name":{$in:teamNames}}]},
+			{status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+		]}
+	]},{sort: {createdAt: -1}});
+
+	var facilityIds = [];
+	var fetchedIssues = issues.fetch();
+	fetchedIssues.map(function(i){
+		if(i.facility&&i.facility._id) {
+			facilityIds.push(i.facility._id);
+		}
+	})
+
+	//find all of the facilities that are in those teams
+	facilities = Facilities.find({$or:[
+		{"team._id":{$in:teamIds}},
+		{"_id":{$in:facilityIds}}
+	]});
+
 	return [teams,facilities,issues];
 });
 

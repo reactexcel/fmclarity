@@ -1,4 +1,5 @@
 // I wonder what the benefits of caching these results would be?
+// Should simply be called RBAC.helpers, or RBAC.lib
 AuthHelpers = {
   owner:function(role,user,item) {
     if(item&&item.owner) {
@@ -16,7 +17,7 @@ AuthHelpers = {
     return user.role=="dev";
   },
   manager:function(role) {
-    return role=="manager"||role=="support";
+    return role=="manager"||role=="fmc support";
   },
   managerOrOwner:function(role,user,team) {
     return AuthHelpers.manager(role,user,team)||AuthHelpers.owner(role,user,team)
@@ -24,7 +25,7 @@ AuthHelpers = {
   managerOfRelatedTeam:function (role,user,item) {
     var team = Teams.findOne(item.team._id);
     var role = RBAC.getRole(user,team);
-    return role=="manager";
+    return role=="manager"||role=="fmc support";
   },
   memberOfRelatedTeam:function (role,user,item) {
     var team = Teams.find({

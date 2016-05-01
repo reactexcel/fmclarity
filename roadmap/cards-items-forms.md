@@ -47,3 +47,11 @@ Supplier email address should be a mail link
 Should be able to differentiate between "contact" (non-invited) type users and "self-managed"?? (invited) style users
 Contact cards only display phone number and email. should they 
 Portfolio: Contact information should be link to contact in dropdown modal
+
+
+Forms and fields
+
+Validation
+- Separate phone number digits into normal separations eg (03) 8767 5676, 0446 565 678, 1800 890 989 and disallow other characters same with ABN: 82 069 830 957 
+
+Service types should be a combination of suggestive search and combo box

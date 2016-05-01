@@ -17,6 +17,10 @@ FilterBox = React.createClass({
     }
   },
 
+  itemIsSticky(item) {
+    return item.isSticky?item.isSticky():null;
+  },
+
   applyFilter(items) {
     var filters = this.props.filters;
     var filteredItems = items;
@@ -37,6 +41,7 @@ FilterBox = React.createClass({
 
   applySort(items) {
     var headers = this.props.headers;
+    var component = this;
     if(items&&headers) {
       items.sort(function(a,b){
         return a.createdAt - b.createdAt;
@@ -47,11 +52,28 @@ FilterBox = React.createClass({
         f = headers[this.state.selectedSortNum].sortFunction;
         modifier = this.state.sortDirection;
       }
-      return items.sort(function(a,b){
-        if(a.isNew()||a.sticky) {
+      return items.sort(function(a,b) {
+        if(a.isNew()) {
           return -1
         }
-        else if(b.isNew()||b.sticky) {
+        else if(b.isNew()) {
+          return 1;
+        }
+        else if(component.itemIsSticky(a)&&component.itemIsSticky(b)) {
+          if(f) {
+            return f(a,b)*modifier;
+          }
+          else {
+            if(a.createdAt>b.createdAt) {
+              return -1;
+            }
+            return 1;
+          }
+        }
+        else if(component.itemIsSticky(a)) {
+          return -1
+        }
+        else if(component.itemIsSticky(b)) {
           return 1;
         }
         else if(f) {
@@ -276,12 +298,17 @@ CardWrapper = React.createClass({
     this.item.save();
   },
 
+  itemIsSticky(item) {
+    return item.isSticky?item.isSticky():null;
+  },
+
   render() {
     var $this = this;
     var item = this.item = this.props.item;
     var owner = this.item.getOwner?this.item.getOwner():{};
     var Summary = this.props.itemView.summary;
     var Detail = this.props.itemView.detail;
+    var sticky = this.itemIsSticky(item);
     return (
       <div 
         ref="container"
@@ -292,13 +319,15 @@ CardWrapper = React.createClass({
       >
         <div className="card-header">
           <div className="card-header-right-toolbar">
+            {/*
             <div
-              style={{padding:"10px 5px 7px 13px",fontSize:"20px",opacity:item.sticky?1:0.1,color:item.sticky?"blue":"#000"}}
+              style={{padding:"10px 5px 7px 13px",fontSize:"20px",opacity:sticky?1:0.1,color:(sticky=="Sticky"?"blue":sticky?"red":"#000")}}
               onClick={this.toggleSticky}
               className="grid-item-select-button"
             >
-              <i className="fa fa-thumb-tack"></i>
+              <i title={sticky} className={"fa "+(sticky=="Sticky"||!sticky?"fa-thumb-tack":sticky=="Overdue"?"fa-clock-o":"fa-exclamation-triangle")}></i>
             </div>
+            */}
           </div>
           <div className="card-header-summary" onClick={this.toggle}>
             <Summary item={item} />
@@ -309,7 +338,6 @@ CardWrapper = React.createClass({
           <Detail item={item} closeCallback={this.toggle}/>
         </div>:null}
       </div>
-
     )
   }
 });

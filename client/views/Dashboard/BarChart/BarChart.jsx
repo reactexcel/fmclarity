@@ -111,6 +111,9 @@ BarChart = React.createClass({
     		var serviceName;
     		if(i.service&&i.service.name) {
     			serviceName = i.service.name;
+                if(serviceName.length>15) {
+                    serviceName = serviceName.substring(0,13)+'...';
+                }
     			if(!buckets[serviceName]) {
     				labels.push(serviceName);
     				buckets[serviceName] = [];
@@ -173,6 +176,7 @@ BarChart = React.createClass({
         }
 	    this.chart.scale.xLabels = this.data.labels;
         this.chart.update();
+        //this.chart.reDraw();
 	},	
 
 	componentDidMount() {
@@ -180,6 +184,7 @@ BarChart = React.createClass({
 	},
 
 	componentDidUpdate() {
+        // ???
 		if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
 			this.updateChart();
 		}

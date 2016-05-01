@@ -1,8 +1,29 @@
 Accounts.emailTemplates.siteName = "FM Clarity";
-Accounts.emailTemplates.from = "no-reply@fmclarity.com";
+Accounts.emailTemplates.from = "FM Clarity<no-reply@fmclarity.com>";
 Accounts.emailTemplates.enrollAccount.subject = function (user) {
-    return "Welcome to FM Clarity, " + user.profile.name;
+  var name = user.profile.name;
+  var team = Teams.findOne({
+    members:{$elemMatch:{_id:user._id}}
+  });
+
+  return team.name+" has invited you to join FM Clarity";
 };
+Accounts.emailTemplates.enrollAccount.text = function(user,url) {
+  var name = user.profile.name;
+  var team = Teams.findOne({
+    members:{$elemMatch:{_id:user._id}}
+  });
+
+  var str = "Hi "+name+",\n\n";
+  str+= team.name + " has set up FM Clarity web-based software to make it easy to manage facility processes. "
+  str+="As a member of the facility management team, an account has been created for you to give you access to the system.\n\n"
+  str+= "Quick info: what do I need to do to get setup?\n\n";
+  str+="1. Click the link at the bottom of this email\n";
+  str+="2. Change your password\n";
+  str+="3. Follow the walkthrough";
+  str+="\n\n"+url;
+  return str;
+}
 
 Accounts.urls.enrollAccount = function (token) {
     if(FM.inProduction()) {
@@ -30,7 +51,7 @@ Meteor.startup(function(){
     var smtpUsername = "AKIAIPJKWHGNFC75EL3Q";
     var smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
 
-	process.env.ROOT_URL = 'http://htpc:3000';
+	process.env.ROOT_URL = 'https://app.fmclarity.com';
     process.env.MAIL_URL = "smtp://"+smtpUsername+":"+
     encodeURIComponent(smtpPassword)+
     "@email-smtp.us-west-2.amazonaws.com:465/";

@@ -1,6 +1,46 @@
 CHANGELOG.md
 ============
 
+**v1.0.4b**
+
+* Rearrangement of wo details view to accomodate due date
+* Due date selectable on work order detail form
+* New auto stick items: urgent, critical, overdue [removed]
+* Updated user invitation text
+* Added new "fmc support" role with manager privileges but not show in wos
+* Put due date on work order form and it gets prefilled according to priority but you can select a custom date.
+* Can attach metadata to files
+
+**v1.0.3b**
+
+* Staff no longer see dash or suppliers
+* Calendar events color coded by priority
+* Calendar and bar chart increased in height to accomodate more events and larger service names
+* Moved messages notifications out to separate package
+* Dashboard: Added team notifications widget
+* Dashboard: Added responsive sizing to line and bar graph on
+* All portfolios now show both added facilities and the facilities attached to wos issues to team
+* All suppliers/clients screens show both added suppliers and teams who have assigned issues
+* Created separate "FileExplorer" package in preparation for file handling improvements
+* Dashboard: Truncated labels
+* Notifications for all new work orders to all managers
+
+**v1.0.2b**
+
+* WO table: Issue date no longer red
+* "FOLLOW UP" text on follow up wos now in caps
+* Suppliers can now see their own requests and facilities from main account
+* Single request page no shows navigation and settings controls
+* WO table shows real issued date, not relative date
+* Supplier menu has labels "Clients" and "Sites" instead of "Suppliers" and "Portfolio"
+* Fixed a problem that was causing redirect to dashboard after password reset (even for suppliers)
+* System emails now sent from FM Clarity<no-reply@fmclarity.com>
+* Work orders only visilble to contractors when issued
+* Staff no longer see suppliers tab on left navigation bar
+* Facility contact be changed to staff (need to change roles in Kaplan after deploy!!)
+* WO Drafts always appear irrespective of filter status
+* Files added when closing a work order are added to closed issue files
+
 **v1.0.1b**
 
 * Added "send email invitation" to user actions menu

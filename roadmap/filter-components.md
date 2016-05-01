@@ -13,3 +13,6 @@ Custom sort/filter widget
 
 * Modal stack
 - Add supplier, add contact within supplier link not working (3)
+
+
+- Reduce size of dropdown for facilities on dash

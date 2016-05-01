@@ -212,7 +212,7 @@ LineChart = React.createClass({
 	    	<div>
 		        <ActionsMenu items={this.getMenu()} icon="eye" />
 		        <div className="ibox-title">
-		        	<h2>Requests {this.data.title}</h2>
+		        	<h2>Request activity {this.data.title}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">

@@ -7,6 +7,11 @@ ORM = {
 		else {
 			collection = name;
 		}
+		collection.allow({
+			insert:function(){
+				return true;
+			}
+		})
 		_.extend(collection,{
 			schema:function(newSchema){
 				if(newSchema) {
@@ -19,6 +24,7 @@ ORM = {
 				}
 			},
 			methods:function(functions) {
+				// would like to get rid of this to remove dependency or ORM on RBAC
 				return RBAC.methods(functions,collection)
 			},
 			registerMethod:function(functionName,method){
@@ -44,12 +50,14 @@ ORM = {
 		})
 		// shouldn't this be createdDate?
 		// and shouldn't it be somewhere else?
-		collection.before.insert(function (userId, doc) {
-			if(!doc.createdAt) {
-				doc.createdAt = moment().toDate();
-			}
-		});
-		return collection;
+		if(collection.before) {
+			collection.before.insert(function (userId, doc) {
+				if(!doc.createdAt) {
+					doc.createdAt = moment().toDate();
+				}
+			});
+			return collection;
+		}
 	},
 }
 
@@ -58,6 +66,7 @@ function createNewItemUsingSchema(schema,item,callback,usingSubSchema) {
 	// actually it is - in the "new" method
 	//set up flags and owner
 	var newItem = {};
+	item = item||{};
 	if(!usingSubSchema) {
 		var user = Meteor.user();
 		newItem.isNewItem = true;
@@ -173,8 +182,14 @@ function createAccessMethods(collection,schema) {
 	for(var fieldName in schema) {
 		var field = schema[fieldName];
 
+		if(field.helpers) {
+			_.extend(functions.helpers,field.helpers);
+		}
+		if(field.actions) {
+			collection.methods(field.actions);
 		//set up hasOne relationship
-		if(field.relationship) {
+		}
+		else if(field.relationship) {
 			if(field.relationship.hasOne) {
 				var relatedCollection = field.relationship.hasOne;
 				o2oGet(functions,collection,fieldName,relatedCollection);
@@ -193,15 +208,17 @@ function createAccessMethods(collection,schema) {
 			}
 		}
 		// otherwise create adhoc access functions
+		// should these be encapsulated in methods? I would say so
+		// perhaps this can be overridden in RBAC to create access methods?
 		else {
 			if(field.getter&&_.isFunction(field.getter)) {
 				var getterName = "get"+ucfirst(fieldName);
 				functions.helpers[getterName] = field.getter;
 			}
-			if(field.setter&&_.isFunction(field.setter)) {
+			/*if(field.setter&&_.isFunction(field.setter)) {
 				var setterName = "set"+ucfirst(fieldName);
 				functions.helpers[setterName] = field.setter;
-			}
+			}*/
 		}
 	}
 
@@ -245,31 +262,6 @@ function createCommonDocumentMethods(collection) {
 	    	}
 			this.save();
 		},		
-
-		//should go in document-messages
-		getInboxName:function() {
-	    	return this.getName()+"'s"+" inbox";
-	  	},
-		getInboxId:function() {
-			return {
-				collectionName:collection._name,
-				name:this.getInboxName(),
-				path:this.path,
-				query:{_id:this._id}
-			}
-		},
-		getMessages:function(options) {
-			options = options||{sort:{createdAt:1}};
-			return Messages.find({inboxId:this.getInboxId()},options).fetch();
-	  	},
-	  	//why???
-		getNotifications:function(options) {
-			options = options||{sort:{createdAt:1}};
-			return Messages.find({inboxId:this.getInboxId()},options).fetch();
-		},
-		getMessageCount:function() {
-	    	return Messages.find({inboxId:this.getInboxId()}).count();
-		},
 
 		//again this should go in it's own package document-thumbnails
 		getAttachmentUrl:function(index) {

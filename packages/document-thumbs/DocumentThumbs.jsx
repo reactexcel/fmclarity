@@ -1,5 +1,8 @@
+
+//should be called docthumbs
 DocThumb = {
-	register:registerCollection
+	register:registerCollection,
+	File:File
 }
 
 var Thumbs = null;
