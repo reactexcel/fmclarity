@@ -65,7 +65,7 @@ WOLocationSelector = React.createClass({
                                 items={facility.levels} 
                                 onChange={request.setArea.bind(request)}
                             >
-                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!request.level.name?"Select":""} area</span>
+                                <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!request.level||!request.level.name?"Select":""} area</span>
                             </SuperSelect>
                             {request.level?
                                 <div style={{clear:"both"}}>{request.level.name}</div>

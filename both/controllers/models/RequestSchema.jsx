@@ -122,6 +122,12 @@ function setFacility(request,facility) {
   request = Issues._transform(request);
   facility = Facilities._transform(facility);
   Issues.update(request._id,{$set:{
+    level:null,
+    area:null,
+    service:null,
+    subservice:null,
+    assignee:null,
+    supplier:null,
     facility:{
       _id:facility._id,
       name:facility.name

@@ -81,7 +81,26 @@ Facilities.helpers({
   	return areas;
   },
   getAvailableServices(parent) {
-  	var services = parent?parent.children:this.services;
+    var services;
+
+    //if indexing children of another service
+    if(parent) {
+      services = parent.children;
+    }
+    //else merge team services with facility services
+    else if(this.services) {
+      services = this.services;
+      var team = this.getTeam();
+      if(team.servicesRequired) {
+        services = services.concat(team.servicesRequired);
+        services.sort(function(a,b){
+          return (a.name>b.name)?1:-1;
+        })
+        services = _.uniq(services,true,function(i){return i.name});
+      }
+    }
+
+    //add only active services to available list
   	var availableServices = [];
   	services?services.map(function(service){
   		if(service.active) {
@@ -90,6 +109,8 @@ Facilities.helpers({
   	}):null;
   	return availableServices;
   },
+
+
   getPrimaryContact() {
     var contacts = this.getMembers();
   	if(contacts&&contacts.length) {
