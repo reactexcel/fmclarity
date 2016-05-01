@@ -44,7 +44,7 @@ WOServiceSelector = React.createClass({
         return (
         <div className="row" style={{minHeight:"37px"}}>
 
-            {facility&&request.level.name?
+            {facility&&request.level&&request.level.name?
 				<div className="col-md-3">
 				    <div className="row">
 					    <div className="col-md-12">
