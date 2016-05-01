@@ -17,21 +17,22 @@ FileSchema = {
 		input:"MDSelect",
 		options:{
 			items:[
-				"Plans",
-				"Inductions",
-				"House Rules",
-				"Inspections",
-				"Audits",
-				"SWMS",
-				"Service Reports",
-				"Quotes",
-				"MSDS",
-				"Budgets",
-				"Contracts",
+				"Audit",
+				"Budget",
+				"Contract",
 				"Emergency Management",
-				"Registers",
-				"Registrations",
-				"Procedures"
+				"House Rules",
+				"Induction",
+				"Inspection",
+				"Insurance",
+				"MSDS",
+				"Plan",
+				"Procedure",
+				"Quote",
+				"Register",
+				"Registration",
+				"Service Report",
+				"SWMS",
 			]
 		}
 	},
@@ -41,6 +42,9 @@ FileSchema = {
     },
     expiry: {
     	type:Date,
+    	condition:function(item){
+    		return item.type=="Insurance";
+    	},
     	defaultValue:function(item) {
     		return new Date();
     	},

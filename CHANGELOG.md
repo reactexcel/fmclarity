@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+**v1.1.1b**
+
+* Teams contain a master service list that gets merged with individual facility services
+
+///waitasecond - this will cause a clash with the services provided list!
+//////rename servicesRequired and servicesProvided
+
+* Services sorted alphabetically in wo dropdown
+
 **v1.0.4b**
 
 * Rearrangement of wo details view to accomodate due date
