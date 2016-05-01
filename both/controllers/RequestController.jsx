@@ -45,7 +45,7 @@ Issues.methods({
   },
   setPriority:{
     authentication:accessForTeamMembers,
-    method:RBAC.lib.setItem(Issues,'priority'),
+    method:setPriority,
   },
   setService:{
     authentication:accessForTeamMembers,
@@ -62,12 +62,21 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-  },  
-  setLevel:{
-    authentication:accessForTeamMembers,
   },
+  setDueDate:{
+    authentication:accessForTeamMembers,
+  } , 
   setArea:{
     authentication:accessForTeamMembers,
+    method:setArea
+  },
+  setSubarea:{
+    authentication:accessForTeamMembers,
+    method:setSubarea
+  },
+  setAreaIdentifier:{
+    authentication:accessForTeamMembers,
+    method:setAreaIdentifier
   },
   
   addMember:{
@@ -92,6 +101,43 @@ Issues.methods({
     method:setAssignee
   },
 })
+
+function setArea(request,area) {
+  //level = area, area = subarea
+  Issues.update(request._id,{$set:{
+    'level':area,
+    'area':0
+  }})
+}
+
+function setSubarea(request,subarea) {
+  if(request.level) {
+    Issues.update(request._id,{$set:{
+      'area':subarea
+    }})    
+  }
+}
+
+function setAreaIdentifier(request,identifier) {
+  if(request.area) {
+    Issues.update(request._id,{$set:{
+      'area.identifier':identifier
+    }})
+  }
+}
+
+function setPriority(request,priority) {
+  if(!request) {
+    return;
+  }
+  var newDueDate = makeDueDate(request,priority);
+  //should also update due date in this function
+  Issues.update(request._id,{$set:{
+    priority:priority,
+    urgent:(priority=="Urgent"||priority=="Critical"),
+    dueDate:newDueDate,
+  }})
+}
 
 function setSupplier(request,supplier) {
   if(!request) {
@@ -220,6 +266,15 @@ Issues.helpers({
   }
 });
 
+function makeDueDate(request,priority) {
+  if(!request.team) {
+    return new Date();
+  }
+  var team = Teams.findOne(request.team._id);
+  var timeframe = team.timeframes[priority]*1000;
+  var createdMs = request.createdAt.getTime();
+  return new Date(createdMs+timeframe);
+}
 
 Issues.helpers({
   //determines when to set stick and/or when to delete on page change
@@ -231,7 +286,28 @@ Issues.helpers({
   },
   getPotentialSuppliers:getPotentialSuppliers,
   getAssignee:getAssignee,
-  getSupplier:getSupplier
+  getSupplier:getSupplier,
+  isOverdue:function() {
+    return moment(this.dueDate).isBefore();
+  },
+  isFollowUp:function(){
+    return this.parent!=null;
+  },
+  isSticky:function(){/*
+    if(this.priority=="Urgent"||this.priority=="Critical") {
+      return "Urgent";
+    }
+    else if(this.isOverdue()) {
+      return "Overdue";
+    }
+    else if(this.isFollowUp()&&this.status==Issues.STATUS_NEW) {
+      return "Approval required";
+    }
+    else */if(this.sticky==true) {
+      return "Sticky";
+    }
+    return null;
+  }
 });
 
 Issues.helpers({

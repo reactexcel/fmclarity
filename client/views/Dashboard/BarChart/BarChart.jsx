@@ -111,6 +111,9 @@ BarChart = React.createClass({
     		var serviceName;
     		if(i.service&&i.service.name) {
     			serviceName = i.service.name;
+                if(serviceName.length>15) {
+                    serviceName = serviceName.substring(0,13)+'...';
+                }
     			if(!buckets[serviceName]) {
     				labels.push(serviceName);
     				buckets[serviceName] = [];
@@ -200,7 +203,7 @@ BarChart = React.createClass({
                 <div className="ibox-content">
                     <div style={{margin:"0px 25px 0px 0px"}}>
                         <div>
-                            <canvas id="bar-chart" height="250"></canvas>
+                            <canvas id="bar-chart"></canvas>
                         </div>
                     </div>
                 </div>

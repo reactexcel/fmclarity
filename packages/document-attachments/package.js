@@ -16,16 +16,20 @@ Package.onUse(function(api) {
 	api.use([
 		'react',
 		'less',
+		//'dburles:collection-helpers',
+		//'matb33:collection-hooks'
 	]);
 
 	api.addFiles([
 		'FileView.jsx',
 		'FileExplorerView.jsx',
+		'FileSchema.jsx',
 		'style.less',
 		'DocumentAttachments.jsx'
 	]);
 
 	api.export([
-		'DocAttachments'
+		'DocAttachments',
+		'FileSchema'
 	]);
 });

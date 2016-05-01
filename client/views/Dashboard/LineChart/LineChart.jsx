@@ -212,14 +212,14 @@ LineChart = React.createClass({
 	    	<div>
 		        <ActionsMenu items={this.getMenu()} icon="eye" />
 		        <div className="ibox-title">
-		        	<h2>Requests {this.data.title}</h2>
+		        	<h2>Request activity {this.data.title}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">
 			        	<div className="col-sm-12">
 			            	<div style={{margin:"0px 25px 30px 10px"}}>
 								<div id="line-chart-wrapper">
-								    <canvas id="line-chart" height="250"></canvas>
+								    <canvas id="line-chart"></canvas>
 								</div>
 					        </div>
 				        </div>

@@ -1,6 +1,22 @@
+FileMeta.schema(FileSchema);
 
+//this should be a wrapper for CollectionFS, then we can, in theory, unplug it in due course
+//come to think of it could have a wrapper for user as well - would fix that profile malarkey
 
-
+FileMeta.methods({
+  create:{
+    authentication:true,
+    method:RBAC.lib.create.bind(FileMeta)
+  },
+  save:{
+    authentication:true,
+    method:RBAC.lib.save.bind(FileMeta)
+  },
+  destroy:{
+    authentication:true,
+    method:RBAC.lib.destroy.bind(FileMeta)
+  }
+})
 
 if(Meteor.isServer){
 	Files.allow({
@@ -45,7 +61,7 @@ if(Meteor.isServer){
 
         /*Comment this out and Uncomment manual publishing to see publication issue*/
 
-        return Files.find();
+        return [Files.find(),FileMeta.find()];
 
     });
 

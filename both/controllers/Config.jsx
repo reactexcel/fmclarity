@@ -47,7 +47,7 @@ var navFMStaff = [{
 
 var navSupplier = [{
 	path:"requests",		
-	label:"Requests",
+	label:"Jobs",
 	icon:"fa fa-wrench"
 },{
 	path:"portfolio",		
@@ -68,12 +68,13 @@ var navTenant = [{
 Config.modules = {
 	fm:{
 		manager:navFM,
-		support:navFM,
+		'fmc support':navFM,
 		staff:navFMStaff,
 		tenant:navTenant,
 		contact:[],
 	},
 	contractor:{
+		'fmc support':navFM,
 		manager:navSupplier,
 		staff:navSupplier
 	}

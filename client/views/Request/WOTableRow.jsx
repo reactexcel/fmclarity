@@ -5,8 +5,8 @@ IssueSummary = React.createClass({
   mixins: [ReactMeteorData],
 
   getMeteorData() {
-    var issue = this.props.item;
-    if(!issue) {
+    var request = this.props.item;
+    if(!request) {
       return {
         ready:false
       }
@@ -18,12 +18,13 @@ IssueSummary = React.createClass({
       // get saved directly in the issue doucment (thumbnail etc)
       return {
         ready:true,
-        issue:issue,
-        facility:issue.getFacility(),
-        owner:issue.getOwner(),
-        supplier:issue.getSupplier(),
-        status:issue.status,
-        timeframe:issue.getTimeframe()
+        request:request,
+        facility:request.getFacility(),
+        team:request.getTeam(),
+        owner:request.getOwner(),
+        supplier:request.getSupplier(),
+        status:request.status,
+        timeframe:request.getTimeframe()
       }
     }
   },
@@ -39,7 +40,8 @@ IssueSummary = React.createClass({
 
   render() {
       if(this.data.ready) {
-        var request = this.item = this.data.issue;
+        var request = this.item = this.data.request;
+        var team = this.data.team;
         var facility = this.data.facility;
         var owner = this.data.owner;
         var supplier = this.data.supplier;
@@ -53,14 +55,14 @@ IssueSummary = React.createClass({
             <IssuePriority issue={request} />
             {/*<ContactAvatarSmall item={owner} />*/}
           </div>
-          {/*}
-          <div className="issue-summary-col issue-summary-col-2">
-            <ContactAvatarSmall item={supplier} />
-          </div>
-          */}
           <div className="issue-summary-col issue-summary-col-2">
             <span style={{marginRight:"2px"}} className={"label dropdown-label label-"+request.status}>{request.status}</span>
           </div>
+          {/*
+          <div className="issue-summary-col issue-summary-col-2">
+            <ContactAvatarSmall item={team} />
+          </div>
+          */}
           <div className="issue-summary-col issue-summary-col-3">
             <span className="issue-summary-facility-name">
               {facility?facility.name:null}
@@ -75,7 +77,7 @@ IssueSummary = React.createClass({
             :null}
           </div>          
           <div className="issue-summary-col issue-summary-col-6">
-            {issuedDate&&request.status!=Issues.STATUS_CLOSED?
+            {issuedDate?
               <span>{issuedDate.format("MMM Do, h:mm a")}</span>
             :null}
           </div>

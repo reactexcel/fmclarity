@@ -4,12 +4,7 @@ IssueSchema = {
   },
 
   priority:{
-    defaultValue:"Standard",
-    setter(priority) {
-      var team = this.getTeam();
-      this.priority = priority;
-      this.timeframe = team.getTimeframe(priority);
-    }
+    defaultValue:"Standard"
   },
 
   timeframe:{
@@ -49,6 +44,19 @@ IssueSchema = {
         code = team.getNextWOCode();
       }      
       return code;
+    }
+  },
+
+  dueDate:{
+    type:Date,
+    defaultValue:function(item) {
+      if(!item.team) {
+        return new Date();
+      }
+      var team = Teams.findOne(item.team._id);
+      var timeframe = team.timeframes['Standard']*1000;
+      var now = new Date();
+      return new Date(now.getTime()+timeframe);
     }
   },
 

@@ -14,9 +14,6 @@ DashboardPage = React.createClass({
 			        <div className="row" style={{margin:"5px 0 0 -20px"}}>
 			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
 				            <div className="ibox">
-				            	<DashboardOverview />
-				            </div>
-				            <div className="ibox">
 				            	<div className="ibox-content" style={{padding:"7px"}}>
 					            	<Calendar />
 					            </div>
@@ -26,6 +23,9 @@ DashboardPage = React.createClass({
 				            </div>
 				        </div>
 			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
+				            <div className="ibox">
+				            	<DashboardOverview />
+				            </div>
 				            <div className="ibox">
 						        <LineChart />
 				            </div>

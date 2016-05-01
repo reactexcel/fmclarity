@@ -93,7 +93,7 @@ function readyToOpen(request) {
     request.name&&request.name.length&&
     //request.description&&request.description.length&&
     request.facility&&request.facility._id&&
-    //request.area&&request.area.name&&request.area.name.length&&
+    request.level&&request.level.name&&request.level.name.length&&
     request.service&&request.service.name.length
   )        
 }
@@ -157,21 +157,18 @@ function generalRequestNotification(verb) {
  */
 function issue(request) {
 
-  var team = Teams.findOne(request.team._id);
-  var timeframe = team.timeframes[request.priority]*1000;
-  var createdMs = request.createdAt.getTime();
-
   var response = Meteor.call('Issues.save',request,{
-    dueDate:new Date(createdMs+timeframe),
     status:Issues.STATUS_ISSUED,
     issuedAt:new Date()
   });
   var request = Issues.findOne(response._id);
+  var watchers = request.getWatchers();
+  watchers[2] = null;
 
   request.sendNotification({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  });//might also call sendMessage depending on state of notification options
+  },watchers);//might also call sendMessage depending on state of notification options
 
   //var supplier = request.getSupplier();
   //a parellel functionality to sendNotification

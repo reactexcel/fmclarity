@@ -1,3 +1,69 @@
+Meteor.methods({
+	'Files.setMeta':function(fileId,meta) {
+		Files.update(fileId,{$set:{
+			meta:meta
+		}})
+	}
+})
+
+FileViewEdit = React.createClass({
+
+
+	mixins: [ReactMeteorData],
+
+    getMeteorData() {
+		var file = this.props.item;
+		var meta = FileMeta.findOne(file.meta);
+		if(!meta) {
+			meta = FileMeta.create({
+				file:{_id:file._id},
+				name:file.name()
+			});
+			file.meta = {_id:meta._id};
+			Meteor.call('Files.setMeta',file._id,{
+				_id:meta._id
+			});
+		}
+		return {
+			file:file,
+			url:file.url(),
+			meta:meta
+		}
+	},
+
+    downloadFile() {
+    	var win = window.open(this.data.url, '_blank');
+    	win.focus();
+    },
+
+    deleteFile() {
+		var message = confirm('Are you sure you want to delete this file?');
+    	if(message == true){
+	        this.data.file.remove();
+	        this.data.meta.destroy();
+			Modal.hide();
+			this.props.onChange(null);
+     	}
+    },
+
+	render(){
+		var file = this.data.file;
+		var meta = this.data.meta;
+		if(!meta) {
+			return <div/>
+		}
+		return (
+			<div>
+				<AutoForm schema={FileSchema} item={meta}/>
+				<div style={{paddingTop:"20px"}}>
+	              	<button type="button" onClick={this.downloadFile} className="btn btn-primary">Download</button>
+    	           	<button style={{marginLeft:"5px"}} type="button" onClick={this.deleteFile} className="btn btn-danger">Delete</button>
+    	        </div>
+			</div>
+		)
+	}
+})
+
 File = React.createClass({
 
 	mixins: [ReactMeteorData],
@@ -6,11 +72,12 @@ File = React.createClass({
 
 		Meteor.subscribe('File');
     	
-    	var query,file,name,url,extension,icon,isImage,progress;
+    	var query,file,name,url,extension,icon,isImage,progress,meta;
     	query = this.props.item;
     	file = Files.findOne(query);
     	if(file) {
     		url = file.url();
+    		meta = FileMeta.findOne(file.meta);
     		progress = file.uploadProgress();
     		extension = file.extension();
     		name = file.name();
@@ -21,6 +88,7 @@ File = React.createClass({
 	    }
     	return {
     		file:file,
+    		meta:meta,
     		name:name,
     		url:url,
     		extension:extension,
@@ -40,6 +108,12 @@ File = React.createClass({
 	    });
 	},
 
+	showFileDetailsModal() {
+		Modal.show({
+			content:<FileViewEdit item={this.data.file} onChange={this.props.onChange}/>
+		})
+	},
+
 	showImageInModal() {
         Modal.show({
             content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
@@ -55,6 +129,9 @@ File = React.createClass({
 		var message = confirm('Are you sure you want to delete this file?');
     	if(message == true){
 	        this.data.file.remove();
+	        if(this.data.meta) {
+		        this.data.meta.destroy();
+		    }
 			this.props.onChange(null);
      	}
     },
@@ -64,7 +141,8 @@ File = React.createClass({
 			this.showImageInModal()
 		}
 		else if(this.data.file) {
-			this.downloadFile();
+			this.showFileDetailsModal();
+			//this.downloadFile();
 		}
 		else {
 			$(this.refs.input).click();			

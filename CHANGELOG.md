@@ -1,6 +1,16 @@
 CHANGELOG.md
 ============
 
+**v1.0.4b**
+
+* Rearrangement of wo details view to accomodate due date
+* Due date selectable on work order detail form
+* New auto stick items: urgent, critical, overdue [removed]
+* Updated user invitation text
+* Added new "fmc support" role with manager privileges but not show in wos
+* Put due date on work order form and it gets prefilled according to priority but you can select a custom date.
+* Can attach metadata to files
+
 **v1.0.3b**
 
 * Staff no longer see dash or suppliers
@@ -11,6 +21,9 @@ CHANGELOG.md
 * Dashboard: Added responsive sizing to line and bar graph on
 * All portfolios now show both added facilities and the facilities attached to wos issues to team
 * All suppliers/clients screens show both added suppliers and teams who have assigned issues
+* Created separate "FileExplorer" package in preparation for file handling improvements
+* Dashboard: Truncated labels
+* Notifications for all new work orders to all managers
 
 **v1.0.2b**
 

@@ -1,7 +1,10 @@
 AutoInput.mdtextarea = React.createClass({
 
 	componentDidMount() {
-		$(this.refs.input).elastic();
+		var component = this;
+		setTimeout(function(){
+			$(component.refs.input).elastic();
+		},400);
 	},
 
 	handleChange(event) {

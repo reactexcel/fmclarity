@@ -7,6 +7,11 @@ ORM = {
 		else {
 			collection = name;
 		}
+		collection.allow({
+			insert:function(){
+				return true;
+			}
+		})
 		_.extend(collection,{
 			schema:function(newSchema){
 				if(newSchema) {
@@ -45,12 +50,14 @@ ORM = {
 		})
 		// shouldn't this be createdDate?
 		// and shouldn't it be somewhere else?
-		collection.before.insert(function (userId, doc) {
-			if(!doc.createdAt) {
-				doc.createdAt = moment().toDate();
-			}
-		});
-		return collection;
+		if(collection.before) {
+			collection.before.insert(function (userId, doc) {
+				if(!doc.createdAt) {
+					doc.createdAt = moment().toDate();
+				}
+			});
+			return collection;
+		}
 	},
 }
 
@@ -59,6 +66,7 @@ function createNewItemUsingSchema(schema,item,callback,usingSubSchema) {
 	// actually it is - in the "new" method
 	//set up flags and owner
 	var newItem = {};
+	item = item||{};
 	if(!usingSubSchema) {
 		var user = Meteor.user();
 		newItem.isNewItem = true;

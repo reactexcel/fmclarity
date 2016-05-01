@@ -1,7 +1,14 @@
 ContactViewName = React.createClass({
 	render() {
 		var contact = this.props.item || {};
-		var name = contact.getName?contact.getName():contact.name;
+		var name;
+		if(_.isString(contact)) {
+			name = contact;
+		}
+		else {
+			name = contact.getName?contact.getName():contact.name;
+		}
+
 		return (
 			<span>{name}</span>
 		)
@@ -99,8 +106,9 @@ Contact2Line = React.createClass({
 
 Contact2LineWithAvatar = React.createClass({
 	render() {
-		var contact, profile;
+		var contact, profile, role;
 		contact = this.props.item;
+		role = this.props.role;
 		if(contact) {
 			profile = contact.getProfile();
 		}
@@ -113,7 +121,7 @@ Contact2LineWithAvatar = React.createClass({
 					<ContactAvatarSmall item={contact} />
 				</span>
 				<span className="contact-card-2line-text">
-		        	{profile.name} {profile.role?<span className="label label-default pull-right">{profile.role}</span>:null}<br/>
+		        	{profile.name} {role?<span className="label label-default pull-right">{role}</span>:null}<br/>
 		        	<span style={{fontSize:"11px",color:"#777"}}>
 
 		            	{profile.email?
@@ -199,18 +207,18 @@ ContactCard = React.createClass({
 		var role;
 		if(this.props.team) {
 			role = RBAC.getRole(contact,this.props.team);
-			profile.role = role;
+			//profile.role = role;
 		}
 		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (
-				<ContactAvatarSmall item={contact}/>
+				<ContactAvatarSmall item={contact} role={role}/>
 			);
 			case '1-line':return (
-				<Contact1Line item={contact}/>
+				<Contact1Line item={contact} role={role}/>
 			);
 			default:return (
-				<Contact2LineWithAvatar item={contact}/>
+				<Contact2LineWithAvatar item={contact} role={role}/>
 	        );
 		}
 	}

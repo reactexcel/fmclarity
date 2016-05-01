@@ -91,7 +91,7 @@ Facilities.helpers({
   	return availableServices;
   },
   getPrimaryContact() {
-    var contacts = this.getMembers({role:"contact"});
+    var contacts = this.getMembers();
   	if(contacts&&contacts.length) {
       return contacts[0]
     }

@@ -32,9 +32,11 @@ AutoInput.date = React.createClass({
 				:null
 			}
 			<input 
+				style={{border:"none",outline:"none",backgroundColor:"transparent"}}
 				type="datetime-local"
 				ref="input"
-				defaultValue={convertedValue} 
+				value={convertedValue} 
+				readOnly={this.props.readOnly}
 				onChange={this.handleChange}
 			/>
 			</div>
