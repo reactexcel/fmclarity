@@ -63,9 +63,9 @@ function loginWithToken(token,callback) {
 				//console.log(foundToken);
 				expired = moment(foundToken.expiry).isBefore();
 				if(!expired) {
-					console.log({
+					/*console.log({
 						"all good":user
-					})
+					})*/
 					loginWithoutPassword(user,callback);
 				}
 				else {
