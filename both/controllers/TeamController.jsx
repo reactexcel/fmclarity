@@ -5,6 +5,16 @@ Teams.schema(TeamSchema);
 
 DocThumb.register(Teams,{repo:Files});
 
+DocMembers.register(Teams,{
+  fieldName:"members",
+  authentication:AuthHelpers.managerOrOwner
+});
+
+DocMembers.register(Teams,{
+  fieldName:"suppliers",
+  authentication:AuthHelpers.managerOrOwner
+});
+
 DocMessages.register(Teams,{
   getWatchers:function() {
     return this.getMembers({role:"manager"});
@@ -52,26 +62,15 @@ Teams.methods({
     authentication:AuthHelpers.managerOrOwner,
     method:inviteMember,
   },
-  addMember:{
-    authentication:AuthHelpers.managerOrOwner,
-    method:RBAC.lib.addMember(Teams,'members')
-  },
-  removeMember:{
-    authentication:AuthHelpers.managerOrOwner,
-    method:RBAC.lib.removeMember(Teams,'members')
-  },
-  setMemberRole:{
-    authentication:function(role,user,team,args){
-      var victim = args[1];
-      return AuthHelpers.managerOrOwner(role,user,team)&&user._id!=victim._id;
-    },
-    method:setMemberRole
-  },
-/*
+
+
+
+
   inviteSupplier:{
     authentication:AuthHelpers.manager,
     method:inviteSupplier,
   },
+  /*
   addSupplier:{
     authentication:AuthHelpers.manager,
     method:RBAC.lib.addMember(Teams,'suppliers')
@@ -80,8 +79,7 @@ Teams.methods({
     authentication:AuthHelpers.manager,
     method:RBAC.lib.removeMember(Teams,'suppliers')
   },
-*/
-
+  */
 
   addFacility:{
     authentication:AuthHelpers.manager,
@@ -99,6 +97,43 @@ Teams.methods({
     authentication:AuthHelpers.manager,
   }
 });
+
+function getSuppliers() {
+  var ids=[];
+
+  if(this.suppliers&&this.suppliers.length) {
+    this.suppliers.map(function(s){
+      ids.push(s._id);
+    })
+  }
+
+  var issues = this.getIssues();
+  if(issues&&issues.length) {
+    issues.map(function(i){
+      if(i.team) {
+        ids.push(i.team._id);
+      }
+    })
+  }
+
+  return Teams.find({_id:{$in:ids}},{sort:{name:1,_id:1}}).fetch();
+}
+
+function inviteSupplier(team,email,ext) {
+  var supplier;
+  supplier = Teams.findOne({email:email});
+  if(!supplier) {
+    supplier = Meteor.call("Teams.create",{
+      type:"contractor",
+      email:email
+    });
+    supplier = Teams.findOne(supplier._id);
+  }
+
+  //its a subscription issue!!!!
+  Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
+  return supplier;
+}
 
 function createRequest(team,options) {
   team = Teams._transform(team);
@@ -142,11 +177,6 @@ function inviteMember(team,email,ext) {
   }
 }
 
-// this moved to same location as other member functionality
-function setMemberRole(team,user,role) {
-  Teams.update({_id:team._id,"members._id":user._id},{$set:{"members.$.role":role}});
-}
-
 function addFacility(team,facility) {
   facility = facility||{};
   facility.team = {
@@ -182,16 +212,6 @@ Teams.helpers({
     return this.name==null||this.name.length==0;
   },
 
-
-  getRole(user) {
-    for(var i in this.members) {
-      var member = this.members[i];
-      if(member&&user&&member._id==user._id) {
-        return member.role;
-      }
-    }
-  },
-
   getProfile() {
     return this;
   },
@@ -207,6 +227,8 @@ Teams.helpers({
     return timeframe;
   },
   
+  getSuppliers:getSuppliers,
+
   getNextWOCode(){
     if(!this.counters) {
       this.counters = {};

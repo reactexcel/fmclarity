@@ -2,6 +2,17 @@ Facilities.schema(FacilitySchema);
 
 DocThumb.register(Facilities,Files);
 
+DocMembers.register(Facilities,{
+  fieldName:"members",
+  authentication:AuthHelpers.managerOfRelatedTeam,
+});
+
+DocMembers.register(Facilities,{
+  fieldName:"suppliers",
+  authentication:AuthHelpers.managerOfRelatedTeam,
+  membersCollection:Teams
+});
+
 Facilities.methods({
   create:{
     authentication:AuthHelpers.managerOfRelatedTeam,
@@ -15,25 +26,21 @@ Facilities.methods({
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.destroy.bind(Facilities)
   },
-  addMember:{
-    authentication:AuthHelpers.managerOfRelatedTeam,
-    method:RBAC.lib.addMember(Facilities,'members')
-  },
-  removeMember:{
-    authentication:AuthHelpers.managerOfRelatedTeam,
-    method:RBAC.lib.removeMember(Facilities,'members')
-  }
+
 })
 
 // how would it be if these went in the schema?
 // would make RBAC a lot easier
 Facilities.helpers({
+
   getIssues() {
   	return Issues.find({"facility._id":this._id}).fetch();
   },
+
   getTeam() {
     return Teams.findOne(this.team._id);
   },  
+
   setTeam(team) {
   	this.save({
   		team:{
@@ -42,13 +49,16 @@ Facilities.helpers({
   		}
   	})
   },
+
   isNew() {
   	return this.name==null||this.name.length==0;
   },
+
   getName() {
   	//return this.name?(this.name+', '+this.address.city):'';
   	return this.name;
   },
+
   getAddress() {
     var str = '';
   	var a = this.address;
@@ -60,56 +70,18 @@ Facilities.helpers({
     }
     return str;
   },
-  getAreas() {
-  	var areas = [];
-  	for(var areaGroupNum in this.areas) {
-  		var areaGroup = this.areas[areaGroupNum];
-  		var levelsLikeThis = parseInt(areaGroup.data?areaGroup.data.number:1);
-  		for(var level=1;level<=levelsLikeThis;level++) {
-	  		for(var areaNum in areaGroup.children) {
-	  			var area = areaGroup.children[areaNum];
-	  			var name = area.name;
-	  			if(levelsLikeThis>1) {
-	  				name = ('Level '+level+': ')+name;
-	  			}
-	  			areas.push({
-	  				name:name
-	  			});
-	  		}
-	  	}
-  	}
-  	return areas;
-  },
-  getAvailableServices(parent) {
-    var services;
 
-    //if indexing children of another service
-    if(parent) {
-      services = parent.children;
-    }
-    //else merge team services with facility services
-    else if(this.services) {
-      services = this.services;
-      var team = this.getTeam();
-      if(team&&team.servicesRequired) {
-        services = services.concat(team.servicesRequired);
-      }
-      services.sort(function(a,b){
-        return (a.name>b.name)?1:-1;
-      })
-      services = _.uniq(services,true,function(i){return i.name});
-    }
-
-    //add only active services to available list
-  	var availableServices = [];
-  	services?services.map(function(service){
-  		if(service.active) {
-  			availableServices.push(service);
-  		}
-  	}):null;
-  	return availableServices;
+  getAreas(parent) {
+    return mergeWithTeamArray(this,'areas',parent);
   },
 
+  getServices(parent) {
+    return mergeWithTeamArray(this,'servicesRequired',parent);
+  },
+
+  getAllSuppliers() {
+    return mergeWithTeamArray(this,'suppliers');
+  },
 
   getPrimaryContact() {
     var contacts = this.getMembers();
@@ -117,19 +89,31 @@ Facilities.helpers({
       return contacts[0]
     }
   },
+
   getIssueCount() {
   	return Issues.find({"facility._id":this._id}).count();
-  },
-  getLocation() {
-  	if(this.address) {
-  		var a = this.address;
-	  	return a.streetNumber+' '+a.streetName+', '+a.city;
-	}
-  },
-  getBuildingAndLocation() {
-  	if(this.address) {
-  		return this.address.buildingName+'-'+this.getLocation();
-  	}
-  },
+  }
+
 });
 
+function mergeWithTeamArray(item,field,parent) {
+    var items;
+
+    //if indexing children of another service
+    if(parent) {
+      items = parent.children;
+    }
+    //else merge team services with facility services
+    else {
+      items = item[field]?item[field]:[];
+      var team = item.getTeam();
+      if(team&&team[field]) {
+        items = items.concat(team[field]);
+      }
+      items.sort(function(a,b){
+        return (a.name>b.name)?1:-1;
+      })
+      items = _.uniq(items,true,function(i){return i.name});
+    }
+    return items;
+}

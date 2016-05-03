@@ -31,8 +31,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:actionOpen,
-    notification:generalRequestNotification("created")
+    method:actionOpen
   },
   issue:{
     method:issue,
@@ -136,6 +135,16 @@ function readyToCancel(request) {
  */
 function actionOpen (request) {
   var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+
+  var request = Issues.findOne(response._id);
+  var watchers = request.getWatchers();
+  watchers[2] = null;
+
+  request.sendNotification({
+    verb:"created",
+    subject:"Work order #"+request.code+" has been created",
+  },watchers);//might also call sendMessage depending on state of notification options
+
   return Issues.findOne(response._id);
 }
 
@@ -324,7 +333,7 @@ function reverse(request) {
 
   var newRequest = _.omit(request,'_id');
   _.extend(newRequest,{
-    status:"Reverse",
+    status:"Reversed",
     code:'R'+request.code,
     exported:false,
     costThreshold:request.costThreshold*-1,

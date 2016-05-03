@@ -4,23 +4,20 @@ FacilityViewEdit = React.createClass({
 
     getMeteorData() {
     	Meteor.subscribe('users');
-		var facility, schema, team, tenants, staff, config;
+		var facility, schema, team, suppliers;
 		facility = this.props.item;
 		schema = Facilities.schema();
 		if(facility){
 			team = facility.getTeam();
-			//staff = facility.getContacts();
-			//tenants = facility.getTenants();
-
-			staff = facility.getMembers({role:"staff"});
-			tenants = facility.getMembers({role:"tenant"});
+			suppliers = facility.getSuppliers();
+			members = facility.getMembers();
 			return {
 				ready:true,
 				facility:facility,
-				team:facility.getTeam(),
+				team:team,
 				schema:schema,
-				staff:staff,
-				tenants:tenants
+				members:members,
+				suppliers:suppliers,
 			}
 		}
 		return {
@@ -38,14 +35,17 @@ FacilityViewEdit = React.createClass({
 		this.data.facility.addMember(member,ext);
 	},
 
+	addSupplier(ext,supplier) {
+		this.data.facility.addSupplier(supplier,ext);
+	},
+
 	render() {
 		var ready = this.data.ready;
 		if(!ready) return (<div/>);
 
 		var facility = this.data.facility;
-		var tenants = this.data.tenants;
-		var staff = this.data.staff;
 		var members = this.data.members;
+		var suppliers = this.data.suppliers;
 		var schema = this.data.schema;
 		var team = this.data.team;
 
@@ -70,38 +70,35 @@ FacilityViewEdit = React.createClass({
 			        	</div>
 			        </div>
 				</CollapseBox>
-				<CollapseBox title="Documents & images">
+				<CollapseBox title="Files">
 					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
-				<CollapseBox title="Staff">
+				<CollapseBox title="Members">
 			   		<ContactList 
-			   			items={staff}
-			   			//items={members}
+			   			items={members}
 			   			facility={facility}
-			   			role="staff"
 			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
-				<CollapseBox title="Tenants">
+				<CollapseBox title="Suppliers">
 			   		<ContactList 
-			   			items={tenants} 
-			   			//items={members}
+			   			items={suppliers}
 			   			facility={facility}
-			   			role="tenant"
-			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
+			   			type="team"
+			   			onAdd={team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
 			   		/>
 				</CollapseBox>
+				{/*
 				<CollapseBox title="Lease particulars" collapsed={true}>
 				    <AutoForm item={facility} schema={schema} form={['lease']}/>
 				</CollapseBox>
-				{/*
 				<CollapseBox title="Building areas" collapsed={true}>
 					<FacilityAreas item={facility}/>
 				</CollapseBox>
+				*/}
 				<CollapseBox title="Default services & suppliers" collapsed={true}>
 					<ServicesSelector item={facility}/>
 				</CollapseBox>
-				*/}
 			</div>
 		)
 	}

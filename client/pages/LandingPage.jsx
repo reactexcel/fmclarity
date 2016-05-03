@@ -7,7 +7,7 @@ LandingPage = React.createClass({
     	user = Meteor.user();
     	team = Session.getSelectedTeam();
     	if(user&&team) {
-    		role = team.getRole(user);
+    		role = team.getMemberRole(user);
     	}
         if(role) {
             var modules = Config.modules[team.type][role];

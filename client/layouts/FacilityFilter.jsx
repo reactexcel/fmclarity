@@ -10,7 +10,7 @@ FacilityFilter = React.createClass({
                 return {
                     user : user,
                     team : team,
-                    facility : user.getSelectedFacility(),
+                    facility : Session.getSelectedFacility(),
                     facilities : team.getFacilities()
                 }
             }

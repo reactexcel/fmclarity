@@ -3,7 +3,7 @@ WOServiceSelector = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var request,team,facility,supplier,assignee;
+    	var request,team,facility,supplier,assignee,services;
     	request = this.props.item;
     	if(request) {
     		team = request.getTeam();
@@ -11,6 +11,9 @@ WOServiceSelector = React.createClass({
     		supplier = request.getSupplier();
     		assignee = request.getAssignee();
     	}
+        if(facility) {
+            services = facility.getServices();
+        }
         return {
         	request:request,
             facility:facility,
@@ -19,8 +22,8 @@ WOServiceSelector = React.createClass({
             supplier:supplier,
             assignee:assignee,
 
-            services:facility?facility.getAvailableServices():null,
-            subservices:(facility&&request.service)?facility.getAvailableServices(request.service):null,
+            services:services,
+            subservices:(facility&&request.service)?facility.getServices(request.service):null,
 
            	suppliers:request.getPotentialSuppliers(),
            	allSuppliers:team?team.getSuppliers():null,

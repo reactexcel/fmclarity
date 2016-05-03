@@ -18,19 +18,44 @@ Meteor.publish('facilities',function(){
 	return Facilities.find();
 });
 
+Meteor.publish('suppliersForTeam',function(teamId,numSuppliers){
+	var team = Teams.findOne(teamId);
+	var supplierIds = [];
+
+	if(team.suppliers&&team.suppliers.length) {
+		team.suppliers.map(function(s) {
+			supplierIds.push(s._id);
+		})
+	}
+
+	return Teams.find({_id:{$in:supplierIds}},{sort:{name:1,_id:1},limit:numSuppliers});
+});
+
 Meteor.publish('teamsAndFacilitiesForUser', function () {
 //probably should be ... Meteor.publish('teamsAndFacilitiesForUser', function (user) {
 	//console.log('updating subscription');
-	var teams, facilities, issues;
+	var teams, facilities, issues, suppliers;
 
-	//compile an array of the ids of all of the teams that the current member is in
+	//teams I am a member in
 	teams = Teams.find({"members._id":this.userId});
 	var teamIds = [];
 	var teamNames = [];
+	//var supplierIds = [];
 	teams.forEach(function(t){
 		teamIds.push(t._id);
 		teamNames.push(t.name);
+		//need to see all suppliers of our teams as well
+		//if(t.suppliers&&t.suppliers.length) {
+			//t.suppliers.map(function(s) {
+				//supplierIds.push(s._id);
+			//})
+		//}
 	});
+
+	//suppliers = Teams.find({_id:{$in:supplierIds}});
+
+	//console.log('looked again');
+
 	//find all of the issues that are for those teams, either as a creator or a supplier
 	issues = Issues.find({$or:[
 		{$or:[
@@ -73,5 +98,5 @@ Meteor.publish("singleRequest",function(id){
 });
 
 Meteor.publish("contractors",function() {
-	return Teams.find(/*{type:"contractor"}*/);
+	return Teams.find({},{sort:{name:1,_id:1}});
 });

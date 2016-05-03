@@ -18,7 +18,7 @@ Package.onUse(function(api) {
 	]);
 
 	api.addFiles([
-		'DocumentMessages.js',
+		'DocMessages.js',
 		'methods.js',
 		'views/InboxView.jsx',
 		'views/MessagePage.jsx',

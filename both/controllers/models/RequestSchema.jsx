@@ -110,10 +110,6 @@ IssueSchema = {
   members: {
     type: [Object],
     label:"Members",
-    //setter and getter can come from ORM.helpers
-    relationship:{
-      hasMany:Users
-    },
     defaultValue:membersDefaultValue
   }
 }

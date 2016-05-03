@@ -1,17 +1,29 @@
 CHANGELOG.md
 ============
 
-**v1.1.1b-03**
+**v1.2.0b**
 
+* Members functionality split out into separate package used for team members, facility members and facility suppliers
+* Can add suppliers to facilities from facility edit screen
+* Can fiter suppliers by facility on suppliers page
+* Can remove suppliers from a facility on suppliers page
+* Can toggle facility members roles between staff and manager
 
+**v1.1.2b**
+
+* WO table shows WO code
+
+* Differentiate between services required and services provided
+* Have master areas in team
+* Have master services in team
+* Have master suppliers in team
+* Facility members, not separate staff and managers
+* Have local suppliers in facility
+* Suppliers added from services screen
 
 **v1.1.1b**
 
 * Teams contain a master service list that gets merged with individual facility services
-
-///waitasecond - this will cause a clash with the services provided list!
-//////rename servicesRequired and servicesProvided
-
 * Services sorted alphabetically in wo dropdown
 
 **v1.0.4b**

@@ -89,69 +89,10 @@ TeamSchema = {
   //these could be defined as a hasMany relationship
   members: {
     type: [Object],
-    relationship:{
-      hasMany:Users
-    },
     label:"Members"
   },
   suppliers: {
     type: [Object],
-    label: "Suppliers",
-    helpers: {
-      getSuppliers:getSuppliers
-    },
-    actions:{
-      /*
-      getSuppliers:{
-        helper:RBAC.lib.getMembers(Teams,'suppliers'),
-      },
-      */
-      inviteSupplier:{
-        authentication:AuthHelpers.manager,
-        method:inviteSupplier
-      },
-      addSupplier:{
-        authentication:AuthHelpers.manager,
-        method:RBAC.lib.addMember(Teams,'suppliers'),
-      },
-      removeSupplier:{
-        authentication:AuthHelpers.manager,
-        method:RBAC.lib.removeMember(Teams,'suppliers'),
-      },
-    }
+    label: "Suppliers"
   }
-}
-
-function getSuppliers() {
-  var ids=[];
-
-  if(this.suppliers&&this.suppliers.length) {
-    this.suppliers.map(function(s){
-      ids.push(s._id);
-    })
-  }
-
-  var issues = this.getIssues();
-  if(issues&&issues.length) {
-    issues.map(function(i){
-      if(i.team) {
-        ids.push(i.team._id);
-      }
-    })
-  }
-
-  return Teams.find({_id:{$in:ids}},{sort:{name:1}}).fetch();
-}
-
-function inviteSupplier(team,email,ext) {
-  var supplier;
-  supplier = Teams.findOne({email:email});
-  if(!supplier) {
-    supplier = Meteor.call("Teams.create",{
-      type:"contractor",
-      email:email
-    });
-  }
-  Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
-  return supplier;
 }

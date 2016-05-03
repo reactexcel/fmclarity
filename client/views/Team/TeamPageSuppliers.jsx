@@ -4,21 +4,27 @@ SupplierIndexPage = React.createClass({
 
     getMeteorData() {
         Meteor.subscribe('contractors');
+        Meteor.subscribe('teamsAndFacilitiesForUser');
         var team, suppliers;
         team = Session.getSelectedTeam();
-        if(team) {
+        facility = Session.getSelectedFacility();
+        if(facility) {
+            suppliers = facility.getSuppliers();
+        }
+        else if(team) {
             suppliers = team.getSuppliers();
         }
         return {
         	team : team,
-            suppliers : suppliers
+            suppliers : suppliers,
+            facility : facility
 //            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
         }
     },
 
     showModal(callback) {
         Modal.show({
-            content:<TeamViewEdit onChange={callback} />
+            content:<TeamViewEdit facility={this.data.facility} onChange={callback} />
         })
     },
 
@@ -26,11 +32,11 @@ SupplierIndexPage = React.createClass({
         var team = this.data.team;
 		return(
             <div>
-                {/*<div className="row wrapper page-heading">
+                <div className="row wrapper page-heading">
                     <div className="col-lg-12">
-                        <span style={{color:"#333",fontWeight:"bold",fontSize:"16px",lineHeight:"40px",marginLeft:"20px"}}>Suppliers</span>
+                        <FacilityFilter title="Suppliers"/>
                     </div>
-                </div>*/}
+                </div>
     	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
     				<FilterBox2 
     					items={this.data.suppliers}

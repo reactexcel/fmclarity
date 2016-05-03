@@ -8,6 +8,7 @@ fmc:rbac
 fmc:orm
 fmc:document-thumbs
 fmc:doc-attachments
+fmc:doc-members
 fmc:login-tokens
 fmc:document-messages
 
