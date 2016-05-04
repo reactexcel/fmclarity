@@ -30,21 +30,45 @@ Meteor.methods({
         var html = ReactDOMServer.renderToStaticMarkup (element);
         var address = user.emails[0].address;
         var to = user.name?(user.name+" <"+address+">"):address;
+        var subject = (message.subject||"FM Clarity notification");
 
-        var email = {
-            bcc :["leo@fmclarity.com","rich@fmclarity.com"],
-            from:"FM Clarity <no-reply@fmclarity.com>",
-            subject:(message.subject||"FM Clarity notification"),
-            html:html
+        var email, devMsg;
+
+        devMsg = {
+          to:["leo@fmclarity.com","rich@fmclarity.com"]
         }
 
         if(FM.inProduction()) {
-          message.to = to;
+
+          email = {
+              to:to,
+              from:"FM Clarity <no-reply@fmclarity.com>",
+              subject:subject,
+              html:html
+          }
+          Email.send(email);
+
+          devMsg.from = "FM Outgoing Message Alert <no-reply@fmclarity.com>";
+          devMsg.subject = "["+to+"]"+subject;
+          devMsg.html = 
+            "***Message sent to "+to+"***<br/><br/>"+
+            html+
+            "<br/>******<br/>"+
+            JSON.stringify(message)+"<br/>"+
+            JSON.stringify(email)+"<br/>";
         }
+
         else {
-          email.subject = "[to:"+to+"]"+email.subject;
+          devMsg.from = "FM Test Message <no-reply@fmclarity.com>";
+          devMsg.subject = "["+to+"]"+subject;
+          devMsg.html = 
+            "***Test message incercepted for:"+to+"***<br/><br/>"+
+            html+
+            "<br/>******<br/>"+
+            JSON.stringify(message)+"<br/>"
         }
-        Email.send(email);
+
+        Email.send(devMsg);
       }
     })}
   }

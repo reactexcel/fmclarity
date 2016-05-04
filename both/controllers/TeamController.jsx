@@ -243,13 +243,14 @@ Teams.helpers({
   },
 
   getAvailableServices(parent) {
+    console.log(this.services);
     var services = parent?parent.children:this.services;
     var availableServices = [];
     if(!services) {
       return;
     }
     services.map(function(service){
-      if(service.available) {
+      if(service.active) {
         availableServices.push(service);
       }
     });

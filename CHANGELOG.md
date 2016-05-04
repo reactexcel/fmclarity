@@ -8,6 +8,9 @@ CHANGELOG.md
 * Can fiter suppliers by facility on suppliers page
 * Can remove suppliers from a facility on suppliers page
 * Can toggle facility members roles between staff and manager
+* Changed developer alert email format
+* Fixed a problem that was causing suppliers to filter incorrectly
+* Team card:Fixed a problem that was causing supplier services to not diplay
 
 **v1.1.2b**
 
