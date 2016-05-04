@@ -9,8 +9,8 @@ TeamViewEdit = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var team,members;
-    	team = this.state.item;
+    	var supplier,members;
+    	supplier = this.state.item;
 
 		var form1 = [
 			"name",
@@ -21,9 +21,9 @@ TeamViewEdit = React.createClass({
 		];
 		var form2 = [];
 
-    	if(team) {
-    		members = team.getMembers();
-    		if(team.type=="fm") {
+    	if(supplier) {
+    		members = supplier.getMembers();
+    		if(supplier.type=="fm") {
     			form2.push("address")
     			form2.push("defaultWorkOrderValue");
     		}
@@ -32,8 +32,9 @@ TeamViewEdit = React.createClass({
     		}
     	}
     	return {
-    		selectedTeam:Session.getSelectedTeam(),
-    		team:team,
+    		team:this.props.team||Session.getSelectedTeam(),
+    		facility:this.props.facility,
+    		supplier:supplier,
     		members:members,
     		form1:form1,
     		form2:form2
@@ -65,19 +66,27 @@ TeamViewEdit = React.createClass({
 
 	handleInvite(event) {
     	event.preventDefault();
-    	var selectedTeam,input,email,regex,component;
-    	component = this;
-		selectedTeam = this.data.selectedTeam;
-    	input = this.refs.invitationEmail;
-    	email = input.value;
-    	regex = /.+@.+\..+/i
+    	var component = this;
+		var team = this.data.team;
+		var facility = this.data.facility;
+    	var input = this.refs.invitationEmail;
+    	var email = input.value;
+    	var regex = /.+@.+\..+/i
     	if(!regex.test(email)) {
     		alert('Please enter a valid email address');
     	}
     	else {
             input.value = '';
-            selectedTeam.inviteSupplier(email, null, function(supplier){
-            	supplier = Teams.findOne(supplier._id);
+            team.inviteSupplier(email, null, function(supplier){
+            	//console.log(supplier);
+            	supplier = Teams._transform(supplier);
+            	if(facility) {
+            		facility.addSupplier(supplier);
+            	}
+            	//is not being found
+            	//is a subscription issue??
+            	//supplier = Teams.findOne(supplier._id);
+            	//console.log(supplier);
             	component.setItem(supplier);
             	if(component.props.onChange) {
             		component.props.onChange(supplier);
@@ -90,12 +99,12 @@ TeamViewEdit = React.createClass({
     },
 
 	render() {
-    	var selectedTeam,team,members,schema;
-    	team = this.state.item;
+    	var team,supplier,members,schema;
+    	supplier = this.state.item;
     	members = this.data.members;
-    	selectedTeam = this.data.selectedTeam;
+    	team = this.data.team;
 		schema = Teams.schema();
-		if(!team) {
+		if(!supplier) {
 			return (
                 <form className="form-inline">
                     <div className="form-group">
@@ -106,43 +115,43 @@ TeamViewEdit = React.createClass({
                 </form>
             )
 		}
-		else if(!team.canSave()) {
+		else if(!supplier.canSave()) {
 			return (
-				<TeamViewDetail item={team} />
+				<TeamViewDetail item={supplier} />
 			)
 		}
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
-            	<h2><span>{team.getName()}</span></h2>
+            	<h2><span>{supplier.getName()}</span></h2>
 		   		<CollapseBox title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-sm-7">
-			        		<AutoForm item={team} schema={schema} form={this.data.form1} />
+			        		<AutoForm item={supplier} schema={schema} form={this.data.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<DocThumb.File item={team.thumb} onChange={team.setThumb.bind(team)} />
+			        		<DocThumb.File item={supplier.thumb} onChange={supplier.setThumb.bind(supplier)} />
 			        	</div>
 			        	<div className="col-sm-12">
-				        	<AutoForm item={team} schema={schema} form={this.data.form2} />
+				        	<AutoForm item={supplier} schema={schema} form={this.data.form2} />
 				        </div>
 			        </div>
 		        </CollapseBox>
-		        {team.type=="contractor"?
+		        {supplier.type=="contractor"?
 				<CollapseBox title="Documents & images">
-					<AutoForm item={team} schema={schema} form={["attachments"]}/>
+					<AutoForm item={supplier} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
 				:null}
 				<CollapseBox title="Members">
 			   		<ContactList 
 			   			items={members}
-			   			team={team}
-			   			onAdd={team.canInviteMember()?team.addMember.bind(team):null}
+			   			team={supplier}
+			   			onAdd={supplier.canInviteMember()?supplier.addMember.bind(supplier):null}
 			   		/>
 				</CollapseBox>
 				{/*
 			   	<CollapseBox title="Services Provided" collapsed={true}>
-			      	<ServicesSelector item={team} save={team.set.bind(team,"services")}/>
+			      	<ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
 				</CollapseBox>
 				*/}
 			</div>

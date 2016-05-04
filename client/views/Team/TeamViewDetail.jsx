@@ -9,7 +9,8 @@ TeamViewDetail = React.createClass({
 	    	profile = team.getProfile();
 	    }
 	    if(team.getAvailableServices) {
-	    	availableServices = team.getAvailableServices();	    	
+	    	availableServices = team.getAvailableServices();	
+	    	//console.log(availableServices);    	
 	    }
 	    var members = team.getMembers({role:"manager"});
 	    if(members&&members.length) {

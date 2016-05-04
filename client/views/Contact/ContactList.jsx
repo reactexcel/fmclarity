@@ -1,10 +1,14 @@
 ContactList = React.createClass({
 
     showModal(selectedUser) {
-    	if(selectedUser&&selectedUser.collectionName=="Team") {
+    	var type = this.props.type;
+    	if(type=="team"||(selectedUser&&selectedUser.collectionName=="Team")) {
 	        Modal.show({
 	            content:<TeamCard 
 	            	item={selectedUser} 
+	            	team={this.props.team}
+	            	facility={this.props.facility}
+	            	role={this.props.role}
 	            	onChange={this.handleAdd} 
 	            />
 	        })

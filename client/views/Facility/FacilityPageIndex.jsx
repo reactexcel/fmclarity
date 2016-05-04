@@ -3,13 +3,14 @@ FacilityIndexPage = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	Meteor.subscribe('teamsAndFacilitiesForUser');
+    	Meteor.subscribe('teamsAndFacilitiesForUser');//for some reason this isn't picking up my contractors
         Meteor.subscribe('users');
     	var user, selectedTeam, selectedFacility, facilties;
     	user = Meteor.user();
     	if(user) {
 	        selectedTeam = Session.getSelectedTeam();
     	    if(selectedTeam) {
+		    	Meteor.subscribe('suppliersForTeam',selectedTeam._id,selectedTeam.suppliers?selectedTeam.suppliers.length:null);
 	    	    selectedFacility = user.getSelectedFacility();
 	        	facilities = selectedTeam.getFacilities();
 		        return {

@@ -31,8 +31,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:actionOpen,
-    notification:generalRequestNotification("created")
+    method:actionOpen
   },
   issue:{
     method:issue,
@@ -136,6 +135,16 @@ function readyToCancel(request) {
  */
 function actionOpen (request) {
   var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+
+  var request = Issues.findOne(response._id);
+  var watchers = request.getWatchers();
+  watchers[2] = null;
+
+  request.sendNotification({
+    verb:"created",
+    subject:"Work order #"+request.code+" has been created",
+  },watchers);//might also call sendMessage depending on state of notification options
+
   return Issues.findOne(response._id);
 }
 
@@ -204,22 +213,44 @@ function sendSupplierEmail(request){
       var expiry = moment(request.dueDate).add({days:3}).toDate();
       var token = FMCLogin.generateLoginToken(user,expiry);
       var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:token});
+      var subject = "New work request from "+" "+team.getName();
       var html = ReactDOMServer.renderToStaticMarkup(element);
 
-      var message = {
-        bcc :["leo@fmclarity.com","rich@fmclarity.com"],
-        from:"FM Clarity <no-reply@fmclarity.com>",
-        subject:("New work request from "+" "+team.getName()),
-        html:html
+      var email, devMsg;
+
+      devMsg = {
+        to:["leo@fmclarity.com","rich@fmclarity.com"]
       }
 
       if(FM.inProduction()) {
-        message.to = to;
+
+        email = {
+          to:to,
+          from:"FM Clarity <no-reply@fmclarity.com>",
+          subject:subject,
+          html:html
+        }
+        Email.send(email);
+
+        devMsg.from = "FM Outgoing Message Alert <no-reply@fmclarity.com>";
+        devMsg.subject = "["+to+"]"+subject;
+        devMsg.html = 
+          "***Message sent to '"+to+"'***<br/><br/>"+
+          html+
+            "<br/>******<br/>"+
+            JSON.stringify(request);
       }
       else {
-        message.subject = "[to:"+to+"]"+message.subject;
+        devMsg.from = "FM Test Message <no-reply@fmclarity.com>";
+        devMsg.subject = "["+to+"]"+subject;
+        devMsg.html = 
+          "***Intercepted message to "+to+"***<br/><br/>"+
+          html+
+            "<br/>******<br/>"+
+            JSON.stringify(request);
       }
-      Email.send(message);
+
+      Email.send(devMsg);      
 
     }
   })}  
@@ -324,7 +355,7 @@ function reverse(request) {
 
   var newRequest = _.omit(request,'_id');
   _.extend(newRequest,{
-    status:"Reverse",
+    status:"Reversed",
     code:'R'+request.code,
     exported:false,
     costThreshold:request.costThreshold*-1,

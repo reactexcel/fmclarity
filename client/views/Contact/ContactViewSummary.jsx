@@ -193,8 +193,10 @@ Contact3Line = React.createClass({
 
 ContactCard = React.createClass({
 	render() {
+		
 		var contact,profile,view;
 		contact = this.props.item;
+
 		if(contact&&contact.getProfile) {
 			profile = contact.getProfile();
 		}
@@ -204,11 +206,15 @@ ContactCard = React.createClass({
 			});
 			profile = {};
 		}
+
 		var role;
 		if(this.props.team) {
 			role = RBAC.getRole(contact,this.props.team);
-			//profile.role = role;
 		}
+		else if(this.props.facility) {
+			role = RBAC.getRole(contact,this.props.facility);
+		}
+
 		view = this.props.view;
 		switch(view) {
 			case 'avatar':return (

@@ -32,6 +32,7 @@ WOLocationSelector = React.createClass({
     render() {
         var request = this.props.item;
         var facility = this.data.selectedFacility;
+        var facilityAreas = this.data.facilityAreas;
         var area = this.data.selectedArea;
         return (
             <div className="row" style={{minHeight:"37px"}}>
@@ -62,7 +63,7 @@ WOLocationSelector = React.createClass({
                             <SuperSelect 
                                 readOnly={!request.canSetArea()}
                                 itemView={ContactViewName}
-                                items={facility.levels} 
+                                items={facilityAreas} 
                                 onChange={request.setArea.bind(request)}
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!request.level||!request.level.name?"Select":""} area</span>
@@ -75,14 +76,14 @@ WOLocationSelector = React.createClass({
                 </div>
                 :null}
 
-                {request.level&&request.level.type&&request.level.type.children&&request.level.type.children.length?
+                {request.level&&request.level.children&&request.level.children.length?
                 <div className="col-md-3">
                     <div className="row">
                         <div className="col-md-12">
                             <SuperSelect 
                                 readOnly={!request.canSetSubarea()}
                                 itemView={ContactViewName}
-                                items={request.level.type.children} 
+                                items={request.level.children}
                                 onChange={request.setSubarea.bind(request)}
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!request.area?"Select":""} sub-area</span>
@@ -95,14 +96,14 @@ WOLocationSelector = React.createClass({
                 </div>
                 :null}
 
-                {request.area&&request.area.identifiers&&request.area.identifiers.length?
+                {request.area&&request.area.children&&request.area.children.length?
                 <div className="col-md-3">
                     <div className="row">
                         <div className="col-md-12">
                         <SuperSelect 
                             readOnly={!request.canSetAreaIdentifier()}
                             itemView={ContactViewName}
-                            items={request.area.identifiers} 
+                            items={request.area.children} 
                             onChange={request.setAreaIdentifier.bind(request)}
                         >
                             <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!request.area.identifier?"Select":""} identifier</span>

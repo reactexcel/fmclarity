@@ -15,6 +15,14 @@ DocMessages.register(Issues,{
   }
 });
 
+DocMembers.register(Issues,{
+  authentication:{
+    add:function(){
+      return true;
+    }
+  }
+});
+
 var accessForTeamMembers = function(role,user,request) {
   return (
     isEditable(request)&&
@@ -79,15 +87,6 @@ Issues.methods({
     method:setAreaIdentifier
   },
   
-  addMember:{
-    authentication:true,
-    method:RBAC.lib.addMember(Issues,'members')// this is ORM, not RBAC
-  },
-  removeMember:{
-    authentication:false,
-    method:RBAC.lib.removeMember(Issues,'members')
-  },
-
   setSupplier:{
     authentication:accessForTeamMembers,
     method:setSupplier

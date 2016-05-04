@@ -82,7 +82,7 @@ IssueSummary = React.createClass({
             :null}
           </div>
           <div className="issue-summary-col issue-summary-col-7">
-            <span className="issue-summary-name">{request.name}</span>
+            <span className="issue-summary-name"><span style={{color:"#999"}}>#{request.code} </span>{request.name}</span>
             {/*<span className="issue-summary-description">{issue.description}</span>*/}
           </div>
         </div>

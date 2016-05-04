@@ -135,9 +135,6 @@ FacilitySchema = {
     members : {
         label: "Members",
         type: [Object],
-        relationship:{
-            "hasMany":Users
-        },
     },
     levels: {
         type:[Object],

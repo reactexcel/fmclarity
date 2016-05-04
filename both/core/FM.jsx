@@ -1,6 +1,6 @@
 Schema = {};
 FM = {
-	version:"1.1.0b",
+	version:"1.2.0b",
 	collections:{},
 	schemas:{}
 }
@@ -29,7 +29,9 @@ if(Meteor.isClient) {
 	}
 	Session.getSelectedTeam = function() {
 	    var selectedTeamQuery = Session.get('selectedTeam');
-	    return Teams.findOne(selectedTeamQuery);
+	    if(selectedTeamQuery) {
+		    return Teams.findOne(selectedTeamQuery._id);
+		}
 	}
 	Session.selectTeam = function(team) {
 	    if(team) {
@@ -39,7 +41,9 @@ if(Meteor.isClient) {
     }
 	Session.getSelectedFacility = function() {
 	    var selectedFacilityQuery = Session.get('selectedFacility');
-	    return Facilities.findOne(selectedFacilityQuery);
+	    if(selectedFacilityQuery) {
+		    return Facilities.findOne(selectedFacilityQuery._id);
+		}
 	}
 	Session.selectFacility = function(f) {
 	    if(f) {
