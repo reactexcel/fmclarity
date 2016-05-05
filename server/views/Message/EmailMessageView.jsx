@@ -4,52 +4,47 @@ EmailMessageView = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, user, owner;
+        var query, message, user, owner, target, facility;
         query = this.props.item;
 
         user = Users.findOne(this.props.user._id);
         message = Messages.findOne(query);
         if(message) {
             owner = message.getOwner();
+            target = message.getTarget();
+            if(target&&target.getFacility) {
+                facility = target.getFacility();
+            }
         }
         return {
             user:user,
             owner:owner,
             inbox:this.props.inbox,
-            message:message
+            message:message,
+            facility:facility
         }
     },
 
     render() {
         var message = this.data.message||{};
+        var facility = this.data.facility;
         var owner = this.data.owner;
         var user = this.data.user;
         var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName()
         var createdAt = message.createdAt;
         return(
             <div>
-                <div>
-                    <p>Hi {userName},</p>
-                    <p>An FM Clarity work order you are involved with has changed. If you were previously emailed an access link, click that link to see the updates. If you have an FM Clarity account <a href={message.getAbsoluteTargetUrl()}>click here</a>.</p>
-                </div>
+                <p>Hi {userName},</p>
 
-                <div style={{width:"100%",textAlign:"center",backgroundColor:"#0152b5",color:"#fff"}}>
-                    <span>Updates</span>
-                </div>
-                <div className="media-body">
-                    {message.body||message.subject||message.verb?
-                    <div style={{padding:"20px"}}>
-                        <strong>{owner.getName()}</strong> {
-                        message.verb?
-                            <span>{message.verb} <b><a style={{textDecoration:"none"}} href={message.getAbsoluteTargetUrl()}>{message.getTargetName()}</a></b></span>
-                        :
-                            <span>{message.subject}</span>
-                        }<br/>
-                        <div>{message.body}</div>
-                        <div><small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small></div>
-                    </div>
-                    :null}
-                </div>
+                <p>
+                {owner.getName()} has {message.verb} work request <i>{message.getTargetName()}</i> {facility?<span>at {facility.getName()}</span>:null}.
+                {message.body?<span> {owner.getName()} writes:</span>:null}
+                </p>
+
+                {message.body?<blockquote>{message.body}</blockquote>:null}
+
+                <p>Click <a href={message.getAbsoluteTargetUrl()}>here</a> to view.</p>
+                {owner.profile.phone?<p>{owner.getName()} can be contacted on {owner.profile.phone} shoud you require.</p>:null}
             </div>
         )
     }

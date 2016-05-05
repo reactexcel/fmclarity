@@ -111,7 +111,7 @@ ConfigBlockModal = React.createClass({
 	},
 
 	addItem() {
-		var items = this.state.items;
+		var items = this.state.items||[];
 		items.push({
 			name:"New item",
 			active:true,
@@ -140,7 +140,7 @@ ConfigBlockModal = React.createClass({
 		var component = this;
 		var tabs = [];
 		var DetailComponent = this.props.view;
-		this.state.items.map(function(item,index){
+		{this.state.items?this.state.items.map(function(item,index){
 			if(!item.hidden) {
 				tabs.push({
 					tab:<span className="items-selector-tab">
@@ -160,7 +160,7 @@ ConfigBlockModal = React.createClass({
 					</div>
 				})
 			}
-		});
+		}):null};
 		tabs.push({
 			tab:<span style={{color:"#aaa"}} className="items-selector-tab"><i>New</i></span>,
 			onClick:component.addItem

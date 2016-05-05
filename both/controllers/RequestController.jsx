@@ -12,6 +12,28 @@ DocMessages.register(Issues,{
     var assignee = this.getAssignee();
     //and facilityContact?
     return [user,owner,supplier,team,assignee];
+    return [
+      {
+        role:"active user",
+        watcher:user
+      },
+      {
+        role:"owner",
+        watcher:owner
+      },
+      {
+        role:"team",
+        watcher:team
+      },
+      {
+        role:"supplier",
+        watcher:supplier
+      },
+      {
+        role:"assignee",
+        watcher:assignee
+      },
+    ];
   }
 });
 

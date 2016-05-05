@@ -23,6 +23,13 @@ Messages.helpers({
     var collection = FM.collections[inboxId.collectionName];
     return collection.findOne(inboxId.query);
   },
+  getTarget() {
+    var target = this.target;
+    var collection = FM.collections[target.collectionName];
+    if(collection) {
+      return collection.findOne(target.query);
+    }
+  },
   getTargetName() {
     var target = this.target?this.target:this.inboxId;
     return target.name;
@@ -45,12 +52,3 @@ Messages.helpers({
     }
   }
 });
-
-if(Meteor.isServer) {
-  Meteor.publish("messages",function(){
-    return Messages.find();
-  });
-}
-else {
-  Meteor.subscribe("messages");
-}

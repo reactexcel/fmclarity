@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v1.2.1b** 
+
+* Fixed a problem that was causing some message notifications to be sent multiple times
+* Fixed a problem that was preventing facility services selector from opening
+* Added services consumed and services provided selectors to team settings
+* Staff see only issues where they are the owner or assignee
+* Updated email notificaton text
+
 **v1.2.0b**
 
 * Members functionality split out into separate package used for team members, facility members and facility suppliers
@@ -10,19 +18,17 @@ CHANGELOG.md
 * Can toggle facility members roles between staff and manager
 * Changed developer alert email format
 * Fixed a problem that was causing suppliers to filter incorrectly
-* Team card:Fixed a problem that was causing supplier services to not diplay
+* Team card:Fixed a problem that was causing supplier services to not display
 
 **v1.1.2b**
 
 * WO table shows WO code
-
 * Differentiate between services required and services provided
 * Have master areas in team
 * Have master services in team
 * Have master suppliers in team
-* Facility members, not separate staff and managers
-* Have local suppliers in facility
-* Suppliers added from services screen
+* Facility members in the one widget, not separate staff and managers
+* Local suppliers saved in facility
 
 **v1.1.1b**
 

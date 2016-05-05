@@ -12,15 +12,17 @@ ServicesSelector = React.createClass({
 		}
 		return {
 			team:team,
-			suppliers:suppliers
+			suppliers:suppliers,
+			field:(this.props.field||"services")
 		}
 	},
 
 	showModal() {
+		var field = this.data.field;
 		Modal.show({
 	        content:<ConfigBlockModal 
 	        	item={this.props.item}
-	        	field="services"
+	        	field={field}
 	        	view={ServiceDetail}
 	        />
 	     })
@@ -28,7 +30,8 @@ ServicesSelector = React.createClass({
 
 	updateSupplier(idx,newSupplier) {
 		if(newSupplier) {
-			var service = this.props.item.services[idx];
+			var field = this.data.field;
+			var service = this.props.item[field][idx];
 			service.data = service.data||{};
 			service.data.supplier = {
 				_id:newSupplier._id,
@@ -40,7 +43,8 @@ ServicesSelector = React.createClass({
 	},
 
 	render() {
-		var services = this.props.item.services;
+		var field = this.data.field;
+		var services = this.props.item[field];
 		var component = this;
 		return (
 			<div>

@@ -35,6 +35,34 @@ var navFM = [{
 	icon:"fa fa-wrench"
 }];
 
+if(true) {
+	navFM.push({
+		path:"maintenence",
+		label:"Maintenence",
+		icon:"fa fa-calendar"
+	});
+	navFM.push({
+		path:"compliance",
+		label:"Compliance",
+		icon:"fa fa-check-square"
+	});
+	navFM.push({
+		path:"Sustainability",
+		label:"Sustainability",
+		icon:"fa fa-leaf"
+	});
+	navFM.push({
+		path:"contracts",
+		label:"Contracts",
+		icon:"fa fa-file-text-o"
+	});
+	navFM.push({
+		path:"reports",
+		label:"Reports",
+		icon:"fa fa-bar-chart"
+	});
+}
+
 var navFMStaff = [{
 	path:"requests",		
 	label:"Requests",

@@ -1,60 +1,85 @@
 Messages = ORM.Collection("Messages");
 
+
 DocMessages = {
   register:registerCollection
 }
 
 var defaultHelpers = {
-  sendMessage:sendMessage,
-  sendNotification:sendMessage,
+  sendMessage:sendMessageToSelfAndWatchers,
+  sendNotification:sendMessageToSelfAndWatchers,
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
   getInboxId:getInboxId,
   getMessages:getMessages,
   getNotifications:getNotifications,
   getMessageCount:getMessageCount,
+  getRecipients:getRecipients,
 }
 
-function sendMessage(message,cc,opts) {
-  cc = cc||this.getWatchers();
-  var user = Meteor.user();
-
-  message.inboxId = this.getInboxId();
-
-  //only create target and owner first time
-  if(message.originalId) {
-    var alreadySent = Messages.findOne({
-      inboxId:message.inboxId,
-      originalId:message.originalId
-    });
-    if(alreadySent) {
-      return;
-    }
-  }
-  else {
-    //if this is the first instance
-    message.target = message.inboxId;
-    message.owner = {
-      _id:user._id,
-      name:user.getName()
-    }    
-  }
-
-  Meteor.call("Messages.create",message,function(err,messageId){
-    message.originalId = message.originalId||messageId;
-    if(cc&&cc.length) {
-      cc.map(function(recipient){
-        if(recipient) {
-          if(message.verb=="issued"&&recipient.type=="contractor") {
-            recipient.sendMessage(message,null,{doNotEmail:true});
-          }
-          else {
-            recipient.sendMessage(message,null,opts);
-          }
-        }
-      })
+function getRecipients(inCC,outCC) {
+  outCC = outCC||[];
+  inCC.map(function(c){
+    if(c) {
+      outCC.push(c);
+      if(c.getWatchers) {
+        getRecipients(c.getWatchers(),outCC);
+      }
     }
   })
+  return outCC;
+}
+
+function flattenRecipients(cc) {
+  var recipients = getRecipients(cc);
+  recipients = _.uniq(recipients,false,function(i){
+    return i._id;
+  })
+  return recipients;  
+}
+
+function sendMessageToSelfAndWatchers(message,cc) {
+  cc = cc||this.getWatchers();
+  cc = flattenRecipients(cc);
+
+  var user = Meteor.user();
+
+  message.target = this.getInboxId();
+  message.owner = {
+    _id:user._id,
+    name:user.getName()
+  }
+
+  sendMessage(message,this);
+
+  cc.map(function(recipient){
+    sendMessage(message,recipient);
+  })
+}
+
+function recipientIsCreator(message,recipient) {
+  return recipient._id&&message.owner._id&&recipient._id==message.owner._id
+}
+
+function sendMessage(message,recipient) {
+  //make copy of original message using our own personal inboxId
+  var copy = _.extend({},message,{
+    inboxId:recipient.getInboxId()
+  });
+
+  //check if we should mark the message as read
+  if(recipientIsCreator(message,recipient)){
+    copy.read = true;
+  }
+
+  //create the message
+  Meteor.call("Messages.create",copy,function(){
+    //then email if we are supposed to
+    if(!copy.read) {
+      Meteor.call("Messages.sendEmail",recipient,copy);
+    }
+  });
+
 }
 
 function registerCollection(collection,customHelpers) {
@@ -102,6 +127,7 @@ function getNotifications(opts) {
     "inboxId.query._id":this._id,
     read:false
   };
+  //console.log(q);
   if(hideOwn) {
     q["$ne"] = {"owner._id":this._id};
   }
@@ -111,29 +137,3 @@ function getNotifications(opts) {
 function markAllNotificationsAsRead() {
   Meteor.call('Messages.markAllNotificationsAsRead',this.getInboxId());
 }
-
-function sendUserEmail(message,opts) {
-  var doNotEmail = opts?opts.doNotEmail:false;
-  message.inboxId = this.getInboxId();
-  if(message.originalId) {
-    var alreadySent = Messages.findOne({
-      inboxId:message.inboxId,
-      originalId:message.originalId
-    });
-    if(alreadySent) {
-      return;
-    }
-  }
-  if(this._id&&message.owner._id&&this._id==message.owner._id) {
-    message = _.extend({},message,{read:true});
-  }
-  Meteor.call("Messages.create",message);
-  if(!message.read&&!doNotEmail) {
-    Meteor.call("Messages.sendEmail",this,message);
-  }
-}
-
-
-registerCollection(Meteor.users,{
-  sendMessage:sendUserEmail
-});
