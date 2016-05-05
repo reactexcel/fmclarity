@@ -122,23 +122,10 @@ loggedIn.route('/messages', {
   }
 });
 
-loggedIn.route('/contracts', {
-  name: 'contracts',
-  action() {
-    ReactLayout.render(MainLayout,{content:<PageContracts />});
-  }
-});
 loggedIn.route('/suppliers', {
   name: 'suppliers',
   action() {
     ReactLayout.render(MainLayout,{content:<SupplierIndexPage />});
-  }
-});
-
-loggedIn.route('/reports', {
-  name: 'reports',
-  action() {
-    ReactLayout.render(MainLayout,{content:<PageReports />});
   }
 });
 

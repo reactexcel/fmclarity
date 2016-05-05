@@ -97,7 +97,7 @@ FacilityViewEdit = React.createClass({
 				</CollapseBox>
 				*/}
 				<CollapseBox title="Default services & suppliers" collapsed={true}>
-					<ServicesSelector item={facility}/>
+					<ServicesSelector item={facility} field={"servicesRequired"}/>
 				</CollapseBox>
 			</div>
 		)

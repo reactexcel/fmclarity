@@ -24,7 +24,7 @@ Meteor.methods({
         console.log('production');
       }
       */
-      if(user) {
+      if(user&&user.emails) {
 
         var element = React.createElement(EmailMessageView,{user:user,item:message});
         var html = ReactDOMServer.renderToStaticMarkup (element);
@@ -54,15 +54,15 @@ Meteor.methods({
             "***Message sent to "+to+"***<br/><br/>"+
             html+
             "<br/>******<br/>"+
-            JSON.stringify(message)+"<br/>"+
-            JSON.stringify(email)+"<br/>";
+            JSON.stringify(message)+"<br/>"
+            //JSON.stringify(email)+"<br/>";
         }
 
         else {
           devMsg.from = "FM Test Message <no-reply@fmclarity.com>";
           devMsg.subject = "["+to+"]"+subject;
           devMsg.html = 
-            "***Test message incercepted for:"+to+"***<br/><br/>"+
+            "***Test message intercepted for:"+to+"***<br/><br/>"+
             html+
             "<br/>******<br/>"+
             JSON.stringify(message)+"<br/>"

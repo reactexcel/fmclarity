@@ -18,6 +18,17 @@ DocMembers.register(Teams,{
 DocMessages.register(Teams,{
   getWatchers:function() {
     return this.getMembers({role:"manager"});
+    var members = this.getMembers({role:"manager"});
+    var watchers = [];
+    if(members&&members.length) {
+      members.map(function(m){
+        watchers.push({
+          role:"manager",
+          watcher:m
+        });
+      })
+    }
+    return watchers;
   }  
 });
 
@@ -243,7 +254,6 @@ Teams.helpers({
   },
 
   getAvailableServices(parent) {
-    console.log(this.services);
     var services = parent?parent.children:this.services;
     var availableServices = [];
     if(!services) {
@@ -281,9 +291,24 @@ Teams.helpers({
     return facilities[i];
   },
 
+  getStaffIssues() {
+    return Issues.find({$or:[
+      {'owner._id':Meteor.userId()},
+      {'assignee._id':Meteor.userId()}
+    ]}).fetch();
+  },
+
   getIssues() {
     //this is vulnerable to error - what if the name changes
     //of course if we only have the name then we need to add the id at some point
+    var role = this.getMemberRole(Meteor.user());
+    if(role=="manager"||role=="fmc support") {
+      return this.getManagerIssues();
+    }
+    return this.getStaffIssues();
+  },
+
+  getManagerIssues() {
     return Issues.find({$or:[
       {$or:[
         {"team._id":this._id},
@@ -297,5 +322,5 @@ Teams.helpers({
         {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
       ]}
     ]}).fetch();
-  },
+  }
 });

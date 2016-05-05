@@ -5,6 +5,8 @@ DocThumb.register(Users,{
   defaultThumb:"/img/ProfilePlaceholderSuit.png"
 });
 
+DocMessages.register(Meteor.users);
+
 Users.methods({
   create:{
     authentication:true,

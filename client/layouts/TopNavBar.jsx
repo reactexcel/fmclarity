@@ -3,7 +3,8 @@ TopNavBar = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        Meteor.subscribe('notifications');
+        //Meteor.subscribe('notifications');
+        Meteor.subscribe("messages","users",Meteor.userId());
         var user, notifications;
         user = Meteor.user();
         if(user) {

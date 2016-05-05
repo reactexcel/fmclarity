@@ -7,6 +7,9 @@ UpdatesWidget = React.createClass({
     	user = Meteor.user();
     	if(user) {
     		team = user.getSelectedTeam();
+    		if(team) {
+    			Meteor.subscribe("messages","Teams",team._id)
+    		}
     	}
     	return {
     		user:user,
