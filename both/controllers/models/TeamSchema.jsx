@@ -45,6 +45,13 @@ TeamSchema = {
     label: "Description",
     input:"mdtextarea",
   },
+
+  insuranceDetails: {
+    type:[Object],
+    label:"Insurance details",
+    schema:InsuranceSchema
+  },
+
   attachments: {
     type:[Object],
     label:"Attachments",

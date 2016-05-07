@@ -136,7 +136,12 @@ function inviteSupplier(team,email,ext) {
   if(!supplier) {
     supplier = Meteor.call("Teams.create",{
       type:"contractor",
-      email:email
+      email:email,
+      owner:{
+        _id:team._id,
+        name:team.name,
+        type:"team"
+      }
     });
     supplier = Teams.findOne(supplier._id);
   }
@@ -171,7 +176,11 @@ function inviteMember(team,email,ext) {
     if(name) {
       if(Meteor.isServer) {
         //Accounts.sendEnrollmentEmail(id);
-        user = Meteor.call("Users.create",{name:name,email:email});
+        user = Meteor.call("Users.create",{name:name,email:email,owner:{
+          _id:team._id,
+          name:team.name,
+          type:"team"
+        }});
       }
     }
     else {
@@ -260,7 +269,7 @@ Teams.helpers({
       return;
     }
     services.map(function(service){
-      if(service.active) {
+      if(service&&service.active) {
         availableServices.push(service);
       }
     });

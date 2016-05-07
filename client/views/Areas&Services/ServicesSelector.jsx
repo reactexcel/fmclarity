@@ -29,17 +29,20 @@ ServicesSelector = React.createClass({
 	},
 
 	updateSupplier(idx,newSupplier) {
+		var field = this.data.field;
+		var service = this.props.item[field][idx];
+		service.data = service.data||{};
 		if(newSupplier) {
-			var field = this.data.field;
-			var service = this.props.item[field][idx];
-			service.data = service.data||{};
 			service.data.supplier = {
 				_id:newSupplier._id,
 				name:newSupplier.getName()
 			}
-			this.props.item.save();
-			//this.props.onChange(service);
 		}
+		else {
+			service.data.supplier = {};
+		}
+		this.props.item.save();
+		//this.props.onChange(service);
 	},
 
 	render() {
@@ -55,7 +58,7 @@ ServicesSelector = React.createClass({
 						<th style={{width:"50%"}}>Default Supplier</th>
 					</tr>
 					{services?services.map(function(service,idx){
-						if(service.active) {
+						if(service&&service.active) {
 							return (
 								<tr key={idx}>
 									<td style={{padding:"10px"}}>{service.name}</td>
@@ -112,6 +115,7 @@ ServiceDetail = React.createClass({
 			}
 			this.props.onChange(service);
 		}
+		else this.props.onChange(null);
 	},
 
 	componentWillMount() {

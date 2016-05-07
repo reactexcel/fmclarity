@@ -9,6 +9,17 @@ TopNavBar = React.createClass({
         user = Meteor.user();
         if(user) {
             notifications = user.getNotifications();
+            var count = notifications.length;
+            if(count>this.oldCount) {
+                this.oldCount = count;
+                if(notifications&&notifications.length) {
+                    var n = notifications[0];
+                    this.audio.play();
+                    this.showNotification(n.subject,n.body);
+                }
+                //toastr notification
+                //alert(count+" new messages");
+            }
         }
         return {
             user:user,
@@ -16,16 +27,32 @@ TopNavBar = React.createClass({
         }
     },
 
+    showNotification(title,body) {
+        notify.createNotification(title,{
+            body:body,
+            icon:"icon-64x64.ico"
+        });
+    },
+
     componentDidMount() {
+
         $('body').addClass('fixed-nav');
         $('.navbar-static-top').removeClass('navbar-static-top').addClass('navbar-fixed-top');
         
         var component = this;
         $(this.refs.notifications).on('hidden.bs.dropdown', function () {
             if(component.data.user) {
+                component.count = 0;
+                component.oldCount = 0;
                 component.data.user.markAllNotificationsAsRead();
             }
         })
+        this.oldCount = 0;
+        this.audio = new Audio('/audio/alert3.wav');
+        //var permission = notify.permissionLevel();
+        //console.log(permission);
+        notify.requestPermission();
+        notify.config({pageVisibility: false, autoClose: 5000});
     },
 
     toggleLeftSideBar() {

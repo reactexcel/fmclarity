@@ -141,7 +141,7 @@ ConfigBlockModal = React.createClass({
 		var tabs = [];
 		var DetailComponent = this.props.view;
 		{this.state.items?this.state.items.map(function(item,index){
-			if(!item.hidden) {
+			if(item&&!item.hidden) {
 				tabs.push({
 					tab:<span className="items-selector-tab">
 						<span style={{opacity:!item.active?0.6:1}}>{item.name}</span>

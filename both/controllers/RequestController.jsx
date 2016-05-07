@@ -38,11 +38,7 @@ DocMessages.register(Issues,{
 });
 
 DocMembers.register(Issues,{
-  authentication:{
-    add:function(){
-      return true;
-    }
-  }
+  authentication:AuthHelpers.memberOfRelatedTeam
 });
 
 var accessForTeamMembers = function(role,user,request) {
@@ -183,8 +179,10 @@ function setSupplier(request,supplier) {
 
     request = Issues._transform(request);
     supplier = request.getSupplier(supplier);
-    var supplierMembers = supplier.getMembers({role:"manager"});
-    request.addMember(supplierMembers,{role:"supplier manager"});
+    if(supplier) {
+      var supplierMembers = supplier.getMembers({role:"manager"});
+      request.addMember(supplierMembers,{role:"supplier manager"});
+    }
   }
 
 }

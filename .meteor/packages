@@ -12,6 +12,8 @@ fmc:doc-members
 fmc:login-tokens
 fmc:document-messages
 
+oaf:html5-desktop-notifications
+
 #aldeed:collection2
 abpetkov:switchery
 cosmos:browserify

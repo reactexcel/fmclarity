@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+**v1.2.2b**
+
+* Can add and remove members from request contact
+* (x) in services selector (15mins)
+* Notification sound (1hr)
+* Supplier summary insurance expiry (simple date field) (1hr)
+
+
+
 **v1.2.1b** 
 
 * Fixed a problem that was causing some message notifications to be sent multiple times

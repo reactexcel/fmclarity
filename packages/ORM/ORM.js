@@ -88,7 +88,7 @@ function createNewItemUsingSchema(schema,item,callback,usingSubSchema) {
 		else if(field.type==String) {
 		    newItem[fieldName] = "";
 		}
-		else if(field.type==Number) {
+		else if(field.type==Number||field.type==Date) {
 		    newItem[fieldName] = null;
 		}
 		else if(field.schema!=null) {
