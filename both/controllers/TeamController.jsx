@@ -166,6 +166,7 @@ function createRequest(team,options) {
 function inviteMember(team,email,ext) {
   var user,id;
   var found = false;
+  ext = ext||{};
   //user = Accounts.findUserByEmail(email);
   user = Users.findOne({emails:{$elemMatch:{address:email}}});
   if(user) {
@@ -176,11 +177,14 @@ function inviteMember(team,email,ext) {
     if(name) {
       if(Meteor.isServer) {
         //Accounts.sendEnrollmentEmail(id);
-        user = Meteor.call("Users.create",{name:name,email:email,owner:{
-          _id:team._id,
-          name:team.name,
-          type:"team"
-        }});
+        var params = {
+          name:name,
+          email:email
+        };
+        if(ext.owner) {
+          params.owner = ext.owner;
+        }
+        user = Meteor.call("Users.create",params);
       }
     }
     else {
@@ -188,7 +192,7 @@ function inviteMember(team,email,ext) {
     }
   }
   if(user) {
-    Meteor.call("Teams.addMember",team,{_id:user._id},ext);
+    Meteor.call("Teams.addMember",team,{_id:user._id},{role:ext.role});
     //return user;
     return {
       user:user,

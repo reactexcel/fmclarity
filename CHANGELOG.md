@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.3.1b** 
+
+* Limit dashboard updates to max 50
+* Managers can edit dueDate and value of issues orders
+
 **v1.3.0b**
 
 * (x) in services selector clears supplier

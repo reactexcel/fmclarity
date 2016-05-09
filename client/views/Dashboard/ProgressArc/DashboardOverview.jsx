@@ -158,22 +158,6 @@ DashboardOverview = React.createClass({
 
     render() {
         var results = this.data.results;
-
-        var newThisPeriod = results['New'].thisPeriod;
-        var newLastPeriod = Math.ceil(newThisPeriod*0.75);
-        var issuedThisPeriod = results['Issued'].thisPeriod;
-        var issuedLastPeriod = Math.ceil(issuedThisPeriod*4);
-        var closedThisPeriod = results['Closed'].thisPeriod;
-        var closedLastPeriod = Math.ceil(closedThisPeriod*1.2);
-
-        var quotesThisPeriod = Math.ceil((Math.random()*15)+5);
-        var quotesLastPeriod = Math.ceil(quotesThisPeriod*4);
-        var insuranceThisPeriod = Math.ceil((Math.random()*15)+5);
-        var insuranceLastPeriod = Math.ceil(insuranceThisPeriod*2);
-        var reviewsThisPeriod = Math.ceil((Math.random()*15)+5);
-        var reviewsLastPeriod = Math.ceil(reviewsThisPeriod*1.5);
-
-
         return (
             <div>
                 <ActionsMenu items={this.getMenu()} icon="eye" />
@@ -185,51 +169,53 @@ DashboardOverview = React.createClass({
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="New Requests" 
-                                thisPeriod = {newThisPeriod}
-                                lastPeriod = {newLastPeriod}
+                                thisPeriod = {results['New'].thisPeriod}
+                                lastPeriod = {results['New'].lastPeriod}
                                 color="#3ca773"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Issued Requests" 
-                                thisPeriod = {issuedThisPeriod}
-                                lastPeriod = {issuedLastPeriod}
+                                thisPeriod = {results['Issued'].thisPeriod}
+                                lastPeriod = {results['Issued'].lastPeriod}
                                 color="#b8e986"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Closed Requests" 
-                                thisPeriod = {closedThisPeriod}
-                                lastPeriod = {closedLastPeriod}
+                                thisPeriod = {results['Closed'].thisPeriod}
+                                lastPeriod = {results['Closed'].lastPeriod}
                                 color="#333333"
                             />
                         </div>
+                        {/*
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Open Quotes" 
-                                thisPeriod = {quotesThisPeriod}
-                                lastPeriod = {quotesLastPeriod}
+                                thisPeriod = {4}
+                                lastPeriod = {3}
                                 color="#999999"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Expired Insurance" 
-                                thisPeriod = {insuranceThisPeriod}
-                                lastPeriod = {insuranceLastPeriod}
+                                thisPeriod = {5}
+                                lastPeriod = {0}
                                 color="#666666"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Supplier Reviews" 
-                                thisPeriod = {reviewsThisPeriod}
-                                lastPeriod = {reviewsLastPeriod}
+                                thisPeriod = {10}
+                                lastPeriod = {11}
                                 color="#333333"
                             />
                         </div>
+                        */}
                     </div>
                 </div>
             </div>

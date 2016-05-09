@@ -69,7 +69,15 @@ UserProfile = React.createClass({
     	}
     	else {
             input.value = '';
-            team.inviteMember(email, {role:component.props.role}, function(response){
+            var creatorsTeam = Session.getSelectedTeam();
+            team.inviteMember(email, {
+            	role:component.props.role,
+            	owner:{
+            		type:'team',
+            		_id:creatorsTeam._id,
+            		name:creatorsTeam.name
+            	}
+            }, function(response){
             	var user = Users.findOne(response.user._id);
             	if(!response.found) {
 		            component.setState({
