@@ -35,7 +35,7 @@ var navFM = [{
 	icon:"fa fa-wrench"
 }];
 
-if(true) {
+if(false) {
 	navFM.push({
 		path:"maintenence",
 		label:"Maintenence",

@@ -1,3 +1,8 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+
 ContactSummary = React.createClass({
 	render() {
 		var contact, profile, availableServices;

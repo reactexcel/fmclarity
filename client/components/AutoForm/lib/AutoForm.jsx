@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 AutoInput = {};
 
@@ -41,7 +44,7 @@ AutoForm = React.createClass({
     makeState(props) {
     	var item = props.item;
     	var field = props.field;
-    	item = field?item[field]:item;
+    	item = field?(item[field]||{}):item;
     	return {
     		item:item
     	}
@@ -65,16 +68,18 @@ AutoForm = React.createClass({
     	var originalItem = this.props.item;
     	var field = this.props.field;
     	var save = this.props.save;
-    	if(!originalItem.field) {
-    		originalItem.field = {};
+    	if(!originalItem[field]) {
+    		originalItem[field] = {};
     	}
     	for(var i in schema) {
+    		//console.log([originalItem,field]);
     		if(field) {
 	    		originalItem[field][i] = this.state.item[i];
 	    	}
 	    	else {
 	    		originalItem[i] = this.state.item[i];	    		
 	    	}
+	    	//console.log(originalItem);
     	}
     	if(save) {
 	    	save();

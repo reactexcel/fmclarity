@@ -1,14 +1,14 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 PageRegister = React.createClass({
 
 
     handleSubmit: function(e) {
         e.preventDefault();
-        var email = ReactDOM.findDOMNode(this.refs.email).value.trim();
-        var password = ReactDOM.findDOMNode(this.refs.password).value.trim();
-        console.log({
-            email:email,
-            password:password
-        });
+        var email = this.refs.email.value.trim();
+        var password = this.refs.password.value.trim();
         if (!email || !password) {
             return;
         }

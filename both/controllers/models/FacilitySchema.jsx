@@ -1,26 +1,3 @@
-Insurance = {
-	insurer:{
-		label:"Insurer",
-		size:6
-	},
-	policyNumber:{
-		label:"Policy number",
-		size:6
-	},
-	sumInsured:{
-		label:"Sum insured",
-		size:6
-	},
-	expiry:{
-		label:"Expiry",
-		size:6
-	},
-	documents:{
-		label:"Insurance documents",
-		//input:"attachment",
-	},
-}
-
 SecurityDeposit = {
 	purpose:{
 		label:"Purpose",
@@ -47,6 +24,32 @@ SecurityDeposit = {
 	originalHeldBy:{
 		label:"Original held by"
 	}
+}
+
+InsuranceSchema = {
+    insurer:{
+        label:"Insurer",
+        size:6
+    },
+    policyNumber:{
+        label:"Policy number",
+        size:6
+    },
+    sumInsured:{
+        label:"Sum insured",
+        size:6
+    },
+    expiry:{
+        type:Date,
+        label:"Expiry",
+        size:6,
+        input:"MDDate",
+    },
+    documents:{
+        type:[Object],
+        label:"Insurance documents",
+        input:DocAttachments.FileExplorer
+    }
 }
 
 Parking = {  
@@ -85,7 +88,7 @@ LeaseSchema = {
     },
     insuranceDetails: {
     	label:"Insurance details",
-    	schema:Insurance
+    	schema:InsuranceSchema
     },
     securityDeposit: {
     	label:"Security deposit",
@@ -151,11 +154,11 @@ FacilitySchema = {
         	return JSON.parse(JSON.stringify(Config.defaultAreas));
     	}
     },
-    services: {
-    	type:[Object],
-    	label:"Building services",
-    	defaultValue:function(){
-        	return JSON.parse(JSON.stringify(Config.services));
-    	}
+    servicesRequired: {
+        type:[Object],
+        label:"Services Consumed",
+        defaultValue:function(){
+            return JSON.parse(JSON.stringify(Config.services));
+        }
     }
 }

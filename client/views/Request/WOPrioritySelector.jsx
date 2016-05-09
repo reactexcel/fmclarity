@@ -1,3 +1,8 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+
 IssuePriority = React.createClass({
   render() {
     var issue = this.props.issue;

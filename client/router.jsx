@@ -13,6 +13,10 @@ Reaktor.init(
 );
 */
 // Router API https://github.com/meteorhacks/flow-router
+
+import React from 'react';
+import {mount} from 'react-mounter';
+
 var loggedIn = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
@@ -49,7 +53,7 @@ admin = FlowRouter.group({
 admin.route('/admin',{
   name: 'admin',
   action() {
-    ReactLayout.render(MainLayout,{content:<AdminPage/>});
+    mount(MainLayout,{content:<AdminPage/>});
   }
 });
 
@@ -66,7 +70,8 @@ if(Meteor.isClient) {
 loggedIn.route('/', {
   name: 'root',
   action() {
-    ReactLayout.render(MainLayout,{content:<LandingPage/>});
+    mount(MainLayout, {content:<LandingPage/>});
+    //mount(MainLayout,{content:<LandingPage/>});
   }
 });
 
@@ -76,98 +81,98 @@ loggedIn.route('/', {
 loggedIn.route('/requests/:_id', {
   name: 'request',
   action(params) {
-    ReactLayout.render(MainLayout,{content:<IssuePage selected={params._id} />});
+    mount(MainLayout,{content:<IssuePage selected={params._id} />});
   }
 });
 
 loggedIn.route('/change-password',{
   name:'change-password',
   action() {
-    ReactLayout.render(BlankLayout,{content:<PageChangePassword/>});
+    mount(BlankLayout,{content:<PageChangePassword/>});
   }
 })
 
 loggedIn.route('/pmp', {
   name: 'pmp',
   action() {
-    ReactLayout.render(MainLayout,{content:<PageMaintenence/>});
+    mount(MainLayout,{content:<PageMaintenence/>});
   }
 });
 
 loggedIn.route('/abc', {
   name: 'abc',
   action() {
-    ReactLayout.render(MainLayout,{content:<PageCompliance/>});
+    mount(MainLayout,{content:<PageCompliance/>});
   }
 });
 
 loggedIn.route('/requests', {
   name: 'requests',
   action() {
-    ReactLayout.render(MainLayout,{content:<IssuesIndexPage/>});
+    mount(MainLayout,{content:<IssuesIndexPage/>});
   }
 });
 
 loggedIn.route('/dashboard', {
   name: 'dashboard',
   action() {
-    ReactLayout.render(MainLayout,{content:<DashboardPage/>});
+    mount(MainLayout,{content:<DashboardPage/>});
   }
 });
 
 loggedIn.route('/messages', {
   name: 'messages',
   action() {
-    ReactLayout.render(MainLayout,{content:<MessagesPage />});
+    mount(MainLayout,{content:<MessagesPage />});
   }
 });
 
 loggedIn.route('/suppliers', {
   name: 'suppliers',
   action() {
-    ReactLayout.render(MainLayout,{content:<SupplierIndexPage />});
+    mount(MainLayout,{content:<SupplierIndexPage />});
   }
 });
 
 loggedIn.route('/settings', {
   name: 'settings',
   action() {
-    ReactLayout.render(MainLayout,{content: <PageSettings />});
+    mount(MainLayout,{content: <PageSettings />});
   }
 });
 
 loggedIn.route('/account', {
   name: 'account',
   action() {
-    ReactLayout.render(MainLayout,{content: <TeamProfilePage />});
+    mount(MainLayout,{content: <TeamProfilePage />});
   }
 });
 
 loggedIn.route('/profile', {
   name: 'profile',
   action() {
-    ReactLayout.render(MainLayout,{content: <UserProfilePage />});
+    mount(MainLayout,{content: <UserProfilePage />});
   }
 });
 
 loggedIn.route('/team', {
   name: 'team',
   action() {
-    ReactLayout.render(MainLayout,{content: <TeamIndexPage />});
+    mount(MainLayout,{content: <TeamIndexPage />});
   }
 });
 
 loggedIn.route('/portfolio', {
   name: 'portfolio',
   action() {
-    ReactLayout.render(MainLayout,{content: <FacilityIndexPage />});
+    mount(MainLayout,{content: <FacilityIndexPage />});
   }
 });
 
 loggedIn.route('/contacts', {
   name: 'contacts',
   action() {
-    ReactLayout.render(MainLayout,{content: <UsersPage />});
+    mount(MainLayout,{content: <UsersPage />});
   }
 });
 
@@ -182,6 +187,6 @@ loggedIn.route('/logout', {
 
 FlowRouter.notFound = {
   action() {
-    ReactLayout.render(BlankLayout, { content: <NotFound /> });
+    mount(BlankLayout, { content: <NotFound /> });
   }
 };

@@ -30,7 +30,7 @@ Accounts.urls.enrollAccount = function (token) {
       return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"https://app.fmclarity.com"});
     }
     else {
-      return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"http://52.62.240.180:3000"});
+      return Meteor.absoluteUrl('enroll-account/' + token,{rootUrl:"http://52.62.132.202:3000"});
     }
 };
 
@@ -39,7 +39,7 @@ Accounts.urls.resetPassword = function (token) {
       return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"https://app.fmclarity.com"});
     }
     else {
-      return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"http://52.62.240.180:3000"});
+      return Meteor.absoluteUrl('reset-password/' + token,{rootUrl:"http://52.62.132.202:3000"});
     }
 };
 

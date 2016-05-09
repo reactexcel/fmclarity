@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 // this kind of belongs in the model
 // actually it's kind of a controller - but then again so is the RBAC actions spec
 // can they be merged?

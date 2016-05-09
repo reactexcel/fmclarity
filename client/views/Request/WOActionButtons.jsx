@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 IssueActionButtons = React.createClass({
 
     // all of this should be moved into controller

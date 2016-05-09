@@ -1,3 +1,7 @@
+
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 // This file to be coupled with WOActionButtons and packaged
 
 Issues.STATUS_DRAFT = "Draft";

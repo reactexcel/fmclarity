@@ -1,10 +1,15 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+
 IssueDynamicArea = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var issue = this.props.item;
-        if(!issue) {
+        var request = this.props.item;
+        if(!request) {
             return {
                 ready:false
             }
@@ -14,7 +19,7 @@ IssueDynamicArea = React.createClass({
             selectedTeam = Session.getSelectedTeam();
 
             var facility, facilityContacts, facilityContact;
-            facility = issue.getFacility();
+            facility = request.getFacility();
             if(facility) {
                 facilityContacts = facility.getMembers();
                 facilityContact = facilityContacts?facilityContacts[0]:null;
@@ -22,14 +27,14 @@ IssueDynamicArea = React.createClass({
 
             return {
                 ready:true,
-                issue:issue,
-                owner:issue.getOwner(),
+                request:request,
+                owner:request.getOwner(),
                 facilityContact:facilityContact,
-                supplier:issue.getSupplier(),
-                assignee:issue.getAssignee(),
-                notifications:issue.getNotifications(),
-                messageCount:issue.getMessageCount(),
-                attachmentCount:issue.getAttachmentCount()
+                supplier:request.getSupplier(),
+                assignee:request.getAssignee(),
+                notifications:request.getNotifications(),
+                messageCount:request.getMessageCount(),
+                attachmentCount:request.getAttachmentCount()
             }
         }
     },
@@ -40,11 +45,11 @@ IssueDynamicArea = React.createClass({
     },
 
     render() {
-        var issue = this.props.item;
+        var request = this.props.item;
         var notifications = this.data.notifications;
         var contacts;
-        if(issue.members) {
-            contacts = issue.getMembers();
+        if(request.members) {
+            contacts = request.getMembers();
         }
         else {
             contacts = [];
@@ -77,17 +82,21 @@ IssueDynamicArea = React.createClass({
                         {
                             tab:<span><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
                             content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <Inbox for={issue} truncate={true}/>
+                                <Inbox for={request} truncate={true}/>
                             </div>
                         },{
                             tab:<span><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
                             content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <AutoForm item={issue} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
+                                <AutoForm item={request} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
                             </div>
                         },{
                             tab:<span><span>Contacts</span></span>,
                             content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <ContactList items={contacts} team={issue}/>
+                                <ContactList 
+                                    items={contacts} 
+                                    team={request}
+                                    //onAdd={request.canAddMember()?request.addMember.bind(request,{role:"contact"}):null}
+                                />
                             </div>
                         }
                     ]} />

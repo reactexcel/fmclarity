@@ -12,20 +12,19 @@ fmc:doc-members
 fmc:login-tokens
 fmc:document-messages
 
+oaf:html5-desktop-notifications
+
 #aldeed:collection2
 abpetkov:switchery
-cosmos:browserify
+#cosmos:browserify
 
 #dbarrett:dropzonejs
 dburles:collection-helpers
 
-#kadira:reaktor
 kadira:flow-router@2.4.0
-kadira:react-layout
 
 lai:document-methods
 
-meteorhacks:npm
 matb33:collection-hooks
 momentjs:moment
 monbro:mongodb-mapreduce-aggregation
@@ -34,9 +33,7 @@ twbs:bootstrap
 tomwasd:flow-router-autoscroll
 zimme:active-route
 
-
 accounts-password
-#blaze-html-templates
 static-html
 check
 ejson
@@ -51,17 +48,16 @@ meteor-base
 mobile-experience
 mongo
 
-react
+ecmascript
+
 reload
 random
 
-standard-minifiers
 session
 spacebars
 
 tracker
 
-npm-container
 mdg:geolocation
 
 cfs:standard-packages
@@ -71,6 +67,7 @@ cfs:gridfs
 pfafman:filesaver
 harrison:papa-parse
 
-meteorhacks:ssr
 base64
 
+standard-minifier-css
+standard-minifier-js

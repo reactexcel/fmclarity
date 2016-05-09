@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 UpdatesWidget = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -26,7 +30,7 @@ UpdatesWidget = React.createClass({
 		        </div>
 		        <div className="ibox-content">
 		        	{this.data.team?
-					<Inbox for={this.data.team} truncate={true} readOnly={true}/>
+					<Inbox for={this.data.team} truncate={true} options={{limit:5}} readOnly={true}/>
 		        	:null}
 				</div>
 			</div>

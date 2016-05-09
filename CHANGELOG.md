@@ -1,6 +1,21 @@
 CHANGELOG.md
 ============
 
+**v1.3.1b** 
+
+* Limit dashboard updates to max 50
+* Managers can edit dueDate and value of issues orders
+
+**v1.3.0b**
+
+* (x) in services selector clears supplier
+* Notification sound
+* Notification desktop alerts
+* Supplier summary insurance expiry on supplier card
+* Material design date picker for expiry field
+* Upgraded meteor from 1.2.x to 1.3.2.4
+* Updated favicon
+
 **v1.2.1b** 
 
 * Fixed a problem that was causing some message notifications to be sent multiple times

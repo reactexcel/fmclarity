@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 PlainCard = React.createClass({
 	render() {
 		return (
@@ -56,7 +60,7 @@ AutoInput.MDSelect = React.createClass({
 			return (
 				<span className={"md-input readonly dropdown "+classes}>
 					<div className={"input"+(selectedItem?" used":null)}>
-	      				{selectedItem?<Card item={selectedItem}/>:<span>&nbsp;</span>}
+	      				{selectedItem?<Card item={selectedItem}/>:null}
 	      			</div>
 				    <span className="highlight"></span>
       				<span className="bar"></span>

@@ -84,7 +84,7 @@ Facilities.helpers({
   },
 
   getPrimaryContact() {
-    var contacts = this.getMembers();
+    var contacts = this.getMembers({role:"manager"});
   	if(contacts&&contacts.length) {
       return contacts[0]
     }
@@ -111,9 +111,11 @@ function mergeWithTeamArray(item,field,parent) {
         items = items.concat(team[field]);
       }
       items.sort(function(a,b){
-        return (a.name>b.name)?1:-1;
+        if(a&&a.name&&b&&b.name) {
+          return (a.name>b.name)?1:-1;
+        }
       })
-      items = _.uniq(items,true,function(i){return i.name});
+      items = _.uniq(items,true,function(i){return i&&i.name?i.name:null});
     }
     return items;
 }

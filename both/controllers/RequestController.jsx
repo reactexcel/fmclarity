@@ -38,12 +38,14 @@ DocMessages.register(Issues,{
 });
 
 DocMembers.register(Issues,{
-  authentication:{
-    add:function(){
-      return true;
-    }
-  }
+  authentication:AuthHelpers.memberOfRelatedTeam
 });
+
+function isEditable(request) {
+  return (
+    request.status=="Draft"||request.status=="New"
+  )        
+}
 
 var accessForTeamMembers = function(role,user,request) {
   return (
@@ -52,13 +54,18 @@ var accessForTeamMembers = function(role,user,request) {
   )
 }
 
-/**
- *
- */
-function isEditable(request) {
+var accessForTeamMembersWithElevatedAccessForManagers = function(role,user,request) {
   return (
-    request.status==Issues.STATUS_DRAFT||request.status==Issues.STATUS_NEW
-  )        
+    (
+      request.status=="Issued"&&
+      AuthHelpers.managerOfRelatedTeam(role,user,request)
+    )
+    ||
+    (
+      isEditable(request)&&
+      AuthHelpers.memberOfRelatedTeam(role,user,request)
+    )
+  )
 }
 
 //maybe actions it better terminology?
@@ -86,16 +93,11 @@ Issues.methods({
     method:setSubService
   },
   setCost:{
-    authentication:function(role,user,request) {
-      return (
-        (isEditable(request)||request.status==Issues.STATUS_ISSUED)&&
-        AuthHelpers.memberOfRelatedTeam(role,user,request)
-      )
-    },
+    authentication:accessForTeamMembersWithElevatedAccessForManagers,
   },
   setDueDate:{
-    authentication:accessForTeamMembers,
-  } , 
+    authentication:accessForTeamMembersWithElevatedAccessForManagers,
+  }, 
   setArea:{
     authentication:accessForTeamMembers,
     method:setArea
@@ -183,8 +185,10 @@ function setSupplier(request,supplier) {
 
     request = Issues._transform(request);
     supplier = request.getSupplier(supplier);
-    var supplierMembers = supplier.getMembers({role:"manager"});
-    request.addMember(supplierMembers,{role:"supplier manager"});
+    if(supplier) {
+      var supplierMembers = supplier.getMembers({role:"manager"});
+      request.addMember(supplierMembers,{role:"supplier manager"});
+    }
   }
 
 }

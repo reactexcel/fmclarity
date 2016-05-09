@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 TeamViewDetail = React.createClass({
 	render() {
 		var team, contact, contactName, profile, availableServices;
@@ -19,7 +23,12 @@ TeamViewDetail = React.createClass({
 	    if(contact) {
 	    	contactName = contact.getName();
 	    }
-	    
+	    var expiry;
+	    if(team.insuranceDetails&&team.insuranceDetails.expiry) {
+	    	expiry = moment(team.insuranceDetails.expiry).format('DD/MM/YYYY');
+	    }
+
+
 	    return (
 	    	<div className="business-card">				
 				<div className="contact-thumbnail pull-left">
@@ -32,6 +41,7 @@ TeamViewDetail = React.createClass({
 						<b>Email</b> {team.email}<br/>
 						{profile.phone?<span><b>Phone</b> {team.phone}<br/></span>:null}
 						{team.phone2?<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>:null}
+						{expiry?<span><b>Insurance Expiry</b> {expiry}</span>:null}
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
 						{availableServices?

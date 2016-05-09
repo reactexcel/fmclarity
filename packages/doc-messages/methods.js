@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 Meteor.methods({
 	//probably Messages.markAllNotificationsRead
   'Messages.markAllNotificationsAsRead':function(inboxId) {
