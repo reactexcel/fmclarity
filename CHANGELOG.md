@@ -1,14 +1,15 @@
 CHANGELOG.md
 ============
 
-**v1.2.2b**
+**v1.3.0b**
 
-* Can add and remove members from request contact
-* (x) in services selector (15mins)
-* Notification sound (1hr)
-* Supplier summary insurance expiry (simple date field) (1hr)
-
-
+* (x) in services selector clears supplier
+* Notification sound
+* Notification desktop alerts
+* Supplier summary insurance expiry on supplier card
+* Material design date picker for expiry field
+* Upgraded meteor from 1.2.x to 1.3.2.4
+* Updated favicon
 
 **v1.2.1b** 
 

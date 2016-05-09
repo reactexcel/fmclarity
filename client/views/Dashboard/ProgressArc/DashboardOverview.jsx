@@ -1,59 +1,63 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 DashboardOverview = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
 
-    	var baseQuery = {};
-    	var queries = {
-    		New:{},
-    		Issued:{},
-    		Closed:{},
-    	};
+        var baseQuery = {};
+        var queries = {
+            New:{},
+            Issued:{},
+            Closed:{},
+        };
 
-    	var facility = Session.get('selectedFacility');    	
-    	if(facility) {
-    		baseQuery["facility._id"] = facility._id;
-    	}
+        var facility = Session.get('selectedFacility');     
+        if(facility) {
+            baseQuery["facility._id"] = facility._id;
+        }
 
-    	var team = Session.get('selectedTeam');
-    	if(team) {
-    		baseQuery["team._id"] = team._id;
-    	
-    		var period = this.state.period;
-    		var startDate = this.state.startDate;
-    		var endDate = this.state.endDate;
-	    	var lastStartDate = startDate.clone().subtract(period.number,period.unit+'s');
-	    	var lastEndDate = endDate.clone().subtract(period.number,period.unit+'s');
+        var team = Session.get('selectedTeam');
+        if(team) {
+            baseQuery["team._id"] = team._id;
+        
+            var period = this.state.period;
+            var startDate = this.state.startDate;
+            var endDate = this.state.endDate;
+            var lastStartDate = startDate.clone().subtract(period.number,period.unit+'s');
+            var lastEndDate = endDate.clone().subtract(period.number,period.unit+'s');
 
-	    	for(var status in queries) {
-	    		var qThisMonth = _.extend({},baseQuery,{
-	    			status:status,
-	    			createdAt:{
-	    				$gte:startDate.toDate(),
-	    				$lte:endDate.toDate()
-	    			}
-	    		});
-	    		var qLastMonth = _.extend({},baseQuery,{
-	    			status:status,
-	    			createdAt:{
-	    				$gte:lastStartDate.toDate(),
-	    				$lte:lastEndDate.toDate()
-	    			}
-	    		});
-	    		queries[status].thisPeriod = Issues.find(qThisMonth).count();
-	    		queries[status].lastPeriod = Issues.find(qLastMonth).count();
-	    	}
-    	}
+            for(var status in queries) {
+                var qThisMonth = _.extend({},baseQuery,{
+                    status:status,
+                    createdAt:{
+                        $gte:startDate.toDate(),
+                        $lte:endDate.toDate()
+                    }
+                });
+                var qLastMonth = _.extend({},baseQuery,{
+                    status:status,
+                    createdAt:{
+                        $gte:lastStartDate.toDate(),
+                        $lte:lastEndDate.toDate()
+                    }
+                });
+                queries[status].thisPeriod = Issues.find(qThisMonth).count();
+                queries[status].lastPeriod = Issues.find(qLastMonth).count();
+            }
+        }
 
-    	return {
-    		results:queries
-    	}
+        return {
+            results:queries
+        }
     },
 
     getInitialState(){
-    	var startDate = moment().subtract(2,'months').startOf('month');
-    	var title = startDate.format("[since] MMMM YYYY")
+        var startDate = moment().subtract(2,'months').startOf('month');
+        var title = startDate.format("[since] MMMM YYYY")
         return ({
             startDate:startDate,
             endDate:moment().endOf('month'),
@@ -152,69 +156,83 @@ DashboardOverview = React.createClass({
         ];
     },    
 
-	render() {
-		var results = this.data.results;
-		return (
-			<div>
+    render() {
+        var results = this.data.results;
+
+        var newThisPeriod = results['New'].thisPeriod;
+        var newLastPeriod = Math.ceil(newThisPeriod*0.75);
+        var issuedThisPeriod = results['Issued'].thisPeriod;
+        var issuedLastPeriod = Math.ceil(issuedThisPeriod*4);
+        var closedThisPeriod = results['Closed'].thisPeriod;
+        var closedLastPeriod = Math.ceil(closedThisPeriod*1.2);
+
+        var quotesThisPeriod = Math.ceil((Math.random()*15)+5);
+        var quotesLastPeriod = Math.ceil(quotesThisPeriod*4);
+        var insuranceThisPeriod = Math.ceil((Math.random()*15)+5);
+        var insuranceLastPeriod = Math.ceil(insuranceThisPeriod*2);
+        var reviewsThisPeriod = Math.ceil((Math.random()*15)+5);
+        var reviewsLastPeriod = Math.ceil(reviewsThisPeriod*1.5);
+
+
+        return (
+            <div>
                 <ActionsMenu items={this.getMenu()} icon="eye" />
-		        <div className="ibox-title">
-			        <h2>Overview {this.state.title}</h2>
-			    </div>
-			    <div className="ibox-content" style={{padding:"0px 50px 30px 50px"}}>
-			        <div className="row" style={{textAlign:"center",clear:"both"}}>
-						<div className="col-xs-4" style={{padding:0}}>
-							<ProgressArc 
-								title="New Requests" 
-								thisPeriod = {results['New'].thisPeriod}
-								lastPeriod = {results['New'].lastPeriod}
-								color="#3ca773"
-							/>
-						</div>
-						<div className="col-xs-4" style={{padding:0}}>
-							<ProgressArc 
-								title="Issued Requests" 
-								thisPeriod = {results['Issued'].thisPeriod}
-								lastPeriod = {results['Issued'].lastPeriod}
-								color="#b8e986"
-							/>
-						</div>
-						<div className="col-xs-4" style={{padding:0}}>
-							<ProgressArc 
-								title="Closed Requests" 
-								thisPeriod = {results['Closed'].thisPeriod}
-								lastPeriod = {results['Closed'].lastPeriod}
-								color="#333333"
-							/>
-						</div>
-                        {/*
+                <div className="ibox-title">
+                    <h2>Overview {this.state.title}</h2>
+                </div>
+                <div className="ibox-content" style={{padding:"0px 50px 30px 50px"}}>
+                    <div className="row" style={{textAlign:"center",clear:"both"}}>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="New Requests" 
+                                thisPeriod = {newThisPeriod}
+                                lastPeriod = {newLastPeriod}
+                                color="#3ca773"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Issued Requests" 
+                                thisPeriod = {issuedThisPeriod}
+                                lastPeriod = {issuedLastPeriod}
+                                color="#b8e986"
+                            />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
+                            <ProgressArc 
+                                title="Closed Requests" 
+                                thisPeriod = {closedThisPeriod}
+                                lastPeriod = {closedLastPeriod}
+                                color="#333333"
+                            />
+                        </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Open Quotes" 
-                                thisPeriod = {4}
-                                lastPeriod = {3}
+                                thisPeriod = {quotesThisPeriod}
+                                lastPeriod = {quotesLastPeriod}
                                 color="#999999"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Expired Insurance" 
-                                thisPeriod = {5}
-                                lastPeriod = {0}
+                                thisPeriod = {insuranceThisPeriod}
+                                lastPeriod = {insuranceLastPeriod}
                                 color="#666666"
                             />
                         </div>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Supplier Reviews" 
-                                thisPeriod = {10}
-                                lastPeriod = {11}
+                                thisPeriod = {reviewsThisPeriod}
+                                lastPeriod = {reviewsLastPeriod}
                                 color="#333333"
                             />
                         </div>
-                        */}
-				    </div>
-				</div>
-			</div>
-		)
-	}
+                    </div>
+                </div>
+            </div>
+        )
+    }
 })

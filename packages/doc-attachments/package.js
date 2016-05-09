@@ -14,8 +14,9 @@ Package.describe({
 Package.onUse(function(api) { 
 
 	api.use([
-		'react',
+		'ecmascript',
 		'less',
+		'react-meteor-data'
 		//'dburles:collection-helpers',
 		//'matb33:collection-hooks'
 	]);

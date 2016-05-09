@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 Meteor.methods({
 	'Files.setMeta':function(fileId,meta) {
 		Files.update(fileId,{$set:{

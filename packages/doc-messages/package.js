@@ -12,7 +12,8 @@ Package.onUse(function(api) {
 		'underscore',
 		'accounts-base',
 		'less',
-		'react',
+		'ecmascript',
+		'react-meteor-data',
 		'fmc:orm',
 		'fmc:rbac'
 	]);

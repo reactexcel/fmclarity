@@ -9,12 +9,11 @@ Package.describe({
 Package.onUse(function(api) { 
 
 	api.use([
-		'kadira:flow-router@2.4.0',
-		'kadira:react-layout'
+		'kadira:flow-router',
 	],'client');
 
 	api.use([
-		'react',
+		'ecmascript',
 		'accounts-base',
 		'base64'
 	]);

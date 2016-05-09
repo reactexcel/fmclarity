@@ -18,7 +18,8 @@ Package.onUse(function(api) {
 	],'client');
 
 	api.use([
-		'react',
+		'react-meteor-data',
+		'ecmascript',
 		'dburles:collection-helpers'
 	]);
 

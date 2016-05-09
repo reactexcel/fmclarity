@@ -72,7 +72,7 @@ Users.helpers({
   },
   
   getName:function() {
-    return this.profile.name;
+    return this.profile.name||this.profile.firstName||"Guest";
   },
   getEmail:function() {
     return this.emails[0].address;

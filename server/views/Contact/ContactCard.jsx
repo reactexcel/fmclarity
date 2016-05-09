@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDom from "react-dom";
+
 ContactViewName = React.createClass({
 	render() {
 		var contact = this.props.item || {};

@@ -10,6 +10,11 @@
 });
 */
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 
 MainLayout = React.createClass({
 
@@ -76,6 +81,7 @@ MainLayout = React.createClass({
   },
   render() {
     return (
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
       <div id="wrapper">
         <Navigation />
         <div className="gradient-bg">
@@ -87,6 +93,7 @@ MainLayout = React.createClass({
         <RightSideBar />
         <Modal/>
       </div>
+      </MuiThemeProvider>
     );
   }
 });

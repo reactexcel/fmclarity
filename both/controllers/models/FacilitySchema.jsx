@@ -43,7 +43,7 @@ InsuranceSchema = {
         type:Date,
         label:"Expiry",
         size:6,
-        input:"date",
+        input:"MDDate",
     },
     documents:{
         type:[Object],
@@ -154,11 +154,11 @@ FacilitySchema = {
         	return JSON.parse(JSON.stringify(Config.defaultAreas));
     	}
     },
-    services: {
-    	type:[Object],
-    	label:"Building services",
-    	defaultValue:function(){
-        	return JSON.parse(JSON.stringify(Config.services));
-    	}
+    servicesRequired: {
+        type:[Object],
+        label:"Services Consumed",
+        defaultValue:function(){
+            return JSON.parse(JSON.stringify(Config.services));
+        }
     }
 }

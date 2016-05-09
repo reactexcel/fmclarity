@@ -1,3 +1,7 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 /*
 Tracker.autorun(function(computation) {
    var docs = Posts.find({}); // and also try with opts

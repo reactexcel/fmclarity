@@ -1,9 +1,12 @@
+import React from "react";
+import {mount} from 'react-mounter';
+
 var exposed = FlowRouter.group();
 
 exposed.route('/login', {
   name: 'login',
   action() {
-    ReactLayout.render(BlankLayout,{content:<PageLogin/>});
+    mount(BlankLayout,{content:<PageLogin/>});
   },
 });
 
@@ -19,21 +22,21 @@ exposed.route('/enroll-account/:token', {
 exposed.route('/403', {
   name: '403',
   action() {
-    ReactLayout.render(BlankLayout,{content: <Page403/>});
+    mount(BlankLayout,{content: <Page403/>});
   }
 });
 
 exposed.route('/register', {
   name: 'register',
   action() {
-    ReactLayout.render(BlankLayout,{content:<PageRegister/>});
+    mount(BlankLayout,{content:<PageRegister/>});
   }
 });
 
 exposed.route('/lost-password', {
   name: 'lost-password',
   action() {
-    ReactLayout.render(BlankLayout,{content:<PageLostPassword/>});
+    mount(BlankLayout,{content:<PageLostPassword/>});
   }
 });
 

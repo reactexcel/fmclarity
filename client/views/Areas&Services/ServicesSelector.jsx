@@ -1,3 +1,8 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+
 ServicesSelector = React.createClass({
 	//this is stupid - save should be hosted here instead
 

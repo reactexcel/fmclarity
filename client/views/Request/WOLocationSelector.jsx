@@ -1,3 +1,8 @@
+import React from "react";
+import ReactDom from "react-dom";
+import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+
 WOLocationSelector = React.createClass({
 
     mixins: [ReactMeteorData],
