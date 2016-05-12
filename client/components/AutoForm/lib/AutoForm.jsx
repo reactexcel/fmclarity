@@ -82,7 +82,7 @@ AutoForm = React.createClass({
 	    	//console.log(originalItem);
     	}
     	if(save) {
-	    	save();
+	    	save(originalItem);
     	}
     	else {
 	    	originalItem.save();
@@ -93,7 +93,7 @@ AutoForm = React.createClass({
 		if(!this.state.item) return <div/>;
 		var component = this;
 		var item = this.state.item;
-		var id = this.props.key||item._id;
+		var id = this.props.keyField||item._id;
 		var schema = this.props.schema;
 		var form = this.props.form||Object.keys(schema);
 		
@@ -149,6 +149,10 @@ AutoForm = React.createClass({
 						//If it is a string take it from the autoinput package
 						//if it isn't then consider it a component
 						var Input = _.isString(s.input)?AutoInput[s.input]:s.input;
+						if(!Input) {
+							console.log(s);
+							throw new Meteor.Error("schema-input-type-does-not-exist","Schema input type doesn't exist","You have tried to access a nonexistent input type.")
+						}
 						return (
 							<div key={id+'-'+key} className={"col-sm-"+s.size}>
 								<Input

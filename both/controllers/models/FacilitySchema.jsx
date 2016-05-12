@@ -118,6 +118,11 @@ FacilitySchema = {
     	label:"Attachments",
         input:DocAttachments.FileExplorer
     },
+    documents: {
+        type:[Object],
+        label:"Documents",
+        input:DocAttachments.DocumentExplorer
+    },
     address:{
     	label:"Address",
     	schema:AddressSchema,

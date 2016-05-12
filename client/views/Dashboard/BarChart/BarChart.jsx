@@ -109,6 +109,7 @@ BarChart = React.createClass({
     	var issues = Issues.find(query);
 
     	var buckets = {};
+        var costs = {};
     	var labels = [];
     	var counts = [];
     	issues.map(function(i){
@@ -118,11 +119,15 @@ BarChart = React.createClass({
                 if(serviceName.length>15) {
                     serviceName = serviceName.substring(0,13)+'...';
                 }
+                if(!costs[serviceName]) {
+                    costs[serviceName] = 0;
+                }
     			if(!buckets[serviceName]) {
     				labels.push(serviceName);
     				buckets[serviceName] = [];
     			}
     			buckets[serviceName].push(i);
+                costs[serviceName] += parseInt(i.costThreshold);
     		}
     	});
     	labels.map(function(serviceName,idx){
@@ -132,7 +137,7 @@ BarChart = React.createClass({
     	return {
     		facility:facility,
     		labels:labels,
-    		set:counts
+    		set:costs//counts
     	}
     },
 

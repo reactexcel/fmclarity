@@ -16,12 +16,15 @@ Package.onUse(function(api) {
 	api.use([
 		'ecmascript',
 		'less',
-		'react-meteor-data'
+		'react-meteor-data',
+		'fmc:orm',
+		'fmc:rbac'
 		//'dburles:collection-helpers',
 		//'matb33:collection-hooks'
 	]);
 
 	api.addFiles([
+		'controller.jsx',
 		'FileView.jsx',
 		'FileExplorerView.jsx',
 		'FileSchema.jsx',
@@ -31,6 +34,6 @@ Package.onUse(function(api) {
 
 	api.export([
 		'DocAttachments',
-		'FileSchema'
+		'Documents'
 	]);
 });

@@ -1,10 +1,21 @@
 CHANGELOG.md
 ============
 
+**v1.3.2b**
+
+* Bar chart on dashboard shows cost rather than count
+* New "facility document" component
+
 **v1.3.1b** 
 
 * Limit dashboard updates to max 50
 * Managers can edit dueDate and value of issues orders
+* Changed email notification text
+* Emails are now sent to "displayAddress" rather than "accountAddress"
+* Services of new suppliers are all inactive by default
+* Facility "Members" renamed to "Facility personnel"
+* Old style contact list no longer shows facility manager
+* Uploaded image show as icon rather than thumbnail (addressing an issue which was causing them to display incorrectly)
 
 **v1.3.0b**
 

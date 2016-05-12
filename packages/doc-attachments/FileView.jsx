@@ -2,45 +2,15 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-Meteor.methods({
-	'Files.setMeta':function(fileId,meta) {
-		Files.update(fileId,{$set:{
-			meta:meta
-		}})
-	}
-})
-
-FileViewEdit = React.createClass({
-
-
-	mixins: [ReactMeteorData],
-
-    getMeteorData() {
-		var file = this.props.item;
-		var meta = FileMeta.findOne(file.meta);
-		if(!meta) {
-			meta = FileMeta.create({
-				file:{_id:file._id},
-				name:file.name()
-			});
-			file.meta = {_id:meta._id};
-			Meteor.call('Files.setMeta',file._id,{
-				_id:meta._id
-			});
-		}
-		return {
-			file:file,
-			url:file.url(),
-			meta:meta
-		}
-	},
+DocumentViewEdit = React.createClass({
 
     downloadFile() {
+
     	var win = window.open(this.data.url, '_blank');
     	win.focus();
     },
 
-    deleteFile() {
+    deleteDoc() {
 		var message = confirm('Are you sure you want to delete this file?');
     	if(message == true){
 	        this.data.file.remove();
@@ -51,22 +21,68 @@ FileViewEdit = React.createClass({
     },
 
 	render(){
-		var file = this.data.file;
-		var meta = this.data.meta;
-		if(!meta) {
+		var doc = Documents._transform(this.props.item);
+		if(!doc) {
 			return <div/>
 		}
 		return (
 			<div>
-				<AutoForm schema={FileSchema} item={meta}/>
+				<AutoForm schema={DocumentSchema} item={doc} save={this.props.onChange}/>
 				<div style={{paddingTop:"20px"}}>
 	              	<button type="button" onClick={this.downloadFile} className="btn btn-primary">Download</button>
-    	           	<button style={{marginLeft:"5px"}} type="button" onClick={this.deleteFile} className="btn btn-danger">Delete</button>
+    	           	<button style={{marginLeft:"5px"}} type="button" onClick={this.deleteDoc} className="btn btn-danger">Delete</button>
     	        </div>
 			</div>
 		)
 	}
 })
+
+DocumentIconHeader = React.createClass({
+
+	render() {
+		return (
+			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}>&nbsp;</span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Type</span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Name</span>
+				<span style={{display:"inline-block",width:"50%",minWidth:"20px",paddingLeft:"10px"}}>Description</span>
+			</div>
+		)
+	}
+});
+
+DocumentIcon = React.createClass({
+
+	showFileDetailsModal() {
+		Modal.show({
+			content:<DocumentViewEdit item={this.props.item} onChange={this.props.onChange}/>
+		})
+	},
+
+	handleClick() {
+		this.showFileDetailsModal();
+	},
+
+	render() {
+		var doc = this.props.item;
+		if(!doc) {
+			return (
+			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}><i className="fa fa-plus"></i></span>
+				<span style={{display:"inline-block",width:"90%",minWidth:"20px"}}>Add document</span>
+			</div>
+			)
+		}
+		return (
+			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}><i className="fa fa-file-o"></i></span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>{doc.type||'-'}</span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>{doc.name||'-'}</span>
+				<span style={{display:"inline-block",width:"50%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{doc.description||'-'}</span>
+			</div>
+		)
+	}
+});
 
 File = React.createClass({
 
@@ -76,12 +92,11 @@ File = React.createClass({
 
 		Meteor.subscribe('File');
     	
-    	var query,file,name,url,extension,icon,isImage,progress,meta;
+    	var query,file,name,url,extension,icon,isImage,progress;
     	query = this.props.item;
     	file = Files.findOne(query);
     	if(file) {
     		url = file.url();
-    		meta = FileMeta.findOne(file.meta);
     		progress = file.uploadProgress();
     		extension = file.extension();
     		name = file.name();
@@ -92,7 +107,6 @@ File = React.createClass({
 	    }
     	return {
     		file:file,
-    		meta:meta,
     		name:name,
     		url:url,
     		extension:extension,
@@ -112,12 +126,6 @@ File = React.createClass({
 	    });
 	},
 
-	showFileDetailsModal() {
-		Modal.show({
-			content:<FileViewEdit item={this.data.file} onChange={this.props.onChange}/>
-		})
-	},
-
 	showImageInModal() {
         Modal.show({
             content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
@@ -133,9 +141,6 @@ File = React.createClass({
 		var message = confirm('Are you sure you want to delete this file?');
     	if(message == true){
 	        this.data.file.remove();
-	        if(this.data.meta) {
-		        this.data.meta.destroy();
-		    }
 			this.props.onChange(null);
      	}
     },
@@ -145,8 +150,8 @@ File = React.createClass({
 			this.showImageInModal()
 		}
 		else if(this.data.file) {
-			this.showFileDetailsModal();
-			//this.downloadFile();
+			//this.showFileDetailsModal();
+			this.downloadFile();
 		}
 		else {
 			$(this.refs.input).click();			
