@@ -21,8 +21,7 @@ IssueDynamicArea = React.createClass({
             var facility, facilityContacts, facilityContact;
             facility = request.getFacility();
             if(facility) {
-                facilityContacts = facility.getMembers();
-                facilityContact = facilityContacts?facilityContacts[0]:null;
+                facilityContacts = facility.getPrimaryContact();
             }
 
             return {

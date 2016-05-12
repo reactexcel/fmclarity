@@ -192,10 +192,6 @@ File = React.createClass({
 										data-height="80" 
 									/>
 						    </div>
-						:this.data.isImage?
-							<div style={{width:"100%",overflow:"hidden",cursor:"pointer"}}>
-						    	<img style={{width:"100%","borderRadius":"1px"}} alt="image" src={this.data.url} />
-						    </div>
 						:
 						    <img style={{marginTop:"20px"}} alt="image" src={this.data.icon} />
 						}

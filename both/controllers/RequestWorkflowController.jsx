@@ -209,7 +209,7 @@ function sendSupplierEmail(request){
     }*/
     var user = members[0];    
     if(user) {
-      var email = user.emails[0].address;
+      var email = user.profile.email;//user.emails[0].address;
       var to = user.name?(user.name+" <"+email+">"):email;
 
       //var stampedLoginToken = Accounts._generateStampedLoginToken();

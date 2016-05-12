@@ -46,8 +46,8 @@ EmailMessageView = React.createClass({
 
                 {message.body?<blockquote>{message.body}</blockquote>:null}
 
-                <p>Click <a href={message.getAbsoluteTargetUrl()}>here</a> to view.</p>
-                {owner.profile.phone?<p>{owner.getName()} can be contacted on {owner.profile.phone} shoud you require.</p>:null}
+                <p>Click <a href={message.getAbsoluteTargetUrl()}>here</a> to reply to the work order.</p>
+                {owner.profile.phone?<p>If the matter is urgent, {owner.getName()} can be contacted on {owner.profile.phone}.</p>:null}
             </div>
         )
     }

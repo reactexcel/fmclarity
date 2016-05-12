@@ -30,7 +30,7 @@ UpdatesWidget = React.createClass({
 		        </div>
 		        <div className="ibox-content">
 		        	{this.data.team?
-					<Inbox for={this.data.team} truncate={true} options={{limit:5}} readOnly={true}/>
+					<Inbox for={this.data.team} truncate={true} readOnly={true}/>
 		        	:null}
 				</div>
 			</div>

@@ -411,10 +411,10 @@ Config.services = [{
 
 Config.services.map(function(service){
 	service.contractor = {};
-	service.active = true;
+	service.active = false;
 	service.hasChildren = true;
 	service.children.map(function(subservice) {
-		subservice.active = true;
+		subservice.active = false;
 	})
 });
 

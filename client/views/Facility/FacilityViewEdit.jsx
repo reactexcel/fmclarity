@@ -77,14 +77,14 @@ FacilityViewEdit = React.createClass({
 				<CollapseBox title="Files">
 					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
-				<CollapseBox title="Members">
+				<CollapseBox title="Facility personnel">
 			   		<ContactList 
 			   			items={members}
 			   			facility={facility}
 			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
-				<CollapseBox title="Suppliers">
+				<CollapseBox title="Facility suppliers">
 			   		<ContactList 
 			   			items={suppliers}
 			   			facility={facility}

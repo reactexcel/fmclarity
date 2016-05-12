@@ -75,7 +75,7 @@ Users.helpers({
     return this.profile.name||this.profile.firstName||"Guest";
   },
   getEmail:function() {
-    return this.emails[0].address;
+    return this.profile.email;//this.emails[0].address;
   },
   getAvailableServices:function() {
     return [];
