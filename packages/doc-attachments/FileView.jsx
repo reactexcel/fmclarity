@@ -28,9 +28,9 @@ DocumentViewEdit = React.createClass({
 		return (
 			<div>
 				<AutoForm schema={DocumentSchema} item={doc} save={this.props.onChange}/>
-				<div style={{paddingTop:"20px"}}>
-	              	<button type="button" onClick={this.downloadFile} className="btn btn-primary">Download</button>
+				<div style={{paddingTop:"20px",textAlign:"right"}}>
     	           	<button style={{marginLeft:"5px"}} type="button" onClick={this.deleteDoc} className="btn btn-danger">Delete</button>
+    	           	<button style={{marginLeft:"5px"}} type="button" onClick={Modal.hide} className="btn btn-primary">Done</button>
     	        </div>
 			</div>
 		)
@@ -41,10 +41,10 @@ DocumentIconHeader = React.createClass({
 
 	render() {
 		return (
-			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}>&nbsp;</span>
+			<div style={{padding:"5px",margin:"5px",border:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"20px"}}>&nbsp;</span>
 				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Type</span>
-				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Name</span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px",paddingLeft:"10px"}}>Name</span>
 				<span style={{display:"inline-block",width:"50%",minWidth:"20px",paddingLeft:"10px"}}>Description</span>
 			</div>
 		)
@@ -59,6 +59,13 @@ DocumentIcon = React.createClass({
 		})
 	},
 
+	getColorFromString(str) {
+		var r = (str.charCodeAt(str.length-3)%25)*10;
+		var g = (str.charCodeAt(str.length-2)%25)*10;
+		var b = (str.charCodeAt(str.length-1)%25)*10;
+		return 'rgb('+r+','+g+','+b+')';
+	},
+
 	handleClick() {
 		this.showFileDetailsModal();
 	},
@@ -67,18 +74,22 @@ DocumentIcon = React.createClass({
 		var doc = this.props.item;
 		if(!doc) {
 			return (
-			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}><i className="fa fa-plus"></i></span>
+			<div style={{padding:"5px",margin:"5px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"20px"}}><i className="fa fa-plus"></i></span>
 				<span style={{display:"inline-block",width:"90%",minWidth:"20px"}}>Add document</span>
 			</div>
 			)
 		}
+		var color = "#000";
+		if(doc.type) {
+			color = this.getColorFromString(doc.type);
+		}
 		return (
-			<div style={{padding:"4px",margin:"4px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",width:"10%",minWidth:"20px"}}><i className="fa fa-file-o"></i></span>
-				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>{doc.type||'-'}</span>
-				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>{doc.name||'-'}</span>
-				<span style={{display:"inline-block",width:"50%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{doc.description||'-'}</span>
+			<div style={{padding:"5px",margin:"5px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"20px",color:color}}><i className="fa fa-file"></i></span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff"}}>{doc.type||'-'}</span>
+				<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff",paddingLeft:"10px"}}>{doc.name||'-'}</span>
+				<span style={{display:"inline-block",width:"50%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{doc.description||'-'}</span>
 			</div>
 		)
 	}
@@ -214,7 +225,7 @@ File = React.createClass({
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
-				<div style={{paddingTop:"40%"}}>Upload file</div>
+				<div style={{paddingTop:"25%",fontSize:"40px",color:"#999"}}><i className="fa fa-cloud-upload"></i></div>
 			</div>
 		)
 	}

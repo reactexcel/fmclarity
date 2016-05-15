@@ -55,7 +55,7 @@ DocumentExplorer = React.createClass({
 		else {
 			documents.splice(index,1);
 		}
-		console.log(documents);
+		//console.log(documents);
 		this.props.onChange(documents)
 	},
 

@@ -30,6 +30,7 @@ DocumentSchema = {
 				"Induction",
 				"Inspection",
 				"Insurance",
+                "Invoice",
                 "Lease",
 				"MSDS",
 				"Plan",
@@ -55,6 +56,7 @@ DocumentSchema = {
                 "Emergency Management",
                 "House Rules",
                 "Insurance",
+                "Invoice",
                 "MSDS",
                 "Plan",
                 "Procedure",
@@ -65,19 +67,13 @@ DocumentSchema = {
             ].indexOf(item.type)>-1;
         },
     },
-    version:{
-        label:"Version",
+    gst:{
+        label:"GST",
         size:6,
         condition:function(item){
             return [
-                "Emergency Management",
-                "House Rules",
-                "MSDS",
-                "Plan",
-                "Procedure",
-                "Register",
-                "Registration",
-                "SWMS",
+                "Quote",
+                "Invoice",
             ].indexOf(item.type)>-1;
         },
     },
@@ -87,48 +83,45 @@ DocumentSchema = {
         condition:function(item){
             return [
                 "Bank Guarantee",
-                "Contract",
                 "Insurance",
+                "Invoice",
                 "Quote",
             ].indexOf(item.type)>-1;
         },
 
     },
     currentYear:{
-        label:"Current year",
+        label:"Current year value",
         size:6,
         condition:function(item){
             return [
                 "Budget",
                 "Contract",
                 "Lease",
-                "Quote",
             ].indexOf(item.type)>-1;
         },
 
     },
     'currentYear+1':{
-        label:"Current year +1",
+        label:"Current year +1 value",
         size:6,
         condition:function(item){
             return [
                 "Budget",
                 "Contract",
                 "Lease",
-                "Quote",
             ].indexOf(item.type)>-1;
         },
 
     },
     'currentYear+2':{
-        label:"Current year +2",
+        label:"Current year +2 value",
         size:6,
         condition:function(item){
             return [
                 "Budget",
                 "Contract",
                 "Lease",
-                "Quote",
             ].indexOf(item.type)>-1;
         },
 
@@ -141,6 +134,7 @@ DocumentSchema = {
                 "Audit",
                 "Contract",
                 "Inspection",
+                "Invoice",
                 "MSDS",
                 "Plan",
                 "Procedure",
@@ -163,6 +157,7 @@ DocumentSchema = {
                 "Induction",
                 "Inspection",
                 "Insurance",
+                "Invoice",
                 "MSDS",
                 "Quote",
                 "Register",
@@ -192,8 +187,8 @@ DocumentSchema = {
             ].indexOf(item.type)>-1;
         },
     },    
-    'PI/PL':{
-        label:"PI/PL",
+    'Insurance type':{
+        label:"Insurance type",
         size:6,
         condition:function(item){
             return [
@@ -207,13 +202,11 @@ DocumentSchema = {
     		return [
 				"Audit",
 				"Budget",
-				"Contract",
 				"Emergency Management",
 				"House Rules",
 				"Inspection",
-				"Insurance",
+                "Invoice",
 				"Register",
-				"Registration",
 				"Service Report",
     		].indexOf(item.type)>-1;
     	},
@@ -230,13 +223,11 @@ DocumentSchema = {
     		return [
                 "Audit",
                 "Budget",
-                "Contract",
                 "Emergency Management",
                 "House Rules",
                 "Inspection",
-                "Insurance",
+                "Invoice",
                 "Register",
-                "Registration",
                 "Service Report",
     		].indexOf(item.type)>-1;
     	},
@@ -246,17 +237,6 @@ DocumentSchema = {
      	label:"Applicable period end",
         size:6,
         input:"MDDate",
-    },
-    clientExecutedDate:{
-    	type:Date,
-    	condition:function(item){
-    		return ['Contract','Lease'].indexOf(item.type)>-1;
-    	},
-    	defaultValue:function(item) {
-    		return new Date();
-    	},
-     	label:"Date client executed",
-     	input:"date"
     },
     commencementDate:{
     	type:Date,
@@ -302,6 +282,7 @@ DocumentSchema = {
 				"Induction",
 				"Inspection",
                 "Insurance",
+                "Invoice",
                 "Lease",
 				"MSDS",
 				"Plan",
@@ -320,6 +301,17 @@ DocumentSchema = {
         size:6,
         input:"MDDate",
     },
+    clientExecutedDate:{
+        type:Date,
+        condition:function(item){
+            return ['Contract','Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Date client executed",
+        input:"MDDate"
+    },    
     supplierExecutedDate:{
     	type:Date,
     	condition:function(item){

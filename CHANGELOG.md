@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v1.3.3b**
+
+* Fixed an error which was causing facility select to bypass access restrictions for work requests
+* Attachments: replaced "upload file" text with "upload to cloud" icon
+* Updated document type fields as per spreadsheet
+* Document icons are now color coded by type
+
 **v1.3.2b**
 
 * Bar chart on dashboard shows cost rather than count

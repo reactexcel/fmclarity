@@ -13,15 +13,16 @@ IssuesIndexPage = React.createClass({
         Meteor.subscribe('users');
 	    var issues;
     	if(Meteor.user()) {
-	        var facility = Session.getSelectedFacility();
-	        if(facility) {
-	        	issues = facility.getIssues();
-	        }
-	        else {
-	        	var team = Meteor.user().getSelectedTeam();
-	        	if(team) {
-	        		issues = team.getIssues();
-	        	}
+	        var team = Meteor.user().getSelectedTeam();
+	        if(team) {
+		        var facility = Session.getSelectedFacility();
+
+		        var q = {};
+		        if(facility) {
+		        	q['facility._id'] = facility._id;
+		        }
+
+	        	issues = team.getIssues(q);
 	        }
 	    }
         return {
