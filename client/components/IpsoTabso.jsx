@@ -36,7 +36,7 @@ IpsoTabso = React.createClass({
                                             className={(idx==active?"ipso-tab active":"ipso-tab")}
                                             key={idx}
                                         >
-                                            <div className="btn btn-sm btn-flat issue-nav-btn">{i.tab}</div>
+                                            <div className="tab">{i.tab}</div>
                                             <div className="highlight"/>
                                         </div>
                                     )

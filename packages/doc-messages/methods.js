@@ -31,7 +31,7 @@ Meteor.methods({
 
         var element = React.createElement(EmailMessageView,{user:user,item:message});
         var html = ReactDOMServer.renderToStaticMarkup (element);
-        var address = user.emails[0].address;
+        var address = user.profile.email;//user.emails[0].address;
         var to = user.name?(user.name+" <"+address+">"):address;
         var subject = (message.subject||"FM Clarity notification");
 

@@ -304,25 +304,21 @@ Teams.helpers({
     return facilities[i];
   },
 
-  getStaffIssues() {
-    return Issues.find({$or:[
-      {'owner._id':Meteor.userId()},
-      {'assignee._id':Meteor.userId()}
-    ]}).fetch();
-  },
-
-  getIssues() {
+  getIssues(q) {
     //this is vulnerable to error - what if the name changes
     //of course if we only have the name then we need to add the id at some point
     var role = this.getMemberRole(Meteor.user());
     if(role=="manager"||role=="fmc support") {
-      return this.getManagerIssues();
+      return this.getManagerIssues(q);
     }
-    return this.getStaffIssues();
+    return this.getStaffIssues(q);
   },
 
-  getManagerIssues() {
-    return Issues.find({$or:[
+  getManagerIssues(filterQuery) {
+
+    var q;
+
+    var issuesQuery = {$or:[
       {$or:[
         {"team._id":this._id},
         {"team.name":this.name}
@@ -334,6 +330,42 @@ Teams.helpers({
         ]},
         {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
       ]}
-    ]}).fetch();
+    ]}
+
+    if(filterQuery) {
+      q = {$and:[
+        issuesQuery,
+        filterQuery
+      ]};
+    }
+    else {
+      q = issuesQuery;
+    }
+
+    return Issues.find(q).fetch();
+  },
+
+  getStaffIssues(filterQuery) {
+
+    var q;
+
+    var issuesQuery = {$or:[
+      {'owner._id':Meteor.userId()},
+      {'assignee._id':Meteor.userId()}
+    ]}
+
+    if(filterQuery) {
+      q = {$and:[
+        issuesQuery,
+        filterQuery
+      ]};
+    }
+    else {
+      q = issuesQuery;
+    }
+
+    return Issues.find(q).fetch();
+
   }
+
 });

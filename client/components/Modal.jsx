@@ -154,8 +154,8 @@ ModalInner = React.createClass({
             <div>{this.props.children}</div>
             {this.props.handleSubmit?
               <div className="modal-footer">
-                <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Submit</button>
+                <button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" className="btn btn-flat btn-primary" onClick={this.handleSubmit}>Submit</button>
               </div>
             :null}
             </div>

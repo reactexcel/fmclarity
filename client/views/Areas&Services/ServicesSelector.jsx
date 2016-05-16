@@ -81,7 +81,9 @@ ServicesSelector = React.createClass({
 					}):null}
 					</tbody>
 				</table>
-				<span onClick={this.showModal} className="btn btn-primary">Edit services</span>
+				<div style={{textAlign:"left"}}>
+					<span onClick={this.showModal} className="btn btn-flat btn-primary">Edit services</span>
+				</div>
 			</div>
 		)
 	}

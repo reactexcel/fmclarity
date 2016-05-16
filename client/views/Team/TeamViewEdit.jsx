@@ -145,7 +145,10 @@ TeamViewEdit = React.createClass({
 					<CollapseBox title="Insurance Details">
 						<AutoForm item={supplier} schema={schema} form={["insuranceDetails"]}/>
 					</CollapseBox>
-					<CollapseBox title="Documents & images">
+					<CollapseBox title="Company Documents">
+						<AutoForm item={supplier} schema={schema} form={["documents"]}/>
+					</CollapseBox>
+					<CollapseBox title="Quick Files">
 						<AutoForm item={supplier} schema={schema} form={["attachments"]}/>
 					</CollapseBox>
 				</div>:null}
