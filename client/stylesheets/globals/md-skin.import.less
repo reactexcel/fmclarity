@@ -381,8 +381,6 @@ body.md-skin {
 
 }
 
-
-
 .md-skin .btn {
   border: none;
   border-radius: 2px;
@@ -404,10 +402,25 @@ body.md-skin {
 
 .md-skin .btn-flat {
   box-shadow:none;
+  background-color:#fff;
+  color:#000;
+  margin:4px 0px!important;
+}
+
+.md-skin .btn-flat:hover {
+  background-color:#ddd;
+}
+
+.md-skin .btn-flat.btn-primary {
+  color:@navy
 }
 
 .md-skin .btn.btn-disabled:hover {
   opacity:0.8;
+}
+
+.md-skin .btn.btn-danger {
+  color:@red;
 }
 
 .md-skin .btn:hover {

@@ -22,12 +22,24 @@ TopNavBar = React.createClass({
                 this.oldCount = count;
                 if(notifications&&notifications.length) {
                     this.audio.play();
-                    notifications.map(function(n){
-                        if(!component.shown[n._id]) {
-                            component.shown[n._id] = true;
-                            component.showNotification(n.subject,n.body);
-                        }
-                    })
+                    var suppressFurtherNotifications = false;
+                    if(notifications.length>3) {
+                        component.showNotification(
+                            "You have FM Clarity notifications",
+                            "You have more than 3 new notifications from FM Clarity"
+                        );
+                        suppressFurtherNotifications = true;
+                    }
+                    else {
+                        notifications.map(function(n){
+                            if(!component.shown[n._id]) {
+                                component.shown[n._id] = true;
+                                if(!suppressFurtherNotifications) {
+                                    component.showNotification(n.subject,n.body);
+                                }
+                            }
+                        })
+                    }
                 }
                 //toastr notification
                 //alert(count+" new messages");

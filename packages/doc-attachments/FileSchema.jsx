@@ -90,6 +90,16 @@ DocumentSchema = {
         },
 
     },
+    subjectAddress:{
+        label:"Subject Address",
+        condition:function(item){
+            return [
+                "Bank Guarantee",
+                "Contract",
+                "Lease"
+            ].indexOf(item.type)>-1;
+        },
+    },    
     currentYear:{
         label:"Current year value",
         size:6,
@@ -176,17 +186,7 @@ DocumentSchema = {
                 "Insurance",
             ].indexOf(item.type)>-1;
         },
-    },    
-    location:{
-        label:"Location",
-        condition:function(item){
-            return [
-                "Bank Guarantee",
-                "Contract",
-                "Lease"
-            ].indexOf(item.type)>-1;
-        },
-    },    
+    },
     'Insurance type':{
         label:"Insurance type",
         size:6,
@@ -238,10 +238,58 @@ DocumentSchema = {
         size:6,
         input:"MDDate",
     },
+    tenantExecutedDate:{
+        type:Date,
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Date tenant executed",
+        size:6,
+        input:"MDDate"
+    },    
+    lessorExecutedDate:{
+        type:Date,
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Date lessor executed",
+        size:6,
+        input:"MDDate",
+    },
+    tenant: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6
+    },
+    landlord: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6
+    },
+    commencingRent: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6,
+        label:"Commencing term rent pa (ex GST)"
+    },
     commencementDate:{
     	type:Date,
     	condition:function(item){
-    		return ['Contract','Insurance','Lease','Registration'].indexOf(item.type)>-1;
+    		return [
+                'Contract',
+                'Insurance',
+                'Lease',
+                'Registration'
+            ].indexOf(item.type)>-1;
     	},
     	defaultValue:function(item) {
     		return new Date();
@@ -304,18 +352,19 @@ DocumentSchema = {
     clientExecutedDate:{
         type:Date,
         condition:function(item){
-            return ['Contract','Lease'].indexOf(item.type)>-1;
+            return ['Contract'].indexOf(item.type)>-1;
         },
         defaultValue:function(item) {
             return new Date();
         },
         label:"Date client executed",
+        size:6,
         input:"MDDate"
     },    
     supplierExecutedDate:{
     	type:Date,
     	condition:function(item){
-    		return ['Contract',''].indexOf(item.type)>-1;
+    		return ['Contract'].indexOf(item.type)>-1;
     	},
     	defaultValue:function(item) {
     		return new Date();
@@ -324,9 +373,74 @@ DocumentSchema = {
         size:6,
         input:"MDDate",
     },
+    annualReview: {
+        type:Date,
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Annual review",
+        size:6,
+        input:"MDDate",
+    },
+    reviewMethod: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6,
+        label:"Review method"
+    },
+    reviewAmount: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6,
+        label:"Review amount"
+    },
+    options: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6
+    },
+    optionExerciseFromDate: {
+        type:Date,
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Option exercise from date",
+        size:6,
+        input:"MDDate",
+    },
+    optionExerciseToDate: {
+        type:Date,
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        defaultValue:function(item) {
+            return new Date();
+        },
+        label:"Option exercise to date",
+        size:6,
+        input:"MDDate",
+    },
+    area: {
+        condition:function(item){
+            return ['Lease'].indexOf(item.type)>-1;
+        },
+        size:6,
+        label:"Area (m2)"
+    },
+
     attachments: {
-    	type:[Object],
-    	label:"Attachments",
+        type:[Object],
+        label:"Attachments",
         input:FileExplorer
-    }
+    },
+
 }

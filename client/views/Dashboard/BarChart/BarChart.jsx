@@ -207,7 +207,7 @@ BarChart = React.createClass({
             <div>
                 <ActionsMenu items={this.getMenu()} icon="eye" />
                 <div className="ibox-title">
-                    <h2>Types of requests {this.state.title}</h2>
+                    <h2>Request breakdown {this.state.title}</h2>
                 </div>
                 <div className="ibox-content">
                     <div style={{margin:"0px 25px 0px 0px"}}>

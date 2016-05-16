@@ -29,8 +29,8 @@ DocumentViewEdit = React.createClass({
 			<div>
 				<AutoForm schema={DocumentSchema} item={doc} save={this.props.onChange}/>
 				<div style={{paddingTop:"20px",textAlign:"right"}}>
-    	           	<button style={{marginLeft:"5px"}} type="button" onClick={this.deleteDoc} className="btn btn-danger">Delete</button>
-    	           	<button style={{marginLeft:"5px"}} type="button" onClick={Modal.hide} className="btn btn-primary">Done</button>
+    	           	<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-danger" onClick={this.deleteDoc} >Delete</button>
+    	           	<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-primary" onClick={Modal.hide}>Done</button>
     	        </div>
 			</div>
 		)
@@ -192,7 +192,7 @@ File = React.createClass({
 		if(this.data.file) {
 			return(
 				<div className="fm-icon">
-					<div title={this.data.name} onClick={this.onClick}>
+					<div onClick={this.onClick}>
 						{
 						!this.data.file.isUploaded()?
 							<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
@@ -209,7 +209,7 @@ File = React.createClass({
 									/>
 						    </div>
 						:
-						    <img style={{marginTop:"20px"}} alt="image" src={this.data.icon} />
+						    <img style={{marginTop:"20px",cursor:"pointer"}} title="Click to download" alt="image" src={this.data.icon} />
 						}
 						<div style={{width:0,height:0,overflow:"hidden"}}>
 							<input ref="input" type="file" onChange={this.handleChange}/>
@@ -225,7 +225,9 @@ File = React.createClass({
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
-				<div style={{paddingTop:"25%",fontSize:"40px",color:"#999"}}><i className="fa fa-cloud-upload"></i></div>
+				<div title="Upload file" style={{paddingTop:"25%",fontSize:"40px",color:"#999"}}>
+					<i className="fa fa-cloud-upload"></i>
+				</div>
 			</div>
 		)
 	}

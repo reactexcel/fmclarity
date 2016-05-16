@@ -1,6 +1,20 @@
 CHANGELOG.md
 ============
 
+**v1.3.4b**
+
+* Updated buttons on service selector, close work order modal and document edit view to flat style
+* Remove date client executed from lease and add date lessor executed and date tenant executed
+* If more than three new notifications only one desktop alert is shown with message "you have more than three..."
+* Added lease fields to document edit view
+* Remove date client executed from lease and add date lessor executed and date tenant executed
+* Change mouse pointer to hand when hovering over file to download and have tooltip, click to download
+* Fixed "Lease fields not aligning in upload docs as attached"
+* Foxed "Incorrect background colour on service selector buttons. You can see the background is a lighter shade of grey"
+* Added tooltip (Upload file) for upload file icon
+* Renamed Compliance Documents to Building Documents when used in a facility/site and Company Documents when used in a Team
+
+
 **v1.3.3b**
 
 * Fixed an error which was causing facility select to bypass access restrictions for work requests

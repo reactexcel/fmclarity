@@ -74,10 +74,10 @@ FacilityViewEdit = React.createClass({
 			        	</div>
 			        </div>
 				</CollapseBox>
-				<CollapseBox title="Documents">
+				<CollapseBox title="Building Documents">
 					<AutoForm item={facility} schema={schema} form={["documents"]}/>
 				</CollapseBox>
-				<CollapseBox title="Files">
+				<CollapseBox title="Quick Files">
 					<AutoForm item={facility} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
 				<CollapseBox title="Facility personnel">
