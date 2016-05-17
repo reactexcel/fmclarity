@@ -32,6 +32,26 @@ IssuePage = React.createClass({
         }
     },
 
+    tour:{
+      id: "single-issue",
+      steps: [
+        {
+          title: "My Header",
+          content: "This is the header of my page.",
+          target: "tour-test",
+          placement: "bottom"
+        }
+      ]
+    },
+
+    componentDidMount(){
+        var tour = this.tour;
+        setTimeout(function(){
+            hopscotch.startTour(tour);
+            console.log('ooooh');
+        },2000);
+    },
+
     render() {
         var request = this.data.request;
         var facility = this.data.facility;
@@ -42,7 +62,7 @@ IssuePage = React.createClass({
         }
     	return (
             <div>
-                <div className="issue-page wrapper wrapper-content animated fadeIn">
+                <div id="tour-test" className="issue-page wrapper wrapper-content animated fadeIn">
                     <div className="row">
                         <div className="col-xs-12">
                             <h3>{request.team.name}<br/>

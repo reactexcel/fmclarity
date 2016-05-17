@@ -13,6 +13,7 @@ fmc:login-tokens
 fmc:document-messages
 
 oaf:html5-desktop-notifications
+mikkelking:meteor-hopscotch
 
 #aldeed:collection2
 abpetkov:switchery
