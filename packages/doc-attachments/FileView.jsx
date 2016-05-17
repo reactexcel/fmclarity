@@ -4,8 +4,19 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 DocumentViewEdit = React.createClass({
 
-    downloadFile() {
+	mixins: [ReactMeteorData],
 
+    getMeteorData() {
+    	var doc = this.props.item;
+    	if(doc&&doc._id) {
+    		doc = Documents.findOne(doc._id);
+    	}
+    	return {
+    		doc:doc
+    	}
+    },
+
+    downloadFile() {
     	var win = window.open(this.data.url, '_blank');
     	win.focus();
     },
@@ -20,16 +31,32 @@ DocumentViewEdit = React.createClass({
      	}
     },
 
+	handleChange(item) {
+		var component = this;
+		if(!item._id) {
+			item = Documents.create(item);
+		}
+		else {
+			item.save();
+		}
+		component.props.onChange({
+			name:item.name,
+			description:item.description,
+			type:item.type,
+			_id:item._id
+		});
+	},    
+
 	render(){
-		var doc = Documents._transform(this.props.item);
+		var doc = Documents._transform(this.data.doc);
 		if(!doc) {
 			return <div/>
 		}
 		return (
 			<div>
-				<AutoForm schema={DocumentSchema} item={doc} save={this.props.onChange}/>
+				<AutoForm schema={DocumentSchema} item={doc} save={this.handleChange}/>
 				<div style={{paddingTop:"20px",textAlign:"right"}}>
-    	           	<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-danger" onClick={this.deleteDoc} >Delete</button>
+    	           	{/*<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-danger" onClick={this.deleteDoc} >Delete</button>*/}
     	           	<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-primary" onClick={Modal.hide}>Done</button>
     	        </div>
 			</div>

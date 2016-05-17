@@ -32,6 +32,8 @@ DocMessages.register(Teams,{
   }  
 });
 
+DocAttachments.register(Teams);
+
 Teams.methods({
   create:{
     authentication:true,

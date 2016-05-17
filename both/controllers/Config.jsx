@@ -17,6 +17,28 @@ Config = {};
 
 */
 
+var navFMSupport = [{
+	path:"dashboard",		
+	label:"Dashboard",
+	icon:"fa fa-newspaper-o"
+},{
+	path:"portfolio",		
+	label:"Portfolio",
+	icon:"fa fa-building"
+},{
+	path:"suppliers",		
+	label:"Suppliers",
+	icon:"fa fa-group"
+},{
+	path:"requests",		
+	label:"Requests",
+	icon:"fa fa-wrench"
+},{
+	path:"reports",		
+	label:"Reports",
+	icon:"fa fa-bar-chart"
+}];
+
 var navFM = [{
 	path:"dashboard",		
 	label:"Dashboard",

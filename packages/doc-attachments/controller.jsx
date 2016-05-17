@@ -2,6 +2,15 @@ Documents = ORM.Collection("Files");
 
 Documents.schema(DocumentSchema);
 
+if(Meteor.isServer) {
+  Meteor.publish('docs',function(){
+    return Documents.find({});
+  });
+}
+else {
+  Meteor.subscribe('docs');
+}
+
 //this should be a wrapper for CollectionFS, then we can, in theory, unplug it in due course
 //come to think of it could have a wrapper for user as well - would fix that profile malarkey
 

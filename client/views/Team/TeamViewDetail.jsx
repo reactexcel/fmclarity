@@ -23,9 +23,14 @@ TeamViewDetail = React.createClass({
 	    if(contact) {
 	    	contactName = contact.getName();
 	    }
+	    var docs = team.getDocs({type:"Insurance"});
+	    console.log(docs);
 	    var expiry;
-	    if(team.insuranceDetails&&team.insuranceDetails.expiry) {
-	    	expiry = moment(team.insuranceDetails.expiry).format('DD/MM/YYYY');
+	    if(docs&&docs.length) {
+	    	var primaryDoc = docs[0];
+	    	if(primaryDoc.expiryDate!=null) {
+		    	expiry = moment(primaryDoc.expiryDate).format('DD/MM/YYYY');
+		    }
 	    }
 
 

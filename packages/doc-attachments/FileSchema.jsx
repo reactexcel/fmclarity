@@ -3,12 +3,6 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 DocumentSchema = {
-	file:{
-		type:[Object],
-		condition:function(){
-			return false;
-		}
-	},
     name: {
      	label:"Name",
      	input:"mdtext",
@@ -187,7 +181,7 @@ DocumentSchema = {
             ].indexOf(item.type)>-1;
         },
     },
-    'Insurance type':{
+    insuranceType:{
         label:"Insurance type",
         size:6,
         condition:function(item){

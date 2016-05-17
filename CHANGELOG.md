@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.3.5b**
+
+* Fixed an error that was causing some team documents to save incorrectly
+* Put insurance expiry from team documents on team card
+
 **v1.3.4b**
 
 * Updated buttons on service selector, close work order modal and document edit view to flat style
