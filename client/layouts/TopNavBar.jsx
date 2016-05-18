@@ -101,7 +101,7 @@ TopNavBar = React.createClass({
                         <span className="topnav-icon" onClick={this.toggleLeftSideBar}><i className="fa fa-bars"></i></span>
                     </div>
                     <div className="col-xs-8" style={{textAlign:"center"}}>
-                        <img style={{width:"160px",margin:"6px"}} src="/img/logo-white.svg"/>
+                        <img id="fm-logo" style={{width:"160px",margin:"6px"}} src="/img/logo-white.svg"/>
                     </div>
                     <div className="col-xs-2">
                         <div style={{float:"right"}}>

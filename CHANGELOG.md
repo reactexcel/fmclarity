@@ -1,6 +1,14 @@
 CHANGELOG.md
 ============
 
+**v1.3.5b-02**
+
+* WO: Assignee visible to fm managers once set by supplier
+* WO contacts: Supplier managers have persmission to add contacts (when assigning member)
+* Staff can no longer select supplier
+* Team members do not see drafts from other team members
+* Assignee is cleared when supplier changes
+
 **v1.3.5b-01**
 
 * Request "watchers" updated according to status, suppliers do not watch new or draft requests

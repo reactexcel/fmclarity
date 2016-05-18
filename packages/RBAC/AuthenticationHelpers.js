@@ -36,6 +36,25 @@ AuthHelpers = {
     });
     return team.count()>0;
   },
+  managerOfSuppliersTeam:function (role,user,request) {
+    var supplier = request.supplier;
+    if(supplier) {
+
+      var query = {members:{$elemMatch:{
+        _id:user._id,
+        role:"manager"
+      }}};
+
+      if(supplier._id) {
+        query._id = supplier._id;
+      }
+      else if(supplier.name) {
+        query.name = supplier.name;
+      }
+
+      return Teams.find(query).count()>0;
+    }
+  },
   memberOfSuppliersTeam:function (role,user,request) {
     var supplier = request.supplier;
     if(supplier) {
