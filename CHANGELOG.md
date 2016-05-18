@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.3.5b-01**
+
+* Request "watchers" updated according to status, suppliers do not watch new or draft requests
+* Cannot view request in single request view unless you are owner, team manager, supplier manager or assignee
+
 **v1.3.5b**
 
 * Fixed an error that was causing some team documents to save incorrectly
