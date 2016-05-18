@@ -13,7 +13,6 @@ IssuePage = React.createClass({
         Meteor.subscribe('facilities');
         Meteor.subscribe('teamsAndFacilitiesForUser');
         Meteor.subscribe('users');
-        Meteor.subscribe('singleRequest',id);
         Meteor.subscribe('allTeams');
         var request, facility, dueDate, address;
         request = Issues.findOne(id);
@@ -45,11 +44,13 @@ IssuePage = React.createClass({
     },
 
     componentDidMount(){
+        /*
         var tour = this.tour;
         setTimeout(function(){
             hopscotch.startTour(tour);
             console.log('ooooh');
         },2000);
+        */
     },
 
     render() {

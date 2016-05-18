@@ -5,11 +5,20 @@ DocMessages.register(Issues,{
     return "work order #"+this.code+' "'+this.getName()+'"';
   },
   getWatchers:function() {
-    var user = Meteor.user();
-    var owner = this.getOwner();
-    var team = this.getTeam();
-    var supplier = this.getSupplier();
-    var assignee = this.getAssignee();
+
+    var user, owner, team, supplier, assignee;
+
+    user = Meteor.user();
+    owner = this.getOwner();
+
+    if(this.status!=Issues.STATUS_DRAFT) {
+      team = this.getTeam();
+      if(this.status!=Issues.STATUS_NEW) {
+        supplier = this.getSupplier();
+        assignee = this.getAssignee();
+      }
+    }
+
     //and facilityContact?
     return [user,owner,supplier,team,assignee];
     return [
