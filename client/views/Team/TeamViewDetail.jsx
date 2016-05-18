@@ -24,7 +24,7 @@ TeamViewDetail = React.createClass({
 	    	contactName = contact.getName();
 	    }
 	    var docs = team.getDocs({type:"Insurance"});
-	    console.log(docs);
+	    //console.log(docs);
 	    var expiry;
 	    if(docs&&docs.length) {
 	    	var primaryDoc = docs[0];

@@ -58,6 +58,7 @@ function registerCollection(collection,opts) {
 	helpers['get'+fn+'s'] = getMembers(membersCollection,fieldName);
 	helpers['get'+fn+'Role']  = getMemberRole(membersCollection,fieldName);
 	helpers['has'+fn] = hasMember(membersCollection,fieldName);
+	helpers['dangerouslyAddMember'] = addMember(collection,fieldName);
 
 	collection.methods(methods);
 	collection.helpers(helpers);

@@ -115,7 +115,7 @@ WOServiceSelector = React.createClass({
                 </div>
             :null}
 
-            {request.status&&supplier&&team&&request.canSetAssignee()?
+            {request.status&&supplier&&team&&(assignee||request.canSetAssignee())?
                 <div className="col-md-3">
                     <div className="row">
                        	<div className="col-lg-12">

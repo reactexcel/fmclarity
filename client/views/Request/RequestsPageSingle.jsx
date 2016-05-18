@@ -35,9 +35,14 @@ IssuePage = React.createClass({
       id: "single-issue",
       steps: [
         {
-          title: "My Header",
-          content: "This is the header of my page.",
-          target: "tour-test",
+          title: "Welcome to FM Clarity!",
+          content: "Welcome to FM Clarity - a new solution to streamline facility management and servicing. This is the work request screen.",
+          target: "fm-logo",
+          placement: "bottom"
+        },{
+          title: "Identity information",
+          content: "At the top of each request is the identity area showing you the team who has issued the request, the location of the job, and the due date.",
+          target: "identity-area",
           placement: "bottom"
         }
       ]
@@ -48,7 +53,6 @@ IssuePage = React.createClass({
         var tour = this.tour;
         setTimeout(function(){
             hopscotch.startTour(tour);
-            console.log('ooooh');
         },2000);
         */
     },
@@ -63,9 +67,9 @@ IssuePage = React.createClass({
         }
     	return (
             <div>
-                <div id="tour-test" className="issue-page wrapper wrapper-content animated fadeIn">
+                <div id="single-issue-page" className="issue-page wrapper wrapper-content animated fadeIn">
                     <div className="row">
-                        <div className="col-xs-12">
+                        <div id="identity-area" className="col-xs-12">
                             <h3>{request.team.name}<br/>
                             Work Request #{request.code}<br/>
                             {address}<br/>

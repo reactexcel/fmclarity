@@ -47,7 +47,12 @@ DocMessages.register(Issues,{
 });
 
 DocMembers.register(Issues,{
-  authentication:AuthHelpers.memberOfRelatedTeam
+  authentication:function(role,user,request) {
+    return (
+      AuthHelpers.memberOfRelatedTeam(role,user,request)||
+      AuthHelpers.managerOfSuppliersTeam(role,user,request)
+    )
+  }
 });
 
 function isEditable(request) {
@@ -60,6 +65,13 @@ var accessForTeamMembers = function(role,user,request) {
   return (
     isEditable(request)&&
     AuthHelpers.memberOfRelatedTeam(role,user,request)
+  )
+}
+
+var accessForTeamManagers = function(role,user,request) {
+  return (
+    isEditable(request)&&
+    AuthHelpers.managerOfRelatedTeam(role,user,request)
   )
 }
 
@@ -121,13 +133,13 @@ Issues.methods({
   },
   
   setSupplier:{
-    authentication:accessForTeamMembers,
+    authentication:accessForTeamManagers,
     method:setSupplier
   },
   setAssignee:{
     authentication:function(role,user,request) {
       return (
-        AuthHelpers.memberOfSuppliersTeam(role,user,request)
+        AuthHelpers.managerOfSuppliersTeam(role,user,request)
       )
     },
     method:setAssignee
@@ -180,12 +192,16 @@ function setSupplier(request,supplier) {
 
   if(!supplier) {
 
-    Issues.update(request._id,{$set:{supplier:null}});
+    Issues.update(request._id,{$set:{
+      assignee:null,
+      supplier:null
+    }});
 
   }
   else {
 
     Issues.update(request._id,{$set:{
+      assignee:null,
       supplier:{
         _id:supplier._id,
         name:supplier.name
@@ -196,10 +212,10 @@ function setSupplier(request,supplier) {
     supplier = request.getSupplier(supplier);
     if(supplier) {
       var supplierMembers = supplier.getMembers({role:"manager"});
-      request.addMember(supplierMembers,{role:"supplier manager"});
+      //dangerously bypass supplier permissions
+      request.dangerouslyAddMember(request,supplierMembers,{role:"supplier manager"});
     }
   }
-
 }
 
 function getSupplier(query) {
@@ -218,27 +234,31 @@ function setService(request,service) {
     service:service,
     subservice:null
   }});
-  if(request.canSetSupplier()) {
+  //if(request.canSetSupplier()) {
     if(service.data&&service.data.supplier) {
-      request.setSupplier(service.data.supplier);
+      //dangerously bypass supplier permissions
+      setSupplier(request,service.data.supplier);
     }
     else {
-      request.setSupplier(null);
+      //dangerously bypass supplier permissions
+      setSupplier(request,null);
     }
-  }
+  //}
 }
 
 function setSubService(request,subservice) {
   request = Issues._transform(request);
   Issues.update(request._id,{$set:{subservice:subservice}});
-  if(request.canSetSupplier()) {
+  //if(request.canSetSupplier()) {
     if(subservice.data&&subservice.data.supplier) {
-      request.setSupplier(subservice.data.supplier);
+      //dangerously bypass RBAC
+      setSupplier(requeset,subservice.data.supplier);
     }
     else {
-      request.setSupplier(null);
+      //dangerously bypass RBAC
+      setSupplier(request,null);
     }
-  }
+  //}
 }
 
 function setAssignee(request,assignee) {
@@ -250,7 +270,8 @@ function setAssignee(request,assignee) {
   }});
   request = Issues._transform(request);
   Issues.update(request._id,{$pull:{members:{role:"assignee"}}});
-  request.addMember(assignee,{role:"assignee"});
+  //dangerously bypass RBAC
+  request.dangerouslyAddMember(request,assignee,{role:"assignee"});
 }
 
 function getAssignee() {
