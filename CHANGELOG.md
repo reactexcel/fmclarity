@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.3.6b-03**
+
+* Various changes to improve supplier experience
+* Beta version of full screen document browser
+
 **v1.3.5b-02**
 
 * WO: Assignee visible to fm managers once set by supplier

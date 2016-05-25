@@ -96,6 +96,10 @@ var navFMStaff = [{
 }];
 
 var navSupplier = [{
+	path:"dashboard",		
+	label:"Dashboard",
+	icon:"fa fa-newspaper-o"
+},{
 	path:"requests",		
 	label:"Jobs",
 	icon:"fa fa-wrench"

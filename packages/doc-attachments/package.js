@@ -25,6 +25,8 @@ Package.onUse(function(api) {
 
 	api.addFiles([
 		'controller.jsx',
+		'DocViewEdit.jsx',
+		'DocViewItem.jsx',
 		'FileView.jsx',
 		'FileExplorerView.jsx',
 		'FileSchema.jsx',
@@ -34,6 +36,8 @@ Package.onUse(function(api) {
 
 	api.export([
 		'DocAttachments',
+		'DocViewItem',
+		'DocViewEdit',
 		'Documents'
 	]);
 });

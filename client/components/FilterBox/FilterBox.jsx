@@ -183,7 +183,7 @@ FilterBox = React.createClass({
         <div className="filter-box ibox">
           <div className="ibox-title">
             <button 
-              onClick={this.props.exportCallback.bind(null,items)} 
+              onClick={this.props.exportCallback?this.props.exportCallback.bind(null,items):null} 
               className="card-button new-card-button pull-right"
               style={{backgroundColor:"transparent",color:"#333"}}
             ><i className="fa fa-download"></i></button>

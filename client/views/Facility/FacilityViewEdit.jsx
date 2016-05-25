@@ -84,7 +84,7 @@ FacilityViewEdit = React.createClass({
 			   		<ContactList 
 			   			items={members}
 			   			facility={facility}
-			   			onAdd={team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
+			   			onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
 				<CollapseBox title="Facility suppliers">
@@ -92,7 +92,7 @@ FacilityViewEdit = React.createClass({
 			   			items={suppliers}
 			   			facility={facility}
 			   			type="team"
-			   			onAdd={team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
+			   			onAdd={team&&team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
 			   		/>
 				</CollapseBox>
 				{/*

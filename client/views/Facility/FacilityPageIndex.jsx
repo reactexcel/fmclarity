@@ -9,18 +9,30 @@ FacilityIndexPage = React.createClass({
     getMeteorData() {
     	Meteor.subscribe('teamsAndFacilitiesForUser');//for some reason this isn't picking up my contractors
         Meteor.subscribe('users');
-    	var user, selectedTeam, selectedFacility, facilties;
-    	user = Meteor.user();
-    	if(user) {
-	        selectedTeam = Session.getSelectedTeam();
-    	    if(selectedTeam) {
-		    	Meteor.subscribe('suppliersForTeam',selectedTeam._id,selectedTeam.suppliers?selectedTeam.suppliers.length:null);
-	    	    selectedFacility = user.getSelectedFacility();
-	        	facilities = selectedTeam.getFacilities();
+    	var team, facility, facilties;
+    	if(Meteor.user()) {
+	        team = Session.getSelectedTeam();
+    	    if(team) {
+		    	Meteor.subscribe('suppliersForTeam',team._id,team.suppliers?team.suppliers.length:null);
+	    	    facility = Session.getSelectedFacility();
+	        	facilities = team.getFacilities();
+	        	var client = Session.getSelectedClient();
+	        	if(client) {
+	        		//this is an awesome way to do it
+	        		//it needs to be like this on all filter pages
+	        		//to avoid the access bypass problems we were having
+	        		facilities = _.filter(facilities,function(f){
+	        			return (
+	        				(f.team._id == client._id)||
+	        				(f.team.name == client.name)
+	        			)
+	        		})
+	        	}
+
 		        return {
 		        	ready:true,
-		        	selectedTeam : selectedTeam,
-		        	selectedFacility : selectedFacility,
+		        	selectedTeam : team,
+		        	selectedFacility : facility,
 		            facilities : facilities
 		        }
 	        }
@@ -60,11 +72,12 @@ FacilityIndexPage = React.createClass({
 		if(!this.data.ready) return <div/>
 		return(		        
 			<div>
-				{/*<div className="row wrapper page-heading">
-				    <div className="col-lg-12">
-	                	<span style={{color:"#333",fontWeight:"bold",fontSize:"16px",lineHeight:"40px",marginLeft:"20px"}}>Portfolio</span>
-			        </div>
-			    </div>*/}
+                {team.type=="contractor"?
+                <div className="row wrapper page-heading">
+                    <div className="col-lg-12">
+                        <ClientFilter title="Sites"/>
+                    </div>
+                </div>:null}
 		        <div className="facility-page wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
 						items={this.data.facilities}

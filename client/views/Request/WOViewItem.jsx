@@ -24,6 +24,7 @@ IssueSummary = React.createClass({
         request:request,
         facility:request.getFacility(),
         team:request.getTeam(),
+        selectedTeam:Session.getSelectedTeam(),
         owner:request.getOwner(),
         supplier:request.getSupplier(),
         status:request.status,
@@ -51,6 +52,7 @@ IssueSummary = React.createClass({
         var timeframe = this.data.timeframe;
         var dueDate = request.dueDate?moment(request.dueDate):null;
         var issuedDate = request.issuedAt?moment(request.issuedAt):null;
+        var selectedTeam = this.data.selectedTeam;
         return (
         <div className={"issue-summary issue-status-"+status}>
           
@@ -72,7 +74,10 @@ IssueSummary = React.createClass({
             </span>
           </div>
           <div className="issue-summary-col issue-summary-col-4">
-            <span className="issue-summary-name">{supplier?supplier.name:''}</span>
+            {(selectedTeam&&selectedTeam.type=="contractor")?
+            <span className="issue-summary-name">{team?team.name:''}</span>
+            :<span className="issue-summary-name">{supplier?supplier.name:''}</span>
+            }
           </div>
           <div className="issue-summary-col issue-summary-col-5">
             {dueDate&&request.status!=Issues.STATUS_CLOSED?

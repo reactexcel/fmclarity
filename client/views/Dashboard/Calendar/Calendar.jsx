@@ -8,7 +8,8 @@ Calendar = React.createClass({
 
     getMeteorData() {
         var team,issues;
-        team = Session.get("selectedTeam");
+        //team = Session.get("selectedTeam");
+        team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
         if(team) {
             var query = {"team._id":team._id};
             var facility = Session.get("selectedFacility");

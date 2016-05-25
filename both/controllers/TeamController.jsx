@@ -321,16 +321,16 @@ Teams.helpers({
     var q;
 
     var issuesQuery = {$or:[
-      //owner
-      {'owner._id':Meteor.userId()},
       //or team member or assignee and not draft
       {$and:[
         {$or:[
-          {'assignee._id':Meteor.userId()},
           {"team._id":this._id},
           {"team.name":this.name}
         ]},
-        {status:{$nin:[Issues.STATUS_DRAFT]}}
+        {$or:[
+          {'owner._id':Meteor.userId()},
+          {status:{$nin:[Issues.STATUS_DRAFT]}}
+        ]}
       ]},
       //or supplier team member and not draft or new
       {$and:[
@@ -338,7 +338,10 @@ Teams.helpers({
           {"supplier._id":this._id},
           {"supplier.name":this.name}
         ]},
-        {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+        {$or:[
+          {'owner._id':Meteor.userId()},
+          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+        ]}
       ]}
     ]}
 

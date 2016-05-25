@@ -21,6 +21,7 @@ function getDocs(fieldName) {
 	    var ids = [];
 	    var names = [];
 	    var members = item[fieldName];
+	    //console.log(members);
 	    members?members.map(function(m){
 	    	if(!filter||!m.type||filter.type==m.type) {
 	    		if(m._id) {

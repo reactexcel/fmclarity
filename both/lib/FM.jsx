@@ -50,6 +50,17 @@ if(Meteor.isClient) {
 	      Session.set('selectedFacility',{_id:f._id});
 	    }
     }
+	Session.getSelectedClient = function() {
+	    var selectedClientQuery = Session.get('selectedClient');
+	    if(selectedClientQuery) {
+		    return Teams.findOne(selectedClientQuery._id);
+		}
+	}
+	Session.selectClient = function(c) {
+	    if(f) {
+	      Session.set('selectedClient',{_id:c._id});
+	    }
+    }
 }
 else {
 	FM.inDevelopment = function () {

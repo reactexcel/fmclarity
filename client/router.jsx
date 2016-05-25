@@ -176,6 +176,13 @@ loggedIn.route('/reports', {
   }
 });
 
+loggedIn.route('/documents', {
+  name: 'documents',
+  action() {
+    mount(MainLayout,{content: <DocsPageIndex />});
+  }
+});
+
 loggedIn.route('/contacts', {
   name: 'contacts',
   action() {
