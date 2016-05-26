@@ -50,7 +50,7 @@ WOServiceSelector = React.createClass({
         var supplier = this.data.supplier;
         var assignee = this.data.assignee;
         return (
-        <div className="row" style={{minHeight:"37px"}}>
+        <div id="supplier-region" className="row" style={{minHeight:"37px"}}>
 
             {facility&&request.level&&request.level.name?
 				<div className="col-md-3">
