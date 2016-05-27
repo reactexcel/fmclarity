@@ -20,7 +20,7 @@ CollapseBox = React.createClass({
 	render() {
 		var collapsed = this.state.collapsed;
 		return (
-			<div>
+			<div id={this.props.id||""}>
 			    <h4 onClick={this.toggle} style={{cursor:"pointer"}}>
 			    	<span><i className={"fa fa-caret-"+(collapsed?'right':'down')}></i> {this.props.title}</span>
 			    </h4>

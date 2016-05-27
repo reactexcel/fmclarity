@@ -25,96 +25,121 @@ IssuePage = React.createClass({
         }
         return {
         	request:request,
-            dueDate:dueDate,
-            facility:facility,
-            address:address
+          dueDate:dueDate,
+          facility:facility,
+          address:address,
+          user:Meteor.user()
         }
     },
 
     //how would it be if every component added to this tour structure
     //and there was a significant delay before the tour is triggered to allow for all elements to load
     tour:{
-      id: "single-issue",
+      id:"single-page-request",
       steps: [
-        {
-          title: "Welcome to FM Clarity!",
-          content: "Welcome to FM Clarity - a new solution to streamline facility management and servicing. You are currently on the work request screen.",
-          target: "fm-logo",
-          onShow:function(){
-            $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
-          },
-          placement: "bottom"
-        },{
-          title: "Summary region",
-          content: "At the top of each request is the summary area showing you at a glance the issuing team, the location of the job, and the due date.",
-          target: "summary-region",
-          placement: "bottom"
-        },{
-          title: "Job status region",
-          content: "This is the job status region which displays the job creator, status and priority.",
-          target: "status-region",
-          placement: "right"
-        },{
-          title: "Primary request info",
-          content: "In this region you will see the primary request info including title, code, cost and due date. Due dates are automatically set based on the selected job priority but can be customised here prior to issuing the job.",
-          target: "primary-info-region",
-          placement: "bottom"
-        },{
-          title: "Location region",
-          content: "This region displays the location of the job including the building, level, area and sub-area.",
-          target: "location-region",
-          placement: "bottom"
-        },{
-          title: "Supplier region",
-          content: "The supplier region shows the type of service and sub-service (if applicable). When filling a request jobs are automatically matched with appropriate suppliers from your contact list. If this is an internal request, or if you are a supplier and you want to assign the job to a member of your team, make a selection using the assignee drop-down here.",
-          target: "supplier-region",
-          placement: "top"
-        },{
-          title: "Action buttons",
-          content: "The action buttons display the request workflow options available to you at this time. When a job is complete, click the 'Close' button here to log the job as finished.",
-          target: "action-buttons",
-          placement: "left"            
-        },{
-          title: "Collaboration region",
-          content: "This is the collaboration region where stakeholders share dynamic information about the status of a job. The first tab is the comments area where issuers, suppliers and assignees can relay information.",
-          target: "discussion-tab",
-          onNext:function(){
-            $("#documents-tab").click();
-          },
-          placement: "top"            
-        },{
-          title: "Request dropbox",
-          content: "Documents relevant to each request can be uploaded into the request drop-box here.",
-          target: "documents-tab",
-          onNext:function(){
-            $("#contacts-tab").click();
-          },
-          placement: "top"            
-        },{
-          title: "Request contacts",
-          content: "Every job has a dedicated contact list that changes dynamically as stakeholders are added or changed. Users with the relevant permissions can add external contracts if required.",
-          target: "contacts-tab",
-          placement: "top"            
+      {
+        title: "Welcome to FM Clarity!",
+        content: "FM Clarity is a new solution to streamline facility management and servicing. You are currently on the work request screen",
+        target: "fm-logo",
+        arrowOffset:"center",
+        onShow:function(){
+          $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
         },
-        {
-          title: "Enjoy!",
-          content: 'Thanks for using FM Clarity. If you have any other questions please feel free to contact our support team at <a href="mailto:contact@fmclarity.com">contact@fmclarity.com</a>.',
-          target: "fm-logo",
-          onShow:function(){
-            $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
-          },
-          placement: "bottom"
-        }
+        placement: "bottom"
+      },{
+        title: "Summary region",
+        content: "At the top of each request is the summary area showing you at a glance the issuing organisation, the location of the job, and the due date",
+        target: "summary-region",
+        placement: "bottom"
+      },{
+        title: "Primary request info",
+        content: "In this region you will see the primary request info including title, work order number, work order value and due date",
+        target: "primary-info-region",
+        placement: "bottom"
+      },{
+        title: "Job status region",
+        content: "This is the job status region which displays the job creator, status and priority - light blue for scheduled, dark blue for standard, orange for urgent and red critical",
+        target: "status-region",
+        placement: "right"
+      },{
+        title: "Location region",
+        content: "This region displays the location of the job including the building, level, area and sub-area (if applicable)",
+        target: "location-region",
+        placement: "bottom"
+      },{
+        title: "Supplier region",
+        content: "The supplier region shows the type of service and sub-service (if applicable)",
+        target: "supplier-region",
+        placement: "top"
+      },{
+        title: "Assignee",
+        content: "If this is an internal request, or if you are a supplier and you want to assign the job to a member of your team, make a selection using the assignee drop-down which will appear here. Additional team members can be added in account settings for future work orders",
+        target: "assignee-dropdown",
+        placement: "top"
+      },{
+        title: "Action buttons",
+        content: "The action buttons display the request workflow options available to you at this time. When a job is complete, click the 'Close' button here to log the job as finished",
+        target: "action-buttons",
+        placement: "left"            
+      },{
+        title: "Collaboration region",
+        content: "This is the collaboration region where stakeholders share dynamic information about the status of a job. The first tab is the discussion area where issuers, suppliers and assignees can relay information",
+        target: "discussion-tab",
+        onNext:function(){
+          $("#discussion-tab").click();
+        },
+        placement: "top"            
+      },{
+        title: "Request dropbox",
+        content: "Documents relevant to each request can be uploaded into the request drop-box here such as quotes, images and invoices",
+        target: "documents-tab",
+        onShow:function(){
+          $("#documents-tab").click();
+        },
+        placement: "top"            
+      },{
+        title: "Request contacts",
+        content: "Every job has a dedicated contact list that changes dynamically as stakeholders are added or changed. Users with the relevant permissions can add external contacts if required",
+        target: "contacts-tab",
+        onShow:function(){
+          $("#contacts-tab").click();
+        },
+        placement: "top"
+      },{
+        title: "Alerts button",
+        content: "When a request you are involved in changes you will receive an alert window here.",
+        target: "alerts-icon",
+        placement: "left"
+      },{
+        title: "Settings button",
+        content: 'Settings for yourself and your team can be managed by pushing this button.<br/><br/> Click on your personal information here to go to your profile settings.<br/><br/> Click on the "account settings" button to go to your team settings and upload company documents such as insurance.',
+        target: "settings-icon",
+        nextOnTargetClick:true,
+        placement: "left"
+      }      
       ]
     },
 
-    componentDidMount(){
-        //*
-        var tour = this.tour;
+    startTour(tour) {
+      var user = this.data.user;
+      if(!this.tourStarted&&user) {
+        this.tourStarted = true;
         setTimeout(function(){
-            hopscotch.startTour(tour,0);
+          user.startTour(tour);
         },1000);
-        //*/
+      }
+    },
+
+    componentDidUpdate(){
+      this.startTour(this.tour);
+    },
+
+    componentDidMount() {
+        this.startTour(this.tour);
+    },
+
+    componentWillUnmount() {
+      hopscotch.endTour();
     },
 
     render() {

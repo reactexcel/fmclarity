@@ -84,7 +84,7 @@ IssueDynamicArea = React.createClass({
                                 <Inbox for={request} truncate={true}/>
                             </div>
                         },{
-                            tab:<span id="documents-tab"><span>Dropbox</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
+                            tab:<span id="documents-tab"><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
                             content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
                                 <AutoForm item={request} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
                             </div>

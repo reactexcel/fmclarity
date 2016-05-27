@@ -98,7 +98,7 @@ TopNavBar = React.createClass({
             <nav className="navbar navbar-fixed-top" role="navigation" style={{marginBottom:"0px"}}>
                 <div className="row">
                     <div className="col-xs-2">
-                        <span className="topnav-icon" onClick={this.toggleLeftSideBar}><i className="fa fa-bars"></i></span>
+                        <span id="nav-menu-icon" className="topnav-icon" onClick={this.toggleLeftSideBar}><i className="fa fa-bars"></i></span>
                     </div>
                     <div className="col-xs-8" style={{textAlign:"center"}}>
                         <img id="fm-logo" style={{width:"160px",margin:"6px"}} src="/img/logo-white.svg"/>
@@ -109,7 +109,7 @@ TopNavBar = React.createClass({
                                 <span className="topnav-icon"><i className="fa fa-cog"></i></span>
                             </UserProfileMenu>
                         </div>
-                        <div style={{float:"right"}} ref="notifications" className="hidden-xs dropdown right-dropdown">
+                        <div id="alerts-icon" style={{float:"right"}} ref="notifications" className="hidden-xs dropdown right-dropdown">
                             <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
                                 <i className="fa fa-bell"></i>
                                 <div style={{float:"right",width:"15px"}}>

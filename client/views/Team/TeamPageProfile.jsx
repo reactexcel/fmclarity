@@ -15,7 +15,7 @@ TeamProfilePage = React.createClass({
 		return {
 			team:team
 		}
-	},
+	},	
 
 	render() {
 		if(!this.data.team) {

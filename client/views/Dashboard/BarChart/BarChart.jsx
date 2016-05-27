@@ -101,8 +101,8 @@ BarChart = React.createClass({
     		query["facility._id"] = facility._id;
     	}
 
-    	//var team = Session.get('selectedTeam');
-        var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
+    	var team = Session.get('selectedTeam');
+        //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
     	if(team) {
     		query["team._id"] = team._id;
     	}

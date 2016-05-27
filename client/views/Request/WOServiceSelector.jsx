@@ -115,8 +115,8 @@ WOServiceSelector = React.createClass({
                 </div>
             :null}
 
+                <div id="assignee-dropdown" className="col-md-3">
             {request.status&&supplier&&team&&(assignee||request.canSetAssignee())?
-                <div className="col-md-3">
                     <div className="row">
                        	<div className="col-lg-12">
                             <SuperSelect 
@@ -130,8 +130,8 @@ WOServiceSelector = React.createClass({
     	                    <div style={{clear:"both"}}>{assignee?assignee.getName():'-'}</div>
         	            </div>
             	    </div>
+            :null}
 	            </div>
-			:null}
 
 			
         </div>

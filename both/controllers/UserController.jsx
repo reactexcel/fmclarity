@@ -56,10 +56,13 @@ Meteor.methods({
 })
 
 Users.helpers({
+
   collectionName:'users',
+
   sendInvite:function() {
     Meteor.call('User.sendInvite',this._id);
   },
+
   hasRole:function(role) {
     switch(role) {
       case 'dev':
@@ -70,16 +73,45 @@ Users.helpers({
       break;
     }
   },
+
+  tourDone:function(tour) {
+    return false;
+  },
+
+  markTourDone:function(tour) {
+    return false;
+  },
+
+  startTour:function(tour) {
+    var currTour, user;
+    currTour = hopscotch.getCurrTour();
+    if(currTour&&currTour.id!=tour.id) {
+      currTour = null;
+      hopscotch.endTour();
+    }
+    if(!currTour) {
+      user = this;
+      if(!user.tourDone(tour)) {
+        tour.onEnd = function() {
+          user.markTourDone();
+        }
+        hopscotch.startTour(tour,0);
+      }
+    }
+  },
   
   getName:function() {
     return this.profile.name||this.profile.firstName||"Guest";
   },
+
   getEmail:function() {
     return this.profile.email;//this.emails[0].address;
   },
+
   getAvailableServices:function() {
     return [];
-  },  
+  },
+
   getTeams:function() {
     return Teams.find({"members._id":Meteor.userId()}).fetch();
   },
