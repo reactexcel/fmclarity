@@ -11,6 +11,7 @@ DocMessages.register(Issues,{
     user = Meteor.user();
     owner = this.getOwner();
 
+    //don't include suppliers and assignees if draft or new
     if(this.status!=Issues.STATUS_DRAFT) {
       team = this.getTeam();
       if(this.status!=Issues.STATUS_NEW) {
@@ -183,23 +184,22 @@ function setPriority(request,priority) {
   }})
 }
 
+//changes the supplier for a work request
 function setSupplier(request,supplier) {
   if(!request) {
     return;
   }
 
-  Issues.update(request._id,{$pull:{members:{role:"supplier manager"}}});
-
+  //if supplier is null then delete existing supplier
   if(!supplier) {
-
     Issues.update(request._id,{$set:{
       assignee:null,
       supplier:null
     }});
 
   }
+  //otherwise update supplier accordingly
   else {
-
     Issues.update(request._id,{$set:{
       assignee:null,
       supplier:{
@@ -207,14 +207,6 @@ function setSupplier(request,supplier) {
         name:supplier.name
       }
     }});
-
-    request = Issues._transform(request);
-    supplier = request.getSupplier(supplier);
-    if(supplier) {
-      var supplierMembers = supplier.getMembers({role:"manager"});
-      //dangerously bypass supplier permissions
-      request.dangerouslyAddMember(request,supplierMembers,{role:"supplier manager"});
-    }
   }
 }
 
@@ -268,6 +260,11 @@ function setAssignee(request,assignee) {
       name:assignee.profile.name
     }
   }});
+
+  //this should be handled the same way as supplier is not
+  // that is to say, member should not be added until request is "issued"
+  // or in this case we need to create another issue status and should not be added until
+  // say - "assigned"?
   request = Issues._transform(request);
   Issues.update(request._id,{$pull:{members:{role:"assignee"}}});
   //dangerously bypass RBAC

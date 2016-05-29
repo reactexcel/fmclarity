@@ -75,16 +75,26 @@ Users.helpers({
   },
 
   tourDone:function(tour) {
-    return false;
+    if(!tour||!tour.id) return false;
+    return (Users.findOne({_id:this._id,"profile.toursCompleted.id":tour.id}))!=null;
+  },
+
+  resetTours:function() {
+    Users.update(this._id,{$set:{"profile.toursCompleted":[]}});
   },
 
   markTourDone:function(tour) {
-    return false;
+    if(!tour||!tour.id) return;
+    Users.update(this._id,{$push:{"profile.toursCompleted":{
+      id:tour.id,
+      completedDate:new Date()
+    }}});
   },
 
   startTour:function(tour) {
     var currTour, user;
     currTour = hopscotch.getCurrTour();
+    //if there is a tour current running and it is a different one from the tour we want to start
     if(currTour&&currTour.id!=tour.id) {
       currTour = null;
       hopscotch.endTour();
@@ -93,7 +103,7 @@ Users.helpers({
       user = this;
       if(!user.tourDone(tour)) {
         tour.onEnd = function() {
-          user.markTourDone();
+          user.markTourDone(tour);
         }
         hopscotch.startTour(tour,0);
       }

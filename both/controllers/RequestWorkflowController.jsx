@@ -156,6 +156,41 @@ function actionOpen (request) {
 /**
  *
  */
+function actionOpen2 (request) {
+  //update the status of the issue then load new issue
+  var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+  var request = Issues.findOne(response._id);
+  //create message
+  var message = {
+    verb:"created",
+    subject:"Work order #"+request.code+" has been created",
+  }
+  //then send it to intended recipients REFACT:sendMessages(message,["owner","facility manager","team manager"])
+  //this isn't even going through the request now!!!
+  request.sendMessages({
+    //"owner":message,//redundant - but should it be? do we always want to send to owner???
+    "facility manager":message,
+    "team manager":message
+  });
+  /*how about...
+  DocMessages.post(message,[
+    request,//perhaps need to rethink this anyway - and show user messages filtered by request
+    request.getTeam(),//perhaps need to rethink this anyway - and show user messages filtered by team
+    request.getFacility(),//...of course - user messages filtered by facility
+    request.getMembers({role:["facility manager","team manager"]})
+  ])
+  */
+
+  //shit, now they don't go to request, facility or team
+  return request;
+  //is there a reason for this?
+  return Issues.findOne(response._id);
+}
+
+
+/**
+ *
+ */
 function generalRequestNotification(verb) {
 	return function(request) {
 		request.sendNotification({
@@ -174,6 +209,17 @@ function issue(request) {
     status:Issues.STATUS_ISSUED,
     issuedAt:new Date()
   });
+
+  //remove previous supplier member from contact list
+  Issues.update(request._id,{$pull:{members:{role:"supplier manager"}}});
+  //add selected supplier to contact list
+  request = Issues._transform(request); //is this needed?
+  var supplier = request.getSupplier(supplier);
+  if(supplier) {
+    var supplierMembers = supplier.getMembers({role:"manager"});
+    request.dangerouslyAddMember(request,supplierMembers,{role:"supplier manager"});
+  }
+
   var request = Issues.findOne(response._id);
   var watchers = request.getWatchers();
   watchers[2] = null;

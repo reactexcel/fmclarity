@@ -7,6 +7,7 @@ DocMessages = {
 
 var defaultHelpers = {
   sendMessage:sendMessageToSelfAndWatchers,
+  sendMessages:sendMessagesToMembers,
   sendNotification:sendMessageToSelfAndWatchers,
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
@@ -17,6 +18,7 @@ var defaultHelpers = {
   getRecipients:getRecipients,
 }
 
+//gets all recipients of the message
 function getRecipients(inCC,outCC) {
   outCC = outCC||[];
   inCC.map(function(c){
@@ -30,6 +32,7 @@ function getRecipients(inCC,outCC) {
   return outCC;
 }
 
+//if the recipient structure contains Teams their members are also added to the structure
 function flattenRecipients(cc) {
   var recipients = getRecipients(cc);
   recipients = _.uniq(recipients,false,function(i){
@@ -38,12 +41,32 @@ function flattenRecipients(cc) {
   return recipients;  
 }
 
+//if the object in question has included the doc-members package then 
+//we can send messages to different members based on their role
+function sendMessagesToMembers(map){
+  if(!this.getMembers) {
+    return;
+  }
+  var user = Meteor.user();
+  for(var role in map) {
+    var members = this.getMembers({role:role});
+    var message = map[role];
+    message.target = this.getInboxId();
+    message.owner = {
+      _id:user._id,
+      name:user.getName()
+    }
+    members.map(function(recipient){
+      sendMessage(message,recipient);
+    })
+  }
+}
+
 function sendMessageToSelfAndWatchers(message,cc) {
   cc = cc||this.getWatchers();
   cc = flattenRecipients(cc);
 
   var user = Meteor.user();
-
   message.target = this.getInboxId();
   message.owner = {
     _id:user._id,

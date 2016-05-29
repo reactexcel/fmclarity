@@ -12,7 +12,7 @@ UpdatesWidget = React.createClass({
     	if(user) {
     		team = user.getSelectedTeam();
     		if(team) {
-    			Meteor.subscribe("messages","Teams",team._id)
+    			Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
     		}
     	}
     	return {

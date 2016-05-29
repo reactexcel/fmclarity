@@ -45,7 +45,19 @@ UserActions = {
 		addRoleBasedActions(menu,user,team);
 		addRoleBasedActions(menu,user,facility);
 
+		//these really should do in RBAC
 		if(user) {
+
+			if(user._id==Meteor.userId()) {
+				menu.push({
+					label:"Reset tutorials",
+					shouldConfirm:true,
+					action() {
+						user.resetTours()
+					}
+				})
+			}
+
 			menu.push({
 				label:"Send email invitation",
 				shoudConfirm:true,

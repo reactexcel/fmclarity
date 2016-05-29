@@ -1,6 +1,8 @@
+// REFACT: rename this file version and move respective client and server functions into "client" and "server" folders
+
 Schema = {};
 FM = {
-	version:"1.3.5b-02",
+	version:"1.3.8b",
 	collections:{},
 	schemas:{}
 }

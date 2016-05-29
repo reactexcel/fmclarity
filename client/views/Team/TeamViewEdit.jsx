@@ -59,29 +59,29 @@ TeamViewEdit = React.createClass({
         placement: "bottom"
       },{
         title: "Basic info",
-        content: "Your basic info may initially be entered by a client. It's a good idea to check that it is all accurate before using your FM Clarity account.",
+        content: "Your basic info may have initially been entered by a client. It's a good idea to check that it is all accurate before using your FM Clarity account.",
         target: "basic-info",
         placement: "right"
       },{
         title: "Company documents",
         content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here.",
         target: "company-documents",
-        placement: "right"
+        placement: "bottom"
       },{
         title: "Quick files",
         content: "This quick files region is for saving quick reference files that don't fit a particular document type.",
         target: "quick-files",
-        placement: "right"
+        placement: "bottom"
       },{
         title: "Members",
         content: "You team may have multiple members with different roles. Adding staff members using this component will unlock the ability to assign jobs to members of your team.",
         target: "members",
-        placement: "right"
+        placement: "bottom"
       },{
         title: "Services",
         content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided are those that you can perform as a supplier.",
         target: "services-consumed",
-        placement: "right"
+        placement: "bottom"
       }]
     },
 
