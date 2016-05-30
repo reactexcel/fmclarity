@@ -15,6 +15,7 @@ LineChart = React.createClass({
     	}
 
     	var team = Session.get('selectedTeam');
+        //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
     	if(team) {
     		openQuery["team._id"] = team._id;
     		closedQuery["team._id"] = team._id;

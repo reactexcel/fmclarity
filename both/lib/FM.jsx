@@ -1,6 +1,8 @@
+// REFACT: rename this file version and move respective client and server functions into "client" and "server" folders
+
 Schema = {};
 FM = {
-	version:"1.3.5b-02",
+	version:"1.3.8b",
 	collections:{},
 	schemas:{}
 }
@@ -48,6 +50,17 @@ if(Meteor.isClient) {
 	Session.selectFacility = function(f) {
 	    if(f) {
 	      Session.set('selectedFacility',{_id:f._id});
+	    }
+    }
+	Session.getSelectedClient = function() {
+	    var selectedClientQuery = Session.get('selectedClient');
+	    if(selectedClientQuery) {
+		    return Teams.findOne(selectedClientQuery._id);
+		}
+	}
+	Session.selectClient = function(c) {
+	    if(f) {
+	      Session.set('selectedClient',{_id:c._id});
 	    }
     }
 }

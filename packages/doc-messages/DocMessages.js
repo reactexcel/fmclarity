@@ -7,6 +7,7 @@ DocMessages = {
 
 var defaultHelpers = {
   sendMessage:sendMessageToSelfAndWatchers,
+  distributeMessage:distributeMessage,
   sendNotification:sendMessageToSelfAndWatchers,
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
@@ -17,6 +18,7 @@ var defaultHelpers = {
   getRecipients:getRecipients,
 }
 
+//gets all recipients of the message
 function getRecipients(inCC,outCC) {
   outCC = outCC||[];
   inCC.map(function(c){
@@ -30,6 +32,7 @@ function getRecipients(inCC,outCC) {
   return outCC;
 }
 
+//if the recipient structure contains Teams their members are also added to the structure
 function flattenRecipients(cc) {
   var recipients = getRecipients(cc);
   recipients = _.uniq(recipients,false,function(i){
@@ -38,12 +41,53 @@ function flattenRecipients(cc) {
   return recipients;  
 }
 
+function sendMessageToMembers(obj,message,role) {
+  var team,facility,recipients = [];
+  if(role=="team"&&obj.getTeam) {
+    team = obj.getTeam();
+    if(team) {
+      recipients.push(team);
+    }
+  }
+  else if(role=="facility"&&obj.getFacility) {
+    facility = obj.getFacility();
+    if(facility) {
+      recipients.push(facility);
+    }
+  }
+  else if(obj.getMembers) {
+    recipients = obj.getMembers({role:role})
+  }
+  //console.log(recipients);
+  recipients.map(function(r){
+    //console.log(r);
+    sendMessage(message,r);
+  })
+}
+
+function distributeMessage(message,recipientRoles) {
+  var user = Meteor.user();
+  var obj = this;
+  message.target = obj.getInboxId();
+  message.owner = {
+    _id:user._id,
+    name:user.getName()
+  }
+  //add message/notification to original sending object
+  sendMessage(message,obj);
+  //scan through the list of recipientRoles and process them
+  // if string treat as role name, is obj treat as recipient proper
+  //console.log(recipientRoles);
+  recipientRoles.map(function(role){
+    sendMessageToMembers(obj,message,role);
+  })
+}
+
 function sendMessageToSelfAndWatchers(message,cc) {
   cc = cc||this.getWatchers();
   cc = flattenRecipients(cc);
 
   var user = Meteor.user();
-
   message.target = this.getInboxId();
   message.owner = {
     _id:user._id,

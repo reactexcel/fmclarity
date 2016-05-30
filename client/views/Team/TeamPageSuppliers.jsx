@@ -12,6 +12,8 @@ SupplierIndexPage = React.createClass({
         var team, suppliers;
         team = Session.getSelectedTeam();
         facility = Session.getSelectedFacility();
+        //this needs to be changed so that it always goes through team.getSuppliers
+        // ie team.getSuppliers({facility._id}) ergh or something
         if(facility) {
             suppliers = facility.getSuppliers();
         }
@@ -34,13 +36,17 @@ SupplierIndexPage = React.createClass({
 
 	render() {
         var team = this.data.team;
+        if(!team) {
+            return <div/>
+        }
 		return(
             <div>
+                {team.type=="fm"?
                 <div className="row wrapper page-heading">
                     <div className="col-lg-12">
                         <FacilityFilter title="Suppliers"/>
                     </div>
-                </div>
+                </div>:null}
     	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
     				<FilterBox2 
     					items={this.data.suppliers}

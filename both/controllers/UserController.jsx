@@ -56,10 +56,13 @@ Meteor.methods({
 })
 
 Users.helpers({
+
   collectionName:'users',
+
   sendInvite:function() {
     Meteor.call('User.sendInvite',this._id);
   },
+
   hasRole:function(role) {
     switch(role) {
       case 'dev':
@@ -70,16 +73,64 @@ Users.helpers({
       break;
     }
   },
+
+  tourDone:function(tour) {
+    if(!tour||!tour.id) return false;
+    return (Users.findOne({_id:this._id,"profile.toursCompleted.id":tour.id}))!=null;
+  },
+
+  resetTours:function() {
+    Users.update(this._id,{$set:{"profile.toursCompleted":[]}});
+  },
+
+  markTourDone:function(tour) {
+    if(!tour||!tour.id) return;
+    Users.update(this._id,{$push:{"profile.toursCompleted":{
+      id:tour.id,
+      completedDate:new Date()
+    }}});
+  },
+
+  checkTourComplete:function(tour) {
+    var currStepNum = hopscotch.getCurrStepNum();
+    var finalStep = tour.steps.length-1;
+    if(currStepNum==finalStep) {
+      console.log('tour complete');
+      this.markTourDone(tour);
+    }
+  },
+
+  startTour:function(tour) {
+    var currTour, user;
+    currTour = hopscotch.getCurrTour();
+    //if there is a tour current running and it is a different one from the tour we want to start
+    if(currTour&&currTour.id!=tour.id) {
+      currTour = null;
+      hopscotch.endTour();
+    }
+    if(!currTour) {
+      user = this;
+      if(!user.tourDone(tour)) {
+        tour.onNext = function() {
+          user.checkTourComplete(tour);
+        }
+        hopscotch.startTour(tour,0);
+      }
+    }
+  },
   
   getName:function() {
     return this.profile.name||this.profile.firstName||"Guest";
   },
+
   getEmail:function() {
     return this.profile.email;//this.emails[0].address;
   },
+
   getAvailableServices:function() {
     return [];
-  },  
+  },
+
   getTeams:function() {
     return Teams.find({"members._id":Meteor.userId()}).fetch();
   },

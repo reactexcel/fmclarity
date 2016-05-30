@@ -20,6 +20,7 @@ IssueSpecArea = React.createClass({
             var team = issue.getTeam();
 
             return {
+                user:Meteor.user(),
                 ready:true,
                 issue:issue,
                 team:team,
@@ -36,6 +37,8 @@ IssueSpecArea = React.createClass({
             //handleDestroy
         }
         else if(request.status=="Closing") {
+            hopscotch.endTour();
+            this.startTour(this.tour);
             this.showModal();
         }
         else if(this.props.closeCallback) {
@@ -49,8 +52,39 @@ IssueSpecArea = React.createClass({
         }
     },
 
+    startTour(tour) {
+      var user = this.data.user;
+      if(!this.tourStarted&&user) {
+        this.tourStarted = true;
+        setTimeout(function(){
+          user.startTour(tour);
+        },1100);
+      }
+    },
+
+    componentWillUnmount() {
+      hopscotch.endTour();
+    },
+
+    tour:{
+        id:"close-work-order",
+        steps: [
+            {
+                title: "Close work order.",
+                content: "When you have finished a job register it as closed using this screen. Enter the date and time of attendance and completion and attach a service report and/invoice. If there is further work required that requires a new work order, hit the switch  and complete the fields to generate a new work request.",
+                target: "fm-logo",
+                arrowOffset:"center",
+                onShow:function(){
+                    $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
+                },
+                placement: "bottom"
+            }
+        ]
+    },  
+
     showModal() {
         var request = this.props.item;
+        this.startTour(this.tour);
         Modal.show({
             title:"All done? Great just need a few details to finalise the job.",
             onSubmit:function(){
@@ -89,7 +123,7 @@ IssueSpecArea = React.createClass({
             <div className="issue-spec-area">
 
                 <div className="row">
-                    <div className="col-xs-12 col-sm-8 col-md-1">
+                    <div id="status-region" className="col-xs-12 col-sm-8 col-md-1">
                         <div style={{float:"left",clear:"both",width:"45px",height:"45px",paddingLeft:"4px",paddingTop:"3px"}}>
                             <ContactAvatarSmall item={owner} />
                         </div>
@@ -127,7 +161,7 @@ IssueSpecArea = React.createClass({
                                         </h2>
 				                    </div>
                                 </div>
-                                <div className="row" style={{marginBottom:"10px",paddingBottom:"10px",borderBottom:"1px solid #ddd"}}>
+                                <div id="primary-info-region" className="row" style={{marginBottom:"10px",paddingBottom:"10px",borderBottom:"1px solid #ddd"}}>
                                     <div className="col-md-3">
                                         <div style={{cursor:"default"}} className="issue-summary-facility-col">                                        
                                             <b>Order #</b>
@@ -170,7 +204,7 @@ IssueSpecArea = React.createClass({
                                     </div>
                                 </div>
 		                    </div>{/*col*/}
-		                    <div className="col-xs-12 hidden-sm col-md-2">
+		                    <div  id="action-buttons" className="col-xs-12 hidden-sm col-md-2">
                                 <IssueActionButtons
                                     item={request}
                                     onStatusChange={this.handleStatusChange}

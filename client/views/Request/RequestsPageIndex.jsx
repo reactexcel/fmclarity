@@ -12,21 +12,20 @@ IssuesIndexPage = React.createClass({
         Meteor.subscribe('teamsAndFacilitiesForUser');
         Meteor.subscribe('users');
 	    var issues;
-    	if(Meteor.user()) {
-	        var team = Meteor.user().getSelectedTeam();
-	        if(team) {
-		        var facility = Session.getSelectedFacility();
+	    var team = Session.getSelectedTeam();
+	    if(team) {
+		    var facility = Session.getSelectedFacility();
 
-		        var q = {};
-		        if(facility) {
-		        	q['facility._id'] = facility._id;
-		        }
+		    var q = {};
+		    if(facility) {
+		        q['facility._id'] = facility._id;
+		    }
 
-	        	issues = team.getIssues(q);
-	        }
+	    	issues = team.getIssues(q);
 	    }
         return {
-            issues : issues
+            issues : issues,
+            team : team
         }
     },
 
@@ -42,7 +41,7 @@ IssuesIndexPage = React.createClass({
 	},    
 
     createNewIssue(callback) {
-        var selectedFacility = Meteor.user().getSelectedFacility();
+        var selectedFacility = Session.getSelectedFacility();
         var selectedTeam = Session.getSelectedTeam();
         var issue = {
         	costThreshold:selectedTeam.defaultWorkOrderValue
@@ -59,12 +58,14 @@ IssuesIndexPage = React.createClass({
 	    		name:selectedFacility.name
 	    	}
 	    }
+	    //console.log(issue);
 	    Meteor.call('Issues.create',issue,function(err,response){
 	    	if(err) {
 	    		console.log(err);
 	    	}
 	    	if(callback&&response) {
 	    		var newItem = Issues.findOne(response._id);
+	    		//console.log(newItem);
 	    		callback(newItem);
 	    	}
 	    });
@@ -96,6 +97,7 @@ IssuesIndexPage = React.createClass({
     },
 
 	render() {
+		var team = this.data.team;
 		var filters = [
 	    {
 	        text:"Open",
@@ -153,7 +155,7 @@ IssuesIndexPage = React.createClass({
 	    	},
 	    },
 	    {
-	    	text:"Supplier",
+	    	text:(team&&team.type=="contractor")?"Client":"Supplier",
 	    	sortFunction(a,b) {
 	    		if(!b.supplier) {
 	    			return 1;
@@ -218,7 +220,7 @@ IssuesIndexPage = React.createClass({
 							summary:IssueSummary,
 							detail:IssueDetail
 						}}
-						newItemCallback={this.createNewIssue}
+						newItemCallback={team&&team.type=="fm"?this.createNewIssue:null}
 						exportCallback={this.exportIssues}
 					/>
 				</div>

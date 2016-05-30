@@ -35,7 +35,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:actionOpen
+    method:actionOpen2
   },
   issue:{
     method:issue,
@@ -156,6 +156,29 @@ function actionOpen (request) {
 /**
  *
  */
+function actionOpen2 (request) {
+  //update the status of the issue then load new issue
+  var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
+  var request = Issues.findOne(response._id);
+  //create message
+
+  var message = {
+    verb:"created",
+    subject:"Work order #"+request.code+" has been created",
+  }
+  //might be nice...
+  //message.setTarget(this);
+  //then go message.distribute(["team","facility manager","team manager"])
+  request.distributeMessage(message,[
+    "team","facility manager","team manager"
+  ]);
+  return request;
+}
+
+
+/**
+ *
+ */
 function generalRequestNotification(verb) {
 	return function(request) {
 		request.sendNotification({
@@ -174,6 +197,17 @@ function issue(request) {
     status:Issues.STATUS_ISSUED,
     issuedAt:new Date()
   });
+
+  //remove previous supplier member from contact list
+  Issues.update(request._id,{$pull:{members:{role:"supplier manager"}}});
+  //add selected supplier to contact list
+  request = Issues._transform(request); //is this needed?
+  var supplier = request.getSupplier(supplier);
+  if(supplier) {
+    var supplierMembers = supplier.getMembers({role:"manager"});
+    request.dangerouslyAddMember(request,supplierMembers,{role:"supplier manager"});
+  }
+
   var request = Issues.findOne(response._id);
   var watchers = request.getWatchers();
   watchers[2] = null;

@@ -113,13 +113,14 @@ Teams.methods({
 
 function getSuppliers() {
   var ids=[];
-
+  //if we have any supplier - add their ids to our list of ids
   if(this.suppliers&&this.suppliers.length) {
     this.suppliers.map(function(s){
       ids.push(s._id);
     })
   }
 
+  //also add any suppliers of the issues allocated to us
   var issues = this.getIssues();
   if(issues&&issues.length) {
     issues.map(function(i){
@@ -321,16 +322,16 @@ Teams.helpers({
     var q;
 
     var issuesQuery = {$or:[
-      //owner
-      {'owner._id':Meteor.userId()},
       //or team member or assignee and not draft
       {$and:[
         {$or:[
-          {'assignee._id':Meteor.userId()},
           {"team._id":this._id},
           {"team.name":this.name}
         ]},
-        {status:{$nin:[Issues.STATUS_DRAFT]}}
+        {$or:[
+          {'owner._id':Meteor.userId()},
+          {status:{$nin:[Issues.STATUS_DRAFT]}}
+        ]}
       ]},
       //or supplier team member and not draft or new
       {$and:[
@@ -338,7 +339,10 @@ Teams.helpers({
           {"supplier._id":this._id},
           {"supplier.name":this.name}
         ]},
-        {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+        {$or:[
+          {'owner._id':Meteor.userId()},
+          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+        ]}
       ]}
     ]}
 

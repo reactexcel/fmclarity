@@ -42,11 +42,11 @@ UserProfileMenu = React.createClass({
         var teams = this.data.teams;
         var component = this;
         return (
-        <div className="dropdown right-dropdown">
+        <div id="settings-icon" className="dropdown right-dropdown">
             <span className="dropdown-toggle count-info" data-toggle="dropdown">
                 {this.props.children}
             </span>
-            <ul className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
+            <ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
                 <li>
                     <a style={{padding:"10px 10px 6px 10px"}} href={FlowRouter.path('profile')}>
                         <ContactCard item={this.data.user}/>

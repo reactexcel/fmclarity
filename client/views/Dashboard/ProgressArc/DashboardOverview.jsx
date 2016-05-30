@@ -21,6 +21,7 @@ DashboardOverview = React.createClass({
         }
 
         var team = Session.get('selectedTeam');
+        //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
         if(team) {
             baseQuery["team._id"] = team._id;
         

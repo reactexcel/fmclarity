@@ -40,7 +40,7 @@ WOLocationSelector = React.createClass({
         var facilityAreas = this.data.facilityAreas;
         var area = this.data.selectedArea;
         return (
-            <div className="row" style={{minHeight:"37px"}}>
+            <div id="location-region" className="row" style={{minHeight:"37px"}}>
 
             
                 <div className="col-md-3">

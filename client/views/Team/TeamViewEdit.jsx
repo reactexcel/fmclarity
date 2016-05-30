@@ -36,6 +36,7 @@ TeamViewEdit = React.createClass({
     		}
     	}
     	return {
+    		user:Meteor.user(),
     		team:this.props.team||Session.getSelectedTeam(),
     		facility:this.props.facility,
     		supplier:supplier,
@@ -43,6 +44,45 @@ TeamViewEdit = React.createClass({
     		form1:form1,
     		form2:form2
     	}
+    },
+
+    tour:{
+      id:"team-edit-page",
+      steps: [{
+        title: "This is your team profile.",
+        content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents.",
+        target: "fm-logo",
+        arrowOffset:"center",
+        onShow:function(){
+          $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
+        },
+        placement: "bottom"
+      },{
+        title: "Basic info",
+        content: "Your basic info may have initially been entered by a client. It's a good idea to check that it is all accurate before using your FM Clarity account.",
+        target: "basic-info",
+        placement: "right"
+      },{
+        title: "Company documents",
+        content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here.",
+        target: "company-documents",
+        placement: "bottom"
+      },{
+        title: "Quick files",
+        content: "This quick files region is for saving quick reference files that don't fit a particular document type.",
+        target: "quick-files",
+        placement: "bottom"
+      },{
+        title: "Members",
+        content: "You team may have multiple members with different roles. Adding staff members using this component will unlock the ability to assign jobs to members of your team.",
+        target: "members",
+        placement: "bottom"
+      },{
+        title: "Services",
+        content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided are those that you can perform as a supplier.",
+        target: "services-consumed",
+        placement: "bottom"
+      }]
     },
 
 	getInitialState() {
@@ -61,11 +101,30 @@ TeamViewEdit = React.createClass({
 		});
 	},
 
+    startTour(tour) {
+      var user = this.data.user;
+      if(!this.tourStarted&&user) {
+        this.tourStarted = true;
+        setTimeout(function(){
+          user.startTour(tour);
+        },1000);
+      }
+    },
+
+    componentDidUpdate(){
+      this.startTour(this.tour);
+    },
+
+    componentWillUnmount() {
+      hopscotch.endTour();
+    },
+
 	componentDidMount() {
 		var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
 		elems.forEach(function(html) {
 		  var switchery = new Switchery(html, {size:'small',color:'#db4437'});
 		});
+        this.startTour(this.tour);
 	},
 
 	handleInvite(event) {
@@ -128,7 +187,7 @@ TeamViewEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
             	<h2><span>{supplier.getName()}</span></h2>
-		   		<CollapseBox title="Basic Info">
+		   		<CollapseBox id="basic-info" title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-sm-7">
 			        		<AutoForm item={supplier} schema={schema} form={this.data.form1} />
@@ -141,19 +200,13 @@ TeamViewEdit = React.createClass({
 				        </div>
 			        </div>
 		        </CollapseBox>
-		        {supplier.type=="contractor"?<div>
-
-					{/*<CollapseBox title="Insurance Details">
-						<AutoForm item={supplier} schema={schema} form={["insuranceDetails"]}/>
-					</CollapseBox>*/}
-					<CollapseBox title="Company Documents">
-						<AutoForm item={supplier} schema={schema} form={["documents"]}/>
-					</CollapseBox>
-					<CollapseBox title="Quick Files">
-						<AutoForm item={supplier} schema={schema} form={["attachments"]}/>
-					</CollapseBox>
-				</div>:null}
-				<CollapseBox title="Members">
+				<CollapseBox id="company-documents" title="Company Documents">
+					<AutoForm item={supplier} schema={schema} form={["documents"]}/>
+				</CollapseBox>
+				<CollapseBox id="quick-files" title="Quick Files">
+					<AutoForm item={supplier} schema={schema} form={["attachments"]}/>
+				</CollapseBox>
+				<CollapseBox id="members" title="Members">
 			   		<ContactList 
 			   			items={members}
 			   			team={supplier}
@@ -161,12 +214,12 @@ TeamViewEdit = React.createClass({
 			   		/>
 				</CollapseBox>
 				{supplier.type=="fm"?
-				<CollapseBox title="Services Consumed" collapsed={true}>
+				<CollapseBox id="services-consumed" title="Services Consumed" collapsed={true}>
 					<ServicesSelector item={supplier} field={"servicesRequired"}/>
 				</CollapseBox>
 				:null}
 				{
-			   	<CollapseBox title="Services Provided" collapsed={supplier.type=="fm"}>
+			   	<CollapseBox id="services-provided" title="Services Provided" collapsed={supplier.type=="fm"}>
 			      	<ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
 				</CollapseBox>
 				}

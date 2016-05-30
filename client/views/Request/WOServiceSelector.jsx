@@ -50,7 +50,7 @@ WOServiceSelector = React.createClass({
         var supplier = this.data.supplier;
         var assignee = this.data.assignee;
         return (
-        <div className="row" style={{minHeight:"37px"}}>
+        <div id="supplier-region" className="row" style={{minHeight:"37px"}}>
 
             {facility&&request.level&&request.level.name?
 				<div className="col-md-3">
@@ -115,8 +115,8 @@ WOServiceSelector = React.createClass({
                 </div>
             :null}
 
+                <div id="assignee-dropdown" className="col-md-3">
             {request.status&&supplier&&team&&(assignee||request.canSetAssignee())?
-                <div className="col-md-3">
                     <div className="row">
                        	<div className="col-lg-12">
                             <SuperSelect 
@@ -130,8 +130,8 @@ WOServiceSelector = React.createClass({
     	                    <div style={{clear:"both"}}>{assignee?assignee.getName():'-'}</div>
         	            </div>
             	    </div>
+            :null}
 	            </div>
-			:null}
 
 			
         </div>

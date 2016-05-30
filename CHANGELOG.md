@@ -1,6 +1,30 @@
 CHANGELOG.md
 ============
 
+**v1.3.8b-01**
+
+* Suppliers can no longer create work orders
+* Dash removed for suppliers
+* User tutorials only marked as complete when final step is finished
+* View all button on work request updates
+
+**v1.3.8b**
+
+* Updates on front page show only previous seven days
+* Supplier managers now only added to contact list when request is issued
+* Tour completion status saved in user account
+* Clear tours button added to user actions
+* User can reset status of tours from own card
+
+**v1.3.7b**
+
+* Added hopscotch tour
+
+**v1.3.6b-03**
+
+* Various changes to improve supplier experience
+* Beta version of full screen document browser
+
 **v1.3.5b-02**
 
 * WO: Assignee visible to fm managers once set by supplier
