@@ -7,7 +7,7 @@ DocMessages = {
 
 var defaultHelpers = {
   sendMessage:sendMessageToSelfAndWatchers,
-  sendMessages:sendMessagesToMembers,
+  distributeMessage:distributeMessage,
   sendNotification:sendMessageToSelfAndWatchers,
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
@@ -41,25 +41,46 @@ function flattenRecipients(cc) {
   return recipients;  
 }
 
-//if the object in question has included the doc-members package then 
-//we can send messages to different members based on their role
-function sendMessagesToMembers(map){
-  if(!this.getMembers) {
-    return;
-  }
-  var user = Meteor.user();
-  for(var role in map) {
-    var members = this.getMembers({role:role});
-    var message = map[role];
-    message.target = this.getInboxId();
-    message.owner = {
-      _id:user._id,
-      name:user.getName()
+function sendMessageToMembers(obj,message,role) {
+  var team,facility,recipients = [];
+  if(role=="team"&&obj.getTeam) {
+    team = obj.getTeam();
+    if(team) {
+      recipients.push(team);
     }
-    members.map(function(recipient){
-      sendMessage(message,recipient);
-    })
   }
+  else if(role=="facility"&&obj.getFacility) {
+    facility = obj.getFacility();
+    if(facility) {
+      recipients.push(facility);
+    }
+  }
+  else if(obj.getMembers) {
+    recipients = obj.getMembers({role:role})
+  }
+  //console.log(recipients);
+  recipients.map(function(r){
+    //console.log(r);
+    sendMessage(message,r);
+  })
+}
+
+function distributeMessage(message,recipientRoles) {
+  var user = Meteor.user();
+  var obj = this;
+  message.target = obj.getInboxId();
+  message.owner = {
+    _id:user._id,
+    name:user.getName()
+  }
+  //add message/notification to original sending object
+  sendMessage(message,obj);
+  //scan through the list of recipientRoles and process them
+  // if string treat as role name, is obj treat as recipient proper
+  //console.log(recipientRoles);
+  recipientRoles.map(function(role){
+    sendMessageToMembers(obj,message,role);
+  })
 }
 
 function sendMessageToSelfAndWatchers(message,cc) {

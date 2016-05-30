@@ -91,6 +91,15 @@ Users.helpers({
     }}});
   },
 
+  checkTourComplete:function(tour) {
+    var currStepNum = hopscotch.getCurrStepNum();
+    var finalStep = tour.steps.length-1;
+    if(currStepNum==finalStep) {
+      console.log('tour complete');
+      this.markTourDone(tour);
+    }
+  },
+
   startTour:function(tour) {
     var currTour, user;
     currTour = hopscotch.getCurrTour();
@@ -102,8 +111,8 @@ Users.helpers({
     if(!currTour) {
       user = this;
       if(!user.tourDone(tour)) {
-        tour.onEnd = function() {
-          user.markTourDone(tour);
+        tour.onNext = function() {
+          user.checkTourComplete(tour);
         }
         hopscotch.startTour(tour,0);
       }

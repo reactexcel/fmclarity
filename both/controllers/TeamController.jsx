@@ -113,13 +113,14 @@ Teams.methods({
 
 function getSuppliers() {
   var ids=[];
-
+  //if we have any supplier - add their ids to our list of ids
   if(this.suppliers&&this.suppliers.length) {
     this.suppliers.map(function(s){
       ids.push(s._id);
     })
   }
 
+  //also add any suppliers of the issues allocated to us
   var issues = this.getIssues();
   if(issues&&issues.length) {
     issues.map(function(i){

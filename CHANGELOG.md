@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v1.3.8b-01**
+
+* Suppliers can no longer create work orders
+* Dash removed for suppliers
+* User tutorials only marked as complete when final step is finished
+* View all button on work request updates
+
 **v1.3.8b**
 
 * Updates on front page show only previous seven days

@@ -220,7 +220,7 @@ IssuesIndexPage = React.createClass({
 							summary:IssueSummary,
 							detail:IssueDetail
 						}}
-						newItemCallback={this.createNewIssue}
+						newItemCallback={team&&team.type=="fm"?this.createNewIssue:null}
 						exportCallback={this.exportIssues}
 					/>
 				</div>

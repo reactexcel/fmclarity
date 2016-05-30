@@ -35,7 +35,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:actionOpen
+    method:actionOpen2
   },
   issue:{
     method:issue,
@@ -161,30 +161,18 @@ function actionOpen2 (request) {
   var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
   var request = Issues.findOne(response._id);
   //create message
+
   var message = {
     verb:"created",
     subject:"Work order #"+request.code+" has been created",
   }
-  //then send it to intended recipients REFACT:sendMessages(message,["owner","facility manager","team manager"])
-  //this isn't even going through the request now!!!
-  request.sendMessages({
-    //"owner":message,//redundant - but should it be? do we always want to send to owner???
-    "facility manager":message,
-    "team manager":message
-  });
-  /*how about...
-  DocMessages.post(message,[
-    request,//perhaps need to rethink this anyway - and show user messages filtered by request
-    request.getTeam(),//perhaps need to rethink this anyway - and show user messages filtered by team
-    request.getFacility(),//...of course - user messages filtered by facility
-    request.getMembers({role:["facility manager","team manager"]})
-  ])
-  */
-
-  //shit, now they don't go to request, facility or team
+  //might be nice...
+  //message.setTarget(this);
+  //then go message.distribute(["team","facility manager","team manager"])
+  request.distributeMessage(message,[
+    "team","facility manager","team manager"
+  ]);
   return request;
-  //is there a reason for this?
-  return Issues.findOne(response._id);
 }
 
 

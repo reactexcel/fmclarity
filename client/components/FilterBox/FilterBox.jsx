@@ -187,10 +187,12 @@ FilterBox = React.createClass({
               className="card-button new-card-button pull-right"
               style={{backgroundColor:"transparent",color:"#333"}}
             ><i className="fa fa-download"></i></button>
-            <button 
-              onClick={this.createNewItem} 
-              className="card-button new-card-button pull-right"
-            >+</button>
+            {this.props.newItemCallback==null?null:
+              <button 
+                onClick={this.createNewItem} 
+                className="card-button new-card-button pull-right"
+              >+</button>
+            }
             {title?<h5>{title}</h5>:null}
 
             {!filters?null:
