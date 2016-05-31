@@ -50,7 +50,7 @@ TeamViewEdit = React.createClass({
       id:"team-edit-page",
       steps: [{
         title: "This is your team profile.",
-        content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents.",
+        content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents, SWMS, references, etc",
         target: "fm-logo",
         arrowOffset:"center",
         onShow:function(){
@@ -58,29 +58,19 @@ TeamViewEdit = React.createClass({
         },
         placement: "bottom"
       },{
-        title: "Basic info",
-        content: "Your basic info may have initially been entered by a client. It's a good idea to check that it is all accurate before using your FM Clarity account.",
-        target: "basic-info",
-        placement: "right"
-      },{
         title: "Company documents",
-        content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here.",
+        content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here",
         target: "company-documents",
         placement: "bottom"
       },{
-        title: "Quick files",
-        content: "This quick files region is for saving quick reference files that don't fit a particular document type.",
-        target: "quick-files",
-        placement: "bottom"
-      },{
         title: "Members",
-        content: "You team may have multiple members with different roles. Adding staff members using this component will unlock the ability to assign jobs to members of your team.",
+        content: "Adding staff members will enable you to assign jobs to members of your team. New members will be given the role of staff meaning they can only view requests assigned to them. If you want them to see all jobs you can promote them to manager by selecting the member and clicking promote from the tool icon at the top right of their profile. You can also invite them to use FMC from this same menu",
         target: "members",
         placement: "bottom"
       },{
         title: "Services",
-        content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided are those that you can perform as a supplier.",
-        target: "services-consumed",
+        content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided services are those that you can perform as a supplier.",
+        target: "services-provided",
         placement: "bottom"
       }]
     },
@@ -102,13 +92,15 @@ TeamViewEdit = React.createClass({
 	},
 
     startTour(tour) {
-      var user = this.data.user;
-      if(!this.tourStarted&&user) {
-        this.tourStarted = true;
-        setTimeout(function(){
-          user.startTour(tour);
-        },1000);
-      }
+        var selectedTeam = Session.getSelectedTeam();
+        var user = this.data.user;
+        var team = this.data.supplier;
+        if(!this.tourStarted&&user&&team._id==selectedTeam._id) {
+            this.tourStarted = true;
+            setTimeout(function(){
+                user.startTour(tour);
+            },1000);
+        }
     },
 
     componentDidUpdate(){
@@ -202,9 +194,6 @@ TeamViewEdit = React.createClass({
 		        </CollapseBox>
 				<CollapseBox id="company-documents" title="Company Documents">
 					<AutoForm item={supplier} schema={schema} form={["documents"]}/>
-				</CollapseBox>
-				<CollapseBox id="quick-files" title="Quick Files">
-					<AutoForm item={supplier} schema={schema} form={["attachments"]}/>
 				</CollapseBox>
 				<CollapseBox id="members" title="Members">
 			   		<ContactList 

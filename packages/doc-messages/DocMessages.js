@@ -41,31 +41,8 @@ function flattenRecipients(cc) {
   return recipients;  
 }
 
-function sendMessageToMembers(obj,message,role) {
-  var team,facility,recipients = [];
-  if(role=="team"&&obj.getTeam) {
-    team = obj.getTeam();
-    if(team) {
-      recipients.push(team);
-    }
-  }
-  else if(role=="facility"&&obj.getFacility) {
-    facility = obj.getFacility();
-    if(facility) {
-      recipients.push(facility);
-    }
-  }
-  else if(obj.getMembers) {
-    recipients = obj.getMembers({role:role})
-  }
-  //console.log(recipients);
-  recipients.map(function(r){
-    //console.log(r);
-    sendMessage(message,r);
-  })
-}
-
-function distributeMessage(message,recipientRoles) {
+function distributeMessage(message,recipientRoles,options) {
+  options = options||{};
   var user = Meteor.user();
   var obj = this;
   message.target = obj.getInboxId();
@@ -74,12 +51,41 @@ function distributeMessage(message,recipientRoles) {
     name:user.getName()
   }
   //add message/notification to original sending object
-  sendMessage(message,obj);
+  if(!options.suppressOriginalPost) {
+    sendMessage(message,obj);
+  }
   //scan through the list of recipientRoles and process them
   // if string treat as role name, is obj treat as recipient proper
   //console.log(recipientRoles);
   recipientRoles.map(function(role){
     sendMessageToMembers(obj,message,role);
+  })
+}
+
+function sendMessageToMembers(obj,message,role) {
+  var team,facility,recipients = [];
+  //if we are sending the message to the team
+  if(role=="team"&&obj.getTeam) {
+    team = obj.getTeam();
+    if(team) {
+      recipients.push(team);
+    }
+  }
+  //else if we are sending it to facility
+  else if(role=="facility"&&obj.getFacility) {
+    facility = obj.getFacility();
+    if(facility) {
+      recipients.push(facility);
+    }
+  }
+  //else if we are sending it to the member with "role"
+  else if(obj.getMembers) {
+    recipients = obj.getMembers({role:role})
+  }
+  //console.log(recipients);
+  recipients.map(function(r){
+    //console.log(r);
+    sendMessage(message,r);
   })
 }
 
@@ -106,24 +112,37 @@ function recipientIsCreator(message,recipient) {
 }
 
 function sendMessage(message,recipient) {
+  var msgCopy, body;
+
+  //if body is a callback then create the personalised body using the callback
+  if(Meteor.isServer) {
+    if(message.body&&_.isFunction(message.body)) {
+      body = message.body(recipient,message);
+    }
+    else {
+      body = message.body;
+    }
+  }
+
   //make copy of original message using our own personal inboxId
-  var copy = _.extend({},message,{
-    inboxId:recipient.getInboxId()
+  var msgCopy = _.extend({},message,{
+    inboxId:recipient.getInboxId(),
+    body:body
   });
+
 
   //check if we should mark the message as read
   if(recipientIsCreator(message,recipient)){
-    copy.read = true;
+    msgCopy.read = true;
   }
 
   //create the message
-  Meteor.call("Messages.create",copy,function(){
+  Meteor.call("Messages.create",msgCopy,function(){
     //then email if we are supposed to
-    if(!copy.read) {
-      Meteor.call("Messages.sendEmail",recipient,copy);
+    if(!msgCopy.read) {
+      Meteor.call("Messages.sendEmail",recipient,msgCopy);
     }
   });
-
 }
 
 function registerCollection(collection,customHelpers) {

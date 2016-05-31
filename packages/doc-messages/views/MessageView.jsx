@@ -87,9 +87,7 @@ MessageView = React.createClass({
                             }
                         </div>
 
-                        <div className="message-body">
-                            {message.body}
-                        </div>
+                        <div className="message-body" dangerouslySetInnerHTML={{__html:message.body}}/>
 
                         <div className="message-footer">
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
@@ -104,7 +102,7 @@ MessageView = React.createClass({
                 <div className="media-body">
                     <textarea 
                         ref="input"
-                        style={{width:"80%",paddingLeft:"4px"}}
+                        style={{width:"80%",paddingLeft:"5px",marginTop:"0px"}}
                         placeholder="Leave a comment or question..."
                         className={"input inline-form-control "+(used?'used':'')}
                         defaultValue={message.body} 

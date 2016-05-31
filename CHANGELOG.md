@@ -1,6 +1,18 @@
 CHANGELOG.md
 ============
 
+**v1.3.9b**
+
+* WO list: Removed new and issued filters
+* Notifications for deletion, reversal and file upload
+* FM managers can now change priority of issued work orders
+* When a new request is created title field has focus
+* Changed padding in comment text area to match comment padding
+* Updated tour text for single issue page
+* Updated tour text for team edit page
+* Updated WO issued message to use role based messages
+* Removed "quick files" components from facilities and teams (NB:check all quick files have been copied to documents before production release)
+
 **v1.3.8b-01**
 
 * Suppliers can no longer create work orders

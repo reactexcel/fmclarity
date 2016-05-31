@@ -103,7 +103,7 @@ Issues.methods({
     method:Issues._schema['facility'].setter,
   },
   setPriority:{
-    authentication:accessForTeamMembers,
+    authentication:accessForTeamMembersWithElevatedAccessForManagers,
     method:setPriority,
   },
   setService:{

@@ -11,6 +11,8 @@ Issues.STATUS_ASSIGNED = "Issued";
 Issues.STATUS_CLOSING = "Closing";
 Issues.STATUS_CLOSED = "Closed";
 Issues.STATUS_REVIEWED = "Reviewed";
+Issues.STATUS_CANCELLED = "Cancelled";
+Issues.STATUS_DELETED = "Deleted";
 Issues.STATUS_ARCHIVED = "Archived";
 
 //maybe actions it better terminology?
@@ -35,7 +37,7 @@ Issues.methods({
         AuthHelpers.memberOfRelatedTeam(role,user,request)
       )
     },
-    method:actionOpen2
+    method:actionOpen
   },
   issue:{
     method:issue,
@@ -75,7 +77,7 @@ Issues.methods({
     method:RBAC.lib.save.bind(Issues)
   },
   destroy:{
-    method:RBAC.lib.destroy.bind(Issues),
+    method:actionDestroy,
     authentication:function(role,user,request) {
       return (
         readyToCancel(request)&&
@@ -134,34 +136,46 @@ function readyToCancel(request) {
   )
 }
 
+function actionDestroy (request) {
+  var response, message, recipients;
+  switch(request.status) {
+    case Issues.STATUS_DRAFT:
+      Issues.remove(request._id);
+      request = null;
+      break;
+    case Issues.STATUS_NEW:
+      response = Meteor.call('Issues.save',request,{status:Issues.STATUS_CANCELLED});
+      request = Issues.findOne(response._id);
+      message = {
+        verb:"cancelled",
+        subject:"Work order #"+request.code+" has been cancelled",
+      }
+      recipients = ["team","team manager","facility manager"];
+      break;
+    case Issues.STATUS_ISSUED:
+      response = Meteor.call('Issues.save',request,{status:Issues.STATUS_DELETED});
+      request = Issues.findOne(response._id);
+      message = {
+        verb:"deleted",
+        subject:"Work order #"+request.code+" has been deleted",
+      }
+      recipients = ["team","team manager","facility manager","supplier manager"];
+      break;
+  }
+  if(message&&recipients) {
+    request.distributeMessage(message,recipients);
+  }
+  return request;  
+}
+
 /**
  *
  */
 function actionOpen (request) {
-  var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
-
-  var request = Issues.findOne(response._id);
-  var watchers = request.getWatchers();
-  watchers[2] = null;
-
-  request.sendNotification({
-    verb:"created",
-    subject:"Work order #"+request.code+" has been created",
-  },watchers);//might also call sendMessage depending on state of notification options
-
-  return Issues.findOne(response._id);
-}
-
-
-/**
- *
- */
-function actionOpen2 (request) {
   //update the status of the issue then load new issue
   var response = Meteor.call('Issues.save',request,{status:Issues.STATUS_NEW});
   var request = Issues.findOne(response._id);
   //create message
-
   var message = {
     verb:"created",
     subject:"Work order #"+request.code+" has been created",
@@ -173,19 +187,6 @@ function actionOpen2 (request) {
     "team","facility manager","team manager"
   ]);
   return request;
-}
-
-
-/**
- *
- */
-function generalRequestNotification(verb) {
-	return function(request) {
-		request.sendNotification({
-			verb:verb,
-			subject:"Work order #"+request.code+" has been "+verb
-		})
-	}
 }
 
 /**
@@ -209,89 +210,31 @@ function issue(request) {
   }
 
   var request = Issues.findOne(response._id);
-  var watchers = request.getWatchers();
-  watchers[2] = null;
+  var team = request.getTeam();
 
-  request.sendNotification({
+  request.distributeMessage({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  },watchers);//might also call sendMessage depending on state of notification options
+  },["owner","team","team manager","facility manager"]);
 
-  //var supplier = request.getSupplier();
-  //a parellel functionality to sendNotification
-  //EmailTemplates.supplierIssued(request) is a function which returns a function which
-  //  takes a user as an argument and is mapped to watchers
-  //supplier.sendMessage(EmailTemplates.supplierIssued(request));
-
-  sendSupplierEmail(request);
+  request.distributeMessage({
+    verb:"issued",
+    subject:"New work request from "+" "+team.getName(),
+    body:function(recipient){
+      var expiry = moment(request.dueDate).add({days:3}).toDate();
+      var token = FMCLogin.generateLoginToken(recipient,expiry);
+      var element = React.createElement(SupplierRequestEmailView,{recipient:{_id:recipient._id},item:{_id:request._id},token:token});
+      return ReactDOMServer.renderToStaticMarkup(element);
+    }
+  },
+  [
+    "supplier manager"
+  ],
+  {
+    suppressOriginalPost:true
+  });
 
   return request;
-}
-
-//should this just be a standard message sent using "sendMessage"?
-function sendSupplierEmail(request){
-
-  var tester = Meteor.user();
-  if(Meteor.isServer/*&&FM.inProduction()*/) { Meteor.defer(function(){
-
-    request = Issues._transform(request);
-    var team = request.getTeam();
-    var supplier = request.getSupplier();
-    var members = supplier.getMembers({role:"manager"});
-    /*for(var i in members) {
-      console.log(members[i].emails[0].address);
-    }*/
-    var user = members[0];    
-    if(user) {
-      var email = user.profile.email;//user.emails[0].address;
-      var to = user.name?(user.name+" <"+email+">"):email;
-
-      //var stampedLoginToken = Accounts._generateStampedLoginToken();
-      //Accounts._insertLoginToken(user._id, stampedLoginToken);
-      var expiry = moment(request.dueDate).add({days:3}).toDate();
-      var token = FMCLogin.generateLoginToken(user,expiry);
-      var element = React.createElement(SupplierRequestEmailView,{item:{_id:request._id},token:token});
-      var subject = "New work request from "+" "+team.getName();
-      var html = ReactDOMServer.renderToStaticMarkup(element);
-
-      var email, devMsg;
-
-      devMsg = {
-        to:["leo@fmclarity.com","rich@fmclarity.com"]
-      }
-
-      if(FM.inProduction()) {
-
-        email = {
-          to:to,
-          from:"FM Clarity <no-reply@fmclarity.com>",
-          subject:subject,
-          html:html
-        }
-        Email.send(email);
-
-        devMsg.from = "FM Outgoing Message Alert <no-reply@fmclarity.com>";
-        devMsg.subject = "["+to+"]"+subject;
-        devMsg.html = 
-          "***Message sent to '"+to+"'***<br/><br/>"+
-          html+
-            "<br/>******<br/>"+
-            JSON.stringify(request);
-      }
-      else {
-        devMsg.from = "FM Test Message <no-reply@fmclarity.com>";
-        devMsg.subject = "["+to+"]"+subject;
-        devMsg.html = 
-          "***Intercepted message to "+to+"***<br/><br/>"+
-          html+
-            "<br/>******<br/>"+
-            JSON.stringify(request);
-      }
-
-      Email.send(devMsg);      
-
-    }
-  })}  
 }
 
 /**
@@ -401,12 +344,13 @@ function reverse(request) {
   });
 
   var response = Meteor.call('Issues.create',newRequest);
-
   request = Issues.findOne(request._id);
-  request.sendNotification({
+
+  var message = {
     verb:"requested",
-    subject:"Work order #"+request.code+" has been reversed and reversal #"+newRequest.code+" has been created"    
-  });
+    subject:"Work order #"+request.code+" has been reversed and reversal #"+newRequest.code+" has been created"        
+  }
+  request.distributeMessage(message,["team","team manager","facility manager","supplier manager"]);
 
   //perhaps we should just be passing around ids?
   return newRequest;

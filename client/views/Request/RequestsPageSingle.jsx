@@ -39,7 +39,7 @@ IssuePage = React.createClass({
       steps: [
       {
         title: "Welcome to FM Clarity!",
-        content: "FM Clarity is a new solution to streamline facility management and servicing. You are currently on the work request screen",
+        content: "FM Clarity is a new solution designed to streamline facility management and servicing. You are currently viewing a work request that has been issued to you. At the top or the work request you will note the issuing organisation, the location of the job, and the due date",
         target: "fm-logo",
         arrowOffset:"center",
         onShow:function(){
@@ -47,33 +47,13 @@ IssuePage = React.createClass({
         },
         placement: "bottom"
       },{
-        title: "Summary region",
-        content: "At the top of each request is the summary area showing you at a glance the issuing organisation, the location of the job, and the due date",
+        title: "Work request details",
+        content: "On each request you will note the general work order details, which are read-only",
         target: "summary-region",
         placement: "bottom"
       },{
-        title: "Primary request info",
-        content: "In this region you will see the primary request info including title, work order number, work order value and due date",
-        target: "primary-info-region",
-        placement: "bottom"
-      },{
-        title: "Job status region",
-        content: "This is the job status region which displays the job creator, status and priority - light blue for scheduled, dark blue for standard, orange for urgent and red critical",
-        target: "status-region",
-        placement: "right"
-      },{
-        title: "Location region",
-        content: "This region displays the location of the job including the building, level, area and sub-area (if applicable)",
-        target: "location-region",
-        placement: "bottom"
-      },{
-        title: "Supplier region",
-        content: "The supplier region shows the type of service and sub-service (if applicable)",
-        target: "supplier-region",
-        placement: "top"
-      },{
         title: "Assignee",
-        content: "If this is an internal request, or if you are a supplier and you want to assign the job to a member of your team, make a selection using the assignee drop-down which will appear here. Additional team members can be added in account settings for future work orders",
+        content: "If you want to assign the job to a member of your team, make a selection using the assignee drop-down which will appear here. Additional team members can be added in account settings (gear icon at top right) for future work orders",
         target: "assignee-dropdown",
         placement: "top"
       },{
@@ -83,7 +63,7 @@ IssuePage = React.createClass({
         placement: "left"            
       },{
         title: "Collaboration region",
-        content: "This is the collaboration region where stakeholders share dynamic information about the status of a job. The first tab is the discussion area where issuers, suppliers and assignees can relay information",
+        content: "This is the collaboration region where stakeholders share dynamic information about the status of a job. The first tab is the discussion area where issuers, suppliers and assignees can discuss information relating to the job. Feel free to add any comments",
         target: "discussion-tab",
         onNext:function(){
           $("#discussion-tab").click();
@@ -91,7 +71,7 @@ IssuePage = React.createClass({
         placement: "top"            
       },{
         title: "Request dropbox",
-        content: "Documents relevant to each request can be uploaded into the request drop-box here such as quotes, images and invoices",
+        content: "Documents relevant to each request can be uploaded from your device into the request drop-box such as quotes, images and invoices",
         target: "documents-tab",
         onShow:function(){
           $("#documents-tab").click();
@@ -105,11 +85,6 @@ IssuePage = React.createClass({
           $("#contacts-tab").click();
         },
         placement: "top"
-      },{
-        title: "Alerts button",
-        content: "When a request you are involved in changes you will receive an alert window here.",
-        target: "alerts-icon",
-        placement: "left"
       },{
         title: "Settings button",
         content: 'Settings for yourself and your team can be managed by pushing this button.<br/><br/> Click on your personal information here to go to your profile settings.<br/><br/> Click on the "account settings" button to go to your team settings and upload company documents such as insurance.',

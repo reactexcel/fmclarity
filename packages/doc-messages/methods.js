@@ -29,13 +29,12 @@ Meteor.methods({
       */
       if(user&&user.emails) {
 
+        var subject, body, address, to, email, devMsg;
         var element = React.createElement(EmailMessageView,{user:user,item:message});
-        var html = ReactDOMServer.renderToStaticMarkup (element);
-        var address = user.profile.email;//user.emails[0].address;
-        var to = user.name?(user.name+" <"+address+">"):address;
-        var subject = (message.subject||"FM Clarity notification");
 
-        var email, devMsg;
+        subject = (message.subject||"FM Clarity notification");
+        body = (message.body||ReactDOMServer.renderToStaticMarkup (element));
+        to = user.name?(user.name+" <"+user.profile.email+">"):user.profile.email;
 
         devMsg = {
           to:["leo@fmclarity.com","rich@fmclarity.com"]
@@ -47,7 +46,7 @@ Meteor.methods({
               to:to,
               from:"FM Clarity <no-reply@fmclarity.com>",
               subject:subject,
-              html:html
+              html:body
           }
           Email.send(email);
 
@@ -55,10 +54,9 @@ Meteor.methods({
           devMsg.subject = "["+to+"]"+subject;
           devMsg.html = 
             "***Message sent to "+to+"***<br/><br/>"+
-            html+
+            body+
             "<br/>******<br/>"+
             JSON.stringify(message)+"<br/>"
-            //JSON.stringify(email)+"<br/>";
         }
 
         else {
@@ -66,10 +64,12 @@ Meteor.methods({
           devMsg.subject = "["+to+"]"+subject;
           devMsg.html = 
             "***Test message intercepted for:"+to+"***<br/><br/>"+
-            html+
+            body+
             "<br/>******<br/>"+
             JSON.stringify(message)+"<br/>"
         }
+
+        console.log({"sending to":to});
 
         Email.send(devMsg);
       }

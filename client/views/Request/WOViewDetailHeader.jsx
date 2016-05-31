@@ -155,6 +155,7 @@ IssueSpecArea = React.createClass({
 				                        <h2><AutoInput.Text
                                                 readOnly={!request.canSetName()}
                                                 value={request.name}
+                                                autoFocus={true}
                                                 placeholder="Work order title"
                                                 onChange={this.updateItem.bind(this,'name')}
                                             />
