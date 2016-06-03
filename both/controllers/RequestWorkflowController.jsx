@@ -184,7 +184,7 @@ function actionOpen (request) {
   //message.setTarget(this);
   //then go message.distribute(["team","facility manager","team manager"])
   request.distributeMessage(message,[
-    "team","facility manager","team manager"
+    "team","team manager","facility","facility manager"
   ]);
   return request;
 }
@@ -215,12 +215,12 @@ function issue(request) {
   request.distributeMessage({
     verb:"issued",
     subject:"Work order #"+request.code+" has been issued",
-  },["owner","team","team manager","facility manager"]);
+  },["owner","team","team manager","facility","facility manager"]);
 
   request.distributeMessage({
     verb:"issued",
     subject:"New work request from "+" "+team.getName(),
-    body:function(recipient){
+    emailBody:function(recipient){
       var expiry = moment(request.dueDate).add({days:3}).toDate();
       var token = FMCLogin.generateLoginToken(recipient,expiry);
       var element = React.createElement(SupplierRequestEmailView,{recipient:{_id:recipient._id},item:{_id:request._id},token:token});

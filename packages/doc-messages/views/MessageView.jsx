@@ -7,15 +7,20 @@ MessageView = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, owner;
-        query = this.props.item;
-        message = Messages.findOne(query);
+        var message, owner, target, inbox, messageIsInContext;
+        inbox = this.props.inbox;
+        message = Messages.findOne(this.props.item);
         if(message) {
-            owner = message.getOwner()
+            owner = message.getOwner();
+            if(message.getTargetId()==inbox._id) {
+                messageIsInContext = true;
+            }
+
         }
         return {
+            messageIsInContext:messageIsInContext,
             owner:owner,
-            inbox:this.props.inbox,
+            inbox:inbox,
             message:message
         }
     },
@@ -78,6 +83,7 @@ MessageView = React.createClass({
                 <div className={"media-body message-type-"+message.type} style={{paddingLeft:"5px",whiteSpace:"pre-wrap"}}>
                     <div>
                         <small className="message-timestamp pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        {message.type=="comment"&&this.data.messageIsInContext?null:
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                             message.verb?
@@ -86,8 +92,11 @@ MessageView = React.createClass({
                                 <span>{message.subject}</span>
                             }
                         </div>
+                        }
 
-                        <div className="message-body" dangerouslySetInnerHTML={{__html:message.body}}/>
+                        <div className="message-body">
+                            {message.body}
+                        </div>
 
                         <div className="message-footer">
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>

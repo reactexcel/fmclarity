@@ -32,7 +32,7 @@ SupplierRequestEmailView = React.createClass({
             return;
         }
 
-        console.log(recipient);
+        //console.log(recipient);
 
         var team = this.data.team;              //the issuing team
         var supplier = this.data.supplier;      //the supplier item has been issued to

@@ -18,36 +18,36 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 MainLayout = React.createClass({
 
+  checkSize() {
+    if ($(window).width() < 769) {
+      $('body').addClass('body-small fixed-sidebar')
+    } else {
+      $('body').removeClass('body-small')
+    }
+
+    if(!$("body").hasClass('body-small')) {
+
+      var navbarHeight = $('nav.navbar-default').height();
+      var wrapperHeight = $('#page-wrapper').height();
+
+      if(navbarHeight > wrapperHeight){
+        $('#page-wrapper').css("min-height", navbarHeight + "px");
+      }
+
+      if(navbarHeight < wrapperHeight){
+        $('#page-wrapper').css("min-height", $(window).height()  + "px");
+      }
+
+      if ($('body').hasClass('fixed-nav')) {
+        $('#page-wrapper').css("min-height", $(window).height() - 60 + "px");
+      }
+    }    
+  },
+
   componentDidMount() {
     // Minimalize menu when screen is less than 768px
-    
-    $(window).bind("resize load", function () {
-        if ($(this).width() < 769) {
-            $('body').addClass('body-small fixed-sidebar')
-        } else {
-            $('body').removeClass('body-small')
-        }
-    });
-    // Fix height of layout when resize, scroll and load
-    $(window).bind("load resize scroll", function() {
-        if(!$("body").hasClass('body-small')) {
-
-            var navbarHeight = $('nav.navbar-default').height();
-            var wrapperHeight = $('#page-wrapper').height();
-
-            if(navbarHeight > wrapperHeight){
-                $('#page-wrapper').css("min-height", navbarHeight + "px");
-            }
-
-            if(navbarHeight < wrapperHeight){
-                $('#page-wrapper').css("min-height", $(window).height()  + "px");
-            }
-
-            if ($('body').hasClass('fixed-nav')) {
-                $('#page-wrapper').css("min-height", $(window).height() - 60 + "px");
-            }
-        }
-    });
+    this.checkSize();
+    $(window).bind("resize scroll", this.checkSize);
 
     // SKIN OPTIONS
     // Uncomment this if you want to have different skin option:
@@ -87,7 +87,11 @@ MainLayout = React.createClass({
         <div className="gradient-bg">
           {/*<div id="pattern-bg" className="pattern-bg"></div>*/}
           <TopNavBar />
-          <main id="page-wrapper">{this.props.content}</main>
+          <main id="page-wrapper">
+            <div id="page-wrapper-inner">
+              {this.props.content}
+            </div>
+          </main>
           {/*<Footer />*/}
         </div>
         <RightSideBar />

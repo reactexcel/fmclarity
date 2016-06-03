@@ -1,11 +1,26 @@
+.tab-panel {
+    border:0;
+}
+
+.issue-detail .tab-panel .tab-pane {
+    box-shadow: inset 0px 1px 2px 2px #ececec;
+    border: 1px solid #ddd;
+    border-radius: 0px;    
+}
+
+.issue-detail .tab-panel .tab-row {
+    background-color:transparent;
+}
+
 .tab-panel .tab-pane {
 	clear:both;
     background-color: #fff;
-    box-shadow: inset 0px 1px 2px 2px #ececec;
-    border: 1px solid #ddd;
-    border-radius: 0px;
     margin: 0;
     /*min-height:150px;*/
+}
+
+.tab-panel .tab-row {
+    background-color:rgba(0,0,0,0.1);
 }
 
 .tab-panel .panel-heading {
@@ -33,7 +48,7 @@
     display: inline-block;
     font-weight: bold;
     line-height: 2.5;
-    margin: 4px 0;
+    margin: 8px 0 4px 0;
     padding: 0 16px;
     text-transform: uppercase;
     white-space: nowrap;

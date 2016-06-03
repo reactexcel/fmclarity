@@ -1,6 +1,8 @@
 Facilities.schema(FacilitySchema);
 
-DocThumb.register(Facilities,Files);
+DocThumb.register(Facilities,{
+  defaultThumbUrl:0
+});
 
 DocMembers.register(Facilities,{
   fieldName:"members",
@@ -11,6 +13,22 @@ DocMembers.register(Facilities,{
   fieldName:"suppliers",
   authentication:AuthHelpers.managerOfRelatedTeam,
   membersCollection:Teams
+});
+
+DocMessages.register(Facilities,{
+  getInboxName() {
+    return this.getName()+" announcements";
+  },
+  getWatchers:function() {
+    var members = this.getMembers();
+    var watchers = [];
+    if(members&&members.length) {
+      members.map(function(m){
+        watchers.push(m);
+      })
+    }
+    return watchers;
+  }  
 });
 
 Facilities.methods({

@@ -4,6 +4,15 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 FacilityCard = React.createClass({
 
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	var facility = this.props.item;
+		return {
+			facility:facility
+		}
+	},
+
 	getInitialState() {
 		return {
 			edit:this.props.edit||this.props.item==null||false
@@ -18,7 +27,7 @@ FacilityCard = React.createClass({
 
 	getMenu() {
 		var component = this;
-		var facility = this.props.item;
+		var facility = this.data.facility;
 
 		var menu = [];
 
@@ -44,14 +53,15 @@ FacilityCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
-		var item = this.props.item;
+		var facility = this.data.facility;
 		return (
 			<div>
-			    {item.canSave()&&this.state.edit?
-			        <FacilityViewEdit item={item} />
+			    {facility.canSave()&&this.state.edit?
+			        <FacilityViewEdit item={facility} />
 			    :
-					<FacilityViewDetail item={item}/>
+					<FacilityViewDetail item={facility}/>
 				}
+
             	<ActionsMenu items={menu} />
 			</div>
 		)

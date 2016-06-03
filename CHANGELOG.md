@@ -1,6 +1,22 @@
 CHANGELOG.md
 ============
 
+**v1.3.11b**
+
+* Fixed a problem that was causing left navigation to block mobile view on initial load
+* Restricted max width of main content wrapper to 1280px
+* Restricted max height of facilty image to 500px
+
+**v1.3.10b**
+
+* Can add team announcements from dashboard
+* Can add facility announcement from dashboard by selecting facility from primary facility dropdown
+* Fixed a bug that was causing team tour to display when viewing other teams
+* Tabs section on facility card for detailed information
+* Facility discussion appears on facility card
+* Facility documents appear on facility card
+* Facility card given material design style
+
 **v1.3.9b**
 
 * WO list: Removed new and issued filters
@@ -12,6 +28,7 @@ CHANGELOG.md
 * Updated tour text for team edit page
 * Updated WO issued message to use role based messages
 * Removed "quick files" components from facilities and teams (NB:check all quick files have been copied to documents before production release)
+* Delete and cancel do not remove from database (still visible from email links)
 
 **v1.3.8b-01**
 

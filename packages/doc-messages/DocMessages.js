@@ -112,22 +112,20 @@ function recipientIsCreator(message,recipient) {
 }
 
 function sendMessage(message,recipient) {
-  var msgCopy, body;
+  var msgCopy, emailBody;
 
-  //if body is a callback then create the personalised body using the callback
-  if(Meteor.isServer) {
-    if(message.body&&_.isFunction(message.body)) {
-      body = message.body(recipient,message);
-    }
-    else {
-      body = message.body;
-    }
+  //if emailBody is a callback then create the personalised body using the callback
+  if(Meteor.isServer&&message.emailBody&&_.isFunction(message.emailBody)) {
+    emailBody = message.emailBody(recipient,message);
+  }
+  else {
+    emailBody = message.emailBody;
   }
 
   //make copy of original message using our own personal inboxId
   var msgCopy = _.extend({},message,{
     inboxId:recipient.getInboxId(),
-    body:body
+    emailBody:emailBody
   });
 
 

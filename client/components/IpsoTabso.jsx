@@ -28,7 +28,7 @@ IpsoTabso = React.createClass({
                 <div className="panel-heading">
                     <div className="row" style={{margin:0}}>
                         <div className="col-xs-12 col-sm-7 col-md-12">
-                            <div className="row">
+                            <div className="row tab-row">
                                 {tabs.map(function(i,idx){
                                     return (
                                         <div 

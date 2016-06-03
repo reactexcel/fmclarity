@@ -47,7 +47,7 @@ Inbox = React.createClass({
                         if(idx>messages.length-6||!truncated) {
                             return (
                                 <div key={message._id} className="feed-element">
-                                    <MessageView item={message}/>
+                                    <MessageView item={message} inbox={inbox}/>
                                 </div>
                             )
                         }

@@ -30,6 +30,10 @@ Messages.helpers({
       return collection.findOne(target.query);
     }
   },
+  getTargetId() {
+    var target = this.target?this.target:this.inboxId;
+    return target.query?target.query._id:null;
+  },  
   getTargetName() {
     var target = this.target?this.target:this.inboxId;
     return target.name;

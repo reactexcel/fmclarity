@@ -29,11 +29,11 @@ Meteor.methods({
       */
       if(user&&user.emails) {
 
-        var subject, body, address, to, email, devMsg;
+        var subject, html, address, to, email, devMsg;
         var element = React.createElement(EmailMessageView,{user:user,item:message});
 
         subject = (message.subject||"FM Clarity notification");
-        body = (message.body||ReactDOMServer.renderToStaticMarkup (element));
+        html = (message.emailBody||ReactDOMServer.renderToStaticMarkup (element));
         to = user.name?(user.name+" <"+user.profile.email+">"):user.profile.email;
 
         devMsg = {
@@ -46,7 +46,7 @@ Meteor.methods({
               to:to,
               from:"FM Clarity <no-reply@fmclarity.com>",
               subject:subject,
-              html:body
+              html:html
           }
           Email.send(email);
 
@@ -54,7 +54,7 @@ Meteor.methods({
           devMsg.subject = "["+to+"]"+subject;
           devMsg.html = 
             "***Message sent to "+to+"***<br/><br/>"+
-            body+
+            html+
             "<br/>******<br/>"+
             JSON.stringify(message)+"<br/>"
         }
@@ -64,7 +64,7 @@ Meteor.methods({
           devMsg.subject = "["+to+"]"+subject;
           devMsg.html = 
             "***Test message intercepted for:"+to+"***<br/><br/>"+
-            body+
+            html+
             "<br/>******<br/>"+
             JSON.stringify(message)+"<br/>"
         }

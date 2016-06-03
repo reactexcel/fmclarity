@@ -16,6 +16,9 @@ DocMembers.register(Teams,{
 });
 
 DocMessages.register(Teams,{
+  getInboxName() {
+    return this.getName();
+  },
   getWatchers:function() {
     return this.getMembers({role:"manager"});
     var members = this.getMembers({role:"manager"});
@@ -300,11 +303,6 @@ Teams.helpers({
       {"team._id":this._id},
       {_id:{$in:facilityIds}}
     ]},{sort:{name:1}}).fetch();
-  },
-
-  getFacility(i) {
-    var facilities = this.getFacilities();
-    return facilities[i];
   },
 
   getIssues(q) {

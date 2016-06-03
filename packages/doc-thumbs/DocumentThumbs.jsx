@@ -11,7 +11,7 @@ function registerCollection(collection,opts) {
 	Thumbs = opts.repo;
 
 	collection.helpers({
-		defaultThumbUrl:(opts.defaultThumbUrl||"/img/default-placeholder.jpg"),
+		defaultThumbUrl:(opts.defaultThumbUrl!=null?opts.defaultThumbUrl:"/img/default-placeholder.jpg"),
 		uploadThumb:function(url) {
 			return uploadThumb(this,url);
 		},
