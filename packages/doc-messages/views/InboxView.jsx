@@ -56,7 +56,7 @@ Inbox = React.createClass({
                 }
                 {
                 readOnly?null:
-                    <div className="feed-element" style={{paddingBottom:0,borderBottom:"none"}}>
+                    <div className="feed-element" style={{borderBottom:"none"}}>
                         <MessageView inbox={inbox}/>
                     </div>
                 }

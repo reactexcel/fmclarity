@@ -1,8 +1,14 @@
+@border-color:#eee;
+
 .notification-list-item {
 	padding-bottom:5px;
 	margin-bottom:5px;
 	padding-left:5px;
 	border-bottom:1px solid #ddd;
+}
+
+.message-body, .message-subject {
+  color:#000;
 }
 
 .notification-list-item:last-child {
@@ -11,4 +17,44 @@
 
 .tab-pane .message-type-comment .message-footer, .tab-pane .message-type-comment .message-subject {
 	display:none;
+}
+
+.feed-activity-list .feed-element {
+  border-bottom: 1px solid @border-color;
+}
+
+.feed-element {
+  padding: 13px;
+}
+
+.feed-element, .media-body {
+  overflow: hidden;
+}
+
+.feed-element > .pull-left {
+  margin-right: 10px;
+}
+
+.feed-element img.img-circle, .dropdown-messages-box img.img-circle {
+  width: 38px;
+  height: 38px;
+}
+
+.feed-element .well {
+  border: 1px solid @border-color;
+  box-shadow: none;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding: 10px 20px;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.feed-element .actions {
+  margin-top: 10px;
+}
+
+.feed-element .photos {
+  margin: 10px 0;
+
 }

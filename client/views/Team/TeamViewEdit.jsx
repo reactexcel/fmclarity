@@ -95,7 +95,7 @@ TeamViewEdit = React.createClass({
         var selectedTeam = Session.getSelectedTeam();
         var user = this.data.user;
         var team = this.data.supplier;
-        if(!this.tourStarted&&user&&team._id==selectedTeam._id) {
+        if(team&&!this.tourStarted&&user&&team._id==selectedTeam._id) {
             this.tourStarted = true;
             setTimeout(function(){
                 user.startTour(tour);

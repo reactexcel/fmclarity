@@ -88,9 +88,12 @@ ContactList = React.createClass({
 			    }):null}
 			    {canCreate?
 			    <div 
+			    	className="contact-list-item"
 			        onClick={component.showModal.bind(null,null)}
+			        style={{paddingLeft:"24px"}}
 			    >
-			        <span className="active-link">Add contact</span>
+					<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+			        <span className="active-link">Add another</span>
 			    </div>
 			    :null}
 			</div>

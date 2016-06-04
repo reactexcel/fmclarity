@@ -19,7 +19,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 MainLayout = React.createClass({
 
   checkSize() {
-    if ($(window).width() < 769) {
+    if (window.matchMedia('(max-width: 768px)').matches) {
       $('body').addClass('body-small fixed-sidebar')
     } else {
       $('body').removeClass('body-small')
@@ -47,7 +47,7 @@ MainLayout = React.createClass({
   componentDidMount() {
     // Minimalize menu when screen is less than 768px
     this.checkSize();
-    $(window).bind("resize scroll", this.checkSize);
+    $(window).bind("resize", this.checkSize);
 
     // SKIN OPTIONS
     // Uncomment this if you want to have different skin option:

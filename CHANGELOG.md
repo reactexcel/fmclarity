@@ -6,6 +6,15 @@ CHANGELOG.md
 * Fixed a problem that was causing left navigation to block mobile view on initial load
 * Restricted max width of main content wrapper to 1280px
 * Restricted max height of facilty image to 500px
+* Increase padding around avatars
+* Updated avatars, contact lists, document tables, to all conform with md spec (increased padding and made full width), made numerous additional updates to strylesheets to simplify and improve md compliance
+* Added facility tabs for personnel, suppliers, services, removed from edit view
+* Moved "add facility" button to fab position
+* Updated breakpoints for filterbox2 (and facility layout) card
+* Fixed a problem with horizontally aligned layout elements wrapping on smaller screens causing clumsy navigation
+* Facility layout: Changed width and colour of left navigation element so as to allow more information to be displayed on the facility card itself
+* Added "add another" button to contact list
+* Changed font colours on comment and notification to better distinguish message text from metadata
 
 **v1.3.10b**
 

@@ -45,9 +45,14 @@ FacilitySummary = React.createClass({
 					</span>
 					<br/>
 					{contact?
-					<span style={{fontSize:"11px",color:"#777"}}>
-						<b style={{color:"#000"}}>Contact </b>
-						<Contact1Line item={contact}/>
+					<span style={{fontSize:"11px",color:"#aaa"}}>
+						<span className="contact-card contact-card-1line">
+              				<a href="#">{contact.name}</a>&nbsp;&nbsp;
+		            		{contact.email?
+		            			<span><i className="fa fa-envelope"></i>&nbsp;{contact.email}</span>
+		            		:null}		            	
+            			</span>					
+					{/*}	<Contact1Line item={contact}/>*/}
 					</span>
 					:null}
 			    </div>

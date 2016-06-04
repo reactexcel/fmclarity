@@ -93,15 +93,13 @@ Contact2Line = React.createClass({
 		return (
 			<div className="contact-card contact-card-2line">
 				<div className="contact-card-2line-text">
-		        	{profile.name}<br/>
-		        	<span style={{fontSize:"11px",color:"#777"}}>
-
+		        	<span className="contact-card-line-1">{profile.name}</span><br/>
+		        	<span className="contact-card-line-2">
 		            	{profile.email?
 		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
 		            	:null}
 		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
 		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
-
 		            </span>
 		       	</div>
 	        </div>
@@ -126,8 +124,9 @@ Contact2LineWithAvatar = React.createClass({
 					<ContactAvatarSmall item={contact} />
 				</span>
 				<span className="contact-card-2line-text">
-		        	{profile.name} {role?<span className="label label-default pull-right">{role}</span>:null}<br/>
-		        	<span style={{fontSize:"11px",color:"#777"}}>
+					<span className="contact-card-line-1">{profile.name}</span>
+					{role?<span className="label label-default pull-right">{role}</span>:null}<br/>
+		        	<span className="contact-card-line-2">
 
 		            	{profile.email?
 		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>

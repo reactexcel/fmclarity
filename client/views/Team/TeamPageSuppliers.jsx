@@ -51,6 +51,7 @@ SupplierIndexPage = React.createClass({
     				<FilterBox2 
     					items={this.data.suppliers}
     					newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
+                        numCols={1}
     					itemView={{
     						summary:Contact2LineWithAvatar,
     						detail:TeamCard

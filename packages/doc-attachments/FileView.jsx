@@ -7,8 +7,8 @@ DocumentIconHeader = React.createClass({
 
 	render() {
 		return (
-			<div style={{padding:"5px",margin:"5px",border:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",minWidth:"20px"}}>&nbsp;</span>
+			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}>&nbsp;</span>
 				<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Type</span>
 				<span style={{display:"inline-block",width:"20%",minWidth:"20px",paddingLeft:"10px"}}>Name</span>
 				<span style={{display:"inline-block",width:"50%",minWidth:"20px",paddingLeft:"10px"}}>Description</span>
@@ -40,8 +40,8 @@ DocumentIcon = React.createClass({
 		var doc = this.props.item;
 		if(!doc) {
 			return (
-			<div style={{padding:"5px",margin:"5px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",minWidth:"20px"}}><i className="fa fa-plus"></i></span>
+			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 				<span style={{display:"inline-block",width:"90%",minWidth:"20px"}}>Add document</span>
 			</div>
 			)
@@ -51,8 +51,8 @@ DocumentIcon = React.createClass({
 			color = this.getColorFromString(doc.type);
 		}
 		return (
-			<div style={{padding:"5px",margin:"5px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
-				<span style={{display:"inline-block",minWidth:"20px",color:color}}><i className="fa fa-file"></i></span>
+			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
+				<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 				<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff"}}>{doc.type||'-'}</span>
 				<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff",paddingLeft:"10px"}}>{doc.name||'-'}</span>
 				<span style={{display:"inline-block",width:"50%",minWidth:"20px",whiteSpace:"nowrap",backgroundColor:"#fff",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{doc.description||'-'}</span>

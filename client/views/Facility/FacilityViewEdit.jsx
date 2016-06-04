@@ -74,17 +74,17 @@ FacilityViewEdit = React.createClass({
 			        	</div>
 			        </div>
 				</CollapseBox>
-				<CollapseBox title="Building Documents">
+				<CollapseBox title="Building Documents" collapsed={true}>
 					<AutoForm item={facility} schema={schema} form={["documents"]}/>
 				</CollapseBox>
-				<CollapseBox title="Facility personnel">
+				<CollapseBox title="Facility personnel" collapsed={true}>
 			   		<ContactList 
 			   			items={members}
 			   			facility={facility}
 			   			onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
 			   		/>
 				</CollapseBox>
-				<CollapseBox title="Facility suppliers">
+				<CollapseBox title="Facility suppliers" collapsed={true}>
 			   		<ContactList 
 			   			items={suppliers}
 			   			facility={facility}
@@ -92,14 +92,9 @@ FacilityViewEdit = React.createClass({
 			   			onAdd={team&&team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
 			   		/>
 				</CollapseBox>
-				{/*
-				<CollapseBox title="Lease particulars" collapsed={true}>
-				    <AutoForm item={facility} schema={schema} form={['lease']}/>
-				</CollapseBox>
 				<CollapseBox title="Building areas" collapsed={true}>
 					<FacilityAreas item={facility}/>
 				</CollapseBox>
-				*/}
 				<CollapseBox title="Default services & suppliers" collapsed={true}>
 					<ServicesSelector item={facility} field={"servicesRequired"}/>
 				</CollapseBox>

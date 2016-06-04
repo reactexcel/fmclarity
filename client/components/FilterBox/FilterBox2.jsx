@@ -5,14 +5,25 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 FilterBox2 = React.createClass({
 
 	componentDidMount() {
-	    this.applyFilter();
+    this.checkScreenSize();
+    $(window).bind("resize", this.checkScreenSize);
 	},
 
 	getInitialState() {
     return {
-    	selectedFilterNum:0,
-    	selectedItem:this.props.items?this.props.items[0]:null
+    	selectedItem:this.props.items?this.props.items[0]:null,
+      screenSize:"sm"
     }
+  },
+
+  checkScreenSize() {
+    var size = "sm";
+    if (window.matchMedia('(min-width: 1200px)').matches) {
+      size = "lg";
+    } 
+    this.setState({
+      screenSize:size
+    })
   },
 
   componentWillReceiveProps(newProps) {
@@ -34,33 +45,11 @@ FilterBox2 = React.createClass({
     }
   },
 
-  applyFilter(items) {
-    var filters = this.props.filters;
-    if(filters) {
-    	var filter = this.props.filters[this.state.selectedFilterNum].filter;
-      if(filter) {
-		    items = _.filter(items,filter);
-      }
-    }
-    if(items&&items.length) {
-      items = items.sort(function(a,b){
-        return a.getName()<b.getName()?-1:1;
-      });
-    }
-    return items;
-  },
-
-  setFilter(filterNum) {
-    this.setState({
-      selectedFilterNum:filterNum
-    })
-  },
-
   createNewItem() {
     var component = this;
-    component.setFilter(0);
     if(this.props.newItemCallback) {
       this.props.newItemCallback(function(newItem){
+        console.log(newItem);
         component.setState({
           selectedItem:newItem
         });
@@ -75,25 +64,16 @@ FilterBox2 = React.createClass({
   },
 
 	render() {
-    var $this = this;
-    var title = $this.props.title;
-    var filters = $this.props.filters;
-
-    var selectedFilterNum = this.state.selectedFilterNum;
-    var initialItems = this.props.items;
-
-
-    var items = this.applyFilter(initialItems);
-
-
+    var component = this;
+    var items = this.props.items;
     var numCols = parseInt(this.props.numCols) || 1;
+    var navWidth = parseInt(this.props.navWidth) || 6;
+    var bodyWidth = parseInt(12-navWidth);
     var colSize = Math.floor(12 / numCols);
-
     var newItemCallback = this.props.newItemCallback;
-
-    var Header = $this.props.itemView.header;
-
+    var Header = component.props.itemView.header;
     var selectedItem;
+
     for(var i in this.props.items) {
       var item = this.props.items[i];
       if(item&&this.state.selectedItem&&item._id==this.state.selectedItem._id) {
@@ -105,74 +85,58 @@ FilterBox2 = React.createClass({
     	return <div/>
     }
     return (
-    <div className="row">
-      	<div className="col-lg-6 sm-gutter-right-5px">
-        	<div className="filter-box-2 ibox">
-        		<div className="ibox-title">
-                {this.props.newItemCallback==null?null:
-              		<button onClick={this.createNewItem} className="card-button new-card-button pull-right">+</button>
-                }
-            		{title?<h5>{title}</h5>:null}
-            		{!filters?null:
-            			<ol id="filters" className="breadcrumb" style={{backgroundColor:"transparent",padding:"15px 0 15px 20px"}}>
-              			{filters.map(function(i,index){
-                			return (
-                  				<li key={index} className={selectedFilterNum==index?'active':''}>
-                    				<a onClick={$this.setFilter.bind(null,index)}>{i.text}</a>
-                  				</li>
-                			)
-              			})}
-            			</ol>}
-            		{!Header?null:<Header item={items[0]} />}
-          		</div>
-	          	<div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
-		            <div className="row isotope">
-		              	{items.map(function(i,index){
-                      if(i.sticky||i.isNewItem)
-		                	return (
-		                  		<div 
-		                    		key={i._id}
-		                    		style={{padding:0}}
-		                    		className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
-		                  		>
-			                    	<CardHeaderWrapper
-			                      		item={i}
-			                      		view={$this.props.itemView.summary}
-			                      		toggle={$this.selectItem.bind($this,i)}
-			                      		isSelected={$this.state.selectedItem&&$this.state.selectedItem._id==i._id}
-			                    	/>
-		                  		</div>	
-	                	)
-		              	})}
-                    {items.map(function(i,index){
-                      if(!(i.sticky||i.isNewItem))
-                      return (
-                          <div 
-                            key={i._id}
-                            style={{padding:0}}
-                            className={"table-row col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
-                          >
-                            <CardHeaderWrapper
-                                item={i}
-                                view={$this.props.itemView.summary}
-                                toggle={$this.selectItem.bind($this,i)}
-                                isSelected={$this.state.selectedItem&&$this.state.selectedItem._id==i._id}
-                            />
-                          </div>  
-                    )
-                    })}
-		            </div>
-	        	</div>
-    		</div>
-    	</div>
-    	<div className="col-lg-6">
-    				{selectedItem?
-			        <CardBodyWrapper
-			            item={selectedItem}
-			            view={this.props.itemView.detail}
-			        />
-			        :null}
-    	</div>
+    <div className="filter-box-2">
+      <div className="row">
+        {!selectedItem||this.state.screenSize=="lg"?
+        <div className={"col-lg-"+navWidth+" lg-gutter-right-5px"}>
+          <div className="row">
+            {items.map(function(i,index){
+              return (
+                <div 
+                  key={i._id}
+                  className={"col-lg-"+colSize+" col-sm-12"}
+                >
+                  <CardHeaderWrapper
+                    item={i}
+                    view={component.props.itemView.summary}
+                    toggle={component.selectItem.bind(component,i)}
+                    isSelected={component.state.selectedItem&&component.state.selectedItem._id==i._id}
+                  />
+                </div>  
+              )
+            })}
+  		    </div>
+      	</div>
+        :null}
+        {selectedItem||this.state.screenSize=="lg"?
+        <div className={"col-lg-"+bodyWidth}>
+      		{selectedItem?
+            <CardBodyWrapper
+              item={selectedItem}
+              view={this.props.itemView.detail}
+            />
+          :null}
+          {this.state.screenSize!="lg"?
+            <div onClick={this.selectItem.bind(this,null)} style={{
+              position:"absolute",
+              left:"32px",
+              top:"10px",
+              color:"#888",
+              fontSize:"24px",
+              cursor:"pointer"
+            }}>
+              <i className="fa fa-chevron-circle-left"></i>
+            </div>
+          :null}
+      	</div>
+        :null}
+      </div>
+      {this.props.newItemCallback==null?null:
+        <button 
+          onClick={this.createNewItem} 
+          className="card-button new-card-button pull-right" 
+        >+</button>
+      }
     </div>
     )
 	}
@@ -208,73 +172,3 @@ CardBodyWrapper = React.createClass({
 	    )
 	}
 })
-
-CardWrapper2 = React.createClass({
-
-
-  	toggle() {
-    	this.setState({shouldExpand:!this.state.shouldExpand});
-  	},
-
-  	shouldComponentUpdate() {
-    	if(this.isAnimating) {
-      		return false;
-    	}
-    	return true;
-  	},
-
-  	componentWillMount() {
-    	this.isAnimating = false;
-    	if(this.props.item.isNewItem) {
-      		this.setState({
-        		shouldExpand:true
-      		});
-    	}
-  	},
-
-  	componentWillReceiveProps() {
-    	if(this.props.item.isNewItem) {
-      		this.setState({
-        	shouldExpand:true
-      	});
-    	}
-  	},
-
-  	componentDidUpdate () {
-    	if(!this.state.didExpand&&this.state.shouldExpand) {
-      		this.expand();
-    	}
-    	else if(this.state.didExpand&&!this.state.shouldExpand) {
-      		this.contract();
-    	}
-  	},
-
-  	render() {
-	    var $this = this;
-	    var item = this.item = this.props.item;
-	    var Summary = this.props.itemView.summary;
-	    var Detail = this.props.itemView.detail;
-	    return (
-	    <div className={
-		        (item.isNewItem?"new-grid-item diminished ":'')+
-		        (this.state.didExpand?"gigante ":'')+
-		        "grid-item"
-		    }
-	    >
-	    	<CardHeaderWrapper 
-	    		item={this.item}
-	    		view={this.props.itemView.summary}
-	    		toggle={this.toggle} 
-	    		shouldExpand={this.state.shouldExpand}
-	    	/>
-	        {Detail&&(this.state.shouldExpand||this.state.didExpand)?
-	        <CardBodyWrapper
-	        	item={this.item}
-	        	view={this.props.itemView.detail}
-	        	toggle={this.toggle}
-	        	shouldExpand={this.state.shouldExpand}
-        	/>
-			:null}
-	    </div>
-    )}
-});

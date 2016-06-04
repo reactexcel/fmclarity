@@ -80,7 +80,7 @@ IssueDynamicArea = React.createClass({
                     <IpsoTabso tabs={[
                         {
                             tab:<span id="discussion-tab"><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
-                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
+                            content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
                                 <Inbox for={request} truncate={true}/>
                             </div>
                         },{
@@ -90,7 +90,7 @@ IssueDynamicArea = React.createClass({
                             </div>
                         },{
                             tab:<span id="contacts-tab"><span>Contacts</span></span>,
-                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
+                            content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
                                 <ContactList 
                                     items={contacts} 
                                     team={request}

@@ -1,5 +1,7 @@
 .contact-list-item {
 	overflow: hidden;
+	padding:13px;
+	border-bottom:1px solid #eee;
 }
 
 .contact-card-2line {
@@ -10,10 +12,17 @@
 .contact-card-2line-text {
 	/*display:inline-block;*/
 	display:block;
-
-	padding:3px 0;
 	white-space:nowrap;
-	line-height: 15px;
+	line-height: 16px;
+}
+
+.contact-card-line-1 {
+	color:#000;
+}
+
+.contact-card-line-2 {
+	font-size:11px;
+	color:#777;
 }
 
 .contact-card-2line-avatar {
@@ -22,7 +31,7 @@
 
 .contact-card-avatar {
 	float:left;
-	margin-right:3px;
+	margin-right:13px;
 	width:35px;
 	height:35px;
 	overflow: hidden;
@@ -41,6 +50,7 @@
  	color:#000;
  	opacity:1;
  	height:100%;
+ 	padding-bottom:10px;
 }
 
 .business-card.small h2 {

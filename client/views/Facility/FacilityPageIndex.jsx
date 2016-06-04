@@ -48,6 +48,7 @@ FacilityIndexPage = React.createClass({
     		Modal.show({
             	content:<FacilityViewEdit item={newItem} />
             });
+            callback(newItem);
         })
     },
 
@@ -81,6 +82,7 @@ FacilityIndexPage = React.createClass({
 		        <div className="facility-page wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
 						items={this.data.facilities}
+						navWidth={3}
 						itemView={{
 							summary:FacilitySummary,
 							detail:FacilityCard

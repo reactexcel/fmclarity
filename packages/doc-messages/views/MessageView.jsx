@@ -80,9 +80,9 @@ MessageView = React.createClass({
         if(message.body||message.subject||message.verb) {
             return (<div>
                 <ContactAvatarSmall item={owner}/>
-                <div className={"media-body message-type-"+message.type} style={{paddingLeft:"5px",whiteSpace:"pre-wrap"}}>
+                <div className={"media-body message-type-"+message.type} style={{whiteSpace:"pre-wrap"}}>
                     <div>
-                        <small className="message-timestamp pull-right" style={{color:"#999",marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        <small className="message-timestamp pull-right text-muted" style={{marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
                         {message.type=="comment"&&this.data.messageIsInContext?null:
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
@@ -111,7 +111,7 @@ MessageView = React.createClass({
                 <div className="media-body">
                     <textarea 
                         ref="input"
-                        style={{width:"80%",paddingLeft:"5px",marginTop:"0px"}}
+                        style={{width:"80%",marginTop:"0px"}}
                         placeholder="Leave a comment or question..."
                         className={"input inline-form-control "+(used?'used':'')}
                         defaultValue={message.body} 

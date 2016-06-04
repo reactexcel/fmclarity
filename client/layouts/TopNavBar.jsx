@@ -109,7 +109,7 @@ TopNavBar = React.createClass({
                                 <span className="topnav-icon"><i className="fa fa-cog"></i></span>
                             </UserProfileMenu>
                         </div>
-                        <div id="alerts-icon" style={{float:"right"}} ref="notifications" className="hidden-xs dropdown right-dropdown">
+                        <div id="alerts-icon" style={{float:"right"}} ref="notifications" className="hidden-xs hidden-sm dropdown right-dropdown">
                             <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
                                 <i className="fa fa-bell"></i>
                                 <div style={{float:"right",width:"15px"}}>
