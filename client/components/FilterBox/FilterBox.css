@@ -37,7 +37,6 @@
 .card-header {
   overflow:hidden;
   -webkit-user-select: none;
-  height:47px;
   /*transition: max-height 0.250s;*/
 }
 

@@ -39,21 +39,18 @@ FacilitySummary = React.createClass({
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+facility.getThumbUrl()+"')",backgroundSize:"cover"}}/>
 				    {/*<img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />*/}
 				 </div>
-				 <div className="facility-info">
-					<span>
+				 <div className="facility-info contact-card contact-card-2line">
+					<span className="contact-card-line-1">
 						{facility.getName()}
 					</span>
 					<br/>
 					{contact?
-					<span style={{fontSize:"11px",color:"#aaa"}}>
-						<span className="contact-card contact-card-1line">
-              				<a href="#">{contact.name}</a>&nbsp;&nbsp;
-		            		{contact.email?
-		            			<span><i className="fa fa-envelope"></i>&nbsp;{contact.email}</span>
-		            		:null}		            	
-            			</span>					
-					{/*}	<Contact1Line item={contact}/>*/}
-					</span>
+					<span className="contact-card-line-2">
+              			<a href="#">{contact.name}</a>&nbsp;&nbsp;
+		            	{contact.email?
+		            		<span><i className="fa fa-envelope"></i>&nbsp;{contact.email}</span>
+		            	:null}		            	
+            		</span>					
 					:null}
 			    </div>
 			</div>

@@ -72,14 +72,14 @@ FacilityIndexPage = React.createClass({
 		var team = this.data.selectedTeam;
 		if(!this.data.ready) return <div/>
 		return(		        
-			<div>
+			<div className="facility-page">
                 {team.type=="contractor"?
                 <div className="row wrapper page-heading">
                     <div className="col-lg-12">
                         <ClientFilter title="Sites"/>
                     </div>
                 </div>:null}
-		        <div className="facility-page wrapper wrapper-content animated fadeIn">
+                <div className="theme-dark wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
 						items={this.data.facilities}
 						navWidth={3}

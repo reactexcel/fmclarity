@@ -3,7 +3,7 @@
 
 Teams.schema(TeamSchema);
 
-DocThumb.register(Teams,{repo:Files});
+DocThumb.register(Teams,{defaultThumbUrl:0});
 
 DocMembers.register(Teams,{
   fieldName:"members",
@@ -136,6 +136,14 @@ function getSuppliers() {
   return Teams.find({_id:{$in:ids}},{sort:{name:1,_id:1}}).fetch();
 }
 
+function getPrimaryContact(team) {
+  team = team||this;
+  var managers = team.getMembers({role:"manager"});
+  if(managers&&managers.length) {
+    return managers[0];
+  }
+}
+
 function inviteSupplier(team,email,ext) {
   var supplier;
   supplier = Teams.findOne({email:email});
@@ -257,6 +265,9 @@ Teams.helpers({
     return timeframe;
   },
   
+
+  getPrimaryContact:getPrimaryContact,
+
   getSuppliers:getSuppliers,
 
   getNextWOCode(){

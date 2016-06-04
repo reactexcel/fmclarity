@@ -18,6 +18,7 @@ SupplierIndexPage = React.createClass({
             suppliers = facility.getSuppliers();
         }
         else if(team) {
+            Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
             suppliers = team.getSuppliers();
         }
         return {
@@ -40,24 +41,30 @@ SupplierIndexPage = React.createClass({
             return <div/>
         }
 		return(
-            <div>
+            <div className="suppliers-page animated fadeIn">
+
                 {team.type=="fm"?
+
                 <div className="row wrapper page-heading">
                     <div className="col-lg-12">
                         <FacilityFilter title="Suppliers"/>
                     </div>
-                </div>:null}
-    	        <div className="contacts-page wrapper wrapper-content animated fadeIn">
-    				<FilterBox2 
-    					items={this.data.suppliers}
-    					newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
+                </div>
+
+                :null}
+
+                <div className="theme-dark wrapper wrapper-content">
+        			<FilterBox2 
+        				items={this.data.suppliers}
+        				newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
                         numCols={1}
-    					itemView={{
-    						summary:Contact2LineWithAvatar,
-    						detail:TeamCard
-    					}}
-    				/>
-    			</div>
+                        navWidth={4}
+        				itemView={{
+        					summary:Contact2LineWithAvatar,
+        					detail:TeamCard
+        				}}
+        			/>
+                </div>
             </div>
 		);
 	}

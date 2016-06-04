@@ -1,12 +1,3 @@
- .facility-page .card-header {
- 	background-color:rgba(0,0,0,0.9);
- 	color:#fff;
-}
-
-.facility-page .grid-item:hover .card-header, .facility-page .grid-item.active .card-header {
-	background-color:rgba(0,0,0,0.7);
-}
-
 
 .facility-info {
 	padding:0 5px;

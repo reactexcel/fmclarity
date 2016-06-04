@@ -25,6 +25,23 @@
 	color:#777;
 }
 
+.theme-dark .contact-card-line-2 {
+	color:#aaa;
+}
+
+.theme-dark .card-header {
+ 	background-color:rgba(0,0,0,0.9);
+ 	color:#fff;
+}
+
+.theme-dark .grid-item:hover .card-header, .theme-dark .grid-item.active .card-header {
+	background-color:rgba(0,0,0,0.7);
+}
+
+.theme-dark .contact-card-line-1 {
+	color:#fff;
+}
+
 .contact-card-2line-avatar {
 	display:inline-block;
 }
@@ -42,6 +59,11 @@
 	height:35px;
 	border-radius:50%;
 	background-color:#ccc;
+	color:#fff;
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    padding-top: 8px;	
 }
 
 .business-card {
@@ -75,10 +97,13 @@
 	width:48%;
 	min-height:200px;
 	position:relative;
+	text-align:center;
+	padding-top:40px;
 }
 
 .business-card .contact-thumbnail > img {
-	width:100%;
+	vertical-align: middle;
+	max-width:100%;
 }
 
 .business-card .contact-info {
@@ -86,8 +111,8 @@
 	overflow: hidden;
 	width:50%;
 	padding-top:40px;
-	float:left;
 	padding-left:5px;
+	padding-bottom:20px;
 }
 
 .business-card.small .contact-info {

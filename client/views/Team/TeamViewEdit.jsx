@@ -192,10 +192,10 @@ TeamViewEdit = React.createClass({
 				        </div>
 			        </div>
 		        </CollapseBox>
-				<CollapseBox id="company-documents" title="Company Documents">
+				<CollapseBox id="company-documents" title="Company Documents" collapsed={true}>
 					<AutoForm item={supplier} schema={schema} form={["documents"]}/>
 				</CollapseBox>
-				<CollapseBox id="members" title="Members">
+				<CollapseBox id="members" title="Members" collapsed={true}>
 			   		<ContactList 
 			   			items={members}
 			   			team={supplier}
@@ -208,7 +208,7 @@ TeamViewEdit = React.createClass({
 				</CollapseBox>
 				:null}
 				{
-			   	<CollapseBox id="services-provided" title="Services Provided" collapsed={supplier.type=="fm"}>
+			   	<CollapseBox id="services-provided" title="Services Provided" collapsed={true}>
 			      	<ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
 				</CollapseBox>
 				}

@@ -28,21 +28,13 @@ ContactAvatarSmall = React.createClass({
 		Meteor.subscribe('File');
 		var contact, profile, name, url, style = {}, initials='';
 
-		var placeholderStyle = {
-			backgroundColor:"#000",
-			color:"#fff",
-			textAlign:"center",
-			fontWeight:"bold",
-			fontSize:"15px",
-			paddingTop:"7px"
-		};
 		contact = this.props.item;
 		if(contact) {
 			profile = contact.getProfile();
 		}
 		name = profile?profile.name:"";
 		url = contact?contact.getThumbUrl():"";
-		if(url!="/img/default-placeholder.jpg") {
+		if(url&&url!="/img/default-placeholder.jpg") {
 			style['backgroundImage'] = 'url(\''+url+'\')';
 			style['backgroundSize'] = "cover";
 			style['color'] = "transparent";
@@ -61,7 +53,6 @@ ContactAvatarSmall = React.createClass({
 			var r = (name.charCodeAt(name.length-3)%25)*10;
 			var g = (name.charCodeAt(name.length-2)%25)*10;
 			var b = (name.charCodeAt(name.length-1)%25)*10;
-			style=placeholderStyle;
 			style['backgroundColor'] = 'rgb('+r+','+g+','+b+')';
 		}
 		return {
@@ -120,20 +111,18 @@ Contact2LineWithAvatar = React.createClass({
 		}
 		return (
 			<div className="contact-card contact-card-2line">
-				<span>
-					<ContactAvatarSmall item={contact} />
-				</span>
+				<ContactAvatarSmall item={contact} />
 				<span className="contact-card-2line-text">
 					<span className="contact-card-line-1">{profile.name}</span>
 					{role?<span className="label label-default pull-right">{role}</span>:null}<br/>
 		        	<span className="contact-card-line-2">
 
 		            	{profile.email?
-		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
-		            	:null}
-		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
-		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
-
+			            	<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            		:profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>
+							:profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>
+		            		:null
+		            	}
 		            </span>
 		       	</span>
 	        </div>

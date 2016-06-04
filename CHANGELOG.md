@@ -1,6 +1,13 @@
 CHANGELOG.md
 ============
 
+**v1.3.12b**
+
+* Contact cards for teams, facilities now only show primary contact (be it email or phone)
+* Supplier page has decrease width navigation column and increase width card (4/8)
+* Supplier card has tabs (messages, documents, members, services)
+* Created Stepper component and applied it to the facility edit screen
+
 **v1.3.11b**
 
 * Fixed a problem that was causing left navigation to block mobile view on initial load
@@ -15,6 +22,7 @@ CHANGELOG.md
 * Facility layout: Changed width and colour of left navigation element so as to allow more information to be displayed on the facility card itself
 * Added "add another" button to contact list
 * Changed font colours on comment and notification to better distinguish message text from metadata
+* Fixed a problem that was causing crash when new supplier team added
 
 **v1.3.10b**
 
