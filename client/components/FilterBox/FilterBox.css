@@ -135,7 +135,7 @@
   color:#fff;
   right:17px;
   bottom:20px;
-  z-index:3000;
+  z-index:1499;
   transition:opacity 0.1s;
   box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
 }

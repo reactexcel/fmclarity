@@ -144,13 +144,14 @@ function getPrimaryContact(team) {
   }
 }
 
-function inviteSupplier(team,email,ext) {
+function inviteSupplier(team,query,ext) {
   var supplier;
-  supplier = Teams.findOne({email:email});
+  supplier = Teams.findOne(query);
   if(!supplier) {
     supplier = Meteor.call("Teams.create",{
       type:"contractor",
-      email:email,
+      email:query.email,
+      name:query.name,
       owner:{
         _id:team._id,
         name:team.name,
@@ -159,8 +160,6 @@ function inviteSupplier(team,email,ext) {
     });
     supplier = Teams.findOne(supplier._id);
   }
-
-  //its a subscription issue!!!!
   Meteor.call("Teams.addSupplier",team,{_id:supplier._id},ext);
   return supplier;
 }
@@ -297,7 +296,7 @@ Teams.helpers({
     return availableServices;
   },
 
-  getFacilities() {
+  getManagerFacilities() {
     //return all facilities in my currently selected team
     //and all the facilities in the issues allocated to my team
     var issues,facilityIds = [];
@@ -314,6 +313,28 @@ Teams.helpers({
       {"team._id":this._id},
       {_id:{$in:facilityIds}}
     ]},{sort:{name:1}}).fetch();
+  },
+
+  getStaffFacilities() {
+    var user = Meteor.user();
+    var facilities = this.getManagerFacilities();
+    var staffFacilities = [];
+    facilities.map(function(f){
+      if(f.hasMember(user)) {
+        staffFacilities.push(f);
+      }
+    })
+    return staffFacilities;
+  },
+
+  getFacilities(q) {
+    //this is vulnerable to error - what if the name changes
+    //of course if we only have the name then we need to add the id at some point
+    var role = this.getMemberRole(Meteor.user());
+    if(role=="manager"||role=="fmc support") {
+      return this.getManagerFacilities(q);
+    }
+    return this.getStaffFacilities(q);
   },
 
   getIssues(q) {
@@ -348,10 +369,7 @@ Teams.helpers({
           {"supplier._id":this._id},
           {"supplier.name":this.name}
         ]},
-        {$or:[
-          {'owner._id':Meteor.userId()},
-          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
-        ]}
+        {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
       ]}
     ]}
 
@@ -373,11 +391,25 @@ Teams.helpers({
     var q;
 
     var issuesQuery = {$or:[
-      {'owner._id':Meteor.userId()},
+      //or team member or assignee and not draft
       {$and:[
-        {'assignee._id':Meteor.userId()},
-        {status:{$nin:[Issues.STATUS_DRAFT]}}
+        {$or:[
+          {"team._id":this._id},
+          {"team.name":this.name}
+        ]},
+        {'owner._id':Meteor.userId()}
       ]},
+      //or supplier team member and not draft or new
+      {$and:[
+        {$or:[
+          {"supplier._id":this._id},
+          {"supplier.name":this.name}
+        ]},
+        {$and:[
+          {'assignee._id':Meteor.userId()},
+          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}}
+        ]}
+      ]}
     ]}
 
     if(filterQuery) {
@@ -391,7 +423,6 @@ Teams.helpers({
     }
 
     return Issues.find(q).fetch();
-
   }
 
 });

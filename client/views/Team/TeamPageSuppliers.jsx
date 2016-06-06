@@ -53,7 +53,7 @@ SupplierIndexPage = React.createClass({
 
                 :null}
 
-                <div className="theme-dark wrapper wrapper-content">
+                <div className="wrapper wrapper-content">
         			<FilterBox2 
         				items={this.data.suppliers}
         				newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}

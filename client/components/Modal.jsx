@@ -75,7 +75,8 @@ Modal = React.createClass({
         content:current.content,
         onSubmit:current.onSubmit,
         onCancel:current.onCancel
-      })   
+      })
+      this.forceUpdate();
       return false;   
     }
     else {

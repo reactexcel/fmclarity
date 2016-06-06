@@ -53,6 +53,9 @@ UserProfile = React.createClass({
 		},
 		phone2:{
 			label:"Phone number 2",
+		},
+		tenancy:{
+			label:"Tenancy"
 		}
 	},
 
@@ -92,14 +95,15 @@ UserProfile = React.createClass({
         }
     },
 
-    handleThumbChange(newThumb) {
-		var user, profile;
-		user = this.state.item;
+    setThumb(newThumb) {
+		var user = this.state.item;
 		if(user) {
-			profile = user.profile;
+			user.setThumb(newThumb);
+			user.thumb = newThumb;
+			this.setState({
+				item:user
+			});
 		}
-		profile.thumb = newThumb;
-		this.save();
     },
 
 	removeMember(team,user) {
@@ -146,7 +150,7 @@ UserProfile = React.createClass({
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			   		<div className="col-sm-5">
-				        <DocThumb.File item={user.thumb} onChange={user.setThumb.bind(user)} />
+				        <DocThumb.File item={user.thumb} onChange={this.setThumb} />
 				    </div>
 		        </div>
 			</div>

@@ -112,7 +112,7 @@ MessageView = React.createClass({
                     <textarea 
                         ref="input"
                         style={{width:"80%",marginTop:"0px"}}
-                        placeholder="Leave a comment or question..."
+                        placeholder="Send an announcement..."
                         className={"input inline-form-control "+(used?'used':'')}
                         defaultValue={message.body} 
                         onKeyDown={this.handleKeyPress}>

@@ -73,34 +73,7 @@ ContactAvatarSmall = React.createClass({
 
 Contact2Line = React.createClass({
 	render() {
-		var contact, profile;
-		contact = this.props.item;
-		if(contact) {
-			profile = contact.getProfile();
-		}
-		if(!profile) {
-			return <div />
-		}
-		return (
-			<div className="contact-card contact-card-2line">
-				<div className="contact-card-2line-text">
-		        	<span className="contact-card-line-1">{profile.name}</span><br/>
-		        	<span className="contact-card-line-2">
-		            	{profile.email?
-		            		<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
-		            	:null}
-		            	{profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>:null}
-		            	{profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>:null}
-		            </span>
-		       	</div>
-	        </div>
-		)
-	}
-});
-
-Contact2LineWithAvatar = React.createClass({
-	render() {
-		var contact, profile, role;
+		var contact, profile, role, tenancy;
 		contact = this.props.item;
 		role = this.props.role;
 		if(contact) {
@@ -109,22 +82,34 @@ Contact2LineWithAvatar = React.createClass({
 		if(!profile) {
 			return <div />
 		}
+		tenancy = profile.tenancy;
+		return (
+			<span className="contact-card-2line-text">
+				<span className="contact-card-line-1">{profile.name}</span>
+				{tenancy?<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>:null}
+				{role?<span className="label label-default pull-right">{role}</span>:null}<br/>
+		        <span className="contact-card-line-2">
+
+		            {profile.email?
+		            	<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+		            	:profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>
+						:profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>
+		            	:null
+		            }
+		        </span>
+		    </span>
+		)
+	}
+});
+
+Contact2LineWithAvatar = React.createClass({
+	render() {
+		var contact = this.props.item;
+		var role = this.props.role;
 		return (
 			<div className="contact-card contact-card-2line">
 				<ContactAvatarSmall item={contact} />
-				<span className="contact-card-2line-text">
-					<span className="contact-card-line-1">{profile.name}</span>
-					{role?<span className="label label-default pull-right">{role}</span>:null}<br/>
-		        	<span className="contact-card-line-2">
-
-		            	{profile.email?
-			            	<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
-		            		:profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>
-							:profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>
-		            		:null
-		            	}
-		            </span>
-		       	</span>
+				<Contact2Line item={contact} role={role}/>
 	        </div>
 		)
 	}

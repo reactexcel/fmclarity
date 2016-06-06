@@ -16,17 +16,26 @@
 	line-height: 16px;
 }
 
+.theme-dark .contact-list .contact-card-line-1 {
+	color:#000;
+}
+
+
 .contact-card-line-1 {
 	color:#000;
 }
 
-.contact-card-line-2 {
+.contact-card-line-2, .contact-card-email-link {
 	font-size:11px;
 	color:#777;
 }
 
-.theme-dark .contact-card-line-2 {
+.theme-dark .contact-card-line-2,.theme-dark .contact-card-email-link {
 	color:#aaa;
+}
+
+.contact-card-email-link:hover {
+	text-decoration: underline;
 }
 
 .theme-dark .card-header {

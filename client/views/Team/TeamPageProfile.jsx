@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-TeamProfilePage = React.createClass({
+TeamPageProfile = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -24,11 +24,13 @@ TeamProfilePage = React.createClass({
 		return (
 		    <div className="wrapper wrapper-content animated fadeIn">
 		        <div className="row">
-		            <div className="col-lg-6">
+		        	<div className="col-lg-2"></div>
+		            <div className="col-lg-8">
 		            	<div className="ibox">
-							<TeamCard item={this.data.team} edit={true}/>
+							<TeamViewEdit item={this.data.team}/>
 						</div>
 					</div>
+		        	<div className="col-lg-2"></div>
 				</div>
 			</div>
 		)

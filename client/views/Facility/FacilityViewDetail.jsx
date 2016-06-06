@@ -7,16 +7,20 @@ FacilityViewDetail = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var team,facility,members,suppliers;
+        var team,facility,members,suppliers,address,tenants;
         team = Session.getSelectedTeam();
-        facility = this.props.item;
+        facility = this.props.item?Facilities.findOne(this.props.item._id):null;
         if(facility) {
             Meteor.subscribe("messages","Facilities",facility._id,moment().subtract({days:7}).toDate());
             members = facility.getMembers();
-            suppliers = team.getSuppliers({facility});
+            tenants = facility.getMembers({role:"tenant"});
+            suppliers = facility.getSuppliers();
+            address = facility.getAddress();
         }
         return {
             facility:facility,
+            address:address,
+            tenants:tenants,
             suppliers:suppliers,
             members:members,
             team:team
@@ -35,6 +39,10 @@ FacilityViewDetail = React.createClass({
         this.data.facility.addSupplier(supplier,ext);
     },
 
+    addTenant(ext,tenant) {
+        this.data.facility.addTenant(tenant,ext);
+    },
+
     updateField(field) {
         var component = this;
         return function(event) {
@@ -47,8 +55,10 @@ FacilityViewDetail = React.createClass({
         var facility = this.data.facility;
         var members = this.data.members;
         var suppliers = this.data.suppliers;
+        var tenants = this.data.tenants;
         var team = this.data.team;
-        var thumb = facility.getThumbUrl();
+        var address = this.data.address;
+        var thumb = facility?facility.getThumbUrl():null;
         var createdAt = moment(facility.createdAt).format();
         var contact = facility.getPrimaryContact();
         if(contact) {
@@ -68,7 +78,7 @@ FacilityViewDetail = React.createClass({
 
                 <div className="title-overlay">
                     <h2>{facility.getName()}</h2>                        
-                    <b>{facility.getAddress()}</b>
+                    {address?<b>{address}</b>:null}
                 </div>
 
                 {contact?
@@ -104,6 +114,14 @@ FacilityViewDetail = React.createClass({
                                 onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
                             />
                         </div>
+                    },
+                    {
+                        tab:<span id="tenants-tab"><span style={{color:"white"}}>Tenants</span></span>,
+                        content:
+                            <ContactList 
+                                items={tenants}
+                                facility={facility}
+                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}/>
                     },
                     {
                         tab:<span id="suppliers-tab"><span style={{color:"white"}}>Suppliers</span></span>,

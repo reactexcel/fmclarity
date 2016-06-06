@@ -79,7 +79,7 @@ FacilityIndexPage = React.createClass({
                         <ClientFilter title="Sites"/>
                     </div>
                 </div>:null}
-                <div className="theme-dark wrapper wrapper-content animated fadeIn">
+                <div className="wrapper wrapper-content animated fadeIn">
 					<FilterBox2 
 						items={this.data.facilities}
 						navWidth={3}

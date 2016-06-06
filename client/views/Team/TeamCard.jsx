@@ -25,38 +25,34 @@ function addTeamMenuItem(menu,item,team) {
 
 TeamCard = React.createClass({
 
-	getInitialState() {
-		return {
-			edit:this.props.edit||this.props.item==null||false
-		}
-	},
-
-	toggleEdit() {
-		this.setState({
-			edit:!this.state.edit
-		})
-	},
-
 	getMenu() {
 		var component = this;
-		var item = this.props.item;
+		var supplier = this.props.item;
 		var parentTeam = Session.getSelectedTeam();
 		var parentFacility = Session.getSelectedFacility();
 		var menu = [];
 
-		if(item) {
+		if(supplier) {
 
-			if(item.canSave()) {
+			if(supplier.canSave()) {
 				menu.push({
-					label:this.state.edit?"View as card":"Edit",
+					label:"Edit",
 					action(){
-						component.toggleEdit()
+						Modal.show({
+							content:<TeamViewEdit 
+								item={supplier} 
+								team={component.props.team}
+								facility={component.props.facility}
+								role={component.props.role}
+								onChange={component.props.onChange}
+					        />
+						})
 					}
 				});
 			}
 
-			addTeamMenuItem(menu,item,parentTeam);
-			addTeamMenuItem(menu,item,parentFacility);
+			addTeamMenuItem(menu,supplier,parentTeam);
+			addTeamMenuItem(menu,supplier,parentFacility);
 
 		}
 		return menu;
@@ -68,19 +64,9 @@ TeamCard = React.createClass({
 
 		return (
 			<div>
-			    {(!supplier||supplier.canSave())&&this.state.edit?
-			        <TeamViewEdit 
-						item={supplier} 
-						team={this.props.team}
-						facility={this.props.facility}
-						role={this.props.role}
-						onChange={this.props.onChange}
-			        />
-			    :
-					<TeamViewDetail item={supplier}/>
-				}
-            	<ActionsMenu items={menu} />
-			</div>
+				<TeamViewDetail item={supplier}/>
+	            <ActionsMenu items={menu} />
+	        </div>
 		)
 	}
 });

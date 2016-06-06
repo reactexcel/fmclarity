@@ -14,7 +14,7 @@ TeamViewEdit = React.createClass({
 
     getMeteorData() {
     	var supplier,members;
-    	supplier = this.state.item;
+    	supplier = this.state.item?Teams.findOne(this.state.item._id):null;
 
 		var form1 = [
 			"name",
@@ -37,7 +37,7 @@ TeamViewEdit = React.createClass({
     	}
     	return {
     		user:Meteor.user(),
-    		team:this.props.team||Session.getSelectedTeam(),
+    		team:this.props.team?Teams.findOne(this.props.team._id):Session.getSelectedTeam(),
     		facility:this.props.facility,
     		supplier:supplier,
     		members:members,
@@ -124,36 +124,45 @@ TeamViewEdit = React.createClass({
     	var component = this;
 		var team = this.data.team;
 		var facility = this.data.facility;
-    	var input = this.refs.invitationEmail;
-    	var email = input.value;
-    	var regex = /.+@.+\..+/i
-    	if(!regex.test(email)) {
-    		alert('Please enter a valid email address');
-    	}
+    	var input = this.refs.invitation;
+    	var searchName = input.value;
+        if(!searchName) {
+            alert('Please enter a valid name.');
+        }
     	else {
             input.value = '';
-            team.inviteSupplier(email, null, function(supplier){
-            	//console.log(supplier);
+            team.inviteSupplier({name:searchName}, null, function(supplier){
             	supplier = Teams._transform(supplier);
             	if(facility) {
             		facility.addSupplier(supplier);
             	}
-            	//is not being found
-            	//is a subscription issue??
-            	//supplier = Teams.findOne(supplier._id);
-            	//console.log(supplier);
             	component.setItem(supplier);
             	if(component.props.onChange) {
             		component.props.onChange(supplier);
             	}
+                if(!supplier.email) {
+                    this.setState({
+                        shouldShowMessage:true
+                    });
+                }
+                else {
+                    Modal.hide();
+                }
             });
-            this.setState({
-            	shouldShowMessage:true
-            });            		
 	    }
     },
 
+    setThumb(thumb) {
+        var supplier = this.state.item;
+        supplier.setThumb(thumb);
+        supplier.thumb = thumb;
+        this.setState({
+            item:supplier
+        });
+    },
+
 	render() {
+        console.log({'renderific':this.state.item});
     	var team,supplier,members,schema;
     	supplier = this.state.item;
     	members = this.data.members;
@@ -164,7 +173,7 @@ TeamViewEdit = React.createClass({
                 <form className="form-inline">
                     <div className="form-group">
                         <b>Let's search to see if this team already has an account.</b>
-                        <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
+                        <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
                         <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                     </div>
                 </form>
@@ -185,7 +194,7 @@ TeamViewEdit = React.createClass({
 			        		<AutoForm item={supplier} schema={schema} form={this.data.form1} />
 			        	</div>
 			        	<div className="col-sm-5">
-			        		<DocThumb.File item={supplier.thumb} onChange={supplier.setThumb.bind(supplier)} />
+			        		<DocThumb.File item={supplier.thumb} onChange={this.setThumb} />
 			        	</div>
 			        	<div className="col-sm-12">
 				        	<AutoForm item={supplier} schema={schema} form={this.data.form2} />

@@ -1,6 +1,16 @@
 CHANGELOG.md
 ============
 
+**v1.3.13b**
+
+* Email addresses are now mailto lings
+* Removed focus outline from flat style buttons
+* Fixed an erro that was causing facility address to appear on card as "null" if not entered
+* Edit facility now brings up modal stepper
+* Now search for new suppliers by name, not by email - modal closes and supplier selected if found
+* Fixed a problem that was causing thumbnails to not update in modal dialogs
+* Staff/tenants only see facilities that they are a member of
+
 **v1.3.12b**
 
 * Contact cards for teams, facilities now only show primary contact (be it email or phone)

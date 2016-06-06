@@ -81,12 +81,14 @@ Facilities.helpers({
     var str = '';
   	var a = this.address;
     if(a) {
-      str = a.streetNumber+
-      ' '+a.streetName+
-      ' '+a.streetType+
-      (a.city?(', '+a.city):null);
+      str = 
+      (a.streetNumber?a.streetNumber:'')+
+      (a.streetName?(' '+a.streetName):'')+
+      (a.streetType?(' '+a.streetType):'')+
+      (a.city?(', '+a.city):'');
     }
-    return str;
+    str = str.trim();
+    return str.length?str:null;
   },
 
   getAreas(parent) {

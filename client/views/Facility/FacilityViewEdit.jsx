@@ -8,16 +8,18 @@ FacilityViewEdit = React.createClass({
 
     getMeteorData() {
     	Meteor.subscribe('users');
-		var facility, schema, team, suppliers;
-		facility = this.props.item;
+		var facility, schema, team, suppliers, tenants;
+		facility = this.state.item?Facilities.findOne(this.state.item._id):null;
 		schema = Facilities.schema();
 		if(facility){
 			team = facility.getTeam();
 			suppliers = facility.getSuppliers();
 			members = facility.getMembers();
+			tenants = facility.getMembers({role:"tenant"});
 			return {
 				ready:true,
 				facility:facility,
+				tenants:tenants,
 				team:team,
 				schema:schema,
 				members:members,
@@ -29,6 +31,12 @@ FacilityViewEdit = React.createClass({
 		}
 
     },
+
+	getInitialState() {
+		return {
+			item:this.props.item
+		}
+	},    
 
 	updateField(field,value) {
 		this.props.item[field] = value;
@@ -43,12 +51,20 @@ FacilityViewEdit = React.createClass({
 		this.data.facility.addSupplier(supplier,ext);
 	},
 
+    setThumb(thumb) {
+        var facility = this.data.facility;
+        facility.setThumb(thumb);
+        facility.thumb = thumb;
+        this.setState({item:facility});
+    },
+
 	render() {
 		var ready = this.data.ready;
 		if(!ready) return (<div/>);
 
 		var facility = this.data.facility;
 		var members = this.data.members;
+		var tenants = this.data.tenants;
 		var suppliers = this.data.suppliers;
 		var schema = this.data.schema;
 		var team = this.data.team;
@@ -109,7 +125,7 @@ FacilityViewEdit = React.createClass({
 									<AutoForm item={facility} schema={schema} form={["name","address","operatingTimes"]}/>
 								</div>
 					        	<div className="col-sm-5">
-					        		<DocThumb.File item={facility.thumb} onChange={facility.setThumb.bind(facility)} />
+					        		<DocThumb.File item={facility.thumb} onChange={this.setThumb} />
 					        	</div>
 			        		</div>,
 			        	instructions:<div>
@@ -134,6 +150,18 @@ FacilityViewEdit = React.createClass({
                             />,
 			        	instructions:<div>
 			        		Enter the facility personnel here by clicking on add member.
+			        	</div>
+                    },
+                    {
+                        tab:<span id="tenants-tab">Tenants</span>,
+                        content:
+                            <ContactList 
+                                items={tenants}
+                                facility={facility}
+                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
+                            />,
+			        	instructions:<div>
+			        		Enter tenants to the property by clicking on add member here.
 			        	</div>
                     },
                     {

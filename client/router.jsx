@@ -144,7 +144,7 @@ loggedIn.route('/settings', {
 loggedIn.route('/account', {
   name: 'account',
   action() {
-    mount(MainLayout,{content: <TeamProfilePage />});
+    mount(MainLayout,{content: <TeamPageProfile />});
   }
 });
 

@@ -61,12 +61,20 @@ UserProfileMenu = React.createClass({
                     )
                 }):null}
                 <li className="divider"></li>
+
+                {selectedTeam&&selectedTeam.canSave()?
+
                 <li>
                     <a href={FlowRouter.path('account')}>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
-                        <span className="nav-label">Account Settings</span>
+                        <span className="nav-label">Team Settings</span>
                     </a>
                 </li>
+                :
+                null
+
+                }
+
                 {Meteor.user().role=="dev"?<li>
                     <a onClick={this.resetTestData}>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;

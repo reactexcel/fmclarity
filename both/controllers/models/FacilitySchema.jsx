@@ -100,6 +100,7 @@ FacilitySchema = {
     name: {
     	label: "Name",
     	defaultValue: "",
+        autoFocus:true
     },
     type: {
     	label:"Property type",

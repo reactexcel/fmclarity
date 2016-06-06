@@ -23,7 +23,7 @@ TopNavBar = React.createClass({
                 if(notifications&&notifications.length) {
                     this.audio.play();
                     var suppressFurtherNotifications = false;
-                    if(notifications.length>3) {
+                    if(notifications.length>2) {
                         component.showNotification(
                             "You have FM Clarity notifications",
                             "You have more than 3 new notifications from FM Clarity"

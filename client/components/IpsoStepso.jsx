@@ -24,7 +24,6 @@ Stepper = React.createClass({
     	if(this.state.active>=this.props.tabs.length-1) {
     		Modal.hide();
     	}
-
     },
 
     selectPrev() {
@@ -42,11 +41,8 @@ Stepper = React.createClass({
             <div className="ipso-stepso row">
                 {tabs.map(function(i,idx){
                     return (
-                        <div className="col-md-12">
-                            <div 
-                                className={(idx==active?"ipso-stepso active":"ipso-stepso")}
-                                key={idx}
-                            >
+                        <div key={idx} className="col-md-12">
+                            <div className={(idx==active?"ipso-stepso active":"ipso-stepso")}>
 
                                 <div onClick={selectTab.bind(null,idx)} className="ipso-stepso-title">
                                     <span className="ipso-step-num">{parseInt(idx)+1}</span>
