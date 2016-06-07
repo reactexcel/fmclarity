@@ -19,7 +19,7 @@ meteor
 
 The application structure loosely follows that laid out in [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate).
 | Folder | Content |
-| ---- | ---- |
+|----|----|
 | client | Run only on client side, mainly layouts, views, stylesheets |
 | server | Run only on server, somewhat limited as the bulk of the business logic runs on both client and server. Server-side only views such as email text is in this folder |
 | both | Code for both client and server including the bulk of the schemas and business logic |
