@@ -1,14 +1,19 @@
 # FM Clarity Web Application
 
-This is a seed project for the FM Clarity Web Application.
+FM Clarity is a commercial SaaS app for facility management. It is written in Meteor (currently supports 1.3.2.4) with interface components rendered primarily using ReactJS. 
 
-It is based on a mashup of 
-- [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate) and
-- [Bootstrap INSPINIA theme](https://wrapbootstrap.com/theme/inspinia-responsive-admin-theme-WB0R5L90S)
+## Installation
+
+Requires meteor, node, npm.
+
+'''bash
+cd fm-clarity
+meteor install
+npm install
+meteor
+'''
 
 
-
-#### Meteor React Boilerplate Notes
 
 A starter project for React &amp; Meteor
 
