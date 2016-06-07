@@ -6,12 +6,12 @@ FM Clarity is a commercial SaaS app for facility management. It is written in Me
 
 Requires meteor, node, npm.
 
-'''bash
+```bash
 cd fm-clarity
 meteor install
 npm install
 meteor
-'''
+```
 
 
 
