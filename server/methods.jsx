@@ -1,3 +1,5 @@
+//The bulk of this should go in a package devoted to handling FMC emails
+
 Accounts.emailTemplates.siteName = "FM Clarity";
 Accounts.emailTemplates.from = "FM Clarity<no-reply@fmclarity.com>";
 Accounts.emailTemplates.enrollAccount.subject = function (user) {

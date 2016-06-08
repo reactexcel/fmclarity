@@ -2,6 +2,10 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+/*Well this is a bit of a hack isn't it?
+Really should just go in the router hey?
+But then can you load the relevent role information from router?*/
+
 LandingPage = React.createClass({
 
     mixins: [ReactMeteorData],

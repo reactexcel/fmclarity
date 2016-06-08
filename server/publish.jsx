@@ -1,3 +1,6 @@
+//I don't know dude - shouldn't this go in the Model/Controller????
+//It seems a bit stranded here
+
 Meteor.publish('teams', function () {
 	return Teams.find({"members._id":this.userId});
 });

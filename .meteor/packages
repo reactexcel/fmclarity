@@ -4,71 +4,82 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
+############################
+# FMC Core
 fmc:rbac
 fmc:orm
-fmc:document-thumbs
+fmc:doc-thumbs
 fmc:doc-attachments
 fmc:doc-members
+fmc:doc-messages
 fmc:login-tokens
-fmc:document-messages
 
-oaf:html5-desktop-notifications
-mikkelking:meteor-hopscotch
+############################
+# FMC UI
+fmc:tabs
+fmc:stepper
+fmc:select
+fmc:modal
+fmc:actions-menu
+fmc:filterbox
 
-#aldeed:collection2
-abpetkov:switchery
-#cosmos:browserify
-
-#dbarrett:dropzonejs
-dburles:collection-helpers
-
-kadira:flow-router@2.4.0
-
-lai:document-methods
-
-matb33:collection-hooks
-momentjs:moment
-monbro:mongodb-mapreduce-aggregation
-
+############################
+# Styles & Presentation
 twbs:bootstrap
+fortawesome:fontawesome
+
+############################
+# HTML5 Helpers
+oaf:html5-desktop-notifications
+mdg:geolocation
+
+############################
+# Routing
+kadira:flow-router@2.4.0
 tomwasd:flow-router-autoscroll
 zimme:active-route
 
+############################
+# JS Plugins
+mikkelking:meteor-hopscotch
+abpetkov:switchery
+momentjs:moment
+pfafman:filesaver
+harrison:papa-parse
+
+############################
+# MiniMongo Extensions
+#aldeed:collection2
+dburles:collection-helpers
+lai:document-methods
+matb33:collection-hooks
+monbro:mongodb-mapreduce-aggregation
+
+############################
+# Filesystem
+cfs:standard-packages
+cfs:filesystem
+cfs:gridfs
+
+############################
+# Meteor Core
 accounts-password
 static-html
 check
 ejson
 email
-fortawesome:fontawesome
 jquery
-
 less
 logging
-
 meteor-base
 mobile-experience
 mongo
-
 ecmascript
-
 reload
 random
-
 session
 spacebars
-
 tracker
-
-mdg:geolocation
-
-cfs:standard-packages
-cfs:filesystem
-cfs:gridfs
-
-pfafman:filesaver
-harrison:papa-parse
-
 base64
-
 standard-minifier-css
 standard-minifier-js

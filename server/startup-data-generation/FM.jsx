@@ -1,3 +1,5 @@
+//This is all a bit ugle really - should it just be removed all together?
+
 TeamsData = {
     kaplan:{
         type:"fm",
