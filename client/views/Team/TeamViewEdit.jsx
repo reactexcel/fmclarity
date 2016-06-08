@@ -141,7 +141,7 @@ TeamViewEdit = React.createClass({
             		component.props.onChange(supplier);
             	}
                 if(!supplier.email) {
-                    this.setState({
+                    component.setState({
                         shouldShowMessage:true
                     });
                 }
@@ -162,7 +162,6 @@ TeamViewEdit = React.createClass({
     },
 
 	render() {
-        console.log({'renderific':this.state.item});
     	var team,supplier,members,schema;
     	supplier = this.state.item;
     	members = this.data.members;
@@ -170,9 +169,9 @@ TeamViewEdit = React.createClass({
 		schema = Teams.schema();
 		if(!supplier) {
 			return (
-                <form className="form-inline">
+                <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
-                        <b>Let's search to see if this team already has an account.</b>
+                        <b>Lets search to see if this team already has an account.</b>
                         <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
                         <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
                     </div>
@@ -187,7 +186,62 @@ TeamViewEdit = React.createClass({
 		return (
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
-            	<h2><span>{supplier.getName()}</span></h2>
+            	<h2 style={{marginTop:"0px"}}>Edit team</h2>
+                <Stepper tabs={[
+                    {
+                        tab:
+                            <span id="discussion-tab">Basic Details</span>,
+                        content:
+                            <div className="row">
+                                <div className="col-sm-7">
+                                    <AutoForm item={supplier} schema={schema} form={this.data.form1} />
+                                </div>
+                                <div className="col-sm-5">
+                                    <DocThumb.File item={supplier.thumb} onChange={this.setThumb} />
+                                </div>
+                                <div className="col-sm-12">
+                                    <AutoForm item={supplier} schema={schema} form={this.data.form2} />
+                                </div>
+                            </div>,
+                        instructions:
+                            <div>Enter the basic account info here including your teams name, address and image.</div>
+                    },{
+                        tab:
+                            <span id="documents-tab">Documents</span>,
+                        content:
+                            <AutoForm item={supplier} schema={schema} form={["documents"]}/>,
+                        instructions:
+                            <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
+                    },{
+                        tab:
+                            <span id="members-tab">Members</span>,
+                        content:
+                            <ContactList 
+                                items={members}
+                                team={supplier}
+                                onAdd={supplier.canInviteMember()?supplier.addMember.bind(supplier):null}/>,
+                        instructions:
+                            <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
+                    },{
+                        tab:
+                            <span id="services-required-tab">Services required</span>,
+                        content:
+                            <CollapseBox id="services-consumed" title="Services Consumed" collapsed={true}>
+                                <ServicesSelector item={supplier} field={"servicesRequired"}/>
+                            </CollapseBox>,
+                        instructions:
+                            <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
+                    },{
+                        tab:
+                            <span id="services-provided-tab">Services provided</span>,
+                        content:
+                            <CollapseBox id="services-provided" title="Services Provided" collapsed={true}>
+                                <ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
+                            </CollapseBox>,
+                        instructions:
+                            <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
+                    }]}/>
+                {/*
 		   		<CollapseBox id="basic-info" title="Basic Info">
 		   			<div className="row">
 		   				<div className="col-sm-7">
@@ -221,6 +275,8 @@ TeamViewEdit = React.createClass({
 			      	<ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
 				</CollapseBox>
 				}
+
+                */}
 			</div>
 		)
 	}

@@ -61,9 +61,24 @@ TeamCard = React.createClass({
 	render() {
 		var menu = this.getMenu();
 		var supplier = this.props.item;
+		var component = this;
+
+		if(!supplier) {
+			return (
+				<div>			
+					<TeamViewEdit 
+						item={supplier} 
+						team={component.props.team}
+						facility={component.props.facility}
+						role={component.props.role}
+						onChange={component.props.onChange}
+					/>
+				</div>
+			)
+		}
 
 		return (
-			<div>
+			<div>			
 				<TeamViewDetail item={supplier}/>
 	            <ActionsMenu items={menu} />
 	        </div>

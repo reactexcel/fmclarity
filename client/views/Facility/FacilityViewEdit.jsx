@@ -146,8 +146,7 @@ FacilityViewEdit = React.createClass({
                             <ContactList 
                                 items={members}
                                 facility={facility}
-                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
-                            />,
+                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}/>,
 			        	instructions:<div>
 			        		Enter the facility personnel here by clicking on add member.
 			        	</div>

@@ -1,6 +1,15 @@
 CHANGELOG.md
 ============
 
+**v1.3.14b**
+
+* All users have a tenancy field, tenancy appears on contactlist card
+* Fixed an issue that was causing add supplier to fail from portfolio card
+* Fixed an issue that was making it impossible to edit services on porfolio card
+* Fixed an issue which was causing tenants to be added to team as staff
+* Created new "request table" view and and added areas, services and requests tab to portfolio page
+* Created stepper for editing teams to replase previous team edit view
+
 **v1.3.13b**
 
 * Email addresses are now mailto lings

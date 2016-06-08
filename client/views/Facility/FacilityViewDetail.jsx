@@ -12,6 +12,7 @@ FacilityViewDetail = React.createClass({
         facility = this.props.item?Facilities.findOne(this.props.item._id):null;
         if(facility) {
             Meteor.subscribe("messages","Facilities",facility._id,moment().subtract({days:7}).toDate());
+            Meteor.subscribe("contractors");
             members = facility.getMembers();
             tenants = facility.getMembers({role:"tenant"});
             suppliers = facility.getSuppliers();
@@ -121,24 +122,46 @@ FacilityViewDetail = React.createClass({
                             <ContactList 
                                 items={tenants}
                                 facility={facility}
+                                role="tenant"  //could filter based on roles here...
                                 onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}/>
                     },
                     {
-                        tab:<span id="suppliers-tab"><span style={{color:"white"}}>Suppliers</span></span>,
-                        content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
-                            <ContactList 
-                                items={suppliers}
-                                facility={facility}
-                                type="team"
-                                onAdd={team&&team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
-                            />
-                        </div>
+                        tab:
+                            <span id="suppliers-tab"><span style={{color:"white"}}>Suppliers</span></span>,
+                        content:
+                            <div style={{maxHeight:"600px",overflowY:"auto"}}>
+                                <ContactList 
+                                    items={suppliers}
+                                    facility={facility}
+                                    role="supplier"
+                                    type="team"
+                                    onAdd={team&&team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}
+                                />
+                            </div>
                     },
                     {
-                        tab:<span id="services-tab"><span style={{color:"white"}}>Services</span></span>,
-                        content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
-                            <ServicesSelector item={facility} field={"servicesRequired"}/>
-                        </div>
+                        tab:
+                            <span id="areas-tab"><span style={{color:"white"}}>Areas</span></span>,
+                        content:
+                            <div style={{maxHeight:"600px",overflowY:"auto"}}>
+                                <FacilityAreasSelector item={facility}/>
+                            </div>
+                    },
+                    {
+                        tab:
+                            <span id="services-tab"><span style={{color:"white"}}>Services</span></span>,
+                        content:
+                            <div style={{maxHeight:"600px",overflowY:"auto"}}>
+                                <ServicesSelector item={facility} field={"servicesRequired"}/>
+                            </div>
+                    },
+                    {
+                        tab:
+                            <span id="requests-tab"><span style={{color:"white"}}>Requests</span></span>,
+                        content:
+                            <div style={{maxHeight:"600px",overflowY:"auto"}}>
+                                <RequestsTable item={facility}/>
+                            </div>
                     }
                 ]} />                
             </div>

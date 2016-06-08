@@ -123,7 +123,7 @@ UserProfile = React.createClass({
 		}
 		if(!user||!profile) {
 			return (
-                <form className="form-inline">
+                <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
                         <b>Let's search to see if this user already has an account.</b>
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>

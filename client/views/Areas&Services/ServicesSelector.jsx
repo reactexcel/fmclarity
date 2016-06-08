@@ -10,13 +10,12 @@ ServicesSelector = React.createClass({
 
 	getMeteorData() {
         Meteor.subscribe('contractors');
-		var team, suppliers;
-		team = Session.getSelectedTeam();
-		if(team) {
-			suppliers = team.getSuppliers();
+		var suppliers, item;
+		item = this.props.item;
+		if(item&&item.getSuppliers) {
+			suppliers = item.getSuppliers();
 		}
 		return {
-			team:team,
 			suppliers:suppliers,
 			field:(this.props.field||"services")
 		}
@@ -28,8 +27,7 @@ ServicesSelector = React.createClass({
 	        content:<ConfigBlockModal 
 	        	item={this.props.item}
 	        	field={field}
-	        	view={ServiceDetail}
-	        />
+	        	view={ServiceDetail}/>
 	     })
 	},
 

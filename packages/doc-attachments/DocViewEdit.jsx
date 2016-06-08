@@ -53,7 +53,7 @@ DocViewEdit = React.createClass({
 			return <div/>
 		}
 		return (
-			<div>
+			<div style={{padding:"15px"}}>
 				<AutoForm schema={DocumentSchema} item={doc} save={this.handleChange}/>
 				<div style={{paddingTop:"20px",textAlign:"right"}}>
     	           	{/*<button style={{marginLeft:"5px"}} type="button" className="btn btn-flat btn-danger" onClick={this.deleteDoc} >Delete</button>*/}

@@ -1,20 +1,28 @@
+// attach schema to the collection
 Facilities.schema(FacilitySchema);
 
+// register document thumbnails to this collection using fmc:docThumbs
 DocThumb.register(Facilities,{
   defaultThumbUrl:0
 });
 
+// registers a members field to this collection using fmc:docMembers
+// how did you do this with attachments??? wasn't it just 
+// 1. create field
+// 2. specify input type in schema???
 DocMembers.register(Facilities,{
   fieldName:"members",
   authentication:AuthHelpers.managerOfRelatedTeam,
 });
 
+// registers a suppliers field to this collection using fmc:docMembers
 DocMembers.register(Facilities,{
   fieldName:"suppliers",
   authentication:AuthHelpers.managerOfRelatedTeam,
   membersCollection:Teams
 });
 
+// registers discussions on this document using fmc:DocMessages
 DocMessages.register(Facilities,{
   getInboxName() {
     return this.getName()+" announcements";
@@ -31,6 +39,7 @@ DocMessages.register(Facilities,{
   }  
 });
 
+//define core crud operations (perhaps this should be in schema???)
 Facilities.methods({
   create:{
     authentication:AuthHelpers.managerOfRelatedTeam,
@@ -116,6 +125,11 @@ Facilities.helpers({
 
 });
 
+/*
+* Takes the array item "item", with array field "field"
+* and merges the field with the field of the same name in "parent" (if given)
+* or with "team" otherwise
+*/
 function mergeWithTeamArray(item,field,parent) {
     var items;
 

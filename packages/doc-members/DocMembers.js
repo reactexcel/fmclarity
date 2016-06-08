@@ -74,7 +74,7 @@ function addMember(collection,fieldName) {
 		var newObject = {};
 		var role = options&&options.role?options.role:"staff";
 
-		//console.log(obj);
+		//console.log([obj,options]);
 
 		obj.map(function(o){
 			newObject[fieldName] = _.extend({},{
@@ -132,6 +132,7 @@ function getMembers(collection,fieldName) {
 	    var ids = [];
 	    var names = [];
 	    var members = item[fieldName];
+
 	    members?members.map(function(m){
 	    	if(!filter||!m.role||filter.role==m.role) {
 	    		if(m._id) {

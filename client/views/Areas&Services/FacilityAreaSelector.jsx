@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
-FacilityAreas = React.createClass({
+FacilityAreasSelector = React.createClass({
 	//this is stupid - save should be hosted here instead
 	showModal() {
 		Modal.show({

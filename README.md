@@ -1,52 +1,26 @@
 # FM Clarity Web Application
 
-This is a seed project for the FM Clarity Web Application.
+FM Clarity is a commercial SaaS app for facility management. It is written in Meteor (currently supports 1.3.2.4) with interface components rendered primarily using ReactJS. The back end is driven by MongoDB (currently version 2.6) with a custom ORM package (fmc:orm) which uses [dburles:collection-helpers](https://github.com/dburles/meteor-collection-helpers) to bind helper functions to documents on retrieval and uses meteor methods to implement custom rbac (fmc:rbac).
 
-It is based on a mashup of 
-- [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate) and
-- [Bootstrap INSPINIA theme](https://wrapbootstrap.com/theme/inspinia-responsive-admin-theme-WB0R5L90S)
+For more information on the database architecture see [schema.md](schema.md)
 
+## Installation
 
+Requires meteor, node, npm.
 
-#### Meteor React Boilerplate Notes
+```bash
+cd fm-clarity
+meteor install
+npm install
+meteor
+```
 
-A starter project for React &amp; Meteor
+## Application structure
 
-This repo aims to get you up and running with with React with little effort. It has sane defaults that 
-most apps will use (router, accounts, browserify).
+The application structure loosely follows that laid out in [meteor-react-boilerplate](https://github.com/AdamBrodzinski/meteor-react-boilerplate).
 
-Most of the content is in the 'both' folder so that we can so serverside rendering more easily. Here's the 
-rundown on what's included.
-
-See [this guide](http://react-in-meteor.readthedocs.org/en/latest/client-npm/) to learn how to import NPM modules/components via browserify in Meteor.
-
-For an in-depth example of how to use Meteor with React see 
-[React-ive Meteor](https://github.com/AdamBrodzinski/react-ive-meteor). For flux support see the [Flux Leaderboard](https://github.com/AdamBrodzinski/meteor-flux-leaderboard) example app.
-
-#### Packages
-
-- React (MDG preview)
-- Flow Router
-- React Layout
-- Accounts Password
-- Accounts UI (with React wrapper)
-- meteorhacks:npm
-- cosmos:browserify
-- Removes insecure
-- Removes autopublish
-
-#### Components
-
-- Header
-- LoginButtons
-- [Classnames](https://github.com/JedWatson/classnames) (NPM Component)
-
-####Models
-- User
-- (See a more [complex example](https://github.com/AdamBrodzinski/react-ive-meteor/blob/master/both/models/post.js))
-
-####Pages/Routes
-
-- Home, About
-- Not Found
-- Main Layout
+* **client** _Run only on client side, mainly layouts, views, stylesheets_
+* **server** _Run only on server, somewhat limited as the bulk of the business logic runs on both client and server. Server-side only views such as email text is in this folder_
+* **both** _Code for both client and server including the bulk of the schemas and business logic_
+* **public** _Other files exposed to public including sprites and other core layout images, fonts, icons etc_
+* **packages** _Internally developed sub-packages including packages for orm, rbac, documents and document explorer, Mongo document thumbnails and more_
