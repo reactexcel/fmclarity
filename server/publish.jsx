@@ -1,5 +1,4 @@
-//I don't know dude - shouldn't this go in the Model/Controller????
-//It seems a bit stranded here
+//These publish functions need to be moved into their respective controllers
 
 Meteor.publish('teams', function () {
 	return Teams.find({"members._id":this.userId});
@@ -8,10 +7,6 @@ Meteor.publish('teams', function () {
 Meteor.publish('allTeams', function() {
 	return Teams.find();
 })
-
-Meteor.publish('config', function () {
-    return Config.find({});
-});
 
 Meteor.publish('users', function () {
     return Users.find({});

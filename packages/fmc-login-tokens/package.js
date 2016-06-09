@@ -13,17 +13,20 @@ Package.onUse(function(api) {
 	],'client');
 
 	api.use([
+		'fmc:doc-messages',
 		'ecmascript',
 		'accounts-base',
-		'base64'
+		'base64',
+		'react-meteor-data',
 	]);
 
 	api.addFiles([
-		'LoginTokens.js'
+		'LoginTokens.js',
+		'email-templates/PasswordResetEmailTemplate.jsx',
 	]);
 
 	api.addFiles([
-		'Routes.jsx',
+		'router.jsx',
 		'pages/403.jsx',
 		'pages/Login.jsx',
 		'pages/LostPassword.jsx',

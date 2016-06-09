@@ -19,7 +19,7 @@ PageLostPassword = React.createClass({
         }
         else {
             this.setState({successMessage:<span>A password reset link has been sent to your registered email. Click the email link.</span>})
-            Accounts.forgotPassword({email:email});
+            FMCLogin.forgotPassword(email);
         }
         return;
     },

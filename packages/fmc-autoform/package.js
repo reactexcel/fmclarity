@@ -10,12 +10,33 @@ Package.onUse(function(api) {
 		'fmc:rbac',
 		'less',
 		'ecmascript',
+		'jquery',
 		'react-meteor-data',
 	]);
 
 	api.addFiles([
-	]);
+		'plugins/jquery.elastic.source.js',
+		'lib/AutoForm.jsx',
+		'lib/AutoForm.less',
+		'inputs/Date.jsx',
+		'inputs/File.jsx',
+		'inputs/MDDate.jsx',
+		'inputs/MDDate.less',
+		'inputs/MDSelect.jsx',
+		'inputs/MDSelect.less',
+		'inputs/MDText.jsx',
+		'inputs/MDText.less',
+		'inputs/MDTextArea.jsx',
+		'inputs/MDTextArea.less',
+		'inputs/Rating.jsx',
+		'inputs/Switch.jsx',
+		'inputs/Switch.less',
+		'inputs/Text.jsx',
+		'inputs/TextArea.jsx'
+	],'client');
 
 	api.export([
+		'AutoForm',
+		'AutoInput'
 	]);
 });

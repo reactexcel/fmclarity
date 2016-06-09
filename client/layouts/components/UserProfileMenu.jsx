@@ -76,11 +76,12 @@ UserProfileMenu = React.createClass({
                 }
 
                 {Meteor.user().role=="dev"?<li>
-                    <a onClick={this.resetTestData}>
+                    <a href={FlowRouter.path('admin')}>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
-                        <span className="nav-label">Reset test data</span>
+                        <span className="nav-label">Admin Tools</span>
                     </a>
                 </li>:null}
+
                 <li>
                     <a href={FlowRouter.path('logout')}>
                         <i className="fa fa-sign-out"></i> Log out

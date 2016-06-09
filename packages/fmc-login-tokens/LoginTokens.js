@@ -3,38 +3,77 @@
 
 FMCLogin = {
 	generateLoginToken:generateLoginToken,
+	generatePasswordResetToken:generatePasswordResetToken,
 	loginWithToken:loginWithToken,
+	forgotPassword:forgotPassword,
 	getUrl:getUrl
 }
 
 Meteor.methods({
-	"FMCLogin.insertLoginToken":function(userId,token){
-		Meteor.users.update(userId,{$push:{'services.FMCLogin.tokens':token}});
+	'FMCLogin.insertLoginToken':function(userId,token){
+		Meteor.users.update(userId,{$push:{
+			'services.FMCLogin.tokens':token
+		}});
 	},
-	"FMCLogin.generateAccountToken":function(user) {
+	'FMCLogin.generateAccountToken':function(user) {
 		if(Meteor.isServer) {
 			var stampedLoginToken = Accounts._generateStampedLoginToken();
 			Accounts._insertLoginToken(user._id, stampedLoginToken);
 			return stampedLoginToken.token;
 		}
 	},
-	"FMCLogin.findUserFromToken":function(token){
+	'FMCLogin.insertPasswordResetToken':function(userId,tokenRecord) {
+  		Meteor.users.update(userId, {$set: {
+    		"services.password.reset": tokenRecord
+  		}});		
+	},
+	'FMCLogin.findUserFromToken':function(token){
 		return Meteor.users.findOne({'services.FMCLogin.tokens':{$elemMatch:{token:token}}});
+	},
+	'FMCLogin.forgotPassword':function(email) {
+		var user = Users.findOne({'profile.email':email});
+		if(!user) {
+			console.log('No account with that email');
+			return;
+		}
+		Meteor.call('Messages.composeEmail',{
+		    recipient:user,
+		    subject:"FM Clarity password reset",
+		    template:PasswordResetEmailTemplate,
+		    params:{
+		      user:user,
+		      token:FMCLogin.generatePasswordResetToken(user)
+		    }
+		});	
 	}
 })
+
+function forgotPassword(email) {
+	Meteor.call('FMCLogin.forgotPassword',email);
+}
+
+function generatePasswordResetToken(user) {
+  	var tokenRecord = {
+    	token: Random.secret(),
+    	email: user.profile.email,
+    	when: new Date()
+  	};
+  	Meteor.call('FMCLogin.insertPasswordResetToken',user._id,tokenRecord);
+  	return tokenRecord
+}
 
 function generateLoginToken(user,expiry,redirect) {
 	var now = new Date();
 	var expiry = expiry||moment().add({days:14}).toDate();
 	var redirect = redirect||'/';
-	var token = {
+	var tokenRecord = {
 		token:Random.secret(),
 		when:now,
 		expiry:expiry,
 		redirect:redirect
 	}
-	Meteor.call("FMCLogin.insertLoginToken",user._id,token);
-	return token;
+	Meteor.call("FMCLogin.insertLoginToken",user._id,tokenRecord);
+	return tokenRecord;
 }
 
 function getUrl(token,redirect) {

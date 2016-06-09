@@ -289,16 +289,6 @@ CardWrapper = React.createClass({
     }
   },
 
-  markupCheckboxes() {
-    $(this.refs.iCheck).iCheck({
-      checkboxClass: 'icheckbox_square-grey'
-    });
-  },
-
-  componentDidMount() {
-    this.markupCheckboxes();
-  },
-
   toggleSticky() {
     this.item.sticky = this.item.sticky?false:true;
     this.item.save();

@@ -5,6 +5,9 @@ CHANGELOG.md
 
 * Refactored file/folder structure
 * Created packages for most core ui functionality
+* Moved autoform to own package
+* Moved js plugins to their respective packages or views
+* Invites and password reset emails are now handled by role based notifications package rather than Meteor core
 
 **v1.3.14b**
 

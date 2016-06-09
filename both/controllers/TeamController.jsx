@@ -111,6 +111,10 @@ Teams.methods({
   },
   editFacility:{
     authentication:AuthHelpers.manager,
+  },
+  sendMemberInvite:{
+    authentication:true,
+    method:sendMemberInvite
   }
 });
 
@@ -212,6 +216,21 @@ function inviteMember(team,email,ext) {
       found:found
     }
   }
+}
+
+function sendMemberInvite(team,member) {
+  team = Teams._transform(team);
+  console.log(member);
+  Meteor.call('Messages.composeEmail',{
+    recipient:member,
+    subject:team.getName()+" has invited you to join FM Clarity",
+    template:TeamInviteEmailTemplate,
+    params:{
+      team:team,
+      user:member,
+      token:FMCLogin.generatePasswordResetToken(member)
+    }
+  })
 }
 
 function addFacility(team,facility) {

@@ -15,9 +15,26 @@ Meteor.methods({
     });
   },
 
+  'Messages.composeEmail':function(args) {
+    if(Meteor.isServer) {
+      var recipient = args.recipient;
+      var subject = args.subject;
+      var Template = args.template;
+      var params = args.params;
+      var element = React.createElement(Template,params);
+      var emailBody = ReactDOMServer.renderToStaticMarkup(element);
+      console.log(emailBody);
+      Meteor.call('Messages.sendEmail',recipient,{
+        subject:subject,
+        emailBody:emailBody
+      })
+    }
+  },
+
   //no reason why this can't be Messages.sendEmail hey??
   'Messages.sendEmail':function(user,message) {
     if(Meteor.isServer) {Meteor.defer(function(){
+      //check([to, from, subject, text], [String])      
 
       /*
       if(!FM.inProduction()) {

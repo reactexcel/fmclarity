@@ -33,6 +33,17 @@ function addRoleBasedActions(menu,user,team) {
 				}
 			})
 		}
+
+		if(user&&team.canSendMemberInvite&&team.canSendMemberInvite(user)) {
+			menu.push({
+				label:"Send email invitation",
+				shouldConfirm:true,
+				action() {
+					team.sendMemberInvite(user);
+					Modal.hide();
+				}
+			});
+		}
 	}
 }
 
@@ -57,15 +68,6 @@ UserActions = {
 					}
 				})
 			}
-
-			menu.push({
-				label:"Send email invitation",
-				shoudConfirm:true,
-				action() {
-					user.sendInvite();
-					Modal.hide();
-				}
-			});
 		}
 		return menu;
 	}

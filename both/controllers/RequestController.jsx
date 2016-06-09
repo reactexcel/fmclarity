@@ -1,5 +1,7 @@
 Issues.schema(IssueSchema);
 
+//register this collection with the DocMessages package
+//so that documents within this collection can receive messages
 DocMessages.register(Issues,{
   getInboxName:function() {
     return "work order #"+this.code+' "'+this.getName()+'"';
@@ -12,6 +14,7 @@ DocMessages.register(Issues,{
     owner = this.getOwner();
 
     //don't include suppliers and assignees if draft or new
+    //is this deprecated?
     if(this.status!=Issues.STATUS_DRAFT) {
       team = this.getTeam();
       if(this.status!=Issues.STATUS_NEW) {
@@ -19,34 +22,12 @@ DocMessages.register(Issues,{
         assignee = this.getAssignee();
       }
     }
-
-    //and facilityContact?
     return [user,owner,supplier,team,assignee];
-    return [
-      {
-        role:"active user",
-        watcher:user
-      },
-      {
-        role:"owner",
-        watcher:owner
-      },
-      {
-        role:"team",
-        watcher:team
-      },
-      {
-        role:"supplier",
-        watcher:supplier
-      },
-      {
-        role:"assignee",
-        watcher:assignee
-      },
-    ];
   }
 });
 
+//register this collection with the DocMembers package
+//to create a "members" field that can be used for RBAC
 DocMembers.register(Issues,{
   authentication:function(role,user,request) {
     return (

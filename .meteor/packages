@@ -22,6 +22,7 @@ fmc:select
 fmc:modal
 fmc:actions-menu
 fmc:filterbox
+fmc:autoform
 
 ############################
 # Styles & Presentation
@@ -46,6 +47,7 @@ abpetkov:switchery
 momentjs:moment
 pfafman:filesaver
 harrison:papa-parse
+rochal:slimscroll
 
 ############################
 # MiniMongo Extensions

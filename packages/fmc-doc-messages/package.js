@@ -19,6 +19,10 @@ Package.onUse(function(api) {
 	]);
 
 	api.addFiles([
+		'plugins/jquery.elastic.source.js',
+	],'client');
+
+	api.addFiles([
 		'DocMessages.js',
 		'methods.js',
 		'publish.js',

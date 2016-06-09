@@ -34,7 +34,7 @@ Navigation = React.createClass({
     return (
     <nav className="navbar-static-side">
         <div className="sidebar-collapse">
-            <ul className="nav metismenu" id="side-menu" onClick={this.onMenuClick}>
+            <ul className="nav" id="side-menu" onClick={this.onMenuClick}>
             {this.data.modules.map(function(m){
                 return (
                     <li key={m.path} className={FlowRouter.getRouteName()==m.path?'active':''}>

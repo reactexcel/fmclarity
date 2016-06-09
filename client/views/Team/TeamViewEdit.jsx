@@ -226,18 +226,18 @@ TeamViewEdit = React.createClass({
                         tab:
                             <span id="services-required-tab">Services required</span>,
                         content:
-                            <CollapseBox id="services-consumed" title="Services Consumed" collapsed={true}>
+                            <div id="services-consumed" title="Services Consumed" collapsed={true}>
                                 <ServicesSelector item={supplier} field={"servicesRequired"}/>
-                            </CollapseBox>,
+                            </div>,
                         instructions:
                             <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:
                             <span id="services-provided-tab">Services provided</span>,
                         content:
-                            <CollapseBox id="services-provided" title="Services Provided" collapsed={true}>
+                            <div id="services-provided" title="Services Provided" collapsed={true}>
                                 <ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>
-                            </CollapseBox>,
+                            </div>,
                         instructions:
                             <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     }]}/>
