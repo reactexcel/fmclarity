@@ -11,8 +11,23 @@ DocAttachments = {
 function registerCollection(collection,fieldName) {
 	fieldName = fieldName||"documents";
 	collection.helpers({
-		getDocs:getDocs(fieldName)
+		getDocs:getDocs(fieldName),
+		getAttachmentUrl:getAttachmentUrl
 	});
+}
+
+
+//is this being used anywhere?
+function getAttachmentUrl(index) {
+	index=index||0;
+	var file;
+	if(this.attachments&&this.attachments[index]) {
+		file = Files.findOne(this.attachments[index]._id);
+		if(file) {
+			return file.url();
+		}
+	}
+	return this.defaultThumb;
 }
 
 function getDocs(fieldName) {

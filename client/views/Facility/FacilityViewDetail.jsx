@@ -59,19 +59,24 @@ FacilityViewDetail = React.createClass({
         var tenants = this.data.tenants;
         var team = this.data.team;
         var address = this.data.address;
-        var thumb = facility?facility.getThumbUrl():null;
-        var createdAt = moment(facility.createdAt).format();
-        var contact = facility.getPrimaryContact();
-        if(contact) {
-            contactName = contact.getName();
-            contact = contact.getProfile();
+
+        var thumb, createdAt, contact, contactName;
+        if(facility) {
+            thumb = facility.getThumbUrl();
+            createdAt = moment(facility.createdAt).format();
+            contact = facility.getPrimaryContact();
+            if(contact) {
+                contactName = contact.getName();
+                contact = contact.getProfile();
+            }
         }
+
         return (
             <div className="facility-card">
 
                 <div className="contact-thumbnail">
                     {thumb?
-                    <div style={{backgroundImage:"url('"+facility.getThumbUrl()+"')"}}>
+                    <div style={{backgroundImage:"url('"+thumb+"')"}}>
                         <img alt="image" src={thumb}/>
                     </div>
                     :null}

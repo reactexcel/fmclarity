@@ -9,6 +9,7 @@ ORM = {
 			collection = name;
 		}
 		collection.allow({
+			//really - you are globally allowing inserts? seems like a terrible idea
 			insert:function(){
 				return true;
 			}
@@ -25,7 +26,7 @@ ORM = {
 				}
 			},
 			methods:function(functions) {
-				// would like to get rid of this to remove dependency or ORM on RBAC
+				// would like to get rid of this to remove dependency of ORM on RBAC
 				return RBAC.methods(functions,collection)
 			},
 			registerMethod:function(functionName,method){
@@ -117,9 +118,7 @@ function ucfirst(string) {
    	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-// these access functions to be migrated out to RBAC
-
-
+// these access functions to be migrated out to _-RBAC-_ oblivion
 // create a function that can be used to access a related item
 function o2oGet(functions,collection,fieldName,relatedCollection) {
 	var funcName = "get"+ucfirst(fieldName);
@@ -136,44 +135,12 @@ function o2oGet(functions,collection,fieldName,relatedCollection) {
 	}
 }
 
-// create a function that can be used to access a related item
-function m2nGet(functions,collection,fieldName,relatedCollection) {
-	var funcName = "get"+ucfirst(fieldName);
-	functions.helpers[funcName] = function(filter) {
-	    if (this[fieldName]&&this[fieldName].length) {
-	      var members = this[fieldName];
-	      var ids = [];
-	      members.map(function(member){
-	        if(member&&member._id) {
-	        	//filter by role as specified in filter
-	        	if(!filter||!member.role||member.role==filter.role) {
-		        	ids.push(member._id);
-		        }
-	        }
-	      });
-	      return relatedCollection.find({_id:{$in:ids}},{sort:{name:1}}).fetch();
-	    }
-	    return [];
-	}
-}
-
-function m2nCheck(functions,collection,fieldName,relatedCollection) {
-	var singularFieldName = fieldName.slice(0,-1);
-	var funcName = "has"+ucfirst(singularFieldName);
-	functions.helpers[funcName] = function(item) {
-    	var members = this[fieldName];
-    	if(item&&members&&members.length) {
-    		for(var i in members) {
-	    		var member = members[i];
-	    		if(item._id==member._id) {
-	        		return true;
-	        	}
-	        }
-      	}
-	    return false;
-    }
-}
-
+//hey hey, ho ho, this here function has got to go
+//1. remove all references to hasOne from schemas
+//2. delete this function
+//when I remove common document methods and accessMethods what is left of ORM that isn't part of RBAC?
+//A:registering a schema and creating a new item using that schema
+//A2:perhaps validation??
 function createAccessMethods(collection,schema) {
 
 	var functions = {
@@ -197,17 +164,6 @@ function createAccessMethods(collection,schema) {
 				o2oGet(functions,collection,fieldName,relatedCollection);
 				//o2oSet(functions,collection,fieldName,relatedCollection);
 			}
-			else if(field.relationship.hasMany) {
-				var relatedCollection = field.relationship.hasMany;
-				m2nGet(functions,collection,fieldName,relatedCollection);
-				m2nCheck(functions,collection,fieldName,relatedCollection);
-				//m2nInsert(functions,collection,fieldName,relatedCollection);
-				//m2nRemove(functions,collection,fieldName,relatedCollection);
-			}
-			else if(field.relationship.belongsTo) {
-				var relatedCollection = field.relationship.belongsTo;
-				//...?//
-			}
 		}
 		// otherwise create adhoc access functions
 		// should these be encapsulated in methods? I would say so
@@ -229,6 +185,9 @@ function createAccessMethods(collection,schema) {
 }
 
 // this should be in it's own package
+// actually I'm a bit unhappy to have these concealed here
+// perhaps we should just put them in the individual models
+// is set, isNew, eq even used?
 function createCommonDocumentMethods(collection) {
 	collection.helpers({
 		isNew:function() {
@@ -249,7 +208,6 @@ function createCommonDocumentMethods(collection) {
 			return this.name;
 		},
 
-
 		//document-owners?
 		//or just added to custom?
 		getOwner:function() {
@@ -263,19 +221,6 @@ function createCommonDocumentMethods(collection) {
 				name:owner.getName()
 	    	}
 			this.save();
-		},		
-
-		//again this should go in it's own package document-thumbnails
-		getAttachmentUrl:function(index) {
-	    	index=index||0;
-			var file;
-			if(this.attachments&&this.attachments[index]) {
-	    		file = Files.findOne(this.attachments[index]._id);
-	    		if(file) {
-	    			return file.url();
-	    		}
-	    	}
-	    	return this.defaultThumb;
-		},		
+		}
 	});
 }

@@ -39,7 +39,9 @@ DocMessages.register(Facilities,{
   }  
 });
 
-//define core crud operations (perhaps this should be in schema???)
+//currently unable to return values from a method so, in the case we want to return something
+//use functionName:{helper:function(){}} instead
+//suggestion:rename method to writeFunction and helper to readFunction?
 Facilities.methods({
   create:{
     authentication:AuthHelpers.managerOfRelatedTeam,
@@ -65,6 +67,12 @@ Facilities.methods({
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.destroy.bind(Facilities)
   },
+  getIssues:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    helper:function(facility){
+      return Issues.find({"facility._id":facility._id}).fetch()
+    }
+  }
 
 })
 
@@ -72,10 +80,11 @@ Facilities.methods({
 // would make RBAC a lot easier
 Facilities.helpers({
 
+  /*
   getIssues() {
   	return Issues.find({"facility._id":this._id}).fetch();
   },
-
+  */
   getTeam() {
     return Teams.findOne(this.team._id);
   },  

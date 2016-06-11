@@ -30,7 +30,7 @@ AutoInput.mdtext = React.createClass({
 
 	render() {
 		var value, used;
-		value = this.props.value;
+		value = this.props.value||"";
 		used = value!=null;
 		if(_.isString(value)) {
 			used = used&&value.length;

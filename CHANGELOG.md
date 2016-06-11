@@ -1,6 +1,10 @@
 CHANGELOG.md
 ============
 
+**v1.3.17b**
+
+* Collections can now have data-returning helpers with authentication (will be used by facility card to determine which tabs are visible)
+
 **v1.3.16b**
 
 * New areas selector

@@ -12,7 +12,7 @@ ServicesSelector = React.createClass({
 		return {
 			item:item,
 			field:field,
-			services:services,
+			services:services||[],
 			expanded:{}
 		}
 	},
@@ -29,7 +29,7 @@ ServicesSelector = React.createClass({
 			this.setState({
 				item:item,
 				field:field,
-				services:services,
+				services:services||[],
 				expanded:{}
 			});
 		}
@@ -129,8 +129,10 @@ ServicesSelector = React.createClass({
 				</div>
 				{services?services.map(function(service,idx){
 					var expanded = component.state.expanded[service.name];
+					var size = services.length;
+					var key = size+'-'+idx;
 					return (
-						<div key={idx} className={expanded?"services-editor-service-expanded":""}>
+						<div key={key} className={expanded?"services-editor-service-expanded":""}>
 							<div className="row services-editor-row">
 								<ServiceSupplierRow
 									service={service}
@@ -143,8 +145,10 @@ ServicesSelector = React.createClass({
 								{expanded?
 									<div>
 										{service.children?service.children.map(function(subservice,subIdx){
+											var size=service.children.length;
+											var key = size+'-'+subIdx;
 											return (
-												<div className="row services-editor-row services-editor-row-child" key={subIdx}>
+												<div key={key} className="row services-editor-row services-editor-row-child">
 													<ServiceSupplierRow
 														service={subservice}
 														readOnly={readOnly}

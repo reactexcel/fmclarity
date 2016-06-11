@@ -111,14 +111,6 @@ function addMethod(methodName,f,collection) {
 	Meteor.methods(obj);
 }
 
-// not working at the moment
-function addHelper(methodName,f,collection) {
-	var helpers = [];
-	console.log(f);
-	helpers[methodName] = f;
-	collection.helpers(helpers);
-}
-
 /**
  * @method addAuthentication
  * @summary Wraps a given function as an authenticator and stores is locally
@@ -253,14 +245,38 @@ function makeAuthenticationHelper(methodName){
  * @summary Creates collection helpers for the specified method and it's authentication
  * @param {String} methodName The name of the method
  */
-function makeHelpers(collection,methodName) {
+function makeHelpers(methodName,functions,collection) {
 	var helpers = {};
 	//chop off any existing collection prefix
 	var strippedName = methodName.split('.');
 	strippedName = strippedName[1];
-	helpers[strippedName] = makeMethodHelper(methodName);
-	helpers['can'+ucfirst(strippedName)] = makeAuthenticationHelper(methodName);
+	if(functions.authentication) {
+		helpers['can'+ucfirst(strippedName)] = makeAuthenticationHelper(methodName);
+	}
+	if(functions.helper) {
+		helpers[strippedName] = makeCollectionHelper(methodName,functions.helper);
+	}
+	else if(functions.method) {
+		helpers[strippedName] = makeMethodHelper(methodName);
+	}
 	collection.helpers(helpers);
+}
+
+/**
+ * @method makeHelpers
+ * @summary Creates collection helpers for the specified method and it's authentication
+ * @param {String} methodName The name of the method
+ */
+function makeCollectionHelper(methodName,f) {
+	return function() {
+		var auth = authenticators[methodName];
+		[].unshift.call(arguments,this);
+		var permitted = auth?auth.apply(null,arguments):false;
+		if(permitted) {
+			return f?f.apply(null,arguments):false;
+		}
+		return error('access-denied:'+methodName,'Access Denied:','Sorry, you do not have permission to do that');
+	}
 }
 
 /**
@@ -271,13 +287,8 @@ function makeHelpers(collection,methodName) {
  * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
  */
 function method(methodName,functions,collection){
-	if(functions.helper) {
-		addHelper(methodName,functions.helper,collection);
-	}
-	else if(collection) {
-		methodName = ucfirst(collection._name)+'.'+methodName;
-		makeHelpers(collection,methodName);
-	}
+	methodName = ucfirst(collection._name)+'.'+methodName;
+	makeHelpers(methodName,functions,collection);
 	for(var i in functions) {
 		var f = functions[i];
 		if(i=='authentication'){

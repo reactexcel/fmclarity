@@ -30,7 +30,7 @@ RequestsTable = React.createClass({
 			<div>
 				{requests&&requests.length?requests.map(function(r,idx){
 					return (
-						<div className="grid-item" key={idx} style={{height:"41px"}} onClick={component.showModal.bind(null,r)}>
+						<div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={component.showModal.bind(null,r)}>
 							<IssueSummary item={r}/>
 						</div>
 					)
