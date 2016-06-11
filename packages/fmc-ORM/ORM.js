@@ -1,4 +1,5 @@
 ORM = {
+	collections:{},
 	Collection:function(name) {
 		var collection;
 		if(_.isString(name)) {
@@ -56,8 +57,9 @@ ORM = {
 					doc.createdAt = moment().toDate();
 				}
 			});
-			return collection;
 		}
+		this.collections[name] = collection;
+		return collection;
 	},
 }
 

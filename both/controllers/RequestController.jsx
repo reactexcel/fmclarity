@@ -225,7 +225,7 @@ function setSubService(request,subservice) {
   //if(request.canSetSupplier()) {
     if(subservice.data&&subservice.data.supplier) {
       //dangerously bypass RBAC
-      setSupplier(requeset,subservice.data.supplier);
+      setSupplier(request,subservice.data.supplier);
     }
     else {
       //dangerously bypass RBAC

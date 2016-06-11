@@ -4,272 +4,190 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
 FacilityAreasSelector = React.createClass({
-	//this is stupid - save should be hosted here instead
-	showModal() {
-		Modal.show({
-	        content:<ConfigBlockModal 
-	        	item={this.props.item}
-	        	field="areas"
-	        	view={AreaDetail}
-	        />
-	     })
-	},
 
-	updateLevelField(idx,val) {	
-		var item = this.props.item;
-		item.levels[idx] = item.levels[idx]||{};
-		item.levels[idx].name = val;
-		item.save();
-	},
+	mixins: [ReactMeteorData],
 
-	insertLevelAfter(idx) {	
-		var item = this.props.item;
-		item.levels.splice(idx+1,0,{});
-		item.save();
-	},
-
-	removeLevel(idx) {	
-		var item = this.props.item;
-		item.levels.splice(idx,1);
-		item.save();
-	},
-
-	updateType(idx,obj) {
-		console.log(obj);
-		var item = this.props.item;
-		item.levels[idx] = item.levels[idx]||{};
-		item.levels[idx].type = obj;
-		item.save();
-	},
-
-	render() {
-		var item = this.props.item;
-		var levels = this.props.item.levels;
-		if(!levels||!levels.length) {
-			levels = [{}];
-		}
-		var component = this;
-		return (
-			<div style={{minHeight:"200px"}}>
-				<table className="table" style={{marginBottom:0}}>
-					<tbody>
-					<tr>
-						<th style={{width:"50%"}}>Level</th>
-						<th style={{width:"50%"}}>Type</th>
-					</tr>
-					{levels?levels.map(function(level,idx){
-						return (
-							<tr key={idx}>
-								<td style={{padding:"10px"}}>
-									<AutoInput.Text
-										className="inline-form-control" 
-										value={level.name}
-										onChange={component.updateLevelField.bind(component,idx)}
-										onEnter={component.insertLevelAfter.bind(component,idx)}
-										onClear={component.removeLevel.bind(component,idx)}
-									/>
-								</td>
-								<td style={{padding:0}}>
-									<AutoInput.MDSelect 
-										items={item.areas} 
-										selectedItem={level.type}
-										itemView={ContactViewName}
-										onChange={component.updateType.bind(component,idx)}
-										placeholder="Default Supplier"
-									/>
-								</td>
-							</tr>
-						)
-					}):null}
-					</tbody>
-				</table>
-				<span onClick={this.showModal} className="btn btn-primary">Edit area types</span>
-			</div>
-		)
-	}
-
-})
-
-AreaDetail = React.createClass({
-
-	updateField(field,value) {
-		var item = this.props.item;
-		item[field] = value;
-		this.props.onChange(item);
-	},
-
-	componentWillMount() {
-		this.autoSelect = true;
-	},
-
-	render() {
-		var item = this.props.item;
-		var autoSelect = this.autoSelect;
-		this.autoSelect = false;
-		return (
-			<div>
-				<div className="row">
-					<div className="col-md-6">
-						<AutoInput.mdtext
-							placeholder="Area name"
-					    	value={item.name} 
-					    	autoSelect={autoSelect}
-						    onChange={this.updateField.bind(this,'name')}
-						/>
-					</div>
-				</div>
-			</div>
-		)
-	}
-})
-
-FacilityAreaRow = React.createClass({
-	render() {
-		var area = this.props.area;
-		var deleteArea = this.props.delete;
-		var updateField = this.props.update;
-		var Menu = AutoInput.menu;
-		return (
-			<tr>
-				<td style={{width:"30px"}}>
-					<AutoInput.Text 
-						value={area.number}
-						onChange={updateField.bind(null,'number')}
-					/>
-				</td>
-				<td style={{padding:"5px 0",width:"60%"}}>
-					<Menu 
-						options={Config.areaNames} 
-						onChange={updateField.bind(null,'name')}
-						value={area.name}
-					/>
-				</td>
-				<td style={{padding:"5px"}}>
-					<Menu 
-						options={["","North","South","East","West"]} 
-						onChange={updateField.bind(null,'location')}
-						value={area.location}
-					/>
-				</td>
-				<td className="actions" style={{width:"30px"}}>
-					<span 
-						onClick={deleteArea}
-					>
-						<i className="fa fa-times"></i>
-					</span>
-				</td>
-			</tr>
-		)
-	}
-})
-
-
-FacilityAreasOld = React.createClass({
-
-	getInitialState() {
-		return {
-			areaGroups:this.props.item.areas
-		}
-	},
-
-	componentWillReceiveProps(newProps) {
-		this.setState({
-			areaGroups:newProps.item.areas
-		});
-	},
-
-	save() {
-		var item = this.props.item;
-		item.areas = this.state.areaGroups;
-		item.save();
-	},
-
-    componentWillMount: function() {
-        this.save = _.debounce(this.save,2000);
+    getMeteorData() {
+    	var facility,areas;
+    	if(this.props.item) {
+    		facility = Facilities.findOne(this.props.item._id);
+    		if(facility) {
+    			areas = facility.getAreas();
+    		}
+    	}
+    	return {
+    		facility:facility,
+    		areas:areas
+    	}
     },
 
-	updateGroupField(groupNum,field,value) {
-		var areaGroups = this.state.areaGroups;
-		areaGroups[groupNum][field] = value;
-		this.setState({
-			areaGroups:areaGroups
-		});
-		this.save();
-	},
+    render() {
+    	return (
+	    	<FacilityAreasSelectorInner facility={this.data.facility} areas={this.data.areas}/>
+	    )
+    }
+})
 
-	updateAreaField(groupNum,areaNum,field,value) {
-		var areaGroups = this.state.areaGroups;
-		if(!areaGroups[groupNum].areas[areaNum]){
-			areaGroups[groupNum].areas[areaNum] = {};
-		}
-		areaGroups[groupNum].areas[areaNum][field] = value;
-		this.setState({
-			areaGroups:areaGroups
-		});
-		this.save();
-	},
 
-	deleteArea(groupNum,areaNum) {
-		var areaGroups = this.state.areaGroups;
-		areaGroups[groupNum].areas.splice(areaNum,1);		
-		this.setState({
-			areaGroups:areaGroups
-		});
-		this.save();
-	},
+FacilityAreasSelectorInner = React.createClass({
 
-	render () {
-		var deleteArea = this.deleteArea;
-		var updateAreaField = this.updateAreaField;
-		var updateGroupField = this.updateGroupField;
-		var areaGroups = this.state.areaGroups;
-		var Menu = AutoInput.menu;
-		return (
-			<div className="panel-group"> 
-				{areaGroups.map(function(group,groupNum){
-					return (<div key={groupNum} className="panel panel-default"> 
-					<div className="panel-heading" role="tab">
-						<h4 className="panel-title">
-							<span style={{width:"70%",display:"inline-block"}}>
-								<AutoInput.Text 
-									onChange={updateGroupField.bind(null,groupNum,'name')}
-									value={group.name}
-								/>
-							</span>
-							<span style={{float:"right",width:"30px",paddingLeft:"10px"}}>
-								<AutoInput.Text
-									onChange={updateGroupField.bind(null,groupNum,'number')}
-									value={group.number}
-								/>
-							</span>
-							<b>Number like this</b>
-						</h4>
-					</div>
-					<div >
-						<table className="table" style={{margin:0}}>
-							<tbody>
-							{group.areas.map(function(area,areaNum){
-								return (
-									<FacilityAreaRow
-										key={areaNum}
-										area={area}
-										delete={deleteArea.bind(null,groupNum,areaNum)}
-										update={updateAreaField.bind(null,groupNum,areaNum)}
-									/>
-								)
-							})}
-							<FacilityAreaRow
-								key={group.areas.length}
-								area={{}}
-								delete={deleteArea.bind(null,groupNum,group.areas.length)}
-								update={updateAreaField.bind(null,groupNum,group.areas.length)}
-							/>
-							</tbody>
-						</table>
-					</div>
-				</div>)
-				})}
-			</div>
-		)
-	}
+    getInitialState() {
+    	return {
+    		facility:this.props.facility,
+    		selection:[{name:"Root",children:this.props.areas}]
+    	}
+    },
+
+    selectItem(col,item) {
+    	var selection = this.state.selection;
+    	selection[col] = item;
+    	/*for(var i=col+1;i<selection.length;i++) {
+    		selection[col] = null;
+    	}*/
+    	this.setState({
+    		selection:selection
+    	});
+    },
+
+    addItem(col) {
+    	var selection = this.state.selection;
+    	if(!selection[col]) {
+    		selection[col] = {name:"Unknown",children:[]}
+    	}
+    	if(!selection[col].children) {
+    		selection[col].children = [];
+    	}
+    	var lastIndex = selection[col].children.length-1;
+    	var lastItem = selection[col].children[lastIndex];
+    	if(!lastItem||lastItem.name.length) {
+	    	selection[col].children.push({name:"",children:[]});
+	    }
+    	this.setState({
+    		selection:selection
+    	});     	
+    	this.save();
+    },
+
+    removeItem(col,idx) {
+    	var selection = this.state.selection;
+    	selection[col].children.splice(idx,1);
+    	this.setState({
+    		selection:selection
+    	});
+    	this.save();
+    },
+
+    updateItem(col,idx,event) {
+    	var value = event.target.value;
+    	var selection = this.state.selection;
+    	selection[col].children[idx].name = value;
+    	this.setState({
+    		selection:selection
+    	});
+    	this.save();
+    },
+
+    save() {
+    	var facility = this.state.facility;
+    	var selection = this.state.selection;
+    	var areas = selection[0].children;
+    	facility.setAreas(areas);
+    },
+
+    componentDidMount() {
+    	$('.areas-selector .slimscroll').slimScroll({
+    		height:'504px'
+    	});
+    	this.save = _.debounce(this.save,1000);
+    },
+
+    render() {
+        //refact - create a FacilityAreaSelectorRow class nad use that in these three instances below
+    	var component = this;
+    	var facility = this.state.facility;
+    	var areas = this.state.selection[0].children;
+    	var editable = facility.canSetAreas();
+    	var selectedArea = this.state.selection[1]||{};
+    	var selectedSubArea = this.state.selection[2]||{};
+    	return (
+	    	<div className="areas-selector">
+	    		<div className="areas-selector-col col-md-4">
+	    			<div className="areas-selector-row areas-selector-row-header">Level</div>
+			    	<div className="slimscroll">
+			    	{
+			    		areas.map(function(a,idx){
+			    			return (
+			    				<div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
+						    		<input 
+						    			onClick={component.selectItem.bind(component,1,a)} 
+						    			value={a.name||undefined}
+						    			readOnly={!editable}
+						    			onChange={component.updateItem.bind(component,0,idx)}/>
+			    					{editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
+					    		</div>
+				    		)
+			    		})
+			    	}
+			    	{editable?
+			    	<div onClick={component.addItem.bind(component,0)} className="areas-selector-row">
+						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+				        <span className="active-link">Add another</span>
+				    </div>
+				    :null}
+			    	</div>
+		    	</div>
+		    	<div className="areas-selector-col col-md-4">
+	    			<div className="areas-selector-row areas-selector-row-header">Area</div>
+		    		<div className="slimscroll">
+		    		{
+		    			selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
+		    				return (
+			    				<div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
+						    		<input
+						    			onClick={component.selectItem.bind(component,2,b)} 
+						    			value={b.name||undefined}
+						    			readOnly={!editable}
+						    			onChange={component.updateItem.bind(component,1,idx)}/>
+			    					{editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
+					    		</div>
+			    			)
+		    			}):null
+		    		}
+		    		{editable?
+			    	<div onClick={component.addItem.bind(component,1)} className="areas-selector-row">
+						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+				        <span className="active-link">Add another</span>
+				    </div>
+				    :null}
+		    		</div>
+	    		</div>
+		    	<div className="areas-selector-col col-md-4">
+	    			<div className="areas-selector-row areas-selector-row-header">Subarea</div>
+		    		<div className="slimscroll">
+		    		{
+		    			selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
+		    				return (
+			    				<div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
+						    		<input
+						    			onClick={component.selectItem.bind(component,3,c)} 
+						    			value={c.name||undefined}
+						    			readOnly={!editable}
+						    			onChange={component.updateItem.bind(component,2,idx)}/>
+			    					{editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
+					    		</div>
+			    			)
+		    			}):null
+		    		}
+		    		{editable?
+			    	<div onClick={component.addItem.bind(component,2)} className="areas-selector-row">
+						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+				        <span className="active-link">Add another</span>
+				    </div>
+				    :null}
+		    		</div>
+	    		</div>
+	    	</div>
+    	)
+    }
+
 })

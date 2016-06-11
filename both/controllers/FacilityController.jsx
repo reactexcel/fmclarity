@@ -49,6 +49,18 @@ Facilities.methods({
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.save.bind(Facilities)
   },
+  setAreas:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,areas){
+      Facilities.update(facility._id,{$set:{areas:areas}});
+    }
+  },
+  setServicesRequired:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,servicesRequired){
+      Facilities.update(facility._id,{$set:{servicesRequired:servicesRequired}});
+    }
+  },
   destroy:{
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.destroy.bind(Facilities)
@@ -105,6 +117,20 @@ Facilities.helpers({
   },
 
   getServices(parent) {
+    var services;
+    if(parent) {
+      services = parent.children||[];
+    }
+    services = this.servicesRequired;
+    services.sort(function(a,b){
+      if(a&&a.name&&b&&b.name) {
+        return (a.name>b.name)?1:-1;
+      }
+    })
+    return services;
+  },
+
+  getAllServices(parent) {
     return mergeWithTeamArray(this,'servicesRequired',parent);
   },
 

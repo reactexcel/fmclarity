@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.3.16b**
+
+* New areas selector
+* Sew suppliers/services selector
+
 **v1.3.15b**
 
 * Refactored file/folder structure

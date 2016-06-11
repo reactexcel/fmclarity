@@ -1,4 +1,27 @@
+FM = {
+	version:"1.3.15b"
+}
+
+if(Meteor.isServer) {
+
+	Meteor.startup(function(){
+		//perhaps should go in config?
+		var smtpUsername = "AKIAIPJKWHGNFC75EL3Q";
+		var smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
+		process.env.ROOT_URL = 'https://app.fmclarity.com';
+		process.env.MAIL_URL = "smtp://"+smtpUsername+":"+encodeURIComponent(smtpPassword)+"@email-smtp.us-west-2.amazonaws.com:465/";
+	});
+
+	FM.inDevelopment = function () {
+  		return process.env.NODE_ENV === "development"||process.env.METEOR_ENV === "development";
+	};
+	FM.inProduction = function () {
+  		return process.env.METEOR_ENV === "production";
+	};
+}
+
 //I kind of feel like a lot of this would be better in the database
+
 
 Config = {};
 
@@ -467,13 +490,13 @@ Config.defaultAreas =[{
     data:{},
     children:[{
 		name:'Male Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Female Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Accessible Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
     	name:'Lift lobby'
 	},{
@@ -488,21 +511,21 @@ Config.defaultAreas =[{
 		name:'Comms Room',
 	},{
 		name:'Stairwell',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},{
 		name:'Fire Cupboard',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},
 
     {
 		name:'Classroom',
-		identifiers:[{name:'301'}]
+		children:[{name:'301'}]
 	},{
 		name:'Office',
-		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
+		children:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
 	},{
 		name:'Meeting Room',
-		identifiers:[{name:'1'},{name:'2'}]
+		children:[{name:'1'},{name:'2'}]
 	},{
 		name:'Server Room'
     },{
@@ -517,13 +540,13 @@ Config.defaultAreas =[{
     data:{},
     children:[{
 		name:'Male Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Female Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Accessible Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
     	name:'Lift lobby'
 	},{
@@ -538,21 +561,21 @@ Config.defaultAreas =[{
 		name:'Comms Room',
 	},{
 		name:'Stairwell',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},{
 		name:'Fire Cupboard',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},
 
 	{
 		name:'Classroom',
-		identifiers:[{name:'405'},{name:'406'},{name:'407'},{name:'408'},{name:'410'},{name:'411'},{name:'412'}]
+		children:[{name:'405'},{name:'406'},{name:'407'},{name:'408'},{name:'410'},{name:'411'},{name:'412'}]
 	},{
 		name:'Office',
-		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
+		children:[{name:'1'},{name:'2'},{name:'3'},{name:'4'},{name:'5'}]
 	},{
 		name:'Computer Lab',
-		identifiers:[{name:'409'},{name:'413'}]
+		children:[{name:'409'},{name:'413'}]
 	},{
 		name:'Library',
 	},{
@@ -565,7 +588,7 @@ Config.defaultAreas =[{
 		name:'Lecture Hall',
 	},{
     	name:'Kitchen',
-		identifiers:[{name:'Staff'},{name:'Student'}]
+		children:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
     name:'Level 5',
@@ -574,13 +597,13 @@ Config.defaultAreas =[{
     data:{},
     children:[{
 		name:'Male Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Female Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Accessible Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
     	name:'Lift lobby'
 	},{
@@ -595,21 +618,21 @@ Config.defaultAreas =[{
 		name:'Comms Room',
 	},{
 		name:'Stairwell',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},{
 		name:'Fire Cupboard',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},
 
 	{
 		name:'Classroom',
-		identifiers:[{name:'502'},{name:'503'},{name:'504'},{name:'505'},{name:'506'},{name:'507'},{name:'509'},{name:'510'},{name:'511'},{name:'512'},{name:'513'},{name:'515'},{name:'516'}]
+		children:[{name:'502'},{name:'503'},{name:'504'},{name:'505'},{name:'506'},{name:'507'},{name:'509'},{name:'510'},{name:'511'},{name:'512'},{name:'513'},{name:'515'},{name:'516'}]
 	},{
 		name:'Office',
-		identifiers:[{name:'1'},{name:'2'},{name:'3'}]
+		children:[{name:'1'},{name:'2'},{name:'3'}]
 	},{
 		name:'Computer Lab',
-		identifiers:[{name:'409'},{name:'413'}]
+		children:[{name:'409'},{name:'413'}]
 	},{
 		name:'Lecture Hall',
 	},{
@@ -618,7 +641,7 @@ Config.defaultAreas =[{
 		name:'Teacher Staffroom',
 	},{
     	name:'Kitchen',
-		identifiers:[{name:'Staff'},{name:'Student'}]
+		children:[{name:'Staff'},{name:'Student'}]
 	}]
 },{
     name:'Level 6',
@@ -627,13 +650,13 @@ Config.defaultAreas =[{
     data:{},
     children:[{
 		name:'Male Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Female Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
 		name:'Accessible Bathroom',
-		identifiers:[{name:'Front'},{name:'Rear'}]
+		children:[{name:'Front'},{name:'Rear'}]
     },{
     	name:'Lift lobby'
 	},{
@@ -648,21 +671,21 @@ Config.defaultAreas =[{
 		name:'Comms Room',
 	},{
 		name:'Stairwell',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},{
 		name:'Fire Cupboard',
-		identifiers:[{name:'Left'},{name:'Right'}]
+		children:[{name:'Left'},{name:'Right'}]
 	},
 
 	{
 		name:'Classroom',
-		identifiers:[{name:'601'},{name:'602'},{name:'603'},{name:'604'},{name:'605'},{name:'606'},{name:'607'},{name:'608'},{name:'KP Training Room'}]
+		children:[{name:'601'},{name:'602'},{name:'603'},{name:'604'},{name:'605'},{name:'606'},{name:'607'},{name:'608'},{name:'KP Training Room'}]
 	},{
 		name:'Office',
-		identifiers:[{name:'1'},{name:'2'},{name:'3'},{name:'4'}]
+		children:[{name:'1'},{name:'2'},{name:'3'},{name:'4'}]
 	},{
 		name:'Computer Lab',
-		identifiers:[{name:'KP Exam Room'},{name:'600b'}]
+		children:[{name:'KP Exam Room'},{name:'600b'}]
 	},{
 		name:'Board Room',
 	},{
@@ -673,10 +696,10 @@ Config.defaultAreas =[{
 		name:'Shared Services Area',
 	},{
     	name:'Kitchen',
-		identifiers:[{name:'Staff'},{name:'Student'}]
+		children:[{name:'Staff'},{name:'Student'}]
 	},{
 		name:'Meeting Room',
-		identifiers:[{name:'1'}]
+		children:[{name:'1'}]
 	}]
 },{
     name:'Roof',

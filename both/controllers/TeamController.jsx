@@ -190,7 +190,7 @@ function inviteMember(team,email,ext) {
     found = true;
   }
   else {
-    var name = FM.isValidEmail(email); // this could be moved to RBAC, or Schema, general purpose validation function
+    var name = DocMessages.isValidEmail(email);
     if(name) {
       if(Meteor.isServer) {
         //Accounts.sendEnrollmentEmail(id);

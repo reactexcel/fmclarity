@@ -2,7 +2,8 @@ Messages = ORM.Collection("Messages");
 
 
 DocMessages = {
-  register:registerCollection
+  register:registerCollection,
+  isValidEmail:isValidEmail
 }
 
 var defaultHelpers = {
@@ -17,6 +18,15 @@ var defaultHelpers = {
   getMessageCount:getMessageCount,
   getRecipients:getRecipients,
 }
+
+function isValidEmail(email) {
+  var temp = email.split('@');
+  var name = temp[0];
+  var server = temp[1];
+  //return ucfirst name
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 
 //gets all recipients of the message
 function getRecipients(inCC,outCC) {

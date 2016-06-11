@@ -177,6 +177,14 @@ FacilityViewEdit = React.createClass({
 			        	</div>
                     },
                     {
+                        tab:
+                            <span id="areas-tab"><span>Areas</span></span>,
+                        content:
+                            <div style={{maxHeight:"600px",overflowY:"auto"}}>
+                                <FacilityAreasSelector item={facility}/>
+                            </div>
+                    },
+                    {
                         tab:<span id="services-tab">Services</span>,
                         content:
                         	<ServicesSelector item={facility} field={"servicesRequired"}/>,

@@ -20,12 +20,12 @@ Messages.methods({
 Messages.helpers({
   getInbox() {
     var inboxId = this.inboxId;
-    var collection = FM.collections[inboxId.collectionName];
+    var collection = ORM.collections[inboxId.collectionName];
     return collection.findOne(inboxId.query);
   },
   getTarget() {
     var target = this.target;
-    var collection = FM.collections[target.collectionName];
+    var collection = ORM.collections[target.collectionName];
     if(collection) {
       return collection.findOne(target.query);
     }

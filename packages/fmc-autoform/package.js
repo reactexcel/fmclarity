@@ -32,7 +32,9 @@ Package.onUse(function(api) {
 		'inputs/Switch.jsx',
 		'inputs/Switch.less',
 		'inputs/Text.jsx',
-		'inputs/TextArea.jsx'
+		'inputs/TextArea.jsx',
+		'inputs/MDDataTableMenu.jsx',
+		'inputs/MDDataTableMenu.less'
 	],'client');
 
 	api.export([

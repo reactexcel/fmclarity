@@ -167,3 +167,47 @@ Users.helpers({
     return ! User.isLoggedIn();
   }
 });
+
+if(Meteor.isClient) {
+  //I'd really like to remove all of this from here by binding it to user
+  Session.setTeamRole = function(role) {
+    return Session.set('selectedTeamRole',role);
+  }
+  Session.getTeamRole = function() {
+    return Session.get('selectedTeamRole');
+  }
+  Session.getSelectedTeam = function() {
+      var selectedTeamQuery = Session.get('selectedTeam');
+      if(selectedTeamQuery) {
+        return Teams.findOne(selectedTeamQuery._id);
+    }
+  }
+  Session.selectTeam = function(team) {
+      if(team) {
+        Session.set('selectedTeam',{_id:team._id});
+      }
+      Session.set('selectedFacility',0);
+    }
+  Session.getSelectedFacility = function() {
+      var selectedFacilityQuery = Session.get('selectedFacility');
+      if(selectedFacilityQuery) {
+        return Facilities.findOne(selectedFacilityQuery._id);
+    }
+  }
+  Session.selectFacility = function(f) {
+      if(f) {
+        Session.set('selectedFacility',{_id:f._id});
+      }
+    }
+  Session.getSelectedClient = function() {
+      var selectedClientQuery = Session.get('selectedClient');
+      if(selectedClientQuery) {
+        return Teams.findOne(selectedClientQuery._id);
+    }
+  }
+  Session.selectClient = function(c) {
+      if(f) {
+        Session.set('selectedClient',{_id:c._id});
+      }
+    }
+}

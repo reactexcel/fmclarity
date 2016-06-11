@@ -125,6 +125,7 @@ FacilityViewDetail = React.createClass({
                                 role="tenant"  //could filter based on roles here...
                                 onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}/>
                     },
+                    /*deprecated by new services/supplier selector???
                     {
                         tab:
                             <span id="suppliers-tab"><span style={{color:"white"}}>Suppliers</span></span>,
@@ -139,6 +140,7 @@ FacilityViewDetail = React.createClass({
                                 />
                             </div>
                     },
+                    */
                     {
                         tab:
                             <span id="areas-tab"><span style={{color:"white"}}>Areas</span></span>,
