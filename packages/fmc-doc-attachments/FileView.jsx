@@ -42,7 +42,7 @@ DocumentIcon = React.createClass({
 			return (
 			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
 				<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-				<span style={{display:"inline-block",width:"90%",minWidth:"20px"}}>Add document</span>
+				<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 			</div>
 			)
 		}

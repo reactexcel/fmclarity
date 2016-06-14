@@ -60,6 +60,9 @@ FilterBox2 = React.createClass({
 	  this.setState({
 	  	selectedItem:item
 	  });
+    if(this.props.onSelect) {
+      this.props.onSelect(item);
+    }
   },
 
 	render() {
@@ -73,20 +76,25 @@ FilterBox2 = React.createClass({
     var Header = component.props.itemView.header;
     var selectedItem;
 
-    for(var i in this.props.items) {
-      var item = this.props.items[i];
-      if(item&&this.state.selectedItem&&item._id==this.state.selectedItem._id) {
-        selectedItem = item;
+    if(!items) {
+      return <div/>
+    }
+    else if(items.length==1) {
+      selectedItem = items[0];
+    }
+    else {
+      for(var i in this.props.items) {
+        var item = this.props.items[i];
+        if(item&&this.state.selectedItem&&item._id==this.state.selectedItem._id) {
+          selectedItem = item;
+        }
       }
     }
 
-    if(!items) {
-    	return <div/>
-    }
     return (
     <div className="filter-box-2">
       <div className="row">
-        {!selectedItem||this.state.screenSize=="lg"?
+        {!selectedItem||(this.state.screenSize=="lg"&&items.length>1)?
         <div className={"col-lg-"+navWidth+" lg-gutter-right-5px"}>
           <div className="row">
             {items.map(function(i,index){

@@ -29,17 +29,6 @@ IssuesIndexPage = React.createClass({
         }
     },
 
-	componentWillUnmount() {
-		var items = this.data.issues;
-	    if(items) {
-	    	items.map(function(item){
-	    		if(item.isNew()) {
-	        		//item.destroy();
-	        	}
-	      	})
-	    }
-	},    
-
     createNewIssue(callback) {
         var selectedFacility = Session.getSelectedFacility();
         var selectedTeam = Session.getSelectedTeam();

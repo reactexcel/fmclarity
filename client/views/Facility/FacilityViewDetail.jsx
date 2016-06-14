@@ -7,16 +7,17 @@ FacilityViewDetail = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var team,facility,members,suppliers,address,tenants;
+        var team,facility,members,suppliers,address,tenants,coverImage;
         team = Session.getSelectedTeam();
         facility = this.props.item?Facilities.findOne(this.props.item._id):null;
         if(facility) {
             Meteor.subscribe("messages","Facilities",facility._id,moment().subtract({days:7}).toDate());
             Meteor.subscribe("contractors");
             members = facility.getMembers();
-            tenants = facility.getMembers({role:"tenant"});
+            tenants = facility.getTenants();
             suppliers = facility.getSuppliers();
             address = facility.getAddress();
+            coverImage = facility.getThumbUrl();
         }
         return {
             facility:facility,
@@ -24,7 +25,8 @@ FacilityViewDetail = React.createClass({
             tenants:tenants,
             suppliers:suppliers,
             members:members,
-            team:team
+            team:team,
+            coverImage:coverImage
         }
     },
 
@@ -59,10 +61,10 @@ FacilityViewDetail = React.createClass({
         var tenants = this.data.tenants;
         var team = this.data.team;
         var address = this.data.address;
+        var thumb = this.data.coverImage;
 
         var thumb, createdAt, contact, contactName;
         if(facility) {
-            thumb = facility.getThumbUrl();
             createdAt = moment(facility.createdAt).format();
             contact = facility.getPrimaryContact();
             if(contact) {
@@ -106,29 +108,32 @@ FacilityViewDetail = React.createClass({
                         </div>
                     },
                     {
+                        hide:!facility.canAddDocument(),
                         tab:<span id="documents-tab"><span style={{color:"white"}}>Documents</span></span>,
                         content:<div>
                             <AutoForm item={facility} schema={Facilities.schema()} form={["documents"]}/>
                         </div>
                     },
                     {
+                        hide:!facility.canAddMember(),
                         tab:<span id="personnel-tab"><span style={{color:"white"}}>Personnel</span></span>,
                         content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
                             <ContactList 
                                 items={members}
+                                group={facility}
                                 facility={facility}
                                 onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
                             />
                         </div>
                     },
                     {
+                        hide:!facility.canAddTenant(),
                         tab:<span id="tenants-tab"><span style={{color:"white"}}>Tenants</span></span>,
                         content:
                             <ContactList 
                                 items={tenants}
                                 facility={facility}
-                                role="tenant"  //could filter based on roles here...
-                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}/>
+                                onAdd={team&&team.canInviteMember()?this.addTenant.bind(null,{role:"residential"}):null}/>
                     },
                     /*deprecated by new services/supplier selector???
                     {
@@ -147,24 +152,23 @@ FacilityViewDetail = React.createClass({
                     },
                     */
                     {
-                        tab:
-                            <span id="areas-tab"><span style={{color:"white"}}>Areas</span></span>,
+                        hide:!facility.canSetAreas(),
+                        tab:<span id="areas-tab"><span style={{color:"white"}}>Areas</span></span>,
                         content:
                             <div style={{maxHeight:"600px",overflowY:"auto"}}>
                                 <FacilityAreasSelector item={facility}/>
                             </div>
                     },
                     {
-                        tab:
-                            <span id="services-tab"><span style={{color:"white"}}>Services</span></span>,
+                        hide:!facility.canSetServicesRequired(),
+                        tab:<span id="services-tab"><span style={{color:"white"}}>Services</span></span>,
                         content:
                             <div style={{maxHeight:"600px",overflowY:"auto"}}>
                                 <ServicesSelector item={facility} field={"servicesRequired"}/>
                             </div>
                     },
                     {
-                        tab:
-                            <span id="requests-tab"><span style={{color:"white"}}>Requests</span></span>,
+                        tab:<span id="requests-tab"><span style={{color:"white"}}>Requests</span></span>,
                         content:
                             <div style={{maxHeight:"600px",overflowY:"auto"}}>
                                 <RequestsTable item={facility}/>

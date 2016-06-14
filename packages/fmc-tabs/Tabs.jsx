@@ -30,16 +30,16 @@ IpsoTabso = React.createClass({
                         <div className="col-md-12">
                             <div className="row tab-row">
                                 {tabs.map(function(i,idx){
-                                    return (
-                                        <div 
-                                            onClick={selectTab.bind(null,idx)} 
-                                            className={(idx==active?"ipso-tab active":"ipso-tab")}
-                                            key={idx}
-                                        >
-                                            <div className="tab">{i.tab}</div>
-                                            <div className="highlight"/>
-                                        </div>
-                                    )
+                                    return i.hide?null:(
+                                            <div 
+                                                onClick={selectTab.bind(null,idx)} 
+                                                className={(idx==active?"ipso-tab active":"ipso-tab")}
+                                                key={idx}
+                                            >
+                                                <div className="tab">{i.tab}</div>
+                                                <div className="highlight"/>
+                                            </div>
+                                        )
                                 })}
                             </div>
                         </div>

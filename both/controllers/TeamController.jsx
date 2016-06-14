@@ -79,9 +79,6 @@ Teams.methods({
     method:inviteMember,
   },
 
-
-
-
   inviteSupplier:{
     authentication:AuthHelpers.manager,
     method:inviteSupplier,
@@ -220,7 +217,7 @@ function inviteMember(team,email,ext) {
 
 function sendMemberInvite(team,member) {
   team = Teams._transform(team);
-  console.log(member);
+  //console.log(member);
   Meteor.call('Messages.composeEmail',{
     recipient:member,
     subject:team.getName()+" has invited you to join FM Clarity",
@@ -328,10 +325,15 @@ Teams.helpers({
       })
     }
 
-    return Facilities.find({$or:[
+    //console.log(facilityIds);
+
+    var facilities = Facilities.find({$or:[
       {"team._id":this._id},
       {_id:{$in:facilityIds}}
     ]},{sort:{name:1}}).fetch();
+
+    //console.log(facilities);
+    return facilities;
   },
 
   getStaffFacilities() {
@@ -350,6 +352,7 @@ Teams.helpers({
     //this is vulnerable to error - what if the name changes
     //of course if we only have the name then we need to add the id at some point
     var role = this.getMemberRole(Meteor.user());
+    //console.log(role);
     if(role=="manager"||role=="fmc support") {
       return this.getManagerFacilities(q);
     }

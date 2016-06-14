@@ -3,7 +3,8 @@ Messages = ORM.Collection("Messages");
 
 DocMessages = {
   register:registerCollection,
-  isValidEmail:isValidEmail
+  isValidEmail:isValidEmail,
+  config:getConfigurationFunction
 }
 
 var defaultHelpers = {
@@ -27,6 +28,19 @@ function isValidEmail(email) {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
+function getConfigurationFunction(options) {
+  return function(collection) {
+      registerCollection(collection,options);
+  }
+}
+
+function registerCollection(collection,customHelpers) {
+  var helpers = _.extend({
+    collectionName:collection._name
+  },defaultHelpers,customHelpers);
+  
+  collection.helpers(helpers);
+}
 
 //gets all recipients of the message
 function getRecipients(inCC,outCC) {
@@ -151,14 +165,6 @@ function sendMessage(message,recipient) {
       Meteor.call("Messages.sendEmail",recipient,msgCopy);
     }
   });
-}
-
-function registerCollection(collection,customHelpers) {
-  var helpers = _.extend({
-    collectionName:collection._name
-  },defaultHelpers,customHelpers);
-  
-  collection.helpers(helpers);
 }
 
 // I reckon trash getInboxName and make getInboxId explicit in each class that uses it

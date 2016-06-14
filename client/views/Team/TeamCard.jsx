@@ -43,9 +43,8 @@ TeamCard = React.createClass({
 								item={supplier} 
 								team={component.props.team}
 								facility={component.props.facility}
-								role={component.props.role}
-								onChange={component.props.onChange}
-					        />
+								group={component.props.group}
+								onChange={component.props.onChange}/>
 						})
 					}
 				});
@@ -70,9 +69,8 @@ TeamCard = React.createClass({
 						item={supplier} 
 						team={component.props.team}
 						facility={component.props.facility}
-						role={component.props.role}
-						onChange={component.props.onChange}
-					/>
+						group={component.props.group}
+						onChange={component.props.onChange}/>
 				</div>
 			)
 		}

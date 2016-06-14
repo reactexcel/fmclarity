@@ -21,6 +21,16 @@ function addRoleBasedActions(menu,user,team) {
 			});
 		}
 
+		if(team.ownerIs(user)) {
+			menu.push({
+				label:"Revoke ownership of "+teamName,
+				shouldConfirm:true, //lets make this the default
+				action() {
+					team.clearOwner();
+				}
+			})
+		}
+
 		if(team.canSetMemberRole&&team.canSetMemberRole(user)) {
 			var role = team.getMemberRole(user);
 			var newRole = (role=='manager')?'staff':'manager';

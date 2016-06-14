@@ -41,9 +41,7 @@ FacilityAreasSelectorInner = React.createClass({
     selectItem(col,item) {
     	var selection = this.state.selection;
     	selection[col] = item;
-    	/*for(var i=col+1;i<selection.length;i++) {
-    		selection[col] = null;
-    	}*/
+        selection.length = col+1;
     	this.setState({
     		selection:selection
     	});
@@ -70,7 +68,8 @@ FacilityAreasSelectorInner = React.createClass({
 
     removeItem(col,idx) {
     	var selection = this.state.selection;
-    	selection[col].children.splice(idx,1);
+    	selection.length = col+1;
+        selection[col].children.splice(idx,1);
     	this.setState({
     		selection:selection
     	});
@@ -131,7 +130,7 @@ FacilityAreasSelectorInner = React.createClass({
 			    	{editable?
 			    	<div onClick={component.addItem.bind(component,0)} className="areas-selector-row">
 						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-				        <span className="active-link">Add another</span>
+				        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
 				    </div>
 				    :null}
 			    	</div>
@@ -156,7 +155,7 @@ FacilityAreasSelectorInner = React.createClass({
 		    		{editable?
 			    	<div onClick={component.addItem.bind(component,1)} className="areas-selector-row">
 						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-				        <span className="active-link">Add another</span>
+				        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
 				    </div>
 				    :null}
 		    		</div>
@@ -181,7 +180,7 @@ FacilityAreasSelectorInner = React.createClass({
 		    		{editable?
 			    	<div onClick={component.addItem.bind(component,2)} className="areas-selector-row">
 						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-				        <span className="active-link">Add another</span>
+				        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
 				    </div>
 				    :null}
 		    		</div>

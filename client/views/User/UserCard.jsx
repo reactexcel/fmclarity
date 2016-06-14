@@ -43,9 +43,8 @@ UserCard = React.createClass({
 						item={user} 
 						team={this.props.team}
 						facility={this.props.facility}
-						role={this.props.role}
-						onChange={this.props.onChange}
-					/>
+						group={this.props.group}
+						onChange={this.props.onChange}/>
 				:
 					<ContactSummary item={user} role={this.props.role}/>
 				}

@@ -5,17 +5,34 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 DocAttachments = {
 	register:registerCollection,
 	FileExplorer:FileExplorer,
-	DocumentExplorer:DocumentExplorer
+	DocumentExplorer:DocumentExplorer,
+	config:getRegistrationFunc
 }
 
-function registerCollection(collection,fieldName) {
-	fieldName = fieldName||"documents";
+function registerCollection(collection,opts) {
+	opts = opts||{};
+	fieldName = opts.fieldName||"documents";
 	collection.helpers({
 		getDocs:getDocs(fieldName),
 		getAttachmentUrl:getAttachmentUrl
 	});
+	collection.actions({
+		addDocument:{
+			authentication:opts.authentication||function(){return false;}
+		}
+	})
 }
 
+function getRegistrationFunc(opts) {
+	if(!_.isArray(opts)) {
+		opts = [opts];
+	}
+	return function(collection) {
+		opts.map(function(o){
+			registerCollection(collection,o);
+		})
+	}
+}
 
 //is this being used anywhere?
 function getAttachmentUrl(index) {

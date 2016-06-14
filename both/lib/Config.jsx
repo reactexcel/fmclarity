@@ -135,9 +135,9 @@ var navSupplier = [{
 }];
 
 var navTenant = [{
-	path:"requests",		
-	label:"Requests",
-	icon:"fa fa-wrench"
+	path:"portfolio",		
+	label:"Sites",
+	icon:"fa fa-building"
 }];
 
 Config.modules = {

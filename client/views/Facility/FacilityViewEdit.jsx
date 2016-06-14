@@ -15,7 +15,7 @@ FacilityViewEdit = React.createClass({
 			team = facility.getTeam();
 			suppliers = facility.getSuppliers();
 			members = facility.getMembers();
-			tenants = facility.getMembers({role:"tenant"});
+			tenants = facility.getTenants();
 			return {
 				ready:true,
 				facility:facility,
@@ -45,6 +45,10 @@ FacilityViewEdit = React.createClass({
 
 	addMember(ext,member) {
 		this.data.facility.addMember(member,ext);
+	},
+
+	addTenant(ext,tenant) {
+		this.data.facility.addTenant(tenant,ext);
 	},
 
 	addSupplier(ext,supplier) {
@@ -145,6 +149,7 @@ FacilityViewEdit = React.createClass({
                         content:
                             <ContactList 
                                 items={members}
+                                group={facility}
                                 facility={facility}
                                 onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}/>,
 			        	instructions:<div>
@@ -156,8 +161,9 @@ FacilityViewEdit = React.createClass({
                         content:
                             <ContactList 
                                 items={tenants}
+                                group={facility}
                                 facility={facility}
-                                onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"tenant"}):null}
+                                onAdd={team&&team.canInviteMember()?this.addTenant.bind(null,{role:"residential"}):null}
                             />,
 			        	instructions:<div>
 			        		Enter tenants to the property by clicking on add member here.
@@ -168,6 +174,7 @@ FacilityViewEdit = React.createClass({
                         content:
                         	<ContactList 
                                 items={suppliers}
+                                group={facility}
                                 facility={facility}
                                 type="team"
                                 onAdd={team&&team.canInviteSupplier()?this.addSupplier.bind(null,{role:"supplier"}):null}

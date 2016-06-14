@@ -1,11 +1,23 @@
 
 //should be called docthumbs
 DocMembers = {
-	register:registerCollection
+	register:registerCollection,
+	config:getRegistrationFunc
 }
 
 function ucfirst(string) {
    	return string.charAt(0).toUpperCase() + string.slice(1,-1);
+}
+
+function getRegistrationFunc(opts) {
+	if(!_.isArray(opts)) {
+		opts = [opts];
+	}
+	return function(collection) {
+		opts.map(function(o){
+			registerCollection(collection,o);
+		})
+	}
 }
 
 function registerCollection(collection,opts) {
@@ -48,15 +60,16 @@ function registerCollection(collection,opts) {
 
 	methods['set'+fn+'Role'] = {
 		//cannot change own role
-		authentication:/*managerOrOwnerNotSelf*/function(role,user,team,args){
+		authentication:auth.setRole,/*managerOrOwnerNotSelffunction(role,user,team,args){
 		    var victim = args[1];
 		    return auth.setRole(role,user,team,args)&&user._id!=victim._id;
-		},
+		},*/
 		method:setMemberRole(collection,fieldName)
 	}
 
 	helpers['get'+fn+'s'] = getMembers(membersCollection,fieldName);
 	helpers['get'+fn+'Role']  = getMemberRole(membersCollection,fieldName);
+	helpers['get'+fn+'Relation'] = getMemberRelation(membersCollection,fieldName);
 	helpers['has'+fn] = hasMember(membersCollection,fieldName);
 	helpers['dangerouslyAddMember'] = addMember(collection,fieldName);
 
@@ -153,14 +166,25 @@ function getMembers(collection,fieldName) {
 	}
 }
 
-function getMemberRole(collection,fieldName) {
-	return function(user) {
-		var item = this;
-	    for(var i in item[fieldName]) {
-			var member = item[fieldName][i];
-			if(member&&user&&member._id==user._id) {
-				return member.role;
+function getMemberRelation(collection,fieldName) {
+	return function(member) {
+		var group = this;
+		//console.log([group,group[fieldName]]);
+	    for(var i in group[fieldName]) {
+			var relation = group[fieldName][i];
+			if(relation&&member&&relation._id==member._id) {
+				return relation;
 			}
 	    }
+	}
+}
+
+function getMemberRole(collection,fieldName) {
+	return function(member) {
+		var group = this;
+		var relation = group.getMemberRelation(member);
+		if(relation) {
+			return relation.role;
+		}
 	}
 }

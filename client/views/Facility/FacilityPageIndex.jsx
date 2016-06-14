@@ -8,6 +8,7 @@ FacilityIndexPage = React.createClass({
 
     getMeteorData() {
     	Meteor.subscribe('teamsAndFacilitiesForUser');//for some reason this isn't picking up my contractors
+    	Meteor.subscribe('facilities');
         Meteor.subscribe('users');
     	var team, facility, facilties;
     	if(Meteor.user()) {
@@ -56,17 +57,9 @@ FacilityIndexPage = React.createClass({
 		//console.log(Meteor.users.find());
 	},
 
-	componentWillUnmount() {
-		var items = this.data.facilities;
-	    if(items) {
-	    	items.map(function(item){
-	    		if(item.isNew&&item.isNew()) {
-	        		item.destroy();
-	        	}
-	      	})
-	    }
+	handleSelect(facility) {
+		Session.selectFacility(facility);
 	},
-
 
 	render() {
 		var team = this.data.selectedTeam;
@@ -88,6 +81,7 @@ FacilityIndexPage = React.createClass({
 							detail:FacilityCard
 						}}
 						newItemCallback={team.canAddFacility()?this.createNew:null}
+						onSelect={this.handleSelect}
 					/>
 				</div>
 			</div>

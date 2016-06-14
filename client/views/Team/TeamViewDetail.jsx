@@ -118,17 +118,18 @@ TeamViewDetail = React.createClass({
                     content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
                         <ContactList 
                             items={members}
+                            group={team}
                             team={team}
                             onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
                         />
                     </div>
                 },
-                {
+                /*{
                     tab:<span id="services-tab"><span style={{color:"black"}}>Services</span></span>,
                     content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
 					   <ServicesSelector item={team} save={team.set.bind(team,"services")}/>
                     </div>
-                }
+                }*/
 			]}/> 
 
 		</div>

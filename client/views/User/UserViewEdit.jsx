@@ -2,6 +2,58 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+// so this should perhaps be included in the docmembers package??
+UserViewRelationEdit = React.createClass({
+
+    mixins: [ReactMeteorData],
+
+    getMeteorData() {
+    	//these is a problem with modals that is preventing props from propagating down the hierarchy
+    	//loading the group from the database is a workaround
+    	//a better solution is to detect and solve the problem with modals and props
+    	var group;
+    	if(this.props.group) {
+	    	var collectionName = this.props.group.collectionName;
+	    	var collection = ORM.collections[collectionName];
+    		group = collection.findOne(this.props.group._id);
+    	}
+    	return {
+    		group:group
+    	}
+    },
+
+	handleRoleChange(role) {
+		var member,group;
+		member = this.props.member;
+		group = this.data.group;
+		group.setMemberRole(member,role);
+		if(this.props.team) {
+			this.props.team.setMemberRole(member,role);
+		}
+	},
+
+	render() {
+		var member,group,team,relation,role;
+		member = this.props.member;
+		group = this.data.group;
+		if(group) {
+			relation = group.getMemberRelation(member);
+			if(relation) {
+				role = relation.role;
+				return (
+					<AutoInput.MDSelect 
+						items={["manager","staff"]} 
+						selectedItem={role}
+						onChange={this.handleRoleChange}
+						placeholder="Role"/>
+				)
+			}
+		}
+		return <div/>
+	}
+});
+
+
 UserProfile = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -118,6 +170,7 @@ UserProfile = React.createClass({
 		var viewer = Meteor.user();
 		user = this.state.item;
 		team = this.data.selectedTeam;
+		group = this.props.group;
 		if(user) {
 			profile = user.profile;
 		}
@@ -146,6 +199,13 @@ UserProfile = React.createClass({
                         {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}
 		           		<h2><span>{profile.name}</span></h2>
 				   	</div>
+
+		    		{team?
+		    			<div className="col-sm-12">
+		    				<UserViewRelationEdit member={user} group={group} team={team}/>
+		    			</div>
+		    		:null}
+
 				    <div className="col-sm-7">
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>

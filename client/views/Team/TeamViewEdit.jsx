@@ -13,32 +13,43 @@ TeamViewEdit = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var supplier,members;
+        //supplier is the team shown in the form
+        // terminology is a little confusing because they may in reality be a fm
+        // team is the team of the viewer (which may no the same as the team being viewed)
+
+    	var team, facility, supplier,members;
+        team = this.props.team?Teams.findOne(this.props.team._id):Session.getSelectedTeam();
+        facility = this.props.facility?Facilities.findOne(this.props.facility._id):null;
     	supplier = this.state.item?Teams.findOne(this.state.item._id):null;
 
-		var form1 = [
+		var form1, form2;
+
+        form1 = [
 			"name",
 			"abn",
 			"email",
 			"phone",
 			"phone2"
 		];
-		var form2 = [];
 
+        //add relevant fields to form 2 depending on whether type is fm or contractor
+        // would a switch statement be more readable?
+		form2 = [];
     	if(supplier) {
     		members = supplier.getMembers();
     		if(supplier.type=="fm") {
     			form2.push("address")
     			form2.push("defaultWorkOrderValue");
     		}
-    		else {
+    		else if(supplier.type=="contractor") {
     			form2.push("description");
     		}
     	}
+
     	return {
-    		user:Meteor.user(),
-    		team:this.props.team?Teams.findOne(this.props.team._id):Session.getSelectedTeam(),
-    		facility:this.props.facility,
+    		viewer:Meteor.user(),
+    		team:team,
+    		facility:facility,
     		supplier:supplier,
     		members:members,
     		form1:form1,
@@ -93,12 +104,12 @@ TeamViewEdit = React.createClass({
 
     startTour(tour) {
         var selectedTeam = Session.getSelectedTeam();
-        var user = this.data.user;
+        var viewer = this.data.viewer;
         var team = this.data.supplier;
-        if(team&&!this.tourStarted&&user&&team._id==selectedTeam._id) {
+        if(team&&!this.tourStarted&&viewer&&team._id==selectedTeam._id) {
             this.tourStarted = true;
             setTimeout(function(){
-                user.startTour(tour);
+                viewer.startTour(tour);
             },1000);
         }
     },
@@ -162,7 +173,7 @@ TeamViewEdit = React.createClass({
     },
 
 	render() {
-    	var team,supplier,members,schema;
+    	var team,supplier,owner,members,schema;
     	supplier = this.state.item;
     	members = this.data.members;
     	team = this.data.team;
@@ -187,10 +198,16 @@ TeamViewEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
             	<h2 style={{marginTop:"0px"}}>Edit team</h2>
+                {supplier.owner?<div>
+                    <b>Team owner:</b>
+                    <DocOwnerCard owner={supplier.owner} of={supplier}/>
+                </div>
+                :
+                null
+                }
                 <Stepper tabs={[
                     {
-                        tab:
-                            <span id="discussion-tab">Basic Details</span>,
+                        tab:<span id="discussion-tab">Basic Details</span>,
                         content:
                             <div className="row">
                                 <div className="col-sm-7">
@@ -206,25 +223,23 @@ TeamViewEdit = React.createClass({
                         instructions:
                             <div>Enter the basic account info here including your teams name, address and image.</div>
                     },{
-                        tab:
-                            <span id="documents-tab">Documents</span>,
+                        tab:<span id="documents-tab">Documents</span>,
                         content:
                             <AutoForm item={supplier} schema={schema} form={["documents"]}/>,
                         instructions:
                             <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
-                        tab:
-                            <span id="members-tab">Members</span>,
+                        tab:<span id="members-tab">Members</span>,
                         content:
                             <ContactList 
                                 items={members}
                                 team={supplier}
+                                group={supplier}
                                 onAdd={supplier.canInviteMember()?supplier.addMember.bind(supplier):null}/>,
                         instructions:
                             <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
-                        tab:
-                            <span id="services-required-tab">Services required</span>,
+                        tab:<span id="services-required-tab">Services required</span>,
                         content:
                             <div id="services-consumed" title="Services Consumed" collapsed={true}>
                                 <ServicesSelector item={supplier} field={"servicesRequired"}/>
@@ -232,8 +247,7 @@ TeamViewEdit = React.createClass({
                         instructions:
                             <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
-                        tab:
-                            <span id="services-provided-tab">Services provided</span>,
+                        tab:<span id="services-provided-tab">Services provided</span>,
                         content:
                             <div id="services-provided" title="Services Provided" collapsed={true}>
                                 <ServicesSelector item={supplier} save={supplier.set.bind(supplier,"services")}/>

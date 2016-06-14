@@ -12,10 +12,6 @@ Meteor.publish('users', function () {
     return Users.find({});
 });
 
-Meteor.publish('facilities',function(){
-	return Facilities.find();
-});
-
 Meteor.publish('suppliersForTeam',function(teamId,numSuppliers){
 	var team = Teams.findOne(teamId);
 	var supplierIds = [];

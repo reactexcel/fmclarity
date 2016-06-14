@@ -4,6 +4,14 @@ CHANGELOG.md
 **v1.3.17b**
 
 * Collections can now have data-returning helpers with authentication (will be used by facility card to determine which tabs are visible)
+* Selecting a facility on the portfolio screen changes the globally selected facility (on requests screen for example)
+* Fixed a problem that was causing facilities to delete at random
+* UserCard: Included "group relationship" info into user card (currently just for selecting role)
+* TeamEditView: Add document owner info
+* When a user has only one facility or supplier don't show navigation
+* When a user has only one left nav item - don't show left nav
+* Fixed portfolio tab visibility for all relevant roles
+* Fixed facility issue visibility for all roles
 
 **v1.3.16b**
 

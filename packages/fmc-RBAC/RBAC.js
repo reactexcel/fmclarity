@@ -2,6 +2,7 @@ RBAC = {
 	getRole:getRole,
 	method:method,
 	methods:methods,
+	mixins:mixins,
 	authenticate:authenticate,
 	validate:validate,
 	addMethod:addMethod,	
@@ -320,6 +321,21 @@ function methods(functions,collection){
 }
 
 /**
+ * @method methods
+ * @summary Packages multiple functions for RBAC
+ * @param {String} methodName The name of the method
+ * @param {Object} functions A map of objects, each containing the method, authentication and validation functions
+ * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
+ */
+function mixins(mixins,collection){
+	if(mixins&&mixins.length) {
+		mixins.map(function(mixinInitFunc){
+			mixinInitFunc(collection);
+		})
+	}
+}
+
+/**
  * @method error
  * @summary Throws or returns a specified Meteor.error depending on architecture. Shows a toast on client.
  * @param {String} error An error code
@@ -334,7 +350,7 @@ function error(error, reason, details) {
 	});
 	var meteorError = new Meteor.Error(error, reason, details);
 	if (Meteor.isClient) {
-		toastr.error(details,reason);
+		//toastr.error(details,reason);
 		return meteorError;
 	} else if (Meteor.isServer) {
 		throw meteorError;

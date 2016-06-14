@@ -132,7 +132,7 @@ Users.helpers({
   },
 
   getTeams:function() {
-    return Teams.find({"members._id":Meteor.userId()}).fetch();
+    return Teams.find({"members._id":Meteor.userId()},{sort:{name:1}}).fetch();
   },
   getTeam:function(i) {
     var teams = this.getTeams();

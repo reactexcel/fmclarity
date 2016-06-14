@@ -25,10 +25,20 @@ ORM = {
 					return this._schema;
 				}
 			},
+			// would like to move these to remove dependency of ORM on RBAC
+			// perhaps we should be going RBAC.Collection which then calls ORM.Collection
+			// ---because RBAC.Collection has dependence on ORM but not necc vv
 			methods:function(functions) {
-				// would like to get rid of this to remove dependency of ORM on RBAC
 				return RBAC.methods(functions,collection)
 			},
+			actions:function(functions) {
+				return RBAC.methods(functions,collection)
+			},
+			mixins:function(functions) {
+				return RBAC.mixins(functions,collection);
+			},
+			///////////////////////////////////////////////////////////////////////
+			//this has become redundant because we use RBAC to register all methods
 			registerMethod:function(functionName,method){
 				var methodName = name+'.'+functionName;
 				var methods = {};
@@ -43,7 +53,11 @@ ORM = {
 					});
 				}
 				collection.helpers(helpers);
-			},			
+			},
+			//I think I'd prefer this to be ORM.create(collection,item)
+			//it looks a bit weird when we do shit like...
+			//  var team = Teams.findOne(blah._id)
+			//  var anotherNewTeam = team.create({params});
 			create:function(item) {
 				var newItem = createNewItemUsingSchema(this._schema,item);
 				var id = collection.insert(newItem);
@@ -210,17 +224,25 @@ function createCommonDocumentMethods(collection) {
 
 		//document-owners?
 		//or just added to custom?
+		//should be in RBAC in either case
 		getOwner:function() {
 			if(this.owner) {
 				return Users.findOne(this.owner._id);
 			}
 		},
 		setOwner:function(owner) {
-			this.owner = {
+			this.save({owner:{
 				_id:owner._id,
 				name:owner.getName()
-	    	}
-			this.save();
+	    	}});
+		},
+		ownerIs:function(member) {
+			if(this.owner&&member) {
+				return this.owner._id == member._id;
+			}
+		},
+		clearOwner:function() {
+			this.save({owner:null});
 		}
 	});
 }

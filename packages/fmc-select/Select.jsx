@@ -80,13 +80,13 @@ SuperSelect = React.createClass({
                     	</li>
 	                :null}
 
-                    {items.map(function(i,idx){
+                    {(items&&items.length)?items.map(function(i,idx){
 						return (
 	                        <li key={idx} className="dropdown-menu-item" onClick={component.handleChange.bind(null,i)}>
 	                        	<Card item={i} />
 	                        </li>
 						)                    	
-                    })}
+                    }):null}
                     {this.props.moreItems?
                     	<li onClick={this.toggleMore} style={{cursor:"pointer"}} className="browse-button">{this.state.more?<span>Less</span>:<span>More</span>}</li>
                     :null}
