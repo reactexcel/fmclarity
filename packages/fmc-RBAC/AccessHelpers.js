@@ -8,9 +8,9 @@ RBAC.lib = {
 }
 
 function create(item) {
-	//I don't think so bucko
-	//it's only like this because we need to use the schema to create
-	return this.create(item);
+	var newItem = this.createNewItemUsingSchema(item);
+	var newItemId = this.insert(newItem);
+	return this.findOne(newItemId);
 }
 
 function save(item,extension) {
@@ -41,4 +41,24 @@ function setItem(collection,fieldName) {
 		var updatedItem = collection.findOne(item._id);
 		return item;
 	}	
+}
+
+AccessHelpers = {
+  	hasOne:function(opts) {
+    	var collection = opts.collection;
+    	var fieldName = opts.fieldName;
+    	return function(request){
+	      	var item,q;
+	      	item = request[fieldName];
+	      	if(item) {
+	        	q = {$or:[
+	          		{_id:item._id},
+	          		{name:item._name}
+	        	]}
+	      	}
+	      	if(q) {
+	        	return collection.findOne(q);
+	      	}
+		}
+	}
 }

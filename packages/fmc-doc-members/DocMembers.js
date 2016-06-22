@@ -147,21 +147,22 @@ function getMembers(collection,fieldName) {
 	    var members = item[fieldName];
 
 	    members?members.map(function(m){
-	    	if(!filter||!m.role||filter.role==m.role) {
-	    		if(m._id) {
-			    	ids.push(m._id);
-			    }
-		    	else if(m.name) {
-		    		names.push(m.name);
-		    	}
-	    	}
+ 			if(!filter||!m.role||filter.role==m.role||(filter.role.$in&&_.contains(filter.role.$in,m.role))) {
+		    	if(m._id) {
+				    ids.push(m._id);
+				}
+				else if(m.name) {
+					names.push(m.name);
+				}
+			}
 	    }):null;
-	    //console.log([ids,names]);
-	    var items = collection.find({$or:[
+
+		var q = {$or:[
 	    	{_id:{$in:ids}},
 	    	{name:{$in:names}}
-	    ]},{sort:{name:1,_id:1}}).fetch();
-	    //console.log(items);
+	    ]};
+
+	    var items = collection.find(q,{sort:{name:1,_id:1}}).fetch();
 	    return items;
 	}
 }

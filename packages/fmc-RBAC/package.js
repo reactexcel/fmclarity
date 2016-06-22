@@ -22,6 +22,7 @@ Package.onUse(function(api) {
 
 	api.export([
 		'RBAC',
-		'AuthHelpers'
+		'AuthHelpers',
+		'AccessHelpers'
 	]);
 });

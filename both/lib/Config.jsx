@@ -23,7 +23,13 @@ if(Meteor.isServer) {
 //I kind of feel like a lot of this would be better in the database
 
 
-Config = {};
+Config = {
+	getModules:function(user,team) {
+		var type = team&&team.type=="fm"?"fm":"contractor";
+		var role = team&&user?RBAC.getRole(user,team):"staff";
+		return Config.modules[type][role];
+	}
+}
 
 // a bit more configuration here wouldn't go astray
 //eg:

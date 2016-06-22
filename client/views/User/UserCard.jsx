@@ -19,9 +19,9 @@ UserCard = React.createClass({
 	getMenu() {
 		var component = this;
 		var user = this.props.item;
-		var selectedTeam = this.props.team;
-		var selectedFacility = this.props.facility;
-		var menu = UserActions.getMenu(user,{team:selectedTeam,facility:selectedFacility});
+		var team = this.props.team;
+		var group = this.props.group;
+		var menu = UserActions.getMenu(user,{team:team,facility:group});
 		if(user&&user.canSave()) {
 			menu.unshift({
 				label:this.state.edit?"View as card":"Edit",
@@ -39,14 +39,14 @@ UserCard = React.createClass({
 		return (
 			<div>
 				{(!user||user.canSave())&&this.state.edit?
-					<UserProfile 
+					<UserViewEdit 
 						item={user} 
 						team={this.props.team}
-						facility={this.props.facility}
+						role={this.props.role}
 						group={this.props.group}
 						onChange={this.props.onChange}/>
 				:
-					<ContactSummary item={user} role={this.props.role}/>
+					<UserViewDetail item={user} role={this.props.role}/>
 				}
             	<ActionsMenu items={menu} />
 			</div>

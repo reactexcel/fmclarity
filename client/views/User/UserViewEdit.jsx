@@ -5,27 +5,10 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 // so this should perhaps be included in the docmembers package??
 UserViewRelationEdit = React.createClass({
 
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-    	//these is a problem with modals that is preventing props from propagating down the hierarchy
-    	//loading the group from the database is a workaround
-    	//a better solution is to detect and solve the problem with modals and props
-    	var group;
-    	if(this.props.group) {
-	    	var collectionName = this.props.group.collectionName;
-	    	var collection = ORM.collections[collectionName];
-    		group = collection.findOne(this.props.group._id);
-    	}
-    	return {
-    		group:group
-    	}
-    },
-
 	handleRoleChange(role) {
 		var member,group;
 		member = this.props.member;
-		group = this.data.group;
+		group = this.props.group;
 		group.setMemberRole(member,role);
 		if(this.props.team) {
 			this.props.team.setMemberRole(member,role);
@@ -35,14 +18,14 @@ UserViewRelationEdit = React.createClass({
 	render() {
 		var member,group,team,relation,role;
 		member = this.props.member;
-		group = this.data.group;
+		group = this.props.group;
 		if(group) {
 			relation = group.getMemberRelation(member);
 			if(relation) {
 				role = relation.role;
 				return (
 					<AutoInput.MDSelect 
-						items={["manager","staff"]} 
+						items={["manager","staff","tenant"]} 
 						selectedItem={role}
 						onChange={this.handleRoleChange}
 						placeholder="Role"/>
@@ -54,14 +37,31 @@ UserViewRelationEdit = React.createClass({
 });
 
 
-UserProfile = React.createClass({
+UserViewEdit = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
+    	var group,role,member;
+    	role = this.props.newMemberRole;
+    	member = this.props.member;
+    	if(this.props.group) {
+	    	var collectionName = this.props.group.collectionName;
+	    	var collection = ORM.collections[collectionName];
+    		group = collection.findOne(this.props.group._id);
+    		if(group) {
+    			relation = group.getMemberRelation(member);
+    			//if(relation) {
+	    		//	role = relation.role;
+	    		//}
+    		}
+    	}
     	return {
+    		group:group,
+    		relation:relation,
+    		role:role,
     		user:this.state.item,
-    		selectedTeam:this.props.team||Session.getSelectedTeam(),
+    		team:this.props.team||Session.getSelectedTeam(),
     	}
     },
 
@@ -113,9 +113,11 @@ UserProfile = React.createClass({
 
 	handleInvite(event) {
     	event.preventDefault();
-    	var team,input,email,regex,component;
+    	var team,group,role,input,email,regex,component;
     	component = this;
-		team = this.data.selectedTeam;
+		team = this.data.team;
+		group = this.data.group;
+		role = this.props.role;
     	input = this.refs.invitationEmail;
     	email = input.value;
     	regex = /.+@.+\..+/i
@@ -126,7 +128,7 @@ UserProfile = React.createClass({
             input.value = '';
             var creatorsTeam = Session.getSelectedTeam();
             team.inviteMember(email, {
-            	role:component.props.role,
+            	role:role,
             	owner:{
             		type:'team',
             		_id:creatorsTeam._id,
@@ -140,8 +142,9 @@ UserProfile = React.createClass({
             		});	    
             	}
             	component.setItem(user);
-            	if(component.props.onChange) {
-            		component.props.onChange(user);
+            	console.log(role);
+            	if(group&&group.canAddMember()) {
+            		group.addMember(user,{role:role});
             	}
             });
         }
@@ -169,8 +172,8 @@ UserProfile = React.createClass({
 		var user, profile, team;
 		var viewer = Meteor.user();
 		user = this.state.item;
-		team = this.data.selectedTeam;
-		group = this.props.group;
+		team = this.data.team;
+		group = this.data.group;
 		if(user) {
 			profile = user.profile;
 		}

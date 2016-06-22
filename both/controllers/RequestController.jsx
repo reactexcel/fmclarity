@@ -126,6 +126,30 @@ Issues.methods({
     },
     method:setAssignee
   },
+
+  getFacility:{
+    authentication:true,
+    helper:AccessHelpers.hasOne({
+      collection:Facilities,
+      fieldName:"facility"
+    })
+  },
+
+
+  getTeam:{
+    authentication:true,
+    helper:AccessHelpers.hasOne({
+      collection:Teams,
+      fieldName:"team"
+    })
+  },
+
+  getArea:{
+    authentication:true,
+    helper:function(team) {
+      return team.area;
+    }
+  }
 })
 
 function setArea(request,area) {

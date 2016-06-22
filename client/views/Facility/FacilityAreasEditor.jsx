@@ -104,10 +104,11 @@ FacilityAreasSelectorInner = React.createClass({
         //refact - create a FacilityAreaSelectorRow class nad use that in these three instances below
     	var component = this;
     	var facility = this.state.facility;
-    	var areas = this.state.selection[0].children;
+        var selection = this.state.selection;
+    	var areas = selection[0].children;
     	var editable = facility.canSetAreas();
-    	var selectedArea = this.state.selection[1]||{};
-    	var selectedSubArea = this.state.selection[2]||{};
+    	var selectedArea = selection[1]||{};
+    	var selectedSubArea = selection[2]||{};
     	return (
 	    	<div className="areas-selector">
 	    		<div className="areas-selector-col col-md-4">
@@ -152,7 +153,7 @@ FacilityAreasSelectorInner = React.createClass({
 			    			)
 		    			}):null
 		    		}
-		    		{editable?
+		    		{editable&&selection[1]?
 			    	<div onClick={component.addItem.bind(component,1)} className="areas-selector-row">
 						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 				        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
@@ -177,7 +178,7 @@ FacilityAreasSelectorInner = React.createClass({
 			    			)
 		    			}):null
 		    		}
-		    		{editable?
+		    		{editable&&selection[2]?
 			    	<div onClick={component.addItem.bind(component,2)} className="areas-selector-row">
 						<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 				        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>

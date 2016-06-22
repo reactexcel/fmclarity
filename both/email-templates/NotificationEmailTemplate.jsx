@@ -16,6 +16,8 @@ EmailMessageView = React.createClass({
             owner = message.getOwner();
             target = message.getTarget();
             if(target&&target.getFacility) {
+                //I have a concern that this could be blocked by RBAC
+                //if the user sending the email does not have access
                 facility = target.getFacility();
             }
         }

@@ -13,6 +13,7 @@ fmc:doc-attachments
 fmc:doc-members
 fmc:doc-messages
 fmc:login-tokens
+fmc:doc-owners
 
 ############################
 # FMC UI

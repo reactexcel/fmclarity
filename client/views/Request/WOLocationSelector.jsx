@@ -49,7 +49,7 @@ WOLocationSelector = React.createClass({
                             <SuperSelect 
                                 readOnly={!request.canSetFacility()}
                                 items={this.data.teamFacilities} 
-                                itemView={ContactViewName}
+                                itemView={NameCard}
                                 onChange={request.setFacility.bind(request)}
                             >
                                 <span style={{padding:0,lineHeight:1}} className="issue-nav-btn btn btn-flat btn-sm">{!facility?"Select":""} facility</span>
@@ -67,7 +67,7 @@ WOLocationSelector = React.createClass({
                         <div className="col-md-12">
                             <SuperSelect 
                                 readOnly={!request.canSetArea()}
-                                itemView={ContactViewName}
+                                itemView={NameCard}
                                 items={facilityAreas} 
                                 onChange={request.setArea.bind(request)}
                             >
@@ -87,7 +87,7 @@ WOLocationSelector = React.createClass({
                         <div className="col-md-12">
                             <SuperSelect 
                                 readOnly={!request.canSetSubarea()}
-                                itemView={ContactViewName}
+                                itemView={NameCard}
                                 items={request.level.children}
                                 onChange={request.setSubarea.bind(request)}
                             >
@@ -107,7 +107,7 @@ WOLocationSelector = React.createClass({
                         <div className="col-md-12">
                         <SuperSelect 
                             readOnly={!request.canSetAreaIdentifier()}
-                            itemView={ContactViewName}
+                            itemView={NameCard}
                             items={request.area.children} 
                             onChange={request.setAreaIdentifier.bind(request)}
                         >

@@ -9,13 +9,21 @@ Package.describe({
 Package.onUse(function(api) { 
 	api.use([
 		'fmc:rbac',
+		'ecmascript',
+		'react-meteor-data',
 	]);
 
 	api.addFiles([
-		'DocMembers.js'
+		'DocMembers.js',
+		'views/Contact.css',
+		'views/ContactList.jsx',
+		'views/ContactCard.jsx'
 	]);
 
 	api.export([
-		'DocMembers'
+		'DocMembers',
+		'ContactAvatarSmall',
+		'ContactCard',
+		'ContactList'
 	]);
 });

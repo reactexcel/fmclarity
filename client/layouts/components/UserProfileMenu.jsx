@@ -28,6 +28,17 @@ UserProfileMenu = React.createClass({
         Meteor.user().selectTeam(team);
     },
 
+    createTeam() {
+        Meteor.call('Teams.create',{},function(err,response){
+            console.log(response);
+            var team = Teams.findOne(response);
+            console.log(team);
+            Modal.show({
+                content:<TeamViewEdit item={team}/>
+            })
+        })
+    },
+
     resetTestData() {
         Meteor.call("resetTestData");
     },
@@ -55,7 +66,7 @@ UserProfileMenu = React.createClass({
                 {this.data.teams&&this.data.teams.length?<li className="divider"></li>:null}
                 {this.data.teams&&this.data.teams.length?this.data.teams.map(function(team){
                     return (
-                        <li key={team._id} className={team.eq(selectedTeam)?"active":''} onClick={component.selectTeam.bind(component,team)}>
+                        <li key={team._id} className={(team&&selectedTeam&&team._id==selectedTeam._id)?"active":''} onClick={component.selectTeam.bind(component,team)}>
                             <a>{team.name}</a>
                         </li>
                     )
@@ -75,12 +86,23 @@ UserProfileMenu = React.createClass({
 
                 }
 
-                {Meteor.user().role=="dev"?<li>
+                {Meteor.user().emails[0].address=="mrleokeith@gmail.com"?
+                <li>
                     <a href={FlowRouter.path('admin')}>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
                         <span className="nav-label">Admin Tools</span>
                     </a>
-                </li>:null}
+                </li>
+                :null}
+
+                {Meteor.user().emails[0].address=="mrleokeith@gmail.com"?
+                <li>
+                    <a onClick={this.createTeam}>
+                        <i className="fa fa-plus"></i>&nbsp;&nbsp;
+                        <span className="nav-label">Create team</span>
+                    </a>
+                </li>
+                :null}
 
                 <li>
                     <a href={FlowRouter.path('logout')}>

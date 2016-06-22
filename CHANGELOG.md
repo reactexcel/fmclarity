@@ -1,6 +1,17 @@
 CHANGELOG.md
 ============
 
+**v1.3.18b**
+
+* Added new "services provided editor" to team tab and stepper
+* Moved export button to prevent overlap with fab
+* Moved tenants back into main members list for facility
+* Created filters functionality for members contact lists that can be used for tenants
+* Facilities now show owner information
+* Refact: Autoform no longer requires schema to be sent to it (reads from item)
+* Fixed a problem that was causing members to not be added to teams when editing in modal view
+* Supplier search is case insensitive
+
 **v1.3.17b**
 
 * Collections can now have data-returning helpers with authentication (will be used by facility card to determine which tabs are visible)

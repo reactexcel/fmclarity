@@ -31,7 +31,7 @@ FacilityFilter = React.createClass({
         return (
             <SuperSelect 
                 items={this.data.facilities} 
-                itemView={ContactViewName}
+                itemView={NameCard}
                 onChange={this.selectFacility}
                 clearOption={{name:"All facilities"}}
             >

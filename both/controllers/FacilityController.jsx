@@ -33,9 +33,6 @@ Facilities.mixins([
     fieldName:"members",
     authentication:AuthHelpers.managerOfRelatedTeam,
   },{
-    fieldName:"tenants",
-    authentication:AuthHelpers.managerOfRelatedTeam,
-  },{
     fieldName:"suppliers",
     authentication:AuthHelpers.managerOfRelatedTeam,
     /*
@@ -104,7 +101,7 @@ Facilities.actions({
       })
       return services;
     }
-  },  
+  },
   setServicesRequired:{
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:function(facility,servicesRequired){

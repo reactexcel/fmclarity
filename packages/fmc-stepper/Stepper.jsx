@@ -50,7 +50,7 @@ Stepper = React.createClass({
                                 </div>
                                 {active==idx?
                                 	<div className="ipso-stepso-instructions">
-                                		{i.instructions}
+                                		{i.instructions||i.guide}
                                 	</div>
                             	    :null
                             	}

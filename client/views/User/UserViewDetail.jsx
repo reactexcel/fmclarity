@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
-ContactSummary = React.createClass({
+UserViewDetail = React.createClass({
 	render() {
 		var contact, profile, availableServices;
 	    contact = this.props.item;

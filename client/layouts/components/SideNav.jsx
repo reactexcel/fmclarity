@@ -10,13 +10,10 @@ Navigation = React.createClass({
 
     getMeteorData() {
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var user,team,role,modules;
-        user = Meteor.user();
+        var user,team,modules;
         team = Session.getSelectedTeam();
-        if(team) {
-            role = team.getMemberRole(user);
-            modules = Config.modules[team.type][role];
-        }
+        user = Meteor.user();
+        modules = Config.getModules(user,team); //should be user.getModules(team)
 
         return {
             team:team,

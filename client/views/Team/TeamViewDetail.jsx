@@ -4,17 +4,15 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 TeamViewDetail = React.createClass({
 
-
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var team, messages, members, suppliers, services, primaryContact, insuranceDocs;
+    	var team, messages, suppliers, services, primaryContact, insuranceDocs;
         Meteor.subscribe('contractors');
         Meteor.subscribe('teamsAndFacilitiesForUser');
         team = this.props.item;
         if(team) {
             Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate());
-            members = team.getMembers();
             suppliers = team.getSuppliers();
             primaryContact = team.getPrimaryContact();
             messages = team.getMessages();
@@ -26,16 +24,9 @@ TeamViewDetail = React.createClass({
         	services: services,
         	primaryContact: primaryContact,
             suppliers: suppliers,
-            suppliers: suppliers,
-            members: members,
             messages: messages,
             insuranceDocs:insuranceDocs
-//            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
         }
-    },
-
-    addMember(ext,member) {
-        this.data.team.addMember(member,ext);
     },
 
 	render() {
@@ -46,7 +37,6 @@ TeamViewDetail = React.createClass({
 
 	    // import fields
 	    var messages = this.data.messages;
-	    var members = this.data.members;
 	    var suppliers = this.data.suppliers;
 	    var primaryContact = this.data.primaryContact;
 	    var insuranceDocs = this.data.insuranceDocs;
@@ -58,7 +48,7 @@ TeamViewDetail = React.createClass({
 	    	contactName = primaryContact.getName();
 	    }
 
-	    // calculate insurance expiry
+	    // calculate insurance expiry (calculations should be going in getMeteorData)
 	    var insuranceExpiry;
 	    if(insuranceDocs&&insuranceDocs.length) {
 	    	var primaryDoc = insuranceDocs[0];
@@ -71,6 +61,7 @@ TeamViewDetail = React.createClass({
 
 	    return (
 	    <div>
+	    	{/*this should be in sub-component*/}
 	    	<div className="business-card">{/*should perhaps be team-card?*/}
 				<div className="contact-thumbnail pull-left">
 					{thumb?
@@ -90,7 +81,7 @@ TeamViewDetail = React.createClass({
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 					</div>
 
-					{availableServices?
+					{/*this should def be own component*/availableServices&&availableServices.length?
 
 					availableServices.map(function(service,index){
 						return <span key={service.name}>{index?' | ':''}{service.name}</span>
@@ -102,35 +93,22 @@ TeamViewDetail = React.createClass({
 
 			<IpsoTabso tabs={[
 				{
-					tab:<span id="discussion-tab"><span style={{color:"black"}}>Updates</span></span>,
-					content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
-						<Inbox for={team} truncate={true}/>
-					</div>
-				},
-                {
-                    tab:<span id="documents-tab"><span style={{color:"black"}}>Documents</span></span>,
-                    content:<div>
-                        <AutoForm item={team} schema={Teams.schema()} form={["documents"]}/>
-                    </div>
-                },
-                {
-                    tab:<span id="personnel-tab"><span style={{color:"black"}}>Personnel</span></span>,
-                    content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
-                        <ContactList 
-                            items={members}
-                            group={team}
-                            team={team}
-                            onAdd={team&&team.canInviteMember()?this.addMember.bind(null,{role:"staff"}):null}
-                        />
-                    </div>
-                },
-                /*{
-                    tab:<span id="services-tab"><span style={{color:"black"}}>Services</span></span>,
-                    content:<div style={{maxHeight:"600px",overflowY:"auto"}}>
-					   <ServicesSelector item={team} save={team.set.bind(team,"services")}/>
-                    </div>
-                }*/
-			]}/> 
+					tab: 		<span id="discussion-tab"><span style={{color:"black"}}>Updates</span></span>,
+					content: 	<Inbox for={team} truncate={true}/>
+				},{
+                	hide: 		!team.canAddDocument(),
+                    tab: 		<span id="documents-tab"><span style={{color:"black"}}>Documents</span></span>,
+                    content: 	<AutoForm item={team} form={["documents"]}/>
+                },{
+                	hide: 		!team.canAddMember(),
+                    tab: 		<span id="personnel-tab"><span style={{color:"black"}}>Personnel</span></span>,
+                    content: 	<ContactList group={team} team={team}/>
+                },{
+                	hide: 		!team.canSetServicesProvided(),
+                    tab: 		<span id="services-tab"><span style={{color:"black"}}>Services</span></span>,
+                    content: 	<ServicesProvidedEditor item={team} save={team.setServicesProvided.bind(team)}/>
+            	}
+            ]}/> 
 
 		</div>
 		)

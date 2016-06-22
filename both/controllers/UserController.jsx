@@ -7,7 +7,7 @@ DocThumb.register(Users,{
 
 DocMessages.register(Meteor.users);
 
-Users.methods({
+Users.actions({
   create:{
     authentication:true,
     method:createUser
@@ -20,6 +20,15 @@ Users.methods({
     authentication:true,//AuthHelpers.userIsManagerofMembersTeam,
     method:RBAC.lib.destroy.bind(Users)
   },
+  getTeams:{
+    authentication:true,
+    helper:function(user){
+      return Teams.find({$or:[
+        {"members._id":user._id},
+        {"owner._id":user._id}
+      ]}).fetch()
+    }
+  }
 })
 
 function createUser(item,password) {
@@ -131,9 +140,7 @@ Users.helpers({
     return [];
   },
 
-  getTeams:function() {
-    return Teams.find({"members._id":Meteor.userId()},{sort:{name:1}}).fetch();
-  },
+
   getTeam:function(i) {
     var teams = this.getTeams();
     return teams[i];
@@ -177,9 +184,9 @@ if(Meteor.isClient) {
     return Session.get('selectedTeamRole');
   }
   Session.getSelectedTeam = function() {
-      var selectedTeamQuery = Session.get('selectedTeam');
-      if(selectedTeamQuery) {
-        return Teams.findOne(selectedTeamQuery._id);
+    var selectedTeamQuery = Session.get('selectedTeam');
+    if(selectedTeamQuery) {
+      return Teams.findOne(selectedTeamQuery._id);
     }
   }
   Session.selectTeam = function(team) {

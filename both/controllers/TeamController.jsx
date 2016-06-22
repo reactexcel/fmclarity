@@ -1,69 +1,49 @@
-// this is the controller
-
-
 Teams.schema(TeamSchema);
 
-DocThumb.register(Teams,{defaultThumbUrl:0});
-
-DocMembers.register(Teams,{
-  fieldName:"members",
-  authentication:AuthHelpers.managerOrOwner
-});
-
-DocMembers.register(Teams,{
-  fieldName:"suppliers",
-  authentication:AuthHelpers.managerOrOwner
-});
-
-DocMessages.register(Teams,{
-  getInboxName() {
-    return this.getName();
-  },
-  getWatchers:function() {
-    return this.getMembers({role:"manager"});
-    var members = this.getMembers({role:"manager"});
-    var watchers = [];
-    if(members&&members.length) {
-      members.map(function(m){
-        watchers.push({
-          role:"manager",
-          watcher:m
-        });
-      })
+Teams.mixins([
+  DocThumb.config({
+    defaultThumbUrl:0
+  }),
+  DocAttachments.config({
+    authentication:AuthHelpers.managerOrOwner,    
+  }),
+  DocMembers.config([{
+    fieldName:"members",
+    authentication:AuthHelpers.managerOrOwner,
+  },,{
+    fieldName:"suppliers",
+    authentication:AuthHelpers.managerOrOwner,
+  }]),
+  DocMessages.config({
+    getInboxName:function(){
+      return this.getName();
+    },
+    getWatchers:function() {
+      return this.getMembers({role:"manager"});
+      var members = this.getMembers({role:"manager"});
+      var watchers = [];
+      if(members&&members.length) {
+        members.map(function(m){
+          watchers.push({
+            role:"manager",
+            watcher:m
+          });
+        })
+      }
+      return watchers;
     }
-    return watchers;
-  }  
-});
-
-DocAttachments.register(Teams);
+  })  
+]);
 
 Teams.methods({
   create:{
     authentication:true,
     method:RBAC.lib.create.bind(Teams)
   },
-  /*read:{
-    //or should we use something that can be passed to subscription?
-    Meteor.publish("userData", function () {
-      return Meteor.users.find({_id: this.userId},
-        {fields: {'other': 1, 'things': 1}});
-    });
-
-    fields(role,user,query){
-      if(role=="unauthorised") {
-        return {
-          sensitiveField1:0,
-          sensitiveField2:0
-        }
-      }
-    }
-  },*/
-  //update?
   save:{
     authentication:AuthHelpers.managerOrOwner,
     method:RBAC.lib.save.bind(Teams)
   },
-  //delete?
   destroy:{
     authentication:false,
     method:RBAC.lib.destroy.bind(Teams)
@@ -95,23 +75,51 @@ Teams.methods({
   */
 
   addFacility:{
-    authentication:AuthHelpers.manager,
+    authentication:AuthHelpers.managerOrOwner,
     method:addFacility,
   },
   addFacilities:{
-    authentication:AuthHelpers.manager,
+    authentication:AuthHelpers.managerOrOwner,
     method:addFacilities,
   },
   destroyFacility:{
-    authentication:AuthHelpers.manager,
+    authentication:AuthHelpers.managerOrOwner,
     method:destroyFacility,
   },
   editFacility:{
-    authentication:AuthHelpers.manager,
+    authentication:AuthHelpers.managerOrOwner,
   },
   sendMemberInvite:{
     authentication:true,
     method:sendMemberInvite
+  },
+  setServicesRequired:{
+    authentication:AuthHelpers.managerOrOwner,
+    method:function(team,servicesRequired){
+      Teams.update(team._id,{$set:{servicesRequired:servicesRequired}});
+    }
+  },
+  setServicesProvided:{
+    authentication:AuthHelpers.managerOrOwner,
+    method:function(team,services){
+      Teams.update(team._id,{$set:{services:services}});
+    }
+  },
+  getAvailableServices:{
+    authentication:true,
+    helper:function(team,parent) {
+      var services = parent?parent.children:team.services;
+      var availableServices = [];
+      if(!services) {
+        return;
+      }
+      services.map(function(service){
+        if(service&&service.active) {
+          availableServices.push(service);
+        }
+      });
+      return availableServices;
+    }
   }
 });
 
@@ -145,14 +153,14 @@ function getPrimaryContact(team) {
   }
 }
 
-function inviteSupplier(team,query,ext) {
+function inviteSupplier(team,searchName,ext) {
   var supplier;
-  supplier = Teams.findOne(query);
+  searchName = searchName.trim();
+  supplier = Teams.findOne({name:{$regex:searchName,$options:'i'}});
   if(!supplier) {
     supplier = Meteor.call("Teams.create",{
       type:"contractor",
-      email:query.email,
-      name:query.name,
+      name:searchName,
       owner:{
         _id:team._id,
         name:team.name,
@@ -232,11 +240,12 @@ function sendMemberInvite(team,member) {
 
 function addFacility(team,facility) {
   facility = facility||{};
-  facility.team = {
+  var newFacility = Facilities.createNewItemUsingSchema({team:{
     _id:team._id,
     name:team.name    
-  }
-  return Facilities.create(facility);
+  }});
+  var id = Facilities.insert(newFacility);
+  return Facilities.findOne(id);
 }
 
 function addFacilities(team,facilities) {
@@ -296,20 +305,6 @@ Teams.helpers({
     Teams.update({_id:this._id},{$inc:{"counters.WO":1}});
     //this.save();
     return this.counters.WO;
-  },
-
-  getAvailableServices(parent) {
-    var services = parent?parent.children:this.services;
-    var availableServices = [];
-    if(!services) {
-      return;
-    }
-    services.map(function(service){
-      if(service&&service.active) {
-        availableServices.push(service);
-      }
-    });
-    return availableServices;
   },
 
   getManagerFacilities() {

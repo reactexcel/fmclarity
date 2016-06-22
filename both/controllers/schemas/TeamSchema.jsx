@@ -12,7 +12,13 @@ TeamSchema = {
 
   type: {
     type: String,
-    label: "Account type",
+    label:"Account type",
+    input:"MDSelect",
+    options:{items:["fm","contractor"]},
+    condition(item) {
+      var user = Meteor.user();
+      return user.emails[0].address="mrleokeith@gmail.com";
+    }
   },
 
   name: {
@@ -44,6 +50,9 @@ TeamSchema = {
   description: {
     label: "Description",
     input:"mdtextarea",
+    condition:function(item) {
+      return item.type=="contractor"
+    }
   },
 
   attachments: {
@@ -66,7 +75,11 @@ TeamSchema = {
   defaultWorkOrderValue: {
     type: Number,
     label: "Default value for work orders",
-    defaultValue:500
+    defaultValue:500,
+    condition:function(item) {
+      return item.type=="fm"
+    }
+
   },
   services : {
     type: [String],

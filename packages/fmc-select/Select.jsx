@@ -10,6 +10,23 @@ DumbCard = React.createClass({
 	}
 })
 
+NameCard = React.createClass({
+	render() {
+		var contact = this.props.item || {};
+		var name;
+		if(_.isString(contact)) {
+			name = contact;
+		}
+		else {
+			name = contact.getName?contact.getName():contact.name;
+		}
+
+		return (
+			<span>{name}</span>
+		)
+	}
+})
+
 SuperSelect = React.createClass({
 
 	getInitialState() {

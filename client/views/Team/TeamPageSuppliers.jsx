@@ -60,7 +60,7 @@ SupplierIndexPage = React.createClass({
                         numCols={1}
                         navWidth={4}
         				itemView={{
-        					summary:Contact2LineWithAvatar,
+        					summary:ContactCard,
         					detail:TeamCard
         				}}
         			/>

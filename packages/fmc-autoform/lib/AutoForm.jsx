@@ -63,8 +63,12 @@ AutoForm = React.createClass({
         this.saveItem();
     },
 
+    getSchema() {
+    	return this.props.schema||this.props.item.getSchema();
+    },
+
     saveItem() {
-    	var schema = this.props.schema;
+	   	var schema = this.getSchema();
     	var originalItem = this.props.item;
     	var field = this.props.field;
     	var save = this.props.save;
@@ -94,7 +98,7 @@ AutoForm = React.createClass({
 		var component = this;
 		var item = this.state.item;
 		var id = this.props.keyField||item._id;
-		var schema = this.props.schema;
+	   	var schema = this.getSchema();
 		var form = this.props.form||Object.keys(schema);
 		
 		return (

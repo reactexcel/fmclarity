@@ -31,7 +31,7 @@ ClientFilter = React.createClass({
         return (
             <SuperSelect 
                 items={this.data.clients} 
-                itemView={ContactViewName}
+                itemView={NameCard}
                 onChange={this.selectClient}
                 clearOption={{name:"All clients"}}
             >

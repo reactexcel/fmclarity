@@ -33,8 +33,8 @@ CloseDetailsSchema = {
     },
     furtherPriority : {
       label:"Priority",
-      input:"Select",
-      options:["Scheduled","Standard","Urgent","Critical"],
+      input:"MDSelect",
+      options:{items:["Scheduled","Standard","Urgent","Critical"]},
       condition(item) {
         return item&&(item.furtherWorkRequired == true);
       },

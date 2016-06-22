@@ -140,6 +140,21 @@
   box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
 }
 
+.fab-button-2 {
+  position:fixed;
+  height:40px;
+  width:40px;
+  opacity:1;
+  background-color: #3ca773;
+  color:#fff;
+  right:25px;
+  bottom:90px;
+  z-index:1499;
+  font-size:20px;
+  transition:opacity 0.1s;
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+}
+
 .new-card-button:hover {
   opacity:0.8;
 }

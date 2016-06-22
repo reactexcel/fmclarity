@@ -33,7 +33,7 @@ Meteor.methods({
 
   //no reason why this can't be Messages.sendEmail hey??
   'Messages.sendEmail':function(user,message) {
-    if(Meteor.isServer) {Meteor.defer(function(){
+    if(Meteor.isServer) {
       //check([to, from, subject, text], [String])      
 
       /*
@@ -65,7 +65,10 @@ Meteor.methods({
               subject:subject,
               html:html
           }
-          Email.send(email);
+
+          Meteor.defer(function(){
+            Email.send(email);
+          });
 
           devMsg.from = "FM Outgoing Message Alert <no-reply@fmclarity.com>";
           devMsg.subject = "["+to+"]"+subject;
@@ -86,10 +89,12 @@ Meteor.methods({
             JSON.stringify(message)+"<br/>"
         }
 
-        console.log({"sending to":to});
-
-        Email.send(devMsg);
+        Meteor.defer(function(){
+          console.log({"sending to":to});
+          Email.send(devMsg);          
+        });
+        
       }
-    })}
+    }
   }
 })
