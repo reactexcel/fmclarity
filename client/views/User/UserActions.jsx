@@ -31,23 +31,9 @@ function addRoleBasedActions(menu,user,team) {
 			})
 		}
 
-		if(team.canSetMemberRole&&team.canSetMemberRole(user)) {
-			var role = team.getMemberRole(user);
-			var newRole = (role=='manager')?'staff':'manager';
-			menu.push({
-				label:((newRole=='manager')?'Promote to manager':'Demote to staff')+(' of '+teamName),
-				shouldConfirm:true,
-				action(){
-					team.setMemberRole(user,newRole);
-					Modal.hide();
-				}
-			})
-		}
-
 		if(user&&team.canSendMemberInvite&&team.canSendMemberInvite(user)) {
 			menu.push({
 				label:"Send email invitation",
-				shouldConfirm:true,
 				action() {
 					team.sendMemberInvite(user);
 					Modal.hide();
@@ -69,12 +55,26 @@ UserActions = {
 		//these really should do in RBAC
 		if(user) {
 
+			// Hmm, menu options global and dynamic
+			// can be added within different packages
+			// Probably want to follow flux pattern like modal
 			if(user._id==Meteor.userId()) {
 				menu.push({
 					label:"Reset tutorials",
 					shouldConfirm:true,
 					action() {
 						user.resetTours()
+					}
+				})
+			}
+			else {
+				menu.push({
+					label:"Login",
+					shouldConfirm:true,
+					action() {
+						user.login(function(){
+							location.reload();
+						});
 					}
 				})
 			}

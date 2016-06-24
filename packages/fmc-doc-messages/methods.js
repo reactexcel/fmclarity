@@ -90,7 +90,7 @@ Meteor.methods({
         }
 
         Meteor.defer(function(){
-          console.log({"sending to":to});
+          console.log({"sending email to":to});
           Email.send(devMsg);          
         });
         

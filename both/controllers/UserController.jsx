@@ -1,11 +1,12 @@
 // move to own package fmc:users
 
-DocThumb.register(Users,{
-  repo:Files,
-  defaultThumb:"/img/ProfilePlaceholderSuit.png"
-});
-
-DocMessages.register(Meteor.users);
+Users.mixins([
+  DocThumb.config({
+    repo:Files,
+    defaultThumb:"/img/ProfilePlaceholderSuit.png"
+  }),
+  DocMessages.config()
+])
 
 Users.actions({
   create:{
@@ -27,6 +28,81 @@ Users.actions({
         {"members._id":user._id},
         {"owner._id":user._id}
       ]}).fetch()
+    }
+  },
+  getRole:{
+    authentication:true,
+    helper:function(user,group) {
+      if(!group||!group.members||!group.members.length) {
+        return null;
+      }
+      for(var i in group.members) {
+        var currentMember = group.members[i];
+        if(currentMember&&user&&currentMember._id==user._id) {
+          return currentMember.role;
+        }
+      }
+    },
+  },
+  getRequests:{
+    authentication:true,
+    //subscription:???
+    helper:function(user,filter) {
+      var team, role, myFacilities,myFacilityIds;
+
+      team = Session.getSelectedTeam();
+      role = user.getRole(team);
+
+      console.log(role);
+
+      if(role=="portfolio manager") {
+        myFacilities = Facilities.find({"team._id":team._id}).fetch();
+      }
+      else {
+        myFacilities = Facilities.find({"members._id":user._id}).fetch();
+      }
+
+      console.log(myFacilities);
+
+      myFacilityIds = _.pluck(myFacilities,'_id');
+      console.log(myFacilityIds);
+
+      var q = {
+        isNotDraft:{status:{$nin:[Issues.STATUS_DRAFT]}},
+        hasBeenIssued:{status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
+        createdByMyTeam:{$and:[
+          {"team._id":team._id},
+          {status:{$nin:[Issues.STATUS_DRAFT]}},
+        ]},
+        issuedToMyTeam:{$and:[
+          {"supplier._id":team._id},
+          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
+        ]},
+        createdByMe:{"owner._id":user._id},
+        inMyFacilities:{$and:[
+          {"facility._id":{$in:myFacilityIds}},
+          {status:{$nin:[Issues.STATUS_DRAFT]}},
+        ]},
+        assignedToMe:{$and:[
+          {"assignee._id":user._id},
+          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
+        ]}
+      }
+
+      var query = {$and:[
+        q.inMyFacilities,
+        {$or:[q.issuedToMyTeam,q.createdByMyTeam,q.createdByMe,q.assignedToMe]}
+      ]};
+
+      if(filter) {
+        query.$and.push(filter);
+      }
+
+      if(role=="staff"||role=="tenant"){
+        query.$and.push({$or:[q.createdByMe,q.assignedToMe]});
+      }
+
+      return Issues.find(query).fetch();
     }
   }
 })
@@ -67,6 +143,10 @@ Meteor.methods({
 Users.helpers({
 
   collectionName:'users',
+
+  login:function(callback){
+    FMCLogin.loginUser(this,callback)
+  },
 
   sendInvite:function() {
     Meteor.call('User.sendInvite',this._id);

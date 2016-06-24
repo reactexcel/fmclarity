@@ -93,6 +93,7 @@ TeamViewDetail = React.createClass({
 
 			<IpsoTabso tabs={[
 				{
+					hide: 		!team.canGetMessages(),
 					tab: 		<span id="discussion-tab"><span style={{color:"black"}}>Updates</span></span>,
 					content: 	<Inbox for={team} truncate={true}/>
 				},{

@@ -15,26 +15,30 @@ Facilities.mixins([
     authentication:AuthHelpers.managerOfRelatedTeam,    
   }),
   DocMessages.config({
-    getInboxName:function(){
-      return this.getName()+" announcements"
-    },
-    getWatchers:function() {
-      var members = this.getMembers();
-      var watchers = [];
-      if(members&&members.length) {
-        members.map(function(m){
-          watchers.push(m);
-        })
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    helpers:{
+      getInboxName:function(){
+        return this.getName()+" announcements"
+      },
+      getWatchers:function() {
+        var members = this.getMembers();
+        var watchers = [];
+        if(members&&members.length) {
+          members.map(function(m){
+            watchers.push(m);
+          })
+        }
+        return watchers;      
       }
-      return watchers;      
     }
   }),
   DocMembers.config([{
-    fieldName:"members",
     authentication:AuthHelpers.managerOfRelatedTeam,
+    fieldName:"members",
   },{
     fieldName:"suppliers",
     authentication:AuthHelpers.managerOfRelatedTeam,
+    membersCollection:Teams,
     /*
     // or???
     authentication:{
@@ -108,6 +112,35 @@ Facilities.actions({
       Facilities.update(facility._id,{$set:{servicesRequired:servicesRequired}});
     }
   },
+  setServiceSupplier:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,serviceIdx,subserviceIdx,supplier) {
+      console.log(supplier);
+      console.log(facility);
+
+      if(serviceIdx) {
+        facility = Facilities._transform(facility);
+
+        //create update location string
+        updateLocation = ("servicesRequired."+serviceIdx);
+        if(subserviceIdx) {
+          updateLocation += (".children."+subserviceIdx);
+        }
+        updateLocation += ".data.supplier";
+
+        //create update structure
+        var update = {$set:{}};
+        update.$set[updateLocation] = supplier?{
+          _id:supplier._id,
+          name:supplier.name
+        }:null;
+
+        Facilities.update(facility._id,update);
+        facility.addSupplier(supplier);
+      }
+    }    
+  },
+
   getTeam:{
     authentication:AuthHelpers.managerOfRelatedTeam,
     helper:function(facility){
@@ -148,67 +181,14 @@ Facilities.actions({
       }
     }
   },
+  //this is not allowing for suppliers who have a request with this facility
   getIssues:{
     authentication:true,
     helper:function(facility){
       var team = Session.getSelectedTeam();
-
-      //set base query
-      var baseQuery = {'facility._id':facility._id};
-      var hasThisTeam = {'$or':[
-        {'team._id':team._id},
-        {'team.name':team.name}
-      ]};
-      var hasThisSupplier = {'$or':[
-        {'supplier._id':team._id},
-        {'supplier.name':team.name}
-      ]};
-
-      //inspect role to determine extended query
-      var user = Meteor.user();
-      var role = facility.getMemberRole(user);
-      var extendedQuery;
-      switch(role) {
-        case 'manager':
-          extendedQuery = {'$or':[
-            hasThisTeam,
-            hasThisSupplier
-          ]};
-          break;
-        case 'staff':
-          extendedQuery = {'$or':[
-            {'$and':[
-              hasThisTeam,
-              {'owner._id':user._id},
-            ]},
-            {'$and':[
-              hasThisSupplier,
-              {'assignee._id':user._id}
-            ]}
-          ]};
-          break;
-        case 'tenant':
-          extendedQuery = {'$and':[
-              hasThisTeam,
-              {'owner._id':user._id},
-          ]};
-          break;
+      if(team){
+        return team.getIssues({"facility._id":facility._id});
       }
-
-      //combine base and extended query if neccesary
-      var q;
-      if(extendedQuery) {
-        q = {'$and':[
-          baseQuery,
-          extendedQuery
-        ]};
-      }
-      else {
-        q = baseQuery;
-      }
-
-      //execute query
-      return Issues.find(q).fetch();
     }
   },
   getIssueCount:{

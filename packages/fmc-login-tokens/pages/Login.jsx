@@ -55,17 +55,17 @@ PageLogin = React.createClass({
                         <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
                     </div>
                     <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
-                    { this.state.errorMessage &&
-                        <div className="alert alert-danger alert-dismissable">
-                        <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
-                        {this.state.errorMessage}
-                        </div>
-                    }
-                    <div>
-                        <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
-                        <small>Don't have an account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
-                    </div>
                 </form>
+                <div>
+                    <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
+                    <small>No account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+                </div>
+                { this.state.errorMessage &&
+                    <div className="alert alert-danger alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
+                    {this.state.errorMessage}
+                    </div>
+                }
             </div>
         </div>
     </div>

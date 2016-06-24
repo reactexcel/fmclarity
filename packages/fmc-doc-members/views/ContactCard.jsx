@@ -111,11 +111,11 @@ ContactCard = React.createClass({
 		}
 
 		var role;
-		if(this.props.team) {
-			role = RBAC.getRole(contact,this.props.team);
-		}
-		else if(this.props.group) {
+		if(this.props.group) {
 			role = RBAC.getRole(contact,this.props.group);
+		}
+		else if(this.props.team) {
+			role = RBAC.getRole(contact,this.props.team);
 		}
 
 		return (

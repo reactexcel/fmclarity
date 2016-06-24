@@ -86,7 +86,7 @@ IssueDynamicArea = React.createClass({
                             content:    <div style={{padding:"15px"}}><AutoForm item={request} form={['attachments']} save={this.props.save}/></div>
                         },{
                             tab:        <span id="contacts-tab"><span>Contacts</span></span>,
-                            content:    <ContactList group={request}/>
+                            content:    <ContactList group={request} readOnly={true}/>
                         }
                     ]} />
                 </div>

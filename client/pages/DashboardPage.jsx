@@ -2,6 +2,8 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+// Dashboard
+// The main landing page for FMs which is intended to give a broad overview of job status
 DashboardPage = React.createClass({
 
 	render() {

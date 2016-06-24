@@ -21,7 +21,9 @@ IpsoTabso = React.createClass({
     render() {
         var active = this.state.active;
         var selectTab = this.selectTab;
-        var tabs = this.props.tabs;
+        var tabs = _.filter(this.props.tabs,function(t){
+            return !t.hide;
+        })
         var content = tabs[active]?tabs[active].content:null;
         return (
             <div className="tab-panel">

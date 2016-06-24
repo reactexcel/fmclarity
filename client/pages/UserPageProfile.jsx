@@ -2,7 +2,9 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-UserProfilePage = React.createClass({
+// User profile page
+// A simple page which displays only the edit view for the currently logged in user
+UserPageProfile = React.createClass({
 
     mixins: [ReactMeteorData],
 

@@ -72,7 +72,7 @@ ContactList = React.createClass({
 		var component = this;
 		var team = this.data.team;
 		var group = this.data.group;
-		var canCreate = team&&team.canAddMember()||group&&group.canAddMember();
+		var canCreate = !this.props.readOnly&&(team&&team.canAddMember()||group&&group.canAddMember());
 		return (
 			<div className="contact-list">
 			    {members?members.map(function(member,idx){

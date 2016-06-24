@@ -13,15 +13,15 @@ PageRegister = React.createClass({
 
     handleSubmit: function(e) {
         e.preventDefault();
+        var me = this;
         var name = this.refs.name.value.trim();
         var email = this.refs.email.value.trim();
-        var password = this.refs.password.value.trim();
-        if (!email||!password||!name) {
+        if (!email||!name) {
             return;
         }
         Accounts.createUser({
             email:email,
-            password:password,
+            password:Random.secret(),
             profile:{
                 name:name,
                 email:email
@@ -29,9 +29,17 @@ PageRegister = React.createClass({
         },function(error){
             if(error) {
                 console.log(error);
+                me.setState({
+                    successMessage:null,
+                    errorMessage:<span>Sorry, that email address is already registered. If you think it should not be please contact <a href="mailto:admin@fmclarity.com">admin@fmclarity.com</a>.</span>
+                })
             }
             else {
-                FlowRouter.go('/login');
+                me.setState({
+                    errorMessage:null,
+                    successMessage:<span>A password reset link has been sent to your registered email. Click the email link to continue.</span>
+                })
+                FMCLogin.forgotPassword(email);
             }
         });
         // TODO: send request to the server
@@ -48,8 +56,8 @@ PageRegister = React.createClass({
                 <img width="300px" src="img/logo-horizontal-blue.svg"/>
             </div>
             <div style={{marginTop:"30%"}}>
-            <h2>Forgotten Password</h2>
-                <p>Enter your email address and your password will be reset and emailed to you.</p>
+            <h2>Create Account</h2>
+                <p>Enter your details below.</p>
 
                 <form className="m-t" role="form" onSubmit={this.handleSubmit}>
                     <div className="form-group">
@@ -58,15 +66,15 @@ PageRegister = React.createClass({
                     <div className="form-group">
                         <input ref="email" type="email" className="form-control" placeholder="Email" required=""/>
                     </div>
-                    <div className="form-group">
-                        <input ref="password" type="password" className="form-control" placeholder="Password" required=""/>
-                    </div>
-                    <div className="form-group">
+                    {/*<div className="form-group">
                         <div className="checkbox i-checks"><label> <input type="checkbox"/><i></i> Agree the terms and policy
                         </label></div>
-                    </div>
-                    <button type="submit" className="btn btn-primary block full-width m-b">Reset Password</button>
+                    </div>*/}
+                    <button type="submit" className="btn btn-primary block full-width m-b">Register</button>
                 </form>
+                <div>
+                    <small>Already have an account? <a href={FlowRouter.path('login')}>Log in</a></small>
+                </div>
                 { this.state.successMessage &&
                     <div className="alert alert-success alert-dismissable">
                     <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>

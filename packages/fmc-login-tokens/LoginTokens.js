@@ -6,6 +6,7 @@ FMCLogin = {
 	generatePasswordResetToken:generatePasswordResetToken,
 	loginWithToken:loginWithToken,
 	forgotPassword:forgotPassword,
+	loginUser:loginWithoutPassword,
 	getUrl:getUrl
 }
 

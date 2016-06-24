@@ -118,6 +118,7 @@ ServicesSelector = React.createClass({
 
 	render() {
 		var component = this;
+		var facility = this.state.item;
 		var services = this.state.services;
 		var Menu = AutoInput.MDDataTableMenu;
 		var readOnly = false;
@@ -135,6 +136,7 @@ ServicesSelector = React.createClass({
 						<div key={key} className={expanded?"services-editor-service-expanded":""}>
 							<div className="row services-editor-row">
 								<ServiceSupplierRow
+									facility={facility}
 									service={service}
 									readOnly={readOnly}
 									clickExpand={component.toggleExpanded.bind(component,service.name)}
@@ -150,6 +152,7 @@ ServicesSelector = React.createClass({
 											return (
 												<div key={key} className="row services-editor-row services-editor-row-child">
 													<ServiceSupplierRow
+														facility={facility}
 														service={subservice}
 														readOnly={readOnly}
 														onChange={component.updateSubService.bind(component,idx,subIdx)}/>
@@ -215,6 +218,8 @@ ServiceSupplierRow = React.createClass({
 				_id:supplier._id,
 				name:supplier.name
 			}
+			//should be this.props.facility.addSupplier(supplier,{service:foo,subservice:bar})
+			this.props.facility.addSupplier(supplier); 
 		}
 		else {
 			service.data.supplier = null;

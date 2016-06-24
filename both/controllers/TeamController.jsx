@@ -15,22 +15,25 @@ Teams.mixins([
     authentication:AuthHelpers.managerOrOwner,
   }]),
   DocMessages.config({
-    getInboxName:function(){
-      return this.getName();
-    },
-    getWatchers:function() {
-      return this.getMembers({role:"manager"});
-      var members = this.getMembers({role:"manager"});
-      var watchers = [];
-      if(members&&members.length) {
-        members.map(function(m){
-          watchers.push({
-            role:"manager",
-            watcher:m
-          });
-        })
+    authentication:AuthHelpers.managerOrOwner,
+    helpers:{
+      getInboxName:function(){
+        return this.getName();
+      },
+      getWatchers:function() {
+        return this.getMembers({role:"manager"});
+        var members = this.getMembers({role:"manager"});
+        var watchers = [];
+        if(members&&members.length) {
+          members.map(function(m){
+            watchers.push({
+              role:"manager",
+              watcher:m
+            });
+          })
+        }
+        return watchers;
       }
-      return watchers;
     }
   })  
 ]);
@@ -307,13 +310,16 @@ Teams.helpers({
     return this.counters.WO;
   },
 
+  //duplicate this in the publish functions
+  //for that matter can use this function directly in publich (just return cursor instead of items)
   getManagerFacilities() {
     //return all facilities in my currently selected team
-    //and all the facilities in the issues allocated to my team
-    var issues,facilityIds = [];
-    issues = this.getIssues();
-    if(issues&&issues.length) {
-      issues.map(function(i){
+    //and all the facilities in the requests user can see
+    var user = Meteor.user();
+    var requests,facilityIds = [];
+    requests = user.getRequests();
+    if(requests&&requests.length) {
+      requests.map(function(i){
         if(i.facility) {
           facilityIds.push(i.facility._id);
         }
@@ -332,15 +338,31 @@ Teams.helpers({
   },
 
   getStaffFacilities() {
+    //return all facilities user is a member of
+    //and all the facilities in the requests user can see
     var user = Meteor.user();
-    var facilities = this.getManagerFacilities();
-    var staffFacilities = [];
-    facilities.map(function(f){
-      if(f.hasMember(user)) {
-        staffFacilities.push(f);
-      }
-    })
-    return staffFacilities;
+    var requests,facilityIds = [];
+    requests = user.getRequests();
+    if(requests&&requests.length) {
+      requests.map(function(i){
+        if(i.facility) {
+          facilityIds.push(i.facility._id);
+        }
+      })
+    }
+
+    console.log(facilityIds);
+
+    var facilities = Facilities.find({$or:[
+      {$and:[
+        {"team._id":this._id},
+        {"members._id":Meteor.userId()},
+      ]},
+      {_id:{$in:facilityIds}}
+    ]},{sort:{name:1}}).fetch();
+
+    console.log(facilities);
+    return facilities;
   },
 
   getFacilities(q) {
@@ -348,7 +370,7 @@ Teams.helpers({
     //of course if we only have the name then we need to add the id at some point
     var role = this.getMemberRole(Meteor.user());
     //console.log(role);
-    if(role=="manager"||role=="fmc support") {
+    if(role=="fmc support"||role=="portfolio manager") {
       return this.getManagerFacilities(q);
     }
     return this.getStaffFacilities(q);

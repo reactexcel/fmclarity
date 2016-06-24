@@ -2,7 +2,8 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-IssuesIndexPage = React.createClass({
+
+RequestsPageIndex = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -12,6 +13,7 @@ IssuesIndexPage = React.createClass({
         Meteor.subscribe('teamsAndFacilitiesForUser');
         Meteor.subscribe('users');
 	    var issues;
+	    var user = Meteor.user();
 	    var team = Session.getSelectedTeam();
 	    if(team) {
 		    var facility = Session.getSelectedFacility();
@@ -21,7 +23,7 @@ IssuesIndexPage = React.createClass({
 		        q['facility._id'] = facility._id;
 		    }
 
-	    	issues = team.getIssues(q);
+	    	issues = user.getRequests(q);
 	    }
         return {
             issues : issues,

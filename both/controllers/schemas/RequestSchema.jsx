@@ -143,7 +143,8 @@ function getFacility(request) {
 function membersDefaultValue(item) {
   var owner = Meteor.user();
   var team = Teams.findOne(item.team._id);
-  var teamMembers = team.getMembers({role:"manager"});
+  var teamMembers = team.getMembers({role:"portfolio manager"});
+  var facilityMembers = team.getMembers({role:"manager"});
   var members = [{
     _id:owner._id,
     name:owner.profile.name,
@@ -154,6 +155,13 @@ function membersDefaultValue(item) {
       _id:m._id,
       name:m.profile.name,
       role:"team manager"
+    })
+  });
+  teamMembers.map(function(m){
+    members.push({
+      _id:m._id,
+      name:m.profile.name,
+      role:"facility manager"
     })
   });
   return members;

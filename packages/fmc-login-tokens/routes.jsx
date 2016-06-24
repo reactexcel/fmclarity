@@ -2,10 +2,39 @@ import React from "react";
 import {mount} from 'react-mounter';
 
 var exposed = FlowRouter.group();
+loggedIn = FlowRouter.group({
+  triggersEnter: [
+    function(context, redirect) {
+      var route;
+      if (!(Meteor.loggingIn() || Meteor.userId())) {
+        route = FlowRouter.current();
+        console.log(route);
+        if (route.route.name == 'login') {
+          Session.set('redirectAfterLogin', '/');          
+        }
+        else {
+          Session.set('redirectAfterLogin', route.path);
+        }
+        redirect('/login');
+      }
+    }
+  ]
+});
+
+if(Meteor.isClient) {
+  Accounts.onLogin(function() {
+    var redirect = Session.get('redirectAfterLogin')||'/';
+    if(redirect) {
+      Session.set('redirectAfterLogin',null)
+      return FlowRouter.go(redirect);
+    }
+  });
+}
 
 exposed.route('/login', {
   name: 'login',
   action() {
+    var redirect = Session.get('redirectAfterLogin');
     mount(BlankLayout,{content:<PageLogin/>});
   },
 });

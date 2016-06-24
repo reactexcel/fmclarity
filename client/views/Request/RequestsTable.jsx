@@ -2,13 +2,27 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+// RequestsTable
+//
+// A variation on the 1 column filterbox which includes a left navigation bar
+// and a right content section with a large detail view of the selected component
+//
+// PROPS
+//
+// items (array)
+//      the collection of items to render
+//
+// filter (object)
+//      a mongodb query object used to filter the request results
+//
 RequestsTable = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var item,requests;
+    	var item,requests,filter;
     	item = this.props.item;
+        filter = this.props.filter;
     	if(item&&item.getIssues) {
     		requests = item.getIssues();
     	}
@@ -18,9 +32,12 @@ RequestsTable = React.createClass({
     },
 
     showModal(r) {
+        /*
+        //Need a width option for modals before this can be instantiated
     	Modal.show({
     		content:<IssueDetail item={r}/>
     	})
+        */
     },
 
 	render(){

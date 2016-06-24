@@ -7,19 +7,17 @@ ClientFilter = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var user = Meteor.user();
-        if(user) {
-            var team = Session.getSelectedTeam();
-            if(team) {
-                return {
-                    user : user,
-                    team : team,
-                    client : Session.getSelectedClient(),
-                    clients : team.getSuppliers()
-                }
+        var d = {};
+        d.user = Meteor.user();
+        if(d.user) {
+            d.team = Session.getSelectedTeam();
+            d.client = Session.getSelectedClient();
+            if(d.team) {
+                Meteor.subscribe("contractors");
+                d.clients = d.team.getSuppliers();
             }
         }
-        return {}
+        return d;
     },
 
     selectClient(client) {
@@ -33,8 +31,7 @@ ClientFilter = React.createClass({
                 items={this.data.clients} 
                 itemView={NameCard}
                 onChange={this.selectClient}
-                clearOption={{name:"All clients"}}
-            >
+                clearOption={{name:"All clients"}}>
             {
                 client?
                 <div style={{whiteSpace:"nowrap"}}>

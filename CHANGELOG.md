@@ -1,6 +1,35 @@
 CHANGELOG.md
 ============
 
+* Restricted manager role so that manager only see facilities they are a member of
+* Created new role "portfolio manager" who can see all facilities in a team
+----
+ONLY ONE ROLE AND THAT IS IN TEAM
+[
+   there is no real circumstance where a user will have a different role in different buildings in the portfolio
+   if they are staff in one they are staff in all
+   if they are fm in one - they are fm in all
+]
+(so does "group" become irrelevant?)
+"Team manager" - complete control over entire portfolio and settings
+"Facility manager" - complete control over the facilities they manage (but not team settings)
+"Staff" - limited control over the facilities they manage
+"Tenant" - sweet fa
+----
+
+**v1.3.19b**
+
+* Suppliers are now added to facilities when they are added to a service
+* Fixed an issue that was causing notifications to be duplicated when recipient had dual roles
+* Added "login" button to user cards
+* Fixed permissions on facility request
+* Fixed permissions for tenant facilities
+* When signing up second step is now password reset
+* Fixed an issue that was causing documents to not save
+* Added authentication to facility and team message, update visibility of "updates" tab accordingly
+----
+* Hide owners, disable create team, for this release (disable login on production)
+
 **v1.3.18b**
 
 * Added new "services provided editor" to team tab and stepper

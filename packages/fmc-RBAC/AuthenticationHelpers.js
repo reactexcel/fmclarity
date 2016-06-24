@@ -2,6 +2,7 @@
 // Should simply be called RBAC.helpers, or RBAC.lib
 AuthHelpers = {
   owner:function(role,user,item) {
+    //an owner is either a user-owner or a manager of the owning team
     if(item&&item.owner) {
       if(item.owner.type=="team") {
         var team = Teams.findOne(item.owner._id);
@@ -17,7 +18,7 @@ AuthHelpers = {
     return user.role=="dev";
   },
   manager:function(role) {
-    return role=="manager"||role=="fmc support";
+    return role=="manager"||role=="fmc support"||role=="portfolio manager";
   },
   managerOrOwner:function(role,user,team) {
     return AuthHelpers.manager(role,user)||AuthHelpers.owner(role,user,team)

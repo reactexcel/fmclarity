@@ -31,20 +31,25 @@ DocViewEdit = React.createClass({
      	}
     },
 
+    handleChangeCallback(error,item) {
+    	if(!error&&this.props.onChange) {
+			this.props.onChange({
+				name:item.name,
+				description:item.description,
+				type:item.type,
+				_id:item._id
+			})
+		}
+    },
+
 	handleChange(item) {
-		var component = this;
 		if(!item._id) {
-			item = Documents.create(item);
+			item = Meteor.call('Files.create',item,this.handleChangeCallback);
 		}
 		else {
 			item.save();
+			this.handleChangeCallback(null,item);
 		}
-		component.props.onChange({
-			name:item.name,
-			description:item.description,
-			type:item.type,
-			_id:item._id
-		});
 	},    
 
 	render(){

@@ -1,41 +1,41 @@
 Issues.schema(IssueSchema);
 
-//register this collection with the DocMessages package
-//so that documents within this collection can receive messages
-DocMessages.register(Issues,{
-  getInboxName:function() {
-    return "work order #"+this.code+' "'+this.getName()+'"';
-  },
-  getWatchers:function() {
 
-    var user, owner, team, supplier, assignee;
+Issues.mixins([
+  DocMessages.config({
+    helpers:{
+      getInboxName:function() {
+        return "work order #"+this.code+' "'+this.getName()+'"';
+      },
+      getWatchers:function() {
 
-    user = Meteor.user();
-    owner = this.getOwner();
+        var user, owner, team, supplier, assignee;
 
-    //don't include suppliers and assignees if draft or new
-    //is this deprecated?
-    if(this.status!=Issues.STATUS_DRAFT) {
-      team = this.getTeam();
-      if(this.status!=Issues.STATUS_NEW) {
-        supplier = this.getSupplier();
-        assignee = this.getAssignee();
+        user = Meteor.user();
+        owner = this.getOwner();
+
+        //don't include suppliers and assignees if draft or new
+        //is this deprecated?
+        if(this.status!=Issues.STATUS_DRAFT) {
+          team = this.getTeam();
+          if(this.status!=Issues.STATUS_NEW) {
+            supplier = this.getSupplier();
+            assignee = this.getAssignee();
+          }
+        }
+        return [user,owner,supplier,team,assignee];
       }
     }
-    return [user,owner,supplier,team,assignee];
-  }
-});
-
-//register this collection with the DocMembers package
-//to create a "members" field that can be used for RBAC
-DocMembers.register(Issues,{
-  authentication:function(role,user,request) {
-    return (
-      AuthHelpers.memberOfRelatedTeam(role,user,request)||
-      AuthHelpers.managerOfSuppliersTeam(role,user,request)
-    )
-  }
-});
+  }),
+  DocMembers.config({
+    authentication:function(role,user,request) {
+      return (
+        AuthHelpers.memberOfRelatedTeam(role,user,request)||
+        AuthHelpers.managerOfSuppliersTeam(role,user,request)
+      )
+    }
+  })
+])
 
 function isEditable(request) {
   return (

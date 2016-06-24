@@ -14,7 +14,6 @@ var defaultHelpers = {
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
   getInboxId:getInboxId,
-  getMessages:getMessages,
   getNotifications:getNotifications,
   getMessageCount:getMessageCount,
   getRecipients:getRecipients,
@@ -34,12 +33,29 @@ function getConfigurationFunction(options) {
   }
 }
 
-function registerCollection(collection,customHelpers) {
+function registerCollection(collection,opts) {
+  opts = opts||{};
+  var authentication = opts.authentication||true;
+  var customHelpers = opts.helpers||{};
+
   var helpers = _.extend({
     collectionName:collection._name
   },defaultHelpers,customHelpers);
-  
+
   collection.helpers(helpers);
+
+  collection.actions({
+    getMessages:{
+      authentication:authentication,
+      helper:function(inbox,options) {
+        options = options||{sort:{createdAt:1}};
+        return Messages.find({
+          "inboxId.collectionName":inbox.collectionName,
+          "inboxId.query._id":inbox._id,
+        },options).fetch();
+      }
+    }
+  })
 }
 
 //gets all recipients of the message
@@ -81,9 +97,39 @@ function distributeMessage(message,recipientRoles,options) {
   //scan through the list of recipientRoles and process them
   // if string treat as role name, is obj treat as recipient proper
   //console.log(recipientRoles);
-  recipientRoles.map(function(role){
-    sendMessageToMembers(obj,message,role);
+  var recipients = getRecipientListFromRoles(obj,recipientRoles);
+  recipients = _.uniq(recipients,false,function(i){
+    return i._id;
   })
+
+  recipients.map(function(r){
+    console.log({"sending notification to":r.getName()});
+    sendMessage(message,r);
+  })
+}
+
+function getRecipientListFromRoles(obj,roles) {
+  var recipients = [];
+  roles.map(function(role){
+    if(role=="team"&&obj.getTeam) {
+      team = obj.getTeam();
+      if(team) {
+        recipients.push(team);
+      }
+    }
+    //else if we are sending it to facility
+    else if(role=="facility"&&obj.getFacility) {
+      facility = obj.getFacility();
+      if(facility) {
+        recipients.push(facility);
+      }
+    }
+    //else if we are sending it to the member with "role"
+    else if(obj.getMembers) {
+      recipients = recipients.concat(obj.getMembers({role:role}))
+    }
+  })
+  return recipients;
 }
 
 function sendMessageToMembers(obj,message,role) {
@@ -106,7 +152,6 @@ function sendMessageToMembers(obj,message,role) {
   else if(obj.getMembers) {
     recipients = obj.getMembers({role:role})
   }
-  //console.log(recipients);
   recipients.map(function(r){
     //console.log(r);
     sendMessage(message,r);
@@ -180,14 +225,6 @@ function getInboxId(){
 // I reckon trash getInboxName and make getInboxId explicit in each class that uses it
 function getInboxName() {
   return this.getName()+"'s"+" inbox";
-}
-
-function getMessages(options) {
-  options = options||{sort:{createdAt:1}};
-  return Messages.find({
-    "inboxId.collectionName":this.collectionName,
-    "inboxId.query._id":this._id,
-  },options).fetch();
 }
 
 function getMessageCount(opts) {

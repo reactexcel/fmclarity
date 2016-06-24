@@ -3,23 +3,30 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 function addTeamMenuItem(menu,item,team) {
-	if(
-		team&&
-		team.hasSupplier(item)&&
-		team.canRemoveSupplier&&
-		team.canRemoveSupplier()&&
-		team._id!=item._id
-	) {
+	if(team) {
+		if(team.hasSupplier(item)&&team.canRemoveSupplier&&team.canRemoveSupplier()&&team._id!=item._id) {
 
-		menu.push({
-			label:"Remove supplier from "+team.getName(),
-			shouldConfirm:true,
-			action(){
-				team.removeSupplier(item);
-				Modal.hide();
-			}
-		});
+			menu.push({
+				label:"Remove supplier from "+team.getName(),
+				shouldConfirm:true,
+				action(){
+					team.removeSupplier(item);
+					Modal.hide();
+				}
+			});
 
+		}
+
+		if(item&&item.ownerIs&&item.ownerIs(team)) {
+			var itemName = item.getName();
+			menu.push({
+				label:"Revoke ownership of "+itemName,
+				shouldConfirm:true,
+				action() {
+					item.clearOwner();
+				}
+			})
+		}
 	}
 }
 

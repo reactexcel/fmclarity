@@ -25,7 +25,7 @@ UserViewRelationEdit = React.createClass({
 				role = relation.role;
 				return (
 					<AutoInput.MDSelect 
-						items={["manager","staff","tenant"]} 
+						items={["portfolio manager","manager","staff","tenant"]} 
 						selectedItem={role}
 						onChange={this.handleRoleChange}
 						placeholder="Role"/>
@@ -42,7 +42,7 @@ UserViewEdit = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var group,role,member;
+    	var group,role,member,relation;
     	role = this.props.newMemberRole;
     	member = this.props.member;
     	if(this.props.group) {

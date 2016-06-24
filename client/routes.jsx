@@ -1,41 +1,33 @@
-// Reaktor API:  https://github.com/kadirahq/meteor-reaktor
-// Router API:   https://github.com/meteorhacks/flow-router
-
-// NOTE see flow-router branch for the vanilla router
-
-// Layout API https://github.com/kadirahq/meteor-react-layout
-/*
-Reaktor.init(
-  <Router>
-    <Route path="/" content={Home} layout={MainLayout} />
-    <Route path="/about" content={About} layout={MainLayout} />
-  </Router>
-);
-*/
-// Router API https://github.com/meteorhacks/flow-router
-
 import React from 'react';
 import {mount} from 'react-mounter';
 
-var loggedIn = FlowRouter.group({
-  triggersEnter: [
-    function(context, redirect) {
-      var route;
-      if (!(Meteor.loggingIn() || Meteor.userId())) {
-        route = FlowRouter.current();
-        if (route.route.name == 'login') {
-          Session.set('redirectAfterLogin', '/');          
-        }
-        else {
-          Session.set('redirectAfterLogin', route.path);
-        }
-        redirect('/login');
-      }
-    }
-  ]
-});
+// ROUTER
+// Includes all url route for the App
+//
+// Notes: 
+//
+// 1. REFACT: Component naming conventions is being used inconsistenly here, should bein the form ModelPageIndex
+//
+// 2. Some additional routes are specified in packages, particularly the routes for login pages which
+//    are included in fmc:login-tokens
+//
+// 3. For more information on this and alternative router implementations see...
+//    Reaktor API:  https://github.com/kadirahq/meteor-reaktor
+//    Router API:   https://github.com/meteorhacks/flow-router
+//    NOTE see flow-router branch for the vanilla router
+//    Layout API https://github.com/kadirahq/meteor-react-layout
+/*
+      Reaktor.init(
+        <Router>
+          <Route path="/" content={Home} layout={MainLayout} />
+          <Route path="/about" content={About} layout={MainLayout} />
+        </Router>
+      );
+*/
 
-admin = FlowRouter.group({
+
+// Route group for admin users
+var admin = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
       var route;
@@ -57,24 +49,12 @@ admin.route('/admin',{
   }
 });
 
-if(Meteor.isClient) {
-  Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin');
-    if(redirect) {
-      Session.set('redirectAfterLogin',null)
-      return FlowRouter.go(redirect);
-    }
-  });
-}
-
 loggedIn.route('/', {
   name: 'root',
   action() {
     mount(MainLayout, {content:<LandingPage/>});
-    //mount(MainLayout,{content:<LandingPage/>});
   }
 });
-
 
 //probably better called request/:_id
 //also... token required
@@ -109,7 +89,7 @@ loggedIn.route('/abc', {
 loggedIn.route('/requests', {
   name: 'requests',
   action() {
-    mount(MainLayout,{content:<IssuesIndexPage/>});
+    mount(MainLayout,{content:<RequestsPageIndex/>});
   }
 });
 
@@ -151,7 +131,7 @@ loggedIn.route('/account', {
 loggedIn.route('/profile', {
   name: 'profile',
   action() {
-    mount(MainLayout,{content: <UserProfilePage />});
+    mount(MainLayout,{content: <UserPageProfile />});
   }
 });
 
@@ -165,7 +145,7 @@ loggedIn.route('/team', {
 loggedIn.route('/portfolio', {
   name: 'portfolio',
   action() {
-    mount(MainLayout,{content: <FacilityIndexPage />});
+    mount(MainLayout,{content: <FacilityPageIndex />});
   }
 });
 
@@ -180,13 +160,6 @@ loggedIn.route('/documents', {
   name: 'documents',
   action() {
     mount(MainLayout,{content: <DocsPageIndex />});
-  }
-});
-
-loggedIn.route('/contacts', {
-  name: 'contacts',
-  action() {
-    mount(MainLayout,{content: <UsersPage />});
   }
 });
 

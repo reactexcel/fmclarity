@@ -43,7 +43,7 @@ FacilityViewDetail = React.createClass({
             }
         }
 
-        //IpsoTabs content should be wrapped in maxHeight 600px container in all cases
+        //IpsoTabs content needs slimscroll applied
         //IpsoTabs should be renamed... TabPanel?
         return (
             <div className="facility-card">
@@ -74,6 +74,7 @@ FacilityViewDetail = React.createClass({
 
                 <IpsoTabso tabs={[
                     {
+                        hide:       !facility.canGetMessages(),
                         tab:        <span id="discussion-tab"><span style={{color:"white"}}>Updates</span></span>,
                         content:    <Inbox for={facility} truncate={true}/>
                     },{
@@ -83,15 +84,16 @@ FacilityViewDetail = React.createClass({
                     },{
                         hide:       !facility.canAddMember(),
                         tab:        <span id="personnel-tab"><span style={{color:"white"}}>Personnel</span></span>,
-                        content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff"/>
+                        content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>
                     },{
                         hide:       !facility.canAddMember(),
                         tab:        <span id="tenants-tab"><span style={{color:"white"}}>Tenants</span></span>,
-                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant"/>
-                    }/*,{
+                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>
+                    },/*{
+                        hide:       !facility.canAddSupplier(),
                         tab:        <span id="suppliers-tab"><span style={{color:"white"}}>Suppliers</span></span>,
                         content:    <ContactList group={facility} members={suppliers} defaultRole="supplier" type="team"/>
-                    }*/,{
+                    },*/{
                         hide:       !facility.canSetAreas(),
                         tab:        <span id="areas-tab"><span style={{color:"white"}}>Areas</span></span>,
                         content:    <FacilityAreasSelector item={facility}/>

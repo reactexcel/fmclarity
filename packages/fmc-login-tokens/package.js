@@ -26,7 +26,7 @@ Package.onUse(function(api) {
 	]);
 
 	api.addFiles([
-		'router.jsx',
+		'routes.jsx',
 		'pages/403.jsx',
 		'pages/Login.jsx',
 		'pages/LostPassword.jsx',
@@ -36,6 +36,7 @@ Package.onUse(function(api) {
 
 	api.export([
 		'FMCLogin',
-		'PageChangePassword'
+		'PageChangePassword',
+		'loggedIn'
 	]);
 });

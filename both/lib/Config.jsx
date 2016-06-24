@@ -148,16 +148,17 @@ var navTenant = [{
 
 Config.modules = {
 	fm:{
-		manager:navFM,
+		'portfolio manager':navFM,
+		'manager':navFM,
 		'fmc support':navFM,
-		staff:navFMStaff,
-		tenant:navTenant,
-		contact:[],
+		'staff':navFMStaff,
+		'tenant':navTenant,
+		'contact':[],
 	},
 	contractor:{
 		'fmc support':navFM,
-		manager:navSupplier,
-		staff:navSupplier
+		'manager':navSupplier,
+		'staff':navSupplier
 	}
 }
 

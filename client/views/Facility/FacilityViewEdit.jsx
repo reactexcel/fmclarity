@@ -79,11 +79,11 @@ FacilityViewEdit = React.createClass({
 			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
                     },{
                         tab: 		<span id="personnel-tab">Personnel</span>,
-                        content: 	<ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff"/>,
+                        content: 	<ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>,
 			        	guide: 		<div>Enter the facility personnel here by clicking on add member.</div>
                     },{
                         tab: 		<span id="tenants-tab">Tenants</span>,
-                        content: 	<ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant"/>,
+                        content: 	<ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>,
 			        	guide: 		<div>Enter tenants to the property by clicking on add member here.</div>
                     },{
                         tab: 		<span id="suppliers-tab"><span>Suppliers</span></span>,
