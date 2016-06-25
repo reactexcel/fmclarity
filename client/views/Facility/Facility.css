@@ -5,3 +5,51 @@
 	overflow: hidden;
 }
 
+.facility-card {
+	background-color:#00b89e;
+}
+
+.facility-card h2 {
+	/*font-weight:bold;*/
+	margin:0 0 10px 0;
+}
+
+.facility-card .contact-thumbnail {
+	width:100%;
+	min-height:90px;
+	overflow:hidden;
+}
+
+.facility-card .contact-thumbnail > div {
+	width:100%;
+	background-size:cover;
+	background-position:50% 30%;
+	max-height:400px;
+}
+
+.facility-card .contact-thumbnail > div > img {
+	width:100%;
+	visibility:hidden;
+}
+
+.facility-card .contact-title {
+	display:block;
+	font-size:14px;
+	font-weight:bold;
+}
+
+.facility-card .title-overlay {
+	color:white;
+	text-align: right;
+	background-color:rgba(0,0,0,0.3);
+	padding:20px;
+	position:relative;
+	height:90px;
+	margin-top:-90px;
+}
+
+.facility-card .contact-info {
+	color:white;
+	padding:10px 20px 20px 20px;
+	/*text-align:right;*/
+}

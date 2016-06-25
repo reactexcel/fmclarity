@@ -79,24 +79,14 @@ IssueDynamicArea = React.createClass({
                 <div className="col-lg-12" style={{marginTop:"10px"}}>
                     <IpsoTabso tabs={[
                         {
-                            tab:<span id="discussion-tab"><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
-                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <Inbox for={request} truncate={true}/>
-                            </div>
+                            tab:        <span id="discussion-tab"><span>Comments</span>{this.data.messageCount?<span>({this.data.messageCount})</span>:null}</span>,
+                            content:    <Inbox for={request} truncate={true}/>
                         },{
-                            tab:<span id="documents-tab"><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
-                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <AutoForm item={request} schema={Issues.schema()} form={['attachments']} save={this.props.save} />
-                            </div>
+                            tab:        <span id="documents-tab"><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
+                            content:    <div style={{padding:"15px"}}><AutoForm item={request} form={['attachments']} save={this.props.save}/></div>
                         },{
-                            tab:<span id="contacts-tab"><span>Contacts</span></span>,
-                            content:<div style={{padding:"15px",maxHeight:"600px",overflowY:"auto"}}>
-                                <ContactList 
-                                    items={contacts} 
-                                    team={request}
-                                    //onAdd={request.canAddMember()?request.addMember.bind(request,{role:"contact"}):null}
-                                />
-                            </div>
+                            tab:        <span id="contacts-tab"><span>Contacts</span></span>,
+                            content:    <ContactList group={request} readOnly={true}/>
                         }
                     ]} />
                 </div>

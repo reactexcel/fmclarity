@@ -1,6 +1,136 @@
 CHANGELOG.md
 ============
 
+**v1.4.0b**
+
+* Restricted manager role so that manager only see facilities they are a member of
+* Created new role "portfolio manager" who can see all facilities in a team
+* Hid team owners
+* Fixed a problem what was causing managers can see drafts of team issues
+* Made discussion read only (for now)
+* No longer have ability to add/remove members to/from requests
+* Remove services required from team
+* User profile and team settings should be in modal
+* Create new issue should be in Modal (although modal will need to be widened for accom)
+* Facility permissions need to be applied on a per facility basis
+* Owner should be changed to requestor or request creator
+* Create button greyed out until reenter title
+* Nav initially appears an contractor - should not appear until loaded (or perhaps initially as tenant)
+* WO:Creator should not be able to change after created
+* Only portfolio manager sees team discussion board
+
+**v1.3.19b**
+
+* Suppliers are now added to facilities when they are added to a service
+* Fixed an issue that was causing notifications to be duplicated when recipient had dual roles
+* Added "login" button to user cards
+* Fixed permissions on facility request
+* Fixed permissions for tenant facilities
+* When signing up second step is now password reset
+* Fixed an issue that was causing documents to not save
+* Added authentication to facility and team message, update visibility of "updates" tab accordingly
+
+**v1.3.18b**
+
+* Added new "services provided editor" to team tab and stepper
+* Moved export button to prevent overlap with fab
+* Moved tenants back into main members list for facility
+* Created filters functionality for members contact lists that can be used for tenants
+* Facilities now show owner information
+* Refact: Autoform no longer requires schema to be sent to it (reads from item)
+* Fixed a problem that was causing members to not be added to teams when editing in modal view
+* Supplier search is case insensitive
+
+**v1.3.17b**
+
+* Collections can now have data-returning helpers with authentication (will be used by facility card to determine which tabs are visible)
+* Selecting a facility on the portfolio screen changes the globally selected facility (on requests screen for example)
+* Fixed a problem that was causing facilities to delete at random
+* UserCard: Included "group relationship" info into user card (currently just for selecting role)
+* TeamEditView: Add document owner info
+* When a user has only one facility or supplier don't show navigation
+* When a user has only one left nav item - don't show left nav
+* Fixed portfolio tab visibility for all relevant roles
+* Fixed facility issue visibility for all roles
+
+**v1.3.16b**
+
+* New areas selector
+* Sew suppliers/services selector
+
+**v1.3.15b**
+
+* Refactored file/folder structure
+* Created packages for most core ui functionality
+* Moved autoform to own package
+* Moved js plugins to their respective packages or views
+* Invites and password reset emails are now handled by role based notifications package rather than Meteor core
+
+**v1.3.14b**
+
+* All users have a tenancy field, tenancy appears on contactlist card
+* Fixed an issue that was causing add supplier to fail from portfolio card
+* Fixed an issue that was making it impossible to edit services on portfolio card
+* Fixed an issue which was causing tenants to be added to team as staff
+* Created new "request table" view and and added areas, services and requests tab to portfolio page
+* Created stepper for editing teams to replace previous team edit view
+
+**v1.3.13b**
+
+* Email addresses are now mailto lings
+* Removed focus outline from flat style buttons
+* Fixed an erro that was causing facility address to appear on card as "null" if not entered
+* Edit facility now brings up modal stepper
+* Now search for new suppliers by name, not by email - modal closes and supplier selected if found
+* Fixed a problem that was causing thumbnails to not update in modal dialogs
+* Staff/tenants only see facilities that they are a member of
+
+**v1.3.12b**
+
+* Contact cards for teams, facilities now only show primary contact (be it email or phone)
+* Supplier page has decrease width navigation column and increase width card (4/8)
+* Supplier card has tabs (messages, documents, members, services)
+* Created Stepper component and applied it to the facility edit screen
+
+**v1.3.11b**
+
+* Fixed a problem that was causing left navigation to block mobile view on initial load
+* Restricted max width of main content wrapper to 1280px
+* Restricted max height of facilty image to 500px
+* Increase padding around avatars
+* Updated avatars, contact lists, document tables, to all conform with md spec (increased padding and made full width), made numerous additional updates to strylesheets to simplify and improve md compliance
+* Added facility tabs for personnel, suppliers, services, removed from edit view
+* Moved "add facility" button to fab position
+* Updated breakpoints for filterbox2 (and facility layout) card
+* Fixed a problem with horizontally aligned layout elements wrapping on smaller screens causing clumsy navigation
+* Facility layout: Changed width and colour of left navigation element so as to allow more information to be displayed on the facility card itself
+* Added "add another" button to contact list
+* Changed font colours on comment and notification to better distinguish message text from metadata
+* Fixed a problem that was causing crash when new supplier team added
+
+**v1.3.10b**
+
+* Can add team announcements from dashboard
+* Can add facility announcement from dashboard by selecting facility from primary facility dropdown
+* Fixed a bug that was causing team tour to display when viewing other teams
+* Tabs section on facility card for detailed information
+* Facility discussion appears on facility card
+* Facility documents appear on facility card
+* Facility card given material design style
+
+**v1.3.9b**
+
+* WO list: Removed new and issued filters
+* Notifications for deletion, reversal and file upload
+* FM managers can now change priority of issued work orders
+* When a new request is created title field has focus
+* Changed padding in comment text area to match comment padding
+* Updated tour text for single issue page
+* Updated tour text for team edit page
+* Updated WO issued message to use role based messages
+* Removed "quick files" components from facilities and teams (NB:check all quick files have been copied to documents before production release)
+* Delete and cancel do not remove from database (still visible from email links)
+
 **v1.3.8b-01**
 
 * Suppliers can no longer create work orders

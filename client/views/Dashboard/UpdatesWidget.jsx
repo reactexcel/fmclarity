@@ -7,17 +7,31 @@ UpdatesWidget = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var user,team;
+    	var user,item,team,facility;
     	user = Meteor.user();
-    	if(user) {
-    		team = user.getSelectedTeam();
-    		if(team) {
-    			Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
+    	if(this.props.item) {
+    		item = this.props.item;
+    	}
+    	else if(user) {
+    		facility = user.getSelectedFacility();
+	    	team = user.getSelectedTeam();
+
+    		if(facility) {
+	    		Meteor.subscribe("messages","Facilities",facility._id,moment().subtract({days:7}).toDate())
+	    		item = facility;
     		}
+    		else if(team) {
+	    		Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
+		    	item = team;
+	    	}
+	    	else {
+	    		Meteor.subscribe("messages","users",user._id,moment().subtract({days:7}).toDate())
+		    	item = user;	    		
+	    	}
     	}
     	return {
     		user:user,
-    		team:team
+    		item:item
     	}
     },
 
@@ -28,9 +42,9 @@ UpdatesWidget = React.createClass({
 		        <div className="ibox-title">
 		        	<h2>Recent Updates</h2>
 		        </div>
-		        <div className="ibox-content">
-		        	{this.data.team?
-					<Inbox for={this.data.team} truncate={true} readOnly={true}/>
+		        <div className="ibox-content" style={{padding:"0px"}}>
+		        	{this.data.item?
+					<Inbox for={this.data.item} readOnly={true} truncate={true}/>
 		        	:null}
 				</div>
 			</div>

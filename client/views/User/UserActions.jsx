@@ -9,8 +9,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 function addRoleBasedActions(menu,user,team) {
 	if(team&&team.hasMember(user)) {
 		var teamName = team.getName();
-
-		if(!user.isLoggedIn()) {
+		if(!user.isLoggedIn()&&team.canRemoveMember(user)&&team.collectionName!="Issues") {
 			menu.push({
 				label:"Remove from "+teamName,
 				shouldConfirm:true,
@@ -21,17 +20,24 @@ function addRoleBasedActions(menu,user,team) {
 			});
 		}
 
-		if(team.canSetMemberRole&&team.canSetMemberRole(user)) {
-			var role = team.getMemberRole(user);
-			var newRole = (role=='manager')?'staff':'manager';
+		if(false&&team.ownerIs(user)) {
 			menu.push({
-				label:((newRole=='manager')?'Promote to manager':'Demote to staff')+(' of '+teamName),
-				shouldConfirm:true,
-				action(){
-					team.setMemberRole(user,newRole);
-					Modal.hide();
+				label:"Revoke ownership of "+teamName,
+				shouldConfirm:true, //lets make this the default
+				action() {
+					team.clearOwner();
 				}
 			})
+		}
+
+		if(user&&team.canSendMemberInvite&&team.canSendMemberInvite(user)) {
+			menu.push({
+				label:"Send email invitation",
+				action() {
+					team.sendMemberInvite(user);
+					Modal.hide();
+				}
+			});
 		}
 	}
 }
@@ -43,11 +49,16 @@ UserActions = {
 		var menu = [];
 
 		addRoleBasedActions(menu,user,team);
-		addRoleBasedActions(menu,user,facility);
+		if(facility&&team&&(facility._id!=team._id)) {
+			addRoleBasedActions(menu,user,facility);
+		}
 
 		//these really should do in RBAC
 		if(user) {
 
+			// Hmm, menu options global and dynamic
+			// can be added within different packages
+			// Probably want to follow flux pattern like modal
 			if(user._id==Meteor.userId()) {
 				menu.push({
 					label:"Reset tutorials",
@@ -57,15 +68,18 @@ UserActions = {
 					}
 				})
 			}
-
-			menu.push({
-				label:"Send email invitation",
-				shoudConfirm:true,
-				action() {
-					user.sendInvite();
-					Modal.hide();
-				}
-			});
+			//
+			else if(true) {
+				menu.push({
+					label:"Login",
+					shouldConfirm:true,
+					action() {
+						user.login(function(){
+							location.reload();
+						});
+					}
+				})
+			}
 		}
 		return menu;
 	}

@@ -58,7 +58,7 @@ WOServiceSelector = React.createClass({
 					    <div className="col-md-12">
 					        <SuperSelect 
 						        readOnly={!request.canSetService()}
-						        itemView={ContactViewName}
+						        itemView={NameCard}
 						        items={services} 
 						        onChange={request.setService.bind(request)}
 						    >
@@ -78,7 +78,7 @@ WOServiceSelector = React.createClass({
 				        <div className="col-md-12">
 					        <SuperSelect 
 					            readOnly={!request.canSetSubService()}
-					            itemView={ContactViewName}
+					            itemView={NameCard}
 					            items={subservices} 
 					            onChange={request.setSubService.bind(request)}
 					        >
@@ -99,7 +99,7 @@ WOServiceSelector = React.createClass({
                     	<div className="col-md-12">
 	                        <SuperSelect 
 	                            readOnly={!request.canSetSupplier()}
-	                            itemView={ContactViewName}
+	                            itemView={NameCard}
 	                            items={suppliers} 
 	                            moreItems={this.data.allSuppliers}
 	                            clearOption={{name:"None"}}
@@ -121,7 +121,7 @@ WOServiceSelector = React.createClass({
                        	<div className="col-lg-12">
                             <SuperSelect 
                                 readOnly={!request.canSetAssignee()}
-                                itemView={ContactViewName}
+                                itemView={NameCard}
                                 items={supplier.getMembers()}
                                 onChange={request.setAssignee.bind(request)}
                             >

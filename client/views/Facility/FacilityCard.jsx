@@ -2,38 +2,37 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+/* This now redundant and to be moved into FacilityViewDetail */
+
 FacilityCard = React.createClass({
 
-	getInitialState() {
-		return {
-			edit:this.props.edit||this.props.item==null||false
-		}
-	},
+    mixins: [ReactMeteorData],
 
-	toggleEdit() {
-		this.setState({
-			edit:!this.state.edit
-		})
+    getMeteorData() {
+		return {
+			facility:this.props.item
+		}
 	},
 
 	getMenu() {
 		var component = this;
-		var facility = this.props.item;
-
+		var facility = this.data.facility;
 		var menu = [];
 
 		if(facility&&facility.canSave()) {
 			menu.push({
-				label:this.state.edit?"View as card":"Edit",
+				label:"Edit",
 				action(){
-					component.toggleEdit()
+					Modal.show({
+						content:<FacilityViewEdit item={facility} />
+					})
 				}
 			});
 		}
 
 		if(facility.canDestroy()) {
 			menu.push({
-				label:"Delete Facility",
+				label:"Delete",
 				action(){
 					facility.destroy();
 				}
@@ -44,14 +43,10 @@ FacilityCard = React.createClass({
 
 	render() {
 		var menu = this.getMenu();
-		var item = this.props.item;
+		var facility = this.data.facility;
 		return (
 			<div>
-			    {item.canSave()&&this.state.edit?
-			        <FacilityViewEdit item={item} />
-			    :
-					<FacilityViewDetail item={item}/>
-				}
+				<FacilityViewDetail item={facility}/>
             	<ActionsMenu items={menu} />
 			</div>
 		)

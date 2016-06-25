@@ -1,3 +1,5 @@
+//These publish functions need to be moved into their respective controllers
+
 Meteor.publish('teams', function () {
 	return Teams.find({"members._id":this.userId});
 });
@@ -6,16 +8,8 @@ Meteor.publish('allTeams', function() {
 	return Teams.find();
 })
 
-Meteor.publish('config', function () {
-    return Config.find({});
-});
-
 Meteor.publish('users', function () {
     return Users.find({});
-});
-
-Meteor.publish('facilities',function(){
-	return Facilities.find();
 });
 
 Meteor.publish('suppliersForTeam',function(teamId,numSuppliers){
@@ -37,7 +31,10 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 	var teams, facilities, issues, suppliers;
 
 	//teams I am a member in
-	teams = Teams.find({"members._id":this.userId});
+	teams = Teams.find({$or:[
+		{"owner._id":this.userId},
+		{"members._id":this.userId}
+	]});
 	var teamIds = [];
 	var teamNames = [];
 	//var supplierIds = [];
@@ -51,11 +48,8 @@ Meteor.publish('teamsAndFacilitiesForUser', function () {
 			//})
 		//}
 	});
-
 	//suppliers = Teams.find({_id:{$in:supplierIds}});
-
 	//console.log('looked again');
-
 	//find all of the issues that are for those teams, either as a creator or a supplier
 	issues = Issues.find({$or:[
 		{$or:[

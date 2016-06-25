@@ -8,48 +8,34 @@ IssueSummary = React.createClass({
   mixins: [ReactMeteorData],
 
   getMeteorData() {
-    var request = this.props.item;
-    if(!request) {
-      return {
-        ready:false
-      }
+    var request,facility,team,selectedTeam,owner,supplier,status,timeframe;
+    request = this.props.item;
+    selectedTeam = Session.getSelectedTeam();
+    if(request) {
+      facility = request.getFacility();
+      team = request.getTeam();
+      owner = request.getOwner();
+      supplier = request.getSupplier();
+      status = request.status;
     }
-    else {
-      // note: in order to reduce the overhead of loading the owner
-      // supplier etc - we should denormalise the tables
-      // that is to say - any field we want to use in this context
-      // get saved directly in the issue doucment (thumbnail etc)
-      return {
-        ready:true,
-        request:request,
-        facility:request.getFacility(),
-        team:request.getTeam(),
-        selectedTeam:Session.getSelectedTeam(),
-        owner:request.getOwner(),
-        supplier:request.getSupplier(),
-        status:request.status,
-        timeframe:request.getTimeframe()
-      }
-    }
-  },
-
-  updateField(field) {
-    var $this = this;
-    // returns a function that modifies 'field'
-    return function(event) {
-      $this.item[field] = event.target.value;
-      $this.saveItem();
+    return {
+      request:request,
+      facility:facility,
+      team:team,
+      selectedTeam:selectedTeam,
+      owner:owner,
+      supplier:supplier,
+      status:status,
     }
   },
 
   render() {
-      if(this.data.ready) {
-        var request = this.item = this.data.request;
+      var request = this.item = this.data.request;
+      if(request) {
         var team = this.data.team;
         var facility = this.data.facility;
         var owner = this.data.owner;
         var supplier = this.data.supplier;
-        var timeframe = this.data.timeframe;
         var dueDate = request.dueDate?moment(request.dueDate):null;
         var issuedDate = request.issuedAt?moment(request.issuedAt):null;
         var selectedTeam = this.data.selectedTeam;

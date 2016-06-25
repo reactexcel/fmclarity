@@ -3,60 +3,62 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 function addTeamMenuItem(menu,item,team) {
-	if(
-		team&&
-		team.hasSupplier(item)&&
-		team.canRemoveSupplier&&
-		team.canRemoveSupplier()&&
-		team._id!=item._id
-	) {
+	if(team) {
+		if(team.hasSupplier(item)&&team.canRemoveSupplier&&team.canRemoveSupplier()&&team._id!=item._id) {
 
-		menu.push({
-			label:"Remove supplier from "+team.getName(),
-			shouldConfirm:true,
-			action(){
-				team.removeSupplier(item);
-				Modal.hide();
-			}
-		});
+			menu.push({
+				label:"Remove supplier from "+team.getName(),
+				shouldConfirm:true,
+				action(){
+					team.removeSupplier(item);
+					Modal.hide();
+				}
+			});
 
+		}
+
+		if(item&&item.ownerIs&&item.ownerIs(team)) {
+			var itemName = item.getName();
+			menu.push({
+				label:"Revoke ownership of "+itemName,
+				shouldConfirm:true,
+				action() {
+					item.clearOwner();
+				}
+			})
+		}
 	}
 }
 
 TeamCard = React.createClass({
 
-	getInitialState() {
-		return {
-			edit:this.props.edit||this.props.item==null||false
-		}
-	},
-
-	toggleEdit() {
-		this.setState({
-			edit:!this.state.edit
-		})
-	},
-
 	getMenu() {
 		var component = this;
-		var item = this.props.item;
+		var supplier = this.props.item;
 		var parentTeam = Session.getSelectedTeam();
 		var parentFacility = Session.getSelectedFacility();
 		var menu = [];
 
-		if(item) {
+		if(supplier) {
 
-			if(item.canSave()) {
+			if(supplier.canSave()) {
 				menu.push({
-					label:this.state.edit?"View as card":"Edit",
+					label:"Edit",
 					action(){
-						component.toggleEdit()
+						Modal.show({
+							content:<TeamViewEdit 
+								item={supplier} 
+								team={component.props.team}
+								facility={component.props.facility}
+								group={component.props.group}
+								onChange={component.props.onChange}/>
+						})
 					}
 				});
 			}
 
-			addTeamMenuItem(menu,item,parentTeam);
-			addTeamMenuItem(menu,item,parentFacility);
+			addTeamMenuItem(menu,supplier,parentTeam);
+			addTeamMenuItem(menu,supplier,parentFacility);
 
 		}
 		return menu;
@@ -65,22 +67,26 @@ TeamCard = React.createClass({
 	render() {
 		var menu = this.getMenu();
 		var supplier = this.props.item;
+		var component = this;
+
+		if(!supplier) {
+			return (
+				<div>			
+					<TeamViewEdit 
+						item={supplier} 
+						team={component.props.team}
+						facility={component.props.facility}
+						group={component.props.group}
+						onChange={component.props.onChange}/>
+				</div>
+			)
+		}
 
 		return (
-			<div>
-			    {(!supplier||supplier.canSave())&&this.state.edit?
-			        <TeamViewEdit 
-						item={supplier} 
-						team={this.props.team}
-						facility={this.props.facility}
-						role={this.props.role}
-						onChange={this.props.onChange}
-			        />
-			    :
-					<TeamViewDetail item={supplier}/>
-				}
-            	<ActionsMenu items={menu} />
-			</div>
+			<div>			
+				<TeamViewDetail item={supplier}/>
+	            <ActionsMenu items={menu} />
+	        </div>
 		)
 	}
 });

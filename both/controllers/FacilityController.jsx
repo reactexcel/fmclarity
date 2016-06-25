@@ -1,19 +1,59 @@
+// attach schema to the collection
+// in terms of code readability it would be nice to put the Facilities = ORM.Collection("Facilities") here
+// but with the Meteor load order it would break some of the dependencies
 Facilities.schema(FacilitySchema);
 
-DocThumb.register(Facilities,Files);
+//Yes - but doesn't this mean that the schema is not a complete document
+//and what about validation?
+//well - I think if we are going to do it this way then we should at least have some sort of placeholder in the schema??
+// but then again these mixins have their own schemas defined - perhaps we shouldn't concern ourselves
+Facilities.mixins([
+  DocThumb.config({
+    defaultThumbUrl:0
+  }),
+  DocAttachments.config({
+    authentication:AuthHelpers.managerOfRelatedTeam,    
+  }),
+  DocMessages.config({
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    helpers:{
+      getInboxName:function(){
+        return this.getName()+" announcements"
+      },
+      getWatchers:function() {
+        var members = this.getMembers();
+        var watchers = [];
+        if(members&&members.length) {
+          members.map(function(m){
+            watchers.push(m);
+          })
+        }
+        return watchers;      
+      }
+    }
+  }),
+  DocMembers.config([{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    fieldName:"members",
+  },{
+    fieldName:"suppliers",
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    membersCollection:Teams,
+    /*
+    // or???
+    authentication:{
+      create:AuthHelpers.managerOfRelatedTeam,
+      read:AuthHelpers.managerOfRelatedTeam,
+      update:AuthHelpers.managerOfRelatedTeam,
+      delete:AuthHelpers.managerOfRelatedTeam,
+    }
+    */    
+  }])
+]);
 
-DocMembers.register(Facilities,{
-  fieldName:"members",
-  authentication:AuthHelpers.managerOfRelatedTeam,
-});
-
-DocMembers.register(Facilities,{
-  fieldName:"suppliers",
-  authentication:AuthHelpers.managerOfRelatedTeam,
-  membersCollection:Teams
-});
-
-Facilities.methods({
+//suggestion:
+//rename method to writeFunction and helper to readFunction?
+Facilities.actions({
   create:{
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.create.bind(Facilities)
@@ -26,96 +66,144 @@ Facilities.methods({
     authentication:AuthHelpers.managerOfRelatedTeam,
     method:RBAC.lib.destroy.bind(Facilities)
   },
-
-})
-
-// how would it be if these went in the schema?
-// would make RBAC a lot easier
-Facilities.helpers({
-
-  getIssues() {
-  	return Issues.find({"facility._id":this._id}).fetch();
-  },
-
-  getTeam() {
-    return Teams.findOne(this.team._id);
-  },  
-
-  setTeam(team) {
-  	this.save({
-  		team:{
-  			_id:team._id,
-  			name:team.name
-  		}
-  	})
-  },
-
-  isNew() {
-  	return this.name==null||this.name.length==0;
-  },
-
-  getName() {
-  	//return this.name?(this.name+', '+this.address.city):'';
-  	return this.name;
-  },
-
-  getAddress() {
-    var str = '';
-  	var a = this.address;
-    if(a) {
-      str = a.streetNumber+
-      ' '+a.streetName+
-      ' '+a.streetType+
-      (a.city?(', '+a.city):null);
-    }
-    return str;
-  },
-
-  getAreas(parent) {
-    return mergeWithTeamArray(this,'areas',parent);
-  },
-
-  getServices(parent) {
-    return mergeWithTeamArray(this,'servicesRequired',parent);
-  },
-
-  getAllSuppliers() {
-    return mergeWithTeamArray(this,'suppliers');
-  },
-
-  getPrimaryContact() {
-    var contacts = this.getMembers({role:"manager"});
-  	if(contacts&&contacts.length) {
-      return contacts[0]
-    }
-  },
-
-  getIssueCount() {
-  	return Issues.find({"facility._id":this._id}).count();
-  }
-
-});
-
-function mergeWithTeamArray(item,field,parent) {
-    var items;
-
-    //if indexing children of another service
-    if(parent) {
-      items = parent.children;
-    }
-    //else merge team services with facility services
-    else {
-      items = item[field]?item[field]:[];
-      var team = item.getTeam();
-      if(team&&team[field]) {
-        items = items.concat(team[field]);
+  getAreas:{
+    authentication:AuthHelpers.memberOfRelatedTeam,
+    helper:function(facility,parent){
+      var areas;
+      if(parent) {
+        areas = parent.children||[];
       }
-      items.sort(function(a,b){
+      areas = facility.areas;
+      areas.sort(function(a,b){
         if(a&&a.name&&b&&b.name) {
           return (a.name>b.name)?1:-1;
         }
       })
-      items = _.uniq(items,true,function(i){return i&&i.name?i.name:null});
+      return areas;
     }
-    return items;
+  },  
+  setAreas:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,areas){
+      Facilities.update(facility._id,{$set:{areas:areas}});
+    }
+  },
+  getServices:{
+    authentication:AuthHelpers.memberOfRelatedTeam,
+    helper:function(facility,parent){
+      var services;
+      if(parent) {
+        services = parent.children||[];
+      }
+      else {
+        services = facility.servicesRequired||[];
+      }
+      services.sort(function(a,b){
+        if(a&&a.name&&b&&b.name) {
+          return (a.name>b.name)?1:-1;
+        }
+      })
+      return services;
+    }
+  },
+  setServicesRequired:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,servicesRequired){
+      Facilities.update(facility._id,{$set:{servicesRequired:servicesRequired}});
+    }
+  },
+  setServiceSupplier:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    method:function(facility,serviceIdx,subserviceIdx,supplier) {
+      console.log(supplier);
+      console.log(facility);
+
+      if(serviceIdx) {
+        facility = Facilities._transform(facility);
+
+        //create update location string
+        updateLocation = ("servicesRequired."+serviceIdx);
+        if(subserviceIdx) {
+          updateLocation += (".children."+subserviceIdx);
+        }
+        updateLocation += ".data.supplier";
+
+        //create update structure
+        var update = {$set:{}};
+        update.$set[updateLocation] = supplier?{
+          _id:supplier._id,
+          name:supplier.name
+        }:null;
+
+        Facilities.update(facility._id,update);
+        facility.addSupplier(supplier);
+      }
+    }    
+  },
+
+  getTeam:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    helper:function(facility){
+      return Teams.findOne(facility.team._id);
+    }
+  },
+  setTeam:{
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    helper:function(facility,team){
+      Facilities.update(facility._id,{$set:{team:{
+          _id:team._id,
+          name:team.name        
+      }}});
+    }
+  },
+  getAddress:{
+    authentication:true,
+    helper:function(facility){
+      var str = '';
+      var a = facility.address;
+      if(a) {
+        str = 
+        (a.streetNumber?a.streetNumber:'')+
+        (a.streetName?(' '+a.streetName):'')+
+        (a.streetType?(' '+a.streetType):'')+
+        (a.city?(', '+a.city):'');
+      }
+      str = str.trim();
+      return str.length?str:null;
+    }
+  },
+  getPrimaryContact:{
+    authentication:true,
+    helper:function(facility){
+      var contacts = facility.getMembers({role:"manager"});
+      if(contacts&&contacts.length) {
+        return contacts[0]
+      }
+    }
+  },
+  //this is not allowing for suppliers who have a request with this facility
+  getIssues:{
+    authentication:true,
+    helper:function(facility){
+      var team = Session.getSelectedTeam();
+      if(team){
+        return team.getIssues({"facility._id":facility._id});
+      }
+    }
+  },
+  getIssueCount:{
+    authentication:true,
+    helper:function(facility){
+      return facility.getIssues().length;
+    }
+  }
+})
+
+if(Meteor.isServer) {
+  Meteor.publish('facilities',function(){
+    return Facilities.find();
+  });
+}
+else {
+  Meteor.subscribe('facilities');
 }

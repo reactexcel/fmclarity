@@ -1,60 +1,41 @@
 Issues.schema(IssueSchema);
 
-DocMessages.register(Issues,{
-  getInboxName:function() {
-    return "work order #"+this.code+' "'+this.getName()+'"';
-  },
-  getWatchers:function() {
 
-    var user, owner, team, supplier, assignee;
+Issues.mixins([
+  DocMessages.config({
+    helpers:{
+      getInboxName:function() {
+        return "work order #"+this.code+' "'+this.getName()+'"';
+      },
+      getWatchers:function() {
 
-    user = Meteor.user();
-    owner = this.getOwner();
+        var user, owner, team, supplier, assignee;
 
-    //don't include suppliers and assignees if draft or new
-    if(this.status!=Issues.STATUS_DRAFT) {
-      team = this.getTeam();
-      if(this.status!=Issues.STATUS_NEW) {
-        supplier = this.getSupplier();
-        assignee = this.getAssignee();
+        user = Meteor.user();
+        owner = this.getOwner();
+
+        //don't include suppliers and assignees if draft or new
+        //is this deprecated?
+        if(this.status!=Issues.STATUS_DRAFT) {
+          team = this.getTeam();
+          if(this.status!=Issues.STATUS_NEW) {
+            supplier = this.getSupplier();
+            assignee = this.getAssignee();
+          }
+        }
+        return [user,owner,supplier,team,assignee];
       }
     }
-
-    //and facilityContact?
-    return [user,owner,supplier,team,assignee];
-    return [
-      {
-        role:"active user",
-        watcher:user
-      },
-      {
-        role:"owner",
-        watcher:owner
-      },
-      {
-        role:"team",
-        watcher:team
-      },
-      {
-        role:"supplier",
-        watcher:supplier
-      },
-      {
-        role:"assignee",
-        watcher:assignee
-      },
-    ];
-  }
-});
-
-DocMembers.register(Issues,{
-  authentication:function(role,user,request) {
-    return (
-      AuthHelpers.memberOfRelatedTeam(role,user,request)||
-      AuthHelpers.managerOfSuppliersTeam(role,user,request)
-    )
-  }
-});
+  }),
+  DocMembers.config({
+    authentication:function(role,user,request) {
+      return (
+        AuthHelpers.memberOfRelatedTeam(role,user,request)||
+        AuthHelpers.managerOfSuppliersTeam(role,user,request)
+      )
+    }
+  })
+])
 
 function isEditable(request) {
   return (
@@ -100,10 +81,28 @@ Issues.methods({
   },
   setFacility:{
     authentication:accessForTeamMembers,
-    method:Issues._schema['facility'].setter,
+    method:function(request,facility) {
+      request = Issues._transform(request);
+      facility = Facilities._transform(facility);
+      Issues.update(request._id,{$set:{
+        level:null,
+        area:null,
+        service:null,
+        subservice:null,
+        assignee:null,
+        supplier:null,
+        facility:{
+          _id:facility._id,
+          name:facility.name
+        }
+      }});
+      Issues.update(request._id,{$pull:{members:{role:"facility manager"}}});
+      var facilityMembers = facility.getMembers({role:"manager"});
+      request.addMember(facilityMembers,{role:"facility manager"});
+    }
   },
   setPriority:{
-    authentication:accessForTeamMembers,
+    authentication:accessForTeamMembersWithElevatedAccessForManagers,
     method:setPriority,
   },
   setService:{
@@ -145,6 +144,30 @@ Issues.methods({
     },
     method:setAssignee
   },
+
+  getFacility:{
+    authentication:true,
+    helper:AccessHelpers.hasOne({
+      collection:Facilities,
+      fieldName:"facility"
+    })
+  },
+
+
+  getTeam:{
+    authentication:true,
+    helper:AccessHelpers.hasOne({
+      collection:Teams,
+      fieldName:"team"
+    })
+  },
+
+  getArea:{
+    authentication:true,
+    helper:function(team) {
+      return team.area;
+    }
+  }
 })
 
 function setArea(request,area) {
@@ -244,7 +267,7 @@ function setSubService(request,subservice) {
   //if(request.canSetSupplier()) {
     if(subservice.data&&subservice.data.supplier) {
       //dangerously bypass RBAC
-      setSupplier(requeset,subservice.data.supplier);
+      setSupplier(request,subservice.data.supplier);
     }
     else {
       //dangerously bypass RBAC

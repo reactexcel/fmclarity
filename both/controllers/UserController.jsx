@@ -1,13 +1,14 @@
 // move to own package fmc:users
 
-DocThumb.register(Users,{
-  repo:Files,
-  defaultThumb:"/img/ProfilePlaceholderSuit.png"
-});
+Users.mixins([
+  DocThumb.config({
+    repo:Files,
+    defaultThumb:"/img/ProfilePlaceholderSuit.png"
+  }),
+  DocMessages.config()
+])
 
-DocMessages.register(Meteor.users);
-
-Users.methods({
+Users.actions({
   create:{
     authentication:true,
     method:createUser
@@ -20,6 +21,85 @@ Users.methods({
     authentication:true,//AuthHelpers.userIsManagerofMembersTeam,
     method:RBAC.lib.destroy.bind(Users)
   },
+  getTeams:{
+    authentication:true,
+    helper:function(user){
+      return Teams.find({$or:[
+        {"members._id":user._id},
+        {"owner._id":user._id}
+      ]}).fetch()
+    }
+  },
+  getRole:{
+    authentication:true,
+    helper:function(user,group) {
+      group = group||user.getSelectedTeam();
+      if(!group||!group.members||!group.members.length) {
+        return null;
+      }
+      for(var i in group.members) {
+        var currentMember = group.members[i];
+        if(currentMember&&user&&currentMember._id==user._id) {
+          return currentMember.role;
+        }
+      }
+    },
+  },
+  //this to by updated to save/retrieve from database
+  //thereby making persistent
+  getSelectedTeam:{
+    authentication:true,
+    helper:function(user) {
+      return Session.getSelectedTeam()
+    }
+  },
+  getRequests:{
+    authentication:true,
+    //subscription:???
+    helper:function(user,filter) {
+      var team = user.getSelectedTeam();
+      var role = user.getRole();
+      var myFacilities = Facilities.find({"members._id":user._id}).fetch();
+      var myFacilityIds = _.pluck(myFacilities,'_id');
+
+      //fragments to use in query
+      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
+      var isIssued = {status:{$in:[Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
+      var isOpen = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
+      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
+      var createdByMe = {"owner._id":user._id};
+      var createdByMyTeam ={$and:[{"team._id":team._id},isNotDraft]};
+      var issuedToMyTeam = {$and:[{$or:[{"supplier._id":team._id},{"supplier.name":team.name}]},isIssued]};
+      var assignedToMe = {$and:[{"assignee._id":user._id},isIssued]};
+      var inMyFacilities = {$and:[{"facility._id":{$in:myFacilityIds}},isNotDraft]};
+
+      var query = [];
+
+      //if staff or tenant restrict to issues created by or assigned to me
+      if(role=="portfolio manager") {
+        query.push({$or:[issuedToMyTeam,createdByMyTeam,createdByMe,assignedToMe]});
+      }
+      //if manager can be issued to team, created by team, created by me, or assigned to me
+      else if(role=="manager") {
+        if(team.type=="contractor") {
+          query.push({$or:[issuedToMyTeam,createdByMe,assignedToMe]});
+        }
+        else if(team.type=="fm"){
+          query.push({$or:[inMyFacilities,{$and:[createdByMe,isNotClosed]},{$and:[assignedToMe,isOpen]}]});
+        }
+      }
+      else {
+        query.push({$or:[createdByMe,assignedToMe]});
+      }
+      //if filter passed to function then add that to the query
+      if(filter) {
+        query.push(filter);
+      }
+
+      //perform and return the query
+      return Issues.find({$and:query}).fetch({sort:{createdAt:1}});
+    }
+  }
 })
 
 function createUser(item,password) {
@@ -58,6 +138,10 @@ Meteor.methods({
 Users.helpers({
 
   collectionName:'users',
+
+  login:function(callback){
+    FMCLogin.loginUser(this,callback)
+  },
 
   sendInvite:function() {
     Meteor.call('User.sendInvite',this._id);
@@ -131,9 +215,7 @@ Users.helpers({
     return [];
   },
 
-  getTeams:function() {
-    return Teams.find({"members._id":Meteor.userId()}).fetch();
-  },
+
   getTeam:function(i) {
     var teams = this.getTeams();
     return teams[i];
@@ -167,3 +249,47 @@ Users.helpers({
     return ! User.isLoggedIn();
   }
 });
+
+if(Meteor.isClient) {
+  //I'd really like to remove all of this from here by binding it to user
+  Session.setTeamRole = function(role) {
+    return Session.set('selectedTeamRole',role);
+  }
+  Session.getTeamRole = function() {
+    return Session.get('selectedTeamRole');
+  }
+  Session.getSelectedTeam = function() {
+    var selectedTeamQuery = Session.get('selectedTeam');
+    if(selectedTeamQuery) {
+      return Teams.findOne(selectedTeamQuery._id);
+    }
+  }
+  Session.selectTeam = function(team) {
+      if(team) {
+        Session.set('selectedTeam',{_id:team._id});
+      }
+      Session.set('selectedFacility',0);
+    }
+  Session.getSelectedFacility = function() {
+      var selectedFacilityQuery = Session.get('selectedFacility');
+      if(selectedFacilityQuery) {
+        return Facilities.findOne(selectedFacilityQuery._id);
+    }
+  }
+  Session.selectFacility = function(f) {
+      if(f) {
+        Session.set('selectedFacility',{_id:f._id});
+      }
+    }
+  Session.getSelectedClient = function() {
+      var selectedClientQuery = Session.get('selectedClient');
+      if(selectedClientQuery) {
+        return Teams.findOne(selectedClientQuery._id);
+    }
+  }
+  Session.selectClient = function(c) {
+      if(f) {
+        Session.set('selectedClient',{_id:c._id});
+      }
+    }
+}
