@@ -138,7 +138,7 @@ TeamViewEdit = React.createClass({
 		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
             	<h2 style={{marginTop:"0px"}}>Edit team</h2>
-                {viewingTeam.owner?<div>
+                {(false&&viewingTeam.owner)?<div>
                     <b>Team owner:</b>
                     <DocOwnerCard item={viewingTeam}/>
                 </div>
@@ -161,10 +161,6 @@ TeamViewEdit = React.createClass({
                     },{
                         tab:        <span id="members-tab">Members</span>,
                         content:    <ContactList group={viewingTeam} team={viewingTeam}/>,
-                        guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
-                    },{
-                        tab:        <span id="services-required-tab">Services required</span>,
-                        content:    <ServicesSelector item={viewingTeam} field={"servicesRequired"}/>,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:        <span id="services-provided-tab">Services provided</span>,

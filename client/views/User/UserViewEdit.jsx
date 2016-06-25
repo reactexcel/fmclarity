@@ -10,16 +10,16 @@ UserViewRelationEdit = React.createClass({
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole(member,role);
-		if(this.props.team) {
-			this.props.team.setMemberRole(member,role);
-		}
+		//if(this.props.team) {
+			//this.props.team.setMemberRole(member,role);
+		//}
 	},
 
 	render() {
 		var member,group,team,relation,role;
 		member = this.props.member;
 		group = this.props.group;
-		if(group) {
+		if(group&&group.collectionName!="Issues") {
 			relation = group.getMemberRelation(member);
 			if(relation) {
 				role = relation.role;
@@ -28,7 +28,8 @@ UserViewRelationEdit = React.createClass({
 						items={["portfolio manager","manager","staff","tenant"]} 
 						selectedItem={role}
 						onChange={this.handleRoleChange}
-						placeholder="Role"/>
+						placeholder="Role"
+					/>
 				)
 			}
 		}
@@ -139,7 +140,7 @@ UserViewEdit = React.createClass({
             	if(!response.found) {
 		            component.setState({
             			shouldShowMessage:true
-            		});	    
+            		});
             	}
             	component.setItem(user);
             	console.log(role);

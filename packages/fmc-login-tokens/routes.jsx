@@ -23,7 +23,7 @@ loggedIn = FlowRouter.group({
 
 if(Meteor.isClient) {
   Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin')||'/';
+    var redirect = Session.get('redirectAfterLogin');
     if(redirect) {
       Session.set('redirectAfterLogin',null)
       return FlowRouter.go(redirect);
@@ -35,6 +35,9 @@ exposed.route('/login', {
   name: 'login',
   action() {
     var redirect = Session.get('redirectAfterLogin');
+    if(!redirect) {
+      Session.set('redirectAfterLogin','/');
+    }
     mount(BlankLayout,{content:<PageLogin/>});
   },
 });

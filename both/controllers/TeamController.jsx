@@ -15,13 +15,13 @@ Teams.mixins([
     authentication:AuthHelpers.managerOrOwner,
   }]),
   DocMessages.config({
-    authentication:AuthHelpers.managerOrOwner,
+    authentication:AuthHelpers.adminManagerOrOwner,
     helpers:{
       getInboxName:function(){
         return this.getName();
       },
       getWatchers:function() {
-        return this.getMembers({role:"manager"});
+        return this.getMembers({role:{$in:["manager","portfolio manager"]}});
         var members = this.getMembers({role:"manager"});
         var watchers = [];
         if(members&&members.length) {
@@ -44,7 +44,7 @@ Teams.methods({
     method:RBAC.lib.create.bind(Teams)
   },
   save:{
-    authentication:AuthHelpers.managerOrOwner,
+    authentication:AuthHelpers.adminManagerOrOwner,
     method:RBAC.lib.save.bind(Teams)
   },
   destroy:{
@@ -341,6 +341,10 @@ Teams.helpers({
     //return all facilities user is a member of
     //and all the facilities in the requests user can see
     var user = Meteor.user();
+    if(!user) {
+      return []
+    }
+
     var requests,facilityIds = [];
     requests = user.getRequests();
     if(requests&&requests.length) {
@@ -351,7 +355,7 @@ Teams.helpers({
       })
     }
 
-    console.log(facilityIds);
+    //console.log(facilityIds);
 
     var facilities = Facilities.find({$or:[
       {$and:[
@@ -361,7 +365,7 @@ Teams.helpers({
       {_id:{$in:facilityIds}}
     ]},{sort:{name:1}}).fetch();
 
-    console.log(facilities);
+    //console.log(facilities);
     return facilities;
   },
 

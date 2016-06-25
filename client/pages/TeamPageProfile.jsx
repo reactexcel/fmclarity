@@ -27,7 +27,7 @@ TeamPageProfile = React.createClass({
 		        	<div className="col-lg-2"></div>
 		            <div className="col-lg-8">
 		            	<div className="ibox">
-							<TeamViewEdit item={this.data.team}/>
+							<TeamCard item={this.data.team}/>
 						</div>
 					</div>
 		        	<div className="col-lg-2"></div>

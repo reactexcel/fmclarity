@@ -33,6 +33,7 @@ Users.actions({
   getRole:{
     authentication:true,
     helper:function(user,group) {
+      group = group||user.getSelectedTeam();
       if(!group||!group.members||!group.members.length) {
         return null;
       }
@@ -44,65 +45,59 @@ Users.actions({
       }
     },
   },
+  //this to by updated to save/retrieve from database
+  //thereby making persistent
+  getSelectedTeam:{
+    authentication:true,
+    helper:function(user) {
+      return Session.getSelectedTeam()
+    }
+  },
   getRequests:{
     authentication:true,
     //subscription:???
     helper:function(user,filter) {
-      var team, role, myFacilities,myFacilityIds;
+      var team = user.getSelectedTeam();
+      var role = user.getRole();
+      var myFacilities = Facilities.find({"members._id":user._id}).fetch();
+      var myFacilityIds = _.pluck(myFacilities,'_id');
 
-      team = Session.getSelectedTeam();
-      role = user.getRole(team);
+      //fragments to use in query
+      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
+      var isIssued = {status:{$in:[Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
+      var isOpen = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
+      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
+      var createdByMe = {"owner._id":user._id};
+      var createdByMyTeam ={$and:[{"team._id":team._id},isNotDraft]};
+      var issuedToMyTeam = {$and:[{$or:[{"supplier._id":team._id},{"supplier.name":team.name}]},isIssued]};
+      var assignedToMe = {$and:[{"assignee._id":user._id},isIssued]};
+      var inMyFacilities = {$and:[{"facility._id":{$in:myFacilityIds}},isNotDraft]};
 
-      console.log(role);
+      var query = [];
 
+      //if staff or tenant restrict to issues created by or assigned to me
       if(role=="portfolio manager") {
-        myFacilities = Facilities.find({"team._id":team._id}).fetch();
+        query.push({$or:[issuedToMyTeam,createdByMyTeam,createdByMe,assignedToMe]});
+      }
+      //if manager can be issued to team, created by team, created by me, or assigned to me
+      else if(role=="manager") {
+        if(team.type=="contractor") {
+          query.push({$or:[issuedToMyTeam,createdByMe,assignedToMe]});
+        }
+        else if(team.type=="fm"){
+          query.push({$or:[inMyFacilities,{$and:[createdByMe,isNotClosed]},{$and:[assignedToMe,isOpen]}]});
+        }
       }
       else {
-        myFacilities = Facilities.find({"members._id":user._id}).fetch();
+        query.push({$or:[createdByMe,assignedToMe]});
       }
-
-      console.log(myFacilities);
-
-      myFacilityIds = _.pluck(myFacilities,'_id');
-      console.log(myFacilityIds);
-
-      var q = {
-        isNotDraft:{status:{$nin:[Issues.STATUS_DRAFT]}},
-        hasBeenIssued:{status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
-        createdByMyTeam:{$and:[
-          {"team._id":team._id},
-          {status:{$nin:[Issues.STATUS_DRAFT]}},
-        ]},
-        issuedToMyTeam:{$and:[
-          {"supplier._id":team._id},
-          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
-        ]},
-        createdByMe:{"owner._id":user._id},
-        inMyFacilities:{$and:[
-          {"facility._id":{$in:myFacilityIds}},
-          {status:{$nin:[Issues.STATUS_DRAFT]}},
-        ]},
-        assignedToMe:{$and:[
-          {"assignee._id":user._id},
-          {status:{$nin:[Issues.STATUS_DRAFT,Issues.STATUS_NEW]}},
-        ]}
-      }
-
-      var query = {$and:[
-        q.inMyFacilities,
-        {$or:[q.issuedToMyTeam,q.createdByMyTeam,q.createdByMe,q.assignedToMe]}
-      ]};
-
+      //if filter passed to function then add that to the query
       if(filter) {
-        query.$and.push(filter);
+        query.push(filter);
       }
 
-      if(role=="staff"||role=="tenant"){
-        query.$and.push({$or:[q.createdByMe,q.assignedToMe]});
-      }
-
-      return Issues.find(query).fetch();
+      //perform and return the query
+      return Issues.find({$and:query}).fetch({sort:{createdAt:1}});
     }
   }
 })

@@ -69,44 +69,21 @@ IssueSchema = {
   level:{
     type:Object,
   },
-
   area:{
     type:Object,
-    getter() {
-      return this.area;
-    }
   },
-
   team:{
     type:Object,
-    relationship:{
-      hasOne:Teams
-    }
   },
-
   facility:{
     type:Object,
-    setter:setFacility,
-    getter:getFacility
-    /*relationship:{
-      hasOne:Facilities
-    }*/
   },
-
   supplier:{
     type:Object,
-    /*relationship:{
-      hasOne:Teams
-    }*/
   },
-
   assignee:{
     type:Object,
-    /*relationship:{
-      hasOne:Users
-    }*/
   },
-
   members: {
     type: [Object],
     label:"Members",
@@ -114,42 +91,18 @@ IssueSchema = {
   }
 }
 
-function setFacility(request,facility) {
-  request = Issues._transform(request);
-  facility = Facilities._transform(facility);
-  Issues.update(request._id,{$set:{
-    level:null,
-    area:null,
-    service:null,
-    subservice:null,
-    assignee:null,
-    supplier:null,
-    facility:{
-      _id:facility._id,
-      name:facility.name
-    }
-  }});
-  Issues.update(request._id,{$pull:{members:{role:"facility manager"}}});
-  var facilityMembers = facility.getMembers({role:"manager"});
-  request.addMember(facilityMembers,{role:"facility manager"});
-}
-
-function getFacility(request) {
-  request = request||this;
-  //console.log(request);
-  return (request&&request.facility)?Facilities.findOne(request.facility._id):null;
-}
-
 function membersDefaultValue(item) {
   var owner = Meteor.user();
   var team = Teams.findOne(item.team._id);
+  
   var teamMembers = team.getMembers({role:"portfolio manager"});
-  var facilityMembers = team.getMembers({role:"manager"});
+
   var members = [{
     _id:owner._id,
     name:owner.profile.name,
     role:"owner"
   }];
+
   teamMembers.map(function(m){
     members.push({
       _id:m._id,
@@ -157,12 +110,17 @@ function membersDefaultValue(item) {
       role:"team manager"
     })
   });
-  teamMembers.map(function(m){
-    members.push({
-      _id:m._id,
-      name:m.profile.name,
-      role:"facility manager"
-    })
-  });
+
+  if(item.facility) {
+    var facility = Facilities.findOne(item.facility._id);
+    var facilityMembers = facility.getMembers({role:"manager"});
+    facilityMembers.map(function(m){
+      members.push({
+        _id:m._id,
+        name:m.profile.name,
+        role:"facility manager"
+      })
+    });
+  }  
   return members;
 }

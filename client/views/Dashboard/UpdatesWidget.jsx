@@ -44,7 +44,7 @@ UpdatesWidget = React.createClass({
 		        </div>
 		        <div className="ibox-content" style={{padding:"0px"}}>
 		        	{this.data.item?
-					<Inbox for={this.data.item} truncate={true}/>
+					<Inbox for={this.data.item} readOnly={true} truncate={true}/>
 		        	:null}
 				</div>
 			</div>

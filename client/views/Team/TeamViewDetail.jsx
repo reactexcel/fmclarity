@@ -95,7 +95,7 @@ TeamViewDetail = React.createClass({
 				{
 					hide: 		!team.canGetMessages(),
 					tab: 		<span id="discussion-tab"><span style={{color:"black"}}>Updates</span></span>,
-					content: 	<Inbox for={team} truncate={true}/>
+					content: 	<Inbox for={team} readOnly={true} truncate={true}/>
 				},{
                 	hide: 		!team.canAddDocument(),
                     tab: 		<span id="documents-tab"><span style={{color:"black"}}>Documents</span></span>,

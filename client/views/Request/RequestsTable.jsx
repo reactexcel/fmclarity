@@ -20,14 +20,11 @@ RequestsTable = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-    	var item,requests,filter;
-    	item = this.props.item;
-        filter = this.props.filter;
-    	if(item&&item.getIssues) {
-    		requests = item.getIssues();
-    	}
+        var statusFilter = {"status":{$nin:["Cancelled","Deleted","Closed","Reversed"]}};
+        var customFilter = this.props.filter;
+        var filter = {$and:[statusFilter,customFilter]};
     	return {
-    		requests:requests
+    		requests:Meteor.user().getRequests(filter)
     	}
     },
 

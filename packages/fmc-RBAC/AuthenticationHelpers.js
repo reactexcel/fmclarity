@@ -7,7 +7,7 @@ AuthHelpers = {
       if(item.owner.type=="team") {
         var team = Teams.findOne(item.owner._id);
         var role = RBAC.getRole(user,team);
-        return AuthHelpers.manager(role,user);
+        return AuthHelpers.adminManager(role,user,team);
       }
       else {
         return item.owner._id==user._id;
@@ -20,8 +20,19 @@ AuthHelpers = {
   manager:function(role) {
     return role=="manager"||role=="fmc support"||role=="portfolio manager";
   },
+  adminManager:function(role,user,team) {
+    return (role=="fmc support"||role=="portfolio manager")||(team&&(team.type=="contractor"&&role=="manager"));
+  },
   managerOrOwner:function(role,user,team) {
     return AuthHelpers.manager(role,user)||AuthHelpers.owner(role,user,team)
+  },
+  adminManagerOrOwner:function(role,user,team) {
+    return AuthHelpers.adminManager(role,user,team)||AuthHelpers.owner(role,user,team)
+  },
+  adminManagerOfRelatedTeam:function (role,user,item) {
+    var team = Teams.findOne(item.team._id);
+    var role = RBAC.getRole(user,team);
+    return AuthHelpers.adminManager(role,user,team);
   },
   managerOfRelatedTeam:function (role,user,item) {
     var team = Teams.findOne(item.team._id);

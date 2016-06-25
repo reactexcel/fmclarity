@@ -9,8 +9,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 function addRoleBasedActions(menu,user,team) {
 	if(team&&team.hasMember(user)) {
 		var teamName = team.getName();
-
-		if(!user.isLoggedIn()) {
+		if(!user.isLoggedIn()&&team.canRemoveMember(user)&&team.collectionName!="Issues") {
 			menu.push({
 				label:"Remove from "+teamName,
 				shouldConfirm:true,
@@ -21,7 +20,7 @@ function addRoleBasedActions(menu,user,team) {
 			});
 		}
 
-		if(team.ownerIs(user)) {
+		if(false&&team.ownerIs(user)) {
 			menu.push({
 				label:"Revoke ownership of "+teamName,
 				shouldConfirm:true, //lets make this the default
@@ -50,7 +49,9 @@ UserActions = {
 		var menu = [];
 
 		addRoleBasedActions(menu,user,team);
-		addRoleBasedActions(menu,user,facility);
+		if(facility&&team&&(facility._id!=team._id)) {
+			addRoleBasedActions(menu,user,facility);
+		}
 
 		//these really should do in RBAC
 		if(user) {
@@ -67,7 +68,8 @@ UserActions = {
 					}
 				})
 			}
-			else {
+			//
+			else if(true) {
 				menu.push({
 					label:"Login",
 					shouldConfirm:true,

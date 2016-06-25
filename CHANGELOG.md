@@ -1,21 +1,23 @@
 CHANGELOG.md
 ============
 
+**v1.4.0b**
+
 * Restricted manager role so that manager only see facilities they are a member of
 * Created new role "portfolio manager" who can see all facilities in a team
-----
-ONLY ONE ROLE AND THAT IS IN TEAM
-[
-   there is no real circumstance where a user will have a different role in different buildings in the portfolio
-   if they are staff in one they are staff in all
-   if they are fm in one - they are fm in all
-]
-(so does "group" become irrelevant?)
-"Team manager" - complete control over entire portfolio and settings
-"Facility manager" - complete control over the facilities they manage (but not team settings)
-"Staff" - limited control over the facilities they manage
-"Tenant" - sweet fa
-----
+* Hid team owners
+* Fixed a problem what was causing managers can see drafts of team issues
+* Made discussion read only (for now)
+* No longer have ability to add/remove members to/from requests
+* Remove services required from team
+* User profile and team settings should be in modal
+* Create new issue should be in Modal (although modal will need to be widened for accom)
+* Facility permissions need to be applied on a per facility basis
+* Owner should be changed to requestor or request creator
+* Create button greyed out until reenter title
+* Nav initially appears an contractor - should not appear until loaded (or perhaps initially as tenant)
+* WO:Creator should not be able to change after created
+* Only portfolio manager sees team discussion board
 
 **v1.3.19b**
 
@@ -27,8 +29,6 @@ ONLY ONE ROLE AND THAT IS IN TEAM
 * When signing up second step is now password reset
 * Fixed an issue that was causing documents to not save
 * Added authentication to facility and team message, update visibility of "updates" tab accordingly
-----
-* Hide owners, disable create team, for this release (disable login on production)
 
 **v1.3.18b**
 

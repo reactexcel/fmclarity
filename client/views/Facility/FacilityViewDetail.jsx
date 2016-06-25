@@ -76,7 +76,7 @@ FacilityViewDetail = React.createClass({
                     {
                         hide:       !facility.canGetMessages(),
                         tab:        <span id="discussion-tab"><span style={{color:"white"}}>Updates</span></span>,
-                        content:    <Inbox for={facility} truncate={true}/>
+                        content:    <Inbox for={facility} readOnly={true} truncate={true}/>
                     },{
                         hide:       !facility.canAddDocument(),
                         tab:        <span id="documents-tab"><span style={{color:"white"}}>Documents</span></span>,
@@ -103,7 +103,7 @@ FacilityViewDetail = React.createClass({
                         content:    <ServicesSelector item={facility} field={"servicesRequired"}/>
                     },{
                         tab:        <span id="requests-tab"><span style={{color:"white"}}>Requests</span></span>,
-                        content:    <RequestsTable item={facility}/>
+                        content:    <RequestsTable filter={{"facility._id":facility._id}}/>
                     }
                 ]} />                
             </div>

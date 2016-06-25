@@ -81,7 +81,25 @@ Issues.methods({
   },
   setFacility:{
     authentication:accessForTeamMembers,
-    method:Issues._schema['facility'].setter,
+    method:function(request,facility) {
+      request = Issues._transform(request);
+      facility = Facilities._transform(facility);
+      Issues.update(request._id,{$set:{
+        level:null,
+        area:null,
+        service:null,
+        subservice:null,
+        assignee:null,
+        supplier:null,
+        facility:{
+          _id:facility._id,
+          name:facility.name
+        }
+      }});
+      Issues.update(request._id,{$pull:{members:{role:"facility manager"}}});
+      var facilityMembers = facility.getMembers({role:"manager"});
+      request.addMember(facilityMembers,{role:"facility manager"});
+    }
   },
   setPriority:{
     authentication:accessForTeamMembersWithElevatedAccessForManagers,

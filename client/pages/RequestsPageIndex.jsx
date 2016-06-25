@@ -15,7 +15,7 @@ RequestsPageIndex = React.createClass({
 	    var issues;
 	    var user = Meteor.user();
 	    var team = Session.getSelectedTeam();
-	    if(team) {
+	    if(user&&team) {
 		    var facility = Session.getSelectedFacility();
 
 		    var q = {};
