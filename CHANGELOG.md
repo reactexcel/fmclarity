@@ -1,6 +1,11 @@
 CHANGELOG.md
 ============
 
+**v1.4.1b**
+
+* Added report module
+* Dashboard elements can now be viewed as reports and vice versa
+
 **v1.4.0b**
 
 * Restricted manager role so that manager only see facilities they are a member of

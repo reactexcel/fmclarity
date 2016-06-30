@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-DashboardOverview = React.createClass({
+ProgressOverviewChart = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -223,3 +223,12 @@ DashboardOverview = React.createClass({
         )
     }
 })
+
+Reports.register({
+    id:"requests-overview-chart",
+    name:"Requests Overview Chart",
+    content:ProgressOverviewChart
+})
+
+
+

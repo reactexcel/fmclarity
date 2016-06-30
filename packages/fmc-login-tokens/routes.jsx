@@ -42,6 +42,15 @@ exposed.route('/login', {
   },
 });
 
+loggedIn.route('/logout', {
+  name: 'logout',
+  action() {
+    Meteor.logout(function() {
+      return FlowRouter.go('/');
+    });
+  }
+});
+
 exposed.route('/enroll-account/:token', {
   name: 'enroll',
   action(params,queryParams) {

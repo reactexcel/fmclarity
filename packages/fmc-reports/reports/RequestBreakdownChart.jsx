@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-BarChart = React.createClass({
+RequestBreakdownChart = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -222,3 +222,9 @@ BarChart = React.createClass({
 	}
 
 });
+
+Reports.register({
+    id:"request-breakdown-chart",
+    name:"Request Breakdown Chart",
+    content:RequestBreakdownChart
+})

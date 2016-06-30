@@ -28,13 +28,13 @@ DashboardPage = React.createClass({
 				        </div>
 			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
 				            <div className="ibox">
-				            	<DashboardOverview />
+				            	<ProgressOverviewChart />
 				            </div>
 				            <div className="ibox">
-						        <LineChart />
+						        <RequestActivityChart />
 				            </div>
 				            <div className="ibox">
-				            	<BarChart />
+				            	<RequestBreakdownChart />
 				            </div>
 				        </div>
 					</div>

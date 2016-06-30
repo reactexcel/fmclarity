@@ -1,0 +1,50 @@
+
+.print .data-grid {
+	white-space: normal;
+}
+
+.data-grid {
+	white-space:nowrap;
+	width:100%;
+	overflow-x:auto;
+}
+
+.data-grid-header-row {
+	height:56px;
+}
+
+.print .data-grid-select-col, .print .data-grid-select-col-header {
+	display:none;
+}
+
+.data-grid-select-col,.data-grid-select-col-header {
+	width:24px;
+}
+
+.data-grid-header-cell {
+	padding-top:24px!important;
+	color:#999;
+	font-size:12px;
+	cursor:pointer;
+
+	&:hover {
+		color:#111;
+	}
+}
+
+
+.data-grid-row {
+	height:48px;
+}
+
+.data-grid-row:hover {
+	background-color:#eee;
+	border-bottom-color:#ddd;
+}
+
+.data-grid-cell {
+	max-width:300px;
+	overflow:hidden;
+	padding-top:14px!important;
+	color:#111;
+}

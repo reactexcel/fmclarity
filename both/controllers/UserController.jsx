@@ -21,6 +21,12 @@ Users.actions({
     authentication:true,//AuthHelpers.userIsManagerofMembersTeam,
     method:RBAC.lib.destroy.bind(Users)
   },
+  getTeam:{
+    authentication:true,
+    helper:function(){
+      return Session.getSelectedTeam();
+    }
+  },
   getTeams:{
     authentication:true,
     helper:function(user){
