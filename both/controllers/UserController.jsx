@@ -36,6 +36,15 @@ Users.actions({
       ]}).fetch()
     }
   },
+  getFacilities:{
+    authentication:true,
+    helper:function(user,q) {
+      var team = user.getTeam();
+      if(team) {
+        return team.getFacilities(q);
+      }
+    }
+  },
   getRole:{
     authentication:true,
     helper:function(user,group) {
@@ -57,6 +66,12 @@ Users.actions({
     authentication:true,
     helper:function(user) {
       return Session.getSelectedTeam()
+    }
+  },
+  getSelectedFacility:{
+    authentication:true,
+    helper:function(user) {
+      return Session.getSelectedFacility()
     }
   },
   getRequests:{
@@ -274,6 +289,9 @@ if(Meteor.isClient) {
       if(team) {
         Session.set('selectedTeam',{_id:team._id});
       }
+      else {
+        Session.set('selectedTeam',0);
+      }
       Session.set('selectedFacility',0);
     }
   Session.getSelectedFacility = function() {
@@ -285,6 +303,9 @@ if(Meteor.isClient) {
   Session.selectFacility = function(f) {
       if(f) {
         Session.set('selectedFacility',{_id:f._id});
+      }
+      else {
+        Session.set('selectedFacility',0);
       }
     }
   Session.getSelectedClient = function() {

@@ -4,6 +4,12 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 AutoInput.mdtext = React.createClass({
 
+	handleSelect(event) {
+		if(this.props.onSelect) {
+			this.props.onSelect(event.target.value);
+		}
+	},
+
 	handleChange(event) {
 		this.props.onChange(event.target.value);
 	},
@@ -43,6 +49,7 @@ AutoInput.mdtext = React.createClass({
       			pattern=".{1,80}" 
       			className={"input "+(used?'used':'')} 
       			value={value}
+      			onSelect={this.handleSelect}
       			onChange={this.handleChange}
       		/>
       		<span className="highlight"></span>

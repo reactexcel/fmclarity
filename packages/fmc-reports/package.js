@@ -44,6 +44,7 @@ Package.onUse(function(api) {
 		'pages/ReportsPageSingle.jsx',
 		'pages/Reports.less',
 
+
 		'plugins/jsKnob/jquery.knob.js',	//is there a nodejs module or meteor package?
 
 		'reports/Calendar.jsx',				//will go in it's own package eventually
@@ -54,7 +55,7 @@ Package.onUse(function(api) {
 		'reports/RequestActivityChart.css',
 		'reports/RequestBreakdownChart.jsx',
 		'reports/RequestsStatusReport.jsx',
-
+		'reports/ReportsNavWidget.jsx'
 
 	],'client');
 

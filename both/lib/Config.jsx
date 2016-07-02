@@ -64,11 +64,11 @@ var navFMSupport = [{
 	path:"requests",		
 	label:"Requests",
 	icon:"fa fa-wrench"
-},{
+}/*,{
 	path:"reports",		
 	label:"Reports",
 	icon:"fa fa-bar-chart"
-}];
+}*/];
 
 var navFM = [{
 	path:"dashboard",		
@@ -86,11 +86,11 @@ var navFM = [{
 	path:"requests",		
 	label:"Requests",
 	icon:"fa fa-wrench"
-},{
+}/*,{
 	path:"reports",		
 	label:"Reports",
 	icon:"fa fa-bar-chart"
-}];
+}*/];
 
 if(false) {
 	navFM.push({

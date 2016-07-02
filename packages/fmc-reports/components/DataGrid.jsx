@@ -23,7 +23,7 @@ function Dataset(items,originalFields,originalLabels) {
 			return val;
 		}
 		else if(_.isDate(val)) {
-			return moment(val).format(/*"DD/MM/YY HH:mm"*/"ll");
+			return moment(val).format(/*"DD/MM/YY HH:mm"*/"D-MMM-YY");
 		}	
 	}
 
@@ -47,6 +47,14 @@ function Dataset(items,originalFields,originalLabels) {
 			else {
 				for(var label in fields) {
 					var field = fields[label];
+					var formatFunc = formatValue;
+					if(_.isObject(field)&&!_.isFunction(field)){
+						if(field.format) {
+							formatFunc = field.format;
+						}
+						field = field.field;
+					}
+
 					if(_.isFunction(field)){
 						newItem[label] = {
 							val:field(item)
@@ -65,8 +73,8 @@ function Dataset(items,originalFields,originalLabels) {
 							originalVal = item[field];
 						}
 						originalVal = originalVal||" ";
-						formattedVal = formatValue(originalVal,field);
-						if(formattedVal) {
+						formattedVal = formatFunc(originalVal,field);
+						if(formattedVal!=null) {
 							newItem[label] = {
 								originalVal:originalVal,
 								val:formattedVal
@@ -85,14 +93,7 @@ function Dataset(items,originalFields,originalLabels) {
 	}
 
 	function defaultSortFunc(label) {
-		return function(a,b) {
-			var first,second;
-			if(a[label]) {
-				first = a[label].originalVal?a[label].originalVal:a[label].val?a[label].val:"";
-			}
-			if(b[label]) {
-				second = b[label].originalVal?b[label].originalVal:b[label].val?b[label].val:"";
-			}
+		return function(first,second) {
 			var result = 0;
 			if(_.isString(first)) {
 				first = first.trim();
@@ -118,8 +119,8 @@ function Dataset(items,originalFields,originalLabels) {
 	}
 
 	function getSortFunc(col) {
-		if(data[col]&&data[col].sort) {
-			return data[col].sort;
+		if(fields[col]&&fields[col].sort) {
+			return fields[col].sort;
 		}
 		return defaultSortFunc(col);
 	}
@@ -144,7 +145,14 @@ function Dataset(items,originalFields,originalLabels) {
 			}
 			var sortFunc = getSortFunc(label);
 			data.sort(function(a,b){
-				var result = sortFunc(a,b);
+				var first,second;
+				if(a[label]) {
+					first = a[label].originalVal?a[label].originalVal:a[label].val?a[label].val:"";
+				}
+				if(b[label]) {
+					second = b[label].originalVal?b[label].originalVal:b[label].val?b[label].val:"";
+				}
+				var result = sortFunc(first,second);
 				if(dir=="up") {
 					result*=-1;
 				}
@@ -180,7 +188,14 @@ DataGrid = React.createClass({
 		if(items&&items.length) {
 			fields = this.props.fields;
 			dataset.reset(items,fields);
-			rows = dataset.getRows();
+			if(this.state.sortCol) {
+				var col = this.state.sortCol;
+				var dir = this.state.sortDir;
+				rows = dataset.sortBy(col,dir);			
+			}
+			else {
+				rows = dataset.getRows();
+			}
 			cols = dataset.getCols();
 
 		}
@@ -224,6 +239,7 @@ DataGrid = React.createClass({
 		var sortDir = this.state.sortDir;
 		var cols = this.state.cols;
 		var rows = this.state.rows;
+		var fields = this.props.fields;
 		var component = this;
 		if(!cols||!rows) {
 			return <div/>
@@ -251,7 +267,13 @@ DataGrid = React.createClass({
 								<td className="data-grid-select-col">&nbsp;</td>
 								{cols.map(function(col,colIdx){
 									return (
-										<td className="data-grid-cell" key={('val('+rowIdx+','+colIdx+')-'+row[col].val)}>{row[col].val}</td>
+										<td 
+											className="data-grid-cell" 
+											key={('val('+rowIdx+','+colIdx+')-'+row[col].val)}
+											style={fields[col].style?fields[col].style:{}}
+										>
+											{row[col].val}
+										</td>
 									)
 								})}
 							</tr>

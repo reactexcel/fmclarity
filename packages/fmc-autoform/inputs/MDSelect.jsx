@@ -11,6 +11,20 @@ PlainCard = React.createClass({
 })
 
 
+NameCard = React.createClass({
+	render() {
+		var name;
+		var item = this.props.item;
+		if(item) {
+			name = item.name;
+		}
+		return (
+			<span>{name}</span>
+		)
+	}
+})
+
+
 AutoInput.MDSelect = React.createClass({
 
 	getInitialState() {

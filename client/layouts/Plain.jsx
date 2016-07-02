@@ -1,9 +1,13 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 
 BlankLayout = React.createClass({
 	render() {return (
-		<main>{this.props.content}</main>
+		<MuiThemeProvider muiTheme={getMuiTheme()}>
+			<main>{this.props.content}</main>
+		</MuiThemeProvider>
 	)}
 });

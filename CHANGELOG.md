@@ -1,28 +1,36 @@
 CHANGELOG.md
 ============
 
-**v1.4.2b**
+**v1.4.3b**
 
-* Links to reports go on dashboard
+* Fixed header scrolling table
+
+* Export flag needs to be set when an item is exported (...or if not then when)
+* Right align numbers
+
 * Link to report from widgets on dashboard
 * Abstract toolbar from dash and report (and perhaps fab can inherit same mechanism - might be flux pattern)
-* Only show updates on dashboard if allowd to see
- 
-* Export flag needs to be set when an item is exported (...or if not then when)
-
 
 * Need a way to stack actions into toolbar for reports (fab will follow this same mechanism)
 * Need "card" navigation view for reports (filterbox 2 to be generalised?)
-
-* Filter unit that goes at top of reports
-(Team, Location, Service selectors, datetime)
 
 * Problem - there is no way to set the role of users who are not "owned" by you or your team
 * Problem - role confusion (manager perhaps should be facility manager)
 * Problem - setting rbac is confusing
 
+**v1.4.2b**
+
+* Links to reports go on dashboard
+* Only show updates on dashboard if allowed to see
+* Removed export button from fab
+
+* Filter unit that goes at top of reports
+(Team, Location, Service selectors, datetime)
+ 
 **v1.4.1b**
 
+* Added requests status report
+* Created new flexible md compliant data grid view
 * CSV export for reports
 * Fixed a problem that was causing users to not be saved by "managers"
 * Added report module

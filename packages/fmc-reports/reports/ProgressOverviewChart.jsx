@@ -223,12 +223,12 @@ ProgressOverviewChart = React.createClass({
         )
     }
 })
-
+/*
 Reports.register({
     id:"requests-overview-chart",
     name:"Requests Overview Chart",
     content:ProgressOverviewChart
 })
-
+*/
 
 
