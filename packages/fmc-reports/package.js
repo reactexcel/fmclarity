@@ -42,6 +42,7 @@ Package.onUse(function(api) {
 		'pages/DashboardPage.jsx',
 		'pages/ReportsPageIndex.jsx',
 		'pages/ReportsPageSingle.jsx',
+		'pages/Reports.less',
 
 		'plugins/jsKnob/jquery.knob.js',	//is there a nodejs module or meteor package?
 

@@ -11,14 +11,14 @@ loggedIn.route('/reports', {
 loggedIn.route('/report/:reportId', {
   name: 'report',
   action(params) {
-    mount(MainLayout,{content:<ReportsPageSingle id={params.reportId}/>});
+    mount(WideLayout,{content:<ReportsPageSingle id={params.reportId}/>});
   }
 });
 
 loggedIn.route('/report/:reportId/:view', {
   name: 'report',
   action(params) {
-    var Layout = MainLayout;
+    var Layout = WideLayout;
     if(params.view=="print") {
       Layout = PrintLayout;
     }

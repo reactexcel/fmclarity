@@ -23,7 +23,7 @@ function Dataset(items,originalFields,originalLabels) {
 			return val;
 		}
 		else if(_.isDate(val)) {
-			return moment(val).format("DD/MM/YY HH:mm");
+			return moment(val).format(/*"DD/MM/YY HH:mm"*/"ll");
 		}	
 	}
 
@@ -34,9 +34,13 @@ function Dataset(items,originalFields,originalLabels) {
 			var newItem = {};
 			if(_.isArray(fields)) {
 				fields.map(function(field){
-					var val = formatValue(item[field],field);
+					var originalVal = item[field];
+					var val = formatValue(originalVal,field);
 					if(val) {
-						newItem[field] = val;
+						newItem[field] = {
+							val:val,
+							originalVal:originalVal
+						}
 					}
 				})
 			}
@@ -44,7 +48,9 @@ function Dataset(items,originalFields,originalLabels) {
 				for(var label in fields) {
 					var field = fields[label];
 					if(_.isFunction(field)){
-						newItem[label] = field(item);
+						newItem[label] = {
+							val:field(item)
+						}
 					}
 					else if(_.isString(field)) {
 						var originalVal,formattedVal,fieldParts;
@@ -61,7 +67,10 @@ function Dataset(items,originalFields,originalLabels) {
 						originalVal = originalVal||" ";
 						formattedVal = formatValue(originalVal,field);
 						if(formattedVal) {
-							newItem[label] = formattedVal;
+							newItem[label] = {
+								originalVal:originalVal,
+								val:formattedVal
+							}
 						}
 					}
 
@@ -73,6 +82,46 @@ function Dataset(items,originalFields,originalLabels) {
 		//that we have completed the projection in order to remove any cols that
 		//contained invalid values
 		labels = originalLabels||Object.keys(data[0]);
+	}
+
+	function defaultSortFunc(label) {
+		return function(a,b) {
+			var first,second;
+			if(a[label]) {
+				first = a[label].originalVal?a[label].originalVal:a[label].val?a[label].val:"";
+			}
+			if(b[label]) {
+				second = b[label].originalVal?b[label].originalVal:b[label].val?b[label].val:"";
+			}
+			var result = 0;
+			if(_.isString(first)) {
+				first = first.trim();
+			}
+			if(_.isString(second)) {
+				second = second.trim();
+			}
+
+			if(!second) {
+				result = 1;
+			}
+			else if(!first) {
+				result = -1;
+			}
+			else if(first>second) {
+				result = 1;
+			}
+			else {
+				result = -1;
+			}
+			return result;
+		}
+	}
+
+	function getSortFunc(col) {
+		if(data[col]&&data[col].sort) {
+			return data[col].sort;
+		}
+		return defaultSortFunc(col);
 	}
 
 	return {
@@ -93,29 +142,9 @@ function Dataset(items,originalFields,originalLabels) {
 			if(dir=="none") {
 				return data;
 			}
+			var sortFunc = getSortFunc(label);
 			data.sort(function(a,b){
-				var first = a[label]||"";
-				var second = b[label]||"";
-				var result = 0;
-				if(_.isString(first)) {
-					first = first.trim();
-				}
-				if(_.isString(second)) {
-					second = second.trim();
-				}
-
-				if(!second) {
-					result = 1;
-				}
-				else if(!first) {
-					result = -1;
-				}
-				else if(first>second) {
-					result = 1;
-				}
-				else {
-					result = -1;
-				}
+				var result = sortFunc(a,b);
 				if(dir=="up") {
 					result*=-1;
 				}
@@ -184,6 +213,11 @@ DataGrid = React.createClass({
     	})
     },
 
+    download() {
+        var dataset = this.state.dataset;
+        dataset.download();
+    },
+
 	render(){
 		var dataset = this.state.dataset;
 		var sortCol = this.state.sortCol;
@@ -217,7 +251,7 @@ DataGrid = React.createClass({
 								<td className="data-grid-select-col">&nbsp;</td>
 								{cols.map(function(col,colIdx){
 									return (
-										<td className="data-grid-cell" key={('val('+rowIdx+','+colIdx+')-'+row[col])}>{row[col]}</td>
+										<td className="data-grid-cell" key={('val('+rowIdx+','+colIdx+')-'+row[col].val)}>{row[col].val}</td>
 									)
 								})}
 							</tr>
@@ -225,6 +259,10 @@ DataGrid = React.createClass({
 						})}
 					</tbody>
 				</table>
+            	<div className="report-toolbar">
+                    <a href="print" target="_blank"><i className="fa fa-print"></i></a>
+                    <span onClick={this.download} target="_blank"><i className="fa fa-download"></i></span>
+                </div>
 			</div>
 		)
 	}

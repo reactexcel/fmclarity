@@ -13,10 +13,12 @@ StatusReport = React.createClass({
     	"Priority":"priority",
     	"Issue":"name",
     	"Supplier":"supplier.name",
-    	"Service":"service.name",
-    	"Subservice":"subservice.name",
-    	"Area":"level.name",
-    	"Subarea":"area.name",
+    	"Service":function(item){
+            return item.service.name+(item.subservice?(" - "+item.subservice.name):"");
+        },
+        "Location":function(item) {
+            return item.level.name+(item.area?(" - "+item.area.name):"");
+        },
     	"Due":"dueDate",
     	"Completed":"closeDetails.completionDate",
     	"Responsiveness":function(item) {
@@ -57,6 +59,7 @@ StatusReport = React.createClass({
 				<div style={{padding:"15px"}} className="report-details">
 					<h2>Status Report</h2>
 					{this.data.team.name}
+
 				</div>
 				<DataGrid items={data} fields={this.fields}/>
 			</div>

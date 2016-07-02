@@ -8,16 +8,17 @@ ReportsPageIndex = React.createClass({
 		return (
 			<div className="reports-index-page">
 				<div className="wrapper wrapper-content animated fadeIn">
-					<div className="ibox">
-						<h1>Reports</h1>
-						<ul>
+					<div className="row">
+						<div className="col-md-3">
 						{reportIds.map(function(id){
 							report = reports[id];
 							return (
-								<li key={id}><a href={"/report/"+id+"/"}>{report.name}</a></li>
+								<div className="grid-item" style={{margin:"10px 0px",padding:"10px",textAlign:"center"}} key={id}>
+									<a href={"/report/"+id+"/"}>{report.name}</a>
+								</div>
 							)
 						})}
-						</ul>
+						</div>
 					</div>
 				</div>
 			</div>
