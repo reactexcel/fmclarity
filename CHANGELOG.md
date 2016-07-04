@@ -1,7 +1,7 @@
 CHANGELOG.md
 ============
 
-**v1.4.3b**
+**TODO**
 
 * Fixed header scrolling table
 
@@ -17,15 +17,23 @@ CHANGELOG.md
 * Problem - there is no way to set the role of users who are not "owned" by you or your team
 * Problem - role confusion (manager perhaps should be facility manager)
 * Problem - setting rbac is confusing
+* Problem - Managers can add personnel but do not have permission to edit those owned by team
+
+* Need to be able to clear text (particularly for new date picker)
+
+**v1.4.3b**
+
+* Fixed a problem that was preventing reports from exporting correctly
+
 
 **v1.4.2b**
 
 * Links to reports go on dashboard
 * Only show updates on dashboard if allowed to see
 * Removed export button from fab
-
 * Filter unit that goes at top of reports
-(Team, Location, Service selectors, datetime)
+* New datetime picker
+* Formatting for int and float values in datagrid
  
 **v1.4.1b**
 

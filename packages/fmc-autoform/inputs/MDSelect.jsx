@@ -97,7 +97,7 @@ AutoInput.MDSelect = React.createClass({
                 	>
 	                	{selectedItem?<Card item={selectedItem}/>:<span>&nbsp;</span>}
 	                </span>
-	                <div className="close-button" onClick={this.clearItem}>&times;</div>
+	                {selectedItem?<div className="close-button" onClick={this.clearItem}>&times;</div>:null}
 				    <span className="highlight"></span>
       				<span className="bar"></span>
                     <label>{this.props.placeholder}</label>

@@ -6,95 +6,82 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 // fields can be an array or a dictionary
 // if array project using items
 // if dictionary then if function execute, else project
-function Dataset(items,originalFields,originalLabels) {
-	//init
-	var fields = [], labels = [];
-	var data = [];
+function Dataset() {
+	var data = [], fields=[];
 
 	if(items) {
-		reset(items,originalFields,originalLabels);
+		reset(items,fields);
 	}
 
-	function formatValue(val,fieldName) {
-		if(fieldName=='_id') {
-			return null;
-		}
-		else if(_.isString(val)||_.isNumber(val)) {
-			return val;
-		}
-		else if(_.isDate(val)) {
-			return moment(val).format(/*"DD/MM/YY HH:mm"*/"D-MMM-YY");
-		}	
-	}
-
-	function reset(items,originalFields,originalLabels) {
+	function reset(items,newFields) {
 		data.length = 0;
-		fields = originalFields||Object.keys(items[0]);
+		fields = newFields;
+		labels = Object.keys(fields);
+
 		items.map(function(item,idx){
 			var newItem = {};
-			if(_.isArray(fields)) {
-				fields.map(function(field){
-					var originalVal = item[field];
-					var val = formatValue(originalVal,field);
-					if(val) {
-						newItem[field] = {
-							val:val,
-							originalVal:originalVal
-						}
+			for(var label in fields) {
+				var record = fields[label];
+				if(_.isString(record)) {
+					record = {
+						field:record,
+						format:defaultFormatFunc
 					}
-				})
-			}
-			else {
-				for(var label in fields) {
-					var field = fields[label];
-					var formatFunc = formatValue;
-					if(_.isObject(field)&&!_.isFunction(field)){
-						if(field.format) {
-							formatFunc = field.format;
-						}
-						field = field.field;
-					}
-
-					if(_.isFunction(field)){
-						newItem[label] = {
-							val:field(item)
-						}
-					}
-					else if(_.isString(field)) {
-						var originalVal,formattedVal,fieldParts;
-						var fieldParts = field.split('.');
-						if(fieldParts.length>1) {
-							var subitem = item[fieldParts[0]];
-							if(subitem) {
-								originalVal = subitem[fieldParts[1]];
-							}
-						}
-						else {
-							originalVal = item[field];
-						}
-						originalVal = originalVal||" ";
-						formattedVal = formatFunc(originalVal,field);
-						if(formattedVal!=null) {
-							newItem[label] = {
-								originalVal:originalVal,
-								val:formattedVal
-							}
-						}
-					}
-
 				}
+				else if(_.isFunction(record)){
+					record = {
+						field:label,
+						format:record
+					}
+				}
+				newItem[label] = record.format(item,record.field)||{};
 			}
 			data.push(newItem);
 		})
-		//if originalFields were not specified we should update the fields list now
-		//that we have completed the projection in order to remove any cols that
-		//contained invalid values
-		labels = originalLabels||Object.keys(data[0]);
+	}
+
+	function defaultFormatFunc(item,fieldName) {
+		if(fieldName=='_id') {
+			return null;
+		}
+
+		var val;
+
+		var fieldParts = fieldName.split('.');
+		if(fieldParts.length>1) {
+			var subitem = item[fieldParts[0]];
+			if(subitem) {
+				val = subitem[fieldParts[1]];
+			}
+		}
+		else {
+			val = item[fieldName];
+		}
+
+		if(_.isString(val)||_.isNumber(val)) {
+			return {
+				originalVal:val,
+				val:val
+			}
+		}
+		else if(_.isDate(val)) {
+			return {
+				originalVal:val,
+				val:moment(val).format(/*"DD/MM/YY HH:mm"*/"D-MMM-YY")
+			}
+		}	
 	}
 
 	function defaultSortFunc(label) {
-		return function(first,second) {
+		return function(a,b) {
 			var result = 0;
+			var first,second;
+			if(a[label]) {
+				first = a[label].originalVal?a[label].originalVal:a[label].val?a[label].val:"";
+			}
+			if(b[label]) {
+				second = b[label].originalVal?b[label].originalVal:b[label].val?b[label].val:"";
+			}
 			if(_.isString(first)) {
 				first = first.trim();
 			}
@@ -102,10 +89,10 @@ function Dataset(items,originalFields,originalLabels) {
 				second = second.trim();
 			}
 
-			if(!second) {
+			if(second==null) {
 				result = 1;
 			}
-			else if(!first) {
+			else if(first==null) {
 				result = -1;
 			}
 			else if(first>second) {
@@ -137,7 +124,15 @@ function Dataset(items,originalFields,originalLabels) {
 			return data;
 		},
 		toCSV:function() {
-			return Papa.unparse(data);
+			var csv = [];
+			data.map(function(d){
+				var item = {};
+				for(var label in d) {
+					item[label] = d[label].val;
+				}
+				csv.push(item);
+			})
+			return Papa.unparse(csv);
 		},
 		sortBy:function(label,dir) {
 			if(dir=="none") {
@@ -145,14 +140,7 @@ function Dataset(items,originalFields,originalLabels) {
 			}
 			var sortFunc = getSortFunc(label);
 			data.sort(function(a,b){
-				var first,second;
-				if(a[label]) {
-					first = a[label].originalVal?a[label].originalVal:a[label].val?a[label].val:"";
-				}
-				if(b[label]) {
-					second = b[label].originalVal?b[label].originalVal:b[label].val?b[label].val:"";
-				}
-				var result = sortFunc(first,second);
+				var result = sortFunc(a,b);
 				if(dir=="up") {
 					result*=-1;
 				}
@@ -161,7 +149,7 @@ function Dataset(items,originalFields,originalLabels) {
 			return data;
 		},
 		download:function(){
-			var csv = Papa.unparse(data);
+			var csv = this.toCSV();
 			var blob = new Blob([csv], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, "fm-clarity-export.csv");
 		},
@@ -254,7 +242,10 @@ DataGrid = React.createClass({
 							{cols.map(function(col){
 								return (
 									<th onClick={component.handleSortBy.bind(component,col)} className="data-grid-header-cell" key={('head'+col)}>
-										<div style={{position:"relative",left:"-15px"}}><i style={{width:"15px"}} className={(col==sortCol)?("fa fa-arrow-"+sortDir):"fa"}></i><span>{col}</span></div>
+										<div style={{position:"relative",left:"-15px"}}>
+											<i style={{width:"15px"}} className={(col==sortCol)?("fa fa-arrow-"+sortDir):"fa"}></i>
+											<span>{col}</span>
+										</div>
 									</th>
 								)
 							})}
@@ -270,7 +261,7 @@ DataGrid = React.createClass({
 										<td 
 											className="data-grid-cell" 
 											key={('val('+rowIdx+','+colIdx+')-'+row[col].val)}
-											style={fields[col].style?fields[col].style:{}}
+											style={row[col].style?row[col].style:{}}
 										>
 											{row[col].val}
 										</td>

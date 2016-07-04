@@ -11,7 +11,9 @@ AutoInput.mdtext = React.createClass({
 	},
 
 	handleChange(event) {
-		this.props.onChange(event.target.value);
+		if(this.props.onChange) {
+			this.props.onChange(event.target.value);
+		}
 	},
 
 	componentDidMount() {
@@ -34,6 +36,13 @@ AutoInput.mdtext = React.createClass({
 		}
 	},
 
+	handleClearItem() {
+		if(this.props.onClear) {
+			this.props.onClear()
+		}
+		this.handleChange({target:{value:""}});
+	},
+
 	render() {
 		var value, used;
 		value = this.props.value||"";
@@ -52,6 +61,7 @@ AutoInput.mdtext = React.createClass({
       			onSelect={this.handleSelect}
       			onChange={this.handleChange}
       		/>
+	        {used&&value.length?<div className="close-button" onClick={this.handleClearItem}>&times;</div>:null}
       		<span className="highlight"></span>
       		<span className="bar"></span>
       		<label>{this.props.placeholder}</label>

@@ -14,43 +14,45 @@ StatusReport = React.createClass({
     	"Issue":"name",
     	"Supplier":"supplier.name",
     	"Service":function(item){
-            return item.service.name+(item.subservice?(" - "+item.subservice.name):"");
+            return {val:item.service.name+(item.subservice?(" - "+item.subservice.name):"")};
         },
         "Location":function(item) {
-            return item.level.name+(item.area?(" - "+item.area.name):"");
+            return {val:item.level.name+(item.area?(" - "+item.area.name):"")};
         },
     	"Due":"dueDate",
     	"Completed":"closeDetails.completionDate",
     	"Responsiveness":function(item) {
+            if(!item.closeDetails||item.closeDetails.completionDate==null||item.closeDetails.completionDate=="") {
+                return;
+            }
+
     		var start = moment(item.dueDate);
     		var end = moment(item.closeDetails.completionDate);
-    		var duration = moment.duration(end.diff(start));
+            var duration = moment.duration(start.diff(end));
     		if(duration) {
-	    		return duration.humanize();
+                var val = {};
+                val.originalVal = parseInt(duration.asMinutes());
+                val.val = duration.humanize();
+                if(val.originalVal<0) {
+                    val.val = ("- "+val.val);
+                    val.style={color:"red"};
+                }
+                return val;
 	    	}
     	},
-    	"Amount ($)":{
-            field:"costThreshold",//should it be called value???
-            format:function(val) {
-                if(val) {
-                    val = parseFloat(val);
-                    if(isNaN(val)) {
-                        val = 0;
-                    }
+    	"Amount ($)":function(item) {
+            var val = item.costThreshold||0;
+            if(val) {
+                val = parseFloat(val);
+                if(isNaN(val)) {
+                    val = 0;
                 }
-                return val.toFixed(2);
-            },
-            sort:function(a,b) {
-                a = parseFloat(a);
-                b = parseFloat(b);
-                if(a>b||isNaN(b)) {
-                    return 1;
-                }
-                else {
-                    return -1;
-                }
-            },
-            style:{textAlign:"right"}
+            }
+            return {
+                originalVal:val,
+                val:val.toFixed(2),
+                style:{textAlign:"right"}
+            }
         }
     },
 
@@ -114,14 +116,12 @@ StatusReport = React.createClass({
     },
 
     handleStartChange(startDate) {
-        console.log(startDate);
         this.setState({
             startDate:startDate
         })
     },
 
     handleEndChange(endDate) {
-        console.log(endDate);
         this.setState({
             endDate:endDate
         })

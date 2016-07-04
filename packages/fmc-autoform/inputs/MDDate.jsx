@@ -68,10 +68,23 @@ AutoInput.MDDateTime = React.createClass({
 		this.refs.datepicker.openDialog();
 	},
 
+	handleClear() {
+		this.setState({
+			value:"",
+			dateValue:null
+		})
+		this.props.onChange(null);
+	},
+
 	render() {
 		return (
 			<div>
-				<AutoInput.mdtext placeholder={this.props.placeholder} value={this.state.value} onSelect={this.handleSelect}/>
+				<AutoInput.mdtext 
+					placeholder={this.props.placeholder} 
+					value={this.state.value} 
+					onSelect={this.handleSelect}
+					onClear={this.handleClear}
+				/>
 				<div style={{display:"none"}}>
 					<DatePicker 
 						id={"date-input"} 
