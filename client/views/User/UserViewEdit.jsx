@@ -10,9 +10,9 @@ UserViewRelationEdit = React.createClass({
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole(member,role);
-		//if(this.props.team) {
-			//this.props.team.setMemberRole(member,role);
-		//}
+		if(this.props.team) {
+			this.props.team.setMemberRole(member,role);
+		}
 	},
 
 	render() {

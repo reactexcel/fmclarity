@@ -4,10 +4,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 
-BlankLayout = React.createClass({
+PrintLayout = React.createClass({
 	render() {return (
 		<MuiThemeProvider muiTheme={getMuiTheme()}>
-			<main>{this.props.content}</main>
+			<main className="print">{this.props.content}<img className="logo" src="/img/logo-horizontal-blue.svg" style={{position:"fixed",right:"50px",top:"40px",width:"150px",opacity:"0.5"}}/></main>
 		</MuiThemeProvider>
 	)}
 });

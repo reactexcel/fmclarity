@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-LineChart = React.createClass({
+RequestActivityChart = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -235,3 +235,9 @@ LineChart = React.createClass({
 	}
 
 });
+
+Reports.register({
+	id:"request-activity-chart",
+	name:"Request Activity Chart",
+	content:RequestActivityChart
+})

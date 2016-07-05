@@ -7,6 +7,11 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 DashboardPage = React.createClass({
 
 	render() {
+		var canGetMessages;
+		var team = Session.getSelectedTeam();
+		if(team) {
+			canGetMessages = team.canGetMessages();
+		}
 		return(
 			<div>
 				<div className="row wrapper page-heading">
@@ -23,18 +28,21 @@ DashboardPage = React.createClass({
 					            </div>
 				            </div>
 				            <div className="ibox">
-				            	<UpdatesWidget/>
+				            	<ReportsNavWidget />
 				            </div>
+				            {canGetMessages?<div className="ibox">
+				            	<UpdatesWidget/>
+				            </div>:null}
 				        </div>
 			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
 				            <div className="ibox">
-				            	<DashboardOverview />
+				            	<ProgressOverviewChart />
 				            </div>
 				            <div className="ibox">
-						        <LineChart />
+						        <RequestActivityChart />
 				            </div>
 				            <div className="ibox">
-				            	<BarChart />
+				            	<RequestBreakdownChart />
 				            </div>
 				        </div>
 					</div>

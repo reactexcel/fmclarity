@@ -74,9 +74,12 @@ FacilityViewEdit = React.createClass({
 			        				</div>,
 			        	guide: 		<div>Enter the basic facility info here including name, address, and image.</div>
                     },{
-                        tab: 		<span id="documents-tab">Documents</span>,
-                        content: 	<AutoForm item={facility} form={["documents"]}/>,
-			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
+                        tab: 		<span id="areas-tab"><span>Areas</span></span>,
+                        content: 	<FacilityAreasSelector item={facility}/>
+                    },{
+                        tab: 		<span id="services-tab">Services</span>,
+                        content: 	<ServicesSelector item={facility} field={"servicesRequired"}/>,
+			        	guide: 		<div>Enter the services required by this facility. If you want you can also match there services to a supplier. If you want to configure this later simply his finish.</div>
                     },{
                         tab: 		<span id="personnel-tab">Personnel</span>,
                         content: 	<ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>,
@@ -86,17 +89,14 @@ FacilityViewEdit = React.createClass({
                         content: 	<ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>,
 			        	guide: 		<div>Enter tenants to the property by clicking on add member here.</div>
                     },{
+                        tab: 		<span id="documents-tab">Documents</span>,
+                        content: 	<AutoForm item={facility} form={["documents"]}/>,
+			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
+                    },/*{
                         tab: 		<span id="suppliers-tab"><span>Suppliers</span></span>,
                         content: 	<ContactList members={suppliers} group={facility} type="team"/>,
 			        	guide: 		<div>Add the suppliers employed by this facility here. If you want to configure this later simply press next.</div>
-                    },{
-                        tab: 		<span id="areas-tab"><span>Areas</span></span>,
-                        content: 	<FacilityAreasSelector item={facility}/>
-                    },{
-                        tab: 		<span id="services-tab">Services</span>,
-                        content: 	<ServicesSelector item={facility} field={"servicesRequired"}/>,
-			        	guide: 		<div>Enter the services required by this facility. If you want you can also match there services to a supplier. If you want to configure this later simply his finish.</div>
-                    }
+                    },*/
                 ]}/>				
 			</div>
 		)

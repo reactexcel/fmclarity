@@ -27,6 +27,7 @@ import {mount} from 'react-mounter';
 
 
 // Route group for admin users
+// probably should go in its own package
 var admin = FlowRouter.group({
   triggersEnter: [
     function(context, redirect) {
@@ -93,20 +94,6 @@ loggedIn.route('/requests', {
   }
 });
 
-loggedIn.route('/dashboard', {
-  name: 'dashboard',
-  action() {
-    mount(MainLayout,{content:<DashboardPage/>});
-  }
-});
-
-loggedIn.route('/messages', {
-  name: 'messages',
-  action() {
-    mount(MainLayout,{content:<MessagesPage />});
-  }
-});
-
 loggedIn.route('/suppliers', {
   name: 'suppliers',
   action() {
@@ -135,13 +122,6 @@ loggedIn.route('/profile', {
   }
 });
 
-loggedIn.route('/team', {
-  name: 'team',
-  action() {
-    mount(MainLayout,{content: <TeamIndexPage />});
-  }
-});
-
 loggedIn.route('/portfolio', {
   name: 'portfolio',
   action() {
@@ -149,13 +129,7 @@ loggedIn.route('/portfolio', {
   }
 });
 
-loggedIn.route('/reports', {
-  name: 'reports',
-  action() {
-    mount(MainLayout,{content: <ReportsIndexPage />});
-  }
-});
-
+//this should go in fmc:documents
 loggedIn.route('/documents', {
   name: 'documents',
   action() {
@@ -163,12 +137,11 @@ loggedIn.route('/documents', {
   }
 });
 
-loggedIn.route('/logout', {
-  name: 'logout',
+//this should go in fmc:messages?
+loggedIn.route('/messages', {
+  name: 'messages',
   action() {
-    Meteor.logout(function() {
-      return FlowRouter.go('/');
-    });
+    mount(MainLayout,{content:<MessagesPage />});
   }
 });
 

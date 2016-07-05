@@ -1,5 +1,5 @@
 FM = {
-	version:"1.4.0b"
+	version:"1.4.3b"
 }
 
 if(Meteor.isServer) {
@@ -64,11 +64,11 @@ var navFMSupport = [{
 	path:"requests",		
 	label:"Requests",
 	icon:"fa fa-wrench"
-},{
+}/*,{
 	path:"reports",		
 	label:"Reports",
 	icon:"fa fa-bar-chart"
-}];
+}*/];
 
 var navFM = [{
 	path:"dashboard",		
@@ -86,7 +86,11 @@ var navFM = [{
 	path:"requests",		
 	label:"Requests",
 	icon:"fa fa-wrench"
-}];
+}/*,{
+	path:"reports",		
+	label:"Reports",
+	icon:"fa fa-bar-chart"
+}*/];
 
 if(false) {
 	navFM.push({

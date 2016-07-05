@@ -63,30 +63,6 @@ RequestsPageIndex = React.createClass({
 	    //Issues.create(issue,callback);
     },
 
-    exportIssues(issues) {
-    	var projection = [];
-    	issues.map(function(issue,index){
-    		if(issue.status!="New"&&!issue.exported) {
-	    		var newElement = {
-	    			code:issue.code,
-	    			name:issue.name,
-	    			facility:issue.facility.name,
-	    			description:issue.description,
-	    			amount:'$'+issue.costThreshold,
-	    			supplier:issue.supplier.name,
-	    			"date created":issue.createdAt,
-	    			"date issued":issue.issuedAt
-	    		}
-	    		projection.push(newElement);
-	    		issue.exported = true;
-	    		issue.save();
-	    	}
-    	});
-    	var csv = Papa.unparse(projection);
-		var blob = new Blob([csv], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, "fm-clarity-export.csv");
-    },
-
 	render() {
 		var team = this.data.team;
 		var filters = [
