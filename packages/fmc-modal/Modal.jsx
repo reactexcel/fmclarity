@@ -104,13 +104,21 @@ Modal = React.createClass({
           show={this.state.show}
           handleSubmit={this.state.onSubmit}
           handleHide={this.handleHide}>
+
+          <div style={{display:"inline-block"}}>
           {
             queue.map(function(q,idx){
-              return <div className="modal-body" key={idx}>
-                {q.content}
+              return <div className={"modal-dialog"+(q.size?(" modal-dialog-"+q.size):"")} key={idx}>
+                <div className="modal-content">
+                  <div className="modal-body">
+                    {q.content}
+                  </div>
+                </div>
               </div>
             })
           }
+          </div>
+
         </ModalInner>
       )
   }
@@ -149,19 +157,17 @@ ModalInner = React.createClass({
 
   render() {
     return (
-      <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div>{this.props.children}</div>
+      <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>        
+          <div style={{display:"inline-block",position:"relative"}}>
+            {this.props.children}
             {this.props.handleSubmit?
               <div className="modal-footer">
                 <button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>
                 <button type="button" className="btn btn-flat btn-primary" onClick={this.handleSubmit}>Submit</button>
               </div>
             :null}
-            </div>
-          <span style={{position:"absolute",right:0,top:0,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
-        </div>
+            <span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
+          </div>
       </div>
     )
   }

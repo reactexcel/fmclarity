@@ -1,6 +1,5 @@
 import React from "react";
-import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import ActionsMenu from 'meteor/fmc:actions-menu';
 
 ProgressArc = React.createClass({
 

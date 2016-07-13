@@ -16,6 +16,8 @@ fmc:login-tokens
 fmc:doc-owners
 fmc:reports
 
+fmc:workflow-helper
+
 ############################
 # FMC UI
 fmc:tabs
@@ -55,7 +57,6 @@ rochal:slimscroll
 # MiniMongo Extensions
 #aldeed:collection2
 dburles:collection-helpers
-lai:document-methods
 matb33:collection-hooks
 monbro:mongodb-mapreduce-aggregation
 
@@ -87,3 +88,4 @@ tracker
 base64
 standard-minifier-css
 standard-minifier-js
+react-meteor-data

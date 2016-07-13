@@ -18,7 +18,6 @@ Package.onUse(function(api) {
 		'plugins/jquery.elastic.source.js',
 		'lib/AutoForm.jsx',
 		'lib/AutoForm.less',
-		'inputs/Date.jsx',
 		'inputs/File.jsx',
 		'inputs/MDDate.jsx',
 		'inputs/MDDate.less',

@@ -7,15 +7,8 @@ Package.describe({
 Package.onUse(function(api) {
 	api.use([
 		'less',
-		'ecmascript',
-		'react-meteor-data',
+		'ecmascript'
 	]);
 
-	api.addFiles([
-		'ActionsMenu.jsx',
-	]);
-
-	api.export([
-		'ActionsMenu'
-	]);
+	api.mainModule('ActionsMenu.jsx');
 });

@@ -2,12 +2,12 @@
 // including the login forms and the rest?
 
 FMCLogin = {
-	generateLoginToken:generateLoginToken,
-	generatePasswordResetToken:generatePasswordResetToken,
-	loginWithToken:loginWithToken,
-	forgotPassword:forgotPassword,
+	generateLoginToken,
+	generatePasswordResetToken,
+	loginWithToken,
+	forgotPassword,
+	getUrl,
 	loginUser:loginWithoutPassword,
-	getUrl:getUrl
 }
 
 Meteor.methods({

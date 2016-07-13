@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import React from 'react';
+import ActionsMenu from 'meteor/fmc:actions-menu';
+
 
 // Dashboard
 // The main landing page for FMs which is intended to give a broad overview of job status
-DashboardPage = React.createClass({
+DashboardPage = class DashboardPage extends React.Component {
 
 	render() {
 		var canGetMessages;
@@ -50,6 +50,6 @@ DashboardPage = React.createClass({
 			</div>
 		);
 	}
-})
+}
 
                              

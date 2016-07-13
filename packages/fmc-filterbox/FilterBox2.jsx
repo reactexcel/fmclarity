@@ -42,6 +42,7 @@ FilterBox2 = React.createClass({
 
   // gives us dynamic information about screen size...
   // so we can switch components responsively using react
+  // - suggest moving this functionality to another package
   checkScreenSize() {
     var size = "sm";
     if (window.matchMedia('(min-width: 1200px)').matches) {
@@ -78,6 +79,7 @@ FilterBox2 = React.createClass({
 
   // called when the FAB new button is pushed
   // calls the provided newItemCallback and updates the state with the newly created item
+  // this will also go to another package
   createNewItem() {
     var component = this;
     if(this.props.newItemCallback) {

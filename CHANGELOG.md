@@ -4,27 +4,36 @@ CHANGELOG.md
 **TODO**
 
 * Fixed header scrolling table
-
 * Export flag needs to be set when an item is exported (...or if not then when)
-* Right align numbers
-
-* Link to report from widgets on dashboard
 * Abstract toolbar from dash and report (and perhaps fab can inherit same mechanism - might be flux pattern)
-
-* Need a way to stack actions into toolbar for reports (fab will follow this same mechanism)
-* Need "card" navigation view for reports (filterbox 2 to be generalised?)
-
 * Problem - there is no way to set the role of users who are not "owned" by you or your team
 * Problem - role confusion (manager perhaps should be facility manager)
 * Problem - setting rbac is confusing
 * Problem - Managers can add personnel but do not have permission to edit those owned by team
 
-* Need to be able to clear text (particularly for new date picker)
+**v1.4.5b**
+
+* Added "render" function to DocMessages which takes a react compoment and param list and renders static markup
+* Added "replaceMember" function to DocMembers which removes all members with specified role and adds new member
+* Some major changes to folder structure to conform with https://guide.meteor.com/structure.html
+* Merged workflow module with prior Request Workflow Controller
+
+**v1.4.4b**
+
+* Created new "large" modal mode for work orders
+* Clicking on work order in facility card shows wo modal
+* Facility manager can no longer create facilities (only portfolio manager)
+* Applied material design date picker to work order and close work order from
+* Created generalised workflow module to be used for new work request workflow
+* FAB:Added bootstrap tooltips
+* Print button now automatically opens print dialog
 
 **v1.4.3b**
 
 * Fixed a problem that was preventing reports from exporting correctly
-
+* Added clear option to MD text inputs
+* Added formatting options to Data Grid (now colour coding responsiveness on status report)
+* Fixed sorting for floating point columns in Data Grid
 
 **v1.4.2b**
 

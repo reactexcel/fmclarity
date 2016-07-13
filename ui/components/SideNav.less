@@ -1,0 +1,131 @@
+@import "/ui/stylesheets/globals/variables.import.less";
+
+
+.sidebar-back-screen {
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	background-color:#000;
+	opacity:0;
+	z-index:2500;
+	display:none;
+	transition:opacity 0.25s;
+}
+
+.body-small.mini-navbar .sidebar-back-screen {
+	opacity:0.5;
+	display:block;
+}
+
+body.fixed-nav .navbar-static-side,
+body.fixed-nav #wrapper #page-wrapper
+{
+  margin-top: 50px;
+}
+
+.navbar-static-side {
+	position:fixed;
+	background-color:#fff;
+  	width: @sidebar-width;
+  	z-index: 2001;
+  	height: 100%;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);  
+	overflow:hidden;
+}
+
+.fixed-sidebar.body-small .navbar-static-side {
+	z-index:3000;
+	margin-top:0px;
+	left:-@sidebar-width;
+}
+
+ul#side-menu {
+	margin-top:2px;
+}
+
+.topnav-icon {
+	font-size: 20px;
+    color: #fff!important;
+    margin-top:12px;
+    margin-left:18px;
+    margin-right:18px;
+    display: inline-block;
+    cursor:pointer;
+}
+
+#page-wrapper {
+	transition:margin 0.25s;
+}
+
+.navbar-static-side {
+	transition:width 0.25s, left 0.25s;
+}
+
+#side-menu .fa {
+	width: 40px;
+    color: #999;
+    text-align: center;
+    margin-right: 20px;
+}
+
+#side-menu .active .fa {
+    color: inherit;
+}
+
+#side-menu {
+	font-size:12px;
+}
+
+#side-menu i.fa {
+	font-size:20px;
+}
+
+#side-menu a {
+	padding-left:6px;
+}
+
+.md-skin .nav > li > a {
+	white-space:nowrap;
+}
+
+#side-menu.nav > li.active > a {
+    color: #ef6c00;
+    background-color: transparent;
+    padding-left: 6px;
+}
+
+#side-menu.nav > li.active, #side-menu.nav > li:hover,  {
+  background: #eee;
+}
+
+.md-skin.fixed-sidebar.mini-navbar .navbar-static-side {
+	width:55px;
+}
+
+.md-skin.fixed-sidebar.mini-navbar #page-wrapper {
+    margin: 0 0 0 55px;
+}
+
+#side-menu .nav-label {
+	position: relative;
+    top: -2px;
+}
+
+.right-dropdown ul {
+	position: fixed;
+    left: auto;
+    right: 1px;
+    width: 290px;
+    top: 50px;
+    border-radius: 0;
+    padding:0;
+}
+
+.body-small .right-dropdown ul {
+    width:auto;
+    left:1px;
+    right:1px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);  
+}

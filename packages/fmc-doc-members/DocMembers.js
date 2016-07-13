@@ -53,6 +53,11 @@ function registerCollection(collection,opts) {
 		method:addMember(collection,fieldName)
 	}
 
+	methods['replace'+fn] = {
+		authentication:auth.remove,
+		method:replaceMembers(collection,fieldName)
+	}
+
 	methods['remove'+fn] = {
 		authentication:auth.remove,
 		method:removeMember(collection,fieldName)
@@ -67,6 +72,11 @@ function registerCollection(collection,opts) {
 		method:setMemberRole(collection,fieldName)
 	}
 
+	methods['dangerouslyReplace'+fn+'s'] = {
+		authentication:true,
+		method:replaceMembers(collection,fieldName)
+	}
+
 	helpers['get'+fn+'s'] = getMembers(membersCollection,fieldName);
 	helpers['get'+fn+'Role']  = getMemberRole(membersCollection,fieldName);
 	helpers['get'+fn+'Relation'] = getMemberRelation(membersCollection,fieldName);
@@ -77,15 +87,44 @@ function registerCollection(collection,opts) {
 	collection.helpers(helpers);
 }
 
+function replaceMembers(collection,fieldName) {
+	return function(item,obj,options={}) {
+		//remove members with given role
+		var role = options.role;
+		if(!role) {
+			return;
+		}
+		var q = {};
+		q[fieldName] = {role:role};
+		collection.update(item._id,{$pull:q});
+
+		//add new member
+		if(!_.isArray(obj)) {
+			obj = [obj];
+		}
+
+		var newObject = {};
+		obj.map(function(o){
+			newObject[fieldName] = _.extend({},{
+				_id:o._id,
+				role:role,
+				name:o.profile?o.profile.name:o.name
+				//profile:obj.getProfile?obj.getProfile():obj
+			});
+			collection.update(item._id,{$push:newObject});			
+		})
+	}
+}
+
 function addMember(collection,fieldName) {
-	return function(item,obj,options){
+	return function(item,obj,options={}){
 
 		if(!_.isArray(obj)) {
 			obj = [obj];
 		}
 
 		var newObject = {};
-		var role = options&&options.role?options.role:"staff";
+		var role = options.role?options.role:"staff";
 
 		//console.log([obj,options]);
 

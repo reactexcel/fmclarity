@@ -1,36 +1,24 @@
-Messages = ORM.Collection("Messages");
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
+Messages = ORM.Collection("Messages");
 
 DocMessages = {
   register:registerCollection,
   isValidEmail:isValidEmail,
-  config:getConfigurationFunction
+  config:getConfigurationFunction,
+  render:render
 }
 
 var defaultHelpers = {
-  sendMessage:sendMessageToSelfAndWatchers,
   distributeMessage:distributeMessage,
-  sendNotification:sendMessageToSelfAndWatchers,
+  sendMessage:distributeMessage,
   markAllNotificationsAsRead:markAllNotificationsAsRead,
   getInboxName:getInboxName,
   getInboxId:getInboxId,
   getNotifications:getNotifications,
   getMessageCount:getMessageCount,
   getRecipients:getRecipients,
-}
-
-function isValidEmail(email) {
-  var temp = email.split('@');
-  var name = temp[0];
-  var server = temp[1];
-  //return ucfirst name
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-function getConfigurationFunction(options) {
-  return function(collection) {
-      registerCollection(collection,options);
-  }
 }
 
 function registerCollection(collection,opts) {
@@ -43,7 +31,6 @@ function registerCollection(collection,opts) {
   },defaultHelpers,customHelpers);
 
   collection.helpers(helpers);
-
   collection.actions({
     getMessages:{
       authentication:authentication,
@@ -56,6 +43,33 @@ function registerCollection(collection,opts) {
       }
     }
   })
+}
+
+//this is repeated accross all of my document packages
+//should I write some sort of mixin to handle this functionity
+//RegisterFMCDocumentService????
+//Or some sort of class inheritance structure
+function getConfigurationFunction(options) {
+  return function(collection) {
+      registerCollection(collection,options);
+  }
+}
+
+//would be nice to encapsulate the above in some sort of config file (could it be package.js???)
+// and keep the functions below compartmentalised
+///---------------------------------------------------------------------
+
+function render(view,params) {
+  var element = React.createElement(view,params);
+  return ReactDOMServer.renderToStaticMarkup(element);  
+}
+
+function isValidEmail(email) {
+  var temp = email.split('@');
+  var name = temp[0];
+  var server = temp[1];
+  //return ucfirst name
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 //gets all recipients of the message
@@ -72,17 +86,10 @@ function getRecipients(inCC,outCC) {
   return outCC;
 }
 
-//if the recipient structure contains Teams their members are also added to the structure
-function flattenRecipients(cc) {
-  var recipients = getRecipients(cc);
-  recipients = _.uniq(recipients,false,function(i){
-    return i._id;
-  })
-  return recipients;  
-}
-
-function distributeMessage(message,recipientRoles,options) {
-  options = options||{};
+function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
+  if(!message) {
+    return;
+  }
   var user = Meteor.user();
   var obj = this;
   message.target = obj.getInboxId();
@@ -91,13 +98,20 @@ function distributeMessage(message,recipientRoles,options) {
     name:user.getName()
   }
   //add message/notification to original sending object
-  if(!options.suppressOriginalPost) {
+  if(!suppressOriginalPost) {
     sendMessage(message,obj);
   }
   //scan through the list of recipientRoles and process them
   // if string treat as role name, is obj treat as recipient proper
   //console.log(recipientRoles);
-  var recipients = getRecipientListFromRoles(obj,recipientRoles);
+  var recipients;
+  if(recipientRoles) {
+    recipients = getRecipientListFromRoles(obj,recipientRoles);
+  }
+  else {
+    recipients = this.getWatchers();    
+  }
+  
   recipients = _.uniq(recipients,false,function(i){
     return i._id;
   })
@@ -155,24 +169,6 @@ function sendMessageToMembers(obj,message,role) {
   recipients.map(function(r){
     //console.log(r);
     sendMessage(message,r);
-  })
-}
-
-function sendMessageToSelfAndWatchers(message,cc) {
-  cc = cc||this.getWatchers();
-  cc = flattenRecipients(cc);
-
-  var user = Meteor.user();
-  message.target = this.getInboxId();
-  message.owner = {
-    _id:user._id,
-    name:user.getName()
-  }
-
-  sendMessage(message,this);
-
-  cc.map(function(recipient){
-    sendMessage(message,recipient);
   })
 }
 

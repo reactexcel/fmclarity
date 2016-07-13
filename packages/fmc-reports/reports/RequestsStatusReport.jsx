@@ -1,6 +1,7 @@
 import React from "react";
-import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
+import ActionsMenu from 'meteor/fmc:actions-menu';
+
 
 StatusReport = React.createClass({
 
@@ -14,10 +15,14 @@ StatusReport = React.createClass({
     	"Issue":"name",
     	"Supplier":"supplier.name",
     	"Service":function(item){
-            return {val:item.service.name+(item.subservice?(" - "+item.subservice.name):"")};
+            if(item.service) {
+                return {val:item.service.name+(item.subservice?(" - "+item.subservice.name):"")};
+            }
         },
         "Location":function(item) {
-            return {val:item.level.name+(item.area?(" - "+item.area.name):"")};
+            if(item.level) {
+                return {val:item.level.name+(item.area?(" - "+item.area.name):"")};
+            }
         },
     	"Due":"dueDate",
     	"Completed":"closeDetails.completionDate",

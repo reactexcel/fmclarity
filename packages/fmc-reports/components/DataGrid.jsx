@@ -273,7 +273,7 @@ DataGrid = React.createClass({
 					</tbody>
 				</table>
             	<div className="report-toolbar">
-                    <a href="print" target="_blank"><i className="fa fa-print"></i></a>
+                    <a href="print"><i className="fa fa-print"></i></a>
                     <span onClick={this.download} target="_blank"><i className="fa fa-download"></i></span>
                 </div>
 			</div>

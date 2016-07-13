@@ -1,8 +1,23 @@
 import React from "react";
-import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+
 /* to be expanded and made into component that can also support FAB */
-ActionsMenu = React.createClass({
+export default class ActionsMenu extends React.Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			items:props.items,
+			itemCount:props.items?props.items.length:0,
+			icon:props.icon||"wrench",
+		}
+	}
+
+	componentWillReceiveProps(props) {
+		this.setState({
+			items:props.items,
+			itemCount:props.items?props.items.length:0			
+		})		
+	}
 
 	runAction(item,event) {
 		if(item.shouldConfirm) {
@@ -12,18 +27,16 @@ ActionsMenu = React.createClass({
      		}
 		}
 		item.action(event);
-	},
+	}
 
 	render() {
-		var icon = this.props.icon||'wrench';
-		var component = this;
-		if(!(this.props.items&&this.props.items.length)) {
+		if(!(this.state.itemCount)) {
 			return <div/>
 		}
 		return (
 			<div>
 				<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
-					<i className={"fa fa-"+icon}></i>
+					<i className={"fa fa-"+this.state.icon}></i>
 				</a>
 				<ul className="dropdown-menu dropdown-user" style={{
 					position:"absolute",
@@ -31,14 +44,11 @@ ActionsMenu = React.createClass({
 					top: "30px",
 					left: "auto"
 		    	}}>
-		    		{this.props.items.map(function(i,idx){
-		    			return (
-		    				<li key={idx} onClick={component.runAction.bind(null,i)}><a>{i.label}</a></li>
-		    			)
-		    		})}
+		    		{this.state.items.map((i,idx)=>(
+		    			<li key={idx} onClick={()=>this.runAction(i)}><a>{i.label}</a></li>
+		    		))}
 				</ul>
 			</div>
 		)
 	}
-
-});
+}
