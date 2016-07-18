@@ -30,23 +30,35 @@ AuthHelpers = {
     return AuthHelpers.adminManager(role,user,team)||AuthHelpers.owner(role,user,team)
   },
   adminManagerOfRelatedTeam:function (role,user,item) {
+    if(!item.team||!item.team._id) {
+      return false;
+    }
     var team = Teams.findOne(item.team._id);
     var role = RBAC.getRole(user,team);
     return AuthHelpers.adminManager(role,user,team);
   },
   managerOfRelatedTeam:function (role,user,item) {
+    if(!item.team||!item.team._id) {
+      return false;
+    }
     var team = Teams.findOne(item.team._id);
     var role = RBAC.getRole(user,team);
     return AuthHelpers.manager(role,user);
   },
   memberOfRelatedTeam:function (role,user,item) {
-    var team = Teams.find({
-      _id:item.team._id,
-      members:{$elemMatch:{
-        _id:user._id
-      }}
-    });
-    return team.count()>0;
+    //console.log(arguments);
+    if(!item.team||!item.team._id) {
+      return false;
+    }
+    else {
+      var team = Teams.find({
+        _id:item.team._id,
+        members:{$elemMatch:{
+          _id:user._id
+        }}
+      });
+      return team.count()>0;
+    }
   },
   managerOfSuppliersTeam:function (role,user,request) {
     var supplier = request.supplier;

@@ -15,11 +15,14 @@ CloseDetailsSchema = {
       input:"FileField",
     },
     */
-    attachments: {
-      type:[Object],
-      label:"Attachments",
-      input:DocAttachments.FileExplorer
-    },    
+    serviceReport:{
+      label:"Service report",
+      input:"FileField"
+    },
+    invoice:{
+      label:"Invoice",
+      input:"FileField"
+    },
     furtherWorkRequired: {
       label:"Further work required",
       input:"switch",

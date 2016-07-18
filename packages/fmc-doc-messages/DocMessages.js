@@ -113,12 +113,16 @@ function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
   }
   
   recipients = _.uniq(recipients,false,function(i){
-    return i._id;
+    if(i) {
+      return i._id;
+    }
   })
 
   recipients.map(function(r){
-    console.log({"sending notification to":r.getName()});
-    sendMessage(message,r);
+    console.log({"sending notification to":r});
+    if(r) {
+      sendMessage(message,r);
+    }
   })
 }
 

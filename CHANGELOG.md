@@ -11,12 +11,21 @@ CHANGELOG.md
 * Problem - setting rbac is confusing
 * Problem - Managers can add personnel but do not have permission to edit those owned by team
 
+**v1.4.6b**
+
+* Completed first draft new workflow
+
+
 **v1.4.5b**
 
 * Added "render" function to DocMessages which takes a react compoment and param list and renders static markup
 * Added "replaceMember" function to DocMembers which removes all members with specified role and adds new member
 * Some major changes to folder structure to conform with https://guide.meteor.com/structure.html
 * Merged workflow module with prior Request Workflow Controller
+* Made some changes to the way the close work order modal is implemented to make the pattern repeatable for other states
+* Fixed [FWA-247] When you tab across to the $value and start typing it moves the cursor back to the title
+* Fixed [FWA-248] On new WO modal from dash - when you click date due or add a file it resets any other fields, eg areas services, etc
+
 
 **v1.4.4b**
 

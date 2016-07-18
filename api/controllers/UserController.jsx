@@ -84,10 +84,10 @@ Users.actions({
       var myFacilityIds = _.pluck(myFacilities,'_id');
 
       //fragments to use in query
-      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
-      var isIssued = {status:{$in:[Issues.STATUS_ISSUED,Issues.STATUS_CLOSED]}};
-      var isOpen = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
-      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,Issues.STATUS_ISSUED]}};
+      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
+      var isIssued = {status:{$in:[Issues.STATUS_ISSUED,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
+      var isOpen = {status:{$in:[Issues.STATUS_NEW,"In Progress","Progress",Issues.STATUS_ISSUED]}};
+      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_ISSUED]}};
       var createdByMe = {"owner._id":user._id};
       var createdByMyTeam ={$and:[{"team._id":team._id},isNotDraft]};
       var issuedToMyTeam = {$and:[{$or:[{"supplier._id":team._id},{"supplier.name":team.name}]},isIssued]};

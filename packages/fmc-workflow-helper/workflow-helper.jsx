@@ -7,28 +7,28 @@ export default function(collection) {
 
 	collection.methods({
 		doAction:{
-			authentication:authenticateAction,
+			validation:actionIsValid,
+			authentication:actionIsPermitted,
 			method:doAction
+		},
+		getActions:{
+			authentication:true,
+			helper:getActionNames
 		}
 	})
 
-	function authenticateAction(role,user,request,[item,actionName]) {//remove arg request?
+	function actionIsValid(request,[item,actionName]) {//remove arg request?
 		//console.log({role,user,request,actionName});
 		var actions = getActions(request);
 		var action = actions[actionName];
-		if(action) {
-			if(action.authentication) {
-				if(!_.isFunction(action.authentication)) {
-					return action.authentication == true;
-				}
-				else {
-					return action.authentication(role,user,request);
-				}
-			}
-			else {
-				console.log(`Action ${action.methodName} has no authentication function`);
-			}
-		}
+		return RBAC.validate(action.methodName,request);
+	}
+
+	function actionIsPermitted(role,user,request,[item,actionName]) {//remove arg request?
+		//console.log({role,user,request,actionName});
+		var actions = getActions(request);
+		var action = actions[actionName];
+		return RBAC.authenticate(action.methodName,request);
 	}
 
 	function addState(state,actions) {
@@ -38,15 +38,15 @@ export default function(collection) {
 		state.map((s)=>{
 			states[s] = actions;
 			//collection.methods(actions);
-			console.log(actions);
+			//console.log(actions);
 			for(var actionName in actions) {
-				console.log(actionName);
+				//console.log(actionName);
 				var action = actions[actionName];
 				var newMethod = {};
-				var newMethodName = `WF.${s}.${actionName}`;
+				var newMethodName = `workflow.${s}.${actionName}`;
 				var fullMethodName = `${collection._name}.${newMethodName}`;
 				action.methodName = fullMethodName;
-				console.log(newMethodName);
+				//console.log(newMethodName);
 				newMethod[newMethodName] = action;
 				collection.methods(newMethod);
 			}
@@ -66,21 +66,22 @@ export default function(collection) {
 		return actions||[];
 	}
 
-	function actionModal(request,beforeMethod,callback) {
-		if(beforeMethod) {
+	function actionModal(request,form,callback) {
+		if(form) {
 			if(!Meteor.isServer) {
 				request = collection._transform(request);
 				Modal.show({
-		    		onSubmit:()=>{
-		    			callback?callback(request):null;
-		    			Modal.hide();
-		    		},
 		    		content:
 			        	<AutoForm 
 				            item={request} 
-			    	        form={['closeDetails']}
+			    	        form={form.fields}
+			    	        onSubmit={(newRequest)=>{
+			    	        	//console.log(newRequest);
+				    			callback?callback(newRequest):null;
+				    			Modal.hide();
+			    	        }}
 				        >
-			    	        <h2>All done? Great! We just need a few details to finalise the job.</h2>
+			    	        <h2>{form.title}</h2>
 			        	</AutoForm>
 			  	})
 			}
@@ -91,12 +92,18 @@ export default function(collection) {
 
 	}
 
-	function doAction(request,actionName,beforeMethod) {
+	function doAction(request,actionName,form) {
 		var actions = getActions(request);
 		var action = actions[actionName];
 		if(action) {
-			if(action.beforeMethod) {
-				actionModal(request,action.beforeMethod,action.method)
+			if(action.form) {
+				var form = action.form;
+				if(_.isFunction(form)) {
+					form = form(request);
+				}
+				actionModal(request,form,(request)=>{
+					Meteor.call(action.methodName,request);
+				})
 			}
 			else {
 				return action.method(request);

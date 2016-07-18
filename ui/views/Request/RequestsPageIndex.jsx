@@ -37,7 +37,7 @@ RequestsPageIndex = React.createClass({
 	    {
 	        text:"Open",
 	        filter(i) {
-	        	return i.status=='Draft'||i.status=='New'||i.status=='In Progress'||i.status=='Issued';
+	        	return i.status!='Closed'
 	        }
 	    },
 	    {

@@ -172,12 +172,6 @@ FilterBox2 = React.createClass({
       	</div>
         :null}
       </div>
-      {this.props.newItemCallback==null?null:
-        <button 
-          onClick={this.createNewItem} 
-          className="card-button new-card-button pull-right" 
-        >+</button>
-      }
     </div>
     )
 	}

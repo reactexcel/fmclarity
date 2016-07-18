@@ -54,16 +54,11 @@ export default React.createClass({
         */
     },
 
-    handleStatusChange(err,response) {
-        if(err) {
-            console.log(err);
+    handleStatusChange(response) {
+        if(this.props.onStatusChange) {
+            this.props.onStatusChange(response);
         }
-        else {
-            if(this.props.onStatusChange) {
-                this.props.onStatusChange(response);
-            }
-            //Modal.hide();
-        }
+        //Modal.hide();
     },
 
     progress() {
@@ -112,14 +107,16 @@ export default React.createClass({
         return (
             <div>
                 {actions&&actions.length?actions.map((action)=>{
-                    return <button 
-                        key={action}
-                        onClick={()=>{request.doAction(action,this.handleStatusChange)}}
-                        style={{margin:0,width:width,maxWidth:"400px"}} 
-                        type="button" 
-                        className={"btn btn-sm btn-"+(request.canDoAction(action)?'Issued':'disabled')}>
-                        {action}
-                    </button>
+                    if(request.canDoAction(action)) {
+                        return <button 
+                            key={action}
+                            onClick={()=>{request.doAction(action,this.handleStatusChange)}}
+                            style={{margin:0,width:width,maxWidth:"400px"}} 
+                            type="button" 
+                            className={"btn btn-sm btn-"+(request.checkDoAction(action)?'Issued':'disabled')}>
+                            {action}
+                        </button>
+                    }
                 }):null}
             </div>
         )

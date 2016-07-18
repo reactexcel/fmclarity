@@ -160,12 +160,6 @@ ModalInner = React.createClass({
       <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>        
           <div style={{display:"inline-block",position:"relative"}}>
             {this.props.children}
-            {this.props.handleSubmit?
-              <div className="modal-footer">
-                <button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" className="btn btn-flat btn-primary" onClick={this.handleSubmit}>Submit</button>
-              </div>
-            :null}
             <span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
           </div>
       </div>

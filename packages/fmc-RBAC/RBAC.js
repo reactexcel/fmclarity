@@ -160,12 +160,12 @@ function addAuthentication(methodName,f) {
 function addValidation(methodName,f) {
 	validators[methodName] = function() {
 		// create the paramater that will be used to call the validation function
-		var user = Meteor.user();
 		var item = arguments[0];
-		var role = getRole(user,item);
-
-		if(f(role,user,item,arguments)) {
-			return true;
+		if(_.isBoolean(f)) {
+			return f;
+		}		
+		else if(_.isFunction(f)) {
+			return f(item,arguments);
 		}
 		return false;
 	}
@@ -242,6 +242,20 @@ function makeAuthenticationHelper(methodName){
 }
 
 /**
+ * @method makeAuthenticationHelper
+ * @summary Makes a function that can be bound to a collection as a helper to conveniently call the corresponding authenticator on the client.
+ * @param {String} methodName The name of the method
+ */
+function makeValidationHelper(methodName){
+	return function() {
+		var f = validators[methodName];
+		//because we are using a helper the item should become "this"
+		[].unshift.call(arguments,this);
+		return f?f.apply(null,arguments):false;
+	}
+}
+
+/**
  * @method makeHelpers
  * @summary Creates collection helpers for the specified method and it's authentication
  * @param {String} methodName The name of the method
@@ -253,6 +267,9 @@ function makeHelpers(methodName,functions,collection) {
 	strippedName = strippedName[1];
 	if(functions.authentication) {
 		helpers['can'+ucfirst(strippedName)] = makeAuthenticationHelper(methodName);
+	}
+	if(functions.validation) {
+		helpers['check'+ucfirst(strippedName)] = makeValidationHelper(methodName);
 	}
 	if(functions.helper) {
 		helpers[strippedName] = makeCollectionHelper(methodName,functions.helper);

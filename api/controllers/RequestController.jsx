@@ -1,5 +1,8 @@
 Issues.schema(IssueSchema);
 
+Issues.save = function(id,obj,callback) {
+  return Meteor.call('Issues.save',id,obj,callback)
+}
 
 Issues.mixins([
   DocMessages.config({
@@ -185,7 +188,6 @@ Issues.methods({
       var supplier = request.getSupplier();
       if(supplier) {
         var supplierManagers = supplier.getMembers({role:"manager"});
-        console.log(supplierManagers);
         request.dangerouslyReplaceMembers(supplierManagers,{role:"supplier manager"});
       }
     }

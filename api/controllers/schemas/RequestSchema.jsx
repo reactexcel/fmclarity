@@ -17,11 +17,46 @@ IssueSchema = {
   },
 
   description:{
-    input:"textarea"
+    input:"mdtextarea"
+  },
+
+  rejectDescription:{
+    label:"Reason for rejection",
+    input:"mdtextarea"
+  },
+
+  acceptComment:{
+    label:"Comment",
+    input:"mdtextarea",
+  },
+
+  quote: {
+    label:"Quote",
+    input:"FileField"
+  },
+
+  quoteIsPreApproved:{
+    label:"Auto approve quote?",
+    info:"An auto approved quote will ",
+    input:"switch"
+  },
+
+  quoteValue:{
+    label:"Value of quote"
   },
 
   status:{
     defaultValue:"Draft",
+  },
+
+  quoteRequired:{
+    label:"Quote required",
+    input:"switch"
+  },
+
+  confirmRequired:{
+    label:"Completion confirmation required",
+    input:"switch"
   },
 
   costThreshold:{
@@ -45,6 +80,11 @@ IssueSchema = {
       }      
       return code;
     }
+  },
+
+  eta:{
+    label:"ETA",
+    input:"MDDateTime",
   },
 
   dueDate:{

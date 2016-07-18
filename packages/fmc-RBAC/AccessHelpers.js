@@ -14,13 +14,20 @@ function create(item) {
 }
 
 function save(item,extension) {
-	if(!item.createdAt) {
-		item.createdAt = moment().toDate();
+
+	var itemId = _.isObject(item)?item._id:item;
+
+	var updateObj;
+	if(extension) {
+		updateObj = extension;
 	}
-	for(var i in extension) {
-		item[i] = extension[i];
+	else {
+		updateObj = _.omit(item,'_id');
+		if(!updateObj.createdAt) {
+			updateObj.createdAt = moment().toDate();
+		}
 	}
-	this.upsert(item._id, {$set: _.omit(item, '_id')});
+	this.upsert(itemId, {$set:updateObj});
 	return item;
 }
 

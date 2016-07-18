@@ -60,7 +60,13 @@ AutoForm = React.createClass({
 	    this.setState({
 	        item:item
 	    })
-        this.saveItem();
+	    // if we have sent in an onSubmit function then we 
+	    // are saying we want to handle the saving externally
+	    // (this mean I am going to have to put in a manual save
+	    // for the relevant workflow functions)
+	    if(!this.props.onSubmit) {
+        	this.saveItem();
+        }
     },
 
     getSchema() {
@@ -95,7 +101,6 @@ AutoForm = React.createClass({
 
 	render() {
 		if(!this.state.item) return <div/>;
-		var component = this;
 		var item = this.state.item;
 		var id = this.props.keyField||item._id;
 	   	var schema = this.getSchema();
@@ -108,7 +113,7 @@ AutoForm = React.createClass({
 						{this.props.children}
 					</div>
 				:null}
-				{form.map(function(key){
+				{form.map((key)=>{
 
 					var s = schema[key];
 
@@ -129,7 +134,7 @@ AutoForm = React.createClass({
 					        		item={item} 
 					        		field={key} 
 					        		schema={s.schema} 
-					        		save={component.props.save} 
+					        		save={this.props.save}
 					        	>
 								{s.label?<h5>{s.label}</h5>:null}
 					        	</AutoForm>
@@ -162,7 +167,7 @@ AutoForm = React.createClass({
 								<Input
 									placeholder={placeholder}
 									value={item[key]} 
-									onChange={component.updateField.bind(component,key)}
+									onChange={this.updateField.bind(this,key)}
 									options={s.options}
 								/>
 							</div>
@@ -170,6 +175,14 @@ AutoForm = React.createClass({
 
 					}
 				})}
+
+	            {this.props.onSubmit?
+	              <div style={{textAlign:"right"}}>
+	                {/*<button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>*/}
+	                <button type="button" className="btn btn-flat btn-primary" onClick={()=>{this.props.onSubmit(item)}}>Submit</button>
+	              </div>
+	            :null}
+
 			</div>
 		)
 	}
