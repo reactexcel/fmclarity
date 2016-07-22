@@ -73,7 +73,6 @@ static-html
 check
 ejson
 email
-jquery
 less
 logging
 meteor-base

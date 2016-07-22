@@ -5,7 +5,7 @@
   "dependencies": {
     "immutable": "^3.7.6",
     "imports": "^1.0.0",
-    "jquery": "*",
+    "jquery": "^2.x",
     "material-ui": "0.15.0",
     "meteor-node-stubs": "^0.2.3",
     "moment": "*",
