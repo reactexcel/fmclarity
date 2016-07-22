@@ -42,7 +42,7 @@ EmailMessageView = React.createClass({
                 <p>Hi {userName},</p>
 
                 <p>
-                {owner.getName()} has {message.verb} work request <i>{message.getTargetName()}</i> {facility?<span>at {facility.getName()}</span>:null}.
+                {owner.getName()} has {message.verb} <i>{message.getTargetName()}</i> {facility?<span>at {facility.getName()}</span>:null}.
                 {message.body?<span> {owner.getName()} writes:</span>:null}
                 </p>
 

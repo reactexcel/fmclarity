@@ -20,7 +20,7 @@ IssueSchema = {
     input:"mdtextarea"
   },
 
-  rejectDescription:{
+  rejectDescription:{//rejectComment
     label:"Reason for rejection",
     input:"mdtextarea"
   },
@@ -28,6 +28,11 @@ IssueSchema = {
   acceptComment:{
     label:"Comment",
     input:"mdtextarea",
+  },
+
+  closeComment:{
+    label:"Close comment",
+    input:"mdtextarea"
   },
 
   quote: {

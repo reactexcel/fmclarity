@@ -18,7 +18,7 @@ var defaultHelpers = {
   getInboxId:getInboxId,
   getNotifications:getNotifications,
   getMessageCount:getMessageCount,
-  getRecipients:getRecipients,
+  //getRecipients:getRecipients,
 }
 
 function registerCollection(collection,opts) {
@@ -86,6 +86,15 @@ function getRecipients(inCC,outCC) {
   return outCC;
 }
 
+function flattenRecipients(cc) {
+  var recipients = getRecipients(cc);
+  recipients = _.uniq(recipients,false,function(i){
+    return i._id;
+  })
+  return recipients;  
+}
+
+
 function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
   if(!message) {
     return;
@@ -109,7 +118,8 @@ function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
     recipients = getRecipientListFromRoles(obj,recipientRoles);
   }
   else {
-    recipients = this.getWatchers();    
+    recipients = this.getWatchers();
+    recipients = flattenRecipients(recipients);
   }
   
   recipients = _.uniq(recipients,false,function(i){
@@ -118,10 +128,15 @@ function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
     }
   })
 
+  //console.log(recipients);
   recipients.map(function(r){
-    console.log({"sending notification to":r});
     if(r) {
+      //console.log(r);
+      console.log({"sending notification to":r.email});
       sendMessage(message,r);
+    }
+    else {
+      console.log("I tried to send a message to a nonexistent entitiy");
     }
   })
 }

@@ -4,11 +4,16 @@ import {WorkflowHelper} from "meteor/fmc:workflow-helper";
 import React from "react";
 
 Issues.workflow = new WorkflowHelper(Issues);
-
+//////////////////////////////////////////////////////
+// Draft
+//////////////////////////////////////////////////////
 Issues.workflow.addState('Draft',{
+
   create:{
-    label:"Create",
+    label:"Create", //dont think this is used?
+
     authentication:AuthHelpers.memberOfRelatedTeam,
+
     validation(request) {
       //console.log(request);
       return (
@@ -18,43 +23,74 @@ Issues.workflow.addState('Draft',{
         request.service&&request.service.name.length
       )        
     },
+
     form:{
       title:"Please tell us a little bit more about the work that is required.",
       fields:['description']
     },
-    method:actionOpen
+
+    method(request) {
+      Issues.save(request,{
+        status:Issues.STATUS_NEW,
+        description:request.description
+      });
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["team","team manager","facility","facility manager"],
+        message:{
+          verb:"created",
+          subject:"Work order #"+request.code+" has been created",
+          body:request.description
+        }
+      });
+    }
   },
-  cancel:{
-    label:'Cancel',
+
+  delete:{
+    label:'Delete',
     authentication:["owner","facility manager","team manager"],
-    validation:readyToReject,
-    method:actionCancel
+    method:function(request) {
+      Issues.remove(request._id);
+    }
   }
 })
 
+//////////////////////////////////////////////////////
+// New, Quoted
+//////////////////////////////////////////////////////
 Issues.workflow.addState(['New','Quoted'],{
   approve:{
+
     label:'Approve',
+
     authentication:AuthHelpers.managerOfRelatedTeam,
+
     validation(request) {
       return (request.supplier&&(request.supplier._id||request.supplier.name))
     },
+
     /*form:{
       title:"Do you require quotes for this job?",
       fields:['quoteRequired','confirmRequired']
     },*/
-    method:actionIssue //onSubmit?
+    method:actionIssue, //onSubmit?
   },
+
   'get quote':{
+
     label:'Get quote',
+
     authentication:AuthHelpers.managerOfRelatedTeam,
+
     validation(request) {
       return (request.supplier&&(request.supplier._id||request.supplier.name))
     },
+
     form:{
       title:"Do you want to pre-approve this quote?",
       fields:['quoteIsPreApproved']
     },
+
     method(request,user) {
       Issues.save(request,{
         quoteIsPreApproved:request.quoteIsPreApproved,
@@ -62,36 +98,75 @@ Issues.workflow.addState(['New','Quoted'],{
       });
       request = Issues.findOne(request._id);
       request.updateSupplierManagers();
-    }  
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["owner","team","team manager","facility","facility manager","supplier manager"],
+        message:{
+          verb:"requested a quote for",
+          subject:"Work order #"+request.code+" has a new quote request"
+        }
+      });
+    }
   },
+
   reject:{
     label:'Reject',
     authentication:AuthHelpers.managerOfRelatedTeam,
-    validation:readyToReject,
-    form:beforeReject,
-    method:actionCancel
+    form:{
+      title:"What is your reason for rejecting this request?",
+      form:['rejectDescription']
+    },
+    method:function(request) {
+      Issues.save(request,{
+        status:"Rejected"
+      });
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["owner","team","team manager","facility","facility manager"],
+        message:{
+          verb:"rejected",
+          subject:"Work order #"+request.code+" has been rejected",
+          body:request.rejectDescription
+        }
+      });      
+    }
   }
 })
 
+//////////////////////////////////////////////////////
+// Quoting
+//////////////////////////////////////////////////////
 Issues.workflow.addState('Quoting',{
   'send quote':{
     label:"Quote",
-    authentication:["supplier manager"],
+    authentication:AuthHelpers.memberOfSuppliersTeam,
     validation:true,
     form:{
       title:"Please attach you quote document and fill in the value",
       //so this should prob be a subschema???
       fields:['quote','quoteValue']
     },
-    method:function(request,user) {
+    method:function(request) {
       Issues.save(request,{
         costThreshold:parseInt(request.quoteValue),
         status:request.quoteIsPreApproved?'In Progress':'Quoted'
       });
-    }
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["owner","team","team manager","facility manager"],
+        message:{
+          verb:"provided a quote for",
+          subject:"Work order #"+request.code+" has a new quote",
+          body:request.rejectDescription
+        }
+      });      
+    }    
   }
 })
 
+//////////////////////////////////////////////////////
+// Issued
+//////////////////////////////////////////////////////
 Issues.workflow.addState('Issued',{
   accept:{
     label:"Accept",
@@ -101,7 +176,7 @@ Issues.workflow.addState('Issued',{
       //so this should prob be a subschema???
       fields:['eta','assignee','acceptComment']
     },
-    authentication:["supplier manager"],
+    authentication:AuthHelpers.memberOfSuppliersTeam,
     validation:function(request){
       return !request.quoteRequired||request.quote;
     },
@@ -111,60 +186,131 @@ Issues.workflow.addState('Issued',{
         eta:request.eta,
         acceptComment:request.acceptComment
       });
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["owner","team","team manager","facility manager"],
+        message:{
+          verb:"accepted",
+          subject:"Work order #"+request.code+" has been accepted by the supplier",
+          body:request.acceptComment
+        }
+      });      
     }
   },
-  //prob roll these three together
+
+
+
   reject:{
     label:'Reject',
-    authentication:["supplier manager"],
-    validation:readyToReject,
-    fields:beforeReject,
-    method:actionCancel
+    authentication:AuthHelpers.memberOfSuppliersTeam,
+    fields:{
+      title:"What is your reason for rejecting this request?",
+      form:['rejectDescription']
+    },
+    method:function(request) {
+      Issues.save(request,{
+        status:"Rejected"
+      });
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["owner","team","team manager","facility","facility manager"],
+        message:{
+          verb:"rejected",
+          subject:"Work order #"+request.code+" has been rejected by the supplier",
+          body:request.rejectDescription
+        }
+      });      
+    }
   },
-  withdraw:{
-    label:'Withdraw',
+
+
+  delete:{
+    label:'Delete',
     authentication:AuthHelpers.managerOfRelatedTeam,
-    validation:readyToReject,
-    form:beforeReject,
-    method:actionDelete
+    form:{
+      title:"What is your reason for deleting this request?",
+      fields:['rejectDescription']
+    },
+    method:function(){
+      Issues.save(request,{status:Issues.STATUS_DELETED});
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["team","team manager","facility manager","supplier manager"],
+        message:{
+          verb:"deleted",
+          subject:"Work order #"+request.code+" has been deleted",
+        }
+      });
+      return request;
+    }
   },
 })
 
+//////////////////////////////////////////////////////
+// In Progress
+//////////////////////////////////////////////////////
 Issues.workflow.addState('In Progress',{
   complete:{
     label:'Complete',
-    authentication:["supplier manager","assignee"],
+    authentication:AuthHelpers.memberOfSuppliersTeam,
     validation:true,
     form:actionBeforeComplete,
     method:actionComplete
-  }
+  },
 })
 
+//////////////////////////////////////////////////////
+// Complete
+//////////////////////////////////////////////////////
 Issues.workflow.addState('Complete',{
+
   close:{
-    label:'Confirm',
-    authentication:["owner","team manager","facility manager"],
+    label:'Close',
+    authentication:AuthHelpers.managerOfRelatedTeam,
     validation:true,
+    form:{
+      title:"Please leave a comment about the work for the suppliers record",
+      fields:['closeComment']
+    },
     method:function(request) {
       Issues.save(request,{status:'Closed'});
+      request = Issues.findOne(request._id);
+      request.distributeMessage({
+        recipientRoles:["team","team manager","facility manager","supplier manager"],
+        message:{
+          verb:"closed",
+          subject:"Work order #"+request.code+" has been closed",
+        }
+      });
     }
   },
+
   reopen:{
     label:'Reopen',
-    authentication:["team manager","facility manager"],
+    authentication:AuthHelpers.managerOfRelatedTeam,
     validation:true,
+    form:{
+      title:"What is your reason for re-opening this work order?",
+      fields:['reopenReason']
+    },
     method:function(request) {
       Issues.save(request,{status:'New'});
     }
   }
+
 })
 
+//////////////////////////////////////////////////////
+// Closed
+//////////////////////////////////////////////////////
 Issues.workflow.addState('Closed',{
   reverse:{
     label:'Reverse',
     authentication:AuthHelpers.managerOfRelatedTeam,
-    validation:readyToReject,
-    beforeMethod:beforeReject,
+    beforeMethod:{
+      title:"What is your reason for reversing this request?",
+      form:['rejectDescription']
+    },
     method:actionReverse
   }  
 })
@@ -187,100 +333,9 @@ Issues.STATUS_CANCELLED = "Cancelled";
 Issues.STATUS_DELETED = "Deleted";
 Issues.STATUS_ARCHIVED = "Archived";
 
-/**
- *
- */
-function readyToClose(request) {
-  return (
-    request.closeDetails&&
-    request.closeDetails.attendanceDate&&
-    request.closeDetails.completionDate
-  )  
-}
-
-/**
- *
- */
-function readyToReject(request) {
-  return (
-    request.status==Issues.STATUS_DRAFT||
-    request.status==Issues.STATUS_NEW ||
-    (request.status==Issues.STATUS_ISSUED&&!request.exported)
-  )
-}
-
-function beforeReject(request) {
-  return {
-    title:"What is your reason for rejecting this request?",
-    form:['rejectDescription']
-  }  
-}
-
-function actionCancel (request) {
-  //starting to see a pretty consistent pattern here
-  //perhaps there is a way to simplify this -  make it more readable
-  //using this new workflow-helper????
-  Issues.save(request,{status:Issues.STATUS_CANCELLED});
-  request = Issues.findOne(response._id);
-  request.distributeMessage({
-    recipientRoles:["team","team manager","facility manager"],
-    message:{
-      verb:"cancelled",
-      subject:"Work order #"+request.code+" has been cancelled",      
-    }
-  });
-}
-
-function actionDelete (request) {
-  Issues.save(request,{status:Issues.STATUS_DELETED});
-  request = Issues.findOne(request._id);
-  request.distributeMessage({
-    recipientRoles:["team","team manager","facility manager","supplier manager"],
-    message:{
-      verb:"deleted",
-      subject:"Work order #"+request.code+" has been deleted",
-    }
-  });
-  return request;  
-}
-
-//////////////////////////////////////////////////////////
-// Open
-//////////////////////////////////////////////////////////
-
-function actionOpen (request) {
-  Issues.save(request,{
-    status:Issues.STATUS_NEW,
-    description:request.description
-  });
-  /////////////////////////////
-  // Better pattern might be something like...
-  /////////////////////////////
-  /*Messages.send(request._id,{
-    recipientRoles:["team","team manager","facility","facility manager"],
-    message:{
-      verb:"created",
-      subject:"Work order #"+request.code+" has been created",
-      body:request.description
-    }    
-  })*/
-
-  request = Issues.findOne(request._id);
-  request.distributeMessage({
-    recipientRoles:["team","team manager","facility","facility manager"],
-    message:{
-      verb:"created",
-      subject:"Work order #"+request.code+" has been created",
-      body:request.description
-    }
-  });
-  return request;
-}
-
 //////////////////////////////////////////////////////////
 // Issue
 //////////////////////////////////////////////////////////
-
 function actionIssue(request) {
   Issues.save(request,{status:Issues.STATUS_ISSUED,issuedAt:new Date()});
   request = Issues.findOne(request._id);

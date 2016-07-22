@@ -11,10 +11,29 @@ CHANGELOG.md
 * Problem - setting rbac is confusing
 * Problem - Managers can add personnel but do not have permission to edit those owned by team
 
+* New workflow may have compatibility issues with self assigned requests
+* What is the workflow fow self-assigned requests
+* Roles - who can do what?
+* Notifications - what messages should be received at each of the stages?
+* Notifications - it is now more critical that notifications of actions required are reliably received
+* Multiple quotes (value should be stored with supplier)
+* How can we refer to the states consistently without relying on global const style definitions?
+* There are some problems with the modal including close button misalignment and unexpected behaviour in large mode
+* New modal not validated on mobile
+* Suppliers should not be able to create work orders
+* Manager should be able to go straight to issued or quoted from draft
+* New instructions needed for suppliers who are sent a quote request
+
+**v1.4.7b**
+
+* WO:Changed "cancel" to "delete" (because of confusion with "cancelling" a transaction in a modal dialog)
+* WO workflow authentication uses authentication functions in all instances (to avoid problems with multiple roles - for example self)
+* WO refact: update RBAC "notification" function to use distribute message and move the message functions into the workflow definition where possible (to improve code readability)
+* WO workflow: Should jump straight to In Progress if pre approved
+
 **v1.4.6b**
 
 * Completed first draft new workflow
-
 
 **v1.4.5b**
 
@@ -569,6 +588,7 @@ CHANGELOG.md
 * Account settings: Default work order value now working
 
 **v0.3.25a**
+
 * Fixed bug which was causing actions menu icon to appear outside container
 * Centred notifications badge for two digit numbers
 * Prevented multiple submissions of work orders
@@ -910,7 +930,7 @@ CHANGELOG.md
 * Added sorting function to work order table
 * Randomised work order creation date an sorted work order table by date
 
-v0.2.3a 
+**v0.2.3a**
 
 * Fixed a problem where contractor images were not displaying correctly in the work order table
 * Fixed an error that was causing the "new work order" button to fail
@@ -940,12 +960,9 @@ v0.2.3a
 * Added 'datepicker' and 'switch' to available input types
 * Updated user and account profile edit views (not yet complete)
 
-*Milestone - 0.2.0a*
-
-* Live data model added
-
 **v0.2.0a**
 
+* Live data model added
 * Removed contractor collection and made contractors into a type of Team/Account
 * Made text boxes on profile pages reactive and editable by creating an autoform component
 * Various bug fixes
@@ -991,12 +1008,10 @@ v0.2.3a
 * When a member is invited - if they don't exist - they are emailed an invite
 
 **0.1.0a**
+
 * Tidied folder structure of components
 * Users/Contacts view added
 * Work Order : Facility name hidden from summary view when a facility is selected in top left nav
-
-*Milestone - 0.1.0a*
-
 * Basic functionality fit for first demo
 
 **0.0.13a**

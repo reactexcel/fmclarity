@@ -177,15 +177,19 @@ function addValidation(methodName,f) {
  * @param {String} methodName The name of the method
  * @param {function} f The method function
  */
-function addNotification(methodName,f) {
-	notifiers[methodName] = function() {
-		// create the paramater that will be used to call the validation function
-		var user = Meteor.user();
-		var after = arguments[0];
-		var before = arguments[1];
-		var role = getRole(user,before);
-
-		if(f(after,user,role,methodName,before,arguments)) {
+function addNotification(methodName,f,collection) {
+	notifiers[methodName] = function(item) {
+		//console.log(item);
+		if(f) {
+			message = f(item);
+			//Messages.distribute(request,message);
+			item = collection.findOne(item._id);
+			if(item.distributeMessage) {
+				item.distributeMessage(message);
+			}
+			else {
+				console.log("I tried to send a message to an item with not distributeMessage function");
+			}
 			return true;
 		}
 		return false;
@@ -315,8 +319,8 @@ function method(methodName,functions,collection){
 		else if(i=='validation'){
 			addValidation(methodName,f);
 		}
-		else if(i=='notification'){
-			addNotification(methodName,f);
+		else if(i=='notification'||i=='message'){
+			addNotification(methodName,f,collection);
 		}
 		else if(i=='method'){
 			addMethod(methodName,f,collection);
