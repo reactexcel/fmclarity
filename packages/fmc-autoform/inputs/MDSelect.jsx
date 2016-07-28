@@ -19,7 +19,7 @@ NameCard = React.createClass({
 			name = item.name;
 		}
 		return (
-			<span>{name}</span>
+			<span>{name}&nbsp;</span>
 		)
 	}
 })

@@ -52,6 +52,8 @@ MDLocationSelector = React.createClass({
 		}
 	},
 
+	//when props change should check if facility has changed and, if so, invalidate current selection
+
 	handleChange(attribute,newVal) {
 		var location = this.props.value||{};
 		location[attribute] = newVal;
@@ -130,9 +132,7 @@ MDServiceSelector = React.createClass({
 		}
 	},
 
-	updateService
-
-	updateSubservice(newVal) {
+	updateSubService(newVal) {
 		var service = this.props.value||{};
 		service.subservice = newVal;
 		this.props.onChange(service);
@@ -159,7 +159,7 @@ MDServiceSelector = React.createClass({
 						disabled={!this.data.subservices}
 						selectedItem={this.data.subservice}
 						itemView={NameCard}
-						onChange={(val)=>{this.updateService(val)}}
+						onChange={this.updateSubService}
 						placeholder="Sub-service"
 					/>
 				</div>
