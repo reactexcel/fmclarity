@@ -170,9 +170,8 @@ IssueSchema = {
     type:Object,
   },
   service:{
-    label:"Service",
-    size:6,
     type:Object,
+    input:MDServiceSelector
   },
   subservice:{
     label:"Subservice",

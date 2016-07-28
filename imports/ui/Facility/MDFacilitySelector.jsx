@@ -30,16 +30,13 @@ MDLocationSelector = React.createClass({
 	mixins:[ReactMeteorData],
 
 	getMeteorData() {
-		var location,facilities,facility,areas,subareas,identifiers;
-		location = this.props.value||{};
-
-		facilities = Meteor.user().getFacilities();
-		if(location.facility&&location.facility._id) {
-			facility = Facilities.findOne(location.facility._id);
-			if(facility) {
-				areas = facility.areas;
-			}
+		var request,location,areas,subareas,identifiers;
+		var request = this.props.context;
+		if(request&&request.facility) {
+			areas = request.facility.areas;
 		}
+
+		location = this.props.value||{};
 		if(location.area) {
 			subareas = location.area.children;
 		}
@@ -48,9 +45,7 @@ MDLocationSelector = React.createClass({
 		}
 
 		return {
-			facility:facility,
 			location:location,
-			facilities:facilities,
 			areas:areas,
 			subareas:subareas,
 			identifiers:identifiers
@@ -61,8 +56,6 @@ MDLocationSelector = React.createClass({
 		var location = this.props.value||{};
 		location[attribute] = newVal;
 		switch(attribute) {
-			case "facility":
-				location.area = null;
 			case "area":
 				location.subarea = null;
 			case "subarea":
@@ -74,18 +67,8 @@ MDLocationSelector = React.createClass({
 
 	render() {
 		//console.log(this.data);
-		console.log(this.props.context);
 		return (
 			<div className="row">
-				<div className="col-md-12">
-					<AutoInput.MDSelect 
-						items={this.data.facilities} 
-						selectedItem={this.data.facility}
-						itemView={NameCard}
-						onChange={this.handleChange.bind(this,"facility")}
-						placeholder="Facility"
-					/>
-				</div>
 				<div className="col-md-4">
 					<AutoInput.MDSelect 
 						items={this.data.areas} 
@@ -114,6 +97,70 @@ MDLocationSelector = React.createClass({
 						itemView={NameCard}
 						onChange={this.handleChange.bind(this,"identifier")}
 						placeholder="Identifier"
+					/>
+				</div>
+			</div>
+		)
+	}
+})
+
+MDServiceSelector = React.createClass({
+
+	mixins:[ReactMeteorData],
+
+	getMeteorData() {
+		var request,service,subservice,services,subservices;
+		request = this.props.context;
+		if(request&&request.facility) {
+			services = request.facility.servicesRequired;
+		}
+		console.log(services);
+
+		service = this.props.value||{};
+		subservice = service.subservice;
+		if(service.children) {
+			subservices = service.children;
+		}
+
+		return {
+			services:services,
+			subservices:subservices,
+			service:service,
+			subservice:subservice,
+		}
+	},
+
+	updateService
+
+	updateSubservice(newVal) {
+		var service = this.props.value||{};
+		service.subservice = newVal;
+		this.props.onChange(service);
+	},
+
+	render() {
+		//console.log(this.data);
+		console.log(this.data);
+		return (
+			<div className="row">
+				<div className="col-md-6">
+					<AutoInput.MDSelect 
+						items={this.data.services} 
+						disabled={!this.data.services}
+						selectedItem={this.data.service}
+						itemView={NameCard}
+						onChange={this.props.onChange}
+						placeholder="Service"
+					/>
+				</div>
+				<div className="col-md-6">
+					<AutoInput.MDSelect 
+						items={this.data.subservices} 
+						disabled={!this.data.subservices}
+						selectedItem={this.data.subservice}
+						itemView={NameCard}
+						onChange={(val)=>{this.updateService(val)}}
+						placeholder="Sub-service"
 					/>
 				</div>
 			</div>

@@ -187,6 +187,21 @@ Issues.methods({
     }
   },
 
+  getPotentialAreas:{
+    authentication:true,
+    helper:function(request) {
+      var facility;
+      if(request.facility&request.facility._id) {
+        facility = Facilities.findOne(request.facility._id);
+        console.log({request,facility});
+
+        if(facility) {
+          return facility.areas;
+        }
+      }
+    }
+  },
+
   getTeam:{
     authentication:true,
     helper:AccessHelpers.hasOne({

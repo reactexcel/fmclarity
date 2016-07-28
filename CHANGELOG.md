@@ -24,12 +24,14 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+
 **v1.4.8b**
 
 * Added full screen calendar
 * Fixed a problem that was causing large modals to appear incorrectly
 * [FWA-14] created work request type field
 * Created Material Design compliant Facility and area selector
+* Created Material Design compliant Service selector
 
 **v1.4.7b**
 
