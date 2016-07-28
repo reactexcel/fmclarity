@@ -15,12 +15,12 @@ Package.onUse(function(api) {
 	api.use([
 		'fmc:login-tokens',
 		'fmc:actions-menu',
+		'fmc:calendar',
 		'ecmascript',
 		'accounts-base',
 		'base64',
 		'less',
 		'react-meteor-data',
-		'rzymek:fullcalendar',
 		'chart:chart',
 		'pfafman:filesaver',
 		'harrison:papa-parse'
@@ -48,7 +48,7 @@ Package.onUse(function(api) {
 
 		'plugins/jsKnob/jquery.knob.js',	//is there a nodejs module or meteor package?
 
-		'reports/Calendar.jsx',				//will go in it's own package eventually
+		//'reports/Calendar.jsx',				//will go in it's own package eventually
 		'reports/InboxWidget.jsx',			//move to fmc-messages
 
 		'reports/ProgressOverviewChart.jsx',

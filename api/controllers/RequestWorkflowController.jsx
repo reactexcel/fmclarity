@@ -16,25 +16,34 @@ Issues.workflow.addState('Draft',{
 
     validation(request) {
       //console.log(request);
+      return true;
       return (
         request.name&&request.name.length&&
         request.facility&&request.facility._id&&
         request.level&&request.level.name&&request.level.name.length&&
         request.service&&request.service.name.length
-      )        
+      )
     },
 
     form:{
       title:"Please tell us a little bit more about the work that is required.",
-      fields:['description']
+      fields:['name','type','priority','location','service','subservice','description']
     },
 
     method(request) {
+      var location = request.location||{};
       Issues.save(request,{
         status:Issues.STATUS_NEW,
+        type:request.type,
+        priority:request.priority,
+        name:request.name,
         description:request.description
       });
       request = Issues.findOne(request._id);
+      request.setFacility(location.facility);
+      request.setArea(location.area);
+      request.setSubarea(location.subarea);
+      request.setAreaIdentifier(location.identifier);
       request.distributeMessage({
         recipientRoles:["team","team manager","facility","facility manager"],
         message:{

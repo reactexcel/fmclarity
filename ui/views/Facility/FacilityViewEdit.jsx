@@ -92,7 +92,10 @@ FacilityViewEdit = React.createClass({
                         tab: 		<span id="documents-tab">Documents</span>,
                         content: 	<AutoForm item={facility} form={["documents"]}/>,
 			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
-                    },/*{
+                    },{
+                        tab:        <span id="requests-tab"><span style={{color:"white"}}>Plugins</span></span>,
+                        content:    <FacilityPluginSelector/>
+                    }/*{
                         tab: 		<span id="suppliers-tab"><span>Suppliers</span></span>,
                         content: 	<ContactList members={suppliers} group={facility} type="team"/>,
 			        	guide: 		<div>Add the suppliers employed by this facility here. If you want to configure this later simply press next.</div>

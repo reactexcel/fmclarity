@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-Calendar = React.createClass({
+const Calendar = React.createClass({
 
     mixins: [ReactMeteorData],
 
@@ -58,12 +58,13 @@ Calendar = React.createClass({
         $(this.refs.calendar).fullCalendar('addEventSource',events);
     },
 
-	componentDidMount() {
+  componentDidMount() {
         this.events = {
             events:[]
         };
         $(this.refs.calendar).fullCalendar({
-            height:500,
+            //height:500,
+            eventLimit:true,
             header: {
                 left:'',
                 center: 'title',
@@ -71,13 +72,13 @@ Calendar = React.createClass({
             }
         });
         this.addEvents();
-	},
+  },
 
     componentDidUpdate() {
         this.addEvents();
     },
-	
-	render() {
+  
+  render() {
         return (
           <div ref="calendar"></div>
         )
@@ -85,3 +86,12 @@ Calendar = React.createClass({
 
 
 });
+
+CalendarPage = React.createClass({
+  render() {
+    return <div className="i-box" style={{backgroundColor:"#fff",margin:"20px",padding:"20px",position:"relative",top:"20px"}}><Calendar/></div>
+  }
+})
+
+
+export { Calendar, CalendarPage }

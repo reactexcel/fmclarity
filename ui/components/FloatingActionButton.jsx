@@ -32,6 +32,11 @@ FloatingActionButton = class FloatingActionButton extends React.Component {
 	    	}
 	    }
 	    //console.log(request);
+	    //Issues.doAction('create',function(request){
+	    	//request.save({
+	    		//all the things
+	    	//})
+	    //})
 	    Meteor.call('Issues.create',request,function(err,response){
 	    	if(err) {
 	    		console.log(err);
@@ -39,10 +44,11 @@ FloatingActionButton = class FloatingActionButton extends React.Component {
 	    	if(response) {
 	    		var newRequest = Issues.findOne(response._id);
 	    		//console.log(newRequest);
-				Modal.show({
-		    		content:<IssueDetail item={newRequest}/>,
-		            size:"large"
-		    	})
+				//Modal.show({
+		    	//	content:<IssueDetail item={newRequest}/>,
+		        //    size:"large"
+		    	//})
+		    	newRequest.doAction("create");
     		}
 	    });
 		//newItemCallback={team&&team.type=="fm"?this.createNewIssue:null}

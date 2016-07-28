@@ -3,7 +3,14 @@
 
 .modal-dialog {
   display:none;
-  text-align: left;
+  text-align:left;
+  width:auto!important;
+}
+
+@media (max-width:768px) {
+  .modal-dialog {
+    margin:0!important;
+  }
 }
 
 .modal-footer {
@@ -47,14 +54,14 @@
 .modal-body {
     padding:0;
 }
-
+/*
 .modal-dialog.modal-dialog-large {
  width:auto;
  margin-left:100px;
  margin-right:100px;
  width:1000px;
 }
-
+*/
 .modal-content {
   background-clip: padding-box;
   background-color: #FFFFFF;
@@ -63,6 +70,11 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   outline: 0 none;
   position: relative;
+}
+
+.modal.fade:not(.in) .modal-dialog {
+    -webkit-transform: translate3d(125%, 0, 0);
+    transform: translate3d(125%, 0, 0);
 }
 
 .modal-dialog {

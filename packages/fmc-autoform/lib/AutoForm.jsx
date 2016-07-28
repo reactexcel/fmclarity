@@ -118,7 +118,7 @@ AutoForm = React.createClass({
 					var s = schema[key];
 
 					if(!s) {
-						throw new Meteor.Error("schema-field-does-not-exist","Schema field doesn't exist","You have tried to access a nonexistent schema field.")
+						throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
 					}
 
 					//check to see field conditions met
@@ -166,6 +166,7 @@ AutoForm = React.createClass({
 							<div key={id+'-'+key} className={"col-sm-"+s.size}>
 								<Input
 									placeholder={placeholder}
+									context={item}
 									value={item[key]} 
 									onChange={this.updateField.bind(this,key)}
 									options={s.options}

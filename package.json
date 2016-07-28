@@ -6,7 +6,7 @@
     "immutable": "^3.7.6",
     "imports": "^1.0.0",
     "jquery": "^2.x",
-    "material-ui": "0.15.0",
+    "material-ui": "^0.15.2",
     "meteor-node-stubs": "^0.2.3",
     "moment": "*",
     "react": "^15.0.x",

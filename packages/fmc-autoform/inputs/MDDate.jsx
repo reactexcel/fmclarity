@@ -108,9 +108,9 @@ AutoInput.MDDateTime = React.createClass({
 						mode="landscape" 
 						onChange={this.handleTimeChange}
 						//defaultDate={this.state.dateValue}
-						formatDate={function(date){
+						/*formatDate={function(date){
 							return moment(date).format("D-MMM-YY HH:mm");
-						}}
+						}}*/
 					/>
 				</div>
 			</div>
@@ -186,7 +186,7 @@ AutoInput.date = React.createClass({
 					value={this.state.value} 
 					readOnly={true}
 					onSelect={this.handleSelect}
-					onClear={this.handleClear}
+					//onClear={this.handleClear}
 				/>
 				<div style={{display:"none"}}>
 					<DatePicker 
@@ -211,9 +211,9 @@ AutoInput.date = React.createClass({
 						mode="landscape" 
 						onChange={this.handleTimeChange}
 						//defaultDate={this.state.dateValue}
-						formatDate={function(date){
+						/*formatDate={function(date){
 							return moment(date).format("D-MMM-YY HH:mm");
-						}}
+						}}*/
 					/>
 				</div>
 			</div>

@@ -2,6 +2,7 @@ Teams = ORM.Collection("Teams");
 Issues = ORM.Collection("Issues");
 Facilities = ORM.Collection("Facilities");
 Users = ORM.Collection(Meteor.users);
+Services = ORM.Collection("Services");
 //Should be called fileStore
 Files = new FS.Collection("File", {
   stores: [new FS.Store.GridFS("master")]

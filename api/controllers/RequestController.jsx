@@ -165,14 +165,27 @@ Issues.methods({
     method:setAssignee
   },
 
-  getFacility:{
+  /*getFacility:{
     authentication:true,
     helper:AccessHelpers.hasOne({
       collection:Facilities,
       fieldName:"facility"
     })
-  },
+  },*/
 
+  getFacility:{
+    authentication:true,
+    helper:function(request) {
+      var facility;
+      if(request.location&&request.location.facility) {
+        facility = Facilities.findOne(request.location.facility._id);
+      }
+      else if(request.facility) {
+        facility = Facilities.findOne(request.facility._id);
+      }
+      return facility;
+    }
+  },
 
   getTeam:{
     authentication:true,

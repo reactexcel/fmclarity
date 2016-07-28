@@ -1,5 +1,6 @@
 import React from 'react';
 import ActionsMenu from 'meteor/fmc:actions-menu';
+import {Calendar} from 'meteor/fmc:calendar';
 
 
 // Dashboard

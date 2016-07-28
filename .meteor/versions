@@ -50,6 +50,7 @@ email@1.0.16
 fastclick@1.0.12
 fmc:actions-menu@0.0.1
 fmc:autoform@0.0.1
+fmc:calendar@0.0.1
 fmc:doc-attachments@0.0.1
 fmc:doc-members@0.0.1
 fmc:doc-messages@0.0.1

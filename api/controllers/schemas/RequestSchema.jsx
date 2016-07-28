@@ -1,10 +1,9 @@
+import '../../../imports/ui/Facility/MDFacilitySelector.jsx';
+
+
 IssueSchema = {
 
   name:{
-  },
-
-  priority:{
-    defaultValue:"Standard"
   },
 
   timeframe:{
@@ -18,6 +17,40 @@ IssueSchema = {
 
   description:{
     input:"mdtextarea"
+  },
+
+  type: {
+    label:"Request type",
+    defaultValue:"Ad-hoc",
+    size:6,
+    type:String,
+    input:"MDSelect",
+    options:{
+      items:[
+        "Ad-hoc",
+        "Base Building",
+        "Contract",
+        "Preventative",
+        "Warranty",
+        "No Cost",
+        "Internal"
+      ]
+    }
+  },  
+
+  priority:{
+    defaultValue:"Standard",
+    size:6,
+    type:String,
+    input:"MDSelect",
+    options:{
+      items:[
+        "Standard",
+        "Scheduled",
+        "Urgent",
+        "Critical"
+      ]
+    }
   },
 
   rejectDescription:{//rejectComment
@@ -110,11 +143,20 @@ IssueSchema = {
     label:"Attachments",
     input:DocAttachments.FileExplorer
   },
-  
+
+  location:{
+    type:Object,
+    input:MDLocationSelector
+  },
+
   level:{
+    label:"Area",
+    size:6,
     type:Object,
   },
   area:{
+    label:"Sub-area",
+    size:6,
     type:Object,
   },
   team:{
@@ -122,8 +164,19 @@ IssueSchema = {
   },
   facility:{
     type:Object,
+    input:MDFacilitySelector
   },
   supplier:{
+    type:Object,
+  },
+  service:{
+    label:"Service",
+    size:6,
+    type:Object,
+  },
+  subservice:{
+    label:"Subservice",
+    size:6,
     type:Object,
   },
   assignee:{

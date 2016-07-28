@@ -1,6 +1,8 @@
 import React from 'react';
 import {mount} from 'react-mounter';
 
+import {CalendarPage} from 'meteor/fmc:calendar';
+
 // ROUTER
 // Includes all url route for the App
 //
@@ -126,6 +128,14 @@ loggedIn.route('/portfolio', {
   name: 'portfolio',
   action() {
     mount(MainLayout,{content: <FacilityPageIndex />});
+  }
+});
+
+//this should go in fmc:messages?
+loggedIn.route('/calendar', {
+  name: 'calendar',
+  action() {
+    mount(MainLayout,{content:<CalendarPage/>});
   }
 });
 

@@ -61,7 +61,8 @@ AutoInput.MDSelect = React.createClass({
 		var component = this;
 		var options = this.props.options||{};
 
-		var readOnly = this.props.readOnly;
+		var disabled = this.props.disabled;
+		var readOnly = this.props.readOnly||disabled;
 
 		var Card = this.props.itemView||options.view||PlainCard;
 		var items = this.props.items||options.items||[];
@@ -72,14 +73,14 @@ AutoInput.MDSelect = React.createClass({
 
 		if(readOnly) {
 			return (
-				<span className={"md-input readonly dropdown "+classes}>
-					<div className={"input"+(selectedItem?" used":null)}>
-	      				{selectedItem?<Card item={selectedItem}/>:null}
-	      			</div>
+				<div className={"md-input readonly dropdown "+classes+(disabled?" disabled":'')}>
+					<span className={"input"+(selectedItem?" used":'')}>
+	      				{selectedItem?<Card item={selectedItem}/>:<span>&nbsp;</span>}
+	      			</span>
 				    <span className="highlight"></span>
       				<span className="bar"></span>
       				<label>{this.props.placeholder}</label>
-				</span>
+				</div>
 			)
 		}
 

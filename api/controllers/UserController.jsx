@@ -24,6 +24,9 @@ Users.actions({
   getTeam:{
     authentication:true,
     helper:function(){
+      var team = Session.getSelectedTeam();
+      //console.log(team);
+      return team;
       return Session.getSelectedTeam();
     }
   },
@@ -40,6 +43,7 @@ Users.actions({
     authentication:true,
     helper:function(user,q) {
       var team = user.getTeam();
+      //console.log(team);
       if(team) {
         return team.getFacilities(q);
       }
@@ -237,10 +241,6 @@ Users.helpers({
   },
 
 
-  getTeam:function(i) {
-    var teams = this.getTeams();
-    return teams[i];
-  },
   getProfile:function() {
     if(!this.profile._id) {
       this.profile._id = this._id;

@@ -92,6 +92,7 @@ FilterBox2 = React.createClass({
   },
 
   selectItem(item) {
+    console.log(item);
 	  this.setState({
 	  	selectedItem:item
 	  });
@@ -101,14 +102,13 @@ FilterBox2 = React.createClass({
   },
 
 	render() {
-    var component = this;
     var items = this.props.items;
     var numCols = parseInt(this.props.numCols) || 1;
     var navWidth = parseInt(this.props.navWidth) || 6;
     var bodyWidth = parseInt(12-navWidth);
     var colSize = Math.floor(12 / numCols);
     var newItemCallback = this.props.newItemCallback;
-    var Header = component.props.itemView.header;
+    var Header = this.props.itemView.header;
     var selectedItem;
 
     if(!items) {
@@ -120,29 +120,28 @@ FilterBox2 = React.createClass({
     else {
       for(var i in this.props.items) {
         var item = this.props.items[i];
-        if(item&&this.state.selectedItem&&item._id==this.state.selectedItem._id) {
+        if(item&&this.state.selectedItem&&item.name==this.state.selectedItem.name) {
           selectedItem = item;
         }
       }
     }
-
     return (
     <div className="filter-box-2">
       <div className="row">
         {!selectedItem||(this.state.screenSize=="lg"&&items.length>1)?
         <div className={"col-lg-"+navWidth+" lg-gutter-right-5px"}>
           <div className="row">
-            {items.map(function(i,index){
+            {items.map((i,idx)=>{
               return (
                 <div 
-                  key={i._id}
+                  key={i._id||idx}
                   className={"col-lg-"+colSize+" col-sm-12"}
                 >
                   <FilterBox2LeftNavItem
                     item={i}
-                    view={component.props.itemView.summary}
-                    toggle={component.selectItem.bind(component,i)}
-                    isSelected={component.state.selectedItem&&component.state.selectedItem._id==i._id}
+                    view={this.props.itemView.summary}
+                    toggle={this.selectItem.bind(this,i)}
+                    isSelected={this.state.selectedItem&&this.state.selectedItem.name==i.name}
                   />
                 </div>  
               )
