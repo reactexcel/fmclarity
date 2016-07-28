@@ -27,7 +27,7 @@ Issues.workflow.addState('Draft',{
 
     form:{
       title:"Please tell us a little bit more about the work that is required.",
-      fields:['name','type','priority','facility','location','service','description']
+      fields:['name','type','priority','frequency','facility','location','service','supplier','description']
     },
 
     method(request) {

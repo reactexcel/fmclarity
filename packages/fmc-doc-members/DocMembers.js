@@ -117,7 +117,9 @@ function replaceMembers(collection,fieldName) {
 }
 
 function addMember(collection,fieldName) {
-	return function(item,obj,options={}){
+	return function(item,obj,options){
+
+		options=options||{};
 
 		if(!_.isArray(obj)) {
 			obj = [obj];

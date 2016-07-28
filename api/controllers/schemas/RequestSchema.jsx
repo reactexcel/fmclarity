@@ -1,6 +1,5 @@
 import '../../../imports/ui/Facility/MDFacilitySelector.jsx';
 
-
 IssueSchema = {
 
   name:{
@@ -71,6 +70,26 @@ IssueSchema = {
   quote: {
     label:"Quote",
     input:"FileField"
+  },
+
+  frequency:{
+    size:6,
+    condition:function(item) {
+      return item.type=="Preventative"
+    },
+    input:"MDSelect",
+    options:{
+      items:[
+        "daily",
+        "weekly",
+        "fortnightly",
+        "monthly",
+        "quarterly",
+        "biannually",
+        "annually",
+        "biennially"
+      ]
+    }
   },
 
   quoteIsPreApproved:{
@@ -168,6 +187,7 @@ IssueSchema = {
   },
   supplier:{
     type:Object,
+    input:MDSupplierSelector
   },
   service:{
     type:Object,

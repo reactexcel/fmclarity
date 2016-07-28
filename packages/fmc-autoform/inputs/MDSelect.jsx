@@ -71,11 +71,13 @@ AutoInput.MDSelect = React.createClass({
 		var clearOption = this.props.clearOption||options.clearOption;
 		var selectedItem = this.props.value||this.props.selectedItem;
 
+		var used = _.isObject(selectedItem)?selectedItem.name&&selectedItem.name.length:selectedItem&&selectedItem.length;
+
 		if(readOnly) {
 			return (
 				<div className={"md-input readonly dropdown "+classes+(disabled?" disabled":'')}>
-					<span className={"input"+(selectedItem?" used":'')}>
-	      				{selectedItem?<Card item={selectedItem}/>:<span>&nbsp;</span>}
+					<span className={"input"+(used?" used":'')}>
+	      				{used?<Card item={selectedItem}/>:<span>&nbsp;</span>}
 	      			</span>
 				    <span className="highlight"></span>
       				<span className="bar"></span>
@@ -92,13 +94,13 @@ AutoInput.MDSelect = React.createClass({
                 		onClick={this.handleClick} 
                 		className={
                 			"dropdown-toggle input"+
-                			(selectedItem?" used":'')+
+                			(used?" used":'')+
                 			(this.state.open?" focus":'')
                 		}
                 	>
-	                	{selectedItem?<Card item={selectedItem}/>:<span>&nbsp;</span>}
+	                	{used?<Card item={selectedItem}/>:<span>&nbsp;</span>}
 	                </span>
-	                {selectedItem?<div className="close-button" onClick={this.clearItem}>&times;</div>:null}
+	                {used?<div className="close-button" onClick={this.clearItem}>&times;</div>:null}
 				    <span className="highlight"></span>
       				<span className="bar"></span>
                     <label>{this.props.placeholder}</label>

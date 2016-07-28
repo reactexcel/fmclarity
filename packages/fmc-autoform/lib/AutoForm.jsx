@@ -178,7 +178,7 @@ AutoForm = React.createClass({
 				})}
 
 	            {this.props.onSubmit?
-	              <div style={{textAlign:"right"}}>
+	              <div style={{textAlign:"right",clear:"both"}}>
 	                {/*<button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>*/}
 	                <button type="button" className="btn btn-flat btn-primary" onClick={()=>{this.props.onSubmit(item)}}>Submit</button>
 	              </div>

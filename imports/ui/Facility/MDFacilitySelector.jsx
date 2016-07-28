@@ -167,3 +167,36 @@ MDServiceSelector = React.createClass({
 		)
 	}
 })
+
+MDSupplierSelector = React.createClass({
+
+	mixins:[ReactMeteorData],
+
+	getMeteorData() {
+		var request,facility,supplier,suppliers;
+		request = this.props.context;
+		if(request&&request.facility&&request.facility._id) {
+			facility = Facilities.findOne(request.facility._id);
+			suppliers = facility.getSuppliers();
+		}
+		return {
+			suppliers:suppliers,
+			supplier:supplier,
+		}
+	},
+
+	render() {
+		//console.log(this.data);
+		console.log(this.data);
+		return (
+			<AutoInput.MDSelect 
+				items={this.data.suppliers} 
+				disabled={!this.data.suppliers}
+				selectedItem={this.data.supplier}
+				itemView={NameCard}
+				onChange={this.props.onChange}
+				placeholder="Supplier"
+			/>
+		)
+	}
+})
