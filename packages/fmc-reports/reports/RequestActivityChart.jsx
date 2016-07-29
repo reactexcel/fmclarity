@@ -3,6 +3,8 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import ActionsMenu from 'meteor/fmc:actions-menu';
 
+import Chart from 'chart.js';
+
 RequestActivityChart = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -136,28 +138,49 @@ RequestActivityChart = React.createClass({
 		        labels: this.data.labels||[''],
 		        datasets: [
 		            {
-		                label: "Open",
-		                fillColor: "rgba(117,170,238,0.8)",
-		                strokeColor: "rgba(117,170,238,1)",
-		                pointColor: "rgba(117,170,238,1)",
-		                pointStrokeColor: "#fff",
-		                pointHighlightFill: "#fff",
-		                pointHighlightStroke: "rgba(220,220,220,1)",
-		                data: this.data.openSeries||[0]
+		                label: "Closed",
+
+		                backgroundColor: "rgba(193,217,245,0.3)",
+		                borderColor: "rgba(193,217,245,1)",
+
+		                pointBackgroundColor: "rgba(193,217,245,1)",
+		                pointBorderColor: "#fff",
+
+		                pointHoverBackgroundColor: "#fff",
+		                pointHoverBorderColor: "rgba(220,220,220,1)",
+
+		                data: this.data.closedSeries||[0]
 		            },
 		            {
-		                label: "Closed",
-		                fillColor: "rgba(193,217,245,0.8)",
-		                strokeColor: "rgba(193,217,245,1)",
-		                pointColor: "rgba(193,217,245,1)",
-		                pointStrokeColor: "#fff",
-		                pointHighlightFill: "#fff",
-		                pointHighlightStroke: "rgba(220,220,220,1)",
-		                data: this.data.closedSeries||[0]
+		                label: "Open",
+
+		                backgroundColor: "rgba(117,170,238,0.3)",
+		                borderColor: "rgba(117,170,238,1)",
+
+		                pointBackgroundColor: "rgba(117,170,238,1)",
+		                pointBorderColor: "#fff",
+
+		                pointHoverBackgroundColor: "#fff",
+		                pointHoverBorderColor: "rgba(220,220,220,1)",
+
+		                data: this.data.openSeries||[0]
 		            }
 		        ]
 		    },
 	    	lineOptions:{
+	    		scales:{
+	    			xAxes:[{
+			    		gridLines:{
+			    			display:false,
+			    		}
+	    			}],
+	    			yAxes:[{
+	    				ticks:{
+	    					beginAtZero:true
+	    				}
+	    			}]
+	    		}
+	    		/*
 		        scaleShowGridLines: true,
 		        scaleGridLineColor: "rgba(0,0,0,.05)",
 		        scaleGridLineWidth: 1,
@@ -172,6 +195,7 @@ RequestActivityChart = React.createClass({
 		        datasetFill: true,
 		        responsive: true,
 				legendTemplate : "<ul class=\"chart-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+				*/
 		    }
     	}
     },
@@ -183,19 +207,25 @@ RequestActivityChart = React.createClass({
 			this.chart.destroy();
 		}
 	    var ctx = document.getElementById("line-chart").getContext("2d");
-	    this.chart = new Chart(ctx).Line(config.lineData, config.lineOptions);
+	    this.chart = new Chart(ctx,{
+	    	type:"line",
+	    	data:config.lineData,
+	    	options:config.lineOptions
+	    });
+	    /*
 	    if(!this.legend) {
 			this.legend = this.chart.generateLegend();
 	  		$('#line-chart-wrapper').append(this.legend);
 	  	}
+	  	*/
 	},
 
 	updateChart() {
-        for(var i=0;i<this.data.labels.length;i++) {
-	        this.chart.datasets[0].points[i].value = this.data.openSeries[i];
-	        this.chart.datasets[1].points[i].value = this.data.closedSeries[i];
-        }
-	    this.chart.scale.xLabels = this.data.labels;
+        //for(var i=0;i<this.data.labels.length;i++) {
+	        this.chart.data.datasets[0].data = this.data.openSeries;
+	        this.chart.data.datasets[1].data = this.data.closedSeries;
+        //}
+	    this.chart.data.labels = this.data.labels;
         this.chart.update();
 	},
 
@@ -204,12 +234,13 @@ RequestActivityChart = React.createClass({
 	},
 
 	componentDidUpdate(){
-		if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
+		//console.log(this.chart.data);
+		//if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
 			this.updateChart();
-		}
-		else {
-	        this.resetChart();
-	    }
+		//}
+		//else {
+	        //this.resetChart();
+	    //}
 	},
 
 
@@ -223,11 +254,9 @@ RequestActivityChart = React.createClass({
 		        <div className="ibox-content">
 			        <div className="row">
 			        	<div className="col-sm-12">
-			            	<div style={{margin:"0px 25px 30px 10px"}}>
-								<div id="line-chart-wrapper">
-								    <canvas id="line-chart"></canvas>
-								</div>
-					        </div>
+							<div id="line-chart-wrapper">
+								<canvas id="line-chart"></canvas>
+							</div>
 				        </div>
 				    </div>
 				</div>

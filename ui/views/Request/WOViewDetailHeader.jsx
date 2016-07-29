@@ -156,14 +156,7 @@ IssueSpecArea = React.createClass({
 	                    	<div className="col-md-10">
 	                    		<div className="row">
 	                    			<div className="col-md-12">
-				                        <h2><AutoInput.Text
-                                                readOnly={!request.canSetName()}
-                                                value={request.name}
-                                                //autoFocus={true}
-                                                placeholder="Work order title"
-                                                onChange={this.updateItem.bind(this,'name')}
-                                            />
-                                        </h2>
+				                        <h2>{request.name}</h2>
 				                    </div>
                                 </div>
                                 <div id="primary-info-region" className="row" style={{marginBottom:"10px",paddingBottom:"10px",borderBottom:"1px solid #ddd"}}>

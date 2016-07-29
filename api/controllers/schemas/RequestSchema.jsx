@@ -29,11 +29,17 @@ IssueSchema = {
         "Ad-hoc",
         "Base Building",
         "Contract",
+        "Defect",
+        "Internal",
         "Preventative",
+        "Template",
         "Warranty",
-        "No Cost",
-        "Internal"
-      ]
+      ],
+      onChange:function(item) {
+        if(item.type=="Preventative") {
+          item.priority = "Scheduled";
+        }
+      }
     }
   },  
 
@@ -80,14 +86,14 @@ IssueSchema = {
     input:"MDSelect",
     options:{
       items:[
-        "daily",
-        "weekly",
-        "fortnightly",
-        "monthly",
-        "quarterly",
-        "biannually",
-        "annually",
-        "biennially"
+        "Daily",
+        "Weekly",
+        "Fortnightly",
+        "Monthly",
+        "Quarterly",
+        "Biannually",
+        "Annually",
+        "Biennially"
       ]
     }
   },
@@ -117,7 +123,12 @@ IssueSchema = {
   },
 
   costThreshold:{
+    label:"Value",
+    size:6,
     defaultValue:500,
+    condition:function(item) {
+      return _.contains(["Ad-hoc","Contract","Preventative"],item.type)
+    }
   },
 
   costActual:{
@@ -146,6 +157,9 @@ IssueSchema = {
 
   dueDate:{
     type:Date,
+    label:"Due Date",
+    input:"MDDateTime",
+    size:6,
     defaultValue:function(item) {
       if(!item.team) {
         return new Date();

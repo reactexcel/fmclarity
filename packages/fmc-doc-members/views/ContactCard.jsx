@@ -12,18 +12,16 @@ ContactAvatarSmall = React.createClass({
 
 		contact = this.props.item;
 		if(contact) {
-			if(contact.getProfile) {
-				profile = contact.getProfile();
-				name = profile?profile.name:"";
-			}
-			if(contact.getThumbUrl) {
+			profile = contact.getProfile?contact.getProfile():contact;
+			name = profile?profile.name:"";
+			/*if(contact.getThumbUrl) {
 				url = contact?contact.getThumbUrl():"";
 				if(url&&url!="/img/default-placeholder.jpg") {
 					style['backgroundImage'] = 'url(\''+url+'\')';
 					style['backgroundSize'] = "cover";
 					style['color'] = "transparent";
 				}
-				else {
+				else {*/
 					var names;
 					if(name) {
 						names = name.trim().split(' ');
@@ -44,8 +42,8 @@ ContactAvatarSmall = React.createClass({
 						var b = (name.charCodeAt(name.length-1)%25)*10;
 						style['backgroundColor'] = 'rgb('+r+','+g+','+b+')';
 					}
-				}
-			}
+				/*}
+			}*/
 		}
 		return {
 			name:name,
@@ -67,14 +65,9 @@ Contact2Line = React.createClass({
 	render() {
 		var contact, profile, role, tenancy;
 		contact = this.props.item;
-		if(contact&&contact.getProfile) {
-			profile = contact.getProfile();
-			tenancy = profile.tenancy;
-			role = this.props.role;
-		}
-		else {
-			return <div />
-		}
+		profile = contact.getProfile?contact.getProfile():contact;
+		tenancy = profile.tenancy;
+		role = this.props.role;
 		return (
 			<span className="contact-card-2line-text">
 				<span className="contact-card-line-1">{profile.name}</span>

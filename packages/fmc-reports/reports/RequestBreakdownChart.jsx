@@ -3,6 +3,8 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import ActionsMenu from 'meteor/fmc:actions-menu';
 
+import Chart from 'chart.js';
+
 
 RequestBreakdownChart = React.createClass({
 
@@ -115,6 +117,7 @@ RequestBreakdownChart = React.createClass({
         var costs = {};
     	var labels = [];
     	var counts = [];
+        var set = [];
     	issues.map(function(i){
     		var serviceName;
     		if(i.service&&i.service.name) {
@@ -130,35 +133,61 @@ RequestBreakdownChart = React.createClass({
     				buckets[serviceName] = [];
     			}
     			buckets[serviceName].push(i);
-                costs[serviceName] += parseInt(i.costThreshold);
+                var newCost = parseInt(i.costThreshold);
+                if(_.isNaN(newCost)) {
+                    newCost = 0;
+                }
+                costs[serviceName] += newCost;
     		}
     	});
     	labels.map(function(serviceName,idx){
     		counts[idx] = buckets[serviceName].length;
+            set[idx] = costs[serviceName];
     	});
 
     	return {
     		facility:facility,
     		labels:labels,
-    		set:costs//counts
+    		set:set//costs//counts
     	}
     },
 
     getChartConfiguration() {
+        //console.log(this.data);
     	return {
 	    	barData:{
 		        labels: this.data.labels||[''],
 		        datasets: [
 		            {
-		                fillColor: "rgba(117,170,238,0.8)",
-		                strokeColor: "rgba(117,170,238,1)",
-		                highlightFill: "rgba(117,170,238,0.5)",
-		                highlightFill: "rgba(117,170,238,1)",
+		                backgroundColor: "rgba(117,170,238,0.8)",
+		                borderColor: "rgba(117,170,238,1)",
+		                hoverBackgroundColor: "rgba(117,170,238,0.5)",
+		                hoverBorderColor: "rgba(117,170,238,1)",
 		                data: this.data.set||[0]
 		            }
 		        ]
 		    },
 		    barOptions:{
+                scales:{
+                    xAxes:[{
+                        gridLines:{
+                            //offsetGridLines:false,
+                        },
+                        ticks:{
+                            //fontSize:10,
+                            autoSkip:false,
+                        }
+                    }],
+                    yAxes:[{
+                        ticks:{
+                            beginAtZero:true
+                        }
+                    }]
+                },
+                legend:{
+                    display:false
+                }
+                /*                
 		        scaleBeginAtZero: true,
 		        scaleShowGridLines: true,
 		        scaleGridLineColor: "rgba(0,0,0,.05)",
@@ -168,6 +197,7 @@ RequestBreakdownChart = React.createClass({
 		        barValueSpacing: 5,
 		        barDatasetSpacing: 1,
 		        responsive: true
+                */
 		    }
 		}
 
@@ -179,14 +209,21 @@ RequestBreakdownChart = React.createClass({
 			this.chart.destroy();
 		}
 	    var ctx = document.getElementById("bar-chart").getContext("2d");
-	    this.chart = new Chart(ctx).Bar(config.barData, config.barOptions);
+	    this.chart = new Chart(ctx,{
+            type:'bar',
+            data:config.barData,
+            options:config.barOptions
+        });
 	},
 
 	updateChart() {
-        for(var i=0;i<this.data.set.length;i++) {
-	        this.chart.datasets[0].bars[i].value = this.data.set[i];
-        }
-	    this.chart.scale.xLabels = this.data.labels;
+        //console.log(this.data.set);
+        //console.log(this.chart.data);
+        //for(var i=0;i<this.data.set.length;i++) {
+	        this.chart.data.datasets[0].data = this.data.set;
+        //}
+        this.chart.data.labels = this.data.labels;
+	    //this.chart.scale.xLabels = this.data.labels;
         this.chart.update();
         //this.chart.reDraw();
 	},	
@@ -197,12 +234,12 @@ RequestBreakdownChart = React.createClass({
 
 	componentDidUpdate() {
         // ???
-		if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
+		//if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
 			this.updateChart();
-		}
-		else {
-	        this.resetChart();
-	    }
+		//}
+		//else {
+	        //this.resetChart();
+	    //}
 	},
 
 	render() {
@@ -213,10 +250,8 @@ RequestBreakdownChart = React.createClass({
                     <h2>Request breakdown {this.state.title}</h2>
                 </div>
                 <div className="ibox-content">
-                    <div style={{margin:"0px 25px 0px 0px"}}>
-                        <div>
-                            <canvas id="bar-chart"></canvas>
-                        </div>
+                    <div>
+                        <canvas id="bar-chart"></canvas>
                     </div>
                 </div>
             </div>

@@ -16,7 +16,7 @@ const Calendar = React.createClass({
             if(facility) {
                 query["facility._id"] = facility._id;
             }
-            query.$or = [{status:Issues.STATUS_NEW},{status:Issues.STATUS_ISSUED}];
+            query.$or = [{status:Issues.STATUS_NEW},{status:Issues.STATUS_ISSUED},{status:"PMP"}];
             query.dueDate = {
                 $gte:moment().startOf('month').toDate(),
                 $lte:moment().endOf('month').toDate()
@@ -46,7 +46,7 @@ const Calendar = React.createClass({
         this.data.issues.map(function(i){
             if(i.dueDate) {
                 events.push({
-                    title:"#"+i.code+" due",
+                    title:`#${i.code} ${i.name}`,
                     color:colors[i.priority],
                     start:i.dueDate,
                     allDay:true,

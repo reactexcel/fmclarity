@@ -17,7 +17,7 @@ MDFacilitySelector = React.createClass({
 			<AutoInput.MDSelect 
 				items={this.data.facilities} 
 				selectedItem={this.props.value}
-				itemView={NameCard}
+				itemView={FacilitySummary}
 				onChange={this.props.onChange}
 				placeholder="Facility"
 			/>
@@ -116,8 +116,6 @@ MDServiceSelector = React.createClass({
 		if(request&&request.facility) {
 			services = request.facility.servicesRequired;
 		}
-		console.log(services);
-
 		service = this.props.value||{};
 		subservice = service.subservice;
 		if(service.children) {
@@ -139,8 +137,6 @@ MDServiceSelector = React.createClass({
 	},
 
 	render() {
-		//console.log(this.data);
-		console.log(this.data);
 		return (
 			<div className="row">
 				<div className="col-md-6">
@@ -175,6 +171,7 @@ MDSupplierSelector = React.createClass({
 	getMeteorData() {
 		var request,facility,supplier,suppliers;
 		request = this.props.context;
+		supplier = this.props.value;
 		if(request&&request.facility&&request.facility._id) {
 			facility = Facilities.findOne(request.facility._id);
 			suppliers = facility.getSuppliers();
@@ -186,14 +183,12 @@ MDSupplierSelector = React.createClass({
 	},
 
 	render() {
-		//console.log(this.data);
-		console.log(this.data);
 		return (
 			<AutoInput.MDSelect 
 				items={this.data.suppliers} 
 				disabled={!this.data.suppliers}
 				selectedItem={this.data.supplier}
-				itemView={NameCard}
+				itemView={ContactCard}
 				onChange={this.props.onChange}
 				placeholder="Supplier"
 			/>

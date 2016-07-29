@@ -9,7 +9,7 @@ FacilitySummary = React.createClass({
     getMeteorData() {
 		var facility,contact,contactProfile,thumb;
 	    facility = this.props.item || {};
-	    if(facility) {
+	    if(facility&&facility.getThumbUrl) {
 	    	thumb = facility.getThumbUrl();
 		    contact = facility.getPrimaryContact();
 		    if(contact) {
@@ -25,7 +25,7 @@ FacilitySummary = React.createClass({
 
 	render() {
 		var facility = this.data.facility;
-		var contact = this.data.contact;
+		var contact = this.data.contact||{};
 		var thumb = this.data.thumb;
 	    return (
 	    	<div>
@@ -44,7 +44,7 @@ FacilitySummary = React.createClass({
 				 </div>
 				 <div className="facility-info contact-card contact-card-2line">
 					<span className="contact-card-line-1">
-						{facility.getName()}
+						{facility.name}
 					</span>
 					<br/>
 					{contact?

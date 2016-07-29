@@ -50,7 +50,12 @@ AutoInput.MDSelect = React.createClass({
 		if(event) {
 			event.stopPropagation();
 		}
-		this.props.onChange(item);
+		if(this.props.options&&this.props.options.onChange) {
+			this.props.options.onChange(item);
+		}
+		if(this.props.onChange) {
+			this.props.onChange(item);
+		}
 	},
 
 	clearItem() {
@@ -65,13 +70,22 @@ AutoInput.MDSelect = React.createClass({
 		var readOnly = this.props.readOnly||disabled;
 
 		var Card = this.props.itemView||options.view||PlainCard;
-		var items = this.props.items||options.items||[];
 		var onChange = this.props.onChange;
 		var classes = this.props.classes||options.classes||'';
 		var clearOption = this.props.clearOption||options.clearOption;
+
+		var items = this.props.items||options.items||[];
 		var selectedItem = this.props.value||this.props.selectedItem;
 
-		var used = _.isObject(selectedItem)?selectedItem.name&&selectedItem.name.length:selectedItem&&selectedItem.length;
+		if(items&&selectedItem&&selectedItem.name) {
+			selectedItem = _.findWhere(items,{name:selectedItem.name});
+		}
+
+		var used = 
+		_.isObject(selectedItem)?
+			selectedItem.name&&selectedItem.name.length
+		:
+			selectedItem&&selectedItem.length;
 
 		if(readOnly) {
 			return (
@@ -92,6 +106,7 @@ AutoInput.MDSelect = React.createClass({
                 >
                 	<span 
                 		onClick={this.handleClick} 
+                		tabIndex="0"
                 		className={
                 			"dropdown-toggle input"+
                 			(used?" used":'')+
@@ -105,9 +120,9 @@ AutoInput.MDSelect = React.createClass({
       				<span className="bar"></span>
                     <label>{this.props.placeholder}</label>
                     <ul className="dropdown-menu dropdown-messages">
-                    {items.map(function(i,idx){
+                    {items.map((i,idx)=>{
 						return (
-	                        <li key={idx} className="dropdown-menu-item" onClick={component.handleChange.bind(null,i)}>
+	                        <li key={idx} className="dropdown-menu-item" onClick={(event)=>{this.handleChange(i,event)}}>
 	                        	<Card item={i} />
 	                        </li>
 						)                    	

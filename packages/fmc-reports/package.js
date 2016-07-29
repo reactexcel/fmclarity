@@ -21,7 +21,6 @@ Package.onUse(function(api) {
 		'base64',
 		'less',
 		'react-meteor-data',
-		'chart:chart',
 		'pfafman:filesaver',
 		'harrison:papa-parse'
 	]);

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
+import '../../../imports/ui/Request/PMPList.jsx';
 
 ConfigureAdHoc = React.createClass({
     render() {
@@ -225,6 +226,9 @@ FacilityViewDetail = React.createClass({
                         hide:       !facility.canSetServicesRequired(),
                         tab:        <span id="services-tab"><span style={{color:"white"}}>Services</span></span>,
                         content:    <ServicesSelector item={facility} field={"servicesRequired"}/>
+                    },{
+                        tab:        <span id="pmp-tab"><span style={{color:"white"}}>PMP</span></span>,
+                        content:    <PMPList filter={{"facility._id":facility._id}}/>
                     },{
                         tab:        <span id="requests-tab"><span style={{color:"white"}}>Requests</span></span>,
                         content:    <RequestsTable filter={{"facility._id":facility._id}}/>

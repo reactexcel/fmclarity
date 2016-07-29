@@ -32,6 +32,10 @@ CHANGELOG.md
 * [FWA-14] created work request type field
 * Created Material Design compliant Facility and area selector
 * Created Material Design compliant Service selector
+* Updated chartjs to version 2
+* Fixed a problem where pre-selected facilities and suppliers did not display correctly
+* Added PMP editor to facilities tab
+* Minor improvements and bugfixes for modal wo screen
 
 **v1.4.7b**
 

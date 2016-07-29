@@ -27,23 +27,42 @@ Issues.workflow.addState('Draft',{
 
     form:{
       title:"Please tell us a little bit more about the work that is required.",
-      fields:['name','type','priority','frequency','facility','location','service','supplier','description']
+      fields:['name','dueDate','type','priority','costThreshold','frequency','facility','location','service','supplier','description']
     },
 
     method(request) {
-      var location = request.location||{};
+      //console.log(request);
+      var location,facility,supplier;
+      location = request.location||{};
+      facility = _.pick(request.facility,'_id','name');
+      supplier = _.pick(request.supplier,'_id','name');
+
+      if(request.type=="Preventative") {
+        request.status = "PMP";
+        request.priority = "Scheduled";
+      }
+
+      if(location.subarea) {
+        location.subarea.identifier = location.identifier;
+      }
+
       Issues.save(request,{
-        status:Issues.STATUS_NEW,
+        status:request.status,
         type:request.type,
         priority:request.priority,
         name:request.name,
-        description:request.description
+        description:request.description,
+        service:request.service,
+        subservice:request.service?request.service.subservice:null,
+        facility:facility,
+        supplier:supplier,
+        level:location.area,
+        area:location.subarea,
       });
       request = Issues.findOne(request._id);
-      request.setFacility(location.facility);
-      request.setArea(location.area);
-      request.setSubarea(location.subarea);
-      request.setAreaIdentifier(location.identifier);
+      //request.setArea(location.area);
+      //request.setSubarea(location.subarea);
+      //request.setAreaIdentifier(location.identifier);
       request.distributeMessage({
         recipientRoles:["team","team manager","facility","facility manager"],
         message:{
