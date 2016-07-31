@@ -4,6 +4,9 @@ import {WorkflowHelper} from "meteor/fmc:workflow-helper";
 import React from "react";
 
 Issues.workflow = new WorkflowHelper(Issues);
+Issues.forms = {
+  create:['facility','location','name','service','supplier','type','dueDate','frequency','priority','costThreshold','description']
+}
 //////////////////////////////////////////////////////
 // Draft
 //////////////////////////////////////////////////////
@@ -27,19 +30,22 @@ Issues.workflow.addState('Draft',{
 
     form:{
       title:"Please tell us a little bit more about the work that is required.",
-      fields:['name','dueDate','type','priority','costThreshold','frequency','facility','location','service','supplier','description']
+      fields:Issues.forms.create
     },
 
     method(request) {
       //console.log(request);
-      var location,facility,supplier;
+      var location,facility,supplier,status;
       location = request.location||{};
-      facility = _.pick(request.facility,'_id','name');
-      supplier = _.pick(request.supplier,'_id','name');
+      facility = request.facility?_.pick(request.facility,'_id','name'):null;
+      supplier = request.supplier?_.pick(request.supplier,'_id','name'):null;
 
       if(request.type=="Preventative") {
-        request.status = "PMP";
+        status = "PMP";
         request.priority = "Scheduled";
+      }
+      else {
+        status = "New";
       }
 
       if(location.subarea) {
@@ -47,11 +53,13 @@ Issues.workflow.addState('Draft',{
       }
 
       Issues.save(request,{
-        status:request.status,
+        status:status,
         type:request.type,
         priority:request.priority,
         name:request.name,
         description:request.description,
+        frequency:request.frequency,
+        location:request.location,
         service:request.service,
         subservice:request.service?request.service.subservice:null,
         facility:facility,

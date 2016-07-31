@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
+import '../../../imports/ui/Request/ComplianceList.jsx';
+
 
 ServiceViewDetail = React.createClass({
 
@@ -14,14 +16,57 @@ ServiceViewDetail = React.createClass({
         return data;
     },
 
+    createRule(newRule) {
+        console.log(newRule);
+        var facility = this.data.facility;
+        if(facility) {
+            var services = facility.servicesRequired;
+            console.log(services);
+            var idx=-1;
+            for(var i in services) {
+                if(services[i].name==newRule.service) {
+                    idx = i;
+                    break;
+                }
+            }
+            if(idx>=0) {
+                var service = services[idx];
+                console.log({service,idx});
+                if(!service.data) {
+                    service.data = {};
+                }
+                if(!service.data.complianceRules) {
+                    service.data.complianceRules = [];
+                }
+                service.data.complianceRules.push(newRule);
+                services[idx] = service;
+            }
+            facility.setServicesRequired(services);
+        }
+        Modal.hide();
+    },
+
+    handleCreateRuleClick() {
+        var service, serviceName;
+        service = this.props.item;
+        if(service) {
+            serviceName = service.name;
+        }
+        Modal.show({
+            content:<AutoForm 
+                item={{service:serviceName}}
+                schema={ComplianceRuleSchema} 
+                onSubmit={this.createRule}
+            />
+        })
+    },
+
     render() {
 
         var facility = this.data.facility;
         var team = this.data.team;
         var suppliers = this.data.suppliers;
         var service = this.props.item;
-
-        console.log(service);
 
         var thumb = "img/services/"+service.name+".jpg";
         var address;
@@ -49,38 +94,19 @@ ServiceViewDetail = React.createClass({
                     :null}
                 </div>
 
-                <div className="title-overlay">
-                    <h2>{service.name}</h2>
-                    {address?<b>{address}</b>:null}
-                </div>
-
-                {contact?
-
-                     <div className="contact-info">
-                        {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
-                        <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
-                        {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
-                        {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
+                <div className="title-padding"/>
+                <div className="title-overlay" style={{overflow:"hidden",padding:"0px"}}>
+                    <div className="facility-title" style={{float:"left",padding:"20px"}}>
+                        <h2 style={{margin:0}}>{service.name}</h2>
+                        {address?<b>{address}</b>:null}
                     </div>
-
-                :null}
+                    <button onClick={this.handleCreateRuleClick} className="btn btn-flat" style={{float:"right",backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
+                </div>
 
                 <IpsoTabso tabs={[
                     {
-                        tab:        <span id="discussion-tab"><span style={{color:"white"}}>Contracts</span></span>,
-                        content:    <AutoForm item={facility} form={["documents"]}/>
-                    },{
-                        tab:        <span id="documents-tab"><span style={{color:"white"}}>Reactive</span></span>,
-                        content:    <AutoForm item={facility} form={["documents"]}/>
-                    },{
-                        tab:        <span id="personnel-tab"><span style={{color:"white"}}>Preventative</span></span>,
-                        content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>
-                    },{
-                        tab:        <span id="tenants-tab"><span style={{color:"white"}}>Compliance</span></span>,
-                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>
-                    },{
-                        tab:        <span id="tenants-tab"><span style={{color:"white"}}>Live</span></span>,
-                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>
+                        tab:        <span id="pmp-tab"><span style={{color:"white"}}>Compliance</span></span>,
+                        content:    <ComplianceGroup item={service}/>
                     }
                 ]} />                
             </div>

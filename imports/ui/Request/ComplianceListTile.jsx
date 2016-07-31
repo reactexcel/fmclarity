@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
-PMPListTile = React.createClass({
+ComplianceListTile = React.createClass({
 
   /*
   mixins: [ReactMeteorData],
@@ -31,18 +31,21 @@ PMPListTile = React.createClass({
   },
   */
   render() {
-    var request = this.props.item;
+    var rule = this.props.item;
     return (
-      <div className={"issue-summary"}>        
-        <div className="issue-summary-col" style={{width:"40%"}}>
-          {request.name}
+      <div className={"issue-summary"}>
+        <div className="issue-summary-col" style={{width:"10%",fontSize:"20px",lineHeight:"0px"}}>
+          <i className="fa fa-check"/>
         </div>
-        <div className="issue-summary-col" style={{width:"15%"}}>
-          {`${request.frequency.number||''} ${request.frequency.unit||''}`}
+        <div className="issue-summary-col" style={{width:"28%"}}>
+          {rule.service}
         </div>
-        <div className="issue-summary-col" style={{float:"right",width:"35%",padding:"0px"}}>
-          <ContactCard item={request.supplier}/> 
-        </div>          
+        <div className="issue-summary-col" style={{width:"28%"}}>
+          {rule.name}
+        </div>
+        <div className="issue-summary-col" style={{width:"28%"}}>
+          {rule.type}
+        </div>
       </div>
     )
   }

@@ -85,7 +85,7 @@ loggedIn.route('/pmp', {
 loggedIn.route('/abc', {
   name: 'abc',
   action() {
-    mount(MainLayout,{content:<PageCompliance/>});
+    mount(MainLayout,{content:<ServicePageIndex/>});
   }
 });
 

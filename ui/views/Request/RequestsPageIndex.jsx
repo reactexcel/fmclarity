@@ -23,7 +23,7 @@ RequestsPageIndex = React.createClass({
 		        q['facility._id'] = facility._id;
 		    }
 
-	    	issues = user.getRequests(q);
+	    	issues = user.getRequests(q,{expandPMP:true});
 	    }
         return {
             issues : issues,

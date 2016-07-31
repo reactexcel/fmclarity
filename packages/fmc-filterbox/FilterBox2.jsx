@@ -65,7 +65,7 @@ FilterBox2 = React.createClass({
       if(newProps.items&&newProps.items.length) { 
         for(var i in newProps.items) {
           var newItem = newProps.items[i];
-          if(newItem&&newItem._id&&newItem._id==this.state.selectedItem._id) {
+          if(newItem&&newItem.name&&newItem.name==this.state.selectedItem.name) {
             return;
           }
         }
@@ -92,7 +92,7 @@ FilterBox2 = React.createClass({
   },
 
   selectItem(item) {
-    console.log(item);
+    //console.log(item);
 	  this.setState({
 	  	selectedItem:item
 	  });

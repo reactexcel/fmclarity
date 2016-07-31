@@ -2,35 +2,38 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+//todo - create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
+
 const Calendar = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var team,issues;
-        team = Session.get("selectedTeam");
-        //team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-        if(team) {
-            var query = {"team._id":team._id};
-            var facility = Session.get("selectedFacility");
-            if(facility) {
-                query["facility._id"] = facility._id;
+        var data = {
+            user:Meteor.user()
+        };
+
+        if(data.user) {
+            data.team = data.user.getTeam();
+            if(data.team) {
+                var query = {"team._id":data.team._id};
+                var facility = Session.get("selectedFacility");
+                if(facility) {
+                    query["facility._id"] = facility._id;
+                }
+                query.$or = [{status:Issues.STATUS_NEW},{status:Issues.STATUS_ISSUED},{status:"PMP"}];
+                /*query.dueDate = {
+                    $gte:moment().startOf('month').toDate(),
+                    $lte:moment().endOf('month').toDate()
+                }*/
+                data.requests = data.user.getRequests(query,{expandPMP:true});
             }
-            query.$or = [{status:Issues.STATUS_NEW},{status:Issues.STATUS_ISSUED},{status:"PMP"}];
-            query.dueDate = {
-                $gte:moment().startOf('month').toDate(),
-                $lte:moment().endOf('month').toDate()
-            }
-            issues = Issues.find(query).fetch();
         }
-        return {
-            team:team,
-            issues:issues
-        }
+        return data;
     },
 
     addEvents() {
-        if(!this.data.issues)
+        if(!this.data.requests)
             return;
 
         var colors = {
@@ -43,7 +46,7 @@ const Calendar = React.createClass({
 
         var events = this.events.events;
         events.length = 0;
-        this.data.issues.map(function(i){
+        this.data.requests.map((i)=>{
             if(i.dueDate) {
                 events.push({
                     title:`#${i.code} ${i.name}`,
@@ -58,7 +61,7 @@ const Calendar = React.createClass({
         $(this.refs.calendar).fullCalendar('addEventSource',events);
     },
 
-  componentDidMount() {
+    componentDidMount() {
         this.events = {
             events:[]
         };
@@ -66,19 +69,19 @@ const Calendar = React.createClass({
             //height:500,
             eventLimit:true,
             header: {
-                left:'',
-                center: 'title',
-                right:''
+                left:'prev',
+                center: 'title,today',
+                right:'next'
             }
         });
         this.addEvents();
-  },
+    },
 
     componentDidUpdate() {
         this.addEvents();
     },
   
-  render() {
+    render() {
         return (
           <div ref="calendar"></div>
         )

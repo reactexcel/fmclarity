@@ -1,5 +1,5 @@
 FM = {
-	version:"1.4.8b"
+	version:"1.4.9b"
 }
 
 if(Meteor.isServer) {
@@ -91,7 +91,7 @@ var navFM = [{
 	label:"Calendar",
 	icon:"fa fa-calendar"
 },{
-	path:"compliance",
+	path:"abc",
 	label:"Compliance",
 	icon:"fa fa-check-square-o"
 }
@@ -108,7 +108,7 @@ if(false) {
 		icon:"fa fa-calendar"
 	});
 	navFM.push({
-		path:"compliance",
+		path:"abc",
 		label:"Compliance",
 		icon:"fa fa-check-square"
 	});

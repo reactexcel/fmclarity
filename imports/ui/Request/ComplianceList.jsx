@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-import './PMPListTile.jsx';
+import './ComplianceListTile.jsx';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -16,33 +16,22 @@ import './PMPListTile.jsx';
 // filter (object)
 //      a mongodb query object used to filter the request results
 //
-PMPList = React.createClass({
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-        var statusFilter = {"status":"PMP"};
-        var customFilter = this.props.filter;
-        var filter = {$and:[statusFilter,customFilter]};
-        var ungroupedRequests = Meteor.user().getRequests(filter);
-        var requests = _.groupBy(ungroupedRequests,function(r){
-            return r.service?r.service.name:"Other";
-        })
-    	return {
-    		requests:requests
-    	}
-    },
+ComplianceList = React.createClass({
 
 	render(){
-		var requests = this.data.requests;
-        var keys = _.keys(this.data.requests).sort();
+        var facility,item,rules;
+
+        item = this.props.item;
+        if(item&&item.data) {
+            rules = this.item.data.complianceRules
+        }
 		return (
 			<div>
 				{keys.map((k,idx)=>{
                     return (
                         <div key={idx}>
                             <div style={{borderBottom:"1px solid #ddd",backgroundColor:"#eee",padding:"14px 10px"}}>{k}</div>
-                            <PMPGroup items={requests[k]}/>
+                            <ComplianceGroup items={requests[k]}/>
                         </div>
                     )
 				})}
@@ -51,30 +40,34 @@ PMPList = React.createClass({
 	}
 })
 
-PMPGroup = React.createClass({
+ComplianceGroup = React.createClass({
 
-    showModal(request) {
+    showModal(rule) {
         //Need a width option for modals before this can be instantiated
-        request.type = "Preventative";
         Modal.show({
             content:<AutoForm 
-                item={request} 
-                form={Issues.forms.create}
+                item={rule}
+                schema={ComplianceRuleSchema} 
+                onSubmit={()=>{console.log(rule);Modal.hide();}}
             >            
-                <h2>Edit Preventative Maintenence Event</h2>
+                <h2>Edit Compliance Rule</h2>
             </AutoForm>,
-            size:"large"
         })
     },
 
     render() {
-        var requests = this.props.items;
+        var facility,item,rules;
+
+        item = this.props.item;
+        if(item&&item.data) {
+            rules = item.data.complianceRules||[]
+        }
         return (
             <div>
-                {requests&&requests.length?requests.map((r,idx)=>{
+                {rules&&rules.length?rules.map((r,idx)=>{
                     return (
                         <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={this.showModal.bind(null,r)}>
-                            <PMPListTile item={r}/>
+                            <ComplianceListTile item={r}/>
                         </div>
                     )
                 }):null}

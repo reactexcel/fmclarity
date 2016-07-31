@@ -194,10 +194,10 @@ FilterBox = React.createClass({
             {!filters?null:
 
             <ol id="filters" className="breadcrumb" style={{backgroundColor:"transparent",padding:"15px 0 15px 20px"}}>
-              {filters.map(function(i,index){
+              {filters.map(function(i,idx){
                 return (
-                  <li key={index} className={selectedFilterNum==index?'active':''}>
-                    <a onClick={$this.setFilter.bind($this,index)}>{i.text}</a>
+                  <li key={idx} className={selectedFilterNum==idx?'active':''}>
+                    <a onClick={$this.setFilter.bind($this,idx)}>{i.text}</a>
                   </li>
                 )
               })}
@@ -207,16 +207,16 @@ FilterBox = React.createClass({
 
             {!headers?null:
               <div className="card-table-header issue-card-table-header">
-              {headers.map(function(i,index){
+              {headers.map(function(i,idx){
                 return (
                   <div 
-                    key={index}
-                    onClick={$this.setSort.bind(null,index)} 
-                    style={{color:(index==selectedSortNum)?'#000':'#999'}}  
-                    className={"issue-summary-col issue-summary-col-"+(index+1)}
+                    key={idx}
+                    onClick={$this.setSort.bind(null,idx)} 
+                    style={{color:(idx==selectedSortNum)?'#000':'#999'}}  
+                    className={"issue-summary-col issue-summary-col-"+(idx+1)}
                   >
                     <div>{i.text}</div>
-                    {index==selectedSortNum?
+                    {idx==selectedSortNum?
                       <div style={{paddingLeft:"14px",position:"relative",top:"-10px",fontSize:"20px"}}>
                         <i className={"fa fa-caret-"+(sortDirection==1?"down":"up")}></i>
                       </div>
@@ -231,10 +231,10 @@ FilterBox = React.createClass({
           </div>
           <div className="ibox-content" style={{paddingBottom:0,paddingTop:0}}>
             <div className="row isotope">
-              {items.map(function(item,index){
+              {items.map(function(item,idx){
                 return (
                   <div 
-                    key={item._id}
+                    key={`${idx}-${item._id}`}
                     style={{padding:0}}
                     className={"col-lg-"+colSize+" col-md-"+colSize+" col-sm-12 col-xs-12"}
                   >

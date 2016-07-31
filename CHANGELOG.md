@@ -24,6 +24,16 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.4.9b**
+
+* PMP Events now recur on calendar and in wo table
+* Added services list to facility card
+* Added areas list to facility card
+* Created md chip style
+* Facility Card: Added service "chips"
+* Facility Card: Changed to new, more economical layout
+* Created compliance module and compliance schema
+* Create basic compliance editing interface
 
 **v1.4.8b**
 

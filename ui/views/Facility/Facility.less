@@ -1,0 +1,190 @@
+
+@chipBackgroundColor:rgb(200,200,200);
+@chipCloseBackgroundColor:rgb(100,100,100);
+
+.facility-info {
+	padding:0 5px;
+	white-space:nowrap;
+	overflow: hidden;
+}
+
+.facility-card {
+	background-color:#00b89e;
+
+	h2 {
+		/*font-weight:bold;*/
+		margin:0 0 10px 0;
+	}
+
+	.contact-thumbnail {
+		width:100%;
+		min-height:90px;
+		overflow:hidden;
+		position: absolute;
+	}
+
+	.contact-thumbnail > div {
+		width:100%;
+		background-size:cover;
+		background-position:50% 30%;
+		max-height:400px;
+	}
+
+	.contact-thumbnail > div > img {
+		width:100%;
+		visibility:hidden;
+	}
+
+	.contact-title {
+		display:block;
+		font-size:14px;
+		font-weight:bold;
+	}
+
+	.title-padding {
+		height:150px;
+	}
+
+	.title-overlay {
+		color:white;
+		background-color:rgba(0,0,0,0.5);
+		position:relative;
+		padding:20px 0;
+		z-index: 1001;
+	}
+
+	.facility-title {
+		padding-left:20px;
+	}
+
+	.contact-info {
+		color:white;
+		padding:10px 20px;
+		margin-top:10px;
+		border-top:1px solid #fff;
+		white-space:nowrap;
+		position: relative;
+		z-index: 1001;
+		/*text-align:right;*/
+	}
+
+	.services-overview {
+		overflow:hidden;
+		position: relative;
+		padding-left:10px;
+		z-index: 1001;
+	}	
+
+	.tab-panel {
+		position: relative;
+		z-index: 1001;
+
+		.tab-row {
+			background-color:rgba(1,166,143,1);
+		}
+
+		.tab-pane {
+			min-height:200px;
+			max-height:initial;
+		}
+
+	}
+}
+
+
+.md-chip {
+	height:27px;
+	float:left;
+	min-width:135px;
+	color:#fff;
+	padding:5px 0px 5px 10px;
+	text-align:center;
+	font-size:11px;
+	position:relative;
+	cursor:pointer;
+
+	div.left {
+		border-radius:50% 0 0 50%;
+		width:26px;
+		background-color:@chipBackgroundColor;
+		opacity:0;
+		position:absolute;
+		left:1px;
+		top:1px;
+		bottom:0px;
+		z-index:1000;
+	}
+
+	div.center {
+		position:absolute;
+		left:27px;
+		right:26px;
+		top:1px;
+		bottom:0px;
+		background-color:@chipBackgroundColor;
+		opacity:0;
+		z-index:1000;
+	}
+
+	div.right {
+		border-radius:0 50% 50% 0;
+		width:26px;
+		background-color:@chipBackgroundColor;
+		opacity:0;
+		position:absolute;
+		right:0;
+		top:1px;
+		bottom:0px;
+		z-index:1000;
+	}
+
+	div.content {
+		position:relative;
+		white-space:nowrap;
+		z-index:1001;
+		padding-right:4px;
+
+		div.chip-text {
+			font-size:11px;
+			line-height: 17px;
+			float:left;
+		}
+
+		div.chip-close {
+			opacity:0;
+			float:right;
+			width:22px;
+			height:22px;
+			line-height: 21px;
+			position:relative;
+			top:-2px;
+			right:-2px;
+			font-size:20px;
+			background-color:@chipCloseBackgroundColor;
+			border-radius:50%;
+			&:before {
+				content:"×";
+			}
+		}
+	}
+
+	&:hover {
+		div.left, div.right, div.center {
+			opacity:0.5;
+		}
+		div.content {
+			div.chip-close {
+				opacity:0.3;
+			}
+			div.chip-close:hover {
+				opacity: 0.5;
+			}
+		}
+	}
+}
+
+
+
+
+
+

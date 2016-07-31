@@ -81,7 +81,7 @@ Users.actions({
   getRequests:{
     authentication:true,
     //subscription:???
-    helper:function(user,filter) {
+    helper:function(user,filter,options={expandPMP:false}) {
       var team = user.getSelectedTeam();
       var role = user.getRole();
       var myFacilities = Facilities.find({"members._id":user._id}).fetch();
@@ -121,6 +121,28 @@ Users.actions({
         query.push(filter);
       }
 
+      var requests = Issues.find({$and:query}).fetch({sort:{createdAt:1}});
+
+      if(options.expandPMP) {
+        query.push({type:"Preventative"});
+        var PMPRequests = Issues.find({$and:query}).fetch();
+        PMPRequests.map((r)=>{
+          if(r.frequency) {
+            var date = moment(r.dueDate);
+            var repeats = parseInt(r.frequency.repeats);
+            var period = {};
+            period[r.frequency.unit] = parseInt(r.frequency.number);
+            console.log(period);
+            for(var i=0;i<repeats;i++) {
+              var copy = _.omit(r,'_id');
+              copy.dueDate = date.add(period).toDate();
+              requests.push(copy);
+            }
+          }
+        })
+      }
+
+      return requests;
       //perform and return the query
       return Issues.find({$and:query}).fetch({sort:{createdAt:1}});
     }

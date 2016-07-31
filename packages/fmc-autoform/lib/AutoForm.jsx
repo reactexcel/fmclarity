@@ -42,7 +42,7 @@ AutoForm = React.createClass({
     },
 
     makeState(props) {
-    	var item = props.item;
+    	var item = props.item||{};
     	var field = props.field;
     	item = field?(item[field]||{}):item;
     	return {
@@ -69,12 +69,9 @@ AutoForm = React.createClass({
         }
     },
 
-    getSchema() {
-    	return this.props.schema||this.props.item.getSchema();
-    },
-
+    //this to be eventually removed in favour of form->submit style approach to editing
     saveItem() {
-	   	var schema = this.getSchema();
+	   	var schema = this.props.schema||this.props.item.getSchema();
     	var originalItem = this.props.item;
     	var field = this.props.field;
     	var save = this.props.save;
@@ -103,8 +100,9 @@ AutoForm = React.createClass({
 		if(!this.state.item) return <div/>;
 		var item = this.state.item;
 		var id = this.props.keyField||item._id;
-	   	var schema = this.getSchema();
-		var form = this.props.form||Object.keys(schema);
+	   	var schema = this.props.schema||this.props.item.getSchema();	//default: use the getSchema function of the sent item
+		var form = this.props.form||Object.keys(schema);				//default: use all fields
+		var originalItem = this.props.item;
 		
 		return (
 			<div className="autoform row">
@@ -122,12 +120,17 @@ AutoForm = React.createClass({
 					}
 
 					//check to see field conditions met
-					if(s.condition&&!s.condition(item)) {
+					//console.log(this.props.item);
+					if(s.condition&&!s.condition(originalItem)) {
 						return;
 					}
 
 					//if item is another schema create new AutoForm with item
 					if(s.schema) {
+						//console.log(item);
+						if(!item[key]||!_.isObject(item[key])) {
+							item[key] = {};
+						}
 						return (
 							<span key={id+'-'+key}>
 					        	<AutoForm 
@@ -135,6 +138,7 @@ AutoForm = React.createClass({
 					        		field={key} 
 					        		schema={s.schema} 
 					        		save={this.props.save}
+					        		onSubmit={this.props.onSubmit}
 					        	>
 								{s.label?<h5>{s.label}</h5>:null}
 					        	</AutoForm>
@@ -155,6 +159,13 @@ AutoForm = React.createClass({
 							options:{}
 						},s);
 
+						//console.log({item,originalItem});
+
+						var options = s.options;
+						if(_.isFunction(options)) {
+							options = options(originalItem);
+						}
+
 						//If it is a string take it from the autoinput package
 						//if it isn't then consider it a component
 						var Input = _.isString(s.input)?AutoInput[s.input]:s.input;
@@ -169,7 +180,7 @@ AutoForm = React.createClass({
 									context={item}
 									value={item[key]} 
 									onChange={this.updateField.bind(this,key)}
-									options={s.options}
+									options={options}
 								/>
 							</div>
 						)

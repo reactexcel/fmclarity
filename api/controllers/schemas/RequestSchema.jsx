@@ -1,5 +1,103 @@
 import '../../../imports/ui/Facility/MDFacilitySelector.jsx';
 
+//dates structure
+//comments structure
+
+//Pass input objects instead of strings
+
+//migration routine to new structure
+
+
+RequestLocationSchema = {
+  area:{
+    input:"MDSelect",
+    size:4,
+    options:function(item){
+      return {
+        items:item.facility?item.facility.areas:null,
+        view:NameCard
+      }
+    }
+  },
+  subarea:{
+    input:"MDSelect",
+    size:4,
+    options:function(item){
+      return {
+        items:item.location&&item.location.area?item.location.area.children:null,
+        view:NameCard
+      }
+    }
+  },
+  identifier:{
+    input:"MDSelect",
+    size:4,
+    options:function(item){
+      return {
+        items:item.location&&item.location.subarea?item.location.subarea.children:null,
+        view:NameCard
+      }
+    }
+  }
+}
+
+RequestServiceSchema = {
+  service:{
+
+  },
+  subservice:{
+
+  }
+}
+
+RequestFrequencySchema = {
+  repeats:{
+    input:"MDSelect",
+    defaultValue:"6",
+    size:6,
+    options:{
+      items:[
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ]
+    }    
+  },
+  number:{
+    label:"Frequency (number)",
+    input:"MDSelect",
+    defaultValue:"6",
+    size:6,
+    options:{
+      items:[
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ]
+    }
+  },
+  unit:{
+    label:"Frequency (unit)",
+    input:"MDSelect",
+    defaultValue:"months",
+    size:6,
+    options:{
+      items:[
+        "days",
+        "weeks",
+        "months",
+        "years",
+      ]
+    }
+  }
+}
+
 IssueSchema = {
 
   name:{
@@ -15,13 +113,14 @@ IssueSchema = {
   },
 
   description:{
+    label:"Comments",
     input:"mdtextarea"
   },
 
   type: {
     label:"Request type",
     defaultValue:"Ad-hoc",
-    size:6,
+    //size:6,
     type:String,
     input:"MDSelect",
     options:{
@@ -34,12 +133,7 @@ IssueSchema = {
         "Preventative",
         "Template",
         "Warranty",
-      ],
-      onChange:function(item) {
-        if(item.type=="Preventative") {
-          item.priority = "Scheduled";
-        }
-      }
+      ]
     }
   },  
 
@@ -47,6 +141,9 @@ IssueSchema = {
     defaultValue:"Standard",
     size:6,
     type:String,
+    condition(item){
+      return item.type!="Preventative";
+    },
     input:"MDSelect",
     options:{
       items:[
@@ -79,23 +176,10 @@ IssueSchema = {
   },
 
   frequency:{
-    size:6,
-    condition:function(item) {
+    condition(item) {
       return item.type=="Preventative"
     },
-    input:"MDSelect",
-    options:{
-      items:[
-        "Daily",
-        "Weekly",
-        "Fortnightly",
-        "Monthly",
-        "Quarterly",
-        "Biannually",
-        "Annually",
-        "Biennially"
-      ]
-    }
+    schema:RequestFrequencySchema
   },
 
   quoteIsPreApproved:{
@@ -126,8 +210,8 @@ IssueSchema = {
     label:"Value",
     size:6,
     defaultValue:500,
-    condition:function(item) {
-      return _.contains(["Ad-hoc","Contract","Preventative"],item.type)
+    condition(item) {
+      return _.contains(["Ad-hoc","Contract"],item.type)
     }
   },
 
@@ -140,7 +224,7 @@ IssueSchema = {
   },
 
   code:{
-    defaultValue:function(item) {
+    defaultValue(item) {
       var team, code = 0;
       if(item&&item.team) {
         team = Teams.findOne({_id:item.team._id});
@@ -150,17 +234,15 @@ IssueSchema = {
     }
   },
 
-  eta:{
-    label:"ETA",
-    input:"MDDateTime",
-  },
-
   dueDate:{
     type:Date,
     label:"Due Date",
     input:"MDDateTime",
     size:6,
-    defaultValue:function(item) {
+    /*condition(item){
+      return item.type!='Preventative';
+    },*/
+    defaultValue(item) {
       if(!item.team) {
         return new Date();
       }
@@ -171,6 +253,51 @@ IssueSchema = {
     }
   },
 
+  eta:{
+    label:"ETA",
+    size:6,
+    input:"MDDateTime",
+  },
+
+  startDate:{
+    type:Date,
+    label:"Start Date",
+    input:"MDDateTime",
+    size:6,
+    condition(item){
+      return item.type=='Preventative';
+    },
+    defaultValue(item) {
+      if(!item.team) {
+        return new Date();
+      }
+      var team = Teams.findOne(item.team._id);
+      var timeframe = team.timeframes['Standard']*1000;
+      var now = new Date();
+      return new Date(now.getTime()+timeframe);
+    }
+  },
+
+  /*
+  endDate:{
+    type:Date,
+    label:"End Date",
+    input:"MDDateTime",
+    size:6,
+    condition(item){
+      return item.type=='Preventative';
+    },
+    defaultValue(item) {
+      if(!item.team) {
+        return new Date();
+      }
+      var team = Teams.findOne(item.team._id);
+      var timeframe = team.timeframes['Standard']*1000;
+      var now = new Date();
+      return new Date(now.getTime()+timeframe);
+    }
+  },
+  */
   attachments:{
     type:[Object],
     label:"Attachments",

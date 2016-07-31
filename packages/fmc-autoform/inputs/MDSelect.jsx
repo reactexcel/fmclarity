@@ -66,8 +66,6 @@ AutoInput.MDSelect = React.createClass({
 		var component = this;
 		var options = this.props.options||{};
 
-		var disabled = this.props.disabled;
-		var readOnly = this.props.readOnly||disabled;
 
 		var Card = this.props.itemView||options.view||PlainCard;
 		var onChange = this.props.onChange;
@@ -76,9 +74,17 @@ AutoInput.MDSelect = React.createClass({
 
 		var items = this.props.items||options.items||[];
 		var selectedItem = this.props.value||this.props.selectedItem;
+		
+		var disabled = this.props.disabled||!items||!items.length;
+		var readOnly = this.props.readOnly||disabled;
 
 		if(items&&selectedItem&&selectedItem.name) {
-			selectedItem = _.findWhere(items,{name:selectedItem.name});
+			var matchedItem = _.findWhere(items,{name:selectedItem.name});
+			//console.log({matchedItem,selectedItem,eq:matchedItem==selectedItem});
+			selectedItem = matchedItem;
+			//if(matchedItem&&matchedItem!=selectedItem) {
+				//this.handleChange(matchedItem);
+			//}
 		}
 
 		var used = 

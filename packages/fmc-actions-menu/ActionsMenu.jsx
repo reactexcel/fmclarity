@@ -42,7 +42,8 @@ export default class ActionsMenu extends React.Component {
 					position:"absolute",
 					right: 0,
 					top: "30px",
-					left: "auto"
+					left: "auto",
+					zIndex:1001,
 		    	}}>
 		    		{this.state.items.map((i,idx)=>(
 		    			<li key={idx} onClick={()=>this.runAction(i)}><a>{i.label}</a></li>
