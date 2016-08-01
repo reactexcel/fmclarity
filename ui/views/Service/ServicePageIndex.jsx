@@ -28,7 +28,7 @@ ServicePageIndex = React.createClass({
     	var data = {};
 	    var facility = Session.getSelectedFacility();
 	    if(facility) {
-	    	data.items = facility.servicesRequired;
+	    	data.items = _.filter(facility.servicesRequired,(svc)=>{return svc.data&&svc.data.complianceRules&&svc.data.complianceRules.length});
 	    }
 	    return data;
     },

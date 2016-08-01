@@ -24,6 +24,14 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v.1.v.10b**
+
+* Completed compliance rule creation form with facilities and service filter
+* Compliance page:Show only services with rules in left navigation
+* Created ComplianceEvaluationService
+* Compliance rules activated for pmp established and pmp event
+* Added create compliance rule to FAB
+
 **v1.4.9b**
 
 * PMP Events now recur on calendar and in wo table

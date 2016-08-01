@@ -1,14 +1,24 @@
 import React from "react"
 
+import "../../../imports/ui/Request/ComplianceEvaluationService.jsx";
+
+
 ServiceListTile = React.createClass({
 
 	render () {
-		var service,thumb,numRules=0;
+		var service,thumb,numRules=0,numPassed=0,numFailed=0,percPassed=0;
 		service = this.props.item;
 		if(service) {
 	        thumb = "img/services/"+service.name+".jpg";
 	        if(service.data&&service.data.complianceRules) {
 	        	numRules = service.data.complianceRules.length;
+	        	results = ComplianceEvaluationService.evaluate(service.data.complianceRules);
+	        	if(results) {
+		        	numPassed = results.passed.length;
+		        	numFailed = results.failed.length;
+		        	percPassed = Math.ceil((numPassed/numRules)*100);
+		        }
+	        	console.log(results);
 	        }
 	    }
 
@@ -36,7 +46,9 @@ ServiceListTile = React.createClass({
 						{
 						numRules?
 							<span>
-								<span>{numRules} rules</span> <span style={{color:"red"}}><i className="fa fa-exclamation-triangle"/> 1</span>
+								<span>{numRules} rules </span>
+								<span style={{color:numFailed?"red":"green"}}>{percPassed}% <i className="fa fa-check-circle"/> </span>
+								{numFailed?<span style={{color:"red"}}>{numFailed} <i className="fa fa-exclamation-triangle"/> </span>:null}
 							</span>
 						:
 							null
@@ -46,5 +58,4 @@ ServiceListTile = React.createClass({
 			</div>
 		)
 	}
-
 })

@@ -174,6 +174,10 @@ FacilityViewDetail = React.createClass({
             }
         }
 
+        var services = facility.servicesRequired.sort(function(a,b){
+            return !a.name?-1:(!b.name||(a.name>b.name))?1:1;
+        })
+
         //IpsoTabs content needs slimscroll applied
         //IpsoTabs should be renamed... TabPanel?
         return (
@@ -181,42 +185,47 @@ FacilityViewDetail = React.createClass({
 
                 <div className="contact-thumbnail">
                     {thumb?
-                    <div style={{backgroundImage:"url('"+thumb+"')"}}>
-                        <img alt="image" src={thumb}/>
-                    </div>
+                    <div className="cover-image" style={{backgroundImage:"url('"+thumb+"')"}}></div>
                     :null}
-                </div>
 
-                <div className="title-padding"/>
-                <div className="title-overlay">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="facility-title">
-                                <h2>{facility.getName()}</h2>                        
-                                {address?<b>{address}</b>:null}
-                            </div>
-                            {contact?
-                                 <div className="contact-info">
-                                    {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
-                                    <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
-                                    {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
-                                    {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
+                    <div className="title-overlay">
+                        <div className="row">
+                            <div className="col-md-4">
+                                <div className="facility-title">
+                                    <h2>{facility.getName()}</h2>                        
+                                    {address?<b>{address}</b>:null}
                                 </div>
-                            :null}
+                                {contact?
+                                     <div className="contact-info">
+                                        {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
+                                        <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
+                                        {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
+                                        {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
+                                    </div>
+                                :null}
 
-                        </div>
-                        <div className="col-md-8">
-                            <div className="services-overview">
-                                {facility.servicesRequired?facility.servicesRequired.map((svc,idx)=>{
-                                    return (
-                                        <div className="md-chip" key={idx} onClick={()=>{this.editService(svc)}}><div className="left"/><div className="center"/><div className="right"/><div className="content"><div className="chip-text">{svc.name}</div><div className="chip-close"/></div></div>
-                                    )
-                                }):null}
+                            </div>
+                            <div className="col-md-8">
+                                <div className="services-overview">
+                                    {services?services.map((svc,idx)=>{
+                                        var count = 0;
+                                        if(svc.name.length<15&&count<15) {
+                                            count++;
+                                            return (
+                                                <span key={idx}>
+                                                    <MDChip onClick={()=>{this.editService(svc)}}>
+                                                        {svc.name}
+                                                    </MDChip>
+                                                </span>
+                                            )
+                                        }
+                                    }):null}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
 
 
                 <IpsoTabso tabs={[

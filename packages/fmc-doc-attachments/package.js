@@ -38,6 +38,7 @@ Package.onUse(function(api) {
 		'DocAttachments',
 		'DocViewItem',
 		'DocViewEdit',
-		'Documents'
+		'Documents',
+		'DocTypes'
 	]);
 });

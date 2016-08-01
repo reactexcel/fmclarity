@@ -18,13 +18,13 @@ ServiceViewDetail = React.createClass({
 
     createRule(newRule) {
         console.log(newRule);
-        var facility = this.data.facility;
+        var facility = newRule.facility;
         if(facility) {
             var services = facility.servicesRequired;
-            console.log(services);
+            //get index of the selected service
             var idx=-1;
             for(var i in services) {
-                if(services[i].name==newRule.service) {
+                if(services[i].name==newRule.service.name) {
                     idx = i;
                     break;
                 }
@@ -38,7 +38,19 @@ ServiceViewDetail = React.createClass({
                 if(!service.data.complianceRules) {
                     service.data.complianceRules = [];
                 }
-                service.data.complianceRules.push(newRule);
+                //to avoid circular search remove facility and then add with just name and _id
+                var copy = _.omit(newRule,'facility','service','event');
+                if(newRule.facility) {
+                    copy.facility = _.pick(newRule.facility,'name','_id');
+                }
+                if(newRule.event) {
+                    copy.event = _.pick(newRule.event,'name','_id');
+                }
+                if(newRule.service) {
+                    copy.service = _.pick(newRule.service,'name');
+                }
+                //console.log(copy);
+                service.data.complianceRules.push(copy);
                 services[idx] = service;
             }
             facility.setServicesRequired(services);
@@ -47,14 +59,12 @@ ServiceViewDetail = React.createClass({
     },
 
     handleCreateRuleClick() {
-        var service, serviceName;
-        service = this.props.item;
-        if(service) {
-            serviceName = service.name;
-        }
         Modal.show({
             content:<AutoForm 
-                item={{service:serviceName}}
+                item={{
+                    facility:this.data.facility,
+                    service:this.props.item
+                }}
                 schema={ComplianceRuleSchema} 
                 onSubmit={this.createRule}
             />
@@ -88,20 +98,18 @@ ServiceViewDetail = React.createClass({
 
                 <div className="contact-thumbnail">
                     {thumb?
-                    <div style={{backgroundImage:"url('"+thumb+"')"}}>
-                        <img alt="image" src={thumb}/>
-                    </div>
+                    <div className="cover-image" style={{backgroundImage:"url('"+thumb+"')"}}/>
                     :null}
+                    <div className="title-padding"/>
+                    <div className="title-overlay" style={{overflow:"hidden",padding:"0px"}}>
+                        <div className="facility-title" style={{float:"left",padding:"20px"}}>
+                            <h2 style={{margin:0}}>{service.name}</h2>
+                            {address?<b>{address}</b>:null}
+                        </div>
+                        <button onClick={this.handleCreateRuleClick} className="btn btn-flat" style={{float:"right",backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
+                    </div>                    
                 </div>
 
-                <div className="title-padding"/>
-                <div className="title-overlay" style={{overflow:"hidden",padding:"0px"}}>
-                    <div className="facility-title" style={{float:"left",padding:"20px"}}>
-                        <h2 style={{margin:0}}>{service.name}</h2>
-                        {address?<b>{address}</b>:null}
-                    </div>
-                    <button onClick={this.handleCreateRuleClick} className="btn btn-flat" style={{float:"right",backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
-                </div>
 
                 <IpsoTabso tabs={[
                     {

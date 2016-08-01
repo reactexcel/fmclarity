@@ -2,6 +2,28 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+DocTypes = [
+    "Audit",
+    "Bank Guarantee",
+    "Budget",
+    "Contract",
+    "Emergency Management",
+    "House Rules",
+    "Induction",
+    "Inspection",
+    "Insurance",
+    "Invoice",
+    "Lease",
+    "MSDS",
+    "Plan",
+    "Procedure",
+    "Quote",
+    "Register",
+    "Registration",
+    "Service Report",
+    "SWMS",
+];
+
 DocumentSchema = {
     name: {
      	label:"Name",
@@ -14,27 +36,7 @@ DocumentSchema = {
 		type:String,
 		input:"MDSelect",
 		options:{
-			items:[
-				"Audit",
-                "Bank Guarantee",
-				"Budget",
-				"Contract",
-				"Emergency Management",
-				"House Rules",
-				"Induction",
-				"Inspection",
-				"Insurance",
-                "Invoice",
-                "Lease",
-				"MSDS",
-				"Plan",
-				"Procedure",
-				"Quote",
-				"Register",
-				"Registration",
-				"Service Report",
-				"SWMS",
-			]
+			items:DocTypes
 		}
 	},
     description: {
