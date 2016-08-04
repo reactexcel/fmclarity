@@ -42,19 +42,6 @@ ComplianceList = React.createClass({
 
 ComplianceGroup = React.createClass({
 
-    showModal(rule) {
-        //Need a width option for modals before this can be instantiated
-        Modal.show({
-            content:<AutoForm 
-                item={rule}
-                schema={ComplianceRuleSchema} 
-                onSubmit={()=>{console.log(rule);Modal.hide();}}
-            >            
-                <h2>Edit Compliance Rule</h2>
-            </AutoForm>,
-        })
-    },
-
     render() {
         var facility,item,rules;
 
@@ -66,7 +53,7 @@ ComplianceGroup = React.createClass({
             <div>
                 {rules&&rules.length?rules.map((r,idx)=>{
                     return (
-                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={this.showModal.bind(null,r)}>
+                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}}>
                             <ComplianceListTile item={r}/>
                         </div>
                     )

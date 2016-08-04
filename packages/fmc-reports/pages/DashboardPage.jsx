@@ -14,39 +14,33 @@ DashboardPage = class DashboardPage extends React.Component {
 			canGetMessages = team.canGetMessages();
 		}
 		return(
-			<div>
-				<div className="row wrapper page-heading">
-					<div className="col-lg-12">
-			            <FacilityFilter title="Dashboard"/>
-					</div>
-				</div>
-			    <div className="wrapper wrapper-content animated fadeIn">
-			        <div className="row" style={{margin:"5px 0 0 -20px"}}>
-			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
-				            <div className="ibox">
-				            	<div className="ibox-content" style={{padding:"7px"}}>
-					            	<Calendar />
-					            </div>
+			<div className="dashboard-page animated fadeIn">
+				<FacilityFilter title="Dashboard"/>
+		        <div className="row" style={{marginRight:"0px"}}>
+		            <div className="col-sm-6" style={{paddingRight:"0px"}}>
+			            <div className="ibox">
+			            	<div className="ibox-content" style={{padding:"7px"}}>
+				            	<Calendar />
 				            </div>
-				            <div className="ibox">
-				            	<ReportsNavWidget />
-				            </div>
-				            {canGetMessages?<div className="ibox">
-				            	<UpdatesWidget/>
-				            </div>:null}
-				        </div>
-			            <div className="col-sm-6" style={{padding:"0 0 0 20px"}}>
-				            <div className="ibox">
-				            	<ProgressOverviewChart />
-				            </div>
-				            <div className="ibox">
-						        <RequestActivityChart />
-				            </div>
-				            <div className="ibox">
-				            	<RequestBreakdownChart />
-				            </div>
-				        </div>
-					</div>
+			            </div>
+			            <div className="ibox">
+			            	<ReportsNavWidget />
+			            </div>
+			            {canGetMessages?<div className="ibox">
+			            	<UpdatesWidget/>
+			            </div>:null}
+			        </div>
+		            <div className="col-sm-6" style={{paddingRight:"0px"}}>
+			            <div className="ibox">
+			            	<ProgressOverviewChart />
+			            </div>
+			            <div className="ibox">
+					        <RequestActivityChart />
+			            </div>
+			            <div className="ibox">
+			            	<RequestBreakdownChart />
+			            </div>
+			        </div>
 				</div>
 			</div>
 		);

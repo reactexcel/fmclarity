@@ -22,3 +22,28 @@
 	border-bottom:1px solid #ddd;
 	padding:0;
 }
+
+@media (min-width: 768px) {
+	.filter-box-nav-col {
+		position:fixed;
+		width:285px;
+		bottom:0px;
+		top:65px;
+	}
+
+	.filter-box-content-col {
+		position:absolute;
+		left:315px;
+		right:15px;
+		width:auto;
+	}
+}
+
+@media (max-width: 768px) {
+	.filter-box-content-col,.filter-box-nav-col {
+		position:absolute;
+		width:auto;
+		left:0;
+		right:0;
+	}
+}

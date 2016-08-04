@@ -27,17 +27,10 @@ AdminPage = React.createClass({
 	render() {
 		return (
 			<div>
-                <div className="row wrapper page-heading">
-                    <div className="col-lg-12">
-                        <span style={{color:"#333",fontWeight:"bold",fontSize:"16px",lineHeight:"40px",marginLeft:"20px"}}>Admin</span>
-                    </div>
-                </div>
-			    <div className="wrapper wrapper-content animated fadeIn">
-			        <div className="row">
-			            <div className="col-md-12">
-			            	<div className="ibox">
-			            		{this.data.url}
-							</div>
+		        <div className="row">
+		            <div className="col-md-12">
+		            	<div className="ibox">
+		            		{this.data.url}
 						</div>
 					</div>
 				</div>

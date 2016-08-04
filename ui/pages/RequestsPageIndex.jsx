@@ -127,25 +127,18 @@ RequestsPageIndex = React.createClass({
 	    },
 	    ];
 		return(
-			<div>
-		        <div className="row wrapper page-heading">
-		          <div className="col-lg-12">
-                    <FacilityFilter title="Requests"/>
-		          </div>
-		        </div>
-		    	{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}
-		        <div className="issue-page wrapper wrapper-content animated fadeIn">
-					<FilterBox 
-						items={this.data.issues}
-						filters={filters} 
-						headers={headers}
-						itemView={{
-							summary:IssueSummary,
-							detail:IssueDetail
-						}}
-						exportCallback={this.exportIssues}
-					/>
-				</div>
+			<div className="issue-page animated fadeIn">
+                <FacilityFilter title="Requests"/>
+				<FilterBox 
+					items={this.data.issues}
+					filters={filters} 
+					headers={headers}
+					itemView={{
+						summary:IssueSummary,
+						detail:IssueDetail
+					}}
+					exportCallback={this.exportIssues}
+				/>
 			</div>
 		);
 	}

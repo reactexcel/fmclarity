@@ -2,36 +2,13 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-import './ComplianceEvaluationService.jsx';
+import '/imports/ui/Request/ComplianceEvaluationService.jsx';
 
 ComplianceListTile = React.createClass({
 
-  /*
   mixins: [ReactMeteorData],
 
   getMeteorData() {
-    var request,facility,team,selectedTeam,owner,supplier,status,timeframe;
-    request = this.props.item;
-    selectedTeam = Session.getSelectedTeam();
-    if(request) {
-      facility = request.getFacility();
-      team = request.getTeam();
-      owner = request.getOwner();
-      supplier = request.getSupplier();
-      status = request.status;
-    }
-    return {
-      request:request,
-      facility:facility,
-      team:team,
-      selectedTeam:selectedTeam,
-      owner:owner,
-      supplier:supplier,
-      status:status,
-    }
-  },
-  */
-  render() {
     var rule = this.props.item;
     var name, info, results, message;
     switch(rule.type) {
@@ -54,11 +31,33 @@ ComplianceListTile = React.createClass({
     }
     results = ComplianceEvaluationService.evaluateRule(rule)||{};
     message = results.message||{};
-    console.log(results);
+
+    return {rule,name,info,results,message}
+  },
+
+  showModal(rule) {
+    //Need a width option for modals before this can be instantiated
+    Modal.show({
+        content:<AutoForm 
+            item={rule}
+            schema={ComplianceRuleSchema} 
+            onSubmit={()=>{console.log(rule);Modal.hide();}}
+        >            
+            <h2>Edit Compliance Rule</h2>
+        </AutoForm>,
+    })
+  },
+
+  render() {
+    var rule = this.data.rule;
+    var name = this.data.name;
+    var message = this.data.message
+    var results = this.data.results;
+    var info = this.data.info;
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
-          <b>{name}</b>
+          <b onClick={()=>{this.showModal(rule)}}>{name}</b>
         </div>
         <div className="issue-summary-col" style={{width:"30%"}}>
           {info}
@@ -73,7 +72,13 @@ ComplianceListTile = React.createClass({
             :
               <span style={{color:"red"}}>
                 <b><i className="fa fa-exclamation-triangle"/> {message.summary||"failed"}</b>
-                {message.detail?": "+message.detail:""}
+                {
+                    message.detail?
+                      <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                        {message.detail}
+                      </span></span>
+                    :null
+                }
               </span>
           }
         </div>

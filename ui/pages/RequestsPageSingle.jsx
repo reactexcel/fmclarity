@@ -127,7 +127,7 @@ IssuePage = React.createClass({
         }
     	return (
             <div>
-                <div id="single-issue-page" className="issue-page wrapper wrapper-content animated fadeIn">
+                <div id="single-issue-page" className="issue-page animated fadeIn">
                     <div className="row">
                         <div className="col-xs-12">
                             <h3 id="summary-region">{request.team.name}<br/>

@@ -56,6 +56,13 @@ FilterBox2 = React.createClass({
   componentDidMount() {
     this.checkScreenSize();
     $(window).bind("resize", this.checkScreenSize);
+    setTimeout(function(){
+      $('.filter-box-nav-col .slimscroll').slimScroll({
+        height:'auto'
+      });
+      //$('.filter-box-nav-col').css({'background-color':'red'});
+      //alert('shit');
+    },2000);
   },
 
   componentWillReceiveProps(newProps) {
@@ -74,20 +81,6 @@ FilterBox2 = React.createClass({
       this.setState({
         selectedItem:newProps.items?newProps.items[0]:null
       })
-    }
-  },
-
-  // called when the FAB new button is pushed
-  // calls the provided newItemCallback and updates the state with the newly created item
-  // this will also go to another package
-  createNewItem() {
-    var component = this;
-    if(this.props.newItemCallback) {
-      this.props.newItemCallback(function(newItem){
-        component.setState({
-          selectedItem:newItem
-        });
-      });
     }
   },
 
@@ -127,50 +120,45 @@ FilterBox2 = React.createClass({
     }
     return (
     <div className="filter-box-2">
-      <div className="row">
-        {!selectedItem||(this.state.screenSize=="lg"&&items.length>1)?
-        <div className={"col-lg-"+navWidth+" lg-gutter-right-5px"}>
-          <div className="row">
-            {items.map((i,idx)=>{
-              return (
-                <div 
-                  key={i._id||idx}
-                  className={"col-lg-"+colSize+" col-sm-12"}
-                >
-                  <FilterBox2LeftNavItem
-                    item={i}
-                    view={this.props.itemView.summary}
-                    toggle={this.selectItem.bind(this,i)}
-                    isSelected={this.state.selectedItem&&this.state.selectedItem.name==i.name}
-                  />
-                </div>  
-              )
-            })}
-  		    </div>
-      	</div>
+      {!selectedItem||(this.state.screenSize=="lg"&&items.length>1)?
+      <div className="filter-box-nav-col">
+        <div className="slimscroll">
+          {items.map((i,idx)=>{
+            return (
+              <div key={i._id||i.name||idx}>
+                <FilterBox2LeftNavItem
+                  item={i}
+                  view={this.props.itemView.summary}
+                  toggle={this.selectItem.bind(this,i)}
+                  isSelected={this.state.selectedItem&&this.state.selectedItem.name==i.name}
+                />
+              </div>  
+            )
+          })}
+        </div>
+    	</div>
+      :null}
+      {selectedItem||this.state.screenSize=="lg"?
+      <div className="filter-box-content-col">
+    		{selectedItem?
+          <FilterBox2SelectedDetailView
+            item={selectedItem}
+            view={this.props.itemView.detail}/>
         :null}
-        {selectedItem||this.state.screenSize=="lg"?
-        <div className={"col-lg-"+bodyWidth}>
-      		{selectedItem?
-            <FilterBox2SelectedDetailView
-              item={selectedItem}
-              view={this.props.itemView.detail}/>
-          :null}
-          {this.state.screenSize!="lg"?
-            <div onClick={this.selectItem.bind(this,null)} style={{
-              position:"absolute",
-              left:"32px",
-              top:"10px",
-              color:"#888",
-              fontSize:"24px",
-              cursor:"pointer"
-            }}>
-              <i className="fa fa-chevron-circle-left"></i>
-            </div>
-          :null}
-      	</div>
+        {this.state.screenSize!="lg"?
+          <div onClick={this.selectItem.bind(this,null)} style={{
+            position:"absolute",
+            left:"32px",
+            top:"10px",
+            color:"#888",
+            fontSize:"24px",
+            cursor:"pointer"
+          }}>
+            <i className="fa fa-chevron-circle-left"></i>
+          </div>
         :null}
-      </div>
+    	</div>
+      :null}
     </div>
     )
 	}

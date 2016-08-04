@@ -1,5 +1,15 @@
 ComplianceEvaluationService = new function() {
 
+  var defaultResult = {
+    passed:false,
+    message:{
+      summary:"failed"
+    },
+    resolve() {
+      alert('No resolution available');
+    }
+  }
+
   var evaluators = {
     //can pass in facility and service for more efficient calculation
     "Document exists":function(rule,facility,service){
@@ -10,40 +20,43 @@ ComplianceEvaluationService = new function() {
     "PPM schedule established":function(rule,facility,service){
       console.log(rule);
       if(!facility) {
-        return {
+        return _.extend({},defaultResult,{
           passed:false,
           message:{
             summary:"failed",
             detail:"Facility not specified"
           }
-        }
+        })
       }
       else if(!rule.service) {
-        return {
+        return _.extend({},defaultResult,{
           passed:false,
           message:{
             summary:"failed",
             detail:"Service not specified"
           }
-        }
+        })
       }
       var numEvents = Issues.find({'facility._id':facility._id,'service.name':rule.service.name,type:"Preventative"}).count();
       if(numEvents) {
-        return {
+        return _.extend({},defaultResult,{
           passed:true,
           message:{
             summary:"passed",
             detail:numEvents+ " "+(rule.service.name?(rule.service.name+" "):"")+"PMP events setup"
           }
-        }
+        })
       }
-      return {
+      return _.extend({},defaultResult,{
         passed:false,
         message:{
           summary:"failed",
           detail:"Set up "+(rule.service.name?(rule.service.name+" "):"")+"PPM rules"
+        },
+        resolve:function(){
+          FABActions.createRequest();
         }
-      }
+      })
     },
     "PPM event completed":function(rule,facility,service){
       var event;
@@ -52,22 +65,22 @@ ComplianceEvaluationService = new function() {
       }
       
       if(event) {
-        return {
+        return _.extend({},defaultResult,{
           passed:true,
           message:{
             summary:"passed",
             detail:"Last completed "+moment(event.dueDate).format('ddd Do MMM')
           },
           data:event
-        }
+        })
       }
-      return {
+      return _.extend({},defaultResult,{
         passed:false,
         message:{
           summary:"failed",
           detail:"PPM event not found"
         }
-      }
+      })
     }
   }
 

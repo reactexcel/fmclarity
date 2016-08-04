@@ -24,7 +24,14 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
-**v.1.v.10b**
+**v1.4.11b**
+
+* Removed compilance category and subservice from compliance form
+* Frequency can be set in compliance rule
+* Compliance rule evaluation if now reactive
+* Fixed a problem that was preventing newly created compliance groups to be selectable
+
+**v.1.4.10b**
 
 * Completed compliance rule creation form with facilities and service filter
 * Compliance page:Show only services with rules in left navigation

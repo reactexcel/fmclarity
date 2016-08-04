@@ -66,14 +66,9 @@ FacilityPageIndex = React.createClass({
                 {
 	                /* contractors can filter facilities by client using this component */
 	                team.type=="contractor"?
-
-		                <div className="row wrapper page-heading">
-		                    <div className="col-lg-12">
-		                        <ClientFilter title="Sites"/>
-		                    </div>
-		                </div>
-
-	                :null
+                    	<ClientFilter title="Sites"/>
+	                :
+	                	null
             	}
 
 				<FilterBox2 

@@ -42,29 +42,18 @@ SupplierIndexPage = React.createClass({
         }
 		return(
             <div className="suppliers-page animated fadeIn">
+                {team.type=="fm"?<FacilityFilter title="Suppliers"/>:null}
+    			<FilterBox2 
+    				items={this.data.suppliers}
+    				newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
+                    numCols={1}
+                    navWidth={4}
+    				itemView={{
+    					summary:ContactCard,
+    					detail:TeamCard
+    				}}
+    			/>
 
-                {team.type=="fm"?
-
-                <div className="row wrapper page-heading">
-                    <div className="col-lg-12">
-                        <FacilityFilter title="Suppliers"/>
-                    </div>
-                </div>
-
-                :null}
-
-                <div className="wrapper wrapper-content">
-        			<FilterBox2 
-        				items={this.data.suppliers}
-        				newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
-                        numCols={1}
-                        navWidth={4}
-        				itemView={{
-        					summary:ContactCard,
-        					detail:TeamCard
-        				}}
-        			/>
-                </div>
             </div>
 		);
 	}

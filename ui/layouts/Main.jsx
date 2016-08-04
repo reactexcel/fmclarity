@@ -48,14 +48,12 @@ MainLayout = React.createClass({
       <MuiThemeProvider muiTheme={getMuiTheme()}>
       <div id="wrapper">
         <Navigation />
-        <div className="gradient-bg">
           <TopNavBar />
           <main id="page-wrapper">
             <div id="page-wrapper-inner">
               {this.props.content}
             </div>
           </main>
-        </div>
         <FloatingActionButton/>
         <Modal/>
       </div>

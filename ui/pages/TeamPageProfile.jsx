@@ -22,7 +22,7 @@ TeamPageProfile = React.createClass({
 			return <div/>
 		}
 		return (
-		    <div className="wrapper wrapper-content animated fadeIn">
+		    <div className="team-page animated fadeIn">
 		        <div className="row">
 		        	<div className="col-lg-2"></div>
 		            <div className="col-lg-8">

@@ -121,8 +121,14 @@ AutoForm = React.createClass({
 
 					//check to see field conditions met
 					//console.log(this.props.item);
-					if(s.condition&&!s.condition(originalItem)) {
-						return;
+					if(s.condition) {
+						if(
+							(_.isString(s.condition)&&originalItem.type!=s.condition)||
+							(_.isArray(s.condition)&&!_.contains(s.condition,originalItem.type))||
+							(_.isFunction(s.condition)&&!s.condition(originalItem))
+						) {
+							return;
+						}
 					}
 
 					//if item is another schema create new AutoForm with item

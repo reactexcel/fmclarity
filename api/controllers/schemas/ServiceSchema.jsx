@@ -6,13 +6,6 @@ ComplianceRuleSchema = {
 		type:Object,
 		input:MDFacilitySelector
 	},
-    service:{
-    	type:Object,
-    	input:MDServiceSelector
-    },
-    category:{
-    	label:"Compliance category"
-    },
     type: {
     	label:"Check type",
     	input:"MDSelect",
@@ -28,29 +21,42 @@ ComplianceRuleSchema = {
     docType:{
     	label:"Document type",
     	input:"MDSelect",
+        condition:["Document exists","Document is current"],
     	options:{
     		items:DocTypes
     	},
-    	condition:function(item){
-    		return item.type=="Document exists"||item.type=="Document is current"
-    	}
     },
     docName:{
     	label:"Document name",
-    	condition:function(item){
-    		return item.type=="Document exists"||item.type=="Document is current"
-    	}
+        condition:["Document exists","Document is current"]
+    },
+    service:{
+        type:Object,
+        input:"MDSelect",
+        condition:["PPM schedule established","PPM event completed"],
+        options:function(item){
+            if(item.facility) {
+                console.log(item.facility);
+                return {
+                    items:item.facility.servicesRequired,
+                    view:ServiceListTile
+                }
+            }
+        }
     },
     event:{
     	label:"PMP event",
-    	condition:function(item) {
-    		return item.type=="PPM event completed"
-    	},
+    	condition:"PPM event completed",
     	input:MDPPMEventSelector,
     	options:function(item){
     		return {
     			facility:item.facility
     		}
     	}
-    }
+    },
+    frequency:{
+        condition:"PPM event completed",
+        schema:RequestFrequencySchema
+    },
+
 }
