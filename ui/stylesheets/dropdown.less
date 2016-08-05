@@ -1,0 +1,64 @@
+@import "/ui/stylesheets/globals/variables.import.less";
+
+.caret {
+  border-left:4px solid transparent;
+  border-right:4px solid transparent;
+  border-top:4px solid \9;
+  display:inline-block;
+  height:0;
+  margin-left:2px;
+  vertical-align:middle;
+  width:0;
+}
+
+.dropdown-menu {
+  background:@default-bg;
+  color:@default-fg;
+  border:none;
+  box-shadow:@shadow-2;
+  display:none;
+  float:left;
+  font-size:12px;
+  left:0;
+  list-style:none outside none;
+  min-width:160px;
+  padding:0;
+  position:absolute;
+  text-align:left;
+  z-index:1000;
+}
+
+.dropdown-menu .divider {
+  background-color:#ddd;
+  height:1px;
+  margin:0;
+  overflow:hidden;
+}
+
+.dropdown-menu > li.active > a,
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li.active > a:focus {
+  background:@menu-hover-bg;
+  outline:0;
+  text-decoration:none;
+}
+
+.dropdown-menu > li > a {
+  color:@default-fg;
+  clear:both;
+  display:block;
+  font-weight:400;
+  text-align:left;
+  white-space:nowrap;
+  min-height:32px;
+  line-height:32px;
+  padding-left:24px;
+}
+
+.dropdown-toggle:focus,.open > a {
+  outline:0;
+}
+
+.open > .dropdown-menu {
+  display:block;
+}

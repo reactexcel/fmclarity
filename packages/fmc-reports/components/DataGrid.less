@@ -1,50 +1,68 @@
-
-.print .data-grid {
-	white-space: normal;
-}
-
 .data-grid {
-	white-space:nowrap;
-	width:100%;
-	overflow-x:auto;
+  white-space: nowrap;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .data-grid-header-row {
-	height:56px;
+  height: 56px;
 }
 
-.print .data-grid-select-col, .print .data-grid-select-col-header {
-	display:none;
+.print .data-grid-select-col,
+.print .data-grid-select-col-header {
+  display: none;
 }
 
-.data-grid-select-col,.data-grid-select-col-header {
-	width:24px;
+.data-grid-select-col,
+.data-grid-select-col-header {
+  width: 24px;
 }
 
 .data-grid-header-cell {
-	padding-top:24px!important;
-	color:#999;
-	font-size:12px;
-	cursor:pointer;
-
-	&:hover {
-		color:#111;
-	}
+  padding-top: 24px!important;
+  color: #999;
+  font-size: 12px;
+  cursor: pointer;
 }
 
+.data-grid-header-cell,.data-grid-select-col-header {
+  border-bottom:1px solid #ccc;  
+}
+
+.data-grid-header-cell:hover {
+  color: #111;
+}
 
 .data-grid-row {
-	height:48px;
+  height: 48px;
 }
 
 .data-grid-row:hover {
-	background-color:#eee;
-	border-bottom-color:#ddd;
+  background-color: #eee;
+  border-bottom-color: #ddd;
 }
 
 .data-grid-cell {
-	max-width:200px;
-	overflow:hidden;
-	padding-top:14px!important;
-	color:#111;
+  max-width: 200px;
+  overflow: hidden;
+  color: #111;
+  padding:8px;
+}
+
+.data-grid-cell, .data-grid-select-col {
+  border-top:1px solid #ddd;
+}
+
+.report-toolbar {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  font-size: 19px;
+}
+
+.report-toolbar a,
+.report-toolbar span {
+  color: #000;
+  opacity: 0.5;
+  padding: 10px;
 }

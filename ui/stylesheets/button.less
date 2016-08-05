@@ -1,0 +1,43 @@
+.btn {
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 2.5;
+  margin: 4px 0;
+  padding: 0 16px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  opacity: 0.8;
+  transition: opacity 0.1s;
+  font-size:14px;
+}
+
+.btn-flat {
+  box-shadow: none;
+  background-color: #fff;
+  color: #000;
+}
+
+.btn-flat:hover {
+  background-color: #ddd;
+}
+
+.btn-flat.btn-primary {
+  color: #0152b5;
+}
+
+.btn.btn-disabled:hover {
+  opacity: 0.8;
+}
+
+.btn.btn-danger {
+  color: #dc143c;
+}
+
+.btn:hover {
+  opacity: 1;
+}

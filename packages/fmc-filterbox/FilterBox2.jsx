@@ -56,13 +56,6 @@ FilterBox2 = React.createClass({
   componentDidMount() {
     this.checkScreenSize();
     $(window).bind("resize", this.checkScreenSize);
-    setTimeout(function(){
-      $('.filter-box-nav-col .slimscroll').slimScroll({
-        height:'auto'
-      });
-      //$('.filter-box-nav-col').css({'background-color':'red'});
-      //alert('shit');
-    },2000);
   },
 
   componentWillReceiveProps(newProps) {
@@ -119,9 +112,9 @@ FilterBox2 = React.createClass({
       }
     }
     return (
-    <div className="filter-box-2">
+    <div className="filter-box-2 fm-layout">
       {!selectedItem||(this.state.screenSize=="lg"&&items.length>1)?
-      <div className="filter-box-nav-col">
+      <div className="nav-col">
         <div className="slimscroll">
           {items.map((i,idx)=>{
             return (
@@ -139,7 +132,7 @@ FilterBox2 = React.createClass({
     	</div>
       :null}
       {selectedItem||this.state.screenSize=="lg"?
-      <div className="filter-box-content-col">
+      <div className="content-col">
     		{selectedItem?
           <FilterBox2SelectedDetailView
             item={selectedItem}

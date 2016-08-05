@@ -48,16 +48,18 @@ class ServicePageIndexInner extends React.Component {
 		return(		        
 			<div className="facility-page animated fadeIn">
 
-				<FacilityFilter title="Services"/>
+		        <FacilityFilter/>
+		        <div style={{paddingTop:"50px"}}>
 
-				<FilterBox2 
-					items={this.props.items}
-					navWidth={3}
-					itemView={{
-						summary:ServiceListTile,
-						detail:ServiceViewDetail
-					}}
-				/>
+					<FilterBox2 
+						items={this.props.items}
+						navWidth={3}
+						itemView={{
+							summary:ServiceListTile,
+							detail:ServiceViewDetail
+						}}
+					/>
+				</div>
 
 			</div>
 		);

@@ -1,100 +1,92 @@
-@chipBackgroundColor:rgb(200,200,200);
-@chipCloseBackgroundColor:rgb(100,100,100);
-
 .md-chip {
-	height:27px;
-	float:left;
-	min-width:135px;
-	overflow:hidden;
-	color:#fff;
-	padding:5px 0px 5px 10px;
-	text-align:center;
-	font-size:11px;
-	position:relative;
-	cursor:pointer;
-
-	div.left {
-		border-radius:50% 0 0 50%;
-		width:26px;
-		background-color:@chipBackgroundColor;
-		opacity:0;
-		position:absolute;
-		left:1px;
-		top:1px;
-		bottom:0px;
-		z-index:1000;
-	}
-
-	div.center {
-		position:absolute;
-		left:27px;
-		right:26px;
-		top:1px;
-		bottom:0px;
-		background-color:@chipBackgroundColor;
-		opacity:0;
-		z-index:1000;
-	}
-
-	div.right {
-		border-radius:0 50% 50% 0;
-		width:26px;
-		background-color:@chipBackgroundColor;
-		opacity:0;
-		position:absolute;
-		right:0;
-		top:1px;
-		bottom:0px;
-		z-index:1000;
-	}
-
-	div.content {
-		position:relative;
-		white-space:nowrap;
-		z-index:1001;
-		padding-right:4px;
-
-		div.chip-text {
-			font-size:11px;
-			line-height: 17px;
-			float:left;
-		}
-
-		div.chip-close {
-			opacity:0;
-			float:right;
-			width:22px;
-			height:22px;
-			line-height: 21px;
-			position:relative;
-			top:-2px;
-			right:-2px;
-			font-size:20px;
-			background-color:@chipCloseBackgroundColor;
-			border-radius:50%;
-			&:before {
-				content:"×";
-			}
-		}
-	}
-
-	&:hover {
-		div.left, div.right, div.center {
-			opacity:0.5;
-		}
-		div.content {
-			div.chip-close {
-				opacity:0.3;
-			}
-			div.chip-close:hover {
-				opacity: 0.5;
-			}
-		}
-	}
+  height: 27px;
+  float: left;
+  min-width: 135px;
+  overflow: hidden;
+  color: #fff;
+  padding: 5px 0px 5px 10px;
+  text-align: center;
+  font-size: 11px;
+  position: relative;
+  cursor: pointer;
 }
 
+.md-chip div.left {
+  border-radius: 50% 0 0 50%;
+  width: 26px;
+  background-color: #c8c8c8;
+  opacity: 0;
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  bottom: 0px;
+  z-index: 1000;
+}
 
+.md-chip div.center {
+  position: absolute;
+  left: 27px;
+  right: 26px;
+  top: 1px;
+  bottom: 0px;
+  background-color: #c8c8c8;
+  opacity: 0;
+  z-index: 1000;
+}
 
+.md-chip div.right {
+  border-radius: 0 50% 50% 0;
+  width: 26px;
+  background-color: #c8c8c8;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 1px;
+  bottom: 0px;
+  z-index: 1000;
+}
 
+.md-chip div.content {
+  position: relative;
+  white-space: nowrap;
+  z-index: 1001;
+  padding-right: 4px;
+}
 
+.md-chip div.content div.chip-text {
+  font-size: 11px;
+  line-height: 17px;
+  float: left;
+}
 
+.md-chip div.content div.chip-close {
+  opacity: 0;
+  float: right;
+  width: 22px;
+  height: 22px;
+  line-height: 21px;
+  position: relative;
+  top: -2px;
+  right: -2px;
+  font-size: 20px;
+  background-color: #646464;
+  border-radius: 50%;
+}
+
+.md-chip div.content div.chip-close:before {
+  content: "×";
+}
+
+.md-chip:hover div.left,
+.md-chip:hover div.right,
+.md-chip:hover div.center {
+  opacity: 0.5;
+}
+
+.md-chip:hover div.content div.chip-close {
+  opacity: 0.3;
+}
+
+.md-chip:hover div.content div.chip-close:hover {
+  opacity: 0.5;
+}

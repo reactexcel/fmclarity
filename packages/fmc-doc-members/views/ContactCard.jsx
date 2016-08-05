@@ -63,10 +63,14 @@ ContactAvatarSmall = React.createClass({
 
 Contact2Line = React.createClass({
 	render() {
-		var contact, profile, role, tenancy;
+		var contact, profile={}, role, tenancy="";
 		contact = this.props.item;
-		profile = contact.getProfile?contact.getProfile():contact;
-		tenancy = profile.tenancy;
+		if(contact) {
+			profile = contact.getProfile?contact.getProfile():contact;
+			if(profile) {
+				tenancy = profile.tenancy;
+			}
+		}
 		role = this.props.role;
 		return (
 			<span className="contact-card-2line-text">

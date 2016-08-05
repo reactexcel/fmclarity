@@ -59,7 +59,7 @@ UserProfileMenu = React.createClass({
             </span>
             <ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
                 <li>
-                    <a style={{padding:"10px 10px 6px 10px"}} href={FlowRouter.path('profile')}>
+                    <a style={{padding:"7px 8px",height:"48px"}} href={FlowRouter.path('profile')}>
                         <ContactCard item={this.data.user}/>
                     </a>
                 </li>

@@ -1,0 +1,50 @@
+@import "/ui/stylesheets/globals/variables.import.less";
+
+.nav-bar {
+	background-color:@brand-bg;
+	box-shadow: @shadow;
+	z-index: 1499;
+	font-size: 20px;
+	position: fixed;
+	left:0;
+	right:0;
+	top:0;
+	padding:12px 18px;
+	height:@nav-bar-height;
+
+	.logo-region {
+	    position: absolute;
+	    width: 160px;
+	    top: 5px;	
+	    left: 50%;
+	    margin-left: -80px;
+
+	    img {
+	    	width:100%;
+	    	margin:0;
+	    	padding:0;
+	    }
+	}
+
+	.topnav-icon {
+		cursor:pointer;
+	}
+
+	.icon-region-1 {
+	    color:@brand-fg;
+		display:inline-block;
+		float:left;
+	}
+
+	.icon-region-2 {
+	    color:@brand-fg;
+		display:inline-block;
+		float:right;
+
+		#alerts-icon {
+			padding-right:40px;
+		}
+
+	}
+}
+

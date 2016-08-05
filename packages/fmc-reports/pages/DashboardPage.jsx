@@ -15,8 +15,8 @@ DashboardPage = class DashboardPage extends React.Component {
 		}
 		return(
 			<div className="dashboard-page animated fadeIn">
-				<FacilityFilter title="Dashboard"/>
-		        <div className="row" style={{marginRight:"0px"}}>
+				<FacilityFilter/>
+		        <div className="row" style={{paddingTop:"50px"}}>
 		            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 			            <div className="ibox">
 			            	<div className="ibox-content" style={{padding:"7px"}}>

@@ -92,7 +92,14 @@ const Calendar = React.createClass({
 
 CalendarPage = React.createClass({
   render() {
-    return <div className="i-box" style={{backgroundColor:"#fff", padding:"15px"}}><Calendar/></div>
+    return (
+        <div style={{display:"inline"}}>
+            <FacilityFilter/>
+            <div className="i-box" style={{backgroundColor:"#fff", padding:"15px",marginTop:"50px"}}>
+                <Calendar/>
+            </div>
+        </div>
+    )
   }
 })
 

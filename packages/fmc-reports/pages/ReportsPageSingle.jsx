@@ -10,11 +10,9 @@ ReportsPageSingle = React.createClass({
 	render() {
 		var Report = this.state.content;
 		return (
-			<div className="report-page">
-				<div className="wrapper wrapper-content animated fadeIn">
-					<div className="ibox">
-						<Report/>
-					</div>
+			<div className="report-page animated fadeIn">
+				<div className="ibox">
+					<Report/>
 				</div>
 			</div>
 		)

@@ -40,8 +40,8 @@ FacilityPageIndex = React.createClass({
 	        }
         }
 		return {
-		    selectedTeam:team,
-		    selectedFacility:facility,
+		    team:team,
+		    facility:facility,
 		    facilities:facilities
 		}
     },
@@ -54,7 +54,7 @@ FacilityPageIndex = React.createClass({
 
 	render() {
 
-		var team = this.data.selectedTeam;
+		var team = this.data.team;
 
 		if(!team) {
 			return <div/>
@@ -71,15 +71,14 @@ FacilityPageIndex = React.createClass({
 	                	null
             	}
 
-				<FilterBox2 
-					items={this.data.facilities}
-					navWidth={3}
-					itemView={{
-						summary:FacilitySummary,
-						detail:FacilityCard
-					}}
-					onSelect={this.handleSelect}
-				/>
+		        <FacilityFilter/>
+		        <div style={{paddingTop:"50px"}}>            	
+                    <div className="card-body ibox">
+                        {this.data.facility?
+                        <FacilityCard item={this.data.facility}/>
+                        :null}
+                    </div>
+				</div>
 
 			</div>
 		);

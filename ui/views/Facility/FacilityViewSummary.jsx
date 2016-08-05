@@ -8,7 +8,7 @@ FacilitySummary = React.createClass({
 
     getMeteorData() {
 		var facility,contact,contactProfile,thumb;
-	    facility = this.props.item || {};
+	    facility = this.props.item||{};
 	    if(facility&&facility.getThumbUrl) {
 	    	thumb = facility.getThumbUrl();
 		    contact = facility.getPrimaryContact();
@@ -27,6 +27,7 @@ FacilitySummary = React.createClass({
 		var facility = this.data.facility;
 		var contact = this.data.contact||{};
 		var thumb = this.data.thumb;
+
 	    return (
 	    	<div>
 	    		{/*
@@ -40,6 +41,11 @@ FacilitySummary = React.createClass({
 				}
 				<div className="facility-thumbnail pull-left">
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+thumb+"')",backgroundSize:"cover"}}/>
+					{this.props.notification?
+					<div style={{position:"absolute",bottom:"0px",right:"0px"}}>
+						<span className="label label-notification">{this.props.notification}</span>
+					</div>:null}
+
 				    {/*<img style={{width:"40px"}} alt="image" src={facility.getThumbUrl()} />*/}
 				 </div>
 				 <div className="facility-info contact-card contact-card-2line">

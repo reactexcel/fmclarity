@@ -4,28 +4,26 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 SupplierIndexPage = React.createClass({
 
-    mixins: [ReactMeteorData],
+    mixins:[ReactMeteorData],
 
     getMeteorData() {
         Meteor.subscribe('contractors');
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var team, suppliers;
-        team = Session.getSelectedTeam();
+        var data = {};
+        data.user = Meteor.user();
         facility = Session.getSelectedFacility();
-        //this needs to be changed so that it always goes through team.getSuppliers
-        // ie team.getSuppliers({facility._id}) ergh or something
+        if(data.user) {
+            data.facilities = data.user.getFacilities();
+        }
         if(facility) {
-            suppliers = facility.getSuppliers();
+            data.suppliers = facility.getSuppliers();
         }
-        else if(team) {
-            Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
-            suppliers = team.getSuppliers();
-        }
+        return data;
+    },
+
+    getInitialState() {
         return {
-        	team : team,
-            suppliers : suppliers,
-            facility : facility
-//            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
+            supplier:null
         }
     },
 
@@ -36,24 +34,35 @@ SupplierIndexPage = React.createClass({
     },
 
 	render() {
-        var team = this.data.team;
-        if(!team) {
-            return <div/>
-        }
 		return(
-            <div className="suppliers-page animated fadeIn">
-                {team.type=="fm"?<FacilityFilter title="Suppliers"/>:null}
-    			<FilterBox2 
-    				items={this.data.suppliers}
-    				newItemCallback={team&&team.canInviteSupplier()?this.showModal:null}
-                    numCols={1}
-                    navWidth={4}
-    				itemView={{
-    					summary:ContactCard,
-    					detail:TeamCard
-    				}}
-    			/>
-
+            <div 
+                className={
+                    "suppliers-page animated fadeIn"+
+                    (this.state.supplier?" second-selected":"")
+                }
+            >
+                <div className="nav-col" >
+                    <FacilityFilter />
+                </div>
+                <div className="nav-col">
+                    <NavDropDownList 
+                        items={this.data.suppliers}
+                        selectedItem={this.state.supplier} 
+                        tile={ContactCard}
+                        onChange={(supplier)=>{
+                            this.setState({
+                                supplier:supplier
+                            })
+                        }}
+                    />
+                </div>
+                <div className={"content-col"+(!this.state.supplier?" inactive":"")}> 
+                    <div className="card-body ibox">
+                        {this.state.supplier?
+                        <TeamCard item={this.state.supplier}/>
+                        :null}
+                    </div>
+                </div>
             </div>
 		);
 	}

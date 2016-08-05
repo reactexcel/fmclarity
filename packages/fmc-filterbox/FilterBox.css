@@ -1,106 +1,157 @@
 .md-skin .filter-box.ibox {
-  background-color:transparent;
-  border:0;
-  box-shadow:none;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .md-skin .filter-box.ibox > .ibox-title {
-  border-bottom:1px solid #ddd;
-  background-color:#eee;
-  padding:0;
+  border-bottom: 1px solid #ddd;
+  background-color: #eee;
+  padding: 0;
 }
 
 .md-skin .filter-box.ibox > .ibox-content {
-  background-color:transparent;
+  background-color: transparent;
 }
 
 .grid-item {
-  overflow:hidden;
+  overflow: hidden;
   background: #fff;
   color: #262524;
   /*border-left:5px solid #ccc;*/
   /*border-top:1px solid #eee;*/
-  border-bottom:1px solid #ddd;
-  padding:0;
-  max-height:51px;
-  transition:max-height 0.250s, margin-top 0.250s, margin-bottom 0.250s;
-  transition-timing-function:ease-in-out;
+  border-bottom: 1px solid #ddd;
+  padding: 0;
+  max-height: 51px;
+  transition: max-height 0.250s, margin-top 0.250s, margin-bottom 0.250s;
+  transition-timing-function: ease-in-out;
 }
 
 .card-header {
-  overflow:hidden;
+  overflow: hidden;
   -webkit-user-select: none;
   /*transition: max-height 0.250s;*/
 }
 
 .filter-box .card-body,
 .filter-box-2 .card-body {
-  position:relative;
-  left:0;
-  right:0;
+  position: relative;
+  left: 0;
+  right: 0;
 }
 
 .filter-box .grid-item.gigante .card-header {
-  min-height:0px;
-  max-height:0px;
+  min-height: 0px;
+  max-height: 0px;
 }
 
 .filter-box .grid-item.gigante {
-  background:#fff;
-  z-index:5000;
-  width:100%;
-  max-height:2000px;
-  margin-top:10px;
-  margin-bottom:10px;
+  background: #fff;
+  z-index: 5000;
+  width: 100%;
+  max-height: 2000px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   border-left-width: 0;
   box-shadow: 1px 2px 5px 1px rgba(0, 0, 0, 0.2);
-  padding-bottom:0;
-  border-top:1px solid #bbb;
-  border-bottom:1px solid #aaa;
+  padding-bottom: 0;
+  border-top: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
 }
 
 .card-table-header {
-    font-weight: bold;
-    font-size: 12px;
-    height: 48px;
-    border-top: 1px solid #ddd;
-    background-color: #fff;
-    padding-top: 16px;
-    padding-left: 5px;
-    /*padding-right:45px;*/
-    padding-right:5px;
-    color: #999;
-    overflow: hidden;
+  font-weight: bold;
+  font-size: 12px;
+  height: 48px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+  padding-top: 16px;
+  padding-left: 5px;
+  /*padding-right:45px;*/
+  padding-right: 5px;
+  color: #999;
+  overflow: hidden;
 }
 
 .card-table-header > div {
-  padding:0!important;
-  text-align:left!important;
-  border:2px solid #fff;
-  position:relative;
-  left:-2px;
-  top:-2px;
+  padding: 0!important;
+  text-align: left!important;
+  border: 2px solid #fff;
+  position: relative;
+  left: -2px;
+  top: -2px;
 }
 
 .grid-item:hover .card-header,
 .grid-item.active .card-header {
-  background:#eee;
+  background: #eee;
 }
 
 .grid-item.active:hover .card-header {
-  background:#eee;
+  background: #eee;
 }
 
 .filter-box .grid-item.gigante .card-header,
 .filter-box .grid-item.diminished .card-header {
-    background:#eee;
+  background: #eee;
 }
 
 .filter-box .grid-item.diminished {
-  height:0px;
+  height: 0px;
 }
 
 .card-header-summary {
-  padding:5px;
-  overflow:hidden;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.md-skin .filter-box-2.ibox {
+  background-color: #fff;
+}
+
+.card-header-summary {
+  cursor: pointer;
+}
+
+.md-skin .filter-box-2.ibox > .ibox-title {
+  background-color: transparent;
+}
+
+.filter-box-2-detail-pane .card-body {
+  padding-top: 10px;
+}
+
+.table-row:last-child > .grid-item {
+  border-bottom: none;
+}
+
+.md-skin .filter-box-2.ibox > .ibox-title {
+  border-bottom: 1px solid #ddd;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .filter-box-nav-col {
+    position: fixed;
+    width: 285px;
+    bottom: 0px;
+    top: 65px;
+  }
+
+  .filter-box-content-col {
+    position: absolute;
+    left: 315px;
+    right: 15px;
+    width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-box-content-col,
+  .filter-box-nav-col {
+    position: absolute;
+    width: auto;
+    left: 0;
+    right: 0;
+  }
 }

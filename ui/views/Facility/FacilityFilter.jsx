@@ -29,24 +29,16 @@ FacilityFilter = React.createClass({
     render() {
         var facility = this.data.facility;
         return (
-            <SuperSelect 
-                items={this.data.facilities} 
-                itemView={NameCard}
-                onChange={this.selectFacility}
-                clearOption={{name:"All facilities"}}
-            >
-            {
-                facility?
-                <div style={{whiteSpace:"nowrap",fontSize:"16px",lineHeight:"48px",paddingLeft:"16px"}}>
-                	{this.props.title?<span style={{color:"#333",fontWeight:"bold",fontSize:"16px"}}>{this.props.title} for </span>:null}
-                    <span className="nav-label">{facility.getName()} <i className="fa fa-caret-down"></i></span>
-                </div>
-                :
-                <div style={{whiteSpace:"nowrap",fontSize:"16px",lineHeight:"48px",paddingLeft:"16px"}}>
-                	{this.props.title?<span style={{color:"#333",fontWeight:"bold",fontSize:"16px"}}>{this.props.title} for </span>:null}
-                    <span className="nav-label">all facilities <i className="fa fa-caret-down"></i></span>
-                </div>
-            }
-            </SuperSelect>
-        )}
+            <div style={{position:"absolute",zIndex:1498}}>
+                <NavDropDownList
+                    items={this.data.facilities} 
+                    selectedItem={facility}
+                    tile={FacilitySummary}
+                    startOpen={false}
+                    onChange={this.selectFacility}
+                    multiple={true}
+                />
+            </div>
+        )
+    }
 })

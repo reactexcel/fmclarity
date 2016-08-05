@@ -23,9 +23,12 @@ RequestsTable = React.createClass({
         var statusFilter = {"status":{$nin:["Cancelled","Deleted","Closed","Reversed"]}};
         var customFilter = this.props.filter;
         var filter = {$and:[statusFilter,customFilter]};
-    	return {
-    		requests:Meteor.user().getRequests(filter)
-    	}
+        var data = {};
+        data.user = Meteor.user();
+        if(data.user) {
+            data.requests = data.user.getRequests(filter);
+        }
+    	return data;
     },
 
     showModal(r) {

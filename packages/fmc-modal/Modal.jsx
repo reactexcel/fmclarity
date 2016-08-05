@@ -105,14 +105,13 @@ Modal = React.createClass({
           handleSubmit={this.state.onSubmit}
           handleHide={this.handleHide}>
 
-          <div style={{display:"inline-block"}}>
+          <div className="modal-wrapper">
           {
             queue.map(function(q,idx){
               return <div className={"modal-dialog"+(q.size?(" modal-dialog-"+q.size):"")} key={idx}>
-                <div className="modal-content">
-                  <div className="modal-body">
-                    {q.content}
-                  </div>
+                <div className="modal-body">
+                  {q.content}
+                  <span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
                 </div>
               </div>
             })
@@ -158,10 +157,7 @@ ModalInner = React.createClass({
   render() {
     return (
       <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>        
-          <div style={{display:"inline-block",position:"relative"}}>
-            {this.props.children}
-            <span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
-          </div>
+          {this.props.children}
       </div>
     )
   }

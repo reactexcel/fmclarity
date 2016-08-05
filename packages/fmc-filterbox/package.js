@@ -15,7 +15,6 @@ Package.onUse(function(api) {
 		'FilterBox.jsx',
 		'FilterBox.css',
 		'FilterBox2.jsx',
-		'FilterBox2.css',
 	]);
 
 	api.export([

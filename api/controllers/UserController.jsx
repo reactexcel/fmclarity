@@ -84,8 +84,14 @@ Users.actions({
     helper:function(user,filter,options={expandPMP:false}) {
       var team = user.getSelectedTeam();
       var role = user.getRole();
+
+      if(!team) {
+        return [];
+      }
+
       var myFacilities = Facilities.find({"members._id":user._id}).fetch();
       var myFacilityIds = _.pluck(myFacilities,'_id');
+
 
       //fragments to use in query
       var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
@@ -93,7 +99,8 @@ Users.actions({
       var isOpen = {status:{$in:[Issues.STATUS_NEW,"In Progress","Progress",Issues.STATUS_ISSUED]}};
       var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_ISSUED]}};
       var createdByMe = {"owner._id":user._id};
-      var createdByMyTeam ={$and:[{"team._id":team._id},isNotDraft]};
+
+      var createdByMyTeam = {$and:[{"team._id":team._id},isNotDraft]};
       var issuedToMyTeam = {$and:[{$or:[{"supplier._id":team._id},{"supplier.name":team.name}]},isIssued]};
       var assignedToMe = {$and:[{"assignee._id":user._id},isIssued]};
       var inMyFacilities = {$and:[{"facility._id":{$in:myFacilityIds}},isNotDraft]};
@@ -132,7 +139,7 @@ Users.actions({
             var repeats = parseInt(r.frequency.repeats);
             var period = {};
             period[r.frequency.unit] = parseInt(r.frequency.number);
-            console.log(period);
+            //console.log(period);
             for(var i=0;i<repeats;i++) {
               var copy = _.omit(r,'_id');
               copy.dueDate = date.add(period).toDate();

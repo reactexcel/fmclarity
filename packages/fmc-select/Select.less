@@ -1,54 +1,32 @@
-//@import "/client/stylesheets/globals/variables.import.less";
-
-@navy: #0152b5;
-
 .super-select.absolute {
-	position:absolute;
-	width:96%;
+  position: absolute;
+  width: 96%;
 }
 
 .super-select .dropdown-menu {
-	overflow-y:auto;
-	top:18px;
-	max-height:160px;
-	padding:0;
+  overflow-y: auto;
+  top: 18px;
+  max-height: 160px;
+  padding: 0;
 }
 
 .super-select .browse-button {
-	font-weight:bold;
-	text-align: center;
+  font-weight: bold;
+  text-align: center;
 }
 
-.dropdown-menu .dropdown-menu-item {
-	cursor:pointer;
-	float:left;
-	width:100%;
-	line-height: 20px;
-	background-color:#fff;
-	padding:6px;
+.super-select .dropdown-toggle {
+  cursor: pointer;
 }
 
-.dropdown-menu .dropdown-menu-item:hover {
-	background-color:#eee;
+.super-select .dropdown-toggle:hover {
+  color: #0152b5;
 }
 
-.super-select {
-	.dropdown-toggle {
-		cursor:pointer;
-	}
-
-	.dropdown-toggle:hover {
-		color:@navy;
-	}	
+.super-select.readonly .dropdown-toggle {
+  cursor: default;
 }
 
-.super-select.readonly {
-	.dropdown-toggle {
-		cursor:default;
-	}
-
-	.dropdown-toggle:hover {
-		color:inherit;
-	}
+.super-select.readonly .dropdown-toggle:hover {
+  color: inherit;
 }
-

@@ -15,10 +15,11 @@ RequestsPageIndex = React.createClass({
 	    var issues;
 	    var user = Meteor.user();
 	    var team = Session.getSelectedTeam();
+	    var facility, q;
 	    if(user&&team) {
-		    var facility = Session.getSelectedFacility();
+		    facility = Session.getSelectedFacility();
 
-		    var q = {};
+		    q = {};
 		    if(facility) {
 		        q['facility._id'] = facility._id;
 		    }
@@ -26,6 +27,7 @@ RequestsPageIndex = React.createClass({
 	    	issues = user.getRequests(q,{expandPMP:true});
 	    }
         return {
+        	filter:q,
             issues : issues,
             team : team
         }
@@ -127,18 +129,11 @@ RequestsPageIndex = React.createClass({
 	    },
 	    ];
 		return(
-			<div className="issue-page animated fadeIn">
-                <FacilityFilter title="Requests"/>
-				<FilterBox 
-					items={this.data.issues}
-					filters={filters} 
-					headers={headers}
-					itemView={{
-						summary:IssueSummary,
-						detail:IssueDetail
-					}}
-					exportCallback={this.exportIssues}
-				/>
+			<div>
+		        <FacilityFilter/>
+		        <div className="issue-page animated fadeIn" style={{paddingTop:"50px"}}>
+		        	<RequestsTable filter={this.data.filter}/>
+				</div>
 			</div>
 		);
 	}

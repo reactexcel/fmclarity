@@ -31,7 +31,6 @@ fmc:autoform
 
 ############################
 # Styles & Presentation
-twbs:bootstrap
 fortawesome:fontawesome
 
 ############################
