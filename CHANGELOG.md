@@ -24,6 +24,23 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.4.13b**
+
+* New medium sized card view
+* Portfolio navigation:select card on first screen
+* Back option on facility card menu
+* Portfolio naviagation:card transition
+* Removed services from facility card
+* Clicking request in calendar opens request modal
+* New request card view
+* Restored headers in requests table
+* Restored reqeust table sort function
+
+**v1.4.12b**
+
+* Consolidated all existing stylesheets
+* Added new facility filter
+
 **v1.4.11b**
 
 * Removed compilance category and subservice from compliance form

@@ -58,7 +58,7 @@ export default React.createClass({
         if(this.props.onStatusChange) {
             this.props.onStatusChange(response);
         }
-        //Modal.hide();
+        Modal.hide();
     },
 
     progress() {
@@ -100,7 +100,7 @@ export default React.createClass({
 
     render() {
         var request = this.props.item;
-        var width = this.props.width||"100%";
+        var width = this.props.width||"100px";
         var progressVerb = this.getProgressVerb();
         var regressVerb = this.getRegressVerb();
         var actions = request.getActions();
@@ -111,9 +111,9 @@ export default React.createClass({
                         return <button 
                             key={action}
                             onClick={()=>{request.doAction(action,this.handleStatusChange)}}
-                            style={{margin:0,width:width,maxWidth:"400px"}} 
+                            style={{width:width}} 
                             type="button" 
-                            className={"btn btn-sm btn-"+(request.checkDoAction(action)?'Issued':'disabled')}>
+                            className={"btn btn-flat"+(!request.checkDoAction(action)?' disabled':'')}>
                             {action}
                         </button>
                     }

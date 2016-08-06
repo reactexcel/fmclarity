@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+import {WorkflowButtons} from 'meteor/fmc:workflow-helper';
+
 /*
 IssueDetail = React.createClass({
 
@@ -49,6 +52,8 @@ IssueDetail = React.createClass({
                 ready:true,
                 request:request,
                 owner:request.getOwner(),
+                team:request.getTeam(),
+                facility:request.getFacility(),
                 facilityContact:facilityContact,
                 supplier:request.getSupplier(),
                 assignee:request.getAssignee(),
@@ -65,13 +70,17 @@ IssueDetail = React.createClass({
 
     componentWillMount: function() {
         this.saveItem = _.debounce(this.saveItem,500);
-    },    
+    },
+
+    formatDate(date) {
+        return moment(date).format('ddd Do MMM, h:mm a');
+    },
 
     render() {
         var request = this.props.item;
         var notifications = this.data.notifications;
         var service = request?request.service:{};
-        var thumb = service.name?"img/services/"+service.name+".jpg":null;
+        var thumb = service&&service.name?"img/services/"+service.name+".jpg":null;
         var contacts;
         if(request.members) {
             contacts = request.getMembers();
@@ -86,23 +95,55 @@ IssueDetail = React.createClass({
             });
         }
         return (
-            <div className="facility-card">
+            <div className="facility-card" style={{background:"#eee"}}>
 
-                <div className="contact-thumbnail">
-                    {thumb?
-                    <div className="cover-image" style={{backgroundImage:"url('"+thumb+"')"}}></div>
-                    :null}
+                <div className="wo-detail">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <h2>{this.data.team.name}</h2>
+                            <FacilityDetails item={this.data.facility}/>
+                            <ContactDetails item={this.data.owner}/>
+                        </div>
+                        <div className="col-md-6" style={{textAlign:"right"}}>
+                            <h2>Work Order No {request.code}</h2>
+                            {request.service?<b style={{display:"block",marginBottom:"7px"}}>{request.getServiceString()}<br/></b>:null}
+                            <b>Created</b> <span>{this.formatDate(request.createdDate)}<br/></span>
+                            {request.issuedDate?<span><b>Isssued</b> <span>{this.formatDate(request.issuedDate)}</span><br/></span>:null}
+                            {request.dueDate?<span><b>Due</b> <span>{this.formatDate(request.dueDate)}</span><br/></span>:null}
+                            {request.priority?<span><b>Priority</b> <span>{request.priority}</span><br/></span>:null}
+                            <b>Status</b><br/>
+                            <span style={{display:"inline-block",fontSize:"16px",marginTop:"20px"}} className={"label label-"+request.status}>{request.status}</span>
 
-                    <div className="title-overlay">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <IssueSpecArea item={request} save={this.saveItem} closeCallback={this.props.closeCallback}/>
-                            </div>
                         </div>
                     </div>
 
                 </div>
+                
+                <div style={{textAlign:"right"}}>
+                    <WorkflowButtons item={request}/>
+                </div>
 
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>Subject</th>
+                        <td>{request.name||<i>unnamed</i>}</td>
+                    </tr>
+                    {request.location?<tr>
+                        <th>Location</th>
+                        <td>{request.getLocationString()}</td>
+                    </tr>:null}
+                    {request.supplier?<tr>
+                        <th>Supplier</th>
+                        <td>{request.supplier.name}</td>
+                    </tr>:null}
+                    {request.description?                 
+                    <tr>
+                        <th>Description</th>
+                        <td>{request.description}</td>
+                    </tr>:null}
+                    </tbody>
+                </table>
 
                 <IpsoTabso tabs={[
                     {
@@ -115,7 +156,7 @@ IssueDetail = React.createClass({
                         tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                         content:    <ContactList group={request} readOnly={true}/>
                     }
-                ]} />                
+                ]} />
             </div>
         )}
 })

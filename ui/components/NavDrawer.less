@@ -8,7 +8,7 @@ body {
     bottom:0;
     left:0;
   	background-color:@nav-drawer-bg;
-    font-size:12px;
+    font-size:@font-size-sm;
   	width:@nav-drawer-open-width;
   	z-index:1499;
   	box-shadow:@nav-drawer-shadow;
@@ -50,7 +50,6 @@ body {
         background:@nav-drawer-active-bg;
         a {
           color:@nav-drawer-active-fg;
-          font-weight:600;
         }
       }
     }
@@ -80,10 +79,6 @@ body {
 
 body {
 
-  .page-wrapper {
-    margin-top:@wrapper-top;
-  }
-
   @media (min-width: 768px) {
     .page-wrapper {
       position: relative;
@@ -92,6 +87,7 @@ body {
       margin-left:@wrapper-open-left;
       transition:@nav-drawer-transition;
       text-align: center;
+      margin-top:@wrapper-top+@gutter;
     }
 
     .page-wrapper-inner {
@@ -110,7 +106,9 @@ body {
   }
 
   @media (max-width:768px) {
-
+    .page-wrapper {
+      margin-top:@wrapper-top;
+    }
   }
 }
 

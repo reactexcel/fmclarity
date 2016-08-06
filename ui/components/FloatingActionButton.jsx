@@ -3,6 +3,12 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 FABActions = new function() {
 
+	function viewRequest(request) {
+		Modal.show({
+    		content:<IssueDetail item={request}/>
+    	})
+	}
+
     function createRequest() {
         var selectedFacility = Session.getSelectedFacility();
         var selectedTeam = Session.getSelectedTeam();
@@ -97,6 +103,7 @@ FABActions = new function() {
     }
 
     return {
+    	viewRequest,
     	createRequest,
     	createFacility,
     	createComplianceRule

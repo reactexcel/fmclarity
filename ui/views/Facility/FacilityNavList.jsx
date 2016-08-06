@@ -74,8 +74,7 @@ SupplierNavList = React.createClass({
         return {
         	team : team,
             suppliers : suppliers,
-            facility : facility,
-            selectedSupplier : null
+            facility : facility
 //            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
         }
     },
@@ -84,8 +83,8 @@ SupplierNavList = React.createClass({
 		return (
 			<NavList 
 				items={this.data.suppliers} 
-				selectedItem={this.data.selectedSupplier}
-				onClick={this.props.onClick}
+				selectedItem={this.props.selectedItem}
+				onClick={this.props.onChange}
 				tile={ContactCard}
 			/>
 		)
@@ -110,7 +109,7 @@ NavList = class NavListInner extends React.Component {
 					return <div 
 						key={item._id} 
 						className={"list-tile"+(item._id==selectedItem._id?" active":"")} 
-						onClick={(e)=>{e.stopPropagation();this.props.onClick(item)}}
+						onClick={()=>{this.props.onClick(item)}}
 					>
 						<ListTile item={item}/>
 					</div>
@@ -199,7 +198,7 @@ MultipleItems = class MultipleItems extends React.Component {
 			<div>
 			<div className="avatar" style={{position:"relative",float:"left"}}>
 				{images.map((src,idx)=>{
-					return <img key={src} src={src} style={{width:"27px",height:"27px",border:"1px solid #bbb",position:"absolute",top:(idx*5)+"px",left:(idx*5)+"px"}} />
+					return <img key={idx+'-'+src} src={src} style={{width:"27px",height:"27px",border:"1px solid #bbb",position:"absolute",top:(idx*5)+"px",left:(idx*5)+"px"}} />
 				})}
 				{items&&items.length?
 					<div style={{position:"absolute",top:"15px",left:"25px"}}>
@@ -207,7 +206,7 @@ MultipleItems = class MultipleItems extends React.Component {
 					</div>:null
 				}
 			</div>
-			<div style={{float:"left",paddingLeft:"42px"}}>Select Facility</div>
+			<div style={{float:"left",paddingLeft:"42px"}}>All Facilities</div>
 			</div>
 		)
 	}

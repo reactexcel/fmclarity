@@ -121,6 +121,9 @@ IssueSpecArea = React.createClass({
         var actionVerb = this.data.actionVerb;
         var regressVerb = this.data.regressVerb;
 
+        if(!request) {
+            return <div/>
+        }
 
         return (
             <div className="issue-spec-area">

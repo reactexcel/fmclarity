@@ -168,10 +168,6 @@ FacilityViewDetail = React.createClass({
         if(facility) {
             createdAt = moment(facility.createdAt).format();
             contact = facility.getPrimaryContact();
-            if(contact) {
-                contactName = contact.getName();
-                contact = contact.getProfile();
-            }
         }
 
         var services = facility.servicesRequired.sort(function(a,b){
@@ -191,20 +187,13 @@ FacilityViewDetail = React.createClass({
                     <div className="title-overlay">
                         <div className="row">
                             <div className="col-md-4">
-                                <div className="facility-title">
+                                <div className="facility-title" style={{borderBottom:contact?"1px solid #fff":"none"}}>
                                     <h2>{facility.getName()}</h2>                        
                                     {address?<b>{address}</b>:null}
                                 </div>
-                                {contact?
-                                     <div className="contact-info">
-                                        {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
-                                        <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
-                                        {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
-                                        {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
-                                    </div>
-                                :null}
-
+                                <ContactDetails item={contact}/>
                             </div>
+                            {/*
                             <div className="col-md-8">
                                 <div className="services-overview">
                                     {services?services.map((svc,idx)=>{
@@ -222,6 +211,7 @@ FacilityViewDetail = React.createClass({
                                     }):null}
                                 </div>
                             </div>
+                            */}
                         </div>
                     </div>
 
@@ -267,4 +257,33 @@ FacilityViewDetail = React.createClass({
                 ]} />                
             </div>
         )}
+})
+
+ContactDetails = React.createClass({
+    render() {
+        var contact,contactName;
+        var contact = this.props.item;
+        if(contact) {
+            contactName = contact.getName?contact.getName():contact.name;
+            contact = contact.getProfile?contact.getProfile():contact;
+        }
+        if(!contact) return <div/>
+        return <div className="contact-info">
+            {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
+            <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
+            {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
+            {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
+        </div>
+    }  
+})
+
+FacilityDetails = React.createClass({
+    render() {
+        var facility = this.props.item;
+        if(!facility) return <div/>
+        return <div className="contact-info">
+            <span className="contact-title">Site: {facility.name}<br/></span>
+            {facility.address?<span><i className="fa fa-map-marker"></i> {facility.getAddress()}<br/></span>:null}
+        </div>
+    }  
 })

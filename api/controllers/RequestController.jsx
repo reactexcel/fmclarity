@@ -226,7 +226,39 @@ Issues.methods({
     helper:function(request) {
       return request.area;
     }
+  },
+
+  getLocationString:{
+    authentication:true,
+    helper:function(request) {
+      var str = '';
+      if(request.level) {
+        str+= request.level.name;
+      }
+      if(request.area) {
+        str+= (' - '+request.area.name);
+        if(request.area.identifier&&request.area.identifier.name) {
+          str+= (', '+request.area.identifier.name);
+        }
+      }
+      return str;
+    }
+  },
+
+  getServiceString:{
+    authentication:true,
+    helper:function(request) {
+      var str = '';
+      if(request.service) {
+        str+= request.service.name;
+      }
+      if(request.subservice) {
+        str+= (' - '+request.subservice.name);
+      }
+      return str;
+    }
   }
+
 })
 
 function setArea(request,area) {

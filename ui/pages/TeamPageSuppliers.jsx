@@ -35,32 +35,25 @@ SupplierIndexPage = React.createClass({
 
 	render() {
 		return(
-            <div 
-                className={
-                    "suppliers-page animated fadeIn"+
-                    (this.state.supplier?" second-selected":"")
-                }
-            >
-                <div className="nav-col" >
-                    <FacilityFilter />
-                </div>
-                <div className="nav-col">
-                    <NavDropDownList 
-                        items={this.data.suppliers}
-                        selectedItem={this.state.supplier} 
-                        tile={ContactCard}
-                        onChange={(supplier)=>{
-                            this.setState({
-                                supplier:supplier
-                            })
-                        }}
-                    />
-                </div>
-                <div className={"content-col"+(!this.state.supplier?" inactive":"")}> 
-                    <div className="card-body ibox">
-                        {this.state.supplier?
-                        <TeamCard item={this.state.supplier}/>
-                        :null}
+            <div className="suppliers-page animated fadeIn">
+                <FacilityFilter />
+                <div className="row" style={{paddingTop:"50px"}}>
+                    <div className="col-md-4">
+                        <SupplierNavList 
+                            selectedItem={this.state.supplier}
+                            onChange={(supplier)=>{
+                                this.setState({
+                                    supplier:supplier
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className="col-md-8"> 
+                        <div className="card-body ibox">
+                            {this.state.supplier?
+                            <TeamCard item={this.state.supplier}/>
+                            :null}
+                        </div>
                     </div>
                 </div>
             </div>

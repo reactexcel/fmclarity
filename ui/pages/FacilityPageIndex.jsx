@@ -46,6 +46,10 @@ FacilityPageIndex = React.createClass({
 		}
     },
 
+    componentWillMount() {
+    	Session.selectFacility(0);
+    },
+
     // Used as a callback to filterbox
     // Causes facility selected in filterbox left nav to be also selected globally
 	handleSelect(facility) {
@@ -55,32 +59,22 @@ FacilityPageIndex = React.createClass({
 	render() {
 
 		var team = this.data.team;
+		var facilities = this.data.facilities;
 
-		if(!team) {
-			return <div/>
-		}
+		if(!team) return <div/>
 
-		return(		        
-			<div className="facility-page animated fadeIn">
-
-                {
-	                /* contractors can filter facilities by client using this component */
-	                team.type=="contractor"?
-                    	<ClientFilter title="Sites"/>
-	                :
-	                	null
-            	}
-
-		        <FacilityFilter/>
-		        <div style={{paddingTop:"50px"}}>            	
-                    <div className="card-body ibox">
-                        {this.data.facility?
-                        <FacilityCard item={this.data.facility}/>
-                        :null}
-                    </div>
-				</div>
-
-			</div>
-		);
+		return <div className="facility-page animated fadeIn">
+			{/*<ClientFilter/>*/}
+	        {/*<FacilityFilter/>*/}
+	        {this.data.facilities.map((f)=>{
+	        	return <FacilityCard2 key={f._id} item={f} onClick={()=>{
+	        		this.handleSelect(f);
+	        	}}/>
+	        })}
+	    	{/*should be in a layout class - should this be fm-layout?*/}
+            {this.data.facility?<div className="panel-wrapper animated slideInRight">
+				<FacilityCard item={this.data.facility}/>
+            </div>:null}
+		</div>
 	}
 })

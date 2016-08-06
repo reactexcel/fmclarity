@@ -111,7 +111,7 @@ Modal = React.createClass({
               return <div className={"modal-dialog"+(q.size?(" modal-dialog-"+q.size):"")} key={idx}>
                 <div className="modal-body">
                   {q.content}
-                  <span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
+                  {/*<span style={{position:"absolute",right:"10px",top:"35px",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>*/}
                 </div>
               </div>
             })

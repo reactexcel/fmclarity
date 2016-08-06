@@ -69,7 +69,7 @@ RequestsPageIndex = React.createClass({
 	    {
 	    	text:"Status",
 	    	sortFunction(a,b) {
-	    		var weight = {'New':0,'Issued':1,'Closed':2};
+	    		var weight = {'Draft':0,'New':1,'Issued':2,'Complete':3,'Closed':4,'PMP':5};
 	    		return	(weight[a.status]<weight[b.status])?-1:1;
 	    	},
 	    },
@@ -132,7 +132,10 @@ RequestsPageIndex = React.createClass({
 			<div>
 		        <FacilityFilter/>
 		        <div className="issue-page animated fadeIn" style={{paddingTop:"50px"}}>
-		        	<RequestsTable filter={this.data.filter}/>
+		        	<RequestsTable 
+		        		headers={headers}
+		        		filter={this.data.filter}
+		        	/>
 				</div>
 			</div>
 		);

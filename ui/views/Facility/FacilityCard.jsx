@@ -13,6 +13,10 @@ FacilityCard = createContainer(({item})=>{
 },FacilityCardInner);
 */
 
+//this is not actually a card - it is a FacilityPanel
+//Panel - large with tabs
+//Card - small with image
+//Tile - small for positioning
 FacilityCard = React.createClass({
 	mixins:[ReactMeteorData],
 	getMeteorData(){
@@ -50,6 +54,13 @@ class FacilityCardInner extends React.Component {
 				}
 			});
 		}
+
+		menu.push({
+			label:"Back",
+			action(){
+				Session.selectFacility(0);
+			}
+		})
 		return menu;
 	}
 

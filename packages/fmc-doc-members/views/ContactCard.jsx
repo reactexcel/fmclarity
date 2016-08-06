@@ -14,14 +14,14 @@ ContactAvatarSmall = React.createClass({
 		if(contact) {
 			profile = contact.getProfile?contact.getProfile():contact;
 			name = profile?profile.name:"";
-			/*if(contact.getThumbUrl) {
+			if(contact.getThumbUrl) {
 				url = contact?contact.getThumbUrl():"";
 				if(url&&url!="/img/default-placeholder.jpg") {
 					style['backgroundImage'] = 'url(\''+url+'\')';
 					style['backgroundSize'] = "cover";
 					style['color'] = "transparent";
 				}
-				else {*/
+				else {
 					var names;
 					if(name) {
 						names = name.trim().split(' ');
@@ -42,8 +42,8 @@ ContactAvatarSmall = React.createClass({
 						var b = (name.charCodeAt(name.length-1)%25)*10;
 						style['backgroundColor'] = 'rgb('+r+','+g+','+b+')';
 					}
-				/*}
-			}*/
+				}
+			}
 		}
 		return {
 			name:name,
@@ -91,6 +91,7 @@ Contact2Line = React.createClass({
 	}
 });
 
+//this is actually a contact tile
 ContactCard = React.createClass({
 	render() {
 		

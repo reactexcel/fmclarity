@@ -2,6 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+//To be renamed Facility Tile
 FacilitySummary = React.createClass({
 
     mixins: [ReactMeteorData],
@@ -64,6 +65,71 @@ FacilitySummary = React.createClass({
 			    </div>
 			</div>
 		)
+	}
+
+});
+
+FacilityThumbnail = React.createClass({
+	mixins:[ReactMeteorData],
+	getMeteorData() {
+		return {
+			thumb:this.props.item.getThumbUrl()
+		}
+	},
+	render() {
+		var style = _.extend({
+			//width:"37px",
+			//height:"37px",
+			backgroundImage:"url('"+this.data.thumb+"')",
+			backgroundSize:"cover"
+		},this.props.style)
+		return <div className="facility-thumbnail" style={style}>
+			{this.props.children}
+		</div>
+	}
+})
+
+FacilityContact = React.createClass({
+	mixins:[ReactMeteorData],
+	getMeteorData() {
+		var contact = this.props.item.getPrimaryContact();
+		if(contact&&contact.getProfile) {
+			contact = contact.getProfile();
+		}
+		return {contact}
+	},
+	render() {
+
+		if(!this.data.contact) return <div/>
+
+		return <span className="contact-card-line-2">
+  			<a href="#">{this.data.contact.name}</a>&nbsp;&nbsp;
+        	{this.data.contact.email?
+        		<span><i className="fa fa-envelope"></i>&nbsp;{this.data.contact.email}</span>
+        	:null}		            	
+		</span>
+	}
+})
+
+//To be renamed FacilityCard
+FacilityCard2 = React.createClass({
+
+	render() {
+
+		var facility = this.props.item;
+		if(!facility) return <div/>
+
+		var address = facility.getAddress();
+
+	    return <div className="facility-card2" onClick={(e)=>{this.props.onClick?this.props.onClick(e):null}}>
+    		<FacilityThumbnail item={facility}>
+    			<div className="thumbnail-overlay">
+			    	<h3 className="title-line">{facility.name}</h3>
+			    	<span className="address-line"><i className="fa fa-map-marker"></i> {address}</span>
+    			</div>
+    		</FacilityThumbnail>
+    		{/*<FacilityContact item={facility}/>*/}
+		</div>
 	}
 
 });

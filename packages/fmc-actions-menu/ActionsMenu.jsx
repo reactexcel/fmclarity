@@ -38,12 +38,10 @@ export default class ActionsMenu extends React.Component {
 				<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
 					<i className={"fa fa-"+this.state.icon}></i>
 				</a>
-				<ul className="dropdown-menu dropdown-user" style={{
-					position:"absolute",
+				<ul className="dropdown-menu" style={{
 					right: 0,
 					top: "30px",
-					left: "auto",
-					zIndex:1001,
+					left: "auto"					
 		    	}}>
 		    		{this.state.items.map((i,idx)=>(
 		    			<li key={idx} onClick={()=>this.runAction(i)}><a>{i.label}</a></li>

@@ -53,7 +53,8 @@ const Calendar = React.createClass({
                     color:colors[i.priority],
                     start:i.dueDate,
                     allDay:true,
-                    url:i.getUrl()
+                    request:i,
+                    //url:i.getUrl()
                 });
             }
         });
@@ -67,6 +68,11 @@ const Calendar = React.createClass({
         };
         $(this.refs.calendar).fullCalendar({
             //height:500,
+            eventClick(event) {
+                if(event.request) {
+                    FABActions.viewRequest(event.request);
+                }
+            },
             eventLimit:true,
             header: {
                 left:'prev',
