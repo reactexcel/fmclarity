@@ -26,15 +26,16 @@ ServicePageIndex = React.createClass({
     getMeteorData() {
     	Meteor.subscribe('teamsAndFacilitiesForUser');
     	var data = {};
-	    var facility = Session.getSelectedFacility();
-	    if(facility) {
-	    	data.items = _.filter(facility.servicesRequired,(svc)=>{return svc.data&&svc.data.complianceRules&&svc.data.complianceRules.length});
+	    data.facility = Session.getSelectedFacility();
+	    if(data.facility) {
+	    	data.items = _.filter(data.facility.servicesRequired,(svc)=>{return svc.data&&svc.data.complianceRules&&svc.data.complianceRules.length});
 	    }
 	    return data;
     },
 
 	render() {
 		return <ServicePageIndexInner 
+			item={this.facility}
 			items={this.data.items}
 		/>
 	}
@@ -50,15 +51,9 @@ class ServicePageIndexInner extends React.Component {
 
 		        <FacilityFilter/>
 		        <div style={{paddingTop:"50px"}}>
-
-					<FilterBox2 
-						items={this.props.items}
-						navWidth={3}
-						itemView={{
-							summary:ServiceListTile,
-							detail:ServiceViewDetail
-						}}
-					/>
+					<div className="card-body ibox">
+						<ServiceViewDetail items={this.props.items} item={this.props.item}/>
+					</div>
 				</div>
 
 			</div>

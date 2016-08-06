@@ -92,9 +92,11 @@ export default function(collection) {
 
 	}
 
-	function doAction(request,actionName,form) {
+	function doAction(request,actionName) {
+		//get possible actions for this request, then retrieve the action by name
 		var actions = getActions(request);
 		var action = actions[actionName];
+
 		if(action) {
 			if(action.form) {
 				var form = action.form;

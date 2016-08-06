@@ -97,6 +97,7 @@ function flattenRecipients(cc) {
 
 function distributeMessage({recipientRoles,message,suppressOriginalPost}) {
   if(!message) {
+    console.log('No message to send...');
     return;
   }
   var user = Meteor.user();

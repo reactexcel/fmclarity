@@ -12,7 +12,6 @@ ServiceViewDetail = React.createClass({
         var data = {};
         data.facility = Session.getSelectedFacility();
         data.team = Session.getSelectedTeam();
-        data.suppliers = data.facility.getSuppliers();
         return data;
     },
 
@@ -24,7 +23,7 @@ ServiceViewDetail = React.createClass({
             //get index of the selected service
             var idx=-1;
             for(var i in services) {
-                if(services[i].name==newRule.service.name) {
+                if(newRule.service&&newRule.service.name&&services[i].name==newRule.service.name) {
                     idx = i;
                     break;
                 }
@@ -58,6 +57,22 @@ ServiceViewDetail = React.createClass({
         Modal.hide();
     },
 
+    deleteRules(serviceName) {
+        console.log(serviceName);
+        var services = this.data.facility.servicesRequired;
+        var idx=-1;
+        for(var i in services) {
+            if(services[i].name==serviceName) {
+                idx = i;
+                break;
+            }
+        }
+        if(idx>=0) {
+            services[idx].data.complianceRules = null;
+            this.data.facility.setServicesRequired(services);
+        }
+    },
+
     handleCreateRuleClick() {
         Modal.show({
             content:<AutoForm 
@@ -72,29 +87,22 @@ ServiceViewDetail = React.createClass({
     },
 
     render() {
-
         var facility = this.data.facility;
-        var team = this.data.team;
-        var suppliers = this.data.suppliers;
-        var service = this.props.item;
+        if(!facility) 
+            return <div/>
+        var thumb, services;
 
-        var thumb = "img/services/"+service.name+".jpg";
-        var address;
-
-        var thumb, createdAt, contact, contactName;
-        if(facility) {
-            createdAt = moment(facility.createdAt).format();
-            contact = facility.getPrimaryContact();
-            if(contact) {
-                contactName = contact.getName();
-                contact = contact.getProfile();
-            }
+        services = _.filter(facility.servicesRequired,(svc)=>{return svc.data&&svc.data.complianceRules&&svc.data.complianceRules.length});
+        if(services.length) {
+            var i = Math.floor(Math.random()*services.length);
+            thumb = "img/services/"+services[i].name+".jpg";
         }
 
-        //IpsoTabs content needs slimscroll applied
-        //IpsoTabs should be renamed... TabPanel?
+        var results = ComplianceEvaluationService.evaluateServices(services);
+        console.log(results);
+
         return (
-            <div className="facility-card">
+            <div className="facility-card" style={{background:"#fff",color:"#333"}}>
 
                 <div className="contact-thumbnail">
                     {thumb?
@@ -103,20 +111,25 @@ ServiceViewDetail = React.createClass({
                     <div className="title-padding"/>
                     <div className="title-overlay" style={{overflow:"hidden",padding:"0px"}}>
                         <div className="facility-title" style={{float:"left",padding:"20px"}}>
-                            <h2 style={{margin:0}}>{service.name}</h2>
-                            {address?<b>{address}</b>:null}
+                            <h2 style={{margin:0}}>{facility.name}</h2>
+                            <b style={{color:results.passed?'green':'red'}}>{results.percentRulesPassed}% Compliant</b><br/>
+                            <span>{results.numRulesFailed} non-compliant items</span><br/>
+                            <span>{results.servicesFailed} non-compliant services</span>
                         </div>
-                        <button onClick={this.handleCreateRuleClick} className="btn btn-flat" style={{float:"right",backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
+                        <div style={{textAlign:"right"}}>
+                            <button onClick={this.handleCreateRuleClick} className="btn btn-flat" style={{backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
+                        </div>
                     </div>                    
                 </div>
 
+                {services.map((service,idx)=>{
+                    return <div key={idx+'-'+service.name} style={{position:"relative"}}>
+                        <ServiceListTile item={service}/>
+                        <ComplianceGroup item={service}/>
+                        <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"5px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
+                    </div>
+                })}
 
-                <IpsoTabso tabs={[
-                    {
-                        tab:        <span id="pmp-tab"><span style={{color:"white"}}>Compliance</span></span>,
-                        content:    <ComplianceGroup item={service}/>
-                    }
-                ]} />                
             </div>
         )}
 })

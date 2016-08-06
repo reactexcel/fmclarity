@@ -10,7 +10,7 @@ Issues.forms = {
 //////////////////////////////////////////////////////
 // Draft
 //////////////////////////////////////////////////////
-Issues.workflow.addState('Draft',{
+Issues.workflow.addState(['Draft','PMP'],{
 
   create:{
     label:"Create", //dont think this is used?
@@ -87,6 +87,7 @@ Issues.workflow.addState('Draft',{
     authentication:["owner","facility manager","team manager"],
     method:function(request) {
       Issues.remove(request._id);
+      Modal.hide();
     }
   }
 })
@@ -150,13 +151,13 @@ Issues.workflow.addState(['New','Quoted'],{
     authentication:AuthHelpers.managerOfRelatedTeam,
     form:{
       title:"What is your reason for rejecting this request?",
-      form:['rejectDescription']
+      fields:['rejectDescription']
     },
     method:function(request) {
       Issues.save(request,{
         status:"Rejected"
       });
-      request = Issues.findOne(request._id);
+      request = Issues._transform(request);
       request.distributeMessage({
         recipientRoles:["owner","team","team manager","facility","facility manager"],
         message:{
@@ -239,7 +240,7 @@ Issues.workflow.addState('Issued',{
   reject:{
     label:'Reject',
     authentication:AuthHelpers.memberOfSuppliersTeam,
-    fields:{
+    form:{
       title:"What is your reason for rejecting this request?",
       form:['rejectDescription']
     },
@@ -267,7 +268,7 @@ Issues.workflow.addState('Issued',{
       title:"What is your reason for deleting this request?",
       fields:['rejectDescription']
     },
-    method:function(){
+    method:function(request){
       Issues.save(request,{status:Issues.STATUS_DELETED});
       request = Issues.findOne(request._id);
       request.distributeMessage({
@@ -275,6 +276,7 @@ Issues.workflow.addState('Issued',{
         message:{
           verb:"deleted",
           subject:"Work order #"+request.code+" has been deleted",
+          body:request.rejectDescription
         }
       });
       return request;
@@ -310,12 +312,13 @@ Issues.workflow.addState('Complete',{
     },
     method:function(request) {
       Issues.save(request,{status:'Closed'});
-      request = Issues.findOne(request._id);
+      request = Issues._transorm(request);
       request.distributeMessage({
         recipientRoles:["team","team manager","facility manager","supplier manager"],
         message:{
           verb:"closed",
           subject:"Work order #"+request.code+" has been closed",
+          body:request.closeComment
         }
       });
     }
@@ -432,7 +435,11 @@ function actionComplete(request) {
   });
   request = Issues.findOne(request._id);
 
+  console.log(request);
+
   if(request.closeDetails.furtherWorkRequired) {
+
+    console.log('further work required');
 
     var closer = Meteor.user();
 
@@ -457,25 +464,26 @@ function actionComplete(request) {
     }
 
     var response = Meteor.call('Issues.create',newRequest);
+    console.log(response);
     var newRequest = Issues._transform(response);
     //ok cool - but why send notification and not distribute message?
     //is it because distribute message automatically goes to all recipients
     //I think this needs to be replaced with distribute message
     request.distributeMessage({message:{
-      verb:"complete",
+      verb:"completed",
       subject:"Work order #"+request.code+" has been completed and a follow up has been requested"
     }});
 
-    newRequest.distributeMessage({
+    newRequest.distributeMessage({message:{
       verb:"requested a follow up to "+request.getName(),
       subject:closer.getName()+" requested a follow up to "+request.getName(),
       body:newRequest.description
-    });
+    }});
   }
   else {
 
     request.distributeMessage({message:{
-      verb:"closed",
+      verb:"completed",
       subject:"Work order #"+request.code+" has been completed"
     }});
 

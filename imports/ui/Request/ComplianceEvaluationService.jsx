@@ -121,8 +121,66 @@ ComplianceEvaluationService = new function() {
     return results;
   }
 
+  function evaluateService(service) {
+    var results = evaluate(service.data.complianceRules);
+    var numRules = service.data.complianceRules.length;
+    var numPassed = results.passed.length;
+    var numFailed = results.failed.length;
+    var percPassed = Math.ceil((numPassed/numRules)*100);
+    var passed = false;
+    if(percPassed==100) {
+      passed = true;
+    }
+    return {
+      name:service.name,
+      passed,
+      percentPassed:percPassed,
+      numPassed,
+      numFailed,
+      results
+    }
+  }
+
+  function evaluateServices(services) {
+    var rules = [];
+    var results = {
+      passed:[],
+      failed:[]
+    };
+    services.map((s)=>{
+      var result = evaluateService(s);
+      if(result.passed) {
+        results.passed.push(result);
+      }
+      else {
+        results.failed.push(result);
+      }
+      rules = rules.concat(s.data.complianceRules);
+    })
+    var overall = evaluate(rules);
+    var numRules = rules.length;
+    var numPassed = overall.passed.length;
+    var numFailed = overall.failed.length;
+    var percPassed = Math.ceil((numPassed/numRules)*100);
+    var passed = false;
+    if(percPassed==100) {
+      passed = true;
+    }
+    return {
+      passed,
+      percentRulesPassed:percPassed,
+      numRulesPassed:numPassed,
+      numRulesFailed:numFailed,
+      servicesPassed:results.passed.length,
+      servicesFailed:results.failed.length
+    }
+
+
+  }
+
   return {
     evaluateRule,
-    evaluate
+    evaluate,
+    evaluateServices
   }
 }

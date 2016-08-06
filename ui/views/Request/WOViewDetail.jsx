@@ -4,72 +4,30 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import {WorkflowButtons} from 'meteor/fmc:workflow-helper';
 
-/*
-IssueDetail = React.createClass({
-
-    saveItem() {
-        Meteor.call('Issues.save',this.props.item);
-    },
-
-    componentWillMount: function() {
-        this.saveItem = _.debounce(this.saveItem,500);
-    },
-
-    render() {
-        var issue=this.props.item;
-        return (
-            <div className="issue-detail">
-                <IssueSpecArea item={issue} save={this.saveItem} closeCallback={this.props.closeCallback}>
-                    <IssueDynamicArea item={issue} save={this.saveItem} closeCallback={this.props.closeCallback}/>
-                </IssueSpecArea>
-            </div>
-        )
-    }
-})
-*/
 IssueDetail = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var request = this.props.item;
-        if(!request) {
-            return {
-                ready:false
+        var data = {};
+        if(this.props.item&&this.props.item._id) {
+            data.request = Issues.findOne(this.props.item._id);
+            if(data.request) {
+                data.owner = data.request.getOwner();
+                data.team = data.request.getTeam();
+                data.supplier = data.request.getSupplier();
+                data.assignee = data.request.getAssignee();
+                data.notifications = data.request.getNotifications();
+                data.messageCount = data.request.getMessageCount();
+                data.attachmentCount = data.request.getAttachmentCount();
+
+                data.facility = data.request.getFacility();
+                if(data.facility) {
+                    data.facilityContact = data.facility.getPrimaryContact();
+                }
             }
         }
-        else {
-            var selectedTeam, suppliers;
-            selectedTeam = Session.getSelectedTeam();
-
-            var facility, facilityContacts, facilityContact;
-            facility = request.getFacility();
-            if(facility) {
-                facilityContacts = facility.getPrimaryContact();
-            }
-
-            return {
-                ready:true,
-                request:request,
-                owner:request.getOwner(),
-                team:request.getTeam(),
-                facility:request.getFacility(),
-                facilityContact:facilityContact,
-                supplier:request.getSupplier(),
-                assignee:request.getAssignee(),
-                notifications:request.getNotifications(),
-                messageCount:request.getMessageCount(),
-                attachmentCount:request.getAttachmentCount()
-            }
-        }
-    },
-
-    saveItem() {
-        Meteor.call('Issues.save',this.props.item);
-    },
-
-    componentWillMount: function() {
-        this.saveItem = _.debounce(this.saveItem,500);
+        return data;
     },
 
     formatDate(date) {
@@ -77,10 +35,12 @@ IssueDetail = React.createClass({
     },
 
     render() {
-        var request = this.props.item;
+        var request = this.data.request;
+
+        if(!request) return <div/>
+
         var notifications = this.data.notifications;
-        var service = request?request.service:{};
-        var thumb = service&&service.name?"img/services/"+service.name+".jpg":null;
+        var thumb = request.service&&request.service.name?"img/services/"+request.service.name+".jpg":null;
         var contacts;
         if(request.members) {
             contacts = request.getMembers();
@@ -119,7 +79,7 @@ IssueDetail = React.createClass({
 
                 </div>
                 
-                <div style={{textAlign:"right"}}>
+                <div style={{textAlign:"right",paddingRight:"20px"}}>
                     <WorkflowButtons item={request}/>
                 </div>
 

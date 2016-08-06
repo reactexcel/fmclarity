@@ -10,6 +10,7 @@ FABActions = new function() {
 	}
 
     function createRequest() {
+    	//look below at new compliance rule created with AutoForm, that is the way to do this...
         var selectedFacility = Session.getSelectedFacility();
         var selectedTeam = Session.getSelectedTeam();
         var request = {
@@ -27,6 +28,22 @@ FABActions = new function() {
 	    		name:selectedFacility.name
 	    	}
 	    }
+
+		Modal.show({
+            content:<AutoForm 
+                item={request}//do we need to call 'createNewItemUsingSchema' on this item?
+                form={Issues.forms.create}
+                schema={IssueSchema} 
+                onSubmit={(r)=>{
+                	Meteor.call('Issues.create',r);
+                	Modal.hide();
+                }}
+            />
+        })
+
+	    //request = Issues._transform(request);
+		//request.doAction("create");	    
+		/*
 	    Meteor.call('Issues.create',request,function(err,response){
 	    	if(err) {
 	    		console.log(err);
@@ -36,6 +53,7 @@ FABActions = new function() {
 		    	newRequest.doAction("create");
     		}
 	    });
+	    */
     }
 
     function createFacility() {

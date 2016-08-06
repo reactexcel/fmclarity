@@ -1,12 +1,12 @@
 CloseDetailsSchema = {
     attendanceDate: {
       label:"Attendence date and time",
-      input:"date",
+      input:"MDDateTime",
       size:6
     },
     completionDate: {
       label:"Completion date and time",
-      input:"date",
+      input:"MDDateTime",
       size:6
     },
     /*
@@ -25,13 +25,15 @@ CloseDetailsSchema = {
     },
     furtherWorkRequired: {
       label:"Further work required",
-      input:"switch",
+      input:"switch"
     },
     furtherWorkDescription: {
       label:"Details of further work",
       input:"mdtextarea",
       condition(item) {
-        return item&&(item.furtherWorkRequired == true);
+        //I have a hunch this is broken
+        //shouldn't we be sending in the subobject as item?
+        return item.closeDetails&&(item.closeDetails.furtherWorkRequired == true);
       },
     },
     furtherPriority : {
@@ -39,20 +41,20 @@ CloseDetailsSchema = {
       input:"MDSelect",
       options:{items:["Scheduled","Standard","Urgent","Critical"]},
       condition(item) {
-        return item&&(item.furtherWorkRequired == true);
+        return item.closeDetails&&(item.closeDetails.furtherWorkRequired == true);
       },
     },
     furtherQuote: {
       label:"Quote",
       input:"FileField",
       condition(item) {
-        return item&&(item.furtherWorkRequired == true);
+        return item.closeDetails&&(item.closeDetails.furtherWorkRequired == true);
       },
     },
     furtherQuoteValue: {
       label:"Value of quote",
       condition(item) {
-        return item&&(item.furtherWorkRequired == true);
+        return item.closeDetails&&(item.closeDetails.furtherWorkRequired == true);
       },
     }
 }

@@ -26,7 +26,7 @@ MessageView = React.createClass({
     },
 
     componentDidMount() {
-        $(this.refs.input).elastic();
+        //$(this.refs.input).elastic();
     },
 
     submit() {
@@ -36,10 +36,12 @@ MessageView = React.createClass({
         var inboxId = inbox.getInboxId();
         //console.log(inbox);
         inbox.sendMessage({
-            type:"comment",
-            verb:"commented on",
-            subject:owner.getName()+" commented on \""+inbox.getName()+"\"",
-            body:input.value
+            message:{
+                type:"comment",
+                verb:"commented on",
+                subject:owner.getName()+" commented on \""+inbox.getName()+"\"",
+                body:input.value
+            }
         });
         /*
         Meteor.call("Messages.create",{
@@ -113,9 +115,10 @@ MessageView = React.createClass({
                         ref="input"
                         style={{width:"80%",marginTop:"0px"}}
                         placeholder="Leave a message..."
-                        className={"input inline-form-control "+(used?'used':'')}
+                        className={"input "+(used?'used':'')}
                         defaultValue={message.body} 
-                        onKeyDown={this.handleKeyPress}>
+                        onKeyDown={this.handleKeyPress}
+                    >
                     </textarea>
                 </div>
             </div>)

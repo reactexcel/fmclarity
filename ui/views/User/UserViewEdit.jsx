@@ -197,7 +197,7 @@ UserViewEdit = React.createClass({
 			)
 		}
 		return (
-		    <div className="ibox-form user-profile-card">
+		    <div className="user-profile-card">
 		    	<div className="row">
 		    		<div className="col-sm-12">
                         {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}

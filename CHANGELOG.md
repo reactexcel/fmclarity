@@ -24,6 +24,15 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.0b**
+
+* Fixed a problem that was preventing wo comments to display
+* Fixed a problem that was causing drafts to be saved when wo modal was cancelled rather than submitted
+* Fixed a problem that was causing wos to fail to update in real-time in a modal
+* Fixed a problem that was causing wo deletion to fail
+* Restyled compliance page
+* Added new facility statistic evaluator to compliance page
+
 **v1.4.13b**
 
 * New medium sized card view
@@ -34,7 +43,7 @@ CHANGELOG.md
 * Clicking request in calendar opens request modal
 * New request card view
 * Restored headers in requests table
-* Restored reqeust table sort function
+* Restored request table sort function
 
 **v1.4.12b**
 

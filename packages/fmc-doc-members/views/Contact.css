@@ -7,6 +7,7 @@
 .contact-card-2line {
   text-align: left;
   white-space: nowrap;
+  overflow:hidden;
 }
 
 .contact-card-2line-text {

@@ -29,12 +29,12 @@ ServiceListTile = React.createClass({
 		var data = this.data;
 	    return (
 	    	<div className="service-list-tile">
-				<div className="facility-thumbnail pull-left">
+				<div className="facility-thumbnail">
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+data.thumb+"')",backgroundSize:"cover"}}/>
 				 </div>
 				 <div className="facility-info contact-card contact-card-2line">
 					<span className="contact-card-line-1">
-						{data.service.name}
+						<span>{data.service.name}</span>
 					</span>
 					<br/>
 					<span className="contact-card-line-2">

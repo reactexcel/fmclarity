@@ -26,7 +26,7 @@ RequestsTable = React.createClass({
         var data = {};
         data.user = Meteor.user();
         if(data.user) {
-            data.requests = data.user.getRequests(filter);
+            data.requests = data.user.getRequests(filter,{expandPMP:true});
         }
     	return data;
     },
