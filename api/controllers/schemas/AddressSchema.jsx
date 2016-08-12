@@ -9,7 +9,25 @@ AddressSchema = {
 	},
 	streetType:{
 		label: "Type",
-		size:3
+		size:3,
+		input:"MDSelect",
+		options:{
+			items:[
+				"Avenue",
+				"Boulevard",
+				"Court",
+				"Crescent",
+				"Drive",
+				"Esplanade",
+				"Lane",
+				"Parade",
+				"Place",
+				"Road",
+				"Square",
+				"Street",
+				"Terrace"
+			]
+		}
 	},
 	city:{
 		label:"City",
@@ -19,6 +37,18 @@ AddressSchema = {
 	state:{
 		label:"State",
 		size:3,
+		input:"MDSelect",
+		options:{
+			items:[
+				"ACT",
+				"SA",
+				"TAS",
+				"NT",
+				"QLD",
+				"VIC",
+				"WA"
+			]
+		}
 	},
 	postcode:{
 		label:"Postcode",

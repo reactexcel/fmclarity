@@ -24,6 +24,13 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.1b**
+
+* Modal can scroll vertically
+* Changed portfolio slide in animation to be material design compliant
+* Facility address street type is now drop down list
+* Facility address state is now drop down list
+
 **v1.5.0b**
 
 * Fixed a problem that was preventing wo comments to display
