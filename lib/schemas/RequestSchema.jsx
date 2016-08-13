@@ -5,8 +5,9 @@ import './CloseDetailsSchema.jsx';
 if(Meteor.isClient) {
   require ('/client/modules/Facility/MDLocationSelector.jsx');
   require ('/client/modules/Facility/MDFacilitySelector.jsx');
-  require ('/client/modules/Facility/MDSupplierSelector.jsx');
-  require ('/client/modules/Facility/MDServiceSelector.jsx');
+  require ('/client/modules/Team/MDSupplierSelector.jsx');
+  require ('/client/modules/Team/MDAssigneeSelector.jsx');
+  require ('/client/modules/Service/MDServiceSelector.jsx');
 }
 
 //dates structure
@@ -264,7 +265,6 @@ IssueSchema = {
 
   eta:{
     label:"ETA",
-    size:6,
     input:"MDDateTime",
   },
 
@@ -350,6 +350,7 @@ IssueSchema = {
   },
   assignee:{
     type:Object,
+    input:Meteor.isClient?MDAssigneeSelector:null,
   },
   members: {
     type: [Object],

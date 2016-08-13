@@ -73,7 +73,7 @@ PMPGroup = React.createClass({
             <div>
                 {requests&&requests.length?requests.map((r,idx)=>{
                     return (
-                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={this.showModal.bind(null,r)}>
+                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={()=>{FABActions.viewRequest(r)}}>
                             <PMPListTile item={r}/>
                         </div>
                     )

@@ -186,7 +186,8 @@ FloatingActionButton = class FloatingActionButton extends React.Component {
 					title="Create new preventative maintenence event"
 					onClick={()=>{FABActions.createRequest({
 						type:"Preventative",
-						priority:"Scheduled"
+						priority:"Scheduled",
+						status:"PMP"
 					})}} 
 					className="fab fab-4">
 						<i className="fa fa-recycle"></i>

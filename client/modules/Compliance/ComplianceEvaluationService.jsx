@@ -54,7 +54,12 @@ ComplianceEvaluationService = new function() {
           detail:"Set up "+(rule.service.name?(rule.service.name+" "):"")+"PPM rules"
         },
         resolve:function(){
-          FABActions.createRequest();
+          FABActions.createRequest({
+            type:'Preventative',
+            priority:'Scheduled',
+            status:'PMP',
+            service:rule.service
+          });
         }
       })
     },
@@ -129,58 +134,66 @@ ComplianceEvaluationService = new function() {
     var percPassed = Math.ceil((numPassed/numRules)*100);
     var passed = false;
     if(percPassed==100) {
-      passed = true;
+        passed = true;
     }
     return {
-      name:service.name,
-      passed,
-      percentPassed:percPassed,
-      numPassed,
-      numFailed,
-      results
+        name:service.name,
+        passed,
+        percentPassed:percPassed,
+        numPassed,
+        numFailed,
+        results
     }
   }
 
-  function evaluateServices(services) {
+function evaluateServices(services) {
     var rules = [];
-    var results = {
-      passed:[],
-      failed:[]
-    };
+        results = {passed:[], failed:[]},
+        overall = {},
+        nulRules = 0,
+        numPassed = 0,
+        numFailed = 0,
+        percPassed = 100,
+        passed = false;
+
     services.map((s)=>{
-      var result = evaluateService(s);
-      if(result.passed) {
-        results.passed.push(result);
-      }
-      else {
-        results.failed.push(result);
-      }
-      rules = rules.concat(s.data.complianceRules);
+        let result = evaluateService(s);
+        if(result.passed) {
+            results.passed.push(result);
+        }
+        else {
+            results.failed.push(result);
+        }
+        rules = rules.concat(s.data.complianceRules);
     })
-    var overall = evaluate(rules);
-    var numRules = rules.length;
-    var numPassed = overall.passed.length;
-    var numFailed = overall.failed.length;
-    var percPassed = Math.ceil((numPassed/numRules)*100);
-    var passed = false;
-    if(percPassed==100) {
+
+    overall = evaluate(rules);
+    numRules = rules.length;
+    numPassed = overall.passed.length;
+    numFailed = overall.failed.length;
+
+    if(numRules) {
+        percPassed = Math.ceil( (numPassed / numRules) * 100 );
+    }
+    if(percPassed == 100) {
       passed = true;
     }
+
     return {
-      passed,
-      percentRulesPassed:percPassed,
-      numRulesPassed:numPassed,
-      numRulesFailed:numFailed,
-      servicesPassed:results.passed.length,
-      servicesFailed:results.failed.length
+        passed,
+        percentRulesPassed:percPassed,
+        numRulesPassed:numPassed,
+        numRulesFailed:numFailed,
+        servicesPassed:results.passed.length,
+        servicesFailed:results.failed.length
     }
 
 
-  }
+    }
 
-  return {
-    evaluateRule,
-    evaluate,
-    evaluateServices
-  }
+    return {
+        evaluateRule,
+        evaluate,
+        evaluateServices
+    }
 }

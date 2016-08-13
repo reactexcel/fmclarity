@@ -1,6 +1,6 @@
 import React from "react"
 
-import '../Request/ComplianceEvaluationService.jsx';
+import '../Compliance/ComplianceEvaluationService.jsx';
 
 ServiceListTile = React.createClass({
 

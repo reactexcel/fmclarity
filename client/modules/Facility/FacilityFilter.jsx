@@ -29,7 +29,7 @@ FacilityFilter = React.createClass({
     render() {
         var facility = this.data.facility;
         return (
-            <div style={{position:"absolute",zIndex:1400}}>
+            <div style={{position:"absolute",zIndex:1300}}>
                 <NavDropDownList
                     items={this.data.facilities} 
                     selectedItem={facility}

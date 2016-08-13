@@ -33,6 +33,7 @@ function actionEdit(request,user) {
   location = request.location||{};
   facility = request.facility?_.pick(request.facility,'_id','name'):null;
   supplier = request.supplier?_.pick(request.supplier,'_id','name'):null;
+  status = request.status;
 
   if(request.type=="Preventative") {
     status = "PMP";
@@ -45,6 +46,7 @@ function actionEdit(request,user) {
 
   Meteor.call('Issues.save',request,{
     type:request.type,
+    status:status,
     priority:request.priority,
     name:request.name,
     description:request.description,
@@ -302,12 +304,15 @@ Issues.workflow.addState('Issued',{
       return !request.quoteRequired||request.quote;
     },
     method:function(request,user) {
+      console.log(request);
+      var assignee = request.assignee;
       Issues.save(request,{
         status:'In Progress',
         eta:request.eta,
         acceptComment:request.acceptComment
       });
-      request = Issues.findOne(request._id);
+      request = Issues._transform(request);
+      request.setAssignee(request.assignee);
       request.distributeMessage({
         recipientRoles:["owner","team","team manager","facility manager"],
         message:{

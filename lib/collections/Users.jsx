@@ -97,10 +97,10 @@ Users.actions({
 
 
       //fragments to use in query
-      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
+      var isNotDraft = {status:{$in:[Issues.STATUS_NEW,Issues.STATUS_ISSUED,"PMP","In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
       var isIssued = {status:{$in:[Issues.STATUS_ISSUED,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_CLOSED]}};
-      var isOpen = {status:{$in:[Issues.STATUS_NEW,"In Progress","Progress",Issues.STATUS_ISSUED]}};
-      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,,"In Progress","Progress","Quoting","Quoted",Issues.STATUS_ISSUED]}};
+      var isOpen = {status:{$in:[Issues.STATUS_NEW,"PMP","In Progress","Progress",Issues.STATUS_ISSUED]}};
+      var isNotClosed = {status:{$in:[Issues.STATUS_DRAFT,Issues.STATUS_NEW,"PMP","In Progress","Progress","Quoting","Quoted",Issues.STATUS_ISSUED]}};
       var createdByMe = {"owner._id":user._id};
 
       var createdByMyTeam = {$and:[{"team._id":team._id},isNotDraft]};
@@ -144,8 +144,9 @@ Users.actions({
             period[r.frequency.unit] = parseInt(r.frequency.number);
             //console.log(period);
             for(var i=0;i<repeats;i++) {
-              var copy = _.omit(r,'_id');
+              var copy = Object.assign({},r);//_.omit(r,'_id');
               copy.dueDate = date.add(period).toDate();
+              copy = Issues._transform(copy);
               requests.push(copy);
             }
           }

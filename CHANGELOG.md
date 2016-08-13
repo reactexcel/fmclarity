@@ -24,6 +24,15 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.2b**
+
+* Facility compliance defaults to 100% when no rules defined
+* Facility cover image defaults to "Building Works" when no rules
+* WO modals will now only show a single submit button - even when forms are nested
+* Added assignee selector to WO modal forms
+* Added assignee selector
+* Compliance "PPM Schedule" link opens pre-filled Preventative form
+
 **v1.5.1b**
 
 * Rearranged folder to be more consistent with the Mantra application architecture [https://github.com/mantrajs]

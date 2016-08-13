@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-import '../Request/ComplianceEvaluationService.jsx';
+import '../Compliance/ComplianceEvaluationService.jsx';
 
 ComplianceListTile = React.createClass({
 

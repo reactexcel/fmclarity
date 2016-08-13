@@ -1,7 +1,7 @@
 
 if(Meteor.isClient) {
   require ('/client/modules/Facility/MDFacilitySelector.jsx');
-  require ('/client/modules/Facility/MDPPMEventSelector.jsx');
+  require ('/client/modules/Compliance/MDPPMEventSelector.jsx');
 }
 
 ComplianceRuleSchema = {

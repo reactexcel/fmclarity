@@ -78,18 +78,25 @@ AutoInput.MDSelect = React.createClass({
 		var disabled = this.props.disabled||!items||!items.length;
 		var readOnly = this.props.readOnly||disabled;
 
-		if(items&&selectedItem&&selectedItem.name) {
-			var matchedItem = _.findWhere(items,{name:selectedItem.name});
-			//console.log({matchedItem,selectedItem,eq:matchedItem==selectedItem});
-			selectedItem = matchedItem;
-			//if(matchedItem&&matchedItem!=selectedItem) {
-				//this.handleChange(matchedItem);
-			//}
+		if(items&&selectedItem) {
+			var q;
+			if(selectedItem._id) {
+				q = {_id:selectedItem._id};
+			}
+			else if(selectedItem.name) {
+				q = {name:selectedItem.name};
+			}
+			if(q) {
+				var matchedItem = _.findWhere(items,q);
+				if(matchedItem) {
+					selectedItem = matchedItem;
+				}
+			}
 		}
 
 		var used = 
 		_.isObject(selectedItem)?
-			selectedItem.name&&selectedItem.name.length
+			(selectedItem._id&&selectedItem._id.length)||(selectedItem.name&&selectedItem.name.length)
 		:
 			selectedItem&&selectedItem.length;
 

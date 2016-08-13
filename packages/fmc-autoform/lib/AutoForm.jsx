@@ -71,8 +71,8 @@ AutoForm = React.createClass({
 
     //this to be eventually removed in favour of form->submit style approach to editing
     saveItem() {
-	   	var schema = this.props.schema||this.props.item.getSchema();
     	var originalItem = this.props.item;
+	   	var schema = this.props.schema||originalItem.getSchema();
     	var field = this.props.field;
     	var save = this.props.save;
     	if(!originalItem[field]) {
@@ -145,6 +145,7 @@ AutoForm = React.createClass({
 					        		schema={s.schema} 
 					        		save={this.props.save}
 					        		onSubmit={this.props.onSubmit}
+					        		hideSubmitButton={true}
 					        	>
 								{s.label?<h5>{s.label}</h5>:null}
 					        	</AutoForm>
@@ -194,7 +195,7 @@ AutoForm = React.createClass({
 					}
 				})}
 
-	            {this.props.onSubmit?
+	            {this.props.onSubmit&&!this.props.hideSubmitButton?
 	              <div style={{textAlign:"right",clear:"both"}}>
 	                {/*<button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>*/}
 	                <button type="button" className="btn btn-flat btn-primary" onClick={()=>{this.props.onSubmit(item)}}>Submit</button>

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
-import '../Request/ComplianceList.jsx';
+import '../Compliance/ComplianceList.jsx';
 
 
 ServiceViewDetail = React.createClass({
@@ -93,13 +93,13 @@ ServiceViewDetail = React.createClass({
         var thumb, services;
 
         services = _.filter(facility.servicesRequired,(svc)=>{return svc.data&&svc.data.complianceRules&&svc.data.complianceRules.length});
+        thumb = "img/services/Building Works.jpg";
         if(services.length) {
             var i = Math.floor(Math.random()*services.length);
             thumb = "img/services/"+services[i].name+".jpg";
         }
 
         var results = ComplianceEvaluationService.evaluateServices(services);
-        console.log(results);
 
         return (
             <div className="facility-card" style={{background:"#fff",color:"#333"}}>
