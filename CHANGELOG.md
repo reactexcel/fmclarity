@@ -26,6 +26,25 @@ CHANGELOG.md
 
 **v1.5.1b**
 
+* Rearranged folder to be more consistent with the Mantra application architecture [https://github.com/mantrajs]
+* Fixed a problem that was causing app to load with no team selected
+* Added refresh indicator on page reload
+* Removed deprecated filterbox package
+* Fixed padding for FacilityAreasEditor and FacilityServiceEditor
+* Added NSW to AddressSchema states dropdown
+* Added type drop down to Facility editor
+* Restored login page style
+* Added refresh indicator on login
+* When creating a new work order - now proceeds directly to detail view after creation
+* Default type is Ad-hoc when "new request" selected
+* Default type is Preventative when "new pmp" selected
+* Manager can now approve or "get quote" directly from draft
+* Added an manager "edit" option to the workflow managers
+* Managers do not see create option on own drafts - only approve
+* Fixed an issue that was causing message text to move after submitted
+
+**v1.5.0.01b**
+
 * Modal can scroll vertically
 * Changed portfolio slide in animation to be material design compliant
 * Facility address street type is now drop down list

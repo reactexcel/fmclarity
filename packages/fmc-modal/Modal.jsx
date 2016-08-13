@@ -12,21 +12,25 @@ Dispatcher = {
 	},
 
 	broadcast(event,args) {
-  	this.events[event].map(function(callback){
-			callback(args);
-		});
+    if(this.events[event]&&this.events[event].length) {
+    	this.events[event].map(function(callback){
+  			callback(args);
+  		});
+    }
 	}
 }
-
 
 Modal = React.createClass({
 
 	statics : {
 		show(args) {
-			Dispatcher.broadcast('showModal',args);
+			Dispatcher.broadcast('showModal', args);
 		},
     hide(args) {
-      Dispatcher.broadcast('hideModal',args);
+      Dispatcher.broadcast('hideModal', args);
+    },
+    replace(args) {
+      Dispatcher.broadcast('replaceModal', args);
     }
 	},
 
@@ -38,11 +42,10 @@ Modal = React.createClass({
   },
 
   componentWillMount() {
-  	var component = this;
-  	Dispatcher.subscribe('showModal',function(args){
-      var queue = component.state.queue;
+  	Dispatcher.subscribe('showModal', (args)=>{
+      var queue = this.state.queue;
       queue.push(args);
-      component.setState({
+      this.setState({
         show:true,
         queue:queue,
         title:args.title,
@@ -53,8 +56,23 @@ Modal = React.createClass({
   	});
 
 
-    Dispatcher.subscribe('hideModal',function(args){
-      component.handleHide();
+    Dispatcher.subscribe('hideModal', (args)=>{
+      this.handleHide();
+    });
+
+    Dispatcher.subscribe('replaceModal', (args)=>{
+      console.log(args);
+      queue = this.state.queue;
+      queue.pop();
+      queue.push(args);
+      this.setState({
+        show:true,
+        queue:queue,
+        title:args.title,
+        content:args.content,
+        onSubmit:args.onSubmit,
+        onCancel:args.onCancel
+      })
     });
 
   },
@@ -66,7 +84,7 @@ Modal = React.createClass({
     }
     var queue = this.state.queue;
     queue.pop();
-    if(queue.length>0) {
+    if(queue.length > 0) {
       var current = queue[queue.length-1];
       this.setState({
         show:true,

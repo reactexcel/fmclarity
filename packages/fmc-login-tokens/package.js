@@ -15,6 +15,7 @@ Package.onUse(function(api) {
 	api.use([
 		'fmc:doc-messages',
 		'ecmascript',
+		'less',
 		'accounts-base',
 		'base64',
 		'react-meteor-data',
@@ -29,6 +30,7 @@ Package.onUse(function(api) {
 		'routes.jsx',
 		'pages/403.jsx',
 		'pages/Login.jsx',
+		'pages/Login.less',
 		'pages/LostPassword.jsx',
 		'pages/ChangePassword.jsx',
 		'pages/Register.jsx'

@@ -1,4 +1,3 @@
-
 //should be called docthumbs
 DocMembers = {
 	register:registerCollection,

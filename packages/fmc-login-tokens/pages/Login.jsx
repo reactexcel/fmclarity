@@ -2,11 +2,14 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+
 PageLogin = React.createClass({
 
     getInitialState() {
         return {
-            errorMessage:null
+            errorMessage:null,
+            loading:false
         }
     },
 
@@ -22,6 +25,7 @@ PageLogin = React.createClass({
         if (!email) {//} || !password) {
             return;
         }
+        this.setState({loading:true});
         Meteor.loginWithPassword(email,password,function(error){
             var errorMessage = null;
             if(error) {
@@ -35,6 +39,7 @@ PageLogin = React.createClass({
                 /*ReactDOM.findDOMNode(component.refs.email).value = '';*/
                 component.refs.password.value = '';
             }
+            this.setState({loading:false});
         });
         // TODO: send request to the server
         return;
@@ -43,31 +48,61 @@ PageLogin = React.createClass({
     render() {return (
     <div className="middle-box loginscreen animated fadeInDown">
         <div>
-            <div>
-                <img width="300px" src="img/logo-horizontal-blue.svg"/>
-            </div>
-            <div style={{marginTop:"30%"}}>
-                <form className="m-t" role="form" onSubmit={this.handleSubmit}>
-                    <div className="form-group">
-                        <input type="email" ref="email" className="form-control" placeholder="Email Address" required=""/>
-                    </div>
-                    <div className="form-group">
-                        <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
-                    </div>
-                    <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
-                </form>
-                <div>
-                    <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
-                    <small>No account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
-                </div>
-                { this.state.errorMessage &&
-                    <div className="alert alert-danger alert-dismissable">
-                    <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
-                    {this.state.errorMessage}
-                    </div>
-                }
-            </div>
+            <img width="300px" src="img/logo-horizontal-blue.svg"/>
         </div>
+        <div style={{marginTop:"30%"}}>
+            <form className="m-t" role="form" onSubmit={this.handleSubmit}>
+                <div className="form-group">
+                    <input type="email" ref="email" className="form-control" placeholder="Email Address" required=""/>
+                </div>
+                <div className="form-group">
+                    <input type="password" ref="password" className="form-control" placeholder="Password" required=""/>
+                </div>
+                <button type="submit" className="btn btn-primary block full-width m-b">Login</button>
+            </form>
+            <div>
+                <a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
+                <small>No account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+            </div>
+            { this.state.errorMessage &&
+                <div className="alert alert-danger alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" className="close" type="button">×</button>
+                {this.state.errorMessage}
+                </div>
+            }
+        </div>
+        {
+            this.state.loading?
+            <div 
+                style={{
+                    background:"rgba(0,0,0,0.5)",
+                    position:"fixed",
+                    zIndex:5000,
+                    left:"0px",
+                    right:"0px",
+                    top:"0px",
+                    bottom:"0px",
+                    textAlign:"center"
+                }}
+            >
+                <div style={{
+                    position:"absolute",
+                    width:"100px",
+                    marginLeft:"-50px",
+                    left:"50%",
+                    top:"50%",
+                    marginTop:"-50px"
+                }}>
+                    <RefreshIndicator
+                        size={100}
+                        left={0}
+                        top={0}
+                        status="loading"
+                    />
+                </div>
+            </div>
+            :null
+        }
     </div>
     )}
 });

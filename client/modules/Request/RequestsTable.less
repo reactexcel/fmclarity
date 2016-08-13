@@ -1,0 +1,46 @@
+.grid-item {
+  overflow:hidden;
+  background: #fff;
+  color: #262524;
+  border-bottom:1px solid #ddd;
+  padding:0;
+  max-height:51px;
+  transition:max-height 0.250s, margin-top 0.250s, margin-bottom 0.250s;
+  transition-timing-function:ease-in-out;
+}
+
+.card-table-header {
+  font-weight: bold;
+  font-size: 12px;
+  height: 48px;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+  padding-top: 16px;
+  padding-left: 5px;
+  padding-right:5px;
+  color: #999;
+  overflow: hidden;
+
+	div {
+    text-align: left;
+	  padding:0;
+	}
+
+	.sort-button {
+    float:left;
+    clear:both;
+    font-size: 20px;
+    border:none;
+    position: relative;
+    left:5px;
+	}
+}
+
+.grid-item:hover .card-header,
+.grid-item.active .card-header {
+  background:#eee;
+}
+
+.grid-item.active:hover .card-header {
+  background:#eee;
+}

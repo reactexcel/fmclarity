@@ -16,7 +16,7 @@ function getInitFunc(opts) {
 
 
 function registerCollection(collection,opts) {
-	Thumbs = opts.repo;
+	Thumbs = opts.repo||Files;
 
 	collection.helpers({
 		defaultThumbUrl:(opts.defaultThumbUrl!=null?opts.defaultThumbUrl:"/img/default-placeholder.jpg"),
@@ -45,7 +45,7 @@ function uploadThumb(doc,url) {
 
 function getThumb(doc) {
 	var thumb;
-	if(doc.thumb) {
+	if(Thumbs&&doc.thumb&&doc.thumb._id) {
 		thumb = Thumbs.findOne(doc.thumb._id);
 	}
 	return thumb;

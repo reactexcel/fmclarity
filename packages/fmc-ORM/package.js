@@ -12,11 +12,11 @@ Package.onUse(function(api) {
 		'underscore',
 		'fmc:doc-owners',
 		'matb33:collection-hooks',
-		'mongo',
+		'ecmascript',
 		'fmc:rbac' //should not be a dependence, refactor by removing line 23 or ORM.js
 	]);
 	api.addFiles([
-		'ORM.js'
+		'ORM.jsx'
 	]);
 
 	api.export([
