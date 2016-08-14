@@ -74,7 +74,6 @@ RequestsTable = React.createClass({
     },
 
     setSort(sortNum) {
-        console.log(sortNum);
         let direction = 1;
         if(sortNum == this.state.selectedSortNum) {
             direction = this.state.sortDirection *= -1;

@@ -19,27 +19,26 @@ PageLogin = React.createClass({
 
     handleSubmit (e) {
         e.preventDefault();
-        var component = this;
         var email = this.refs.email.value.trim();
         var password = this.refs.password.value.trim();
         if (!email) {//} || !password) {
             return;
         }
-        this.setState({loading:true});
-        Meteor.loginWithPassword(email,password,function(error){
-            var errorMessage = null;
+        setTimeout(()=>{this.setState({loading:true})},0);
+        Meteor.loginWithPassword(email,password,(error)=>{
+
             if(error) {
+                let errorMessage = null;
                 switch(error.error) {
                     case 400:
                     default:
                         errorMessage = <span>Incorrect username or password. Did you <a className="alert-link" href={FlowRouter.path('lost-password')}>forget your password?</a></span>
                     break;
                 }
-                component.setState({errorMessage:errorMessage});
-                /*ReactDOM.findDOMNode(component.refs.email).value = '';*/
-                component.refs.password.value = '';
+                this.setState({errorMessage,loading:false});
+                /*ReactDOM.findDOMNode(this.refs.email).value = '';*/
+                this.refs.password.value = '';
             }
-            this.setState({loading:false});
         });
         // TODO: send request to the server
         return;

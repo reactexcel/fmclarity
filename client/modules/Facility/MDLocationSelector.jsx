@@ -7,10 +7,11 @@ MDLocationSelector = React.createClass({
 	mixins:[ReactMeteorData],
 
 	getMeteorData() {
-		var request,location,areas,subareas,identifiers;
+		var request,location,areas,subareas,identifiers,facility;
 		var request = this.props.context;
-		if(request&&request.facility) {
-			areas = request.facility.areas;
+		if(request && request.facility && request.facility._id) {
+			facility = Facilities.findOne(request.facility._id);
+			areas = facility.areas;
 		}
 
 		location = this.props.value||{};
@@ -22,10 +23,11 @@ MDLocationSelector = React.createClass({
 		}
 
 		return {
-			location:location,
-			areas:areas,
-			subareas:subareas,
-			identifiers:identifiers
+			facility,
+			location,
+			areas,
+			subareas,
+			identifiers,
 		}
 	},
 
@@ -45,7 +47,6 @@ MDLocationSelector = React.createClass({
 	},
 
 	render() {
-		//console.log(this.data);
 		return (
 			<div className="row">
 				<div className="col-md-4">

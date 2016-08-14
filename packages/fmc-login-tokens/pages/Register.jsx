@@ -35,6 +35,7 @@ PageRegister = React.createClass({
                 })
             }
             else {
+                Meteor.call('Teams.create');
                 me.setState({
                     errorMessage:null,
                     successMessage:<span>A password reset link has been sent to your registered email. Click the email link to continue.</span>

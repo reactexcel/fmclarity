@@ -45,14 +45,16 @@ Modal = React.createClass({
   	Dispatcher.subscribe('showModal', (args)=>{
       var queue = this.state.queue;
       queue.push(args);
-      this.setState({
-        show:true,
-        queue:queue,
-        title:args.title,
-        content:args.content,
-        onSubmit:args.onSubmit,
-        onCancel:args.onCancel
-      })
+      setTimeout(()=>{
+        this.setState({
+          show:true,
+          queue:queue,
+          title:args.title,
+          content:args.content,
+          onSubmit:args.onSubmit,
+          onCancel:args.onCancel
+        })
+      },0);
   	});
 
 
@@ -61,18 +63,19 @@ Modal = React.createClass({
     });
 
     Dispatcher.subscribe('replaceModal', (args)=>{
-      console.log(args);
       queue = this.state.queue;
       queue.pop();
       queue.push(args);
-      this.setState({
-        show:true,
-        queue:queue,
-        title:args.title,
-        content:args.content,
-        onSubmit:args.onSubmit,
-        onCancel:args.onCancel
-      })
+      setTimeout(()=>{
+        this.setState({
+          show:true,
+          queue:queue,
+          title:args.title,
+          content:args.content,
+          onSubmit:args.onSubmit,
+          onCancel:args.onCancel
+        })
+      },0);
     });
 
   },
@@ -86,22 +89,26 @@ Modal = React.createClass({
     queue.pop();
     if(queue.length > 0) {
       var current = queue[queue.length-1];
-      this.setState({
-        show:true,
-        queue:queue,
-        title:current.title,
-        content:current.content,
-        onSubmit:current.onSubmit,
-        onCancel:current.onCancel
-      })
+      setTimeout(()=>{
+        this.setState({
+          show:true,
+          queue:queue,
+          title:current.title,
+          content:current.content,
+          onSubmit:current.onSubmit,
+          onCancel:current.onCancel
+        })
+      },0);
       this.forceUpdate();
       return false;   
     }
     else {
-      this.setState({
-        show:false,
-        queue:[]
-      })
+      setTimeout(()=>{
+        this.setState({
+          show:false,
+          queue:[]
+        })
+      },0);
       return true;
     }
     //*/

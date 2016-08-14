@@ -9,6 +9,12 @@ FABActions = new function() {
     	})
 	}
 
+	function editTeam(team) {
+		Modal.show({
+			content:<TeamViewEdit item={team}/>
+		})
+	}
+
     function createRequest(template={}) {
     	//look below at new compliance rule created with AutoForm, that is the way to do this...
         var selectedFacility = Session.getSelectedFacility();
@@ -16,6 +22,7 @@ FABActions = new function() {
         var request = Object.assign({
         	type:'Ad Hoc',
         	priority:'Standard',
+        	dueDate:new Date(),
         	costThreshold:selectedTeam.defaultWorkOrderValue
         },template);
         if(selectedTeam) {
@@ -37,6 +44,10 @@ FABActions = new function() {
                 form={Issues.forms.create}
                 schema={IssueSchema} 
                 onSubmit={(r)=>{
+                	if(r.location) {
+				        r.level = r.location.area;
+				        r.area = r.location.subarea;
+				    }
                 	Meteor.call('Issues.create',r,{},(err,response)=>{
 	                	//Modal.hide();
 	                	Modal.replace({
@@ -66,6 +77,7 @@ FABActions = new function() {
     	var selectedTeam = Session.getSelectedTeam();
     	selectedTeam.addFacility(function(response){
     		var newItem = Facilities.findOne(response._id);
+    		newItem.setupCompliance(Config.compliance);
     		Modal.show({
             	content:<FacilityViewEdit item={newItem} />
             });
@@ -73,7 +85,6 @@ FABActions = new function() {
     }
 
     function createNewComplianceRule(newRule) {
-        console.log(newRule);
         var facility = newRule.facility;
         if(facility) {
             var services = facility.servicesRequired;
@@ -95,17 +106,16 @@ FABActions = new function() {
                     service.data.complianceRules = [];
                 }
                 //to avoid circular search remove facility and then add with just name and _id
-                var copy = _.omit(newRule,'facility','service','event');
+                var copy = _.omit(newRule,'facility','service'/*,'event'*/);
                 if(newRule.facility) {
 	                copy.facility = _.pick(newRule.facility,'name','_id');
 	            }
-                if(newRule.event) {
+                /*if(newRule.event) {
 	                copy.event = _.pick(newRule.event,'name','_id');
-	            }
+	            }*/
 	            if(newRule.service) {
 	                copy.service = _.pick(newRule.service,'name');
 	            }
-                //console.log(copy);
                 service.data.complianceRules.push(copy);
                 services[idx] = service;
             }
@@ -128,6 +138,7 @@ FABActions = new function() {
 
     return {
     	viewRequest,
+    	editTeam,
     	createRequest,
     	createFacility,
     	createComplianceRule

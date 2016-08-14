@@ -24,6 +24,16 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.3b**
+
+* Various bugfixes for new work order
+* Created default compliance rules
+* Streamlines new user account creation
+* New team now created with new user account
+* Team config appears on first login if team is not yet setup
+* Autoform now can save multiple values from one component
+* Configured "default supplier" behaviour on wo modal
+
 **v1.5.2b**
 
 * Facility compliance defaults to 100% when no rules defined

@@ -36,10 +36,9 @@ ComplianceRuleSchema = {
     service:{
         type:Object,
         input:"MDSelect",
-        condition:["PPM schedule established","PPM event completed"],
+        condition:["PPM schedule established","PPM event completed","Document exists","Document is current"],
         options:function(item){
             if(item.facility) {
-                console.log(item.facility);
                 return {
                     items:item.facility.servicesRequired,
                     view:ServiceListTile
@@ -50,12 +49,14 @@ ComplianceRuleSchema = {
     event:{
     	label:"PMP event",
     	condition:"PPM event completed",
+        /*
     	input:Meteor.isClient?MDPPMEventSelector:null,
     	options:function(item){
     		return {
     			facility:item.facility
     		}
     	}
+        */
     },
     frequency:{
         condition:"PPM event completed",

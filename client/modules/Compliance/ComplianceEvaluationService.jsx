@@ -18,7 +18,7 @@ ComplianceEvaluationService = new function() {
 
     },
     "PPM schedule established":function(rule,facility,service){
-      console.log(rule);
+      //console.log(rule);
       if(!facility) {
         return _.extend({},defaultResult,{
           passed:false,
@@ -66,7 +66,11 @@ ComplianceEvaluationService = new function() {
     "PPM event completed":function(rule,facility,service){
       var event;
       if(rule.event) {
-        event = Issues.findOne(rule.event._id);
+        //event = Issues.findOne(rule.event._id);
+        event = Issues.findOne({
+          'facility._id':rule.facility._id,
+          name:rule.event
+        });
       }
       
       if(event) {
@@ -84,6 +88,16 @@ ComplianceEvaluationService = new function() {
         message:{
           summary:"failed",
           detail:"PPM event not found"
+        },
+        resolve:function(){
+          FABActions.createRequest({
+            type:'Preventative',
+            priority:'Scheduled',
+            status:'PMP',
+            name:rule.event,
+            frequency:rule.frequency,
+            service:rule.service
+          });
         }
       })
     }

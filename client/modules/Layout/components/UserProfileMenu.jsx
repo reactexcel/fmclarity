@@ -21,6 +21,9 @@ UserProfileMenu = React.createClass({
                 team = teams[0];
                 user.selectTeam(team);
             }
+            else if(team&&!team.name) {
+                FABActions.editTeam(team);
+            }
         }
         return {
             user:user,
@@ -121,7 +124,7 @@ UserProfileMenu = React.createClass({
 
                 }
 
-                {Meteor.user().emails[0].address=="mrleokeith@gmail.com"?
+                {Meteor.isDevelopment?
                 <li>
                     <a href={FlowRouter.path('admin')}>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
@@ -130,7 +133,7 @@ UserProfileMenu = React.createClass({
                 </li>
                 :null}
 
-                {Meteor.user().emails[0].address=="mrleokeith@gmail.com"?
+                {Meteor.isDevelopment?
                 <li>
                     <a onClick={this.createTeam}>
                         <i className="fa fa-plus"></i>&nbsp;&nbsp;

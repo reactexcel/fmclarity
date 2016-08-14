@@ -1,5 +1,5 @@
 {
-  "public": {
-
-  }
+	"public": {
+		"METEOR_ENV": "development"
+	}
 }

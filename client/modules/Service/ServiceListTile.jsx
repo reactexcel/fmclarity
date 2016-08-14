@@ -19,7 +19,6 @@ ServiceListTile = React.createClass({
 		        	numFailed = results.failed.length;
 		        	percPassed = Math.ceil((numPassed/numRules)*100);
 		        }
-	        	console.log(results);
 	        }
 	    }
 	    return {service,thumb,numRules,numPassed,numFailed,percPassed}

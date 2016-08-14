@@ -55,11 +55,9 @@ AutoForm = React.createClass({
     },
 
     updateField(field,value) {
-        var item = this.state.item;
+        let item = this.state.item;
 	    item[field] = value;
-	    this.setState({
-	        item:item
-	    })
+	    this.setState({item});
 	    // if we have sent in an onSubmit function then we 
 	    // are saying we want to handle the saving externally
 	    // (this mean I am going to have to put in a manual save
@@ -67,6 +65,12 @@ AutoForm = React.createClass({
 	    if(!this.props.onSubmit) {
         	this.saveItem();
         }
+    },
+
+    updateFields(values) {
+    	let item = this.state.item;
+    	Object.assign(item,values);
+    	this.setState({item});
     },
 
     //this to be eventually removed in favour of form->submit style approach to editing
@@ -186,7 +190,8 @@ AutoForm = React.createClass({
 									placeholder={placeholder}
 									context={item}
 									value={item[key]} 
-									onChange={this.updateField.bind(this,key)}
+									onChange={this.updateField.bind(this,key)} //to be deprecated in favour of multi-change (below)
+									multiChange={(vals)=>{this.updateFields(vals)}}
 									options={options}
 								/>
 							</div>

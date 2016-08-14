@@ -53,20 +53,20 @@ function actionEdit(request,user) {
     frequency:request.frequency,
     location:request.location,
     service:request.service,
-    subservice:request.service?request.service.subservice:null,
+    subservice:request.subservice,
     facility:facility,
     supplier:supplier,
     level:location.area,
     area:location.subarea,    
   },(err,response)=>{
-    console.log(response);
+    //console.log(response);
   })
 }
 
 //////////////////////////////////////////////////////
 // Draft
 //////////////////////////////////////////////////////
-Issues.workflow.addState(['Draft','PMP'],{
+Issues.workflow.addState(['Draft'],{
 
   edit:{
     label: 'Edit',
@@ -130,11 +130,11 @@ Issues.workflow.addState(['Draft','PMP'],{
         name:request.name,
         description:request.description,
         frequency:request.frequency,
-        location:request.location,
         service:request.service,
-        subservice:request.service?request.service.subservice:null,
+        subservice:request.subservice,
         facility:facility,
         supplier:supplier,
+        location:request.location,
         level:location.area,
         area:location.subarea,
       });
@@ -177,6 +177,119 @@ Issues.workflow.addState(['Draft','PMP'],{
       fields:['quoteIsPreApproved']
     },
     method:actionGetQuote
+  },
+
+  delete:{
+    label:'Delete',
+    authentication:["owner","facility manager","team manager"],
+    method:function(request) {
+      Issues.remove(request._id);
+      Modal.hide();
+    }
+  }
+})
+
+//////////////////////////////////////////////////////
+// PMP
+//////////////////////////////////////////////////////
+Issues.workflow.addState(['PMP'],{
+
+  edit:{
+    label: 'Edit',
+    authentication: AuthHelpers.managerOfRelatedTeam,
+    validation: true,
+    form:{
+      title:"Edit request.",
+      fields:Issues.forms.create,
+      //onSubmit: actionEdit
+    },    
+    method: actionEdit
+  },
+
+  create:{
+    label:"Instantiate", //dont think this is used?
+
+    authentication:(...args)=>{
+      AuthHelpers.memberOfRelatedTeam(...args)&&!
+      AuthHelpers.managerOfRelatedTeam(...args)
+    },
+
+    validation(request) {
+      //console.log(request);
+      return true;
+      return (
+        request.name&&request.name.length&&
+        request.facility&&request.facility._id&&
+        request.level&&request.level.name&&request.level.name.length&&
+        request.service&&request.service.name.length
+      )
+    },
+
+    form:{
+      title:"Please tell us a little bit more about the work that is required.",
+      fields:Issues.forms.create
+    },
+
+    method:function(request) {
+      //console.log(request);
+      var location,facility,supplier,status;
+      location = request.location||{};
+      facility = request.facility?_.pick(request.facility,'_id','name'):null;
+      supplier = request.supplier?_.pick(request.supplier,'_id','name'):null;
+
+      if(request.type=="Preventative") {
+        status = "PMP";
+        request.priority = "Scheduled";
+      }
+      else {
+        status = "New";
+      }
+
+      if(location.subarea) {
+        location.subarea.identifier = location.identifier;
+      }
+
+      Issues.save(request,{
+        status:status,
+        type:request.type,
+        priority:request.priority,
+        name:request.name,
+        description:request.description,
+        frequency:request.frequency,
+        service:request.service,
+        subservice:request.subservice,
+        facility:facility,
+        supplier:supplier,
+        location:request.location,
+        level:location.area,
+        area:location.subarea,
+      });
+      request = Issues.findOne(request._id);
+      //request.setArea(location.area);
+      //request.setSubarea(location.subarea);
+      //request.setAreaIdentifier(location.identifier);
+      request.distributeMessage({
+        recipientRoles:["team","team manager","facility","facility manager"],
+        message:{
+          verb:"created",
+          subject:"Work order #"+request.code+" has been created",
+          body:request.description
+        }
+      });
+    }
+  },
+
+  approve:{
+    label:'Instantiate',
+    authentication:AuthHelpers.managerOfRelatedTeam,
+    validation(request) {
+      return (request.supplier&&(request.supplier._id||request.supplier.name))
+    },
+    /*form:{
+      title:"Do you require quotes for this job?",
+      fields:['quoteRequired','confirmRequired']
+    },*/
+    method:actionIssue, //onSubmit?
   },
 
   delete:{
@@ -401,7 +514,7 @@ Issues.workflow.addState('Complete',{
     },
     method:function(request) {
       Issues.save(request,{status:'Closed'});
-      request = Issues._transorm(request);
+      request = Issues._transform(request);
       request.distributeMessage({
         recipientRoles:["team","team manager","facility manager","supplier manager"],
         message:{
@@ -537,6 +650,7 @@ function actionComplete(request) {
       supplier:request.supplier,
       team:request.team,
 
+      location:request.location,
       level:request.level,
       area:request.area,
       status:Issues.STATUS_NEW,

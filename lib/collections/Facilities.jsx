@@ -153,6 +153,27 @@ Facilities.actions({
       return Teams.findOne(facility.team._id);
     }
   },
+
+  setupCompliance:{
+    authentication:true,
+    method:function(facility,rules) {
+      let services = facility.servicesRequired;
+      services.map(({name}, idx)=>{
+        if(rules[name]) {
+          services[idx].data = services[idx].data || {};
+          services[idx].data.complianceRules = [];
+          rules[name].map((rule)=>{
+            rule.facility = {_id:facility._id};
+            rule.service = {name};
+            services[idx].data.complianceRules.push(rule);
+          })
+        }
+      })
+      //console.log(services);
+      Meteor.call('Facilities.save',facility,{servicesRequired:services});
+    }
+  },
+
   setTeam:{
     authentication:AuthHelpers.managerOfRelatedTeam,
     helper:function(facility,team){

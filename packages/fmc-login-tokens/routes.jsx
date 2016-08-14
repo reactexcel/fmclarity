@@ -22,8 +22,24 @@ loggedIn = FlowRouter.group({
 });
 
 if(Meteor.isClient) {
-  Accounts.onLogin(function() {
-    var redirect = Session.get('redirectAfterLogin');
+  Accounts.onLogin(()=>{
+    /*
+    let user = Meteor.user(),
+        teams = null;
+
+    //console.log(user);
+    if(user) {
+        teams = user.getTeams();
+        //console.log(teams);
+    }
+
+    if(!teams||!teams.length) {
+        Meteor.logout();
+        //FlowRouter.reload();
+        return FlowRouter.go('/login');
+    }
+    */
+    let redirect = Session.get('redirectAfterLogin');
     if(redirect) {
       Session.set('redirectAfterLogin',null)
       return FlowRouter.go(redirect);

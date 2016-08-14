@@ -35,7 +35,6 @@ function addTeamMenuItem(menu,item,team) {
 TeamCard = React.createClass({
 
 	getMenu() {
-		var component = this;
 		var supplier = this.props.item;
 		var parentTeam = Session.getSelectedTeam();
 		var parentFacility = Session.getSelectedFacility();
@@ -46,14 +45,14 @@ TeamCard = React.createClass({
 			if(supplier.canSave()) {
 				menu.push({
 					label:"Edit",
-					action(){
+					action:()=>{
 						Modal.show({
 							content:<TeamViewEdit 
 								item={supplier} 
-								team={component.props.team}
-								facility={component.props.facility}
-								group={component.props.group}
-								onChange={component.props.onChange}/>
+								team={this.props.team}
+								facility={this.props.facility}
+								group={this.props.group}
+								onChange={this.props.onChange}/>
 						})
 					}
 				});
@@ -69,17 +68,16 @@ TeamCard = React.createClass({
 	render() {
 		var menu = this.getMenu();
 		var supplier = this.props.item;
-		var component = this;
 
 		if(!supplier) {
 			return (
 				<div>			
 					<TeamViewEdit 
 						item={supplier} 
-						team={component.props.team}
-						facility={component.props.facility}
-						group={component.props.group}
-						onChange={component.props.onChange}/>
+						team={this.props.team}
+						facility={this.props.facility}
+						group={this.props.group}
+						onChange={this.props.onChange}/>
 				</div>
 			)
 		}

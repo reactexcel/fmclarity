@@ -26,7 +26,7 @@ ComplianceListTile = React.createClass({
       break;
       case "PPM event completed":
         name = rule.type;
-        info = (rule.event?rule.event.name:"");
+        info = rule.event;//(rule.event?rule.event.name:"");
       break;
     }
     results = ComplianceEvaluationService.evaluateRule(rule)||{};

@@ -28,9 +28,32 @@ NameCard = React.createClass({
 AutoInput.MDSelect = React.createClass({
 
 	getInitialState() {
-		return this.props.initialState||{
-			open:false
-		}
+
+		let options = this.props.options || {};
+
+		let open = false,
+			items = this.props.items || options.items || [],
+			selectedItem = this.props.value || this.props.selectedItem;
+
+		let disabled = this.props.disabled || !items || !items.length;
+		let readOnly = this.props.readOnly || disabled;
+
+		return {open,items,selectedItem,disabled,readOnly};
+	},
+
+	componentWillReceiveProps(props) {
+		let options = props.options || {};		
+		let items = props.items || options.items || [],
+			selectedItem = props.value || props.selectedItem;
+
+		let disabled = props.disabled || !items || !items.length;
+		let readOnly = props.readOnly || disabled;
+		this.setState({items,selectedItem,disabled,readOnly});
+		this.findSelectedItem();
+	},
+
+	componentWillMount() {
+		this.findSelectedItem();
 	},
 
 	handleClick(event) {
@@ -62,43 +85,53 @@ AutoInput.MDSelect = React.createClass({
 		this.handleChange(null);
 	},
 
-	render() {
-		var component = this;
-		var options = this.props.options||{};
-
-
-		var Card = this.props.itemView||options.view||PlainCard;
-		var onChange = this.props.onChange;
-		var classes = this.props.classes||options.classes||'';
-		var clearOption = this.props.clearOption||options.clearOption;
-
-		var items = this.props.items||options.items||[];
-		var selectedItem = this.props.value||this.props.selectedItem;
-		
-		var disabled = this.props.disabled||!items||!items.length;
-		var readOnly = this.props.readOnly||disabled;
-
-		if(items&&selectedItem) {
-			var q;
-			if(selectedItem._id) {
-				q = {_id:selectedItem._id};
-			}
-			else if(selectedItem.name) {
-				q = {name:selectedItem.name};
-			}
-			if(q) {
-				var matchedItem = _.findWhere(items,q);
-				if(matchedItem) {
-					selectedItem = matchedItem;
-				}
-			}
-		}
-
-		var used = 
-		_.isObject(selectedItem)?
+	inputIsUsed(selectedItem) {
+		return _.isObject(selectedItem)?
 			(selectedItem._id&&selectedItem._id.length)||(selectedItem.name&&selectedItem.name.length)
 		:
 			selectedItem&&selectedItem.length;
+	},
+
+	//search for the selected item in the provided list of items
+	// if it is found select it
+	// this if for the case where we have dependent fields
+	// for example location selector dependent on facility selector value
+	// we need to 
+	findSelectedItem() {
+		let {items,selectedItem} = this.state;
+		if(items&&selectedItem) {
+			let q = {},
+				checkField = null,
+				matchedItem = null;
+
+			if(selectedItem._id) {
+				checkField = '_id';
+			}
+			else if(selectedItem.name) {
+				checkField =  'name';
+				q = {name:selectedItem.name};
+			}
+
+			if(checkField) {
+				q[checkField] = selectedItem[checkField];
+				matchedItem = _.findWhere(items,q);
+				if(matchedItem&&!_.isEqual(matchedItem,selectedItem)) {
+					this.handleChange(matchedItem);
+				}
+			}
+		}
+	},
+
+	render() {
+
+		let options = this.props.options || {};
+
+		let {open,items,selectedItem,disabled,readOnly} = this.state;
+
+		let Card = this.props.itemView || options.view || PlainCard,
+			classes = this.props.classes || options.classes || '',
+			clearOption = this.props.clearOption || options.clearOption,
+			used = this.inputIsUsed(selectedItem);
 
 		if(readOnly) {
 			return (

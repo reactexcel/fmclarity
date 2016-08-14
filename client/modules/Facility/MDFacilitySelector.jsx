@@ -15,11 +15,20 @@ MDFacilitySelector = React.createClass({
 	render() {
 		return (
 			<AutoInput.MDSelect 
+				placeholder="Facility"
 				items={this.data.facilities} 
 				selectedItem={this.props.value}
 				itemView={FacilitySummary}
-				onChange={this.props.onChange}
-				placeholder="Facility"
+				onChange={(val)=>{
+					this.props.multiChange({
+						facility:val,
+						location:null,
+						level:null,
+						area:null,
+						supplier:null,
+						assignee:null
+					});
+				}}
 			/>
 		)
 	}
