@@ -23,16 +23,16 @@ loggedIn = FlowRouter.group({
 
 if(Meteor.isClient) {
   Accounts.onLogin(()=>{
-    /*
     let user = Meteor.user(),
         teams = null;
 
     //console.log(user);
     if(user) {
         teams = user.getTeams();
-        //console.log(teams);
+        console.log(teams);
     }
 
+    /*
     if(!teams||!teams.length) {
         Meteor.logout();
         //FlowRouter.reload();
@@ -45,6 +45,10 @@ if(Meteor.isClient) {
       return FlowRouter.go(redirect);
     }
   });
+
+  Accounts.onLogout(()=>{
+    return FlowRouter.go('/login');    
+  })
 }
 
 exposed.route('/login', {

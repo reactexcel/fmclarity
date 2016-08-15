@@ -7,7 +7,7 @@ import './Requests.jsx';
 
 Issues.workflow = new WorkflowHelper(Issues);
 Issues.forms = {
-  create:['facility','location','name','service','supplier','type','priority','dueDate','frequency','costThreshold','description']
+  create:['facility','name','location','service','supplier','type','priority','dueDate','frequency','costThreshold','description']
 }
 
 

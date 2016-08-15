@@ -17,11 +17,14 @@ UserProfileMenu = React.createClass({
             notifications = user.getNotifications();
             teams = user.getTeams();
             team = user.getTeam();
-            if(!team&&teams&&teams.length) {
+            if(!teams||!teams.length) {
+            }
+            else if(!team) {
                 team = teams[0];
                 user.selectTeam(team);
             }
-            else if(team&&!team.name) {
+            else if(!team.name&&!this.showingModal) {
+                this.showingModal = true;
                 FABActions.editTeam(team);
             }
         }
@@ -39,9 +42,9 @@ UserProfileMenu = React.createClass({
 
     createTeam() {
         Meteor.call('Teams.create',{},function(err,response){
-            console.log(response);
+            //console.log(response);
             var team = Teams.findOne(response);
-            console.log(team);
+            //console.log(team);
             Modal.show({
                 content:<TeamViewEdit item={team}/>
             })

@@ -1,5 +1,5 @@
 FM = {
-	version:"1.5.3b"
+	version:"1.5.3-01b"
 }
 
 if(Meteor.isServer) {

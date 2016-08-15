@@ -24,6 +24,12 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.3-01b**
+
+* Changed order of form elements when creating new work order
+* Changed logout behaviour
+* Fixed a problem that was causing multiple modals to appear when creating first team
+
 **v1.5.3b**
 
 * Various bugfixes for new work order
