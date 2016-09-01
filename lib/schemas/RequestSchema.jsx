@@ -3,11 +3,7 @@ import './RequestLocationSchema.jsx';
 import './RequestFrequencySchema.jsx';
 
 import Facilities from '../collections/Facilities';
-import
-{
-	ContactCard
-}
-from 'meteor/fmc:doc-members';
+import { ContactCard } from 'meteor/fmc:doc-members';
 
 //This is a hack to get around clash between new Meteor 1.3+ ES6 imports system and Mantra application architecture
 // it is intended that a better solution will be available in future versions of Mantra
@@ -39,7 +35,7 @@ IssueSchema = {
 	{
 		label: "Code",
 		description: "The unique code for this work request",
-		type: 1,
+		type: "number",
 		defaultValue: getJobCode,
 	},
 
@@ -47,7 +43,7 @@ IssueSchema = {
 	{
 		label: "Request type",
 		description: "The work request type (ie Ad-hoc, Preventative)",
-		type: "",
+		type: "string",
 		defaultValue: "Ad-hoc",
 		input: "MDSelect",
 		options:
@@ -69,7 +65,7 @@ IssueSchema = {
 	{
 		label: "Priority",
 		description: "The urgency of the requested work",
-		type: "",
+		type: "string",
 		defaultValue: "Standard",
 		condition: ( item ) =>
 		{
@@ -90,8 +86,11 @@ IssueSchema = {
 
 	frequency:
 	{
+		/*label: "Frequency",
+		description: "The frequency with which this job should occur",*/
 		condition: "Preventative",
-		schema: RequestFrequencySchema
+		schema: RequestFrequencySchema,
+		optional: true,
 	},
 
 	status:
@@ -99,7 +98,7 @@ IssueSchema = {
 
 		label: "Status",
 		description: "The current status of the job",
-		type: String,
+		type: "string",
 		defaultValue: "Draft",
 
 		options:
@@ -118,8 +117,7 @@ IssueSchema = {
 	{
 		label: "Location",
 		description: "The location within the site where the work is located",
-		type:
-		{},
+		type: "object",
 		input: Meteor.isClient ? MDLocationSelector : null
 	},
 
@@ -127,8 +125,7 @@ IssueSchema = {
 	{
 		label: "Area",
 		size: 4,
-		type:
-		{},
+		type: "object",
 		input: "MDSelect",
 		options: ( item ) =>
 		{
@@ -142,8 +139,7 @@ IssueSchema = {
 	{
 		label: "Sub-area",
 		size: 4,
-		type:
-		{},
+		type: "object",
 		input: "MDSelect",
 		optional: true,
 		options: ( item ) =>
@@ -159,8 +155,7 @@ IssueSchema = {
 		label: "Identifier",
 		description: "Area identifier for the job location (ie classroom number)",
 		size: 4,
-		type:
-		{},
+		type: "object",
 		input: "MDSelect",
 		optional: true,
 		options: ( item ) =>
@@ -178,8 +173,7 @@ IssueSchema = {
 		label: "Service",
 		description: "The category of work required",
 		size: 6,
-		type:
-		{},
+		type: "object",
 		input: "MDSelect",
 		options: ( item ) =>
 		{
@@ -194,8 +188,7 @@ IssueSchema = {
 		label: "Subservice",
 		description: "The subcategory of work required",
 		size: 6,
-		type:
-		{},
+		type: "object",
 		input: "MDSelect",
 		optional: true,
 		options: ( item ) =>
@@ -213,7 +206,7 @@ IssueSchema = {
 	{
 		label: "Comments",
 		description: "A detailed description of the work to be completed",
-		type: String,
+		type: "string",
 		input: "mdtextarea",
 		optional: true
 	},
@@ -222,7 +215,7 @@ IssueSchema = {
 	{
 		label: "Comment",
 		description: "Comment about the acceptance of this work request",
-		type: String,
+		type: "string",
 		input: "mdtextarea",
 	},
 
@@ -230,7 +223,7 @@ IssueSchema = {
 	{
 		label: "Reason for rejection",
 		description: "The reason why this job was rejected",
-		type: String,
+		type: "string",
 		input: "mdtextarea",
 	},
 
@@ -238,7 +231,7 @@ IssueSchema = {
 	{
 		label: "Close comment",
 		description: "Closing comments about this job",
-		type: String,
+		type: "string",
 		input: "mdtextarea"
 	},
 
@@ -249,7 +242,7 @@ IssueSchema = {
 	{
 		label: "Quote required",
 		description: "Is a quote required for this job?",
-		type: Boolean,
+		type: "boolean",
 		input: "switch"
 	},
 
@@ -257,7 +250,7 @@ IssueSchema = {
 	{
 		label: "Auto approve quote?",
 		info: "An auto approved quote will ",
-		type: Boolean,
+		type: "boolean",
 		input: "switch"
 	},
 
@@ -272,7 +265,7 @@ IssueSchema = {
 	{
 		label: "Value of quote",
 		description: "The cost of the requested work",
-		type: Number
+		type: "number"
 	},
 
 	//////////////////////////////////////////////////
@@ -295,8 +288,7 @@ IssueSchema = {
 
 	closeDetails:
 	{
-		type:
-		{},
+		type: "object",
 		schema: CloseDetailsSchema
 	},
 
@@ -305,10 +297,11 @@ IssueSchema = {
 	//////////////////////////////////////////////////  		
 	dueDate:
 	{
-		type: Date,
+		type: "date",
 		label: "Due Date",
 		description: "Latest date that the work can be completed",
 		input: "MDDateTime",
+		optional: true,
 		size: 6,
 		defaultValue: getDefaultDueDate
 	},
@@ -316,6 +309,7 @@ IssueSchema = {
 	eta:
 	{
 		label: "ETA",
+		optional: true,
 		description: "Time the supplier is expected to attend the site",
 		input: "MDDateTime",
 	},
@@ -368,12 +362,15 @@ IssueSchema = {
 				items: ( item.team ? item.team.facilities : null ),
 				view: ( Meteor.isClient ? FacilitySummary : null ),
 
-				onChange: ( item ) =>
+				transform: ( item ) =>
 				{
+					if( item == null) {
+						return;
+					}
 					item.level = null;
 					item.area = null;
 					item.identifier = null;
-					item.servive = null;
+					item.service = null;
 					item.subservice = null;
 					item.supplier = null;
 				}
@@ -467,6 +464,8 @@ IssueSchema = {
  */
 function getMembersDefaultValue( item )
 {
+	console.log( item );
+
 	let owner = Meteor.user(),
 		team = Teams.findOne( item.team._id ),
 		teamMembers = team.getMembers(

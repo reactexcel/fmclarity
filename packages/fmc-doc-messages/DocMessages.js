@@ -4,59 +4,59 @@ import ReactDOMServer from 'react-dom/server';
 Messages = ORM.Collection( "Messages" );
 
 DocMessages = {
-  register: registerCollection,
-  isValidEmail: isValidEmail,
-  config: getConfigurationFunction,
-  render: render
+    register: registerCollection,
+    isValidEmail: isValidEmail,
+    config: getConfigurationFunction,
+    render: render
 }
 
 var defaultHelpers = {
-  distributeMessage: distributeMessage,
-  sendMessage: distributeMessage,
-  markAllNotificationsAsRead: markAllNotificationsAsRead,
-  getInboxName: getInboxName,
-  getInboxId: getInboxId,
-  getNotifications: getNotifications,
-  getMessageCount: getMessageCount,
-  //getRecipients:getRecipients,
+    distributeMessage: distributeMessage,
+    sendMessage: distributeMessage,
+    markAllNotificationsAsRead: markAllNotificationsAsRead,
+    getInboxName: getInboxName,
+    getInboxId: getInboxId,
+    getNotifications: getNotifications,
+    getMessageCount: getMessageCount,
+    //getRecipients:getRecipients,
 }
 
 function registerCollection( collection, opts )
 {
-  opts = opts ||
-  {};
-  var authentication = opts.authentication || true;
-  var customHelpers = opts.helpers ||
-  {};
+    opts = opts ||
+    {};
+    var authentication = opts.authentication || true;
+    var customHelpers = opts.helpers ||
+    {};
 
-  var helpers = _.extend(
-  {
-    collectionName: collection._name
-  }, defaultHelpers, customHelpers );
-
-  collection.helpers( helpers );
-  collection.actions(
-  {
-    getMessages:
+    var helpers = _.extend(
     {
-      authentication: authentication,
-      helper: function( inbox, options )
-      {
-        options = options ||
+        collectionName: collection._name
+    }, defaultHelpers, customHelpers );
+
+    collection.helpers( helpers );
+    collection.actions(
+    {
+        getMessages:
         {
-          sort:
-          {
-            createdAt: 1
-          }
-        };
-        return Messages.find(
-        {
-          "inboxId.collectionName": inbox.collectionName,
-          "inboxId.query._id": inbox._id,
-        }, options ).fetch();
-      }
-    }
-  } )
+            authentication: authentication,
+            helper: function( inbox, options )
+            {
+                options = options ||
+                {
+                    sort:
+                    {
+                        createdAt: 1
+                    }
+                };
+                return Messages.find(
+                {
+                    "inboxId.collectionName": inbox.collectionName,
+                    "inboxId.query._id": inbox._id,
+                }, options ).fetch();
+            }
+        }
+    } )
 }
 
 //this is repeated accross all of my document packages
@@ -65,10 +65,10 @@ function registerCollection( collection, opts )
 //Or some sort of class inheritance structure
 function getConfigurationFunction( options )
 {
-  return function( collection )
-  {
-    registerCollection( collection, options );
-  }
+    return function( collection )
+    {
+        registerCollection( collection, options );
+    }
 }
 
 //would be nice to encapsulate the above in some sort of config file (could it be package.js???)
@@ -77,282 +77,266 @@ function getConfigurationFunction( options )
 
 function render( view, params )
 {
-  var element = React.createElement( view, params );
-  return ReactDOMServer.renderToStaticMarkup( element );
+    var element = React.createElement( view, params );
+    return ReactDOMServer.renderToStaticMarkup( element );
 }
 
 function isValidEmail( email )
 {
-  var temp = email.split( '@' );
-  var name = temp[ 0 ];
-  var server = temp[ 1 ];
-  //return ucfirst name
-  return name.charAt( 0 ).toUpperCase() + name.slice( 1 );
+    var temp = email.split( '@' );
+    var name = temp[ 0 ];
+    var server = temp[ 1 ];
+    //return ucfirst name
+    return name.charAt( 0 ).toUpperCase() + name.slice( 1 );
 }
 
 //gets all recipients of the message
 function getRecipients( inCC, outCC )
 {
-  outCC = outCC || [];
-  inCC.map( function( c )
-  {
-    if ( c )
+    outCC = outCC || [];
+    inCC.map( function( c )
     {
-      outCC.push( c );
-      if ( c.getWatchers )
-      {
-        getRecipients( c.getWatchers(), outCC );
-      }
-    }
-  } )
-  return outCC;
+        if ( c )
+        {
+            outCC.push( c );
+            if ( c.getWatchers )
+            {
+                getRecipients( c.getWatchers(), outCC );
+            }
+        }
+    } )
+    return outCC;
 }
 
 function flattenRecipients( cc )
 {
-  var recipients = getRecipients( cc );
-  recipients = _.uniq( recipients, false, function( i )
-  {
-    return i._id;
-  } )
-  return recipients;
+    var recipients = getRecipients( cc );
+    recipients = _.uniq( recipients, false, function( i )
+    {
+        return i._id;
+    } )
+    return recipients;
 }
 
 
 function distributeMessage(
 {
-  recipientRoles,
-  message,
-  suppressOriginalPost
+    recipientRoles,
+    message,
+    suppressOriginalPost
 } )
 {
-  if ( !message )
-  {
-    console.log( 'No message to send...' );
-    return;
-  }
-  var user = Meteor.user();
-  var obj = this;
-  message.target = obj.getInboxId();
-  message.owner = {
-      _id: user._id,
-      name: user.getName()
-    }
-    //add message/notification to original sending object
-  if ( !suppressOriginalPost )
-  {
-    sendMessage( message, obj );
-  }
-  //scan through the list of recipientRoles and process them
-  // if string treat as role name, is obj treat as recipient proper
-  //console.log(recipientRoles);
-  var recipients;
-  if ( recipientRoles )
-  {
-    recipients = getRecipientListFromRoles( obj, recipientRoles );
-  }
-  else
-  {
-    recipients = this.getWatchers();
-    recipients = flattenRecipients( recipients );
-  }
-
-  recipients = _.uniq( recipients, false, function( i )
-  {
-    if ( i )
+    if ( !message )
     {
-      return i._id;
+        console.log( 'No message to send...' );
+        return;
     }
-  } )
-
-  //console.log(recipients);
-  recipients.map( function( r )
-  {
-    if ( r )
+    var user = Meteor.user();
+    var obj = this;
+    message.target = obj.getInboxId();
+    message.owner = {
+            _id: user._id,
+            name: user.getName()
+        }
+        //add message/notification to original sending object
+    if ( !suppressOriginalPost )
     {
-      //console.log(r);
-      console.log(
-      {
-        "sending notification to": r.email
-      } );
-      sendMessage( message, r );
+        sendMessage( message, obj );
+    }
+    //scan through the list of recipientRoles and process them
+    // if string treat as role name, is obj treat as recipient proper
+    //console.log(recipientRoles);
+    var recipients;
+    if ( recipientRoles )
+    {
+        recipients = getRecipientListFromRoles( obj, recipientRoles );
     }
     else
     {
-      console.log( "I tried to send a message to a nonexistent entitiy" );
+        recipients = this.getWatchers();
+        recipients = flattenRecipients( recipients );
     }
-  } )
+
+    recipients = _.uniq( recipients, false, function( i )
+    {
+        if ( i )
+        {
+            return i._id;
+        }
+    } )
+
+    //console.log(recipients);
+    recipients.map( function( r )
+    {
+        if ( r )
+        {
+            //console.log(r);
+            console.log(
+            {
+                "sending notification to": r.email
+            } );
+            sendMessage( message, r );
+        }
+        else
+        {
+            console.log( "I tried to send a message to a nonexistent entitiy" );
+        }
+    } )
 }
 
 function getRecipientListFromRoles( obj, roles )
 {
-  var recipients = [];
-  roles.map( function( role )
-  {
-    if ( role == "team" && obj.getTeam )
+    var recipients = [];
+    roles.map( function( role )
     {
-      team = obj.getTeam();
-      if ( team )
-      {
-        recipients.push( team );
-      }
-    }
-    //else if we are sending it to facility
-    else if ( role == "facility" && obj.getFacility )
-    {
-      facility = obj.getFacility();
-      if ( facility )
-      {
-        recipients.push( facility );
-      }
-    }
-    //else if we are sending it to the member with "role"
-    else if ( obj.getMembers )
-    {
-      recipients = recipients.concat( obj.getMembers(
-      {
-        role: role
-      } ) )
-    }
-  } )
-  return recipients;
+        if ( role == "team" && obj.team != null )
+        {
+            recipients.push( obj.team );
+        }
+        //else if we are sending it to facility
+        else if ( role == "facility" && obj.facility )
+        {
+            recipients.push( obj.facility );
+        }
+        //else if we are sending it to the member with "role"
+        else if ( obj.getMembers )
+        {
+            recipients = recipients.concat( obj.getMembers(
+            {
+                role: role
+            } ) )
+        }
+    } )
+    return recipients;
 }
 
 function sendMessageToMembers( obj, message, role )
 {
-  var team, facility, recipients = [];
-  //if we are sending the message to the team
-  if ( role == "team" && obj.getTeam )
-  {
-    team = obj.getTeam();
-    if ( team )
+    var team, facility, recipients = [];
+    //if we are sending the message to the team
+    if ( role == "team" && obj.team != null )
     {
-      recipients.push( team );
+        recipients.push( obj.team );
     }
-  }
-  //else if we are sending it to facility
-  else if ( role == "facility" && obj.getFacility )
-  {
-    facility = obj.getFacility();
-    if ( facility )
+    //else if we are sending it to facility
+    else if ( role == "facility" && obj.facility != null )
     {
-      recipients.push( facility );
+        recipients.push( obj.facility );
     }
-  }
-  //else if we are sending it to the member with "role"
-  else if ( obj.getMembers )
-  {
-    recipients = obj.getMembers(
+    //else if we are sending it to the member with "role"
+    else if ( obj.getMembers )
     {
-      role: role
+        recipients = obj.getMembers(
+        {
+            role: role
+        } )
+    }
+    recipients.map( function( r )
+    {
+        //console.log(r);
+        sendMessage( message, r );
     } )
-  }
-  recipients.map( function( r )
-  {
-    //console.log(r);
-    sendMessage( message, r );
-  } )
 }
 
 function recipientIsCreator( message, recipient )
 {
-  return recipient._id && message.owner._id && recipient._id == message.owner._id
+    return recipient._id && message.owner._id && recipient._id == message.owner._id
 }
 
 function sendMessage( message, recipient )
 {
-  var msgCopy, emailBody;
+    var msgCopy, emailBody;
 
-  //if emailBody is a callback then create the personalised body using the callback
-  if ( Meteor.isServer && message.emailBody && _.isFunction( message.emailBody ) )
-  {
-    emailBody = message.emailBody( recipient, message );
-  }
-  else
-  {
-    emailBody = message.emailBody;
-  }
-
-  //make copy of original message using our own personal inboxId
-  var msgCopy = _.extend(
-  {}, message,
-  {
-    inboxId: recipient.getInboxId(),
-    emailBody: emailBody
-  } );
-
-
-  //check if we should mark the message as read
-  if ( recipientIsCreator( message, recipient ) )
-  {
-    msgCopy.read = true;
-  }
-
-  //create the message
-  Meteor.call( "Messages.create", msgCopy, function()
-  {
-    //then email if we are supposed to
-    if ( !msgCopy.read )
+    //if emailBody is a callback then create the personalised body using the callback
+    if ( Meteor.isServer && message.emailBody && _.isFunction( message.emailBody ) )
     {
-      Meteor.call( "Messages.sendEmail", recipient, msgCopy );
+        emailBody = message.emailBody( recipient, message );
     }
-  } );
+    else
+    {
+        emailBody = message.emailBody;
+    }
+
+    //make copy of original message using our own personal inboxId
+    var msgCopy = _.extend(
+    {}, message,
+    {
+        inboxId: recipient.getInboxId(),
+        emailBody: emailBody
+    } );
+
+
+    //check if we should mark the message as read
+    if ( recipientIsCreator( message, recipient ) )
+    {
+        msgCopy.read = true;
+    }
+
+    //create the message
+    Meteor.call( "Messages.create", msgCopy, function()
+    {
+        //then email if we are supposed to
+        if ( !msgCopy.read )
+        {
+            Meteor.call( "Messages.sendEmail", recipient, msgCopy );
+        }
+    } );
 }
 
 // I reckon trash getInboxName and make getInboxId explicit in each class that uses it
 function getInboxId()
 {
-  return {
-    collectionName: this.collectionName,
-    query:
-    {
-      _id: this._id
-    },
-    name: this.getInboxName(),
-    path: this.path,
-  }
+    return {
+        collectionName: this.collectionName,
+        query:
+        {
+            _id: this._id
+        },
+        name: this.getInboxName(),
+        path: this.path,
+    }
 }
 
 // I reckon trash getInboxName and make getInboxId explicit in each class that uses it
 function getInboxName()
 {
-  return this.getName() + "'s" + " inbox";
+    return this.getName() + "'s" + " inbox";
 }
 
 function getMessageCount( opts )
 {
-  return Messages.find(
-  {
-    "inboxId.collectionName": this.collectionName,
-    "inboxId.query._id": this._id
-  }, opts ).count();
+    return Messages.find(
+    {
+        "inboxId.collectionName": this.collectionName,
+        "inboxId.query._id": this._id
+    }, opts ).count();
 }
 
 function getNotifications( opts )
 {
-  var hideOwn = opts ? opts.hideOwn : false;
-  var q = {
-    "inboxId.collectionName": this.collectionName,
-    "inboxId.query._id": this._id,
-    read: false
-  };
-  //console.log(q);
-  if ( hideOwn )
-  {
-    q[ "$ne" ] = {
-      "owner._id": this._id
+    var hideOwn = opts ? opts.hideOwn : false;
+    var q = {
+        "inboxId.collectionName": this.collectionName,
+        "inboxId.query._id": this._id,
+        read: false
     };
-  }
-  return Messages.find( q,
-  {
-    sort:
+    //console.log(q);
+    if ( hideOwn )
     {
-      createdAt: -1
+        q[ "$ne" ] = {
+            "owner._id": this._id
+        };
     }
-  } ).fetch();
+    return Messages.find( q,
+    {
+        sort:
+        {
+            createdAt: -1
+        }
+    } ).fetch();
 }
 
 function markAllNotificationsAsRead()
 {
-  Meteor.call( 'Messages.markAllNotificationsAsRead', this.getInboxId() );
+    Meteor.call( 'Messages.markAllNotificationsAsRead', this.getInboxId() );
 }

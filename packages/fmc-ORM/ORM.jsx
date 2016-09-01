@@ -106,11 +106,17 @@ function markupCollection( collection )
 	} )
 }
 
-function validate( fields, schema )
+function validate( fields, fieldNames, schema )
 {
-	let fieldNames = Object.keys( fields ),
-		errors = [];
+	let errors = [];
 
+	if( fields == null ) {
+		return errors;
+	}
+	if( fieldNames == null )
+	{
+		fieldNames = Object.keys( fields );
+	}
 	if( schema == null ) 
 	{
 		schema = this._schema;
@@ -132,7 +138,7 @@ function validate( fields, schema )
 		}
 		else
 		{
-			if ( !rule.optional && _.isEmpty( item ) )
+			if ( !rule.optional && ( item == null || _.isEmpty( item ) ) )
 			{
 				errors.push(
 				{
@@ -143,15 +149,26 @@ function validate( fields, schema )
 
 			if ( !rule.type )
 			{
-				rule.type == String;
+				rule.type == "string";
 			}
 
 			if ( item && rule.type /* && !check( item, rule.type ) */ )
 			{
 				let itemType = typeof item,
-					expectedType = typeof rule.type;
+					expectedType = rule.type;
 
-				if ( itemType != expectedType )
+				if ( expectedType == "date" )
+				{
+					if( !_.isDate( item ) ) {
+						errors.push(
+						{
+							name: fieldName,
+							type: `Invalid format: please enter a valid date`
+						} )						
+					}
+				}
+
+				else if ( itemType != expectedType )
 				{
 					errors.push(
 					{
@@ -162,6 +179,7 @@ function validate( fields, schema )
 			}
 		}
 	} )
+	return errors;
 	if ( errors.length )
 	{
 		let error = new ValidationError( errors );

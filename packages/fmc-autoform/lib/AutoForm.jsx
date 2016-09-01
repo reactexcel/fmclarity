@@ -27,22 +27,11 @@ AutoForm = class AutoForm extends React.Component
 	constructor( props )
 	{
 		super( props );
-		this.state = this.makeState( this.props );
-	}
-
-	componentWillReceiveProps( nextProps )
-	{
-		this.setState( this.makeState( nextProps ) );
-	}
-
-	makeState( props )
-	{
 		let item = props.item,
 			field = props.field,
 			schema = props.schema,
 			form = props.form,
-			onSubmit = props.onSubmit,
-			errors = {};
+			onSubmit = props.onSubmit;
 
 		if ( field != null )
 		{
@@ -59,57 +48,99 @@ AutoForm = class AutoForm extends React.Component
 			form = Object.keys( item );
 		}
 
-		return {
+		this.state = {
 			item,
 			id: item.id,
 			originalItem: item,
 			schema,
 			form,
 			onSubmit,
-			errors
+			errors:{}
 		}
+	}
+
+	componentWillReceiveProps( props )
+	{
+		let item = props.item,
+			field = props.field,
+			schema = props.schema,
+			form = props.form,
+			onSubmit = props.onSubmit;
+
+		if ( field != null )
+		{
+			item = item[ field ];
+		}
+
+		if ( schema == null )
+		{
+			schema = item.getSchema();
+		}
+
+		if ( form == null )
+		{
+			form = Object.keys( item );
+		}
+
+		this.setState({
+			item,
+			id: item.id,
+			originalItem: item,
+			schema,
+			form,
+			onSubmit,
+			errors:{}
+		})
 	}
 
 	updateFields( update )
 	{
-		let item = this.state.item;
+		let item = this.state.item,
+			errors = this.state.errors;
 		if ( _.isArray( update ) )
 		{
 			let [ fieldName, value ] = update;
 			item[ fieldName ] = value;
+
+			console.log({item, fieldName, value});
+
+			delete errors[ fieldName ];
 		}
 		else if ( _.isObject( update ) )
 		{
+			let fieldNames = Object.keys( update );
+			fieldNames.map( ( fieldName ) => 
+			{
+				item[ fieldName ] = update[ fieldName ];
+				delete errors[ fieldName ];
+			} );
 			Object.assign( item, update );
 		}
+
+
 		this.setState(
 		{
-			item
+			item,
+			errors
 		} );
 	}
 
 	submit( item )
 	{
-		if( this.props.onSubmit == null )
+		let errors = this.props.onSubmit( item, this.state.form ),
+			errorsByField = {};
+		if( errors && errors.length ) 
 		{
-			throw new Meteor.Error("No submit function defined");
-		}
-		let errors = {};
-		this.props.onSubmit( item, ( err ) =>
-		{
-			if ( err.details )
+			errors.map( ( { name, type } ) =>
 			{
-				err.details.map( ( err ) =>
+				if ( errorsByField[ name ] == null )
 				{
-					errors[ err.name ] = errors[ err.name ] || [];
-					errors[ err.name ].push( err.type );
-				} );
-				this.setState(
-				{
-					errors: errors
-				} );
-			}
-		} );
+					errorsByField[ name ] = [];
+				}
+				errorsByField[ name ].push( type );
+			})
+			this.setState({ errors:errorsByField });
+		}
 	}
 
 	/**
@@ -145,6 +176,8 @@ AutoForm = class AutoForm extends React.Component
 			form = this.state.form,
 			originalItem = this.state.originalItem;
 
+		console.log(this.state.errors);
+
 		return (
 			<div className="autoform row">
 
@@ -159,8 +192,9 @@ AutoForm = class AutoForm extends React.Component
 				{
 					var s = schema[key];
 
-					if(!s) {
-						throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
+					if( !s ) {
+						//throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
+						return;
 					}
 					else if(! this.checkCondition( s ) ) 
 					{
@@ -183,7 +217,7 @@ AutoForm = class AutoForm extends React.Component
 					        		item = { item } 
 					        		field = { key } 
 					        		schema = { s.schema } 
-					        		save = { this.props.save }
+									errors = { this.state.errors[ key ] }
 					        		onSubmit = { this.props.onSubmit }
 					        		hideSubmitButton = { true }>
 										{
@@ -215,7 +249,8 @@ AutoForm = class AutoForm extends React.Component
 			}
 
 	        {
-	        !this.props.hideSubmitButton?
+	        this.props.onSubmit != null &&
+	        !this.props.hideSubmitButton ?
 			<div style={ {textAlign:"right", clear:"both"}}>
 				<button 
 					type="button" 

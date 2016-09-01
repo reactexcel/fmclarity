@@ -49,24 +49,21 @@ FABActions = new function()
 				IssueSchema
 			}
 			onSubmit = {
-				( request, callback ) =>
+				( request, form ) =>
 				{
-					Meteor.call( 'Issues.create', request,
-					{}, ( err, response ) =>
+					console.log( request );
+					let errors = Issues.validate( request, form );
+					if( !errors.length ) 
 					{
-						if ( !err )
+						Meteor.call( 'Issues.create', request, {}, ( err, response ) =>
 						{
 							Modal.replace(
 							{
 								content: <IssueDetail item = { response }/>
 							} );
-							return true;
-						}
-						if ( callback )
-						{
-							callback( err, response );
-						}
-					} );
+						} );
+					}
+					return errors;
 				}
 			}
 			/>

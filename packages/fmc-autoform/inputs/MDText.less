@@ -1,201 +1,291 @@
-@default: 	#aaaaaa;
+@default: 	#aaa;
 @valid: 	#0152b5;
 @focus: 	#0152b5;
-@border: 	#dddddd;
+@border: 	#ddd;
 @invalid: 	#dd2c00;
 
-.md-input { 
-  	position:			relative; 
-  	margin:				36px 0 0 0;
-  	display:			inline-block; 
-  	width:				100%;
-  	padding-bottom:		9px;
-  	outline:			none;
+.md-input
+{
+    position: relative;
 
-	label {
-	  color:				#aaa; 
-	  font-size:			13px;
-	  font-weight:			normal;
-	  position:				absolute;
-	  pointer-events:		none;
-	  top:					5px;
-	  transition:			0.2s ease all;
+    display: inline-block;
+
+    width: 100%;
+    margin: 36px 0 0 0;
+    padding-bottom: 9px;
+
+    outline: none;
+    label
+    {
+        font-size: 13px;
+        font-weight: normal;
+
+        position: absolute;
+        top: 5px;
+
+        transition: .2s ease all;
+        pointer-events: none;
+
+        color: #aaa;
+    }
+    .highlight
+    {
+        position: absolute;
+        top: 25%;
+        left: 0;
+
+        width: 100px;
+        height: 60%;
+
+        transition: .2s ease all;
+        pointer-events: none;
+
+        opacity: .5;
+    }
+    .helper-text
+    {
+        font-size: 11px;
+
+        position: absolute;
+        bottom: -9px;
+        left: 1px;
+
+        visibility: hidden;
+
+        height: 15px;
+
+        color: #aaa;
+    }
+
+  	.close-button 
+  	{
+		display: 			none;
+  	}
+
+	&:hover .close-button 
+	{
+	  display: 				block;
+	  opacity: 				0.8;
 	}
+    
+    .input
+    {
+        font-size: 13px;
+        font-weight: 400;
 
-	.highlight {
-  		position:			absolute;
-  		height:				60%; 
-  		width:				100px; 
-  		top:				25%; 
-  		left:				0;
-  		pointer-events:		none;
-  		transition:			0.2s ease all;
-  		opacity:			0.5;
-	}
+        display: block;
 
-	.helper-text {
-		visibility:			hidden;
-		font-size:			11px;
-		color:				#aaa;
-		position:			absolute;
-		height:				15px;
-		bottom:				-9px;
-		left:				1px;
-	}
+        width: 100%;
+        min-height: 27px;
+        padding: 4px 0 7px 0;
 
-	.input {
-  		color:				#333;
-  		font-weight:		400;
-  		font-size:			13px;
-  		padding:			4px 0 7px 0;
-  		display:			block;
-  		width:				100%;
-  		border:				none;
-  		border-bottom:		1px solid @border;
-  		background-color: 	transparent;
-  		min-height:			27px;
+        color: #333;
+        border: none;
+        border-bottom: 1px solid @border;
+        background-color: transparent;
+        &.used
+        {
+            ~ label
+            {
+                font-size: 11px;
 
-		&.used {
-			~ label {
-  				top:				-12px;
-  				font-size:	 		11px;
-  				color: 				@default;
-  			}
-		}
+                top: -12px;
 
-		&:focus,
-		&.focus {
-			outline:			none;
+                color: @default;
+            }
+        }
+        &:focus,
+        &.focus
+        {
+            outline: none;
+            ~ label
+            {
+                font-size: 11px;
 
-			~ label {
-  				top:				-12px;
-  				font-size:			11px;
-  				color:				@focus;
-			}
+                top: -12px;
 
-			~ .helper-text {
-				visibility:			visible;
-			}
+                color: @focus;
+            }
+            ~ .helper-text
+            {
+                visibility: visible;
+            }
+            ~ .bar:before, ~ .bar:after
+            {
+                width: 50%;
+            }
+            ~ .highlight
+            {
+                -webkit-animation: inputHighlighter .3s ease;
+            }
+        }
+        &:valid,
+        &.valid
+        {
+            border-bottom: 1px solid @border;
+            ~ .bar:before, ~ .bar:after
+            {
+                background: @valid !important;
+            }
+            .used ~ label
+            {
+                color: @valid;
+            }
+            ~ .hightlight
+            {
+                -webkit-animation: validHighlighter .3s ease;
+            }
+        }
+        &:invalid,
+        &.invalid
+        {
+            border-bottom: 1px solid @border;
+            ~ .bar:before, ~ .bar:after
+            {
+                width: 50%;
 
-			~ .bar:before,
-			~ .bar:after {
-  				width:				50%;
-			}
+                background: @invalid !important;
+            }
+            ~ .helper-text
+            {
+                visibility: visible;
 
-			~ .highlight {
- 				-webkit-animation:	inputHighlighter 0.3s ease;
-			}
-		}
+                color: @invalid;
+            }
+            ~ label,
+            .used ~ label
+            {
+                color: @invalid;
+            }
+            ~ .hightlight
+            {
+                -webkit-animation: invalidHighlighter .3s ease;
+            }
+        }
+    }
+    .bar
+    {
+        position: relative;
 
-		&:valid,
-		&.valid { 
-			border-bottom: 		1px solid @border;
+        display: block;
 
-			~ .bar:before,
-			~ .bar:after {
-		  		background: 		@valid !important;
-		  	}
+        width: 100%;
+        &:before,
+        &:after
+        {
+            position: absolute;
+            bottom: 1px;
 
-			.used ~ label {
-  				color: 				@valid;
-			}
+            width: 0;
+            height: 2px;
 
-			~ .hightlight {
-				-webkit-animation:	validHighlighter 0.3s ease;
-			}
-		}
+            content: '';
+            transition: .2s ease all;
 
-		&:invalid,
-		&.invalid {
-			border-bottom: 		1px solid @border;
-
-			~ .bar:before,
-			~ .bar:after {
-  				width:				50%;
-		  		background: 		@invalid !important;
-		  	}
-
-			~ .helper-text {
-				visibility:			visible;
-				color:				@invalid;
-			}
-
-			~ label ,
-			.used ~ label {
-  				color: 				@invalid;
-			}
-
-			~ .hightlight {
-				-webkit-animation:	invalidHighlighter 0.3s ease;
-			}
-		}
-	}
-
-	.bar {
-		position:			relative;
-		display:			block;
-		width:				100%; 
-
-		&:before, &:after {
-			content:			'';
-			height:				2px;
-			width:				0;
-			bottom:				1px; 
-			position:			absolute;
-			background:			@focus; 
-			transition:			0.2s ease all;				
-		}
-
-		&:before {
-			left:				50%;
-		}
-
-		&:after {
-			right:				50%; 
-		}
-	}
+            background: @focus;
+        }
+        &:before
+        {
+            left: 50%;
+        }
+        &:after
+        {
+            right: 50%;
+        }
+    }
 }
 
-.md-input.disabled {
-	.input {
-		border-bottom:	1px dashed #ddd;
-		color:			#ddd;
-	}
-	label{
-		color:			#ddd;
-	}
+.md-input.disabled
+{
+    .input
+    {
+        color: #ddd;
+        border-bottom: 1px dashed #ddd;
+        &:invalid,
+        &.invalid
+        {
+            ~ label
+            {
+            	color: #ddd;
+            }
+            ~ .bar:before, ~ .bar:after
+            {
+            	display: none;
+            }
+        }
+    }
+    label
+    {
+        color: #ddd;
+    }
+    .helper-text
+    {
+    	visibility: visible;
+    }
 }
 
 
 /* ANIMATIONS ================ */
-@-webkit-keyframes inputHighlighter {
-	from { background:@focus; }
-  	to 	{ width:0; background:transparent; }
+@-webkit-keyframes inputHighlighter
+{
+    from
+    {
+        background: @focus;
+    }
+    to
+    {
+        width: 0;
+
+        background: transparent;
+    }
 }
 
-@-webkit-keyframes validHighlighter {
-	from { background:@valid !important; }
-  	to 	{ width:0; background:transparent; }
+@-webkit-keyframes validHighlighter
+{
+    from
+    {
+        background: @valid !important;
+    }
+    to
+    {
+        width: 0;
+
+        background: transparent;
+    }
 }
 
-@-webkit-keyframes invalidHighlighter {
-	from { background:@invalid !important; }
-  	to 	{ width:0; background:transparent; }
+@-webkit-keyframes invalidHighlighter
+{
+    from
+    {
+        background: @invalid !important;
+    }
+    to
+    {
+        width: 0;
+
+        background: transparent;
+    }
 }
 
-td .md-input {
-  margin:0;
+td .md-input
+{
+    margin: 0;
 }
 
-td .md-input > .input {
-	padding:10px;
-	border:none;
+td .md-input > .input
+{
+    padding: 10px;
+
+    border: none;
 }
 
-td .md-input .dropdown-menu {
-  top:36px;
+td .md-input .dropdown-menu
+{
+    top: 36px;
 }
 
-td .md-input > label {
-  display:none;
+td .md-input > label
+{
+    display: none;
 }

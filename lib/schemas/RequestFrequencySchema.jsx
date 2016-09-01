@@ -6,7 +6,8 @@ RequestFrequencySchema = {
 		size: 6,
 		options:
 		{
-			items: [
+			items: 
+			[
 				"1",
 				"2",
 				"3",
@@ -24,7 +25,8 @@ RequestFrequencySchema = {
 		size: 6,
 		options:
 		{
-			items: [
+			items: 
+			[
 				"1",
 				"2",
 				"3",
@@ -42,7 +44,8 @@ RequestFrequencySchema = {
 		size: 6,
 		options:
 		{
-			items: [
+			items: 
+			[
 				"days",
 				"weeks",
 				"months",

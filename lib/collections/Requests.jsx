@@ -108,10 +108,9 @@ Issues.methods(
 		authentication: true,
 		helper: function( request )
 		{
-			var supplier = request.getSupplier();
-			if ( supplier )
+			if ( request.supplier )
 			{
-				var supplierManagers = supplier.getMembers(
+				var supplierManagers = request.supplier.getMembers(
 				{
 					role: "manager"
 				} );

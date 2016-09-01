@@ -1,45 +1,57 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-AutoInput.switch = React.createClass({
+AutoInput.switch = React.createClass(
+{
 
-	componentDidMount() {
+	componentDidMount()
+	{
 		var component = this;
 		var save = this.props.onChange;
 		var input = this.refs.input;
-		new Switchery(this.refs.input, {size:'small',color:'#db4437'});
-		input.onchange = function(e){
-			if(component.blockNextSave) {
+		new Switchery( this.refs.input,
+		{
+			size: 'small',
+			color: '#db4437'
+		} );
+		input.onchange = function( e )
+		{
+			if ( component.blockNextSave )
+			{
 				component.blockNextSave = false;
 				return;
 			}
 			var oldValue = component.props.value;
 			var newValue = e.target.checked;
-			if(oldValue!=newValue) {
-				save(e.target.checked);
+			if ( oldValue != newValue )
+			{
+				save( e.target.checked );
 			}
 		}
 	},
 
-	componentWillReceiveProps(newProps) {
+	componentWillReceiveProps( newProps )
+	{
 		var input = this.refs.input;
 		var oldValue = input.checked;
 		var newValue = newProps.value;
-		if(oldValue!=newValue) {
+		if ( oldValue != newValue )
+		{
 			this.blockNextSave = true;
 			input.checked = newValue;
-			var event = document.createEvent('HTMLEvents');
-	        event.initEvent('change', true, true);
-	        input.dispatchEvent(event);
+			var event = document.createEvent( 'HTMLEvents' );
+			event.initEvent( 'change', true, true );
+			input.dispatchEvent( event );
 		}
 	},
 
-	render() {
+	render()
+	{
 		var value = this.props.value;
 		var label = this.props.placeholder;
 		return (
-	        <div className="md-switch">
+			<div className="md-switch">
 				<input 
 					ref="input"
 					type="checkbox"
@@ -53,4 +65,4 @@ AutoInput.switch = React.createClass({
 			</div>
 		)
 	}
-});
+} );

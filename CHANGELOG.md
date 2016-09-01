@@ -24,6 +24,10 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.5.4-01**
+
+* Fixed numerous errors related to work request submission
+
 **v1.5.4**
 
 * Loaded documents now joined using collection hooks

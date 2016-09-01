@@ -22,6 +22,7 @@ TeamSchema = {
     {
         type: String,
         label: "Account type",
+        description: "Is this an account for facility managers or suppliers?",
         input: "MDSelect",
         condition: ( item ) =>
         {
@@ -44,6 +45,7 @@ TeamSchema = {
     email:
     {
         type: String,
+        description: "The primary email contact for this team",
         label: "Email",
         //regEx:        ORM.RegEx.Email,
     },

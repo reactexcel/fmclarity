@@ -36,8 +36,6 @@ function actionGetQuote( request, user )
 
 function actionEdit( request, user )
 {
-	request.facility = _.pick( request.facility, '_id', 'name' );
-	request.supplier = _.pick( request.supplier, '_id', 'name' );
 	if ( request.type == "Preventative" )
 	{
 		request.status = "PMP";
@@ -94,8 +92,6 @@ Issues.workflow.addState( [ 'Draft' ],
 
 		method: function( request )
 		{
-			request.facility = _.pick( request.facility, '_id', 'name' );
-			request.supplier = _.pick( request.supplier, '_id', 'name' );
 			if ( request.type == "Preventative" )
 			{
 				request.status = "PMP";
@@ -222,10 +218,6 @@ Issues.workflow.addState( [ 'PMP' ],
 
 		method: function( request )
 		{
-			// can we do this in the schema?
-			request.facility = _.pick( request.facility, '_id', 'name' );
-			request.supplier = _.pick( request.supplier, '_id', 'name' );
-
 			if ( request.type == "Preventative" )
 			{
 				request.status = "PMP";
@@ -636,7 +628,6 @@ function actionIssue( request )
 		}
 	} );
 
-	var team = request.getTeam();
 	request.distributeMessage(
 	{
 		recipientRoles: [ "supplier manager" ],
@@ -644,7 +635,7 @@ function actionIssue( request )
 		message:
 		{
 			verb: "issued",
-			subject: "New work request from " + " " + team.getName(),
+			subject: "New work request from " + " " + request.team.name,
 			emailBody: function( recipient )
 			{
 				var expiry = moment( request.dueDate )

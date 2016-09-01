@@ -1,39 +1,44 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 import '../Compliance/PMPList.jsx';
 
-FacilityViewDetail = React.createClass({
+FacilityViewDetail = React.createClass(
+{
+    mixins: [ ReactMeteorData ],
 
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
-        var team,facility,suppliers,address,coverImage;
+    getMeteorData()
+    {
+        var team, facility, suppliers, address, coverImage;
         team = Session.getSelectedTeam();
-        facility = this.props.item?Facilities.findOne(this.props.item._id):null;
-        if(facility) {
-            Meteor.subscribe("messages","Facilities",facility._id,moment().subtract({days:7}).toDate());
-            Meteor.subscribe("contractors");
+        facility = this.props.item ? Facilities.findOne( this.props.item._id ) : null;
+        if ( facility )
+        {
+            Meteor.subscribe( "messages", "Facilities", facility._id, moment().subtract( { days: 7 } ).toDate() );
+            Meteor.subscribe( "contractors" );
             suppliers = facility.getSuppliers();
             address = facility.getAddress();
             coverImage = facility.getThumbUrl();
         }
         return {
-            facility:facility,
-            address:address,
-            suppliers:suppliers,
-            team:team,
-            coverImage:coverImage
+            facility,
+            address,
+            suppliers,
+            team,
+            coverImage
         }
     },
 
-    editService(svc) {
-        Modal.show({
-            content:<div><h1>Edit Service "{svc.name}"</h1></div>
-        });
+    editService( svc )
+    {
+        Modal.show(
+        {
+            content: <div><h1>Edit Service "{svc.name}"</h1></div>
+        } );
     },
 
-    render() {
+    render()
+    {
         var facility = this.data.facility;
         var suppliers = this.data.suppliers;
         var team = this.data.team;
@@ -41,14 +46,16 @@ FacilityViewDetail = React.createClass({
         var thumb = this.data.coverImage;
 
         var thumb, createdAt, contact, contactName;
-        if(facility) {
-            createdAt = moment(facility.createdAt).format();
+        if ( facility )
+        {
+            createdAt = moment( facility.createdAt ).format();
             contact = facility.getPrimaryContact();
         }
 
-        var services = facility.servicesRequired.sort(function(a,b){
-            return !a.name?-1:(!b.name||(a.name>b.name))?1:1;
-        })
+        var services = facility.servicesRequired.sort( function( a, b )
+        {
+            return !a.name ? -1 : ( !b.name || ( a.name > b.name ) ) ? 1 : 1;
+        } )
 
         //IpsoTabs content needs slimscroll applied
         //IpsoTabs should be renamed... TabPanel?
@@ -132,24 +139,42 @@ FacilityViewDetail = React.createClass({
                     }
                 ]} />                
             </div>
-        )}
-})
+        )
+    }
+} )
 
-ContactDetails = React.createClass({
-    render() {
-        var contact,contactName;
+ContactDetails = React.createClass(
+{
+    render()
+    {
+        var contact, contactName;
         var contact = this.props.item;
-        if(contact) {
-            contactName = contact.getName?contact.getName():contact.name;
-            contact = contact.getProfile?contact.getProfile():contact;
+        if ( contact != null )
+        {
+            contactName = contact.getName ? contact.getName() : contact.name;
+            contact = contact.getProfile ? contact.getProfile() : contact;
         }
-        if(!contact) return <div/>
-        return <div className="contact-info">
-            {contactName?<span className="contact-title">Contact: {contactName}<br/></span>:null}
-            <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
-            {contact.phone?<span><i className="fa fa-phone"></i> {contact.phone}<br/></span>:null}
-            {contact.phone2?<span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>:null}
-        </div>
-    }  
-})
+        if ( !contact ) {
+            return <div/>
+        }
+        return (
+        <div className="contact-info">
 
+            {contactName?
+            <span className="contact-title">Contact: {contactName}<br/></span>
+            :null}
+
+            <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
+
+            {contact.phone?
+            <span><i className="fa fa-phone"></i> {contact.phone}<br/></span>
+            :null}
+
+            {contact.phone2?
+            <span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>
+            :null}
+
+        </div>
+        )
+    }
+} )
