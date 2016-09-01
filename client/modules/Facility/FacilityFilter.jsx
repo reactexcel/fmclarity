@@ -1,32 +1,38 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-FacilityFilter = React.createClass({
+FacilityFilter = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+    getMeteorData()
+    {
         var user = Meteor.user();
-        if(user) {
+        if ( user )
+        {
             var team = Session.getSelectedTeam();
-            if(team) {
+            if ( team )
+            {
                 return {
-                    user : user,
-                    team : team,
-                    facility : Session.getSelectedFacility(),
-                    facilities : team.getFacilities()
+                    user: user,
+                    team: team,
+                    facility: Session.getSelectedFacility(),
+                    facilities: team.getFacilities()
                 }
             }
         }
         return {}
     },
 
-    selectFacility(facility) {
-        Session.set("selectedFacility",facility);
+    selectFacility( facility )
+    {
+        Session.set( "selectedFacility", facility );
     },
 
-    render() {
+    render()
+    {
         var facility = this.data.facility;
         return (
             <div style={{position:"absolute",zIndex:1300}}>
@@ -41,4 +47,4 @@ FacilityFilter = React.createClass({
             </div>
         )
     }
-})
+} )

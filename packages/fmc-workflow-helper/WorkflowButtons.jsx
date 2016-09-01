@@ -1,10 +1,12 @@
 import React from "react";
 
-export default React.createClass({
+export default React.createClass(
+{
 
-    render() {
+    render()
+    {
         var request = this.props.item;
-        var width = this.props.width||"100px";
+        var width = this.props.width || "100px";
         var actions = request.getActions();
         return (
             <div>
@@ -23,4 +25,4 @@ export default React.createClass({
             </div>
         )
     }
-});
+} );

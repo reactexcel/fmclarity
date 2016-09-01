@@ -92,3 +92,5 @@ base64
 standard-minifier-css
 standard-minifier-js
 react-meteor-data
+
+mdg:validation-error

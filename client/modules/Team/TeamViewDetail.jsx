@@ -1,66 +1,82 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import
+{
+	ReactMeteorData
+}
+from 'meteor/react-meteor-data';
 
-TeamViewDetail = React.createClass({
+TeamViewDetail = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	var team, messages, suppliers, services, primaryContact, insuranceDocs;
-        Meteor.subscribe('contractors');
-        Meteor.subscribe('teamsAndFacilitiesForUser');
-        team = this.props.item;
-        if(team) {
-            Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate());
-            suppliers = team.getSuppliers();
-            primaryContact = team.getPrimaryContact();
-            messages = team.getMessages();
-            services = team.getAvailableServices();
-            insuranceDocs = team.getDocs({type:"Insurance"});
-        }
-        return {
-        	team: team,
-        	services: services,
-        	primaryContact: primaryContact,
-            suppliers: suppliers,
-            messages: messages,
-            insuranceDocs:insuranceDocs
-        }
-    },
+	getMeteorData()
+	{
+		var team, messages, suppliers, services, primaryContact, insuranceDocs;
+		Meteor.subscribe( 'contractors' );
+		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
+		team = this.props.item;
+		if ( team )
+		{
+			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract( {days: 7} ).toDate());
+			suppliers = team.getSuppliers();
+			primaryContact = team.getPrimaryContact();
+			messages = team.getMessages();
+			services = team.getAvailableServices();
+			insuranceDocs = team.getDocs(
+			{
+				type: "Insurance"
+			} );
+		}
+		return {
+			team: team,
+			services: services,
+			primaryContact: primaryContact,
+			suppliers: suppliers,
+			messages: messages,
+			insuranceDocs: insuranceDocs
+		}
+	},
 
-	render() {
+	render()
+	{
 		var team = this.data.team;
-	    if(!team) {
-	    	return <div/>
-	    }
+		if ( !team )
+		{
+			return <div/>
+		}
 
-	    // import fields
-	    var messages = this.data.messages;
-	    var suppliers = this.data.suppliers;
-	    var primaryContact = this.data.primaryContact;
-	    var insuranceDocs = this.data.insuranceDocs;
-	    var availableServices = this.data.services;
+		// import fields
+		var messages = this.data.messages;
+		var suppliers = this.data.suppliers;
+		var primaryContact = this.data.primaryContact;
+		var insuranceDocs = this.data.insuranceDocs;
+		var availableServices = this.data.services;
 
-	    // calculate contact name
-	    var contactName;
-	    if(primaryContact) {
-	    	contactName = primaryContact.getName();
-	    }
+		// calculate contact name
+		var contactName;
+		if ( primaryContact )
+		{
+			contactName = primaryContact.getName();
+		}
 
-	    // calculate insurance expiry (calculations should be going in getMeteorData)
-	    var insuranceExpiry;
-	    if(insuranceDocs&&insuranceDocs.length) {
-	    	var primaryDoc = insuranceDocs[0];
-	    	if(primaryDoc.expiryDate!=null) {
-		    	insuranceExpiry = moment(primaryDoc.expiryDate).format('DD/MM/YYYY');
-		    }
-	    }
+		// calculate insurance expiry (calculations should be going in getMeteorData)
+		var insuranceExpiry;
+		if ( insuranceDocs && insuranceDocs.length )
+		{
+			var primaryDoc = insuranceDocs[ 0 ];
+			if ( primaryDoc.expiryDate != null )
+			{
+				insuranceExpiry = moment( primaryDoc.expiryDate )
+					.format( 'DD/MM/YYYY' );
+			}
+		}
 
-	    var thumb = team.getThumbUrl();
+		var thumb = team.getThumbUrl();
 
-	    return (
-	    <div>
+		return (
+			<div>
 	    	{/*this should be in sub-component*/}
 	    	<div className="business-card">{/*should perhaps be team-card?*/}
 				<div className="contact-thumbnail pull-left">
@@ -114,4 +130,4 @@ TeamViewDetail = React.createClass({
 		</div>
 		)
 	}
-});
+} );

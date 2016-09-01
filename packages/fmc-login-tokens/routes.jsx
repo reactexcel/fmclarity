@@ -8,7 +8,7 @@ loggedIn = FlowRouter.group({
       var route;
       if (!(Meteor.loggingIn() || Meteor.userId())) {
         route = FlowRouter.current();
-        console.log(route);
+        //console.log(route);
         if (route.route.name == 'login') {
           Session.set('redirectAfterLogin', '/');          
         }
@@ -29,7 +29,7 @@ if(Meteor.isClient) {
     //console.log(user);
     if(user) {
         teams = user.getTeams();
-        console.log(teams);
+        //console.log(teams);
     }
 
     /*

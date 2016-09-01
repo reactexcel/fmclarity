@@ -1,48 +1,55 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-ServicesSelector = React.createClass({
-
-	getInitialState() {
-		var item,field,services;
+ServicesSelector = React.createClass(
+{
+	getInitialState()
+	{
+		var item, field, services;
 		item = this.props.item;
-		field = this.props.field||"servicesRequired";
-		services = item&&field?item[field]:[];
+		field = this.props.field || "servicesRequired";
+		services = item && field ? item[ field ] : [];
 		return {
-			item:item,
-			field:field,
-			services:services||[],
+			item,
+			field,
+			services: services || [],
 			expanded:{}
 		}
 	},
 
-	componentWillReceiveProps(props) {
+	componentWillReceiveProps( props )
+	{
 		//only update if the item (facility) being displayed has changed
 		//this means the item will fail to refresh if updated by another client
 		//a deep comparison could prevent this (if it is deemed worthwhile)
-		if(props.item._id!=this.state.item._id) {
-			var item,field,services;
+		if ( props.item._id != this.state.item._id )
+		{
+			var item, field, services;
 			item = props.item;
-			field = props.field||"servicesRequired";
-			services = item&&field?item[field]:[];
-			this.setState({
-				item:item,
-				field:field,
-				services:services||[],
-				expanded:{}
-			});
+			field = props.field || "servicesRequired";
+			services = item && field ? item[ field ] : [];
+			this.setState(
+			{
+				item: item,
+				field: field,
+				services: services || [],
+				expanded:
+				{}
+			} );
 		}
 	},
 
-	componentDidMount(){
-		this.save = _.debounce(this.save,1000);
+	componentDidMount()
+	{
+		this.save = _.debounce( this.save, 1000 );
 	},
 
-	save() {
+	save()
+	{
 		var item = this.state.item;
 		var services = this.state.services;
-		item.setServicesRequired(services);
+		item.setServicesRequired( services );
 		/* or???
 		if(this.props.onChange) {
 			this.props.onChange(this.state.services);
@@ -50,73 +57,96 @@ ServicesSelector = React.createClass({
 		*/
 	},
 
-	updateService(idx,newValue) {
+	updateService( idx, newValue )
+	{
 		var services = this.state.services;
-		if(!newValue) {
-			services.splice(idx,1);
+		if ( !newValue )
+		{
+			services.splice( idx, 1 );
 		}
-		else {
-			services[idx] = newValue;
+		else
+		{
+			services[ idx ] = newValue;
 		}
-		this.setState({
-			services:services
-		})
+		this.setState(
+		{
+			services: services
+		} )
 		this.save();
 	},
 
-	updateSubService(idx,subIdx,newValue) {
+	updateSubService( idx, subIdx, newValue )
+	{
 		var services = this.state.services;
-		var service = services[idx];
-		if(!newValue) {
-			service.children.splice(subIdx,1);
+		var service = services[ idx ];
+		if ( !newValue )
+		{
+			service.children.splice( subIdx, 1 );
 		}
-		else {
-			service.children[subIdx] = newValue;
+		else
+		{
+			service.children[ subIdx ] = newValue;
 		}
-		services[idx] = service;
-		this.setState({
-			services:services
-		})
+		services[ idx ] = service;
+		this.setState(
+		{
+			services: services
+		} )
 		this.save();
 	},
 
-	addService() {
+	addService()
+	{
 		var services = this.state.services;
-		var lastIndex = services.length-1;
-		var lastService = services[lastIndex];
-		if(!lastService||lastService.name.length) {
-			services.push({name:""});
-			this.setState({
-				services:services
-			})
+		var lastIndex = services.length - 1;
+		var lastService = services[ lastIndex ];
+		if ( !lastService || lastService.name.length )
+		{
+			services.push(
+			{
+				name: ""
+			} );
+			this.setState(
+			{
+				services: services
+			} )
 			this.save();
 		}
 	},
 
-	addSubService(idx) {
+	addSubService( idx )
+	{
 		var services = this.state.services;
-		var service = services[idx];
-		service.children = service.children||[];
-		var lastIndex = service.children.length-1;
-		var lastSubService = service.children[lastIndex];
-		if(!lastSubService||lastSubService.name.length) {
-			services[idx].children.push({name:""});
-			this.setState({
-				services:services
-			})
+		var service = services[ idx ];
+		service.children = service.children || [];
+		var lastIndex = service.children.length - 1;
+		var lastSubService = service.children[ lastIndex ];
+		if ( !lastSubService || lastSubService.name.length )
+		{
+			services[ idx ].children.push(
+			{
+				name: ""
+			} );
+			this.setState(
+			{
+				services: services
+			} )
 			this.save();
 		}
 	},
 
-	toggleExpanded(supplierName) {
+	toggleExpanded( supplierName )
+	{
 		var expanded = this.state.expanded;
-		expanded[supplierName] = expanded[supplierName]?false:true;
-		this.setState({
-			expanded:expanded
-		})
+		expanded[ supplierName ] = expanded[ supplierName ] ? false : true;
+		this.setState(
+		{
+			expanded: expanded
+		} )
 	},
 
-	render() {
+	render()
+	{
 		var component = this;
 		var facility = this.state.item;
 		var services = this.state.services;
@@ -180,72 +210,91 @@ ServicesSelector = React.createClass({
 			</div>
 		)
 	}
-})
+} )
 
-ServiceSupplierRow = React.createClass({
+ServiceSupplierRow = React.createClass(
+{
 
-	mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	var service,supplier;
-    	service = this.props.service;
-    	if(service.data&&service.data.supplier) {
-    		var q = service.data.supplier;
-    		if(q._id) {
-    			supplier = Teams.findOne(q._id);
-    		}
-    		else if(q.name) {
-    			supplier = Teams.findOne({name:q.name});
-    		}
-    	}
-    	return {
-    		service:service,
-    		supplier:supplier
-    	}
-    },
+	getMeteorData()
+	{
+		var service, supplier;
+		service = this.props.service;
+		if ( service.data && service.data.supplier )
+		{
+			var q = service.data.supplier;
+			if ( q._id )
+			{
+				supplier = Teams.findOne( q._id );
+			}
+			else if ( q.name )
+			{
+				supplier = Teams.findOne(
+				{
+					name: q.name
+				} );
+			}
+		}
+		return {
+			service: service,
+			supplier: supplier
+		}
+	},
 
-	updateSupplier(supplier,event) {
-		if(event) {
+	updateSupplier( supplier, event )
+	{
+		if ( event )
+		{
 			event.stopPropagation();
 		}
 		var service = this.data.service;
-		if(supplier) {
+		if ( supplier )
+		{
 			//I tend to think this would be better as
 			//facility.setServiceSupplier(service,supplier)
 			//called through the callback below
-			service.data = service.data||{};
+			service.data = service.data ||
+			{};
 			service.data.supplier = {
-				_id:supplier._id,
-				name:supplier.name
-			}
-			//should be this.props.facility.addSupplier(supplier,{service:foo,subservice:bar})
-			this.props.facility.addSupplier(supplier); 
+					_id: supplier._id,
+					name: supplier.name
+				}
+				//should be this.props.facility.addSupplier(supplier,{service:foo,subservice:bar})
+			this.props.facility.addSupplier( supplier );
 		}
-		else {
+		else
+		{
 			service.data.supplier = null;
 		}
-		if(this.props.onChange) {
-			this.props.onChange(service);
+		if ( this.props.onChange )
+		{
+			this.props.onChange( service );
 		}
 	},
 
-	updateServiceName(event) {
+	updateServiceName( event )
+	{
 		var service = this.data.service;
 		var newValue = event.target.value;
 		service.name = newValue;
-		if(this.props.onChange) {
-			this.props.onChange(service);
+		if ( this.props.onChange )
+		{
+			this.props.onChange( service );
 		}
 	},
 
-    showSupplierModal(supplier) {
-    	var facility = Session.getSelectedFacility();
-        Modal.show({
-            content:<TeamViewEdit item={supplier} facility={facility} onChange={this.updateSupplier}/>
-        })
-    },
+	showSupplierModal( supplier )
+	{
+		var facility = Session.getSelectedFacility();
+		Modal.show(
+		{
+			content: <TeamViewEdit item={supplier} facility={facility} onChange={this.updateSupplier}/>
+		} )
+	},
 
-	render() {
+	render()
+	{
 		service = this.data.service;
 		supplier = this.data.supplier;
 		clickExpand = this.props.clickExpand;
@@ -274,5 +323,4 @@ ServiceSupplierRow = React.createClass({
 			</div>
 		)
 	}
-})
-
+} )

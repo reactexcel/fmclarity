@@ -1,125 +1,151 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 /*
 TODO: remove tour, add additional instructions into stepper
 */
-TeamViewEdit = React.createClass({
+TeamViewEdit = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+    getMeteorData()
+    {
 
-    	var viewer, viewersTeam, viewingTeam, group;
+        var viewer, viewersTeam, viewingTeam, group;
 
         viewer = Meteor.user();
-        viewersTeam = this.props.team?Teams.findOne(this.props.team._id):Session.getSelectedTeam();
-        viewingTeam = this.state.item?Teams.findOne(this.state.item._id):null;
+        viewersTeam = this.props.team ? Teams.findOne( this.props.team._id ) : Session.getSelectedTeam();
+        viewingTeam = this.state.item ? Teams.findOne( this.state.item._id ) : null;
         //if this team is a member of a group, group may be included as one of the props
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
-        group = this.props.group?Facilities.findOne(this.props.group._id):null;
+        group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
 
-    	return {
-    		viewer:viewer,
-    		viewersTeam:viewersTeam,
-    		viewingTeam:viewingTeam,
-            group:group,
-    	}
-    },
-
-    tour:{
-      id:"team-edit-page",
-      steps: [{
-        title: "This is your team profile.",
-        content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents, SWMS, references, etc",
-        target: "fm-logo",
-        arrowOffset:"center",
-        onShow:function(){
-          $('.hopscotch-bubble-arrow-container').css('visibility', 'hidden');
-        },
-        placement: "bottom"
-      },{
-        title: "Company documents",
-        content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here",
-        target: "company-documents",
-        placement: "bottom"
-      },{
-        title: "Members",
-        content: "Adding staff members will enable you to assign jobs to members of your team. New members will be given the role of staff meaning they can only view requests assigned to them. If you want them to see all jobs you can promote them to manager by selecting the member and clicking promote from the tool icon at the top right of their profile. You can also invite them to use FMC from this same menu",
-        target: "members",
-        placement: "bottom"
-      },{
-        title: "Services",
-        content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided services are those that you can perform as a supplier.",
-        target: "services-provided",
-        placement: "bottom"
-      }]
-    },
-
-	getInitialState() {
-		return {
-			item:this.props.item
-		}
-	},
-
-	componentWillReceiveProps(newProps) {
-		this.setItem(newProps.item);
-	},
-
-	setItem(newItem) {
-		this.setState({
-			item:newItem
-		});
-	},
-
-	handleInvite(event) {
-    	event.preventDefault();
-    	var component = this;
-		var viewersTeam = this.data.viewersTeam;
-		var group = this.data.group;
-    	var input = this.refs.invitation;
-    	var searchName = input.value;
-        if(!searchName) {
-            alert('Please enter a valid name.');
+        return {
+            viewer: viewer,
+            viewersTeam: viewersTeam,
+            viewingTeam: viewingTeam,
+            group: group,
         }
-    	else {
+    },
+
+    tour:
+    {
+        id: "team-edit-page",
+        steps: [
+        {
+            title: "This is your team profile.",
+            content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents, SWMS, references, etc",
+            target: "fm-logo",
+            arrowOffset: "center",
+            onShow: function()
+            {
+                $( '.hopscotch-bubble-arrow-container' )
+                    .css( 'visibility', 'hidden' );
+            },
+            placement: "bottom"
+        },
+        {
+            title: "Company documents",
+            content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here",
+            target: "company-documents",
+            placement: "bottom"
+        },
+        {
+            title: "Members",
+            content: "Adding staff members will enable you to assign jobs to members of your team. New members will be given the role of staff meaning they can only view requests assigned to them. If you want them to see all jobs you can promote them to manager by selecting the member and clicking promote from the tool icon at the top right of their profile. You can also invite them to use FMC from this same menu",
+            target: "members",
+            placement: "bottom"
+        },
+        {
+            title: "Services",
+            content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided services are those that you can perform as a supplier.",
+            target: "services-provided",
+            placement: "bottom"
+        } ]
+    },
+
+    getInitialState()
+    {
+        return {
+            item: this.props.item
+        }
+    },
+
+    componentWillReceiveProps( newProps )
+    {
+        this.setItem( newProps.item );
+    },
+
+    setItem( newItem )
+    {
+        this.setState(
+        {
+            item: newItem
+        } );
+    },
+
+    handleInvite( event )
+    {
+        event.preventDefault();
+        var component = this;
+        var viewersTeam = this.data.viewersTeam;
+        var group = this.data.group;
+        var input = this.refs.invitation;
+        var searchName = input.value;
+        if ( !searchName )
+        {
+            alert( 'Please enter a valid name.' );
+        }
+        else
+        {
             input.value = '';
-            viewersTeam.inviteSupplier(searchName, null, function(invitee){
-            	invitee = Teams._transform(invitee);
-            	if(group&&group.addSupplier) {
-            		group.addSupplier(invitee);
-            	}
-            	component.setItem(invitee);
-            	if(component.props.onChange) {
-            		component.props.onChange(invitee);
-            	}
-                if(!invitee.email) {
-                    component.setState({
-                        shouldShowMessage:true
-                    });
+            viewersTeam.inviteSupplier( searchName, null, function( invitee )
+            {
+                invitee = Teams._transform( invitee );
+                if ( group && group.addSupplier )
+                {
+                    group.addSupplier( invitee );
                 }
-                else {
+                component.setItem( invitee );
+                if ( component.props.onChange )
+                {
+                    component.props.onChange( invitee );
+                }
+                if ( !invitee.email )
+                {
+                    component.setState(
+                    {
+                        shouldShowMessage: true
+                    } );
+                }
+                else
+                {
                     Modal.hide();
                 }
-            });
-	    }
+            } );
+        }
     },
 
-    setThumb(thumb) {
+    setThumb( thumb )
+    {
         var viewingTeam = this.data.viewingTeam;
-        viewingTeam.setThumb(thumb);
+        viewingTeam.setThumb( thumb );
         viewingTeam.thumb = thumb;
-        this.setState({
-            item:viewingTeam
-        });
+        this.setState(
+        {
+            item: viewingTeam
+        } );
     },
 
-	render() {
-    	var viewingTeam = this.data.viewingTeam;
-		if(!viewingTeam) {
-			return (
+    render()
+    {
+        var viewingTeam = this.data.viewingTeam;
+        if ( !viewingTeam )
+        {
+            return (
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
@@ -128,16 +154,17 @@ TeamViewEdit = React.createClass({
                     </div>
                 </form>
             )
-		}
-		else if(!viewingTeam.canSave()) {
-			return (
-				<TeamViewDetail item={viewingTeam} />
-			)
-		}
-		return (
-		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+        }
+        else if ( !viewingTeam.canSave() )
+        {
+            return (
+                <TeamViewDetail item={viewingTeam} />
+            )
+        }
+        return (
+            <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
-            	<h2 style={{marginTop:"0px"}}>Edit team</h2>
+                <h2 style={{marginTop:"0px"}}>Edit team</h2>
                 {(false&&viewingTeam.owner)?<div>
                     <b>Team owner:</b>
                     <DocOwnerCard item={viewingTeam}/>
@@ -168,7 +195,7 @@ TeamViewEdit = React.createClass({
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     }
                 ]}/>
-			</div>
-		)
-	}
-});
+            </div>
+        )
+    }
+} );

@@ -1,24 +1,29 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-FacilityPicker = React.createClass({
+FacilityPicker = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	var data={};
-    	data.user = Meteor.user();
-    	data.team = Session.getSelectedTeam();
-    	data.facility = Session.getSelectedFacility();
-    	if(data.team) {
-    		data.facilities = data.team.getFacilities();
-    	}
+	getMeteorData()
+	{
+		var data = {};
+		data.user = Meteor.user();
+		data.team = Session.getSelectedTeam();
+		data.facility = Session.getSelectedFacility();
+		if ( data.team )
+		{
+			data.facilities = data.team.getFacilities();
+		}
 		return data;
 	},
 
-	render() {
-		if(!this.data.user) {
+	render()
+	{
+		if ( !this.data.user )
+		{
 			return <div/>
 		}
 		var facilities = this.data.facilities;
@@ -28,23 +33,28 @@ FacilityPicker = React.createClass({
 		)
 	}
 
-})
+} )
 
-TeamPicker = React.createClass({
-    mixins: [ReactMeteorData],
+TeamPicker = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	var data={};
-    	data.user = Meteor.user();
-    	data.team = Session.getSelectedTeam();
-    	if(data.user) {
-    		data.teams = data.user.getTeams();
-    	}
+	getMeteorData()
+	{
+		var data = {};
+		data.user = Meteor.user();
+		data.team = Session.getSelectedTeam();
+		if ( data.user )
+		{
+			data.teams = data.user.getTeams();
+		}
 		return data;
 	},
 
-	render() {
-		if(!this.data.user) {
+	render()
+	{
+		if ( !this.data.user )
+		{
 			return <div/>
 		}
 		var teams = this.data.teams;
@@ -53,23 +63,28 @@ TeamPicker = React.createClass({
 			<AutoInput.MDSelect placeholder="Team" onChange={this.props.onChange} items={teams} itemView={NameCard} value={team}/>
 		)
 	}
-})
+} )
 
-ServicePicker = React.createClass({
-    mixins: [ReactMeteorData],
+ServicePicker = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	var data={};
-    	data.facility = Session.getSelectedFacility();
-    	if(data.facility) {
-    		data.services = data.facility.getServices();
-    	}
+	getMeteorData()
+	{
+		var data = {};
+		data.facility = Session.getSelectedFacility();
+		if ( data.facility )
+		{
+			data.services = data.facility.getServices();
+		}
 		return data;
 	},
 
-	render() {
+	render()
+	{
 		var services = this.data.services;
-		if(!services||!services.length) {
+		if ( !services || !services.length )
+		{
 			return <div/>
 		}
 		return (
@@ -77,4 +92,4 @@ ServicePicker = React.createClass({
 		)
 	}
 
-})
+} )

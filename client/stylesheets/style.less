@@ -1,26 +1,30 @@
 @import url(//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
 @import url(//fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900,100italic,300italic,400italic,500italic,700italic,900italic);
 
-@import "./variables.import.less";
+@import './variables.import.less';
 
-body {
-	background-color:#fff;
-	font-family:'Roboto',arial,'Noto Sans Japanese',sans-serif;
-	font-size:13px;
-	font-weight:500;
-	-webkit-font-smoothing: antialiased;
-	color:@default-fg;
-	margin:0;
-	padding:0;
+body
+{
+    font-family: 'Roboto',arial,'Noto Sans Japanese',sans-serif;
+    font-size: 13px;
+    font-weight: 500;
 
+    margin: 0;
+    padding: 0;
+
+    color: @default-fg;
+    background-color: #fff;
+
+    -webkit-font-smoothing: antialiased;
 }
 
-	div.body-background {
-		position:fixed;
-		left:0;
-		right:0;
-		top:0;
-		bottom:0;
-		background:@body-bg;
-	}
+div.body-background
+{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
+    background: @body-bg;
+}

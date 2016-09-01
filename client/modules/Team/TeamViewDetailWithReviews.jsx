@@ -1,26 +1,39 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import
+{
+	ReactMeteorData
+}
+from 'meteor/react-meteor-data';
 
-TeamViewDetailWithReviews = React.createClass({
-    mixins: [ReactMeteorData],
+TeamViewDetailWithReviews = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-    	Meteor.subscribe('users');
-    	var team, orders;
-    	team = this.props.item;
-    	// would be nice to have a mixin to deal with this pattern
-    	// would dry up the code alot
-    	if(team) {
-    		orders = Issues.find({"_supplier._id":team._id,status:"Closed"}).fetch();
-	    }
-    	return {
-    		team:team,
-    		reviews:orders||[]
-    	}
-    },
+	getMeteorData()
+	{
+		Meteor.subscribe( 'users' );
+		var team, orders;
+		team = this.props.item;
+		// would be nice to have a mixin to deal with this pattern
+		// would dry up the code alot
+		if ( team )
+		{
+			orders = Issues.find(
+				{
+					"_supplier._id": team._id,
+					status: "Closed"
+				} )
+				.fetch();
+		}
+		return {
+			team: team,
+			reviews: orders || []
+		}
+	},
 
-	render() {
+	render()
+	{
 		var team = this.data.team;
 		var reviews = this.data.reviews;
 		return (
@@ -41,4 +54,4 @@ TeamViewDetailWithReviews = React.createClass({
 			</div>
 		)
 	}
-});
+} );

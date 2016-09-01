@@ -1,213 +1,268 @@
+/**
+ * @author       Leo Keith <leo@fmclarity.com>
+ * @copyright    2016 FM Clarity Pty Ltd
+ * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+ */
+
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import
+{
+	ReactMeteorData
+}
+from 'meteor/react-meteor-data';
 
 AutoInput = {};
 
-AutoInput.Events = {
-	checkKey(event) {
-		var value = event.target.value;
-		if(event.key=='Enter') {
-			var onEnter = this.props.onEnter;
-			if(onEnter) {
-				event.preventDefault();
-				onEnter(event);
-			}
-		}
-		else if(value==''&&event.key=='Backspace') {
-			var onClear = this.props.onClear;
-			if(onClear) {
-				event.preventDefault();
-				onClear(event);
-			}
-		}
-	},
+/**
+ * Sprites are the lifeblood of your game, used for nearly everything visual.
+ *
+ * At its most basic a Sprite consists of a set of coordinates and a texture that is rendered to the canvas.
+ * They also contain additional properties allowing for physics motion (via Sprite.body), input handling (via Sprite.input),
+ * events (via Sprite.events), animation (via Sprite.animations), camera culling and more. Please see the Examples for use cases.
+ *
+ */
+AutoForm = class AutoForm extends React.Component
+{
+	constructor( props )
+	{
+		super( props );
+		this.state = this.makeState( this.props );
+	}
 
-	handleChange(event) {
-		var onChange = this.props.onChange;
-		if(onChange) {
-			onChange(event.target.value);
+	componentWillReceiveProps( nextProps )
+	{
+		this.setState( this.makeState( nextProps ) );
+	}
+
+	makeState( props )
+	{
+		let item = props.item,
+			field = props.field,
+			schema = props.schema,
+			form = props.form,
+			onSubmit = props.onSubmit,
+			errors = {};
+
+		if ( field != null )
+		{
+			item = item[ field ];
+		}
+
+		if ( schema == null )
+		{
+			schema = item.getSchema();
+		}
+
+		if ( form == null )
+		{
+			form = Object.keys( item );
+		}
+
+		return {
+			item,
+			id: item.id,
+			originalItem: item,
+			schema,
+			form,
+			onSubmit,
+			errors
 		}
 	}
-}
 
-AutoForm = React.createClass({
+	updateFields( update )
+	{
+		let item = this.state.item;
+		if ( _.isArray( update ) )
+		{
+			let [ fieldName, value ] = update;
+			item[ fieldName ] = value;
+		}
+		else if ( _.isObject( update ) )
+		{
+			Object.assign( item, update );
+		}
+		this.setState(
+		{
+			item
+		} );
+	}
 
-	getInitialState() {
-		return this.makeState(this.props);
-	},
+	submit( item )
+	{
+		if( this.props.onSubmit == null )
+		{
+			throw new Meteor.Error("No submit function defined");
+		}
+		let errors = {};
+		this.props.onSubmit( item, ( err ) =>
+		{
+			if ( err.details )
+			{
+				err.details.map( ( err ) =>
+				{
+					errors[ err.name ] = errors[ err.name ] || [];
+					errors[ err.name ].push( err.type );
+				} );
+				this.setState(
+				{
+					errors: errors
+				} );
+			}
+		} );
+	}
 
-    componentWillReceiveProps(nextProps) {
-    	this.setState(this.makeState(nextProps));
-    },
+	/**
+	 * Called by AutoForm.render to determine the field type of an input
+	 *
+	 * @method
+	 * @memberof AutoForm
+	 * @return {object} The input to be used in rendering the value.
+	 */
+	checkCondition( { condition } )
+	{
+		let item = this.state.item;
+		return (
+			( condition == null ) ||
+			( _.isString( condition ) && item.type == condition ) ||
+			( _.isArray( condition ) && _.contains( condition, item.type )) ||
+			( _.isFunction( condition ) && condition( item ) )
+		)
+	}
 
-    makeState(props) {
-    	var item = props.item||{};
-    	var field = props.field;
-    	item = field?(item[field]||{}):item;
-    	return {
-    		item:item
-    	}
-    },
+	/**
+	 * Called by AutoForm.render to determine the field type of an input
+	 *
+	 * @method
+	 * @memberof AutoForm
+	 * @return {object} The input to be used in rendering the value.
+	 */
+	render()
+	{
+		let item = this.state.item,
+			id = this.state.id,
+			schema = this.state.schema,
+			form = this.state.form,
+			originalItem = this.state.originalItem;
 
-    componentWillMount: function() {
-        this.saveItem = _.debounce(this.saveItem,500);
-    },
-
-    updateField(field,value) {
-        let item = this.state.item;
-	    item[field] = value;
-	    this.setState({item});
-	    // if we have sent in an onSubmit function then we 
-	    // are saying we want to handle the saving externally
-	    // (this mean I am going to have to put in a manual save
-	    // for the relevant workflow functions)
-	    if(!this.props.onSubmit) {
-        	this.saveItem();
-        }
-    },
-
-    updateFields(values) {
-    	let item = this.state.item;
-    	Object.assign(item,values);
-    	this.setState({item});
-    },
-
-    //this to be eventually removed in favour of form->submit style approach to editing
-    saveItem() {
-    	var originalItem = this.props.item;
-	   	var schema = this.props.schema||originalItem.getSchema();
-    	var field = this.props.field;
-    	var save = this.props.save;
-    	if(!originalItem[field]) {
-    		originalItem[field] = {};
-    	}
-    	for(var i in schema) {
-    		//console.log([originalItem,field]);
-    		if(field) {
-	    		originalItem[field][i] = this.state.item[i];
-	    	}
-	    	else {
-	    		originalItem[i] = this.state.item[i];	    		
-	    	}
-	    	//console.log(originalItem);
-    	}
-    	if(save) {
-	    	save(originalItem);
-    	}
-    	else {
-	    	originalItem.save();
-	    }
-    },
-
-	render() {
-		if(!this.state.item) return <div/>;
-		var item = this.state.item;
-		var id = this.props.keyField||item._id;
-	   	var schema = this.props.schema||this.props.item.getSchema();	//default: use the getSchema function of the sent item
-		var form = this.props.form||Object.keys(schema);				//default: use all fields
-		var originalItem = this.props.item;
-		
 		return (
 			<div className="autoform row">
-				{this.props.children?
-					<div className="col-sm-12">
-						{this.props.children}
-					</div>
-				:null}
-				{form.map((key)=>{
 
+			{
+			this.props.children?
+			<div className="col-sm-12">{this.props.children}</div>
+			:null
+			}
+
+			{
+				form.map( (key) => 
+				{
 					var s = schema[key];
 
 					if(!s) {
 						throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
 					}
-
-					//check to see field conditions met
-					//console.log(this.props.item);
-					if(s.condition) {
-						if(
-							(_.isString(s.condition)&&originalItem.type!=s.condition)||
-							(_.isArray(s.condition)&&!_.contains(s.condition,originalItem.type))||
-							(_.isFunction(s.condition)&&!s.condition(originalItem))
-						) {
-							return;
-						}
+					else if(! this.checkCondition( s ) ) 
+					{
+						return;
 					}
 
-					//if item is another schema create new AutoForm with item
-					if(s.schema) {
-						//console.log(item);
-						if(!item[key]||!_.isObject(item[key])) {
-							item[key] = {};
+					if( s.schema != null ) 
+					{
+						// create item object if it doesn't exist
+						if( !item[ key ] || !_.isObject( item[ key ] ) ) 
+						{
+							console.log(`creating field: ${key}`);
+							item[ key ] = {};
 						}
 						return (
-							<span key={id+'-'+key}>
+
+							<span key={ `${id}-${key}` }>
+
 					        	<AutoForm 
-					        		item={item} 
-					        		field={key} 
-					        		schema={s.schema} 
-					        		save={this.props.save}
-					        		onSubmit={this.props.onSubmit}
-					        		hideSubmitButton={true}
-					        	>
-								{s.label?<h5>{s.label}</h5>:null}
+					        		item = { item } 
+					        		field = { key } 
+					        		schema = { s.schema } 
+					        		save = { this.props.save }
+					        		onSubmit = { this.props.onSubmit }
+					        		hideSubmitButton = { true }>
+										{
+										s.label?<h5>{s.label}</h5>
+										:null
+										}
 					        	</AutoForm>
+
 					        </span>
 						)
 					}
 					else {
-
-						//calculate default placeholder
-						var placeholder = 
-							(s.label || key.charAt(0).toUpperCase()+key.slice(1))+
-							(s.required?'*':'');
-
-						//add default values to schema
-						s = _.extend({
-							input:"mdtext",
-							size:12,
-							options:{}
-						},s);
-
-						//console.log({item,originalItem});
-
-						var options = s.options;
-						if(_.isFunction(options)) {
-							options = options(originalItem);
-						}
-
-						//If it is a string take it from the autoinput package
-						//if it isn't then consider it a component
-						var Input = _.isString(s.input)?AutoInput[s.input]:s.input;
-						if(!Input) {
-							console.log(s);
-							throw new Meteor.Error("schema-input-type-does-not-exist","Schema input type doesn't exist","You have tried to access a nonexistent input type.")
-						}
 						return (
-							<div key={id+'-'+key} className={"col-sm-"+s.size}>
-								<Input
-									placeholder={placeholder}
-									context={item}
-									value={item[key]} 
-									onChange={this.updateField.bind(this,key)} //to be deprecated in favour of multi-change (below)
-									multiChange={(vals)=>{this.updateFields(vals)}}
-									options={options}
+
+							<div key = { `${id}-${key}` } className = { `col-sm-${s.size||12}` }>
+								<AutoInputWrapper 
+									context = { item }
+									fieldName = { key }
+									value = { item[ key ] }
+									errors = { this.state.errors[ key ] }
+									config = { s }
+									onChange = { (vals) => { this.updateFields(vals) } }
 								/>
 							</div>
+
 						)
-
 					}
-				})}
+				})
+			}
 
-	            {this.props.onSubmit&&!this.props.hideSubmitButton?
-	              <div style={{textAlign:"right",clear:"both"}}>
-	                {/*<button type="button" className="btn btn-flat btn-default" data-dismiss="modal">Cancel</button>*/}
-	                <button type="button" className="btn btn-flat btn-primary" onClick={()=>{this.props.onSubmit(item)}}>Submit</button>
-	              </div>
-	            :null}
-
+	        {
+	        !this.props.hideSubmitButton?
+			<div style={ {textAlign:"right", clear:"both"}}>
+				<button 
+					type="button" 
+					className="btn btn-flat btn-primary" 
+					onClick={ ( ) => { this.submit( item ) } }>
+					Submit
+				</button>
 			</div>
-		)
+			: null
+			}
+
+		</div>
+	)
+}
+}
+
+function AutoInputWrapper( props )
+{
+	let { config, ...other } = props;
+
+	config = Object.assign(
+	{
+		input: "mdtext",
+		label: props.fieldName,
+		options:
+		{}
+	}, config );
+
+	let label = config.label;
+	if ( !config.optional )
+	{
+		label = label + '*';
 	}
-});
+
+	if ( _.isString( config.input ) )
+	{
+		config.input = AutoInput[ config.input ];
+	}
+
+	if ( _.isFunction( config.options ) && props.context != null )
+	{
+		config.options = config.options( props.context );
+	}
+
+	return (
+		<div>
+			<config.input {...other} {...config} placeholder={ label }/>
+		</div>
+	)
+}

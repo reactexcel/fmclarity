@@ -1,18 +1,23 @@
-AddressSchema = {
-	streetNumber:{
-		label:"Number",
-		size:3
+export default AddressSchema = {
+
+	streetNumber:
+	{
+		label: "Number",
+		size: 3
 	},
-	streetName:{
+	streetName:
+	{
 		label: "Street name",
-		size:6
+		size: 6
 	},
-	streetType:{
+	streetType:
+	{
 		label: "Type",
-		size:3,
-		input:"MDSelect",
-		options:{
-			items:[
+		size: 3,
+		input: "MDSelect",
+		options:
+		{
+			items: [
 				"Avenue",
 				"Boulevard",
 				"Court",
@@ -29,17 +34,20 @@ AddressSchema = {
 			]
 		}
 	},
-	city:{
-		label:"City",
-    	defaultValue: "",
-		size:6,
+	city:
+	{
+		label: "City",
+		defaultValue: "",
+		size: 6,
 	},
-	state:{
-		label:"State",
-		size:3,
-		input:"MDSelect",
-		options:{
-			items:[
+	state:
+	{
+		label: "State",
+		size: 3,
+		input: "MDSelect",
+		options:
+		{
+			items: [
 				"ACT",
 				"NSW",
 				"SA",
@@ -51,8 +59,9 @@ AddressSchema = {
 			]
 		}
 	},
-	postcode:{
-		label:"Postcode",
-		size:3
+	postcode:
+	{
+		label: "Postcode",
+		size: 3
 	}
 }

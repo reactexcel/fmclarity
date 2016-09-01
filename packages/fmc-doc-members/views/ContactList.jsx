@@ -3,76 +3,83 @@
 
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-ContactList = React.createClass({
+ContactList = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData()
+	{
+		let team = this.props.team,
+			role = this.props.defaultRole,
+			group = this.props.group,
+			members = this.props.members,
+			filter = this.props.filter;
 
-    	var team,role,group,members;
+		//members list is either:
+		// 1.passed in from members prop
+		// 2.loaded from group
+		// 3.initiated as blank array
+		if ( members == null )
+		{
+			if( group != null ) 
+			{
+				members = group.getMembers( filter );
+			}
+			else {
+				members = [];
+			}
+		}
 
-    	team = this.props.team;				//the currently selected or active team
-    	group = this.props.group;			//the group to retrieve members from
-    	role = this.props.defaultRole;		//role to assign to new members
+		return {
+			group: group,
+			members: members,
+			team: team,
+			role: role,
+		}
+	},
 
-    	//members list is either:
-    	// 1.passed in from members prop
-    	// 2.loaded from group
-    	// 3.initiated as blank array
-    	if(this.props.members) {
-    		members = this.props.members;
-    	}
-    	else if(group) {
-    		var filter = this.props.filter;
-    		members = group.getMembers(filter);
-    	}
-    	else {
-    		members = [];
-    	}
-
-    	return {
-    		group:group,
-    		members:members,
-    		team:team,
-    		role:role,
-    	}
-    },
-
-    // Display a pop up modal for the selected user 
-    showModal(selectedUser) {
-    	//switch based on "type" sent into component
-    	//this is a temporary work around as we transition into non-team supplier contacts
-    	var type = this.props.type;
-    	if(type=="team"||(selectedUser&&selectedUser.collectionName=="Team")) {
-	        Modal.show({
-	            content:<TeamCard 
+	// Display a pop up modal for the selected user 
+	showModal( selectedUser )
+	{
+		//switch based on "type" sent into component
+		//this is a temporary work around as we transition into non-team supplier contacts
+		if ( this.props.type == "team" || ( selectedUser && selectedUser.collectionName == "Team" ) )
+		{
+			Modal.show(
+			{
+				content: <TeamCard 
 	            	item={selectedUser} 
 	            	team={this.data.team}
 	            	role={this.data.role}
 	            	group={this.data.group}/>
-	        })
-    	}
-    	else {
-	        Modal.show({
-	            content:<UserCard 
+			} )
+		}
+		else
+		{
+			Modal.show(
+			{
+				content: <UserCard 
 	            	item={selectedUser} 
 	            	team={this.data.team}
 	            	role={this.data.role}
 	            	group={this.data.group}/>
-	        })
-	    }
-    },
+			} )
+		}
+	},
 
-	render() {
-		var members = _.uniq(this.data.members,false,function(i){
+	render()
+	{
+		var members = _.uniq( this.data.members, false, function( i )
+		{
 			return i._id;
-		});
+		} );
 		var component = this;
 		var team = this.data.team;
 		var group = this.data.group;
-		var canCreate = !this.props.readOnly&&(team&&team.canAddMember()||group&&group.canAddMember());
+		var canCreate = !this.props.readOnly && ( team && team.canAddMember() || group && group.canAddMember() );
 		return (
 			<div className="contact-list">
 			    {members?members.map(function(member,idx){
@@ -101,4 +108,4 @@ ContactList = React.createClass({
 			</div>
 		)
 	}
-})
+} )

@@ -1,63 +1,74 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 
-IssueDynamicArea = React.createClass({
+IssueDynamicArea = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+    getMeteorData()
+    {
         var request = this.props.item;
-        if(!request) {
+        if ( !request )
+        {
             return {
-                ready:false
+                ready: false
             }
         }
-        else {
+        else
+        {
             var selectedTeam, suppliers;
             selectedTeam = Session.getSelectedTeam();
 
             var facility, facilityContacts, facilityContact;
             facility = request.getFacility();
-            if(facility) {
+            if ( facility )
+            {
                 facilityContacts = facility.getPrimaryContact();
             }
 
             return {
-                ready:true,
-                request:request,
-                owner:request.getOwner(),
-                facilityContact:facilityContact,
-                supplier:request.getSupplier(),
-                assignee:request.getAssignee(),
-                notifications:request.getNotifications(),
-                messageCount:request.getMessageCount(),
-                attachmentCount:request.getAttachmentCount()
+                ready: true,
+                request: request,
+                owner: request.getOwner(),
+                facilityContact: facilityContact,
+                supplier: request.getSupplier(),
+                assignee: request.getAssignee(),
+                notifications: request.getNotifications(),
+                messageCount: request.getMessageCount(),
+                attachmentCount: request.getAttachmentCount()
             }
         }
     },
 
-    updateItem: function(field,value) {
-        this.props.item[field] = value;
+    updateItem: function( field, value )
+    {
+        this.props.item[ field ] = value;
         this.props.save();
     },
 
-    render() {
+    render()
+    {
         var request = this.props.item;
         var notifications = this.data.notifications;
         var contacts;
-        if(request.members) {
+        if ( request.members )
+        {
             contacts = request.getMembers();
         }
-        else {
+        else
+        {
             contacts = [];
             var data = this.data;
-            ['owner','supplier','assignee','facilityContact'].map(function(item){
-                if(data[item]) {
-                    contacts.push(data[item]);
+            [ 'owner', 'supplier', 'assignee', 'facilityContact' ].map( function( item )
+            {
+                if ( data[ item ] )
+                {
+                    contacts.push( data[ item ] );
                 }
-            });
+            } );
         }
         return (
             <div className="row">
@@ -93,4 +104,4 @@ IssueDynamicArea = React.createClass({
             </div>
         )
     }
-});
+} );

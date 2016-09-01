@@ -2,50 +2,76 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+Navigation = React.createClass(
+{
+    mixins: [ ReactMeteorData ],
 
-
-Navigation = React.createClass({
-
-    mixins: [ReactMeteorData],
-
-    getMeteorData() {
+    getMeteorData() 
+    {
         Meteor.subscribe('teamsAndFacilitiesForUser');
-        var user,team,modules;
-        team = Session.getSelectedTeam();
-        user = Meteor.user();
-        modules = Config.getModules(user,team); //should be user.getModules(team)
 
-        return {
-            team:team,
-            modules:modules||[]
-        }
+        let team    = Session.getSelectedTeam(),
+            user    = Meteor.user(),
+            modules = Config.getModules(user,team); //should be user.getModules(team)
+
+        //console.log({user,team,modules});
+
+        return { modules }
     },
 
-    onMenuClick() {
+    onMenuClick() 
+    {
         //$('body').toggleClass('nav-drawer-closed');
     },
 
-    render() {
-        var modules = this.data.modules;
+    render() 
+    {
+        let { modules } = this.data;
 
-        if(modules.length<=1) {
+        if( modules == null )
+        {
+            /*shouldn't happen*/
+        }
+        else if(modules.length <= 1) 
+        {
             return <div/>
         }
+
         return (
+
         <nav className="nav-drawer">
-            <ul onClick={this.onMenuClick}>
-            {this.data.modules.map(function(m){
-                return (
-                    <li key={m.path} className={FlowRouter.getRouteName()==m.path?'active':''}>
-                        <a href={FlowRouter.path(m.path)}>
-                            <i className={m.icon}></i>
-                            <span>{m.label}</span>
-                        </a>
-                    </li>
-                )
-            })}
+            <ul onClick={ this.onMenuClick }>
+
+            {/*******************************************/
+            modules.map( ( module ) => { 
+
+            let pathName    = module.path,
+                icon        = module.icon,
+                label       = module.label,
+                path        = FlowRouter.path( pathName ),
+                classes     = [];
+
+            if( FlowRouter.getRouteName() == pathName )
+            {
+                classes.push("active");
+            }
+
+            return (
+
+            <li key = { pathName } className = { classes.join(' ') }>
+                <a href={ path }>
+                    <i className={ icon }></i>
+                    <span>{ label }</span>
+                </a>
+            </li>
+
+            )
+
+            })/*******************************************/}
+
             </ul>
         </nav>
+
         )
     }
 })

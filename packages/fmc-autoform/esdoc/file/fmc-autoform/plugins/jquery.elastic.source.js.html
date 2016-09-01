@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">fmc-autoform/plugins/jquery.elastic.source.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  </ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">fmc-autoform/plugins/jquery.elastic.source.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+*	@name							Elastic
+*	@descripton						Elastic is jQuery plugin that grow and shrink your textareas automatically
+*	@version						1.6.10
+*	@requires						jQuery 1.2.6+
+*
+*	@author							Jan Jarfalk
+*	@author-email					jan.jarfalk@unwrongest.com
+*	@author-website					http://www.unwrongest.com
+*
+*	@licence						MIT License - http://www.opensource.org/licenses/mit-license.php
+*/
+
+(function(jQuery){ 
+	jQuery.fn.extend({  
+		elastic: function() {
+		
+			//	We will create a div clone of the textarea
+			//	by copying these attributes from the textarea to the div.
+			var mimics = [
+				&apos;paddingTop&apos;,
+				&apos;paddingRight&apos;,
+				&apos;paddingBottom&apos;,
+				&apos;paddingLeft&apos;,
+				&apos;fontSize&apos;,
+				&apos;lineHeight&apos;,
+				&apos;fontFamily&apos;,
+				&apos;width&apos;,
+				&apos;fontWeight&apos;,
+				&apos;border-top-width&apos;,
+				&apos;border-right-width&apos;,
+				&apos;border-bottom-width&apos;,
+				&apos;border-left-width&apos;,
+				&apos;borderTopStyle&apos;,
+				&apos;borderTopColor&apos;,
+				&apos;borderRightStyle&apos;,
+				&apos;borderRightColor&apos;,
+				&apos;borderBottomStyle&apos;,
+				&apos;borderBottomColor&apos;,
+				&apos;borderLeftStyle&apos;,
+				&apos;borderLeftColor&apos;
+				];
+			
+			return this.each( function() {
+				
+				// Elastic only works on textareas
+				if ( this.type !== &apos;textarea&apos; ) {
+					return false;
+				}
+					
+			var $textarea	= jQuery(this),
+				$twin		= jQuery(&apos;&lt;div /&gt;&apos;).css({&apos;position&apos;: &apos;absolute&apos;,&apos;display&apos;:&apos;none&apos;,&apos;word-wrap&apos;:&apos;break-word&apos;}),
+				lineHeight	= parseInt($textarea.css(&apos;line-height&apos;),10) || parseInt($textarea.css(&apos;font-size&apos;),&apos;10&apos;),
+				minheight	= parseInt($textarea.css(&apos;height&apos;),10) || lineHeight*3,
+				maxheight	= parseInt($textarea.css(&apos;max-height&apos;),10) || Number.MAX_VALUE,
+				goalheight	= 0;
+				
+				// Opera returns max-height of -1 if not set
+				if (maxheight &lt; 0) { maxheight = Number.MAX_VALUE; }
+					
+				// Append the twin to the DOM
+				// We are going to meassure the height of this, not the textarea.
+				$twin.appendTo($textarea.parent());
+				
+				// Copy the essential styles (mimics) from the textarea to the twin
+				var i = mimics.length;
+				while(i--){
+					$twin.css(mimics[i].toString(),$textarea.css(mimics[i].toString()));
+				}
+				
+				// Updates the width of the twin. (solution for textareas with widths in percent)
+				function setTwinWidth(){
+					curatedWidth = Math.floor(parseInt($textarea.width(),10));
+					if($twin.width() !== curatedWidth){
+						$twin.css({&apos;width&apos;: curatedWidth + &apos;px&apos;});
+						
+						// Update height of textarea
+						update(true);
+					}
+				}
+				
+				// Sets a given height and overflow state on the textarea
+				function setHeightAndOverflow(height, overflow){
+				
+					var curratedHeight = Math.floor(parseInt(height,10));
+					if($textarea.height() !== curratedHeight){
+						$textarea.css({&apos;height&apos;: curratedHeight + &apos;px&apos;,&apos;overflow&apos;:overflow});
+						
+						// Fire the custom event resize
+						$textarea.trigger(&apos;resize&apos;);
+						
+					}
+				}
+				
+				// This function will update the height of the textarea if necessary 
+				function update(forced) {
+					
+					// Get curated content from the textarea.
+					var textareaContent = $textarea.val().replace(/&amp;/g,&apos;&amp;amp;&apos;).replace(/ {2}/g, &apos;&amp;nbsp;&apos;).replace(/&lt;|&gt;/g, &apos;&amp;gt;&apos;).replace(/\n/g, &apos;&lt;br /&gt;&apos;);
+					
+					// Compare curated content with curated twin.
+					var twinContent = $twin.html().replace(/&lt;br&gt;/ig,&apos;&lt;br /&gt;&apos;);
+					
+					if(forced || textareaContent+&apos;&amp;nbsp;&apos; !== twinContent){
+					
+						// Add an extra white space so new rows are added when you are at the end of a row.
+						$twin.html(textareaContent+&apos;&amp;nbsp;&apos;);
+						
+						// Change textarea height if twin plus the height of one line differs more than 3 pixel from textarea height
+						if(Math.abs($twin.height() + lineHeight - $textarea.height()) &gt; 3){
+							
+							var goalheight = $twin.height()+lineHeight;
+							if(goalheight &gt;= maxheight) {
+								setHeightAndOverflow(maxheight,&apos;auto&apos;);
+							} else if(goalheight &lt;= minheight) {
+								setHeightAndOverflow(minheight,&apos;hidden&apos;);
+							} else {
+								setHeightAndOverflow(goalheight,&apos;hidden&apos;);
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				// Hide scrollbars
+				$textarea.css({&apos;overflow&apos;:&apos;hidden&apos;});
+				
+				// Update textarea size on keyup, change, cut and paste
+				$textarea.bind(&apos;keyup change cut paste&apos;, function(){
+					update(); 
+				});
+				
+				// Update width of twin if browser or textarea is resized (solution for textareas with widths in percent)
+				$(window).bind(&apos;resize&apos;, setTwinWidth);
+				$textarea.bind(&apos;resize&apos;, setTwinWidth);
+				$textarea.bind(&apos;update&apos;, update);
+				
+				// Compact textarea on blur
+				/*$textarea.bind(&apos;blur&apos;,function(){
+					if($twin.height() &lt; maxheight){
+						if($twin.height() &gt; minheight) {
+							$textarea.height($twin.height());
+						} else {
+							$textarea.height(minheight);
+						}
+					}
+				});*/
+				
+				// And this line is to catch the browser paste event
+				$textarea.bind(&apos;input paste&apos;,function(e){ setTimeout( update, 250); });				
+				
+				// Run update once when elastic is initialized
+				update();
+				
+			});
+			
+        } 
+    }); 
+})(jQuery);</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

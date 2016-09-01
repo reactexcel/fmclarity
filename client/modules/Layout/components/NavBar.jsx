@@ -1,43 +1,53 @@
 import React from "react";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-TopNavBar = React.createClass({
+TopNavBar = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
-    shown:{},
+    shown: {},
 
-    getMeteorData() {
+    getMeteorData()
+    {
         //Meteor.subscribe('notifications');
-        Meteor.subscribe("messages","users",Meteor.userId());
+        Meteor.subscribe( "messages", "users", Meteor.userId() );
         var user, notifications;
 
         user = Meteor.user();
         var component = this;
-        if(user) {
+        if ( user )
+        {
             notifications = user.getNotifications();
             var count = notifications.length;
-            if(count>this.oldCount) {
+            if ( count > this.oldCount )
+            {
                 this.oldCount = count;
-                if(notifications&&notifications.length) {
+                if ( notifications && notifications.length )
+                {
                     this.audio.play();
                     var suppressFurtherNotifications = false;
-                    if(notifications.length>2) {
+                    if ( notifications.length > 2 )
+                    {
                         component.showNotification(
                             "You have FM Clarity notifications",
                             "You have more than 3 new notifications from FM Clarity"
                         );
                         suppressFurtherNotifications = true;
                     }
-                    else {
-                        notifications.map(function(n){
-                            if(!component.shown[n._id]) {
-                                component.shown[n._id] = true;
-                                if(!suppressFurtherNotifications) {
-                                    component.showNotification(n.subject,n.body);
+                    else
+                    {
+                        notifications.map( function( n )
+                        {
+                            if ( !component.shown[ n._id ] )
+                            {
+                                component.shown[ n._id ] = true;
+                                if ( !suppressFurtherNotifications )
+                                {
+                                    component.showNotification( n.subject, n.body );
                                 }
                             }
-                        })
+                        } )
                     }
                 }
                 //toastr notification
@@ -45,42 +55,53 @@ TopNavBar = React.createClass({
             }
         }
         return {
-            user:user,
-            notifications:notifications
+            user: user,
+            notifications: notifications
         }
     },
 
-    showNotification(title,body) {
-        notify.createNotification(title,{
-            body:body,
-            icon:"icon-64x64.ico"
-        });
+    showNotification( title, body )
+    {
+        notify.createNotification( title,
+        {
+            body: body,
+            icon: "icon-64x64.ico"
+        } );
     },
 
-    componentDidMount() {
-       
-        $(this.refs.notifications).on('hidden.bs.dropdown', ()=>{
-            if(this.data.user) {
+    componentDidMount()
+    {
+
+        $( this.refs.notifications ).on( 'hidden.bs.dropdown', () =>
+        {
+            if ( this.data.user )
+            {
                 this.count = 0;
                 this.oldCount = 0;
                 this.data.user.markAllNotificationsAsRead();
             }
-        })
+        } )
         this.oldCount = 0;
-        this.audio = new Audio('/audio/alert3.wav');
+        this.audio = new Audio( '/audio/alert3.wav' );
         notify.requestPermission();
-        notify.config({pageVisibility: false, autoClose: 5000});
+        notify.config(
+        {
+            pageVisibility: false,
+            autoClose: 5000
+        } );
     },
 
-    toggleLeftSideBar() {
+    toggleLeftSideBar()
+    {
         //should we change some global property?
-        $('body').toggleClass('nav-drawer-closed');
+        $( 'body' ).toggleClass( 'nav-drawer-closed' );
     },
 
-    render() {
+    render()
+    {
         var notifications = this.data.notifications;
         return (
-        <div>
+            <div>
             <div className="sidebar-back-screen" onClick={this.toggleLeftSideBar}></div>      
             <nav className="nav-bar">
                     
@@ -115,6 +136,7 @@ TopNavBar = React.createClass({
                     </div>
             </nav>
         </div>
-        
-    )}
-});
+
+        )
+    }
+} );

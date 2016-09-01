@@ -45,8 +45,8 @@ MDServiceSelector = React.createClass({
 		if(newService.data&&newService.data.supplier) {
 			update.supplier = Teams.findOne(newService.data.supplier._id);
 		}
-		if(this.props.multiChange) {
-			this.props.multiChange(update);
+		if(this.props.onChange) {
+			this.props.onChange(update);
 		}
 	},
 
@@ -57,8 +57,8 @@ MDServiceSelector = React.createClass({
 		if(newSubService.data&&newSubService.data.supplier) {
 			update.supplier = Teams.findOne(newSubService.data.supplier._id);
 		}
-		if(this.props.multiChange) {
-			this.props.multiChange(update);
+		if(this.props.onChange) {
+			this.props.onChange(update);
 		}
 	},
 

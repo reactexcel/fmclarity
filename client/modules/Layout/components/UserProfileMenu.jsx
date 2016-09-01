@@ -1,100 +1,111 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
-
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-UserProfileMenu = React.createClass({
+UserProfileMenu = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-        Meteor.subscribe('teamsAndFacilitiesForUser');
-        Meteor.subscribe('notifications');
+    getMeteorData()
+    {
+        Meteor.subscribe( 'teamsAndFacilitiesForUser' );
+        Meteor.subscribe( 'notifications' );
         var user, team, role, teams, notifications;
         user = Meteor.user();
-        if(user) {
+        if ( user )
+        {
             notifications = user.getNotifications();
             teams = user.getTeams();
             team = user.getTeam();
-            if(!teams||!teams.length) {
+            if ( !teams || !teams.length )
+            {}
+            else if ( !team )
+            {
+                team = teams[ 0 ];
+                user.selectTeam( team );
             }
-            else if(!team) {
-                team = teams[0];
-                user.selectTeam(team);
-            }
-            else if(!team.name&&!this.showingModal) {
+            else if ( !team.name && !this.showingModal )
+            {
                 this.showingModal = true;
-                FABActions.editTeam(team);
+                FABActions.editTeam( team );
             }
         }
         return {
-            user:user,
-            team:team,
-            teams:teams,
-            notifications:notifications
+            user: user,
+            team: team,
+            teams: teams,
+            notifications: notifications
         }
     },
 
-    selectTeam(team) {
-        Meteor.user().selectTeam(team);
+    selectTeam( team )
+    {
+        Meteor.user().selectTeam( team );
     },
 
-    createTeam() {
-        Meteor.call('Teams.create',{},function(err,response){
+    createTeam()
+    {
+        Meteor.call( 'Teams.create',
+        {}, function( err, response )
+        {
             //console.log(response);
-            var team = Teams.findOne(response);
+            var team = Teams.findOne( response );
             //console.log(team);
-            Modal.show({
-                content:<TeamViewEdit item={team}/>
-            })
-        })
+            Modal.show(
+            {
+                content: <TeamViewEdit item={team}/>
+            } )
+        } )
     },
 
-    resetTestData() {
-        Meteor.call("resetTestData");
+    resetTestData()
+    {
+        Meteor.call( "resetTestData" );
     },
 
-    render() {
-        if(!this.data.team) {
-            return (
-                <div 
-                    style={{
-                        background:"rgba(0,0,0,0.5)",
-                        position:"fixed",
-                        zIndex:5000,
-                        left:"0px",
-                        right:"0px",
-                        top:"0px",
-                        bottom:"0px",
-                        textAlign:"center"
-                    }}
-                >
-                    <div style={{
-                        position:"absolute",
-                        width:"100px",
-                        marginLeft:"-50px",
-                        left:"50%",
-                        top:"50%",
-                        marginTop:"-50px"
-                    }}>
-                        <RefreshIndicator
+    render()
+    {
+        if ( !this.data.team )
+        {
+            return ( < div style = {
+                    {
+                        background: "rgba(0,0,0,0.5)",
+                        position: "fixed",
+                        zIndex: 5000,
+                        left: "0px",
+                        right: "0px",
+                        top: "0px",
+                        bottom: "0px",
+                        textAlign: "center"
+                    }
+                } >
+                < div style = {
+                    {
+                        position: "absolute",
+                        width: "100px",
+                        marginLeft: "-50px",
+                        left: "50%",
+                        top: "50%",
+                        marginTop: "-50px"
+                    }
+                } >
+                <RefreshIndicator
                             size={100}
                             left={0}
                             top={0}
                             status="loading"
-                        />
-                    </div>
-                </div>
+                        /> < /div> < /div>
             )
         }
-        var userEmail = Meteor.user()&&Meteor.user().emails?Meteor.user().emails[0].address:'';
-        var userThumb = Meteor.user()?Meteor.user().getThumbUrl():'';
+        var userEmail = Meteor.user() && Meteor.user().emails ? Meteor.user().emails[ 0 ].address : '';
+        var userThumb = Meteor.user() ? Meteor.user().getThumbUrl() : '';
         var selectedTeam = this.data.team;
         var teams = this.data.teams;
         var component = this;
         return (
-        <div id="settings-icon" className="dropdown right-dropdown">
+            <div id="settings-icon" className="dropdown right-dropdown">
             <span className="dropdown-toggle count-info" data-toggle="dropdown">
                 {this.props.children}
             </span>
@@ -157,4 +168,4 @@ UserProfileMenu = React.createClass({
         </div>
         )
     }
-})
+} )

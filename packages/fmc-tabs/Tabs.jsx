@@ -1,30 +1,37 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-IpsoTabso = React.createClass({
-    getInitialState() {
+IpsoTabso = React.createClass(
+{
+    getInitialState()
+    {
         return {
-            active:0
+            active: 0
         }
     },
 
-    selectTab(idx) {
-        if(this.props.tabs[idx].onClick) {
-            idx = this.props.tabs[idx].onClick();
+    selectTab( idx )
+    {
+        if ( this.props.tabs[ idx ].onClick )
+        {
+            idx = this.props.tabs[ idx ].onClick();
         }
-        this.setState({
-            active:idx
-        });
+        this.setState(
+        {
+            active: idx
+        } );
     },
 
-    render() {
+    render()
+    {
         var active = this.state.active;
         var selectTab = this.selectTab;
-        var tabs = _.filter(this.props.tabs,function(t){
+        var tabs = _.filter( this.props.tabs, function( t )
+        {
             return !t.hide;
-        })
-        var content = tabs[active]?tabs[active].content:null;
+        } )
+        var content = tabs[ active ] ? tabs[ active ].content : null;
         return (
             <div className="tab-panel">
                 <div className="panel-heading">
@@ -54,4 +61,4 @@ IpsoTabso = React.createClass({
         )
     }
 
-});
+} );

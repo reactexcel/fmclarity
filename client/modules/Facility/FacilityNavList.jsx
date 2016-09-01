@@ -1,46 +1,52 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-FacilityNavList = React.createClass({
-	mixins:[ReactMeteorData],
+FacilityNavList = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData()
+	{
 
-    	Meteor.subscribe('teamsAndFacilitiesForUser');
-    	Meteor.subscribe('facilities');
-        Meteor.subscribe('users');
-        //
-    	var team, facility, client, facilities;
+		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
+		Meteor.subscribe( 'facilities' );
+		Meteor.subscribe( 'users' );
+		//
+		var team, facility, client, facilities;
 
-	    team = Session.getSelectedTeam();
-	    facility = Session.getSelectedFacility();
-	    client = Session.getSelectedClient();
+		team = Session.getSelectedTeam();
+		facility = Session.getSelectedFacility();
+		client = Session.getSelectedClient();
 
-    	if(team) {
-			Meteor.subscribe('suppliersForTeam',team._id,team.suppliers?team.suppliers.length:null);
+		if ( team )
+		{
+			Meteor.subscribe( 'suppliersForTeam', team._id, team.suppliers ? team.suppliers.length : null );
 
-	    	facilities = team.getFacilities();
+			facilities = team.getFacilities();
 
-	        if(client) {
-	        	//note that the facilities are being filtered after retreival from db
-	        	//this could be employed more widely across the app to improve performance
-	        	//on retrieval of non-sensitive data
-	        	facilities = _.filter(facilities,function(f){
-	        		return (
-	        			(f.team._id == client._id)||
-	        			(f.team.name == client.name)
-	        		)
-	        	})
-	        }
-        }
-		return {
-		    selectedTeam:team,
-		    selectedFacility:facility,
-		    facilities:facilities
+			if ( client )
+			{
+				//note that the facilities are being filtered after retreival from db
+				//this could be employed more widely across the app to improve performance
+				//on retrieval of non-sensitive data
+				facilities = _.filter( facilities, function( f )
+				{
+					return (
+						( f.team._id == client._id ) ||
+						( f.team.name == client.name )
+					)
+				} )
+			}
 		}
-    },
-	render() {
+		return {
+			selectedTeam: team,
+			selectedFacility: facility,
+			facilities: facilities
+		}
+	},
+	render()
+	{
 		return (
 			<NavList 
 				items={this.data.facilities} 
@@ -50,36 +56,44 @@ FacilityNavList = React.createClass({
 			/>
 		)
 	}
-})
+} )
 
-SupplierNavList = React.createClass({
+SupplierNavList = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-        Meteor.subscribe('contractors');
-        Meteor.subscribe('teamsAndFacilitiesForUser');
-        var team, suppliers;
-        team = Session.getSelectedTeam();
-        facility = Session.getSelectedFacility();
-        //this needs to be changed so that it always goes through team.getSuppliers
-        // ie team.getSuppliers({facility._id}) ergh or something
-        if(facility) {
-            suppliers = facility.getSuppliers();
-        }
-        else if(team) {
-            Meteor.subscribe("messages","Teams",team._id,moment().subtract({days:7}).toDate())
-            suppliers = team.getSuppliers();
-        }
-        return {
-        	team : team,
-            suppliers : suppliers,
-            facility : facility
-//            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
-        }
-    },
+	getMeteorData()
+	{
+		Meteor.subscribe( 'contractors' );
+		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
+		var team, suppliers;
+		team = Session.getSelectedTeam();
+		facility = Session.getSelectedFacility();
+		//this needs to be changed so that it always goes through team.getSuppliers
+		// ie team.getSuppliers({facility._id}) ergh or something
+		if ( facility )
+		{
+			suppliers = facility.getSuppliers();
+		}
+		else if ( team )
+		{
+			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract(
+			{
+				days: 7
+			} ).toDate() )
+			suppliers = team.getSuppliers();
+		}
+		return {
+			team: team,
+			suppliers: suppliers,
+			facility: facility
+				//            suppliers : Teams.find({type:"contractor"},{sort:{createdAt:-1}}).fetch()
+		}
+	},
 
-	render() {
+	render()
+	{
 		return (
 			<NavList 
 				items={this.data.suppliers} 
@@ -89,20 +103,25 @@ SupplierNavList = React.createClass({
 			/>
 		)
 	}
-})
+} )
 
-NavList = class NavListInner extends React.Component {
+NavList = class NavListInner extends React.Component
+{
 
-	componentDidUpdate() {
-      $(this.refs.slimscroll).slimScroll({
-        height:'auto'
-      });
+	componentDidUpdate()
+	{
+		$( this.refs.slimscroll ).slimScroll(
+		{
+			height: 'auto'
+		} );
 	}
 
-	render() {
+	render()
+	{
 		var items = this.props.items;
 		var ListTile = this.props.tile;
-		var selectedItem = this.props.selectedItem||{};
+		var selectedItem = this.props.selectedItem ||
+		{};
 		return (
 			<div ref="slimscroll" className={"nav-list"+(!selectedItem._id?" inactive":"")}>
 				{items?items.map((item,idx)=>{
@@ -119,20 +138,24 @@ NavList = class NavListInner extends React.Component {
 	}
 }
 
-NavDropDownList = class NavDropDownList extends React.Component {
+NavDropDownList = class NavDropDownList extends React.Component
+{
 
-	constructor(props) {
-		super(props);
+	constructor( props )
+	{
+		super( props );
 		this.state = {
-			selectedItem:this.props.selectedItem,
-			open:this.props.startOpen!=null?this.props.startOpen:true
+			selectedItem: this.props.selectedItem,
+			open: this.props.startOpen != null ? this.props.startOpen : true
 		};
 	}
 
-	render() {
+	render()
+	{
 		var items = this.props.items;
 		var ListTile = this.props.tile;
-		if(this.state.open) {
+		if ( this.state.open )
+		{
 			return (
 				<div className="nav-list">
 					{this.props.multiple&&items&&items.length>1?
@@ -144,29 +167,39 @@ NavDropDownList = class NavDropDownList extends React.Component {
 						this.props.onChange(0);
 					}}>
 						<MultipleItems items={items}/>
-					</div>:null}
+					</div>: null
+			}
 
-					{items&&items.length?items.map((item,idx)=>{
-						return <div 
-							key={idx+'-'+item._id} 
-							className={"list-tile fadeIn"+(this.state.selectedItem&&this.state.selectedItem._id==item._id?" active":"")}
-							onClick={(e)=>{
-								this.setState({
-									open:false,
-									selectedItem:item
-								});
-								this.props.onChange(item);
-							}}
-						>
-							<ListTile item={item}/>
-						</div>
-					}):null}
-				</div>
-			)
-		}
-		else {
-			return (
-				<div className="nav-list-selected">
+			{
+				items && items.length ? items.map( ( item, idx ) =>
+				{
+					return <div
+					key = {
+						idx + '-' + item._id
+					}
+					className = {
+						"list-tile fadeIn" + ( this.state.selectedItem && this.state.selectedItem._id == item._id ? " active" : "" )
+					}
+					onClick = {
+							( e ) =>
+							{
+								this.setState(
+								{
+									open: false,
+									selectedItem: item
+								} );
+								this.props.onChange( item );
+							}
+						} >
+						<ListTile item={item}/> < /div>
+				} ) : null
+			} < /div>
+		)
+	}
+	else
+	{
+		return (
+			<div className="nav-list-selected">
 					<div className="list-tile" onClick={()=>{
 						this.setState({open:true});
 					}}>
@@ -176,21 +209,25 @@ NavDropDownList = class NavDropDownList extends React.Component {
 						:
 							<ListTile item={this.state.selectedItem}/>
 						}
-					</div>
-				</div>
-			)
-		}
+					</div> < /div>
+		)
 	}
 }
+}
 
-MultipleItems = class MultipleItems extends React.Component {
-	render() {
+MultipleItems = class MultipleItems extends React.Component
+{
+	render()
+	{
 		var items = this.props.items;
 		var images = [];
-		if(items&&items.length) {
-			for(var i=0;i<3;i++) {
-				if(items[i]) {
-					images.push(items[i].getThumbUrl());
+		if ( items && items.length )
+		{
+			for ( var i = 0; i < 3; i++ )
+			{
+				if ( items[ i ] )
+				{
+					images.push( items[ i ].getThumbUrl() );
 				}
 			}
 		}

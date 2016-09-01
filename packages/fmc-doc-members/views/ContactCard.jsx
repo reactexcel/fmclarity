@@ -1,126 +1,177 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-ContactAvatarSmall = React.createClass({
+ContactAvatarSmall = React.createClass(
+{
 
-	mixins:[ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-	getMeteorData() {
-		Meteor.subscribe('File');
-		var contact, profile, name, url, style = {}, initials='';
+	getMeteorData()
+	{
+		Meteor.subscribe( 'File' );
 
-		contact = this.props.item;
-		if(contact) {
-			profile = contact.getProfile?contact.getProfile():contact;
-			name = profile?profile.name:"";
-			if(contact.getThumbUrl) {
-				url = contact?contact.getThumbUrl():"";
-				if(url&&url!="/img/default-placeholder.jpg") {
-					style['backgroundImage'] = 'url(\''+url+'\')';
-					style['backgroundSize'] = "cover";
-					style['color'] = "transparent";
-				}
-				else {
-					var names;
-					if(name) {
-						names = name.trim().split(' ');
-						if(names.length==1) {
-							initials = names[0][0];
-						}
-						if(names.length==2) {
-							initials = names[0][0]+names[1][0];
-						}
-						else if(names.length==3) {
-							initials = names[0][0]+names[1][0]+names[2][0];
-						}
-						else if(names.length>3) {
-							initials = names[0][0]+names[0][1]+names[0][2]
-						}
-						var r = (name.charCodeAt(name.length-3)%25)*10;
-						var g = (name.charCodeAt(name.length-2)%25)*10;
-						var b = (name.charCodeAt(name.length-1)%25)*10;
-						style['backgroundColor'] = 'rgb('+r+','+g+','+b+')';
+		let contact = this.props.item,
+			profile = this.props.item,
+			name = profile.name,
+			url = null,
+			style = {},
+			initials = "";
+
+		if ( contact )
+		{
+			if ( contact.getProfile )
+			{
+				profile = contact.getProfile();
+				name = profile.name;
+			}
+
+			if ( contact.getThumbUrl )
+			{
+				url = contact.getThumbUrl();
+			}
+
+			if ( url && url != "/img/default-placeholder.jpg" )
+			{
+				style[ 'backgroundImage' ] = 'url(\'' + url + '\')';
+				style[ 'backgroundSize' ] = "cover";
+				style[ 'color' ] = "transparent";
+			}
+			else
+			{
+				let names = [];
+				if ( name != null )
+				{
+					names = name.trim().split( ' ' );
+					if ( names.length == 1 )
+					{
+						initials = names[ 0 ][ 0 ];
 					}
+					if ( names.length == 2 )
+					{
+						initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ];
+					}
+					else if ( names.length == 3 )
+					{
+						initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ] + names[ 2 ][ 0 ];
+					}
+					else if ( names.length > 3 )
+					{
+						initials = names[ 0 ][ 0 ] + names[ 0 ][ 1 ] + names[ 0 ][ 2 ]
+					}
+					var r = ( name.charCodeAt( name.length - 3 ) % 25 ) * 10;
+					var g = ( name.charCodeAt( name.length - 2 ) % 25 ) * 10;
+					var b = ( name.charCodeAt( name.length - 1 ) % 25 ) * 10;
+					style[ 'backgroundColor' ] = 'rgb(' + r + ',' + g + ',' + b + ')';
 				}
 			}
+
 		}
 		return {
-			name:name,
-			initials:initials||'...',
-			style:style
+			name,
+			initials,
+			style
 		}
 	},
 
-	render() {
+	render()
+	{
 		return (
 			<div className="contact-card-avatar">
 				<div title={this.data.name} style={this.data.style}>{this.data.initials}</div>
 			</div>
 		)
 	}
-});
+} );
 
-Contact2Line = React.createClass({
-	render() {
-		var contact, profile={}, role, tenancy="";
-		contact = this.props.item;
-		if(contact) {
-			profile = contact.getProfile?contact.getProfile():contact;
-			if(profile) {
+Contact2Line = React.createClass(
+{
+	render()
+	{
+		let contact = this.props.item,
+			profile = {},
+			role = this.props.role,
+			tenancy = "";
+
+		if ( contact )
+		{
+			profile = contact.getProfile ? contact.getProfile() : contact;
+			if ( profile )
+			{
 				tenancy = profile.tenancy;
 			}
 		}
-		role = this.props.role;
+
 		return (
 			<span className="contact-card-2line-text">
 				<span className="contact-card-line-1">{profile.name}</span>
-				{tenancy?<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>:null}
-				{role?<span className="label label-default pull-right">{role}</span>:null}<br/>
+
+				{
+				tenancy?
+				<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>
+				:null
+				}
+
+				{
+				role?
+				<span className="label label-default pull-right">{role}</span>
+				:null
+				}
+
+				<br/>
 		        <span className="contact-card-line-2">
 
-		            {profile.email?
-		            	<span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
-		            	:profile.phone?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>
-						:profile.phone2?<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>
-		            	:null
-		            }
+		        {
+		        profile.email?
+		        <span><i className="fa fa-envelope"></i>&nbsp;{profile.email}</span>
+
+		        :profile.phone?
+		        <span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone}</span>
+
+				:profile.phone2?
+				<span>&nbsp;<i className="fa fa-phone"></i>&nbsp;{profile.phone2}</span>
+
+		        :null
+		        }
+
 		        </span>
 		    </span>
 		)
 	}
-});
+} );
 
 //this is actually a contact tile
-ContactCard = React.createClass({
-	render() {
-		
-		var contact,profile,view;
-		contact = this.props.item;
+ContactCard = React.createClass(
+{
+	render()
+	{
 
-		if(contact&&contact.getProfile) {
+		let contact = this.props.item,
+			profile = this.props.item,
+			group = this.props.group,
+			team = this.props.team,
+			view = null,
+			role = null;
+
+		if ( contact.getProfile )
+		{
 			profile = contact.getProfile();
 		}
-		else {
-			console.log({
-				'no getProfile function for':contact
-			});
-			profile = {};
-		}
 
-		var role;
-		if(this.props.group) {
-			role = RBAC.getRole(contact,this.props.group);
+		if ( group != null )
+		{
+			role = RBAC.getRole( contact, this.props.group );
 		}
-		else if(this.props.team) {
-			role = RBAC.getRole(contact,this.props.team);
+		else if ( this.props.team )
+		{
+			role = RBAC.getRole( contact, this.props.team );
 		}
 
 		return (
 			<div className="contact-card contact-card-2line">
-				<ContactAvatarSmall item={contact} />
-				<Contact2Line item={contact} role={role}/>
+				<ContactAvatarSmall item={ contact } />
+				<Contact2Line item={ contact } role={ role }/>
 	        </div>
 		)
 	}
-});
+} );

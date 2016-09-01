@@ -1,394 +1,553 @@
 import './CloseDetailsSchema.jsx';
+import './RequestLocationSchema.jsx';
+import './RequestFrequencySchema.jsx';
+
+import Facilities from '../collections/Facilities';
+import
+{
+	ContactCard
+}
+from 'meteor/fmc:doc-members';
 
 //This is a hack to get around clash between new Meteor 1.3+ ES6 imports system and Mantra application architecture
 // it is intended that a better solution will be available in future versions of Mantra
-if(Meteor.isClient) {
-  require ('/client/modules/Facility/MDLocationSelector.jsx');
-  require ('/client/modules/Facility/MDFacilitySelector.jsx');
-  require ('/client/modules/Team/MDSupplierSelector.jsx');
-  require ('/client/modules/Team/MDAssigneeSelector.jsx');
-  require ('/client/modules/Service/MDServiceSelector.jsx');
-}
-
-//dates structure
-//comments structure
-
-//Pass input objects instead of strings
-
-//migration routine to new structure
-
-
-RequestLocationSchema = {
-  area:{
-    input:"MDSelect",
-    size:4,
-    options:function(item){
-      return {
-        items:item.facility?item.facility.areas:null,
-        view:NameCard
-      }
-    }
-  },
-  subarea:{
-    input:"MDSelect",
-    size:4,
-    options:function(item){
-      return {
-        items:item.location&&item.location.area?item.location.area.children:null,
-        view:NameCard
-      }
-    }
-  },
-  identifier:{
-    input:"MDSelect",
-    size:4,
-    options:function(item){
-      return {
-        items:item.location&&item.location.subarea?item.location.subarea.children:null,
-        view:NameCard
-      }
-    }
-  }
-}
-
-RequestServiceSchema = {
-  service:{
-
-  },
-  subservice:{
-
-  }
-}
-
-RequestFrequencySchema = {
-  repeats:{
-    input:"MDSelect",
-    defaultValue:"6",
-    size:6,
-    options:{
-      items:[
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-      ]
-    }    
-  },
-  number:{
-    label:"Frequency (number)",
-    input:"MDSelect",
-    defaultValue:"6",
-    size:6,
-    options:{
-      items:[
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6"
-      ]
-    }
-  },
-  unit:{
-    label:"Frequency (unit)",
-    input:"MDSelect",
-    defaultValue:"months",
-    size:6,
-    options:{
-      items:[
-        "days",
-        "weeks",
-        "months",
-        "years",
-      ]
-    }
-  }
+if ( Meteor.isClient )
+{
+	require( '/client/modules/Facility/MDLocationSelector.jsx' );
+	require( '/client/modules/Facility/MDFacilitySelector.jsx' );
+	require( '/client/modules/Facility/FacilityViewSummary.jsx' );
+	require( '/client/modules/Team/MDSupplierSelector.jsx' );
+	require( '/client/modules/Team/MDAssigneeSelector.jsx' );
+	require( '/client/modules/Service/MDServiceSelector.jsx' );
 }
 
 IssueSchema = {
 
-  name:{
-  },
+	//$schema: 				"http://json-schema.org/draft-04/schema#",
+	//title:       			"Request",
+	//description: 			"A work request",
 
-  timeframe:{
-    getter() {
-      var team = this.getTeam();
-      if(team) {
-        return team.getTimeframe(this.priority);
-      }
-    }
-  },
+	//properties: 
+	//{
+	name:
+	{
+		label: "Subject",
+		description: "A brief, descriptive, title for the work request"
+	},
 
-  description:{
-    label:"Comments",
-    input:"mdtextarea"
-  },
+	code:
+	{
+		label: "Code",
+		description: "The unique code for this work request",
+		type: 1,
+		defaultValue: getJobCode,
+	},
 
-  type: {
-    label:"Request type",
-    defaultValue:"Ad-hoc",
-    //size:6,
-    type:String,
-    input:"MDSelect",
-    options:{
-      items:[
-        "Ad-hoc",
-        "Base Building",
-        "Contract",
-        "Defect",
-        "Internal",
-        "Preventative",
-        "Template",
-        "Warranty",
-      ]
-    }
-  },  
+	type:
+	{
+		label: "Request type",
+		description: "The work request type (ie Ad-hoc, Preventative)",
+		type: "",
+		defaultValue: "Ad-hoc",
+		input: "MDSelect",
+		options:
+		{
+			items: [
+				"Ad-hoc",
+				"Base Building",
+				"Contract",
+				"Defect",
+				"Internal",
+				"Preventative",
+				"Template",
+				"Warranty",
+			]
+		}
+	},
 
-  priority:{
-    defaultValue:"Standard",
-    size:6,
-    type:String,
-    condition(item){
-      return item.type!="Preventative";
-    },
-    input:"MDSelect",
-    options:{
-      items:[
-        "Standard",
-        "Scheduled",
-        "Urgent",
-        "Critical"
-      ]
-    }
-  },
+	priority:
+	{
+		label: "Priority",
+		description: "The urgency of the requested work",
+		type: "",
+		defaultValue: "Standard",
+		condition: ( item ) =>
+		{
+			return item.type != "Preventative"
+		},
+		input: "MDSelect",
+		size: 6,
+		options:
+		{
+			items: [
+				"Standard",
+				"Scheduled",
+				"Urgent",
+				"Critical"
+			]
+		}
+	},
 
-  rejectDescription:{//rejectComment
-    label:"Reason for rejection",
-    input:"mdtextarea"
-  },
+	frequency:
+	{
+		condition: "Preventative",
+		schema: RequestFrequencySchema
+	},
 
-  acceptComment:{
-    label:"Comment",
-    input:"mdtextarea",
-  },
+	status:
+	{
 
-  closeComment:{
-    label:"Close comment",
-    input:"mdtextarea"
-  },
+		label: "Status",
+		description: "The current status of the job",
+		type: String,
+		defaultValue: "Draft",
 
-  quote: {
-    label:"Quote",
-    input:"FileField"
-  },
+		options:
+		{
+			items: [
+				"Draft",
+				"...and the others"
+			]
+		}
+	},
 
-  frequency:{
-    condition(item) {
-      return item.type=="Preventative"
-    },
-    schema:RequestFrequencySchema
-  },
+	//////////////////////////////////////////////////
+	// Facility dependant properties
+	//////////////////////////////////////////////////
+	location:
+	{
+		label: "Location",
+		description: "The location within the site where the work is located",
+		type:
+		{},
+		input: Meteor.isClient ? MDLocationSelector : null
+	},
 
-  quoteIsPreApproved:{
-    label:"Auto approve quote?",
-    info:"An auto approved quote will ",
-    input:"switch"
-  },
+	level:
+	{
+		label: "Area",
+		size: 4,
+		type:
+		{},
+		input: "MDSelect",
+		options: ( item ) =>
+		{
+			return {
+				items: item.facility ? item.facility.areas : null
+			}
+		}
+	},
 
-  quoteValue:{
-    label:"Value of quote"
-  },
+	area:
+	{
+		label: "Sub-area",
+		size: 4,
+		type:
+		{},
+		input: "MDSelect",
+		optional: true,
+		options: ( item ) =>
+		{
+			return {
+				items: item.level ? item.level.children : null
+			}
+		}
+	},
 
-  status:{
-    defaultValue:"Draft",
-  },
+	identifier:
+	{
+		label: "Identifier",
+		description: "Area identifier for the job location (ie classroom number)",
+		size: 4,
+		type:
+		{},
+		input: "MDSelect",
+		optional: true,
+		options: ( item ) =>
+		{
+			return {
+				items: item.area ? item.area.children : null
+			}
+		}
+	},
 
-  quoteRequired:{
-    label:"Quote required",
-    input:"switch"
-  },
+	//////////////////////////////////////////////////
 
-  confirmRequired:{
-    label:"Completion confirmation required",
-    input:"switch"
-  },
+	service:
+	{
+		label: "Service",
+		description: "The category of work required",
+		size: 6,
+		type:
+		{},
+		input: "MDSelect",
+		options: ( item ) =>
+		{
+			return {
+				items: item.facility ? item.facility.servicesRequired : null
+			}
+		}
+	},
 
-  costThreshold:{
-    label:"Value",
-    size:6,
-    defaultValue:500,
-    condition(item) {
-      return _.contains(["Ad-hoc","Contract"],item.type)
-    }
-  },
+	subservice:
+	{
+		label: "Subservice",
+		description: "The subcategory of work required",
+		size: 6,
+		type:
+		{},
+		input: "MDSelect",
+		optional: true,
+		options: ( item ) =>
+		{
+			return {
+				items: item.service ? item.service.children : null
+			}
+		}
+	},
 
-  costActual:{
-  },
+	//////////////////////////////////////////////////
+	// Comments
+	//////////////////////////////////////////////////
+	description:
+	{
+		label: "Comments",
+		description: "A detailed description of the work to be completed",
+		type: String,
+		input: "mdtextarea",
+		optional: true
+	},
 
-  closeDetails:{
-    type:Object,
-    schema:CloseDetailsSchema
-  },
+	acceptComment:
+	{
+		label: "Comment",
+		description: "Comment about the acceptance of this work request",
+		type: String,
+		input: "mdtextarea",
+	},
 
-  code:{
-    defaultValue(item) {
-      var team, code = 0;
-      if(item&&item.team) {
-        team = Teams.findOne({_id:item.team._id});
-        code = team.getNextWOCode();
-      }      
-      return code;
-    }
-  },
+	rejectComment:
+	{
+		label: "Reason for rejection",
+		description: "The reason why this job was rejected",
+		type: String,
+		input: "mdtextarea",
+	},
 
-  dueDate:{
-    type:Date,
-    label:"Due Date",
-    input:"MDDateTime",
-    size:6,
-    /*condition(item){
-      return item.type!='Preventative';
-    },*/
-    defaultValue(item) {
-      if(!item.team) {
-        return new Date();
-      }
-      var team = Teams.findOne(item.team._id);
-      var timeframe = team.timeframes['Standard']*1000;
-      var now = new Date();
-      return new Date(now.getTime()+timeframe);
-    }
-  },
+	closeComment:
+	{
+		label: "Close comment",
+		description: "Closing comments about this job",
+		type: String,
+		input: "mdtextarea"
+	},
 
-  eta:{
-    label:"ETA",
-    input:"MDDateTime",
-  },
+	//////////////////////////////////////////////////
+	// Quote related
+	//////////////////////////////////////////////////
+	quoteRequired:
+	{
+		label: "Quote required",
+		description: "Is a quote required for this job?",
+		type: Boolean,
+		input: "switch"
+	},
 
-  startDate:{
-    type:Date,
-    label:"Start Date",
-    input:"MDDateTime",
-    size:6,
-    condition(item){
-      return item.type=='Preventative';
-    },
-    defaultValue(item) {
-      if(!item.team) {
-        return new Date();
-      }
-      var team = Teams.findOne(item.team._id);
-      var timeframe = team.timeframes['Standard']*1000;
-      var now = new Date();
-      return new Date(now.getTime()+timeframe);
-    }
-  },
+	quoteIsPreApproved:
+	{
+		label: "Auto approve quote?",
+		info: "An auto approved quote will ",
+		type: Boolean,
+		input: "switch"
+	},
 
-  /*
-  endDate:{
-    type:Date,
-    label:"End Date",
-    input:"MDDateTime",
-    size:6,
-    condition(item){
-      return item.type=='Preventative';
-    },
-    defaultValue(item) {
-      if(!item.team) {
-        return new Date();
-      }
-      var team = Teams.findOne(item.team._id);
-      var timeframe = team.timeframes['Standard']*1000;
-      var now = new Date();
-      return new Date(now.getTime()+timeframe);
-    }
-  },
-  */
-  attachments:{
-    type:[Object],
-    label:"Attachments",
-    input:DocAttachments.FileExplorer
-  },
+	quote:
+	{
+		label: "Quote",
+		description: "File detailing the estimated cost of this job",
+		input: "FileField",
+	},
 
-  location:{
-    type:Object,
-    input:Meteor.isClient?MDLocationSelector:null
-  },
+	quoteValue:
+	{
+		label: "Value of quote",
+		description: "The cost of the requested work",
+		type: Number
+	},
 
-  level:{
-    label:"Area",
-    size:6,
-    type:Object,
-  },
-  area:{
-    label:"Sub-area",
-    size:6,
-    type:Object,
-  },
-  team:{
-    type:Object,
-  },
-  facility:{
-    type:Object,
-    input:Meteor.isClient?MDFacilitySelector:null
-  },
-  supplier:{
-    type:Object,
-    input:Meteor.isClient?MDSupplierSelector:null
-  },
-  service:{
-    type:Object,
-    input:Meteor.isClient?MDServiceSelector:null
-  },
-  subservice:{
-    label:"Subservice",
-    size:6,
-    type:Object,
-  },
-  assignee:{
-    type:Object,
-    input:Meteor.isClient?MDAssigneeSelector:null,
-  },
-  members: {
-    type: [Object],
-    label:"Members",
-    defaultValue:membersDefaultValue
-  }
+	//////////////////////////////////////////////////
+	// Settings
+	//////////////////////////////////////////////////  		
+	confirmRequired:
+	{
+		label: "Completion confirmation required",
+		description: "Is manager confirmation required before the job can be closed?",
+		input: "switch"
+	},
+
+	costThreshold:
+	{
+		label: "Value",
+		size: 6,
+		defaultValue: 500,
+		condition: [ "Ad-hoc", "Contract" ],
+	},
+
+	closeDetails:
+	{
+		type:
+		{},
+		schema: CloseDetailsSchema
+	},
+
+	//////////////////////////////////////////////////
+	// Dates & timing
+	//////////////////////////////////////////////////  		
+	dueDate:
+	{
+		type: Date,
+		label: "Due Date",
+		description: "Latest date that the work can be completed",
+		input: "MDDateTime",
+		size: 6,
+		defaultValue: getDefaultDueDate
+	},
+
+	eta:
+	{
+		label: "ETA",
+		description: "Time the supplier is expected to attend the site",
+		input: "MDDateTime",
+	},
+
+	//////////////////////////////////////////////////
+	// Relations
+	// Should be defined here in the schema and implemented automatically
+	//////////////////////////////////////////////////
+
+	// although I created a docowners package for this purpose I think I would prefer owner to be explicit
+	// is there a better way?
+	owner:
+	{
+		label: "Owner",
+		description: "The creator or owner of this request",
+		relation:
+		{
+			type: ORM.OneToOne,
+			source: Users
+		},
+		input: "MDSelect",
+	},
+
+	team:
+	{
+		label: "Owning team",
+		description: "The team who created this work request",
+		relation:
+		{
+			type: ORM.OneToOne,
+			source: Teams
+		},
+		input: "MDSelect",
+	},
+
+	facility:
+	{
+		label: "Facility",
+		description: "The site for this job",
+		relation:
+		{
+			type: ORM.OneToOne,
+			source: Facilities
+		},
+		input: "MDSelect",
+
+		options: ( item ) =>
+		{
+			return {
+				items: ( item.team ? item.team.facilities : null ),
+				view: ( Meteor.isClient ? FacilitySummary : null ),
+
+				onChange: ( item ) =>
+				{
+					item.level = null;
+					item.area = null;
+					item.identifier = null;
+					item.servive = null;
+					item.subservice = null;
+					item.supplier = null;
+				}
+			}
+		},
+	},
+
+	supplier:
+	{
+		label: "Supplier",
+		description: "The supplier who has been assigned to this job",
+		relation:
+		{
+			type: ORM.HasOne,
+			source: Teams
+		},
+		input: "MDSelect",
+		options: ( item ) =>
+		{
+			return {
+				items: ( item.facility ? item.facility.suppliers : null ),
+				view: ( Meteor.isClient ? ContactCard : null )
+			}
+		},
+	},
+
+	assignee:
+	{
+		label: "Assignee",
+		description: "The individual who has been allocated to this job",
+		relation:
+		{
+			type: ORM.HasOne,
+			source: Users
+		},
+		input: "MDSelect",
+		options: ( item ) =>
+		{
+			return {
+				items: ( item.supplier ? item.supplier.members : null ),
+				view: ( Meteor.isClient ? ContactCard : null )
+			}
+		},
+	},
+
+	members:
+	{
+		label: "Contacts",
+		description: "Stakeholders for this work request",
+		/*relation:
+		{
+			type: ORM.ManyToMany,
+			source: "users"
+		},*/
+		defaultValue: getMembersDefaultValue
+	},
+
+	attachments:
+	{
+		label: "Attachments",
+		description: "Deprecated",
+		/*relation:
+		{
+			type: ORM.ManyToMany,
+			source: "Files"
+		},
+		*/
+		input: DocAttachments.FileExplorer
+	},
+
+	documents:
+	{
+		label: "Documents",
+		description: "All documents related to this job",
+		/*relation:
+		{
+			type: ORM.ManyToMany,
+			source: "Files"
+		},*/
+		input: DocAttachments.DocumentExplorer,
+	},
+
+	//////////////////////////////////////////////////  		
+	//}
 }
 
-function membersDefaultValue(item) {
-  var owner = Meteor.user();
-  var team = Teams.findOne(item.team._id);
-  
-  var teamMembers = team.getMembers({role:"portfolio manager"});
+/*
+ *
+ *
+ *
+ */
+function getMembersDefaultValue( item )
+{
+	let owner = Meteor.user(),
+		team = Teams.findOne( item.team._id ),
+		teamMembers = team.getMembers(
+		{
+			role: "portfolio manager"
+		} );
 
-  var members = [{
-    _id:owner._id,
-    name:owner.profile.name,
-    role:"owner"
-  }];
+	let members = [
+	{
+		_id: owner._id,
+		name: owner.profile.name,
+		role: "owner"
+	} ];
 
-  teamMembers.map(function(m){
-    members.push({
-      _id:m._id,
-      name:m.profile.name,
-      role:"team manager"
-    })
-  });
+	teamMembers.map( ( m ) =>
+	{
+		members.push(
+		{
+			_id: m._id,
+			name: m.profile.name,
+			role: "team manager"
+		} )
+	} );
 
-  if(item.facility) {
-    var facility = Facilities.findOne(item.facility._id);
-    var facilityMembers = facility.getMembers({role:"manager"});
-    facilityMembers.map(function(m){
-      members.push({
-        _id:m._id,
-        name:m.profile.name,
-        role:"facility manager"
-      })
-    });
-  }  
-  return members;
+	if ( item.facility )
+	{
+		let facility = Facilities.findOne( item.facility._id ),
+			facilityMembers = facility.getMembers(
+			{
+				role: "manager"
+			} );
+
+		facilityMembers.map( ( m ) =>
+		{
+			members.push(
+			{
+				_id: m._id,
+				name: m.profile.name,
+				role: "facility manager"
+			} )
+		} );
+	}
+
+	return members;
+}
+
+function getTimeframe()
+{
+	let team = this.getTeam();
+	if ( team )
+	{
+		return team.getTimeframe( this.priority );
+	}
+}
+
+function getJobCode( item )
+{
+	let team = null,
+		code = 0;
+
+	if ( item && item.team )
+	{
+		team = Teams.findOne(
+		{
+			_id: item.team._id
+		} );
+		code = team.getNextWOCode();
+	}
+
+	return code;
+}
+
+function getDefaultDueDate( item )
+{
+	if ( !item.team )
+	{
+		return new Date();
+	}
+	let team = Teams.findOne( item.team._id ),
+		timeframe = team.timeframes[ 'Standard' ] * 1000,
+		now = new Date();
+
+	return new Date( now.getTime() + timeframe );
 }

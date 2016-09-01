@@ -1,68 +1,92 @@
-.data-grid {
-  white-space: nowrap;
-  width: 100%;
-  overflow-x: auto;
+.data-grid
+{
+    overflow-x: auto;
+
+    width: 100%;
+
+    white-space: nowrap;
 }
 
-.data-grid-header-row {
-  height: 56px;
+.data-grid-header-row
+{
+    height: 56px;
 }
 
 .print .data-grid-select-col,
-.print .data-grid-select-col-header {
-  display: none;
+.print .data-grid-select-col-header
+{
+    display: none;
 }
 
 .data-grid-select-col,
-.data-grid-select-col-header {
-  width: 24px;
+.data-grid-select-col-header
+{
+    width: 24px;
 }
 
-.data-grid-header-cell {
-  padding-top: 24px!important;
-  color: #999;
-  font-size: 12px;
-  cursor: pointer;
+.data-grid-header-cell
+{
+    font-size: 12px;
+
+    padding-top: 24px!important;
+
+    cursor: pointer;
+
+    color: #999;
 }
 
-.data-grid-header-cell,.data-grid-select-col-header {
-  border-bottom:1px solid #ccc;  
+.data-grid-header-cell,
+.data-grid-select-col-header
+{
+    border-bottom: 1px solid #ccc;
 }
 
-.data-grid-header-cell:hover {
-  color: #111;
+.data-grid-header-cell:hover
+{
+    color: #111;
 }
 
-.data-grid-row {
-  height: 48px;
+.data-grid-row
+{
+    height: 48px;
 }
 
-.data-grid-row:hover {
-  background-color: #eee;
-  border-bottom-color: #ddd;
+.data-grid-row:hover
+{
+    border-bottom-color: #ddd;
+    background-color: #eee;
 }
 
-.data-grid-cell {
-  max-width: 200px;
-  overflow: hidden;
-  color: #111;
-  padding:8px;
+.data-grid-cell
+{
+    overflow: hidden;
+
+    max-width: 200px;
+    padding: 8px;
+
+    color: #111;
 }
 
-.data-grid-cell, .data-grid-select-col {
-  border-top:1px solid #ddd;
+.data-grid-cell,
+.data-grid-select-col
+{
+    border-top: 1px solid #ddd;
 }
 
-.report-toolbar {
-  position: absolute;
-  top: 15px;
-  right: 10px;
-  font-size: 19px;
+.report-toolbar
+{
+    font-size: 19px;
+
+    position: absolute;
+    top: 15px;
+    right: 10px;
 }
 
 .report-toolbar a,
-.report-toolbar span {
-  color: #000;
-  opacity: 0.5;
-  padding: 10px;
+.report-toolbar span
+{
+    padding: 10px;
+
+    opacity: .5;
+    color: #000;
 }

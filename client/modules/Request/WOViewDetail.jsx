@@ -13,17 +13,17 @@ IssueDetail = React.createClass({
         if(this.props.item&&this.props.item._id) {
             data.request = Issues.findOne(this.props.item._id);
             if(data.request) {
-                data.owner = data.request.getOwner();
-                data.team = data.request.getTeam();
-                data.supplier = data.request.getSupplier();
-                data.assignee = data.request.getAssignee();
-                data.notifications = data.request.getNotifications();
-                data.messageCount = data.request.getMessageCount();
-                data.attachmentCount = data.request.getAttachmentCount();
+                data.owner = data.request.owner;
+                data.team = data.request.team;
+                data.supplier = data.request.supplier;
+                data.assignee = data.request.assignee;
+                data.notifications = data.request.notifications;
+                data.messageCount = data.request.messages?data.request.messages.length:0;
+                data.attachmentCount = data.request.attachments.length?data.request.attachments.length:0;
 
-                data.facility = data.request.getFacility();
+                data.facility = data.request.facility;
                 if(data.facility) {
-                    data.facilityContact = data.facility.getPrimaryContact();
+                    data.facilityContact = data.facility.primaryContact;
                 }
             }
         }

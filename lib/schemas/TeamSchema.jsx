@@ -1,118 +1,185 @@
-//might be quite good to have a profile subschema
-/*
-  {
-    name:
-    email:
-    abn:
-    phone:
-    thumbnail:
-  }
-*/
+import './AddressSchema.jsx';
+
 TeamSchema = {
 
-  type: {
-    type: String,
-    label:"Account type",
-    input:"MDSelect",
-    options:{items:["fm","contractor"]},
-    condition(item) {
-      var user = Meteor.user();
-      return user.emails[0].address="mrleokeith@gmail.com";
-    }
-  },
+    //$schema:        "http://json-schema.org/draft-04/schema#",
+    //title:            "Team",
+    //description:      "An account holder or contact team",
 
-  name: {
-    type: String,
-    label: "Company Name",
-    required:true
-  },
-  thumb: {
-    type: String,
-    label: "Thumbnail",
-  },
-  email: {
-    type: String,
-    label: "Email",
-    //regEx: SimpleSchema.RegEx.Email,
-  },
-  phone: {
-    type: String,
-    label: "Phone",
-  },
-  phone2: {
-    type: String,
-    label: "Phone 2",
-  },
-  abn: {
-    type: String,
-    label: "ABN",
-  },
-  description: {
-    label: "Description",
-    input:"mdtextarea",
-    condition:function(item) {
-      return item.type=="contractor"
-    }
-  },
+    //properties: 
+    //{
 
-  attachments: {
-    type:[Object],
-    label:"Attachments",
-    input:DocAttachments.FileExplorer
-  },
+    //////////////////////////////////////////////
+    // Basic info
+    //////////////////////////////////////////////
+    name:
+    {
+        type: String,
+        label: "Company Name",
+    },
 
-  documents: {
-      type:[Object],
-      label:"Documents",
-      input:DocAttachments.DocumentExplorer
-  },
+    type:
+    {
+        type: String,
+        label: "Account type",
+        input: "MDSelect",
+        condition: ( item ) =>
+        {
+            return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
+        },
+        options:
+        {
+            items: [ "fm", "contractor" ]
+        },
+    },
 
-  address:{
-    label:"Address",
-    schema:AddressSchema,
-  },
+    description:
+    {
+        label: "Description",
+        description: "Brief summary of services provided by this team",
+        input: "mdtextarea",
+        condition: "contractor"
+    },
 
-  defaultWorkOrderValue: {
-    type: Number,
-    label: "Default value for work orders",
-    defaultValue:500,
-    condition:function(item) {
-      return item.type=="fm"
-    }
+    email:
+    {
+        type: String,
+        label: "Email",
+        //regEx:        ORM.RegEx.Email,
+    },
 
-  },
-  services : {
-    type: [String],
-    label: "Services",
-    input:"select",
-    defaultValue:function(){
-        return JSON.parse(JSON.stringify(Config.services));
-    }
-  },
-  timeframes: {
-    type:Object,
-    label:"Time frames",
-    defaultValue:function() {
-      return {
-        "Scheduled":24*7*3600,
-        "Standard":24*3600,
-        "Urgent":2*3600,
-        "Critical":1*3600
-      }        
-    }
-  },
-  areasServiced : {
-    type: [String],
-    label: "Places serviced",
-    input:"select",
-  },
-  //these could be defined as a hasMany relationship
-  members: {
-    type: [Object],
-    label:"Members"
-  },
-  suppliers: {
-    type: [Object],
-    label: "Suppliers"
-  }
+    phone:
+    {
+        label: "Primary phone",
+        description: "Primary phone contact number",
+        icon: "phone",
+        type: String,
+    },
+
+    phone2:
+    {
+        label: "Seconday phone",
+        type: String,
+        description: "Secondary phone contact number",
+        icon: "phone",
+    },
+
+    abn:
+    {
+        label: "ABN",
+        description: "Australian Business Number",
+        type: String,
+    },
+
+    address:
+    {
+        label: "Address",
+        description: "Location of primary office",
+        schema: AddressSchema,
+    },
+
+    thumb:
+    {
+        type: String,
+        label: "Thumbnail",
+    },
+
+    //////////////////////////////////////////////
+    // Settings
+    //////////////////////////////////////////////      
+    defaultWorkOrderValue:
+    {
+        label: "Default value for work orders",
+        description: "Preset initial value for all newly created work orders",
+        type: Number,
+        defaultValue: 500,
+        condition: "fm"
+    },
+
+    services:
+    {
+        label: "Services",
+        type: [ String ],
+        description: "Services provided by this team",
+        input: "MDSelect",
+        defaultValue: () =>
+        {
+            return JSON.parse( JSON.stringify( Config.services ) )
+        }
+    },
+
+    timeframes:
+    {
+        label: "Time frames",
+        type: Object,
+        description: "Acceptable turnaround time for jobs of different priorities",
+        defaultValue: () =>
+        {
+            return {
+                'Scheduled': 24 * 7 * 3600,
+                'Standard': 24 * 3600,
+                'Urgent': 2 * 3600,
+                'Critical': 1 * 3600
+            }
+        }
+    },
+
+    //////////////////////////////////////////////
+    // Relations      
+    //////////////////////////////////////////////
+    facilities:
+    {
+        label: "Facilities",
+        description: "Sites maintained by this team",
+        relation:
+        {
+            type: ORM.OneToMany,
+            source: "Facilities",
+            key: "team._id"
+        }
+    },
+
+    members:
+    {
+        label: "Members",
+        description: "Members of this team",
+        /*relation:     
+        { 
+            type: ORM.HasMembers, 
+            source: "users" 
+        }*/
+    },
+
+    suppliers:
+    {
+        label: "Suppliers",
+        description: "Common suppliers for facilities within this team",
+        /*relation:
+        {
+            type: ORM.HasMembers,
+            source: "Teams",
+            key: "team._id"
+        }*/
+    },
+
+    documents:
+    {
+        label: "Documents",
+        description: "Saved team documents",
+        /*relation:
+        {
+            type: ORM.HasMembers,
+            source: "Files",
+            key: "team._id"
+        },*/
+        input: DocAttachments.DocumentExplorer
+    },
+
+    /*
+        notifications / messages :
+        {
+
+        }
+      */
+    //}
 }

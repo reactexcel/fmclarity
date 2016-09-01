@@ -1,78 +1,107 @@
-.tab-panel {
-  border: 0;
+.tab-panel
+{
+    border: 0;
 }
 
-.tab-panel .tab-pane {
-  clear: both;
-  background-color: #fff;
-  margin: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+.tab-panel .tab-pane
+{
+    clear: both;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    margin: 0;
+
+    background-color: #fff;
 }
 
-.tab-panel .tab-row {
-  background-color: rgba(0, 0, 0, 0.1);
-  clear: both;
+.tab-panel .tab-row
+{
+    clear: both;
+
+    background-color: rgba(0, 0, 0, .1);
 }
 
-.tab-panel .panel-heading {
-  padding: 0;
-  border: none;
+.tab-panel .panel-heading
+{
+    padding: 0;
+
+    border: none;
 }
 
-.ipso-tab {
-  float: left;
-  position: relative;
-  padding: 0;
-  text-align: center;
+.ipso-tab
+{
+    position: relative;
+
+    float: left;
+
+    padding: 0;
+
+    text-align: center;
 }
 
 .ipso-tab.active > .btn > span > span:first-child,
-.ipso-tab.active:hover > .btn > span > span:first-child {
-  color: #0152b5!important;
+.ipso-tab.active:hover > .btn > span > span:first-child
+{
+    color: #0152b5!important;
 }
 
-.ipso-tab > .tab {
-  font-size: 12px;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: bold;
-  line-height: 2.5;
-  margin: 10px 0 6px 0;
-  padding: 0 16px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  -webkit-font-smoothing: antialiased;
-  opacity: 0.8;
-  transition: opacity 0.1s;
+.ipso-tab > .tab
+{
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 2.5;
+
+    display: inline-block;
+
+    margin: 10px 0 6px 0;
+    padding: 0 16px;
+
+    cursor: pointer;
+    transition: opacity .1s;
+    white-space: nowrap;
+    text-transform: uppercase;
+
+    opacity: .8;
+    border: none;
+
+    -webkit-font-smoothing: antialiased;
 }
 
-.theme-dark .ipso-tab > .tab {
-  color: #fff;
+.theme-dark .ipso-tab > .tab
+{
+    color: #fff;
 }
 
-.ipso-tab > .tab:hover {
-  opacity: 1;
+.ipso-tab > .tab:hover
+{
+    opacity: 1;
 }
 
-.ipso-tab > .highlight {
-  position: relative;
-  width: 0%;
-  left: 50%;
-  border-bottom: 2px solid;
-  border-color: transparent;
-  transition: 0.2s ease all;
+.ipso-tab > .highlight
+{
+    position: relative;
+    left: 50%;
+
+    width: 0;
+
+    transition: .2s ease all;
+
+    border-color: transparent;
+    border-bottom: 2px solid;
 }
 
-.ipso-tab:hover > .highlight {
-  /*width: 100%;
+.ipso-tab:hover > .highlight
+{
+    /*width: 100%;
     left:0%;
     border-color:#ddd;*/
 }
 
-.ipso-tab.active > .highlight {
-  width: 100%;
-  left: 0%;
-  border-color: #0152b5;
+.ipso-tab.active > .highlight
+{
+    left: 0;
+
+    width: 100%;
+
+    border-color: #0152b5;
 }

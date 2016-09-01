@@ -1,62 +1,73 @@
 import React from "react";
-import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-FacilityViewEdit = React.createClass({
+FacilityViewEdit = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData()
+	{
 
-    	Meteor.subscribe('users');
+		Meteor.subscribe( 'users' );
 
 		var facility, team, suppliers;
 
-		facility = this.state.item?Facilities.findOne(this.state.item._id):null;
-		if(facility){
+		facility = this.state.item ? Facilities.findOne( this.state.item._id ) : null;
+		if ( facility )
+		{
 			team = facility.getTeam();
 			suppliers = facility.getSuppliers();
 		}
 
 		return {
-			facility:facility,
-			team:team,
-			suppliers:suppliers,
+			facility,
+			team,
+			suppliers,
 		}
-    },
-
-	getInitialState() {
-		return {
-			item:this.props.item
-		}
-	},    
-
-	addSupplier(ext,supplier) {
-		this.data.facility.addSupplier(supplier,ext);
 	},
 
-    setThumb(thumb) {
-        var facility = this.data.facility;
-        facility.setThumb(thumb);
-        facility.thumb = thumb;
-        this.setState({item:facility});
-    },
+	getInitialState()
+	{
+		return {
+			item: this.props.item
+		}
+	},
 
-	render() {
+	addSupplier( ext, supplier )
+	{
+		this.data.facility.addSupplier( supplier, ext );
+	},
+
+	setThumb( thumb )
+	{
+		var facility = this.data.facility;
+		facility.setThumb( thumb );
+		facility.thumb = thumb;
+		this.setState(
+		{
+			item: facility
+		} );
+	},
+
+	render()
+	{
 		var facility = this.data.facility;
 		var team = this.data.team;
 		var suppliers = this.data.suppliers;
 
-		if(!facility&&facility.canCreate()) {
+		if ( !facility && facility.canCreate() )
+		{
 			//show facility creation information
 		}
-		else if(!facility.canSave()) {
+		else if ( !facility.canSave() )
+		{
 			return (
 				<FacilityViewDetail item={facility} />
-			)			
+			)
 		}
 		return (
-		    <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+			<div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2 style={{marginTop:"0px"}}>Edit facility</h2>
                 {facility.owner?<div>
                     <b>Facility owner:</b>
@@ -104,4 +115,4 @@ FacilityViewEdit = React.createClass({
 			</div>
 		)
 	}
-});
+} );

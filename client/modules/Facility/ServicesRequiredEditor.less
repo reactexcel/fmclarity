@@ -1,125 +1,160 @@
-.services-editor-col {
-  height: 48px;
-  padding: 15px;
-  width:50%;
-  float:left;
-  position: relative;
+.services-editor-col
+{
+    position: relative;
 
-  .contact-card {
-    position: absolute;
-    left: 15px;
-    top: 6px;
-    width:100%;
-  }
+    float: left;
 
-  input {
-    border: none;
-    margin: 0;
-    padding: 16px;
-    outline: none;
-    position: absolute;
-    left: 32px;
-    top: 0;
+    width: 50%;
+    height: 48px;
+    padding: 15px;
+    .contact-card
+    {
+        position: absolute;
+        top: 6px;
+        left: 15px;
+
+        width: 100%;
+    }
+    input
+    {
+        position: absolute;
+        top: 0;
+        left: 32px;
+
+        width: 100%;
+        height: 47px;
+        margin: 0;
+        padding: 16px;
+
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
+}
+
+.services-editor-col:last-child
+{
+    border-color: transparent;
+}
+
+.services-editor-service-expanded .services-editor-col-service
+{
+    font-weight: bold;
+}
+
+.services-editor-service-expanded .services-editor-child-block
+{
+    max-height: 700px;
+}
+
+.services-editor-service-expanded .fmc-fa-icon-expand::before
+{
+    content: '\f0d7';
+}
+
+.services-editor-service-expanded .services-editor-expand-icon
+{
+    opacity: 1;
+}
+
+.fmc-fa-icon-expand::before
+{
+    content: '\f0da';
+}
+
+.services-editor-child-block
+{
+    overflow: hidden;
+
     width: 100%;
-    height: 47px;
-    background-color: transparent;
-  }
+    max-height: 0;
+
+    transition: max-height .5s;
 }
 
-.services-editor-col:last-child {
-  border-color: transparent;
+.services-editor-row
+{
+    position: relative;
+
+    width: 100%;
+    height: 48px;
+    margin: 0;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee;
 }
 
-.services-editor-service-expanded .services-editor-col-service {
-  font-weight: bold;
+.services-editor-col-service
+{
+    padding-left: 48px;
 }
 
-.services-editor-service-expanded .services-editor-child-block {
-  max-height: 700px;
+.services-editor-row-child .services-editor-col-service
+{
+    font-size: smaller;
+    font-weight: normal;
+
+    padding-left: 48px;
 }
 
-.services-editor-service-expanded .fmc-fa-icon-expand::before {
-  content: "\f0d7";
+.services-editor-delete-icon
+{
+    font-size: 20px;
+    font-weight: normal;
+
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    opacity: 0;
 }
 
-.services-editor-service-expanded .services-editor-expand-icon {
-  opacity: 1;
-}
+.services-editor-expand-icon
+{
+    font-size: 20px;
+    font-weight: normal;
 
-.fmc-fa-icon-expand::before {
-  content: "\f0da";
-}
+    position: absolute;
+    top: 10px;
+    left: 18px;
 
-.services-editor-child-block {
-  max-height: 0px;
-  transition: max-height 0.5s;
-  width: 100%;
-  overflow: hidden;
-}
-
-.services-editor-row {
-  position: relative;
-  height: 48px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  width: 100%;
-  margin: 0;
-}
-
-.services-editor-col-service {
-  padding-left: 48px;
-}
-
-.services-editor-row-child .services-editor-col-service {
-  padding-left: 48px;
-  font-size: smaller;
-  font-weight: normal;
-}
-
-.services-editor-delete-icon {
-  position: absolute;
-  font-size: 20px;
-  top: 10px;
-  right: 10px;
-  opacity: 0;
-  font-weight: normal;
-}
-
-.services-editor-expand-icon {
-  position: absolute;
-  font-size: 20px;
-  top: 10px;
-  left: 18px;
-  opacity: 0.5;
-  font-weight: normal;
+    opacity: .5;
 }
 
 .services-editor-row:last-child,
 .services-editor-row:last-child.active,
-.services-editor-row:last-child:hover {
-  border: none;
-  background-color: transparent;
+.services-editor-row:last-child:hover
+{
+    border: none;
+    background-color: transparent;
 }
 
-.services-editor-row.active {
-  background-color: #eee;
+.services-editor-row.active
+{
+    background-color: #eee;
 }
 
-.services-editor-col:hover {
-  background-color: #eee;
+.services-editor-col:hover
+{
+    background-color: #eee;
 }
 
-.services-editor-col:hover .services-editor-delete-icon {
-  opacity: 0.5;
+.services-editor-col:hover .services-editor-delete-icon
+{
+    opacity: .5;
 }
 
-.services-editor-col:hover .services-editor-delete-icon:hover {
-  opacity: 1;
+.services-editor-col:hover .services-editor-delete-icon:hover
+{
+    opacity: 1;
 }
 
-.services-editor-row-header {
-  background-color: #eee;
-  border-bottom-color: #ddd;
-  border-top: 1px solid #ddd;
-  font-weight: bold;
+.services-editor-row-header
+{
+    font-weight: bold;
+
+    border-top: 1px solid #ddd;
+    border-bottom-color: #ddd;
+    background-color: #eee;
 }

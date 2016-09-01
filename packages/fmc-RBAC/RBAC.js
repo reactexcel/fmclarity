@@ -1,15 +1,15 @@
 RBAC = {
-	getRole:getRole,
-	method:method,
-	methods:methods,
-	mixins:mixins,
-	authenticate:authenticate,
-	validate:validate,
-	addMethod:addMethod,	
-	addAuthentication:addAuthentication,
-	addValidation:addValidation,
-	error:error,
-	warning:warning,
+	getRole: getRole,
+	method: method,
+	methods: methods,
+	mixins: mixins,
+	authenticate: authenticate,
+	validate: validate,
+	addMethod: addMethod,
+	addAuthentication: addAuthentication,
+	addValidation: addValidation,
+	error: error,
+	warning: warning,
 }
 
 var authenticators = {};
@@ -23,15 +23,19 @@ var notifiers = {};
  * @param {Object} item The item to check the role of
  * @returns {Object} the role of the member
  */
-function getRole(member,item) {
+function getRole( member, item )
+{
 	//perhaps the selected team should actually be saved in the user model
 	//then we can always check permissions against the selected team
-	if(!item||!item.members||!item.members.length) {
+	if ( !item || !item.members || !item.members.length )
+	{
 		return null;
 	}
-	for(var i in item.members) {
-		var currentMember = item.members[i];
-		if(currentMember&&member&&currentMember._id==member._id) {
+	for ( var i in item.members )
+	{
+		var currentMember = item.members[ i ];
+		if ( currentMember && member && currentMember._id == member._id )
+		{
 			return currentMember.role;
 		}
 	}
@@ -43,10 +47,11 @@ function getRole(member,item) {
  * @param {String} methodName The name of the method
  * @param {Object} [args] Arguments taken which vary depending on the method call
  */
-function authenticate(/*methodName, [args]*/) {
-	var methodName = [].shift.call(arguments);
-	var f = authenticators[methodName];
-	return f?f.apply(null,arguments):false;
+function authenticate( /*methodName, [args]*/)
+{
+	var methodName = [].shift.call( arguments );
+	var f = authenticators[ methodName ];
+	return f ? f.apply( null, arguments ) : false;
 }
 
 /**
@@ -55,11 +60,12 @@ function authenticate(/*methodName, [args]*/) {
  * @param {String} methodName The name of the method
  * @param {Object} [args] Arguments taken which vary depending on the method call
  */
-function validate(/*methodName, [args]*/) {
+function validate( /*methodName, [args]*/)
+{
 	//extract the methodName from the argument list
-	var methodName = [].shift.call(arguments);
-	var f = validators[methodName];
-	return f?f.apply(null,arguments):true;
+	var methodName = [].shift.call( arguments );
+	var f = validators[ methodName ];
+	return f ? f.apply( null, arguments ) : true;
 }
 
 /**
@@ -68,11 +74,12 @@ function validate(/*methodName, [args]*/) {
  * @param {String} methodName The name of the method
  * @param {Object} [args] Arguments taken which vary depending on the method call
  */
-function notify(/*methodName, [args]*/) {
+function notify( /*methodName, [args]*/)
+{
 	//extract the methodName from the argument list
-	var methodName = [].shift.call(arguments);
-	var f = notifiers[methodName];
-	return f?f.apply(null,arguments):true;
+	var methodName = [].shift.call( arguments );
+	var f = notifiers[ methodName ];
+	return f ? f.apply( null, arguments ) : true;
 }
 
 /**
@@ -81,35 +88,41 @@ function notify(/*methodName, [args]*/) {
  * @param {String} methodName The name of the method
  * @param {function} f The method function
  */
-function addMethod(methodName,f,collection) {
+function addMethod( methodName, f, collection )
+{
 	var obj = {};
-	if(collection&&_.isString(arguments[1])) {
+	if ( collection && _.isString( arguments[ 1 ] ) )
+	{
 		//if the collection has been sent assume that the item is a query object
 		//(this is preferable as it allows one to send an id rather than full object)
 		//(don't really want full object sent over the wire)
-		arguments[1] = collection.findOne(arguments[1]);
+		arguments[ 1 ] = collection.findOne( arguments[ 1 ] );
 	}
-	obj[methodName] = function() {
+	obj[ methodName ] = function()
+	{
 		// add methodName to the start of the argument list for authentication
-		[].unshift.call(arguments,methodName);
-		if(!authenticate.apply(null,arguments)) {
-			return error('access-denied:'+methodName,'Access Denied:','Sorry, you do not have permission to do that');
+		[].unshift.call( arguments, methodName );
+		if ( !authenticate.apply( null, arguments ) )
+		{
+			return error( 'access-denied:' + methodName, 'Access Denied:', 'Sorry, you do not have permission to do that' );
 		}
-		else if(!validate.apply(null,arguments)) {
-			return error('validation-error:'+methodName,'Validation Error:','Some of the information you provided is invalid');
+		else if ( !validate.apply( null, arguments ) )
+		{
+			return error( 'validation-error:' + methodName, 'Validation Error:', 'Some of the information you provided is invalid' );
 		}
-		else {
+		else
+		{
 			// then remove it again to call the method
-			[].shift.call(arguments);
-			var response = f.apply(null,arguments);
+			[].shift.call( arguments );
+			var response = f.apply( null, arguments );
 			// then add it again with the response to call the notifier??
 			// there has to be a better way
-			[].unshift.call(arguments,methodName,response);
-			notify.apply(null,arguments);
+			[].unshift.call( arguments, methodName, response );
+			notify.apply( null, arguments );
 			return response;
 		}
 	}
-	Meteor.methods(obj);
+	Meteor.methods( obj );
 }
 
 /**
@@ -120,32 +133,40 @@ function addMethod(methodName,f,collection) {
  */
 
 
-function addAuthentication(methodName,f) {
-	authenticators[methodName] = function() {
+function addAuthentication( methodName, f )
+{
+	authenticators[ methodName ] = function()
+	{
 		// create the paramater that will be used to call the authentication function
 		var user = Meteor.user();
 
-		if(!user) {
+		if ( !user )
+		{
 			return false;
 		}
 
-		var item = arguments[0];
-		var role = getRole(user,item);
+		var item = arguments[ 0 ];
+		var role = getRole( user, item );
 
-		if(user&&user.role=="dev") {
+		if ( user && user.role == "dev" )
+		{
 			return true;
 		}
-		else if(_.isBoolean(f)) {
+		else if ( _.isBoolean( f ) )
+		{
 			return f;
 		}
-		else if(_.isString(f)) {
-			return role==f;
+		else if ( _.isString( f ) )
+		{
+			return role == f;
 		}
-		else if(_.isArray(f)) {
-			return f.indexOf(role)>=0;
+		else if ( _.isArray( f ) )
+		{
+			return f.indexOf( role ) >= 0;
 		}
-		else if(_.isFunction(f)) {
-			return f(role,user,item,arguments);
+		else if ( _.isFunction( f ) )
+		{
+			return f( role, user, item, arguments );
 		}
 		return false;
 	}
@@ -157,15 +178,19 @@ function addAuthentication(methodName,f) {
  * @param {String} methodName The name of the method
  * @param {function} f The method function
  */
-function addValidation(methodName,f) {
-	validators[methodName] = function() {
+function addValidation( methodName, f )
+{
+	validators[ methodName ] = function()
+	{
 		// create the paramater that will be used to call the validation function
-		var item = arguments[0];
-		if(_.isBoolean(f)) {
+		var item = arguments[ 0 ];
+		if ( _.isBoolean( f ) )
+		{
 			return f;
-		}		
-		else if(_.isFunction(f)) {
-			return f(item,arguments);
+		}
+		else if ( _.isFunction( f ) )
+		{
+			return f( item, arguments );
 		}
 		return false;
 	}
@@ -177,18 +202,23 @@ function addValidation(methodName,f) {
  * @param {String} methodName The name of the method
  * @param {function} f The method function
  */
-function addNotification(methodName,f,collection) {
-	notifiers[methodName] = function(item) {
+function addNotification( methodName, f, collection )
+{
+	notifiers[ methodName ] = function( item )
+	{
 		//console.log(item);
-		if(f) {
-			message = f(item);
+		if ( f )
+		{
+			message = f( item );
 			//Messages.distribute(request,message);
-			item = collection.findOne(item._id);
-			if(item.distributeMessage) {
-				item.distributeMessage(message);
+			item = collection.findOne( item._id );
+			if ( item.distributeMessage )
+			{
+				item.distributeMessage( message );
 			}
-			else {
-				console.log("I tried to send a message to an item with not distributeMessage function");
+			else
+			{
+				console.log( "I tried to send a message to an item with not distributeMessage function" );
 			}
 			return true;
 		}
@@ -201,8 +231,9 @@ function addNotification(methodName,f,collection) {
  * @summary Capitalises first letter of string. Should it be added to the String prototype?
  * @param {String}
  */
-function ucfirst(string) {
-   	return string.charAt(0).toUpperCase() + string.slice(1);
+function ucfirst( string )
+{
+	return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 }
 
 /**
@@ -210,24 +241,29 @@ function ucfirst(string) {
  * @summary Makes a function that can be bound to a collection as a helper to conveniently call the corresponding method on the client.
  * @param {String} methodName The name of the method
  */
-function makeMethodHelper(methodName){
+function makeMethodHelper( methodName )
+{
 	//TODO:this could be packaged as an syncronous function
 	/*Meteor.wrapAsync(function(){...})*/
-	return function(/*args*/) {
-		var lastArg,callback;
+	return function( /*args*/)
+	{
+		var lastArg, callback;
 		//check if last argument on the list is a function, if so process as callback
-		lastArg = arguments[arguments.length-1];
-		if(_.isFunction(lastArg)){
-			callback = [].pop.call(arguments);
+		lastArg = arguments[ arguments.length - 1 ];
+		if ( _.isFunction( lastArg ) )
+		{
+			callback = [].pop.call( arguments );
 		}
 		//because we are using a helper the item shoudl become "this"
-		[].unshift.call(arguments,this);
+		[].unshift.call( arguments, this );
 		//then call the method, we'll also strip any errors from the callback
-		return Meteor.apply(methodName,arguments,null,callback?function(err,response){
-			if(!err) {
-				callback(response);
+		return Meteor.apply( methodName, arguments, null, callback ? function( err, response )
+		{
+			if ( !err )
+			{
+				callback( response );
 			}
-		}:null)
+		} : null )
 	}
 }
 
@@ -236,12 +272,14 @@ function makeMethodHelper(methodName){
  * @summary Makes a function that can be bound to a collection as a helper to conveniently call the corresponding authenticator on the client.
  * @param {String} methodName The name of the method
  */
-function makeAuthenticationHelper(methodName){
-	return function() {
-		var f = authenticators[methodName];
+function makeAuthenticationHelper( methodName )
+{
+	return function()
+	{
+		var f = authenticators[ methodName ];
 		//because we are using a helper the item should become "this"
-		[].unshift.call(arguments,this);
-		return f?f.apply(null,arguments):false;
+		[].unshift.call( arguments, this );
+		return f ? f.apply( null, arguments ) : false;
 	}
 }
 
@@ -250,12 +288,14 @@ function makeAuthenticationHelper(methodName){
  * @summary Makes a function that can be bound to a collection as a helper to conveniently call the corresponding authenticator on the client.
  * @param {String} methodName The name of the method
  */
-function makeValidationHelper(methodName){
-	return function() {
-		var f = validators[methodName];
+function makeValidationHelper( methodName )
+{
+	return function()
+	{
+		var f = validators[ methodName ];
 		//because we are using a helper the item should become "this"
-		[].unshift.call(arguments,this);
-		return f?f.apply(null,arguments):false;
+		[].unshift.call( arguments, this );
+		return f ? f.apply( null, arguments ) : false;
 	}
 }
 
@@ -264,24 +304,29 @@ function makeValidationHelper(methodName){
  * @summary Creates collection helpers for the specified method and it's authentication
  * @param {String} methodName The name of the method
  */
-function makeHelpers(methodName,functions,collection) {
+function makeHelpers( methodName, functions, collection )
+{
 	var helpers = {};
 	//chop off any existing collection prefix
-	var strippedName = methodName.split('.');
-	strippedName = strippedName[1];
-	if(functions.authentication) {
-		helpers['can'+ucfirst(strippedName)] = makeAuthenticationHelper(methodName);
+	var strippedName = methodName.split( '.' );
+	strippedName = strippedName[ 1 ];
+	if ( functions.authentication )
+	{
+		helpers[ 'can' + ucfirst( strippedName ) ] = makeAuthenticationHelper( methodName );
 	}
-	if(functions.validation) {
-		helpers['check'+ucfirst(strippedName)] = makeValidationHelper(methodName);
+	if ( functions.validation )
+	{
+		helpers[ 'check' + ucfirst( strippedName ) ] = makeValidationHelper( methodName );
 	}
-	if(functions.helper) {
-		helpers[strippedName] = makeCollectionHelper(methodName,functions.helper);
+	if ( functions.helper )
+	{
+		helpers[ strippedName ] = makeCollectionHelper( methodName, functions.helper );
 	}
-	else if(functions.method) {
-		helpers[strippedName] = makeMethodHelper(methodName);
+	else if ( functions.method )
+	{
+		helpers[ strippedName ] = makeMethodHelper( methodName );
 	}
-	collection.helpers(helpers);
+	collection.helpers( helpers );
 }
 
 /**
@@ -289,15 +334,18 @@ function makeHelpers(methodName,functions,collection) {
  * @summary Creates collection helpers for the specified method and it's authentication
  * @param {String} methodName The name of the method
  */
-function makeCollectionHelper(methodName,f) {
-	return function() {
-		var auth = authenticators[methodName];
-		[].unshift.call(arguments,this);
-		var permitted = auth?auth.apply(null,arguments):false;
-		if(permitted) {
-			return f?f.apply(null,arguments):false;
+function makeCollectionHelper( methodName, f )
+{
+	return function()
+	{
+		var auth = authenticators[ methodName ];
+		[].unshift.call( arguments, this );
+		var permitted = auth ? auth.apply( null, arguments ) : false;
+		if ( permitted )
+		{
+			return f ? f.apply( null, arguments ) : false;
 		}
-		return error('access-denied:'+methodName,'Access Denied:','Sorry, you do not have permission to do that');
+		return error( 'access-denied:' + methodName, 'Access Denied:', 'Sorry, you do not have permission to do that' );
 	}
 }
 
@@ -308,22 +356,28 @@ function makeCollectionHelper(methodName,f) {
  * @param {Object} functions A map containing the method, authentication and validation functions
  * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
  */
-function method(methodName,functions,collection){
-	methodName = ucfirst(collection._name)+'.'+methodName;
-	makeHelpers(methodName,functions,collection);
-	for(var i in functions) {
-		var f = functions[i];
-		if(i=='authentication'){
-			addAuthentication(methodName,f);
+function method( methodName, functions, collection )
+{
+	methodName = ucfirst( collection._name ) + '.' + methodName;
+	makeHelpers( methodName, functions, collection );
+	for ( var i in functions )
+	{
+		var f = functions[ i ];
+		if ( i == 'authentication' )
+		{
+			addAuthentication( methodName, f );
 		}
-		else if(i=='validation'){
-			addValidation(methodName,f);
+		else if ( i == 'validation' )
+		{
+			addValidation( methodName, f );
 		}
-		else if(i=='notification'||i=='message'){
-			addNotification(methodName,f,collection);
+		else if ( i == 'notification' || i == 'message' )
+		{
+			addNotification( methodName, f, collection );
 		}
-		else if(i=='method'){
-			addMethod(methodName,f,collection);
+		else if ( i == 'method' )
+		{
+			addMethod( methodName, f, collection );
 		}
 	}
 }
@@ -335,9 +389,11 @@ function method(methodName,functions,collection){
  * @param {Object} functions A map of objects, each containing the method, authentication and validation functions
  * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
  */
-function methods(functions,collection){
-	for(var methodName in functions) {
-		method(methodName,functions[methodName],collection);
+function methods( functions, collection )
+{
+	for ( var methodName in functions )
+	{
+		method( methodName, functions[ methodName ], collection );
 	}
 }
 
@@ -348,11 +404,14 @@ function methods(functions,collection){
  * @param {Object} functions A map of objects, each containing the method, authentication and validation functions
  * @param {Meteor.Collection} [collection] Optional. If specified creates helpers on the collection for calling the method and authentication.
  */
-function mixins(mixins,collection){
-	if(mixins&&mixins.length) {
-		mixins.map(function(mixinInitFunc){
-			mixinInitFunc(collection);
-		})
+function mixins( mixins, collection )
+{
+	if ( mixins && mixins.length )
+	{
+		mixins.map( function( mixinInitFunc )
+		{
+			mixinInitFunc( collection );
+		} )
 	}
 }
 
@@ -363,17 +422,22 @@ function mixins(mixins,collection){
  * @param {String} reason A quick summary of the error
  * @param {String} details A detailed description of the error
  */
-function error(error, reason, details) {  
-	console.log({
-		error:error,
-		reason:reason,
-		details:details
-	});
-	var meteorError = new Meteor.Error(error, reason, details);
-	if (Meteor.isClient) {
+function error( error, reason, details )
+{
+	console.log(
+	{
+		error: error,
+		reason: reason,
+		details: details
+	} );
+	var meteorError = new Meteor.Error( error, reason, details );
+	if ( Meteor.isClient )
+	{
 		//toastr.error(details,reason);
 		return meteorError;
-	} else if (Meteor.isServer) {
+	}
+	else if ( Meteor.isServer )
+	{
 		throw meteorError;
 	}
 }
@@ -385,8 +449,10 @@ function error(error, reason, details) {
  * @param {String} reason A quick summary of the warning
  * @param {String} details A detailed description of the warning
  */
-function warning(warning, reason, details) {  
-	if (Meteor.isClient) {
-		toastr.warning(details,reason);
+function warning( warning, reason, details )
+{
+	if ( Meteor.isClient )
+	{
+		toastr.warning( details, reason );
 	}
 }

@@ -1,36 +1,43 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 //To be renamed Facility Tile
-FacilitySummary = React.createClass({
+FacilitySummary = React.createClass(
+{
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
-		var facility,contact,contactProfile,thumb;
-	    facility = this.props.item||{};
-	    if(facility&&facility.getThumbUrl) {
-	    	thumb = facility.getThumbUrl();
-		    contact = facility.getPrimaryContact();
-		    if(contact) {
-		    	contactProfile = contact.getProfile();
-		    }
+	getMeteorData()
+	{
+		var facility, contact, contactProfile, thumb;
+		facility = this.props.item ||
+		{};
+		if ( facility && facility.getThumbUrl )
+		{
+			thumb = facility.getThumbUrl();
+			contact = facility.getPrimaryContact();
+			if ( contact )
+			{
+				contactProfile = contact.getProfile();
+			}
 		}
 		return {
-			facility:facility,
-			thumb:thumb,
-			contact:contactProfile
+			facility: facility,
+			thumb: thumb,
+			contact: contactProfile
 		}
-    },
+	},
 
-	render() {
+	render()
+	{
 		var facility = this.data.facility;
-		var contact = this.data.contact||{};
+		var contact = this.data.contact ||
+		{};
 		var thumb = this.data.thumb;
 
-	    return (
-	    	<div>
+		return (
+			<div>
 	    		{/*
 				<div style={{marginTop:"10px",width:"25px",float:"left"}}>
 					<input type="checkbox" />
@@ -67,40 +74,50 @@ FacilitySummary = React.createClass({
 		)
 	}
 
-});
+} );
 
-FacilityThumbnail = React.createClass({
-	mixins:[ReactMeteorData],
-	getMeteorData() {
+FacilityThumbnail = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
+	getMeteorData()
+	{
 		return {
-			thumb:this.props.item.getThumbUrl()
+			thumb: this.props.item.getThumbUrl()
 		}
 	},
-	render() {
-		var style = _.extend({
+	render()
+	{
+		var style = _.extend(
+		{
 			//width:"37px",
 			//height:"37px",
-			backgroundImage:"url('"+this.data.thumb+"')",
-			backgroundSize:"cover"
-		},this.props.style)
+			backgroundImage: "url('" + this.data.thumb + "')",
+			backgroundSize: "cover"
+		}, this.props.style )
 		return <div className="facility-thumbnail" style={style}>
 			{this.props.children}
 		</div>
 	}
-})
+} )
 
-FacilityContact = React.createClass({
-	mixins:[ReactMeteorData],
-	getMeteorData() {
+FacilityContact = React.createClass(
+{
+	mixins: [ ReactMeteorData ],
+	getMeteorData()
+	{
 		var contact = this.props.item.getPrimaryContact();
-		if(contact&&contact.getProfile) {
+		if ( contact && contact.getProfile )
+		{
 			contact = contact.getProfile();
 		}
-		return {contact}
+		return {
+			contact
+		}
 	},
-	render() {
+	render()
+	{
 
-		if(!this.data.contact) return <div/>
+		if ( !this.data.contact ) return <div/>
 
 		return <span className="contact-card-line-2">
   			<a href="#">{this.data.contact.name}</a>&nbsp;&nbsp;
@@ -109,19 +126,21 @@ FacilityContact = React.createClass({
         	:null}		            	
 		</span>
 	}
-})
+} )
 
 //To be renamed FacilityCard
-FacilityCard2 = React.createClass({
+FacilityCard2 = React.createClass(
+{
 
-	render() {
+	render()
+	{
 
 		var facility = this.props.item;
-		if(!facility) return <div/>
+		if ( !facility ) return <div/>
 
 		var address = facility.getAddress();
 
-	    return <div className="facility-card2" onClick={(e)=>{this.props.onClick?this.props.onClick(e):null}}>
+		return <div className="facility-card2" onClick={(e)=>{this.props.onClick?this.props.onClick(e):null}}>
     		<FacilityThumbnail item={facility}>
     			<div className="thumbnail-overlay">
 			    	<h3 className="title-line">{facility.name}</h3>
@@ -132,4 +151,4 @@ FacilityCard2 = React.createClass({
 		</div>
 	}
 
-});
+} );

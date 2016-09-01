@@ -12,10 +12,10 @@ IssueSummary = React.createClass({
     request = this.props.item;
     selectedTeam = Session.getSelectedTeam();
     if(request) {
-      facility = request.getFacility();
-      team = request.getTeam();
-      owner = request.getOwner();
-      supplier = request.getSupplier();
+      facility = request.facility;
+      team = request.team;
+      owner = request.owner;
+      supplier = request.supplier;
       status = request.status;
     }
     return {

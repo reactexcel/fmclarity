@@ -1,175 +1,210 @@
-@import "/client/stylesheets/variables.import.less";
+@import '/client/stylesheets/variables.import.less';
 
-.panel-wrapper {
-  position: absolute;
-  width:100%;
-  background:@default-bg;
-  min-height:100%;
+.panel-wrapper
+{
+    position: absolute;
+
+    width: 100%;
+    min-height: 100%;
+
+    background: @default-bg;
 }
 
-.facility-info {
-  padding: 0 5px;
-  white-space: nowrap;
-  overflow: hidden;
+.facility-info
+{
+    overflow: hidden;
+
+    padding: 0 5px;
+
+    white-space: nowrap;
 }
 
-.facility-thumbnail {
-  float:left;
-  position:relative;
+.facility-thumbnail
+{
+    position: relative;
+
+    float: left;
 }
 
-.facility-card2 {
-  width:200px;
-  height:150px;
-  background:@default-bg;
-  float:left;
-  margin:0px 10px 10px 0px;
-  box-shadow:@card-shadow;
-  border-radius:2px;
-  cursor:pointer;
-  transition:box-shadow 0.5s;
+.facility-card2
+{
+    float: left;
 
-  &:hover {
-    box-shadow:@card-shadow-hover;
-  }
+    width: 200px;
+    height: 150px;
+    margin: 0 10px 10px 0;
 
-  .title-line {
-    margin:0px;
-    margin-bottom:5px;
-  }
+    cursor: pointer;
+    transition: box-shadow .5s;
 
-  .facility-thumbnail {
-    width:100%;
-    height:100%;
-  }
+    border-radius: 2px;
+    background: @default-bg;
+    box-shadow: @card-shadow;
+    &:hover
+    {
+        box-shadow: @card-shadow-hover;
+    }
+    .title-line
+    {
+        margin: 0;
+        margin-bottom: 5px;
+    }
+    .facility-thumbnail
+    {
+        width: 100%;
+        height: 100%;
+    }
+    .thumbnail-overlay
+    {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
 
-  .thumbnail-overlay {
-    position:absolute;
-    bottom:0px;
-    left:0px;
-    right:0px;
-    background:rgba(0,0,0,0.5);
-    color:#fff;
-    padding:10px;
-  }
+        padding: 10px;
 
-  .facility-detail {
-    text-align:left;
-  }
-
-  .facility.contact {
-    text-align:left;
-  }
+        color: #fff;
+        background: rgba(0,0,0,.5);
+    }
+    .facility-detail
+    {
+        text-align: left;
+    }
+    .facility.contact
+    {
+        text-align: left;
+    }
 }
 
 @cover-image-min-height:150px;
 
 /*peraps fm-panel?*/
-.facility-card {
-  background-color:#00b89e;
-  min-width:800px;
+.facility-card
+{
+    min-width: 800px;
 
-  .contact-title {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-  }
+    background-color: #00b89e;
+    .contact-title
+    {
+        font-size: 14px;
+        font-weight: bold;
 
-  table {
-    width:100%;
-    border-top:4px solid #bbb;
-    tr {
-      margin:0;
-      padding:0;
-      line-height: 48px;
+        display: block;
     }
-    th,td {
-      margin:0;
-      padding:0;
-      border-top:1px solid #ddd;
-      padding-left:16px;
-    }
-    th {
-      width:35px;
-      color:#aaa;
-      font-weight:normal;
-    }
-  }
-
-
-  h2 {
-    /*font-weight:bold;*/
-    margin: 0 0 10px 0;
-  }
-
-  .contact-thumbnail {
-    width: 100%;
-    min-height:@cover-image-min-height;
-    overflow: hidden;
-    position: relative;
-
-    div.cover-image {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background-size: cover;
-      background-position: 50% 30%;
-
-      img {
+    table
+    {
         width: 100%;
-        visibility: hidden;
-      }    
+
+        border-top: 4px solid #bbb;
+        tr
+        {
+            line-height: 48px;
+
+            margin: 0;
+            padding: 0;
+        }
+        th,
+        td
+        {
+            margin: 0;
+            padding: 0;
+            padding-left: 16px;
+
+            border-top: 1px solid #ddd;
+        }
+        th
+        {
+            font-weight: normal;
+
+            width: 35px;
+
+            color: #aaa;
+        }
     }
-  }
-
-  .title-padding {
-    height: 150px;
-  }
-
-  .title-overlay {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    position: relative;
-    padding: 10px 0;
-    z-index: 1001;
-  }
-
-  .facility-title {
-    padding: 20px 0px 10px 20px;
-    white-space: nowrap;
-    overflow: visible;
-  }
-
-  .contact-info {
-    padding: 10px 20px;
-    white-space: nowrap;
-    position: relative;
-    z-index: 1001;
-    /*text-align:right;*/
-  }
-
-  .services-overview {
-    overflow: hidden;
-    position: relative;
-    padding: 10px;
-    z-index: 1001;
-  }
-
-  .tab-panel {
-    position: relative;
-    z-index: 1001;
-
-    .tab-row {
-      background-color: #01a68f;
-      color:#fff;
+    h2
+    {
+        /*font-weight:bold;*/
+        margin: 0 0 10px 0;
     }
+    .contact-thumbnail
+    {
+        position: relative;
 
-    .tab-pane {
-      max-height: initial;
+        overflow: hidden;
+
+        width: 100%;
+        min-height: @cover-image-min-height;
+        div.cover-image
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            background-position: 50% 30%;
+            background-size: cover;
+            img
+            {
+                visibility: hidden;
+
+                width: 100%;
+            }
+        }
     }
+    .title-padding
+    {
+        height: 150px;
+    }
+    .title-overlay
+    {
+        position: relative;
+        z-index: 1001;
 
-  }
+        padding: 10px 0;
+
+        color: white;
+        background-color: rgba(0, 0, 0, .5);
+    }
+    .facility-title
+    {
+        overflow: visible;
+
+        padding: 20px 0 10px 20px;
+
+        white-space: nowrap;
+    }
+    .contact-info
+    {
+        position: relative;
+        z-index: 1001;
+
+        padding: 10px 20px;
+
+        white-space: nowrap;
+        /*text-align:right;*/
+    }
+    .services-overview
+    {
+        position: relative;
+        z-index: 1001;
+
+        overflow: hidden;
+
+        padding: 10px;
+    }
+    .tab-panel
+    {
+        position: relative;
+        z-index: 1001;
+        .tab-row
+        {
+            color: #fff;
+            background-color: #01a68f;
+        }
+        .tab-pane
+        {
+            max-height: initial;
+        }
+    }
 }
-

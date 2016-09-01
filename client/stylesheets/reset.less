@@ -1,66 +1,84 @@
-@import "./variables.import.less";
+@import './variables.import.less';
 
-ol, ul {
-	list-style: none;
-	margin:0;
-	padding:0;
+ol,
+ul
+{
+    margin: 0;
+    padding: 0;
 
-	li {
-		margin:0;
-		padding:0;
-	}
+    list-style: none;
+    li
+    {
+        margin: 0;
+        padding: 0;
+    }
 }
 
-img {
-  border: 0;
+img
+{
+    border: 0;
 }
 
-* {
-  box-sizing: border-box;
+*
+{
+    box-sizing: border-box;
 }
 
-a {
-	background-color: transparent;
-	color: @link-fg;
-	text-decoration: none;
-	cursor:pointer;
+a
+{
+    cursor: pointer;
+    text-decoration: none;
 
-	&:active,&:hover {
-	  outline: 0;
-	  text-decoration: none;
-	}
+    color: @link-fg;
+    background-color: transparent;
+    &:active,
+    &:hover
+    {
+        text-decoration: none;
 
-	&:focus {
-	  outline: none;
-	}
+        outline: 0;
+    }
+    &:focus
+    {
+        outline: none;
+    }
 }
 
-hr {
-  height: 0;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border: 0;
-  border-top: 1px solid #eee;
+hr
+{
+    -webkit-box-sizing: content-box;
+       -moz-box-sizing: content-box;
+            box-sizing: content-box;
+    height: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    border: 0;
+    border-top: 1px solid #eee;
 }
 
-input,textarea,button {
-  font-family: inherit;
-  font-size:inherit;
-  font-weight: inherit;
-  color:inherit;
-  outline:none;
-  resize:none;
-  border:none;
-  background:transparent;
-  margin:0;
-  padding:0;
+input,
+textarea,
+button
+{
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+
+    margin: 0;
+    padding: 0;
+
+    resize: none;
+
+    color: inherit;
+    border: none;
+    outline: none;
+    background: transparent;
 }
 
-table {
-  border-collapse:collapse;
+table
+{
+    border-collapse: collapse;
 }
 
 h1,
@@ -74,125 +92,153 @@ h6,
 .h3,
 .h4,
 .h5,
-.h6 {
-  font-family: inherit;
-  font-weight: 500;
-  line-height: 1.1;
-  color: inherit;
+.h6
+{
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+
+    color: inherit;
 }
 
 h1,
-.h1 {
-  font-size: 24px;
+.h1
+{
+    font-size: 24px;
 }
 
 h2,
-.h2 {
-  font-size: 19px;
-  letter-spacing: -0.02em;
-  font-weight: 300;
+.h2
+{
+    font-size: 19px;
+    font-weight: 300;
+
+    letter-spacing: -.02em;
 }
 h3,
-.h3 {
-  font-size: 17px;
+.h3
+{
+    font-size: 17px;
 }
 
 h4,
-.h4 {
-  font-size: 14px;
+.h4
+{
+    font-size: 14px;
 }
 
-.text-muted {
-  color: #777;
+.text-muted
+{
+    color: #777;
 }
 
-.text-primary {
-  color: #337ab7;
+.text-primary
+{
+    color: #337ab7;
 }
 
 a.text-primary:hover,
-a.text-primary:focus {
-  color: #286090;
+a.text-primary:focus
+{
+    color: #286090;
 }
 
-.text-success {
-  color: #3c763d;
+.text-success
+{
+    color: #3c763d;
 }
 
 a.text-success:hover,
-a.text-success:focus {
-  color: #2b542c;
+a.text-success:focus
+{
+    color: #2b542c;
 }
 
-.text-info {
-  color: #31708f;
+.text-info
+{
+    color: #31708f;
 }
 
 a.text-info:hover,
-a.text-info:focus {
-  color: #245269;
+a.text-info:focus
+{
+    color: #245269;
 }
 
-.text-warning {
-  color: #8a6d3b;
+.text-warning
+{
+    color: #8a6d3b;
 }
 
 a.text-warning:hover,
-a.text-warning:focus {
-  color: #66512c;
+a.text-warning:focus
+{
+    color: #66512c;
 }
 
-.text-danger {
-  color: #a94442;
+.text-danger
+{
+    color: #a94442;
 }
 
 a.text-danger:hover,
-a.text-danger:focus {
-  color: #843534;
+a.text-danger:focus
+{
+    color: #843534;
 }
 
-.bg-primary {
-  color: #fff;
-  background-color: #337ab7;
+.bg-primary
+{
+    color: #fff;
+    background-color: #337ab7;
 }
 
 a.bg-primary:hover,
-a.bg-primary:focus {
-  background-color: #286090;
+a.bg-primary:focus
+{
+    background-color: #286090;
 }
 
-.bg-success {
-  background-color: #dff0d8;
+.bg-success
+{
+    background-color: #dff0d8;
 }
 
 a.bg-success:hover,
-a.bg-success:focus {
-  background-color: #c1e2b3;
+a.bg-success:focus
+{
+    background-color: #c1e2b3;
 }
 
-.bg-info {
-  background-color: #d9edf7;
+.bg-info
+{
+    background-color: #d9edf7;
 }
 
 a.bg-info:hover,
-a.bg-info:focus {
-  background-color: #afd9ee;
+a.bg-info:focus
+{
+    background-color: #afd9ee;
 }
 
-.bg-warning {
-  background-color: #fcf8e3;
+.bg-warning
+{
+    background-color: #fcf8e3;
 }
 
 a.bg-warning:hover,
-a.bg-warning:focus {
-  background-color: #f7ecb5;
+a.bg-warning:focus
+{
+    background-color: #f7ecb5;
 }
 
-.bg-danger {
-  background-color: #f2dede;
+.bg-danger
+{
+    background-color: #f2dede;
 }
 
 a.bg-danger:hover,
-a.bg-danger:focus {
-  background-color: #e4b9b9;
+a.bg-danger:focus
+{
+    background-color: #e4b9b9;
 }

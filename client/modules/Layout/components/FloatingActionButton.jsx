@@ -1,64 +1,78 @@
 import React from "react";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-FABActions = new function() {
+FABActions = new function()
+{
 
-	function viewRequest(request) {
-		Modal.show({
-    		content:<IssueDetail item={request}/>
-    	})
+	function viewRequest( request )
+	{
+		Modal.show(
+		{
+			content: <IssueDetail item={request}/>
+		} )
 	}
 
-	function editTeam(team) {
-		Modal.show({
-			content:<TeamViewEdit item={team}/>
-		})
+	function editTeam( team )
+	{
+		Modal.show(
+		{
+			content: <TeamViewEdit item={team}/>
+		} )
 	}
 
-    function createRequest(template={}) {
-    	//look below at new compliance rule created with AutoForm, that is the way to do this...
-        var selectedFacility = Session.getSelectedFacility();
-        var selectedTeam = Session.getSelectedTeam();
-        var request = Object.assign({
-        	type:'Ad Hoc',
-        	priority:'Standard',
-        	dueDate:new Date(),
-        	costThreshold:selectedTeam.defaultWorkOrderValue
-        },template);
-        if(selectedTeam) {
-    		request.team = {
-    			_id:selectedTeam._id,
-	    		name:selectedTeam.name
-	    	}
-        }
-        if(selectedFacility) {
-	    	request.facility = {
-	    		_id:selectedFacility._id,
-	    		name:selectedFacility.name
-	    	}
-	    }
+	function createRequest( template = {} )
+	{
+		//look below at new compliance rule created with AutoForm, that is the way to do this...
+		var selectedFacility = Session.getSelectedFacility();
+		var selectedTeam = Session.getSelectedTeam();
+		var request = Object.assign(
+		{
+			type: 'Ad Hoc',
+			team: selectedTeam,
+			facility: selectedFacility,
+			priority: 'Standard',
+			dueDate: new Date(),
+			costThreshold: selectedTeam.defaultWorkOrderValue
+		}, template );
 
-		Modal.show({
-            content:<AutoForm 
-                item={request}//do we need to call 'createNewItemUsingSchema' on this item?
-                form={Issues.forms.create}
-                schema={IssueSchema} 
-                onSubmit={(r)=>{
-                	if(r.location) {
-				        r.level = r.location.area;
-				        r.area = r.location.subarea;
-				    }
-                	Meteor.call('Issues.create',r,{},(err,response)=>{
-	                	//Modal.hide();
-	                	Modal.replace({
-    						content:<IssueDetail item={response}/>
-    					})
-                	});
-                }}
-            />
-        })
 
-	    //request = Issues._transform(request);
+		Modal.show(
+		{
+			content: <AutoForm
+			item = {
+				request
+			} //do we need to call 'createNewItemUsingSchema' on this item?
+			form = {
+				Issues.forms.create
+			}
+			schema = {
+				IssueSchema
+			}
+			onSubmit = {
+				( request, callback ) =>
+				{
+					Meteor.call( 'Issues.create', request,
+					{}, ( err, response ) =>
+					{
+						if ( !err )
+						{
+							Modal.replace(
+							{
+								content: <IssueDetail item = { response }/>
+							} );
+							return true;
+						}
+						if ( callback )
+						{
+							callback( err, response );
+						}
+					} );
+				}
+			}
+			/>
+		} )
+
+		//request = Issues._transform(request);
 		//request.doAction("create");	    
 		/*
 	    Meteor.call('Issues.create',request,function(err,response){
@@ -71,93 +85,123 @@ FABActions = new function() {
     		}
 	    });
 	    */
-    }
+	}
 
-    function createFacility() {
-    	var selectedTeam = Session.getSelectedTeam();
-    	selectedTeam.addFacility(function(response){
-    		var newItem = Facilities.findOne(response._id);
-    		newItem.setupCompliance(Config.compliance);
-    		Modal.show({
-            	content:<FacilityViewEdit item={newItem} />
-            });
-        })
-    }
+	function createFacility()
+	{
+		var selectedTeam = Session.getSelectedTeam();
+		selectedTeam.addFacility( ( response ) =>
+		{
+			var newItem = Facilities.findOne( response._id );
+			newItem.setupCompliance( Config.compliance );
+			Modal.show(
+			{
+				content: <FacilityViewEdit item={newItem} />
+			} );
+		} )
+	}
 
-    function createNewComplianceRule(newRule) {
-        var facility = newRule.facility;
-        if(facility) {
-            var services = facility.servicesRequired;
-            //get index of the selected service
-            var idx=-1;
-            for(var i in services) {
-                if(services[i].name==newRule.service.name) {
-                    idx = i;
-                    break;
-                }
-            }
-            if(idx>=0) {
-                var service = services[idx];
-                console.log({service,idx});
-                if(!service.data) {
-                    service.data = {};
-                }
-                if(!service.data.complianceRules) {
-                    service.data.complianceRules = [];
-                }
-                //to avoid circular search remove facility and then add with just name and _id
-                var copy = _.omit(newRule,'facility','service'/*,'event'*/);
-                if(newRule.facility) {
-	                copy.facility = _.pick(newRule.facility,'name','_id');
-	            }
-                /*if(newRule.event) {
+	function createNewComplianceRule( newRule )
+	{
+		var facility = newRule.facility;
+		if ( facility )
+		{
+			var services = facility.servicesRequired;
+			//get index of the selected service
+			var idx = -1;
+			for ( var i in services )
+			{
+				if ( services[ i ].name == newRule.service.name )
+				{
+					idx = i;
+					break;
+				}
+			}
+			if ( idx >= 0 )
+			{
+				var service = services[ idx ];
+				console.log(
+				{
+					service,
+					idx
+				} );
+				if ( !service.data )
+				{
+					service.data = {};
+				}
+				if ( !service.data.complianceRules )
+				{
+					service.data.complianceRules = [];
+				}
+				//to avoid circular search remove facility and then add with just name and _id
+				var copy = _.omit( newRule, 'facility', 'service' /*,'event'*/ );
+				if ( newRule.facility )
+				{
+					copy.facility = _.pick( newRule.facility, 'name', '_id' );
+				}
+				/*if(newRule.event) {
 	                copy.event = _.pick(newRule.event,'name','_id');
 	            }*/
-	            if(newRule.service) {
-	                copy.service = _.pick(newRule.service,'name');
-	            }
-                service.data.complianceRules.push(copy);
-                services[idx] = service;
-            }
-            facility.setServicesRequired(services);
-        }
-        Modal.hide();
-    }
+				if ( newRule.service )
+				{
+					copy.service = _.pick( newRule.service, 'name' );
+				}
+				service.data.complianceRules.push( copy );
+				services[ idx ] = service;
+			}
+			facility.setServicesRequired( services );
+		}
+		Modal.hide();
+	}
 
-    function createComplianceRule() {
-        Modal.show({
-            content:<AutoForm 
-                item={{
-                    facility:Session.getSelectedFacility()
-                }}
-                schema={ComplianceRuleSchema} 
-                onSubmit={createNewComplianceRule}
-            />
-        })
-    }
+	function createComplianceRule()
+	{
+		Modal.show(
+		{
+			content: <AutoForm
+			item = {
+				{
+					facility: Session.getSelectedFacility()
+				}
+			}
+			schema = {
+				ComplianceRuleSchema
+			}
+			onSubmit = {
+				createNewComplianceRule
+			}
+			/>
+		} )
+	}
 
-    return {
-    	viewRequest,
-    	editTeam,
-    	createRequest,
-    	createFacility,
-    	createComplianceRule
-    }
+	return {
+		viewRequest,
+		editTeam,
+		createRequest,
+		createFacility,
+		createComplianceRule
+	}
 }
 
-FloatingActionButton = class FloatingActionButton extends React.Component {
+FloatingActionButton = class FloatingActionButton extends React.Component
+{
 
-	createNewRequest() {
+	createNewRequest()
+	{
 
 	}
 
-	componentDidMount() {
-		$('.fab-panel button[rel=tooltip]').tooltip({
-			container: 'body'
-		});
+	componentDidMount()
+	{
+		$( '.fab-panel button[rel=tooltip]' )
+			.tooltip(
+			{
+				container: 'body'
+			} );
 	}
 
-	render() {
+	render()
+	{
 		return (
 			<div className="fab-panel">
 				<button 
@@ -215,7 +259,5 @@ FloatingActionButton = class FloatingActionButton extends React.Component {
 				</button>				
 			</div>
 		)
-	}	
+	}
 }
-
-

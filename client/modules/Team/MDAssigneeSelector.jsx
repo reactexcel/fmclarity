@@ -1,26 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData }
+from 'meteor/react-meteor-data';
 
-MDAssigneeSelector = React.createClass({
+MDAssigneeSelector = React.createClass(
+{
 
-	mixins:[ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-	getMeteorData() {
+	getMeteorData()
+	{
 		var data = {
-			request:this.props.context,
-			assignee:this.props.value,
-			supplier:null,
-			members:null
+			request: this.props.context,
+			assignee: this.props.value,
+			supplier: null,
+			members: null
 		}
-		if(data.request.supplier&&data.request.supplier._id) {
-			data.supplier = Teams.findOne(data.request.supplier._id);
+		if ( data.request.supplier && data.request.supplier._id )
+		{
+			data.supplier = Teams.findOne( data.request.supplier._id );
 			data.members = data.supplier.getMembers();
 		}
 		return data;
 	},
 
-	render() {
+	render()
+	{
 		return (
 			<AutoInput.MDSelect 
 				items={this.data.members} 
@@ -32,4 +37,4 @@ MDAssigneeSelector = React.createClass({
 			/>
 		)
 	}
-})
+} )
