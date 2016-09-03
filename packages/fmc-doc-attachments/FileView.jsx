@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 
-DocumentIconHeader = React.createClass({
+DocumentIconHeader = React.createClass(
+{
 
-	render() {
+	render()
+	{
 		return (
 			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}} onClick={this.handleClick}>
 				<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}>&nbsp;</span>
@@ -15,40 +17,48 @@ DocumentIconHeader = React.createClass({
 			</div>
 		)
 	}
-});
+} );
 
-DocumentIcon = React.createClass({
+DocumentIcon = React.createClass(
+{
 
-	showFileDetailsModal() {
-		Modal.show({
-			content:<DocViewEdit item={this.props.item} onChange={this.props.onChange}/>
-		})
+	showFileDetailsModal()
+	{
+		Modal.show(
+		{
+			content: <DocViewEdit item={this.props.item} onChange={this.props.onChange}/>
+		} )
 	},
 
-	getColorFromString(str) {
-		var r = (str.charCodeAt(str.length-3)%25)*10;
-		var g = (str.charCodeAt(str.length-2)%25)*10;
-		var b = (str.charCodeAt(str.length-1)%25)*10;
-		return 'rgb('+r+','+g+','+b+')';
+	getColorFromString( str )
+	{
+		var r = ( str.charCodeAt( str.length - 3 ) % 25 ) * 10;
+		var g = ( str.charCodeAt( str.length - 2 ) % 25 ) * 10;
+		var b = ( str.charCodeAt( str.length - 1 ) % 25 ) * 10;
+		return 'rgb(' + r + ',' + g + ',' + b + ')';
 	},
 
-	handleClick() {
+	handleClick()
+	{
 		this.showFileDetailsModal();
 	},
 
-	render() {
+	render()
+	{
 		var doc = this.props.item;
-		if(!doc) {
+		if ( !doc )
+		{
 			return (
-			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
+				<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={this.handleClick}>
 				<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 				<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 			</div>
 			)
 		}
 		var color = "#000";
-		if(doc.type) {
-			color = this.getColorFromString(doc.type);
+		if ( doc.type )
+		{
+			color = this.getColorFromString( doc.type );
 		}
 		return (
 			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={this.handleClick}>
@@ -59,104 +69,128 @@ DocumentIcon = React.createClass({
 			</div>
 		)
 	}
-});
+} );
 
-File = React.createClass({
+File = React.createClass(
+{
 
-	mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData()
+	{
 
-		Meteor.subscribe('File');
-    	
-    	var query,file,name,url,extension,icon,isImage,progress;
-    	query = this.props.item;
-    	file = Files.findOne(query);
-    	if(file) {
-    		url = file.url();
-    		progress = file.uploadProgress();
-    		extension = file.extension();
-    		name = file.name();
-    		isImage = file.isImage()&&extension!='tif';
-    		if(extension) {
-    			icon = "/icons/48px/"+extension+".png";
-    		}
-	    }
-    	return {
-    		file:file,
-    		name:name,
-    		url:url,
-    		extension:extension,
-    		icon:icon,
-    		isImage:isImage
-    	}
-    },
+		Meteor.subscribe( 'File' );
 
-	handleChange(event) {
-		var component = this;
-	    FS.Utility.eachFile(event, function(file) {
-	    	Files.insert(file, function (err, newFile) {
-	    		component.props.onChange({
-			    	_id:newFile._id
-	    		});
-	    	});
-	    });
+		var query, file, name, url, extension, icon, isImage, progress;
+		query = this.props.item;
+		file = Files.findOne( query );
+		if ( file )
+		{
+			url = file.url();
+			progress = file.uploadProgress();
+			extension = file.extension();
+			name = file.name();
+			isImage = file.isImage() && extension != 'tif';
+			if ( extension )
+			{
+				icon = "/icons/48px/" + extension + ".png";
+			}
+		}
+		return {
+			file: file,
+			name: name,
+			url: url,
+			extension: extension,
+			icon: icon,
+			isImage: isImage
+		}
 	},
 
-	showImageInModal() {
-        Modal.show({
-            content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
-        })
-    },
+	handleChange( event )
+	{
+		var component = this;
+		FS.Utility.eachFile( event, function( file )
+		{
+			Files.insert( file, function( err, newFile )
+			{
+				component.props.onChange(
+				{
+					_id: newFile._id
+				} );
+			} );
+		} );
+	},
 
-    downloadFile() {
-    	var win = window.open(this.data.url, '_blank');
-    	win.focus();
-    },
+	showImageInModal()
+	{
+		Modal.show(
+		{
+			content: <img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
+		} )
+	},
 
-    deleteFile() {
-		var message = confirm('Are you sure you want to delete this file?');
-    	if(message == true){
-	        this.data.file.remove();
-			this.props.onChange(null);
-     	}
-    },
+	downloadFile()
+	{
+		var win = window.open( this.data.url, '_blank' );
+		win.focus();
+	},
 
-	onClick() {
-		if(this.data.isImage) {
+	deleteFile()
+	{
+		var message = confirm( 'Are you sure you want to delete this file?' );
+		if ( message == true )
+		{
+			this.data.file.remove();
+			this.props.onChange( null );
+		}
+	},
+
+	onClick()
+	{
+		if ( this.data.isImage )
+		{
 			this.showImageInModal()
 		}
-		else if(this.data.file) {
+		else if ( this.data.file )
+		{
 			//this.showFileDetailsModal();
 			this.downloadFile();
 		}
-		else {
-			$(this.refs.input).click();			
+		else
+		{
+			$( this.refs.input ).click();
 		}
 	},
 
-	componentDidMount() {
-		$(this.refs.progress).knob({
-        	readOnly:true,
-			format:function (value) {
-     			return value + '%';
-  			}
-        });
+	componentDidMount()
+	{
+		$( this.refs.progress ).knob(
+		{
+			readOnly: true,
+			format: function( value )
+			{
+				return value + '%';
+			}
+		} );
 	},
 
-	componentDidUpdate() {
+	componentDidUpdate()
+	{
 		//console.log('updating');
-		if(this.data.file&&!this.data.file.isUploaded()) {
+		if ( this.data.file && !this.data.file.isUploaded() )
+		{
 			//console.log('rendering');
-			$(this.refs.progress)
-				.val(this.data.file.uploadProgress())
-				.trigger("change");
+			$( this.refs.progress )
+				.val( this.data.file.uploadProgress() )
+				.trigger( "change" );
 		}
-	},	
+	},
 
-	render() {
-		if(this.data.file) {
-			return(
+	render()
+	{
+		if ( this.data.file )
+		{
+			return (
 				<div className="fm-icon">
 					<div onClick={this.onClick}>
 						{
@@ -186,7 +220,7 @@ File = React.createClass({
 				</div>
 			)
 		}
-		return(
+		return (
 			<div className="fm-icon" style={{cursor:"pointer"}} onClick={this.onClick}>
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
@@ -197,4 +231,4 @@ File = React.createClass({
 			</div>
 		)
 	}
-});
+} );

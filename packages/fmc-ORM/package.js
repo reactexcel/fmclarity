@@ -14,15 +14,15 @@ Package.onUse( function( api )
 		'underscore',
 		'fmc:doc-owners',
 		'matb33:collection-hooks',
+		'dburles:collection-helpers',
 		'ecmascript',
 		'fmc:rbac' //should not be a dependence, refactor by removing line 23 or ORM.js
 	] );
-	api.addFiles( [
-		//'Schema.jsx',
-		'ORM.jsx'
-	] );
 
 	api.export( [
-		'ORM'
+		'ORM',
+		'Model'
 	] );
+
+	api.mainModule( 'index.js' );	
 } );

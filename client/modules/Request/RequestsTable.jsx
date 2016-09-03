@@ -118,7 +118,7 @@ RequestsTable = React.createClass({
 					<div className="grid-item" 
                         key={idx} 
                         style={{height:"48px",paddingTop:"5px"}} 
-                        onClick={()=>{FABActions.viewRequest(r)}}
+                        onClick={()=>{QuickActions.viewRequest(r)}}
                     >
 						<IssueSummary item={r}/>
 					</div>

@@ -21,7 +21,7 @@ ORM = {
 	HasAndBelongsToMany: 4
 };
 
-
+/*
 ORM.Collection = function( name, schema )
 {
 	// create our local collection object
@@ -152,7 +152,7 @@ function validate( fields, fieldNames, schema )
 				rule.type == "string";
 			}
 
-			if ( item && rule.type /* && !check( item, rule.type ) */ )
+			if ( item && rule.type )
 			{
 				let itemType = typeof item,
 					expectedType = rule.type;
@@ -240,7 +240,6 @@ function join( doc, selector, options )
 
 					if ( query == null )
 					{
-						/* shouldn't happen */
 					}
 					else if ( query._id )
 					{
@@ -259,7 +258,6 @@ function join( doc, selector, options )
 					query = doc[ key ];
 					if ( query == null )
 					{
-						/* shouldn't happen */
 					}
 					else if ( query._id )
 					{
@@ -444,22 +442,6 @@ function addCollectionHooks( collection )
 	} )
 }
 
-/*
-getter: 			getTeam( item ) {
-	if( item._id )
-	{
-		return Teams.findOne( item._id );
-	}
-	else if( item.name )
-	{
-		return Teams.findOne( item.name );
-	}
-},
-setter: 			setTeam( item, team ) {
-	return _.pick(team, ['_id', 'name']);
-},
-*/
-
 
 function createNewItemUsingSchema( schema, ext, callback, usingSubSchema )
 {
@@ -512,3 +494,4 @@ function createNewItemUsingSchema( schema, ext, callback, usingSubSchema )
 	}
 	return newItem;
 };
+*/

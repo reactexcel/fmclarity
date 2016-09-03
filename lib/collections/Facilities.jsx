@@ -6,8 +6,10 @@ import '../schemas/FacilitySchema.jsx';
 import './Teams.jsx';
 import './Files.jsx';
 
+import { Model } from 'meteor/fmc:orm';
+
 //would like to more closely emulate simpleschema paradigm here
-export default Facilities = ORM.Collection( "Facilities", FacilitySchema );
+export default Facilities = new Model( FacilitySchema, "Facilities" );
 
 //Yes - but doesn't this mean that the schema is not a complete document
 //and what about validation?

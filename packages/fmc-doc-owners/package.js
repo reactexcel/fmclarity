@@ -6,22 +6,12 @@ Package.describe({
 
 Package.onUse(function(api) { 
 
-	//api.use(['chrismbeckett:toastr','dburles:collection-helpers'],'client');
-
 	api.use([
 		'underscore',
-		'matb33:collection-hooks',
 		'ecmascript',
 		'react-meteor-data',
 		'mongo',
 	]);
-	api.addFiles([
-		'DocOwners.js',
-		'DocOwnerCard.jsx'
-	]);
 
-	api.export([
-		'DocOwners',
-		'DocOwnerCard'
-	]);
+	api.mainModule( 'index.js' );
 });

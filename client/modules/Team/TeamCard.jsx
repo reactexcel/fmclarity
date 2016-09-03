@@ -13,7 +13,7 @@ function addTeamMenuItem( menu, item, team )
 
 			menu.push(
 			{
-				label: "Remove supplier from " + team.getName(),
+				label: "Remove supplier from " + team.name,
 				shouldConfirm: true,
 				action()
 				{
@@ -26,7 +26,7 @@ function addTeamMenuItem( menu, item, team )
 
 		if ( item && item.ownerIs && item.ownerIs( team ) )
 		{
-			var itemName = item.getName();
+			var itemName = item.name;
 			menu.push(
 			{
 				label: "Revoke ownership of " + itemName,

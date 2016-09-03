@@ -2,7 +2,7 @@
 import './Files.jsx';
 import '../schemas/UserSchema.jsx';
 
-Users = ORM.Collection( Meteor.users, UserSchema );
+Users = new Model( UserSchema, Meteor.users );
 Users.mixins( [
     DocThumb.config(
     {

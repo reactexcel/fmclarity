@@ -1,4 +1,6 @@
-Documents = ORM.Collection( "Files", DocumentSchema );
+import { Model } from 'meteor/fmc:orm';
+
+Documents = new Model( DocumentSchema, "Files" );
 
 if ( Meteor.isServer )
 {

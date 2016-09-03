@@ -56,12 +56,13 @@ fmc:doc-members@0.0.1
 fmc:doc-messages@0.0.1
 fmc:doc-owners@0.0.1
 fmc:doc-thumbs@0.0.1
+fmc:layout@0.0.1
 fmc:login-tokens@0.0.1
+fmc:material-navigation@0.0.1
 fmc:modal@0.0.1
 fmc:orm@0.0.1
 fmc:rbac@0.0.1
 fmc:reports@0.0.1
-fmc:select@0.0.1
 fmc:stepper@0.0.1
 fmc:tabs@0.0.1
 fmc:workflow-helper@0.0.1

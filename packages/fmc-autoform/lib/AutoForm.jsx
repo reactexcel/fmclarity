@@ -31,6 +31,8 @@ AutoForm = class AutoForm extends React.Component
 			field = props.field,
 			schema = props.schema,
 			form = props.form,
+			errors = props.errors ||
+			{},
 			onSubmit = props.onSubmit;
 
 		if ( field != null )
@@ -40,12 +42,12 @@ AutoForm = class AutoForm extends React.Component
 
 		if ( schema == null )
 		{
-			schema = item.getSchema();
+			schema = item.schema;
 		}
 
 		if ( form == null )
 		{
-			form = Object.keys( item );
+			form = Object.keys( schema );
 		}
 
 		this.state = {
@@ -55,7 +57,7 @@ AutoForm = class AutoForm extends React.Component
 			schema,
 			form,
 			onSubmit,
-			errors:{}
+			errors
 		}
 	}
 
@@ -65,6 +67,8 @@ AutoForm = class AutoForm extends React.Component
 			field = props.field,
 			schema = props.schema,
 			form = props.form,
+			errors = props.errors ||
+			{},
 			onSubmit = props.onSubmit;
 
 		if ( field != null )
@@ -74,23 +78,24 @@ AutoForm = class AutoForm extends React.Component
 
 		if ( schema == null )
 		{
-			schema = item.getSchema();
+			schema = item.schema;
 		}
 
 		if ( form == null )
 		{
-			form = Object.keys( item );
+			form = Object.keys( schema );
 		}
 
-		this.setState({
+		this.setState(
+		{
 			item,
 			id: item.id,
 			originalItem: item,
 			schema,
 			form,
 			onSubmit,
-			errors:{}
-		})
+			errors
+		} )
 	}
 
 	updateFields( update )
@@ -102,14 +107,19 @@ AutoForm = class AutoForm extends React.Component
 			let [ fieldName, value ] = update;
 			item[ fieldName ] = value;
 
-			console.log({item, fieldName, value});
+			console.log(
+			{
+				item,
+				fieldName,
+				value
+			} );
 
 			delete errors[ fieldName ];
 		}
 		else if ( _.isObject( update ) )
 		{
 			let fieldNames = Object.keys( update );
-			fieldNames.map( ( fieldName ) => 
+			fieldNames.map( ( fieldName ) =>
 			{
 				item[ fieldName ] = update[ fieldName ];
 				delete errors[ fieldName ];
@@ -127,19 +137,30 @@ AutoForm = class AutoForm extends React.Component
 
 	submit( item )
 	{
-		let errors = this.props.onSubmit( item, this.state.form ),
+		let errors =
 			errorsByField = {};
-		if( errors && errors.length ) 
+
+		try
 		{
-			errors.map( ( { name, type } ) =>
+			this.props.onSubmit( item, this.state.form );
+		}
+		catch ( error )
+		{
+			if ( error.details != null )
 			{
-				if ( errorsByField[ name ] == null )
+				error.details.map( ( { name, type } ) =>
 				{
-					errorsByField[ name ] = [];
-				}
-				errorsByField[ name ].push( type );
-			})
-			this.setState({ errors:errorsByField });
+					if ( errorsByField[ name ] == null )
+					{
+						errorsByField[ name ] = [];
+					}
+					errorsByField[ name ].push( type );
+				} )
+				this.setState(
+				{
+					errors: errorsByField
+				} );
+			}
 		}
 	}
 
@@ -150,13 +171,16 @@ AutoForm = class AutoForm extends React.Component
 	 * @memberof AutoForm
 	 * @return {object} The input to be used in rendering the value.
 	 */
-	checkCondition( { condition } )
+	checkCondition(
+	{
+		condition
+	} )
 	{
 		let item = this.state.item;
 		return (
 			( condition == null ) ||
 			( _.isString( condition ) && item.type == condition ) ||
-			( _.isArray( condition ) && _.contains( condition, item.type )) ||
+			( _.isArray( condition ) && _.contains( condition, item.type ) ) ||
 			( _.isFunction( condition ) && condition( item ) )
 		)
 	}
@@ -176,7 +200,7 @@ AutoForm = class AutoForm extends React.Component
 			form = this.state.form,
 			originalItem = this.state.originalItem;
 
-		console.log(this.state.errors);
+		console.log( this.state );
 
 		return (
 			<div className="autoform row">
@@ -194,10 +218,12 @@ AutoForm = class AutoForm extends React.Component
 
 					if( !s ) {
 						//throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
+						console.log({"nope":key});
 						return;
 					}
 					else if(! this.checkCondition( s ) ) 
 					{
+						console.log({"failed condition":s});
 						return;
 					}
 
@@ -263,13 +289,17 @@ AutoForm = class AutoForm extends React.Component
 			}
 
 		</div>
-	)
-}
+		)
+	}
 }
 
 function AutoInputWrapper( props )
 {
-	let { config, ...other } = props;
+	let
+	{
+		config,
+		...other
+	} = props;
 
 	config = Object.assign(
 	{

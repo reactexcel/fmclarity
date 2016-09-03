@@ -16,6 +16,8 @@ fmc:login-tokens
 fmc:doc-owners
 fmc:reports
 fmc:calendar
+fmc:layout
+fmc:material-navigation
 
 fmc:workflow-helper
 
@@ -23,10 +25,8 @@ fmc:workflow-helper
 # FMC UI
 fmc:tabs
 fmc:stepper
-fmc:select
 fmc:modal
 fmc:actions-menu
-#fmc:filterbox
 fmc:autoform
 
 ############################

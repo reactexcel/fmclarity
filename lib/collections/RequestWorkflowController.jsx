@@ -213,7 +213,18 @@ Issues.workflow.addState( [ 'PMP' ],
 		form:
 		{
 			title: "Please tell us a little bit more about the work that is required.",
-			fields: Issues.forms.create
+			fields: Issues.forms.create,
+			/*validation: function( request )
+			{
+				//console.log(request);
+				return true;
+				return (
+					request.name && request.name.length &&
+					request.facility && request.facility._id &&
+					request.level && request.level.name && request.level.name.length &&
+					request.service && request.service.name.length
+				)
+			},*/
 		},
 
 		method: function( request )

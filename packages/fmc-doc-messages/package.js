@@ -23,7 +23,7 @@ Package.onUse(function(api) {
 	],'client');
 
 	api.addFiles([
-		'DocMessages.js',
+		'DocMessages.jsx',
 		'methods.js',
 		'publish.js',
 		'views/InboxView.jsx',

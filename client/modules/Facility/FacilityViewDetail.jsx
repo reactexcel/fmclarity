@@ -71,7 +71,7 @@ FacilityViewDetail = React.createClass(
                         <div className="row">
                             <div className="col-md-4">
                                 <div className="facility-title" style={{borderBottom:contact?"1px solid #fff":"none"}}>
-                                    <h2>{facility.getName()}</h2>                        
+                                    <h2>{facility.name}</h2>                        
                                     {address?<b>{address}</b>:null}
                                 </div>
                                 <ContactDetails item={contact}/>
@@ -151,7 +151,7 @@ ContactDetails = React.createClass(
         var contact = this.props.item;
         if ( contact != null )
         {
-            contactName = contact.getName ? contact.getName() : contact.name;
+            contactName = contact.getName ? contact.name : contact.name;
             contact = contact.getProfile ? contact.getProfile() : contact;
         }
         if ( !contact ) {

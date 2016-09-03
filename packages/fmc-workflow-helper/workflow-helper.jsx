@@ -89,20 +89,20 @@ export default function( collection )
 				{
 					content:
 						<AutoForm
-					item = {
-						request
-					}
-					form = {
-						form.fields
-					}
-					onSubmit = {
-						( newRequest ) =>
-						{
-							//console.log(newRequest);
-							callback ? callback( newRequest ) : null;
-							Modal.hide();
-						}
-					} >
+							item = {
+								request
+							}
+							form = {
+								form.fields
+							}
+							onSubmit = {
+								( newRequest ) =>
+								{
+									//console.log(newRequest);
+									callback ? callback( newRequest ) : null;
+									Modal.hide();
+								}
+							}>
 					<h2>{form.title}</h2> </AutoForm>
 				} )
 			}

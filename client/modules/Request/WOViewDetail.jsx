@@ -110,7 +110,7 @@ IssueDetail = React.createClass({
                         content:    <Inbox for={request} truncate={true}/>
                     },{
                         tab:        <span id="documents-tab"><span>Files</span>{this.data.attachmentCount?<span>({this.data.attachmentCount})</span>:null}</span>,
-                        content:    <div style={{padding:"15px"}}><AutoForm item={request} form={['attachments']} save={()=>request.save}/></div>
+                        content:    <AutoForm item={request} form={['documents']} save={()=>request.save}/>
                     },{
                         tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                         content:    <ContactList group={request} readOnly={true}/>

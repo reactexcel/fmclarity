@@ -1,46 +1,29 @@
 RequestFrequencySchema = {
 	repeats:
 	{
-		input: "MDSelect",
-		defaultValue: "6",
-		size: 6,
-		options:
-		{
-			items: 
-			[
-				"1",
-				"2",
-				"3",
-				"4",
-				"5",
-				"6"
-			]
-		}
+		label: "Repeats",
+		description: "The number of times this item should happen",
+		input: "mdtext",
+		type: "number",
+		defaultValue: 6,
+		size: 6
 	},
 	number:
 	{
 		label: "Frequency (number)",
-		input: "MDSelect",
-		defaultValue: "6",
-		size: 6,
-		options:
-		{
-			items: 
-			[
-				"1",
-				"2",
-				"3",
-				"4",
-				"5",
-				"6"
-			]
-		}
+		description: "The number of days, weeks, months etc between repeats",
+		input: "mdtext",
+		type: "number",
+		defaultValue: 6,
+		size: 6
 	},
 	unit:
 	{
 		label: "Frequency (unit)",
+		description: "The unit (days, weeks, months etc) of the repeats",
 		input: "MDSelect",
 		defaultValue: "months",
+		type: "string",
 		size: 6,
 		options:
 		{

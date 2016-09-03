@@ -1,11 +1,15 @@
+import { Model } from 'meteor/fmc:orm';
+
 import '../schemas/RequestSchema.jsx';
 
-Issues = ORM.Collection( "Issues", IssueSchema );
+Issues = new Model( IssueSchema, "Issues" );
 
 Issues.save = function( id, obj, callback )
 {
 	return Meteor.call( 'Issues.save', id, obj, callback )
 }
+
+//Issues.addFeature( DocMessages, {} );
 
 Issues.mixins( [
 	DocMessages.config(
@@ -18,23 +22,24 @@ Issues.mixins( [
 			},
 			getWatchers: function()
 			{
-				var user, owner, team, supplier, assignee;
+				let user = Meteor.user(),
+					owner = this.getOwner(),
+					team = this.team,
+					supplier = this.supplier,
+					assignee = this.assignee;
 
-				user = Meteor.user();
-				owner = this.getOwner();
-
-				//don't include suppliers and assignees if draft or new
-				//is this deprecated?
-				if ( this.status != Issues.STATUS_DRAFT )
+				if ( this.status = Issues.STATUS_DRAFT )
 				{
-					team = this.getTeam();
-					if ( this.status != Issues.STATUS_NEW )
-					{
-						supplier = this.getSupplier();
-						assignee = this.getAssignee();
-					}
+					return [ user, owner ];
 				}
-				return [ user, owner, supplier, team, assignee ];
+				else if ( this.status = Issues.STATUS_NEW )
+				{
+					return [ user, owner, team ];
+				}
+				else 
+				{
+					return [ user, owner, team, supplier, assignee ];
+				}
 			}
 		}
 	} ),

@@ -1,4 +1,7 @@
 {
-  "source": ".",
-  "destination": "./esdoc"
+	"source": "./lib",
+	"destination": "./esdoc",
+	"plugins": [{
+		"name": "esdoc-es7-plugin"
+	}]
 }

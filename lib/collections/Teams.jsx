@@ -1,7 +1,7 @@
 import '../schemas/TeamSchema.jsx';
 import './Users.jsx';
 
-Teams = ORM.Collection( "Teams", TeamSchema );
+Teams = new Model( TeamSchema, "Teams" );
 
 Teams.mixins( [
     DocThumb.config(

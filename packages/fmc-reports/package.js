@@ -15,6 +15,7 @@ Package.onUse(function(api) {
 	api.use([
 		'fmc:login-tokens',
 		'fmc:actions-menu',
+		'fmc:layout',
 		'fmc:calendar',
 		'ecmascript',
 		'accounts-base',

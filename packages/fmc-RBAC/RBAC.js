@@ -326,7 +326,10 @@ function makeHelpers( methodName, functions, collection )
 	{
 		helpers[ strippedName ] = makeMethodHelper( methodName );
 	}
-	collection.helpers( helpers );
+	if( collection.helpers != null ) 
+	{
+		collection.helpers( helpers );
+	}
 }
 
 /**

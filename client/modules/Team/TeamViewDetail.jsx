@@ -58,7 +58,7 @@ TeamViewDetail = React.createClass(
 		var contactName;
 		if ( primaryContact )
 		{
-			contactName = primaryContact.getName();
+			contactName = primaryContact.name;
 		}
 
 		// calculate insurance expiry (calculations should be going in getMeteorData)
@@ -87,7 +87,7 @@ TeamViewDetail = React.createClass(
 				 </div>
 				 <div className="contact-info">
 
-					<h2>{team.getName()}</h2>
+					<h2>{team.name}</h2>
 
 					<i style={{color:"#999",display:"block",padding:"3px"}}>{contactName?contactName:null}<br/></i>
 					<b>Email</b> {team.email}<br/>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/AutoForm.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/AutoForm.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author       Leo Keith &lt;leo@fmclarity.com>
+ * @copyright    2016 FM Clarity Pty Ltd
+ * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+ */
+
+import React from "react";
+import ReactDom from "react-dom";
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+
+AutoInput = {};
+
+/**
+ * Sprites are the lifeblood of your game, used for nearly everything visual.
+ *
+ * At its most basic a Sprite consists of a set of coordinates and a texture that is rendered to the canvas.
+ * They also contain additional properties allowing for physics motion (via Sprite.body), input handling (via Sprite.input),
+ * events (via Sprite.events), animation (via Sprite.animations), camera culling and more. Please see the Examples for use cases.
+ *
+ */
+AutoForm = class AutoForm extends React.Component
+{
+	constructor( props )
+	{
+		super( props );
+		let item = props.item,
+			field = props.field,
+			schema = props.schema,
+			form = props.form,
+			errors = props.errors || {},
+			onSubmit = props.onSubmit;
+
+		if ( field != null )
+		{
+			item = item[ field ];
+		}
+
+		if ( schema == null )
+		{
+			schema = item.getSchema();
+		}
+
+		if ( form == null )
+		{
+			form = Object.keys( schema );
+		}
+
+		this.state = {
+			item,
+			id: item.id,
+			originalItem: item,
+			schema,
+			form,
+			onSubmit,
+			errors
+		}
+	}
+
+	componentWillReceiveProps( props )
+	{
+		let item = props.item,
+			field = props.field,
+			schema = props.schema,
+			form = props.form,
+			errors = props.errors || {},
+			onSubmit = props.onSubmit;
+
+		if ( field != null )
+		{
+			item = item[ field ];
+		}
+
+		if ( schema == null )
+		{
+			schema = item.getSchema();
+		}
+
+		if ( form == null )
+		{
+			form = Object.keys( schema );
+		}
+
+		this.setState({
+			item,
+			id: item.id,
+			originalItem: item,
+			schema,
+			form,
+			onSubmit,
+			errors
+		})
+	}
+
+	updateFields( update )
+	{
+		let item = this.state.item,
+			errors = this.state.errors;
+		if ( _.isArray( update ) )
+		{
+			let [ fieldName, value ] = update;
+			item[ fieldName ] = value;
+
+			console.log({item, fieldName, value});
+
+			delete errors[ fieldName ];
+		}
+		else if ( _.isObject( update ) )
+		{
+			let fieldNames = Object.keys( update );
+			fieldNames.map( ( fieldName ) => 
+			{
+				item[ fieldName ] = update[ fieldName ];
+				delete errors[ fieldName ];
+			} );
+			Object.assign( item, update );
+		}
+
+
+		this.setState(
+		{
+			item,
+			errors
+		} );
+	}
+
+	submit( item )
+	{
+		let errors = this.props.onSubmit( item, this.state.form ),
+			errorsByField = {};
+		if( errors &amp;&amp; errors.length ) 
+		{
+			errors.map( ( { name, type } ) =>
+			{
+				if ( errorsByField[ name ] == null )
+				{
+					errorsByField[ name ] = [];
+				}
+				errorsByField[ name ].push( type );
+			})
+			this.setState({ errors:errorsByField });
+		}
+	}
+
+	/**
+	 * Called by AutoForm.render to determine the field type of an input
+	 *
+	 * @method
+	 * @memberof AutoForm
+	 * @return {object} The input to be used in rendering the value.
+	 */
+	checkCondition( { condition } )
+	{
+		let item = this.state.item;
+		return (
+			( condition == null ) ||
+			( _.isString( condition ) &amp;&amp; item.type == condition ) ||
+			( _.isArray( condition ) &amp;&amp; _.contains( condition, item.type )) ||
+			( _.isFunction( condition ) &amp;&amp; condition( item ) )
+		)
+	}
+
+	/**
+	 * Called by AutoForm.render to determine the field type of an input
+	 *
+	 * @method
+	 * @memberof AutoForm
+	 * @return {object} The input to be used in rendering the value.
+	 */
+	render()
+	{
+		let item = this.state.item,
+			id = this.state.id,
+			schema = this.state.schema,
+			form = this.state.form,
+			originalItem = this.state.originalItem;
+
+		console.log(this.state);
+
+		return (
+			&lt;div className="autoform row">
+
+			{
+			this.props.children?
+			&lt;div className="col-sm-12">{this.props.children}&lt;/div>
+			:null
+			}
+
+			{
+				form.map( (key) => 
+				{
+					var s = schema[key];
+
+					if( !s ) {
+						//throw new Meteor.Error("schema-field-"+key+"-does-not-exist","Schema field "+key+" doesn't exist","You have tried to access a nonexistent schema field.")
+						console.log({"nope":key});
+						return;
+					}
+					else if(! this.checkCondition( s ) ) 
+					{
+						console.log({"failed condition":s});
+						return;
+					}
+
+					if( s.schema != null ) 
+					{
+						// create item object if it doesn't exist
+						if( !item[ key ] || !_.isObject( item[ key ] ) ) 
+						{
+							console.log(`creating field: ${key}`);
+							item[ key ] = {};
+						}
+						return (
+
+							&lt;span key={ `${id}-${key}` }>
+
+					        	&lt;AutoForm 
+					        		item = { item } 
+					        		field = { key } 
+					        		schema = { s.schema } 
+									errors = { this.state.errors[ key ] }
+					        		onSubmit = { this.props.onSubmit }
+					        		hideSubmitButton = { true }>
+										{
+										s.label?&lt;h5>{s.label}&lt;/h5>
+										:null
+										}
+					        	&lt;/AutoForm>
+
+					        &lt;/span>
+						)
+					}
+					else {
+						return (
+
+							&lt;div key = { `${id}-${key}` } className = { `col-sm-${s.size||12}` }>
+								&lt;AutoInputWrapper 
+									context = { item }
+									fieldName = { key }
+									value = { item[ key ] }
+									errors = { this.state.errors[ key ] }
+									config = { s }
+									onChange = { (vals) => { this.updateFields(vals) } }
+								/>
+							&lt;/div>
+
+						)
+					}
+				})
+			}
+
+	        {
+	        this.props.onSubmit != null &amp;&amp;
+	        !this.props.hideSubmitButton ?
+			&lt;div style={ {textAlign:"right", clear:"both"}}>
+				&lt;button 
+					type="button" 
+					className="btn btn-flat btn-primary" 
+					onClick={ ( ) => { this.submit( item ) } }>
+					Submit
+				&lt;/button>
+			&lt;/div>
+			: null
+			}
+
+		&lt;/div>
+	)
+}
+}
+
+function AutoInputWrapper( props )
+{
+	let { config, ...other } = props;
+
+	config = Object.assign(
+	{
+		input: "mdtext",
+		label: props.fieldName,
+		options:
+		{}
+	}, config );
+
+	let label = config.label;
+	if ( !config.optional )
+	{
+		label = label + '*';
+	}
+
+	if ( _.isString( config.input ) )
+	{
+		config.input = AutoInput[ config.input ];
+	}
+
+	if ( _.isFunction( config.options ) &amp;&amp; props.context != null )
+	{
+		config.options = config.options( props.context );
+	}
+
+	return (
+		&lt;div>
+			&lt;config.input {...other} {...config} placeholder={ label }/>
+		&lt;/div>
+	)
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AutoForm.html">AutoForm</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Elastic">Elastic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Sep 02 2016 15:43:40 GMT+1000 (E. Australia Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

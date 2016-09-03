@@ -1,7 +1,5 @@
 //move this to messages package
 
-Messages.schema( MessageSchema );
-
 Messages.methods(
 {
   create:

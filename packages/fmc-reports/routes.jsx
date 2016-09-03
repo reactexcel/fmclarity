@@ -1,59 +1,56 @@
 import React from "react";
-import
-{
-  mount
-}
-from 'react-mounter';
+import { mount } from 'react-mounter';
+import { MainLayout, WideLayout } from 'meteor/fmc:layout';
 
 loggedIn.route( '/reports',
 {
-  name: 'reports',
-  action( params )
-  {
-    mount( MainLayout,
+    name: 'reports',
+    action( params )
     {
-      content: <ReportsPageIndex/>
-    } );
-  }
+        mount( MainLayout,
+        {
+            content: <ReportsPageIndex/>
+        } );
+    }
 } );
 
 loggedIn.route( '/report/:reportId',
 {
-  name: 'report',
-  action( params )
-  {
-    mount( WideLayout,
+    name: 'report',
+    action( params )
     {
-      content: <ReportsPageSingle id={params.reportId}/>
-    } );
-  }
+        mount( WideLayout,
+        {
+            content: <ReportsPageSingle id={params.reportId}/>
+        } );
+    }
 } );
 
 loggedIn.route( '/report/:reportId/:view',
 {
-  name: 'report',
-  action( params )
-  {
-    var Layout = WideLayout;
-    if ( params.view == "print" )
+    name: 'report',
+    action( params )
     {
-      Layout = PrintLayout;
+        var Layout = WideLayout;
+        if ( params.view == "print" )
+        {
+            Layout = PrintLayout;
+        }
+        mount( Layout,
+        {
+            content: <ReportsPageSingle id={params.reportId}/>
+        } );
     }
-    mount( Layout,
-    {
-      content: <ReportsPageSingle id={params.reportId}/>
-    } );
-  }
 } );
 
 loggedIn.route( '/dashboard',
 {
-  name: 'dashboard',
-  action()
-  {
-    mount( MainLayout,
+    name: 'dashboard',
+    action()
     {
-      content: <DashboardPage/>
-    } );
-  }
+        mount( MainLayout,
+        {
+            content: <DashboardPage/>
+        } );
+    }
 } );
