@@ -1,7 +1,7 @@
 import React from "react";
-import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { NavListDropDown } from 'meteor/fmc:material-navigation';
+import FacilityListTile from './imports/FacilityListTile.jsx';
 
 FacilityFilter = React.createClass(
 {

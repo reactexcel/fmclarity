@@ -6,7 +6,7 @@ import '/client/modules/Compliance/PMPList.jsx';
 
 export default function FacilityPanel( props )
 {
-	let { team, facility, facilityContact, facilityCoverImage } = props;
+	let { team, facility } = props;
 
 	function getMenu()
 	{
@@ -56,8 +56,8 @@ export default function FacilityPanel( props )
 
                 <div className="contact-thumbnail">
 
-                    {facilityCoverImage?
-                    <div className="cover-image" style={{backgroundImage:"url('"+facilityCoverImage+"')"}}></div>
+                    {facility.thumbUrl?
+                    <div className="cover-image" style={{backgroundImage:"url('"+facility.thumbUrl+"')"}}></div>
                     :null}
 
                     <div className="title-overlay">
@@ -65,7 +65,7 @@ export default function FacilityPanel( props )
                             <div className="col-md-4">
                                 <div 
                                     className="facility-title" 
-                                    style={{borderBottom:facilityContact?"1px solid #fff":"none"}}>
+                                    style={{borderBottom:facility.contact?"1px solid #fff":"none"}}>
 
                                     <h2>{facility.name}</h2>                        
 
@@ -74,7 +74,7 @@ export default function FacilityPanel( props )
                                     :null}
 
                                 </div>
-                                <ContactDetails item={facilityContact}/>
+                                <ContactDetails item={facility.contact}/>
                             </div>
                         </div>
                     </div>

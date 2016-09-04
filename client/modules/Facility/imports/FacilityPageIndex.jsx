@@ -25,7 +25,7 @@ export default class FacilityPageIndex extends React.Component
 
 	render()
 	{
-		let { team, facilities, facility, ...other } = this.props;
+		let { team, facility, ...other } = this.props;
 
 		if ( !team ) 
 		{
@@ -35,7 +35,7 @@ export default class FacilityPageIndex extends React.Component
 		return <div className="facility-page animated fadeIn">
 			{/*<ClientFilter/>*/}
 	        {/*<FacilityFilter/>*/}
-	        {facilities.map((f)=>{
+	        {team.facilities.map((f)=>{
 	        	return <FacilityCard key={f._id} item={f} onClick={()=>{
 	        		this.handleSelect(f);
 	        	}}/>

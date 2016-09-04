@@ -36,15 +36,12 @@ export default QuickActions = new function QuickActionService()
 
 		Modal.show(
 		{
-			content: <AutoForm
-			item = {
-				request
-			} //do we need to call 'createNewItemUsingSchema' on this item?
-			form = {
-				Issues.forms.create
+			content: <FartoForm
+			model = {
+				Issues
 			}
-			schema = {
-				IssueSchema
+			options = {
+				Issues.forms.create
 			}
 			onSubmit = {
 				( request, form ) =>

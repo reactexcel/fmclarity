@@ -1,6 +1,6 @@
 import React from 'react';
 
-function FacilityThumbnail( props )
+export default function FacilityThumbnail( props )
 {
 	let style = _.extend(
 	{

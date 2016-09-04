@@ -165,5 +165,27 @@ FacilitySchema = {
 		input: DocAttachments.DocumentExplorer
 	},
 
+	thumbUrl:
+	{
+		label: "Thumbnail URL",
+		description: "URL for an icon-sized image of the facility",
+		relation:
+		{
+			join: ( facility ) => { return facility.getThumbUrl() },
+			unjoin: ( facility ) => { return null }
+		}
+	},
+
+	contact:
+	{
+		label: "Primary contact",
+		description: "Primary contact for the facility",
+		relation:
+		{
+			join: ( facility ) => { return facility.getPrimaryContact() },
+			unjoin: ( facility ) => { return null }
+		}
+	}
+
 	//}
 }

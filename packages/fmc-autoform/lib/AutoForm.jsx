@@ -14,6 +14,189 @@ from 'meteor/react-meteor-data';
 
 AutoInput = {};
 
+// this is a controller
+// this is the role the the existing controllers should be fulfulling
+// although in some, perhaps many cases, the controller will not need to provide that extra functionality
+// but can just reuse this
+// So autoform renders a controller???? What does that make it semantically???
+///////// a view???
+Controller = class Controller 
+{
+	constructor( model, options = {}, initialItem = {}  )
+	{
+		if( _.isArray( options ) )
+		{
+			this.keys = options;
+			this.options = {};
+		}
+		else if( _.isObject( options )) 
+		{
+			this.keys = Object.keys( options );
+			this.options = options;
+		}
+		else 
+		{
+			throw new Error("Options should be sent through to Controller so that the keys can be initialised")
+		}
+
+		this.model = model;
+		this.options = options;
+
+		if( this.model == null )
+		{
+			this.schema = Object.assign({}, this.options);
+		}
+		else 
+		{
+			this.schema = Object.assign({}, this.model.schema, this.options);			
+		}
+
+		this.item = Object.assign({}, initialItem);
+
+		this.collection = [];
+
+		this.schemaDefaults = {
+			input: "mdtext",
+			size: 12,
+			type: "string"
+		}
+	}
+
+	load( selector )
+	{
+		this.collection = model.find ( selector ).fetch();
+		this.itemIndex = 0;
+		this.item = this.collection[ this.itemIndex ];
+	}
+
+	save()
+	{
+		try 
+		{
+			this.model.update( this.item._id, { $set:this.item } );
+		}
+		catch( errors )
+		{
+			console.log( errors );
+			return errors;
+		}
+	}
+
+	delete()
+	{
+		try
+		{
+			this.model.remove( this.item._id );
+		}
+		catch( errors )
+		{
+			console.log( errors );
+		}
+	}
+
+	validate()
+	{
+		return this.model.validate( this.item, this.keys );
+	}
+
+	checkCondition( condition, item )
+	{
+		return (
+			( _.isString( condition ) && item.type == condition ) ||
+			( _.isArray( condition ) && _.contains( condition, item.type ) ) ||
+			( _.isFunction( condition ) && condition( item ) )
+		)
+	}
+
+	getForm( item )
+	{
+		if( item==null )
+		{
+			item = this.item;
+		}
+		return this.keys.map( ( key ) =>
+		{
+			let props = Object.assign(
+			{
+				input: "mdtext",
+				size: 12,
+				type: "string"
+			}, this.schema[ key ]);
+
+			// Check visibility condition specified in schema
+			if( props.condition != null )
+			{
+				if( !this.checkCondition( props.condition, item ))
+				{
+					return;
+				}
+			}
+
+			// Create default value for this field
+			if( item[ key ] == null )
+			{
+				if( this.model != null ) 
+				{
+					item[ key ] = this.model.getDefaultValue( key, item );
+				}
+				else {
+					item[ key ] = "";
+				}
+			}
+
+			// Unpack options for this field (if the field is a generator)
+			if( _.isFunction( props.options ) )
+			{
+				props.options = props.options( item );
+				//console.log (props.options);
+			}
+
+			if( props.schema != null )
+			{
+				let { schema, size, ...others } = props;
+				return (
+					<div key = { key } className = { `col-sm-${size}` }>
+						<FartoForm options = { schema } item = { item[ key ] } {...others} />
+					</div>
+				)
+			}
+			else 
+			{
+				let { input, size=12, label, description, options } = props,
+					Input = input,
+					placeholder = label;
+
+				if( _.isString( Input ) )
+				{
+					Input = AutoInput[ Input ];
+				}
+
+				if( Input == null )
+				{
+					throw new Error(`You have tried to render a input type "${props.input}" that does not exist`);
+				}
+
+				return (
+					<div key = { key } className = { `col-sm-${size}` }>
+						<Input value = { item[ key ] } placeholder = { placeholder } description = { description } { ...options } />
+					</div>
+				)
+			}
+		} );
+	}
+}
+
+
+FartoForm = function FartoForm( { model, options, item } )
+{
+	let controller = new Controller( model, options, item );
+	return (
+		<div className="autoform row">
+			{ controller.getForm() }
+		</div>
+	)
+}
+
 /**
  * Sprites are the lifeblood of your game, used for nearly everything visual.
  *
@@ -22,6 +205,8 @@ AutoInput = {};
  * events (via Sprite.events), animation (via Sprite.animations), camera culling and more. Please see the Examples for use cases.
  *
  */
+
+
 AutoForm = class AutoForm extends React.Component
 {
 	constructor( props )
@@ -171,6 +356,8 @@ AutoForm = class AutoForm extends React.Component
 	 * @memberof AutoForm
 	 * @return {object} The input to be used in rendering the value.
 	 */
+
+
 	checkCondition(
 	{
 		condition
@@ -192,6 +379,7 @@ AutoForm = class AutoForm extends React.Component
 	 * @memberof AutoForm
 	 * @return {object} The input to be used in rendering the value.
 	 */
+
 	render()
 	{
 		let item = this.state.item,

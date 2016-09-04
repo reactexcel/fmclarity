@@ -2,8 +2,14 @@ import './CloseDetailsSchema.jsx';
 import './RequestLocationSchema.jsx';
 import './RequestFrequencySchema.jsx';
 
-import Facilities from '../collections/Facilities';
+import '../collections/Facilities';
 import { ContactCard } from 'meteor/fmc:doc-members';
+
+if(Meteor.isClient)
+{
+	import FacilityListTile from '/client/modules/Facility/imports/FacilityListTile.jsx';
+	const FacilityListTile = require('/client/modules/Facility/imports/FacilityListTile.jsx').default;
+}
 
 IssueSchema = {
 
@@ -319,10 +325,16 @@ IssueSchema = {
 		description: "The team who created this work request",
 		relation:
 		{
-			type: ORM.OneToOne,
-			source: Teams
+			//type: ORM.OneToOne,
+			//source: Teams
+			join: ( item ) => { return Teams.findOne( item.team._id ) },
+			unjoin: ( item ) => { return _.pick(item.team, [_id, name]) }
 		},
 		input: "MDSelect",
+		defaultValue: ( item ) =>
+		{
+			return Session.getSelectedTeam();
+		}
 	},
 
 	facility:
@@ -338,9 +350,10 @@ IssueSchema = {
 
 		options: ( item ) =>
 		{
+			console.log(item);
 			return {
 				items: ( item.team ? item.team.facilities : null ),
-				view: ( Meteor.isClient ? FacilitySummary : null ),
+				view: ( Meteor.isClient ? FacilityListTile : null ),
 
 				onChange: ( item ) =>
 				{

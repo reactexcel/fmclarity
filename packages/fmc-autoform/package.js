@@ -38,6 +38,8 @@ Package.onUse(function(api) {
 
 	api.export([
 		'AutoForm',
-		'AutoInput'
+		'AutoInput',
+		'FartoForm',
+		'Controller'
 	]);
 });

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import FacilityThumbnail from './FacilityThumbnail.jsx';
+
 export default function FacilityCard( props )
 {
 	var facility = props.item;

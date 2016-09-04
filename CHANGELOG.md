@@ -27,6 +27,8 @@ CHANGELOG.md
 
 
 * Moved schemas into new Model class
+* Refactor react components by moving data retrieval into meteor createComponent blocks
+* Recreated AutoForm to use separate Form/Container/Controller structure
 
 **v1.5.4-01**
 

@@ -27,7 +27,7 @@ IssueDetail = React.createClass(
                 data.facility = data.request.facility;
                 if ( data.facility )
                 {
-                    data.facilityContact = data.facility.primaryContact;
+                    data.facilityContact = data.facility.contact;
                 }
             }
         }

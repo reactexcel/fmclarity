@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
 import { DocOwners } from 'meteor/fmc:doc-owners';
+import ORM from './ORM.jsx';
 
 export default class Model 
 {
@@ -20,6 +21,8 @@ export default class Model
 			this.collection = collection;
 			this._name = collection._name;
 		}
+
+		ORM.collections[ this._name ] = this.collection;
 
 		DocOwners.register( this );
 		// should be collection.addFeature( DocOwners );
@@ -53,55 +56,59 @@ export default class Model
 	}
 
 	// this function may be redundant now that we are using a different autoform architecture
-	create( item = {}, callback )
+	getDefaultValue( fieldName, item )
+	{
+		let field = this.schema[ fieldName ];
+		if ( _.isFunction( field.defaultValue ) )
+		{
+			return field.defaultValue( item );
+		}
+		else if( field.defaultValue != null )
+		{
+			return field.defaultValue;
+		}
+		else if ( field.type == "string" )
+		{
+			return "";
+		}
+		else if ( field.type == "number" ) {
+			return 0;
+		}
+		else if( field.type == "date" )
+		{
+			return new Date();
+		}
+		else if ( field.schema != null )
+		{
+			if( _.isFunction( field.schema.create ) )
+			{
+				return field.schema.create();
+			}
+			return {};
+		}
+		else if ( _.isArray( field.type ) )
+		{
+			return [];
+		}
+		else if ( field.type == "object" )
+		{
+			return {};
+		}
+	}
+
+	create( item = {} )
 	{
 		if( this.schema == null )
 		{
 			throw new Meteor.Error("Can't create item with no schema");
 		}
 
-		var newItem = {};
-		for ( var fieldName in this.schema )
+		let newItem = {};
+		for ( let fieldName in this.schema )
 		{
-			var field = this.schema[ fieldName ];
-			if ( _.isFunction( field.defaultValue ) )
-			{
-				newItem[ fieldName ] = field.defaultValue( item );
-			}
-			else if ( field.defaultValue != null )
-			{
-				newItem[ fieldName ] = field.defaultValue;
-			}
-			else if ( field.type == String )
-			{
-				newItem[ fieldName ] = "";
-			}
-			else if ( field.type == Number || field.type == Date )
-			{
-				newItem[ fieldName ] = null;
-			}
-			else if ( field.schema != null )
-			{
-				newItem[ fieldName ] = createNewItemUsingSchema( field.schema, item ? item[ fieldName ] : null, null, true );
-			}
-			else if ( _.isArray( field.type ) )
-			{
-				newItem[ fieldName ] = [];
-			}
-			else if ( field.type == Object )
-			{
-				newItem[ fieldName ] = {};
-			}
-			else
-			{
-				newItem[ fieldName ] = "";
-			}
+			newItem[ fieldName ] = getDefaultValue( fieldName, item )
 		}
 		_.extend( newItem, item );
-		if ( callback != null )
-		{
-			callback( newItem );
-		}
 		return newItem;
 	};
 
@@ -115,6 +122,8 @@ export default class Model
 				this.before.findOne( ...args );
 			}
 			let doc = this.collection.findOne( ...args );
+			//console.log(args);
+			//console.log(doc);
 			//this.authenticate( doc );
 			if( this.after.findOne != null )
 			{
@@ -138,6 +147,26 @@ export default class Model
 		}
 		catch ( error ) 
 		{
+		}
+	}
+
+	findAll( ...args )
+	{
+		try
+		{
+			let docs = this.collection.find( ...args ).fetch();
+			//console.log( ...args );
+			//console.log(docs);
+			docs.map( ( doc ) => 
+			{
+				this.join( doc );
+			} );
+			//console.log(docs);
+			return docs;
+		}
+		catch ( error )
+		{
+			console.log(error);
 		}
 	}
 
@@ -273,13 +302,14 @@ export default class Model
 	{
 		if ( doc == null )
 		{
+			//console.log( 'No doc');
 			return;
 		}
 
 		//refactor: separate schema fields for properties and relations
 		// then just pull in relations here instead of iterating over all fields
 
-		let schema = this._schema,
+		let schema = this.schema,
 			fieldNames = [];
 
 		if ( schema != null )
@@ -293,6 +323,12 @@ export default class Model
 
 			if ( rules.relation != null )
 			{
+
+				if ( _.isFunction( rules.relation.join ) ) 
+				{
+					doc[ fieldName ] = rules.relation.join( doc );
+					return;
+				}
 				let Source = rules.relation.source,
 					query = {};
 
@@ -306,7 +342,12 @@ export default class Model
 
 				if ( Source == null )
 				{
-					throw new Meteor.error( "Selected a source that does not exist" );
+					throw new Meteor.Error( "Selected a source that does not exist" );
+				}
+				else if ( Source.findOne == null )
+				{
+					console.log( Source );
+					throw new Meteor.Error( "Bad source for relation");
 				}
 
 				switch ( rules.relation.type )
@@ -322,6 +363,7 @@ export default class Model
 						}
 						else if ( query._id )
 						{
+
 							doc[ fieldName ] = Source.findOne( query._id );
 						}
 						else
@@ -417,7 +459,7 @@ export default class Model
 		//refactor: separate schema fields for properties and relations
 		// then just pull in relations here instead of iterating over all fields
 
-		let schema = this._schema,
+		let schema = this.schema,
 			fieldNames = [];
 
 		if ( schema != null )
@@ -434,6 +476,17 @@ export default class Model
 			}
 			else if ( rules.relation )
 			{
+
+				if ( _.isFunction( rules.relation.unjoin ) ) 
+				{
+					doc[ fieldName ] = rules.relation.unjoin( doc );
+					if( doc[ fieldName ]==null )
+					{
+						delete doc[ fieldName ];
+					}
+					return;
+				}
+
 				switch ( rules.relation.type )
 				{
 

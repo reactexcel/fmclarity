@@ -88,12 +88,15 @@ export default function( collection )
 				Modal.show(
 				{
 					content:
-						<AutoForm
+						<FartoForm
+							model = {
+								Issues
+							}
+							options = {
+								form.fields
+							}
 							item = {
 								request
-							}
-							form = {
-								form.fields
 							}
 							onSubmit = {
 								( newRequest ) =>
@@ -103,7 +106,7 @@ export default function( collection )
 									Modal.hide();
 								}
 							}>
-					<h2>{form.title}</h2> </AutoForm>
+					<h2>{form.title}</h2> </FartoForm>
 				} )
 			}
 		}

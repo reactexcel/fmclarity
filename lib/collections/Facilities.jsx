@@ -10,7 +10,7 @@ import { Model } from 'meteor/fmc:orm';
 import { DocMembers } from 'meteor/fmc:doc-members';
 
 //would like to more closely emulate simpleschema paradigm here
-export default Facilities = new Model( FacilitySchema, "Facilities" );
+Facilities = new Model( FacilitySchema, "Facilities" );
 
 //Yes - but doesn't this mean that the schema is not a complete document
 //and what about validation?

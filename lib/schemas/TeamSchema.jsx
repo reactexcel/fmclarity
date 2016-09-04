@@ -135,9 +135,11 @@ TeamSchema = {
         description: "Sites maintained by this team",
         relation:
         {
-            type: ORM.OneToMany,
-            source: "Facilities",
-            key: "team._id"
+            //type: ORM.OneToMany,
+            //source: "Facilities",
+            //key: "team._id"
+            join: ( team ) => { return Facilities.findAll( {'team._id': team._id} ) },
+            unjoin: ( team ) => { return null }
         }
     },
 
