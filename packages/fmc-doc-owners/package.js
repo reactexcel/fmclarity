@@ -11,6 +11,7 @@ Package.onUse(function(api) {
 		'ecmascript',
 		'react-meteor-data',
 		'mongo',
+		'fmc:doc-members'
 	]);
 
 	api.mainModule( 'index.js' );

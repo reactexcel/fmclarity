@@ -1,6 +1,8 @@
 import '../schemas/TeamSchema.jsx';
 import './Users.jsx';
 
+import { DocMembers } from 'meteor/fmc:doc-members';
+
 Teams = new Model( TeamSchema, "Teams" );
 
 Teams.mixins( [

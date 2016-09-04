@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { NavListDropDown } from 'meteor/fmc:material-navigation';
 
 FacilityFilter = React.createClass(
 {
@@ -36,13 +37,13 @@ FacilityFilter = React.createClass(
         var facility = this.data.facility;
         return (
             <div style={{position:"absolute",zIndex:1300}}>
-                <NavDropDownList
-                    items={this.data.facilities} 
-                    selectedItem={facility}
-                    tile={FacilitySummary}
-                    startOpen={false}
-                    onChange={this.selectFacility}
-                    multiple={true}
+                <NavListDropDown
+                    items = { this.data.facilities } 
+                    selectedItem = { facility }
+                    tile = { FacilityListTile }
+                    startOpen = { false }
+                    onChange = { this.selectFacility }
+                    multiple = { true }
                 />
             </div>
         )

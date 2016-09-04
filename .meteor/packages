@@ -18,6 +18,7 @@ fmc:reports
 fmc:calendar
 fmc:layout
 fmc:material-navigation
+fmc:material-misc
 
 fmc:workflow-helper
 

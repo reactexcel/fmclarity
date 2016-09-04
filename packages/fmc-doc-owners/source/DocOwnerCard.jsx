@@ -2,7 +2,9 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-DocOwnerCard = React.createClass(
+import { ContactCard } from 'meteor/fmc:doc-members';
+
+export default DocOwnerCard = React.createClass(
 {
 
     mixins: [ ReactMeteorData ],

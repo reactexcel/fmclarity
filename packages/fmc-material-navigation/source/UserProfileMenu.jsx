@@ -3,6 +3,8 @@ import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
+import { ContactCard } from 'meteor/fmc:doc-members';
+
 export default UserProfileMenu = React.createClass(
 {
 

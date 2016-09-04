@@ -1,6 +1,7 @@
 import { Model } from 'meteor/fmc:orm';
 
 import '../schemas/RequestSchema.jsx';
+import { DocMembers } from 'meteor/fmc:doc-members';
 
 Issues = new Model( IssueSchema, "Issues" );
 

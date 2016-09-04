@@ -5,18 +5,6 @@ import './RequestFrequencySchema.jsx';
 import Facilities from '../collections/Facilities';
 import { ContactCard } from 'meteor/fmc:doc-members';
 
-//This is a hack to get around clash between new Meteor 1.3+ ES6 imports system and Mantra application architecture
-// it is intended that a better solution will be available in future versions of Mantra
-if ( Meteor.isClient )
-{
-	require( '/client/modules/Facility/MDLocationSelector.jsx' );
-	require( '/client/modules/Facility/MDFacilitySelector.jsx' );
-	require( '/client/modules/Facility/FacilityViewSummary.jsx' );
-	require( '/client/modules/Team/MDSupplierSelector.jsx' );
-	require( '/client/modules/Team/MDAssigneeSelector.jsx' );
-	require( '/client/modules/Service/MDServiceSelector.jsx' );
-}
-
 IssueSchema = {
 
 	//$schema: 				"http://json-schema.org/draft-04/schema#",
@@ -113,14 +101,6 @@ IssueSchema = {
 	//////////////////////////////////////////////////
 	// Facility dependant properties
 	//////////////////////////////////////////////////
-	location:
-	{
-		label: "Location",
-		description: "The location within the site where the work is located",
-		type: "object",
-		input: Meteor.isClient ? MDLocationSelector : null
-	},
-
 	level:
 	{
 		label: "Area",
@@ -362,7 +342,7 @@ IssueSchema = {
 				items: ( item.team ? item.team.facilities : null ),
 				view: ( Meteor.isClient ? FacilitySummary : null ),
 
-				transform: ( item ) =>
+				onChange: ( item ) =>
 				{
 					if( item == null) {
 						return;

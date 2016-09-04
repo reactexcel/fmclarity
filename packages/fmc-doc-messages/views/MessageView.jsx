@@ -2,6 +2,8 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+import { ContactAvatarSmall } from 'meteor/fmc:doc-members';
+
 MessageView = React.createClass({
 
     mixins: [ReactMeteorData],

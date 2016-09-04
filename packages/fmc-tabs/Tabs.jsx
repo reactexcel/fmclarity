@@ -1,15 +1,14 @@
 import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-IpsoTabso = React.createClass(
+IpsoTabso = class IpsoTabso extends React.Component
 {
-    getInitialState()
+    constructor()
     {
-        return {
+        super();
+        this.state = {
             active: 0
         }
-    },
+    }
 
     selectTab( idx )
     {
@@ -21,44 +20,56 @@ IpsoTabso = React.createClass(
         {
             active: idx
         } );
-    },
+    }
 
     render()
     {
-        var active = this.state.active;
-        var selectTab = this.selectTab;
-        var tabs = _.filter( this.props.tabs, function( t )
+        let active      = this.state.active,
+            content     = null;
+
+        let tabs = _.filter( this.props.tabs, function( t )
         {
             return !t.hide;
         } )
-        var content = tabs[ active ] ? tabs[ active ].content : null;
+
+        if ( tabs[active] != null )
+        {
+            content = tabs[ active ].content;
+        }
+
         return (
             <div className="tab-panel">
+                {/* container for the tabs */}            
                 <div className="panel-heading">
                     <div className="row" style={{margin:0}}>
                         <div className="col-md-12">
                             <div className="row tab-row">
-                                {tabs.map(function(i,idx){
-                                    return i.hide?null:(
-                                            <div 
-                                                onClick={selectTab.bind(null,idx)} 
-                                                className={(idx==active?"ipso-tab active":"ipso-tab")}
-                                                key={idx}
-                                            >
-                                                <div className="tab">{i.tab}</div>
-                                                <div className="highlight"/>
-                                            </div>
-                                        )
-                                })}
+
+                                {/**************************************************/
+                                tabs.map( (i,idx) => { return i.hide?null:(
+                                    <div 
+                                        key = { idx }
+                                        className = { ( idx==active ? "ipso-tab active" : "ipso-tab" ) }
+                                        onClick = { () => { this.selectTab(idx) } } 
+                                    >
+                                        <div className="tab">
+                                            {i.tab}
+                                        </div>
+                                        <div className="highlight"/>
+                                    </div>
+                                )})
+                                /**************************************************/}
+
                             </div>
                         </div>
                     </div>
                 </div>
+                {/* container for the current active tab pane */}
                 <div className="tab-pane active">
                     {content}
                 </div>
+
             </div>
         )
     }
-
-} );
+}

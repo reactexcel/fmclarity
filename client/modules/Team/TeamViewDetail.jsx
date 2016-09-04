@@ -1,10 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
-import
-{
-	ReactMeteorData
-}
-from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ContactList } from 'meteor/fmc:doc-members';
 
 TeamViewDetail = React.createClass(
 {

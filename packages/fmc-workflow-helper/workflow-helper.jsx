@@ -84,7 +84,7 @@ export default function( collection )
 		{
 			if ( !Meteor.isServer )
 			{
-				request = collection._transform( request );
+				//request = collection._transform( request );
 				Modal.show(
 				{
 					content:

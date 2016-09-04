@@ -14,16 +14,8 @@ Package.onUse(function(api) {
 	]);
 
 	api.addFiles([
-		'DocMembers.js',
-		'views/Contact.css',
-		'views/ContactList.jsx',
-		'views/ContactCard.jsx'
+		'source/Contact.css'
 	]);
 
-	api.export([
-		'DocMembers',
-		'ContactAvatarSmall',
-		'ContactCard',
-		'ContactList'
-	]);
+	api.mainModule( 'index.js' );
 });

@@ -1,15 +1,44 @@
 if ( Meteor.isClient )
 {
-    require( '/client/modules/Facility/MDFacilitySelector.jsx' );
     require( '/client/modules/Compliance/MDPPMEventSelector.jsx' );
 }
 
 ComplianceRuleSchema = {
+
     facility:
     {
-        type: Object,
-        input: Meteor.isClient ? MDFacilitySelector : null
+        label: "Facility",
+        description: "The site for this job",
+        relation:
+        {
+            type: ORM.OneToOne,
+            source: Facilities
+        },
+        input: "MDSelect",
+
+        options: ( item ) =>
+        {
+            return {
+                items: ( item.team ? item.team.facilities : null ),
+                view: ( Meteor.isClient ? FacilitySummary : null ),
+
+                transform: ( item ) =>
+                {
+                    if( item == null) {
+                        return;
+                    }
+                    item.level = null;
+                    item.area = null;
+                    item.identifier = null;
+                    item.service = null;
+                    item.subservice = null;
+                    item.supplier = null;
+                }
+            }
+        },
     },
+
+
     type:
     {
         label: "Check type",

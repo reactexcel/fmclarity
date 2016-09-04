@@ -80,7 +80,7 @@ loggedIn.route( '/change-password',
   {
     mount( BlankLayout,
     {
-      content: <PageChangePassword/>
+      content: <PageChangePassword />
     } );
   }
 } )
@@ -92,7 +92,7 @@ loggedIn.route( '/pmp',
   {
     mount( MainLayout,
     {
-      content: <PageMaintenence/>
+      content: <PageMaintenence />
     } );
   }
 } );
@@ -104,7 +104,7 @@ loggedIn.route( '/abc',
   {
     mount( MainLayout,
     {
-      content: <ServicePageIndex/>
+      content: <ServicePageIndex />
     } );
   }
 } );
@@ -116,7 +116,7 @@ loggedIn.route( '/requests',
   {
     mount( MainLayout,
     {
-      content: <RequestsPageIndex/>
+      content: <RequestsPageIndexContainer />
     } );
   }
 } );
@@ -128,7 +128,7 @@ loggedIn.route( '/suppliers',
   {
     mount( MainLayout,
     {
-      content: <SupplierIndexPage />
+      content: <TeamPageSuppliersContainer />
     } );
   }
 } );
@@ -176,7 +176,7 @@ loggedIn.route( '/portfolio',
   {
     mount( MainLayout,
     {
-      content: <FacilityPageIndex />
+      content: <FacilityPageIndexContainer />
     } );
   }
 } );

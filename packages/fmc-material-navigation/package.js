@@ -18,7 +18,8 @@ Package.onUse( function ( api )
 		'./source/TopNavigationBar.jsx',
 		'./source/TopNavigationBar.less',
 		'./source/UserProfileMenu.less',
-		'./source/Menu.less'
+		'./source/Menu.less',
+		'./source/NavList.less'
 	] );
 
 	api.mainModule( 'index.js' );
