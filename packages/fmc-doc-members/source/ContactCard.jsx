@@ -4,8 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ContactAvatarSmall from './ContactAvatarSmall.jsx';
 import Contact2Line from './Contact2Line.jsx';
 
-export default function ContactCard ( props )
-{
+export default function ContactCard( props ) {
 
 	let contact = props.item,
 		profile = props.item,
@@ -14,17 +13,13 @@ export default function ContactCard ( props )
 		view = null,
 		role = null;
 
-	if ( contact.getProfile )
-	{
+	if ( contact.getProfile ) {
 		profile = contact.getProfile();
 	}
 
-	if ( group != null )
-	{
+	if ( group != null ) {
 		role = RBAC.getRole( contact, props.group );
-	}
-	else if ( props.team )
-	{
+	} else if ( props.team ) {
 		role = RBAC.getRole( contact, props.team );
 	}
 

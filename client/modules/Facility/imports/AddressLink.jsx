@@ -1,7 +1,6 @@
 import React from 'react';
 
-export default function AddressLink( props )
-{
+export default function AddressLink( props ) {
 	let addressString = makeAddressString( props.item ),
 		style = {
 			color: '#000',
@@ -16,11 +15,9 @@ export default function AddressLink( props )
 	)
 
 
-	function makeAddressString( a )
-	{
+	function makeAddressString( a ) {
 		var str = '';
-		if ( a )
-		{
+		if ( a ) {
 			str =
 				( a.streetNumber ? a.streetNumber : '' ) +
 				( a.streetName ? ( ' ' + a.streetName ) : '' ) +
@@ -31,9 +28,8 @@ export default function AddressLink( props )
 		return str.length ? str : '';
 	}
 
-	function openMap( addressString )
-	{
+	function openMap( addressString ) {
 		let url = `http://maps.google.com.au/?q=${addressString}`;
 		window.open( url, 'window', 'toolbar=no, menubar=no, location=no, resizable=yes' );
-	}	
+	}
 }

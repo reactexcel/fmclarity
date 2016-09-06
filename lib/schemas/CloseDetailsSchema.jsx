@@ -1,12 +1,10 @@
 CloseDetailsSchema = {
-    attendanceDate:
-    {
+    attendanceDate: {
         label: "Attendence date and time",
         input: "MDDateTime",
         size: 6
     },
-    completionDate:
-    {
+    completionDate: {
         label: "Completion date and time",
         input: "MDDateTime",
         size: 6
@@ -17,59 +15,47 @@ CloseDetailsSchema = {
       input:"FileField",
     },
     */
-    serviceReport:
-    {
+    serviceReport: {
         label: "Service report",
         input: "FileField"
     },
-    invoice:
-    {
+    invoice: {
         label: "Invoice",
         input: "FileField"
     },
-    furtherWorkRequired:
-    {
+    furtherWorkRequired: {
         label: "Further work required",
         input: "switch"
     },
-    furtherWorkDescription:
-    {
+    furtherWorkDescription: {
         label: "Details of further work",
         input: "mdtextarea",
-        condition( item )
-        {
+        condition( item ) {
             //I have a hunch this is broken
             //shouldn't we be sending in the subobject as item?
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
     },
-    furtherPriority:
-    {
+    furtherPriority: {
         label: "Priority",
         input: "MDSelect",
-        options:
-        {
+        options: {
             items: [ "Scheduled", "Standard", "Urgent", "Critical" ]
         },
-        condition( item )
-        {
+        condition( item ) {
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
     },
-    furtherQuote:
-    {
+    furtherQuote: {
         label: "Quote",
         input: "FileField",
-        condition( item )
-        {
+        condition( item ) {
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
     },
-    furtherQuoteValue:
-    {
+    furtherQuoteValue: {
         label: "Value of quote",
-        condition( item )
-        {
+        condition( item ) {
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
     }

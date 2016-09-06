@@ -11,10 +11,8 @@ Issues.forms = {
 }
 
 
-function actionGetQuote( request, user )
-{
-	Issues.save( request,
-	{
+function actionGetQuote( request, user ) {
+	Issues.save( request, {
 		quoteIsPreApproved: request.quoteIsPreApproved,
 		status: 'Quoting'
 	} );
@@ -23,21 +21,17 @@ function actionGetQuote( request, user )
 	request.updateSupplierManagers();
 	request = Issues.findOne( request._id );
 
-	request.distributeMessage(
-	{
+	request.distributeMessage( {
 		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier manager" ],
-		message:
-		{
+		message: {
 			verb: "requested a quote for",
 			subject: "Work order #" + request.code + " has a new quote request"
 		}
 	} );
 }
 
-function actionEdit( request, user )
-{
-	if ( request.type == "Preventative" )
-	{
+function actionEdit( request, user ) {
+	if ( request.type == "Preventative" ) {
 		request.status = "PMP";
 		request.priority = "Scheduled";
 	}
@@ -47,15 +41,12 @@ function actionEdit( request, user )
 //////////////////////////////////////////////////////
 // Draft
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'Draft' ],
-{
-	edit:
-	{
+Issues.workflow.addState( [ 'Draft' ], {
+	edit: {
 		label: 'Edit',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "Edit request.",
 			fields: Issues.forms.create,
 			//onSubmit: actionEdit
@@ -63,18 +54,15 @@ Issues.workflow.addState( [ 'Draft' ],
 		method: actionEdit
 	},
 
-	create:
-	{
+	create: {
 		label: "Create", //dont think this is used?
 
-		authentication: ( ...args ) =>
-		{
+		authentication: ( ...args ) => {
 			AuthHelpers.memberOfRelatedTeam( ...args ) && !
 				AuthHelpers.managerOfRelatedTeam( ...args )
 		},
 
-		validation( request )
-		{
+		validation( request ) {
 			return true;
 			return (
 				request.name && request.name.length &&
@@ -84,39 +72,30 @@ Issues.workflow.addState( [ 'Draft' ],
 			)
 		},
 
-		form:
-		{
+		form: {
 			title: "Please tell us a little bit more about the work that is required.",
 			fields: Issues.forms.create
 		},
 
-		method: function( request )
-		{
-			if ( request.type == "Preventative" )
-			{
+		method: function( request ) {
+			if ( request.type == "Preventative" ) {
 				request.status = "PMP";
 				request.priority = "Scheduled";
-			}
-			else
-			{
+			} else {
 				request.status = "New";
 			}
 
-			Meteor.call( 'Issues.save', request, ( err, response ) =>
-			{
-				console.log(
-				{
+			Meteor.call( 'Issues.save', request, ( err, response ) => {
+				console.log( {
 					err,
 					response
 				} );
 			} );
 
 			request = Issues.findOne( request._id );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "created",
 					subject: `Work order #${request.code} has been created`,
 					body: request.description
@@ -125,12 +104,10 @@ Issues.workflow.addState( [ 'Draft' ],
 		}
 	},
 
-	approve:
-	{
+	approve: {
 		label: 'Approve',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		validation( request )
-		{
+		validation( request ) {
 			return ( request.supplier && ( request.supplier._id || request.supplier.name ) )
 		},
 		/*form:{
@@ -140,28 +117,23 @@ Issues.workflow.addState( [ 'Draft' ],
 		method: actionIssue, //onSubmit?
 	},
 
-	'get quote':
-	{
+	'get quote': {
 		label: 'Get quote',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		validation( request )
-		{
+		validation( request ) {
 			return ( request.supplier && ( request.supplier._id || request.supplier.name ) )
 		},
-		form:
-		{
+		form: {
 			title: "Do you want to pre-approve this quote?",
 			fields: [ 'quoteIsPreApproved' ]
 		},
 		method: actionGetQuote
 	},
 
-	delete:
-	{
+	delete: {
 		label: 'Delete',
 		authentication: [ "owner", "facility manager", "team manager" ],
-		method: function( request )
-		{
+		method: function( request ) {
 			Issues.remove( request._id );
 			Modal.hide();
 		}
@@ -171,16 +143,13 @@ Issues.workflow.addState( [ 'Draft' ],
 //////////////////////////////////////////////////////
 // PMP
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'PMP' ],
-{
+Issues.workflow.addState( [ 'PMP' ], {
 
-	edit:
-	{
+	edit: {
 		label: 'Edit',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "Edit request.",
 			fields: Issues.forms.create,
 			//onSubmit: actionEdit
@@ -188,18 +157,15 @@ Issues.workflow.addState( [ 'PMP' ],
 		method: actionEdit
 	},
 
-	create:
-	{
+	create: {
 		label: "Instantiate", //dont think this is used?
 
-		authentication: ( ...args ) =>
-		{
+		authentication: ( ...args ) => {
 			AuthHelpers.memberOfRelatedTeam( ...args ) && !
 				AuthHelpers.managerOfRelatedTeam( ...args )
 		},
 
-		validation( request )
-		{
+		validation( request ) {
 			//console.log(request);
 			return true;
 			return (
@@ -210,8 +176,7 @@ Issues.workflow.addState( [ 'PMP' ],
 			)
 		},
 
-		form:
-		{
+		form: {
 			title: "Please tell us a little bit more about the work that is required.",
 			fields: Issues.forms.create,
 			/*validation: function( request )
@@ -227,25 +192,19 @@ Issues.workflow.addState( [ 'PMP' ],
 			},*/
 		},
 
-		method: function( request )
-		{
-			if ( request.type == "Preventative" )
-			{
+		method: function( request ) {
+			if ( request.type == "Preventative" ) {
 				request.status = "PMP";
 				request.priority = "Scheduled";
-			}
-			else
-			{
+			} else {
 				request.status = "New";
 			}
 
 			Issues.save( request );
 			request = Issues.findOne( request._id );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "created",
 					subject: "Work order #" + request.code + " has been created",
 					body: request.description
@@ -254,12 +213,10 @@ Issues.workflow.addState( [ 'PMP' ],
 		}
 	},
 
-	approve:
-	{
+	approve: {
 		label: 'Instantiate',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		validation( request )
-		{
+		validation( request ) {
 			return ( request.supplier && ( request.supplier._id || request.supplier.name ) )
 		},
 		/*form:{
@@ -269,12 +226,10 @@ Issues.workflow.addState( [ 'PMP' ],
 		method: actionIssue, //onSubmit?
 	},
 
-	delete:
-	{
+	delete: {
 		label: 'Delete',
 		authentication: [ "owner", "facility manager", "team manager" ],
-		method: function( request )
-		{
+		method: function( request ) {
 			Issues.remove( request._id );
 			Modal.hide();
 		}
@@ -284,16 +239,13 @@ Issues.workflow.addState( [ 'PMP' ],
 //////////////////////////////////////////////////////
 // New, Quoted
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'New', 'Quoted' ],
-{
+Issues.workflow.addState( [ 'New', 'Quoted' ], {
 
-	edit:
-	{
+	edit: {
 		label: 'Edit',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "Edit request.",
 			fields: Issues.forms.create,
 			//onSubmit: actionEdit
@@ -301,12 +253,10 @@ Issues.workflow.addState( [ 'New', 'Quoted' ],
 		method: actionEdit
 	},
 
-	approve:
-	{
+	approve: {
 		label: 'Approve',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		validation: function( request )
-		{
+		validation: function( request ) {
 			return ( request.supplier && ( request.supplier._id || request.supplier.name ) )
 		},
 		/*form:{
@@ -316,43 +266,34 @@ Issues.workflow.addState( [ 'New', 'Quoted' ],
 		method: actionIssue, //onSubmit?
 	},
 
-	'get quote':
-	{
+	'get quote': {
 		label: 'Get quote',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		validation: function( request )
-		{
+		validation: function( request ) {
 			return ( request.supplier && ( request.supplier._id || request.supplier.name ) )
 		},
-		form:
-		{
+		form: {
 			title: "Do you want to pre-approve this quote?",
 			fields: [ 'quoteIsPreApproved' ]
 		},
 		method: actionGetQuote
 	},
 
-	reject:
-	{
+	reject: {
 		label: 'Reject',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		form:
-		{
+		form: {
 			title: "What is your reason for rejecting this request?",
 			fields: [ 'rejectDescription' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				status: "Rejected"
 			} );
 			request = Issues._transform( request );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "rejected",
 					subject: "Work order #" + request.code + " has been rejected",
 					body: request.rejectDescription
@@ -365,32 +306,25 @@ Issues.workflow.addState( [ 'New', 'Quoted' ],
 //////////////////////////////////////////////////////
 // Quoting
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Quoting',
-{
-	'send quote':
-	{
+Issues.workflow.addState( 'Quoting', {
+	'send quote': {
 		label: "Quote",
 		authentication: AuthHelpers.memberOfSuppliersTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "Please attach you quote document and fill in the value",
 			//so this should prob be a subschema???
 			fields: [ 'quote', 'quoteValue' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				costThreshold: parseInt( request.quoteValue ),
 				status: request.quoteIsPreApproved ? 'In Progress' : 'Quoted'
 			} );
 			request = Issues.findOne( request._id );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "provided a quote for",
 					subject: "Work order #" + request.code + " has a new quote",
 					body: request.rejectDescription
@@ -403,40 +337,32 @@ Issues.workflow.addState( 'Quoting',
 //////////////////////////////////////////////////////
 // Issued
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Issued',
-{
-	accept:
-	{
+Issues.workflow.addState( 'Issued', {
+	accept: {
 		label: "Accept",
 		//so this should be more of a hide:function() pattern
-		form:
-		{
+		form: {
 			title: "Please provide eta and, if appropriate, an assignee.",
 			//so this should prob be a subschema???
 			fields: [ 'eta', 'assignee', 'acceptComment' ]
 		},
 		authentication: AuthHelpers.memberOfSuppliersTeam,
-		validation: function( request )
-		{
+		validation: function( request ) {
 			return !request.quoteRequired || request.quote;
 		},
-		method: function( request, user )
-		{
+		method: function( request, user ) {
 			console.log( request );
 			var assignee = request.assignee;
-			Issues.save( request,
-			{
+			Issues.save( request, {
 				status: 'In Progress',
 				eta: request.eta,
 				acceptComment: request.acceptComment
 			} );
 			request = Issues._transform( request );
 			request.setAssignee( request.assignee );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "accepted",
 					subject: "Work order #" + request.code + " has been accepted by the supplier",
 					body: request.acceptComment
@@ -447,27 +373,21 @@ Issues.workflow.addState( 'Issued',
 
 
 
-	reject:
-	{
+	reject: {
 		label: 'Reject',
 		authentication: AuthHelpers.memberOfSuppliersTeam,
-		form:
-		{
+		form: {
 			title: "What is your reason for rejecting this request?",
 			form: [ 'rejectDescription' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				status: "Rejected"
 			} );
 			request = Issues.findOne( request._id );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
-				message:
-				{
+				message: {
 					verb: "rejected",
 					subject: "Work order #" + request.code + " has been rejected by the supplier",
 					body: request.rejectDescription
@@ -477,27 +397,21 @@ Issues.workflow.addState( 'Issued',
 	},
 
 
-	delete:
-	{
+	delete: {
 		label: 'Delete',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		form:
-		{
+		form: {
 			title: "What is your reason for deleting this request?",
 			fields: [ 'rejectDescription' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				status: Issues.STATUS_DELETED
 			} );
 			request = Issues.findOne( request._id );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
-				message:
-				{
+				message: {
 					verb: "deleted",
 					subject: "Work order #" + request.code + " has been deleted",
 					body: request.rejectDescription
@@ -511,10 +425,8 @@ Issues.workflow.addState( 'Issued',
 //////////////////////////////////////////////////////
 // In Progress
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'In Progress',
-{
-	complete:
-	{
+Issues.workflow.addState( 'In Progress', {
+	complete: {
 		label: 'Complete',
 		authentication: AuthHelpers.memberOfSuppliersTeam,
 		validation: true,
@@ -526,31 +438,24 @@ Issues.workflow.addState( 'In Progress',
 //////////////////////////////////////////////////////
 // Complete
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Complete',
-{
+Issues.workflow.addState( 'Complete', {
 
-	close:
-	{
+	close: {
 		label: 'Close',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "Please leave a comment about the work for the suppliers record",
 			fields: [ 'closeComment' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				status: 'Closed'
 			} );
 			request = Issues._transform( request );
-			request.distributeMessage(
-			{
+			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
-				message:
-				{
+				message: {
 					verb: "closed",
 					subject: "Work order #" + request.code + " has been closed",
 					body: request.closeComment
@@ -559,20 +464,16 @@ Issues.workflow.addState( 'Complete',
 		}
 	},
 
-	reopen:
-	{
+	reopen: {
 		label: 'Reopen',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
-		form:
-		{
+		form: {
 			title: "What is your reason for re-opening this work order?",
 			fields: [ 'reopenReason' ]
 		},
-		method: function( request )
-		{
-			Issues.save( request,
-			{
+		method: function( request ) {
+			Issues.save( request, {
 				status: 'New'
 			} );
 		}
@@ -583,14 +484,11 @@ Issues.workflow.addState( 'Complete',
 //////////////////////////////////////////////////////
 // Closed
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Closed',
-{
-	reverse:
-	{
+Issues.workflow.addState( 'Closed', {
+	reverse: {
 		label: 'Reverse',
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		beforeMethod:
-		{
+		beforeMethod: {
 			title: "What is your reason for reversing this request?",
 			form: [ 'rejectDescription' ]
 		},
@@ -619,51 +517,40 @@ Issues.STATUS_ARCHIVED = "Archived";
 //////////////////////////////////////////////////////////
 // Issue
 //////////////////////////////////////////////////////////
-function actionIssue( request )
-{
-	Issues.save( request,
-	{
+function actionIssue( request ) {
+	Issues.save( request, {
 		status: Issues.STATUS_ISSUED,
 		issuedAt: new Date()
 	} );
 	request = Issues.findOne( request._id );
 	request.updateSupplierManagers();
 	request = Issues.findOne( request._id );
-	request.distributeMessage(
-	{
+	request.distributeMessage( {
 		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
-		message:
-		{
+		message: {
 			verb: "issued",
 			subject: "Work order #" + request.code + " has been issued",
 		}
 	} );
 
-	request.distributeMessage(
-	{
+	request.distributeMessage( {
 		recipientRoles: [ "supplier manager" ],
 		suppressOriginalPost: true,
-		message:
-		{
+		message: {
 			verb: "issued",
 			subject: "New work request from " + " " + request.team.name,
-			emailBody: function( recipient )
-			{
+			emailBody: function( recipient ) {
 				var expiry = moment( request.dueDate )
-					.add(
-					{
+					.add( {
 						days: 3
 					} )
 					.toDate();
 				var token = FMCLogin.generateLoginToken( recipient, expiry );
-				return DocMessages.render( SupplierRequestEmailView,
-				{
-					recipient:
-					{
+				return DocMessages.render( SupplierRequestEmailView, {
+					recipient: {
 						_id: recipient._id
 					},
-					item:
-					{
+					item: {
 						_id: request._id
 					},
 					token: token
@@ -678,15 +565,13 @@ function actionIssue( request )
 //////////////////////////////////////////////////////////
 // Close
 //////////////////////////////////////////////////////////
-function actionBeforeComplete( request )
-{
+function actionBeforeComplete( request ) {
 
 	request = Issues._transform( request );
 	var now = new Date();
 
 	request.closeDetails = {
-		closeDetails:
-		{
+		closeDetails: {
 			attendanceDate: now,
 			completionDate: now
 		}
@@ -698,11 +583,9 @@ function actionBeforeComplete( request )
 	}
 }
 
-function actionComplete( request )
-{
+function actionComplete( request ) {
 
-	Meteor.call( 'Issues.save', request,
-	{
+	Meteor.call( 'Issues.save', request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
 	} );
@@ -710,8 +593,7 @@ function actionComplete( request )
 
 	console.log( request );
 
-	if ( request.closeDetails.furtherWorkRequired )
-	{
+	if ( request.closeDetails.furtherWorkRequired ) {
 
 		console.log( 'further work required' );
 
@@ -734,8 +616,7 @@ function actionComplete( request )
 			costThreshold: request.closeDetails.furtherQuoteValue
 		};
 
-		if ( request.closeDetails.furtherQuote )
-		{
+		if ( request.closeDetails.furtherQuote ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
@@ -745,32 +626,24 @@ function actionComplete( request )
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
 		//I think this needs to be replaced with distribute message
-		request.distributeMessage(
-		{
-			message:
-			{
+		request.distributeMessage( {
+			message: {
 				verb: "completed",
 				subject: "Work order #" + request.code + " has been completed and a follow up has been requested"
 			}
 		} );
 
-		newRequest.distributeMessage(
-		{
-			message:
-			{
+		newRequest.distributeMessage( {
+			message: {
 				verb: "requested a follow up to " + request.getName(),
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
 				body: newRequest.description
 			}
 		} );
-	}
-	else
-	{
+	} else {
 
-		request.distributeMessage(
-		{
-			message:
-			{
+		request.distributeMessage( {
+			message: {
 				verb: "completed",
 				subject: "Work order #" + request.code + " has been completed"
 			}
@@ -778,10 +651,8 @@ function actionComplete( request )
 
 	}
 
-	if ( request.closeDetails.attachments )
-	{
-		request.closeDetails.attachments.map( function( a )
-		{
+	if ( request.closeDetails.attachments ) {
+		request.closeDetails.attachments.map( function( a ) {
 			request.attachments.push( a );
 			request.save();
 		} );
@@ -793,11 +664,9 @@ function actionComplete( request )
 //////////////////////////////////////////////////////////
 // Reverse
 //////////////////////////////////////////////////////////
-function actionReverse( request )
-{
+function actionReverse( request ) {
 	//save current request
-	Meteor.call( 'Issues.save', request,
-	{
+	Meteor.call( 'Issues.save', request, {
 		status: Issues.STATUS_CLOSED,
 		priority: "Closed",
 		name: "Reversed - " + request.name,
@@ -806,8 +675,7 @@ function actionReverse( request )
 
 	//create new request
 	var newRequest = _.omit( request, '_id' );
-	_.extend( newRequest,
-	{
+	_.extend( newRequest, {
 		status: "Reversed",
 		code: 'R' + request.code,
 		exported: false,
@@ -817,11 +685,9 @@ function actionReverse( request )
 	var response = Meteor.call( 'Issues.create', newRequest );
 	//distribute message on new request
 	request = Issues.findOne( request._id );
-	request.distributeMessage(
-	{
+	request.distributeMessage( {
 		recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
-		message:
-		{
+		message: {
 			verb: "requested",
 			subject: "Work order #" + request.code + " has been reversed and reversal #" + newRequest.code + " has been created"
 		}

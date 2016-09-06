@@ -1,9 +1,7 @@
 import React from 'react';
 
-export default function FacilityThumbnail( props )
-{
-	let style = _.extend(
-	{
+export default function FacilityThumbnail( props ) {
+	let style = _.extend( {
 		backgroundImage: "url('" + props.item.thumbUrl + "')",
 		backgroundSize: "cover"
 	}, props.style )
@@ -12,7 +10,7 @@ export default function FacilityThumbnail( props )
 
 	return (
 		<div className="facility-thumbnail" style={style}>
-			{props.children}
+			{ props.children }
 		</div>
 	)
 }

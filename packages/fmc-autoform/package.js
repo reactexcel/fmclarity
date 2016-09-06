@@ -6,40 +6,13 @@ Package.describe({
 
 Package.onUse(function(api) {
 	api.use([
-		'fmc:orm',
-		'fmc:rbac',
 		'less',
 		'ecmascript',
-		'jquery',
-		'react-meteor-data',
 	]);
 
 	api.addFiles([
-		'plugins/jquery.elastic.source.js',
-		'lib/AutoForm.jsx',
-		'lib/AutoForm.less',
-		'inputs/File.jsx',
-		'inputs/MDDate.jsx',
-		'inputs/MDDate.less',
-		'inputs/MDSelect.jsx',
-		'inputs/MDSelect.less',
-		'inputs/MDText.jsx',
-		'inputs/MDText.less',
-		'inputs/MDTextArea.jsx',
-		'inputs/MDTextArea.less',
-		'inputs/Rating.jsx',
-		'inputs/Switch.jsx',
-		'inputs/Switch.less',
-		'inputs/Text.jsx',
-		'inputs/TextArea.jsx',
-		'inputs/MDDataTableMenu.jsx',
-		'inputs/MDDataTableMenu.less'
+		'source/AutoForm.less',
 	],'client');
 
-	api.export([
-		'AutoForm',
-		'AutoInput',
-		'FartoForm',
-		'Controller'
-	]);
+	api.mainModule( 'index.js' );
 });

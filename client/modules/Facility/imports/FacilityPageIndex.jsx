@@ -9,37 +9,32 @@ import FacilityPanel from './FacilityPanel.jsx';
 // and the detail view of the currently selected facility in the right navigation
 //
 
-export default class FacilityPageIndex extends React.Component 
-{
-	componentWillMount()
-	{
+export default class FacilityPageIndex extends React.Component {
+	componentWillMount() {
 		Session.selectFacility( 0 );
 	}
 
 	// Used as a callback to filterbox
 	// Causes facility selected in filterbox left nav to be also selected globally
-	handleSelect( facility )
-	{
+	handleSelect( facility ) {
 		Session.selectFacility( facility );
 	}
 
-	render()
-	{
+	render() {
 		let { team, facility, ...other } = this.props;
 
-		if ( !team ) 
-		{
+		if ( !team ) {
 			return <div/>
 		}
 
 		return <div className="facility-page animated fadeIn">
 			{/*<ClientFilter/>*/}
 	        {/*<FacilityFilter/>*/}
-	        {team.facilities.map((f)=>{
-	        	return <FacilityCard key={f._id} item={f} onClick={()=>{
+	        { team.facilities.map( (f) => {
+	        	return <FacilityCard key={f._id} item={f} onClick={ () => {
 	        		this.handleSelect(f);
 	        	}}/>
-	        })}
+	        } ) }
 	    	{/*should be in a layout class - should this be fm-layout?*/}
 
             {facility?
@@ -51,4 +46,3 @@ export default class FacilityPageIndex extends React.Component
 		</div>
 	}
 }
-

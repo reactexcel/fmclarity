@@ -1,28 +1,40 @@
 import React from "react";
 
-export default React.createClass(
-{
+export default function WorkflowButtons( { item, width = "100px" } ) {
+    let actions = item.getActions();
 
-    render()
-    {
-        var request = this.props.item;
-        var width = this.props.width || "100px";
-        var actions = request.getActions();
+    if ( actions == null && actions.length == 0 ) {
         return (
-            <div>
-                {actions&&actions.length?actions.map((action)=>{
-                    if(request.canDoAction(action)) {
-                        return <button 
-                            key={action}
-                            onClick={()=>{request.doAction(action)}}
-                            style={{width:width}} 
-                            type="button" 
-                            className={"btn btn-flat"+(!request.checkDoAction(action)?' disabled':'')}>
-                            {action}
-                        </button>
-                    }
-                }):null}
-            </div>
+            <div/>
         )
     }
-} );
+
+    return (
+        <div>
+            {actions.map( (action) => {
+
+                let classes = ['btn','btn-flat'];
+
+                if( !item.checkDoAction( action ) ) {
+                    classes.push('disabled');
+                }
+
+                if( item.canDoAction( action ) ) 
+                {
+                    return (
+
+                    <button 
+                        key = { action }
+                        onClick = { () => { item.doAction(action) } }
+                        style = { { width:width } } 
+                        type = "button" 
+                        className = {classes.join(' ')}>
+                        { action }
+                    </button>
+
+                    )
+                }
+            })}
+        </div>
+    )
+}

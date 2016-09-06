@@ -1,34 +1,30 @@
+import * as Input from 'meteor/fmc:material-inputs';
+
 RequestLocationSchema = {
-	area:
-	{
-		input: "MDSelect",
+	area: {
+		input: Input.Select,
 		size: 4,
-		options: function( item )
-		{
+		options: function( item ) {
 			return {
 				items: item.facility ? item.facility.areas : null,
 				view: NameCard
 			}
 		}
 	},
-	subarea:
-	{
-		input: "MDSelect",
+	subarea: {
+		input: Input.Select,
 		size: 4,
-		options: function( item )
-		{
+		options: function( item ) {
 			return {
 				items: item.location && item.location.area ? item.location.area.children : null,
 				view: NameCard
 			}
 		}
 	},
-	identifier:
-	{
-		input: "MDSelect",
+	identifier: {
+		input: Input.Select,
 		size: 4,
-		options: function( item )
-		{
+		options: function( item ) {
 			return {
 				items: item.location && item.location.subarea ? item.location.subarea.children : null,
 				view: NameCard

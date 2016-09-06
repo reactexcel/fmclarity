@@ -4,25 +4,19 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { ContactCard } from 'meteor/fmc:doc-members';
 
-export default DocOwnerCard = React.createClass(
-{
+export default DocOwnerCard = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
-    getMeteorData()
-    {
+    getMeteorData() {
         var q, owner, type, target;
         target = this.props.item;
         q = this.props.item.owner;
-        if ( q )
-        {
+        if ( q ) {
             type = q.type;
-            if ( type == "team" )
-            {
+            if ( type == "team" ) {
                 owner = Teams.findOne( q._id );
-            }
-            else
-            {
+            } else {
                 owner = Users.findOne( q._id );
             }
         }
@@ -33,21 +27,15 @@ export default DocOwnerCard = React.createClass(
         }
     },
 
-    showModal( selectedUser )
-    {
+    showModal( selectedUser ) {
         var type = this.data.type;
-        if ( type == "team" )
-        {
-            Modal.show(
-            {
+        if ( type == "team" ) {
+            Modal.show( {
                 content: <TeamCard 
                     item={this.data.owner} />
             } )
-        }
-        else
-        {
-            Modal.show(
-            {
+        } else {
+            Modal.show( {
                 content: <UserCard 
                     item={this.data.owner} 
                     team={this.data.target}/>
@@ -55,10 +43,8 @@ export default DocOwnerCard = React.createClass(
         }
     },
 
-    render()
-    {
-        if ( !this.data.owner )
-        {
+    render() {
+        if ( !this.data.owner ) {
             return <div/>
         }
         return (

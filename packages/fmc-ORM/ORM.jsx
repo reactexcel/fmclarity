@@ -5,7 +5,7 @@ import { check } from 'meteor/check';
 // http://guides.rubyonrails.org/association_basics.html
 
 export default ORM = {
-	collections:{},
+	collections: {},
 
 	HasOne: 1,
 	OneToOne: 1,

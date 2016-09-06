@@ -17,31 +17,23 @@ Facilities = new Model( FacilitySchema, "Facilities" );
 //well - I think if we are going to do it this way then we should at least have some sort of placeholder in the schema??
 // but then again these mixins have their own schemas defined - perhaps we shouldn't concern ourselves
 Facilities.mixins( [
-	DocThumb.config(
-	{
+	DocThumb.config( {
 		defaultThumbUrl: 0
 	} ),
-	DocAttachments.config(
-	{
+	DocAttachments.config( {
 		authentication: AuthHelpers.managerOfRelatedTeam,
 	} ),
-	DocMessages.config(
-	{
+	DocMessages.config( {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		helpers:
-		{
-			getInboxName: function()
-			{
+		helpers: {
+			getInboxName: function() {
 				return this.getName() + " announcements"
 			},
-			getWatchers: function()
-			{
+			getWatchers: function() {
 				var members = this.getMembers();
 				var watchers = [];
-				if ( members && members.length )
-				{
-					members.map( function( m )
-					{
+				if ( members && members.length ) {
+					members.map( function( m ) {
 						watchers.push( m );
 					} )
 				}
@@ -49,12 +41,10 @@ Facilities.mixins( [
 			}
 		}
 	} ),
-	DocMembers.config( [
-	{
+	DocMembers.config( [ {
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		fieldName: "members",
-	},
-	{
+	}, {
 		fieldName: "suppliers",
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		membersCollection: Teams,
@@ -72,123 +62,93 @@ Facilities.mixins( [
 
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
-Facilities.actions(
-{
-	create:
-	{
+Facilities.actions( {
+	create: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		method: RBAC.lib.create.bind( Facilities )
 	},
-	save:
-	{
+	save: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		method: RBAC.lib.save.bind( Facilities )
 	},
-	destroy:
-	{
+	destroy: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		method: RBAC.lib.destroy.bind( Facilities )
 	},
-	getAreas:
-	{
+	getAreas: {
 		authentication: AuthHelpers.memberOfRelatedTeam,
-		helper: function( facility, parent )
-		{
+		helper: function( facility, parent ) {
 			var areas;
-			if ( parent )
-			{
+			if ( parent ) {
 				areas = parent.children || [];
 			}
 			areas = facility.areas;
-			areas.sort( function( a, b )
-			{
-				if ( a && a.name && b && b.name )
-				{
+			areas.sort( function( a, b ) {
+				if ( a && a.name && b && b.name ) {
 					return ( a.name > b.name ) ? 1 : -1;
 				}
 			} )
 			return areas;
 		}
 	},
-	setAreas:
-	{
+	setAreas: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: function( facility, areas )
-		{
-			Facilities.update( facility._id,
-			{
-				$set:
-				{
+		method: function( facility, areas ) {
+			Facilities.update( facility._id, {
+				$set: {
 					areas: areas
 				}
 			} );
 		}
 	},
-	getServices:
-	{
+	getServices: {
 		authentication: AuthHelpers.memberOfRelatedTeam,
-		helper: function( facility, parent )
-		{
+		helper: function( facility, parent ) {
 			var services;
-			if ( parent )
-			{
+			if ( parent ) {
 				services = parent.children || [];
-			}
-			else
-			{
+			} else {
 				services = facility.servicesRequired || [];
 			}
-			services.sort( function( a, b )
-			{
-				if ( a && a.name && b && b.name )
-				{
+			services.sort( function( a, b ) {
+				if ( a && a.name && b && b.name ) {
 					return ( a.name > b.name ) ? 1 : -1;
 				}
 			} )
 			return services;
 		}
 	},
-	setServicesRequired:
-	{
+	setServicesRequired: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: function( facility, servicesRequired )
-		{
-			Facilities.update( facility._id,
-			{
-				$set:
-				{
+		method: function( facility, servicesRequired ) {
+			Facilities.update( facility._id, {
+				$set: {
 					servicesRequired: servicesRequired
 				}
 			} );
 		}
 	},
-	setServiceSupplier:
-	{
+	setServiceSupplier: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: function( facility, serviceIdx, subserviceIdx, supplier )
-		{
+		method: function( facility, serviceIdx, subserviceIdx, supplier ) {
 			console.log( supplier );
 			console.log( facility );
 
-			if ( serviceIdx )
-			{
+			if ( serviceIdx ) {
 				facility = Facilities._transform( facility );
 
 				//create update location string
 				updateLocation = ( "servicesRequired." + serviceIdx );
-				if ( subserviceIdx )
-				{
+				if ( subserviceIdx ) {
 					updateLocation += ( ".children." + subserviceIdx );
 				}
 				updateLocation += ".data.supplier";
 
 				//create update structure
 				var update = {
-					$set:
-					{}
+					$set: {}
 				};
-				update.$set[ updateLocation ] = supplier ?
-				{
+				update.$set[ updateLocation ] = supplier ? {
 					_id: supplier._id,
 					name: supplier.name
 				} : null;
@@ -199,33 +159,24 @@ Facilities.actions(
 		}
 	},
 
-	getTeam:
-	{
+	getTeam: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		helper: function( facility )
-		{
+		helper: function( facility ) {
 			return Teams.findOne( facility.team._id );
 		}
 	},
 
-	setupCompliance:
-	{
+	setupCompliance: {
 		authentication: true,
-		method: function( facility, rules )
-		{
+		method: function( facility, rules ) {
 			let services = facility.servicesRequired;
-			services.map( (
-				{
+			services.map( ( {
 					name
-				}, idx ) =>
-				{
-					if ( rules[ name ] )
-					{
-						services[ idx ].data = services[ idx ].data ||
-						{};
+				}, idx ) => {
+					if ( rules[ name ] ) {
+						services[ idx ].data = services[ idx ].data || {};
 						services[ idx ].data.complianceRules = [];
-						rules[ name ].map( ( rule ) =>
-						{
+						rules[ name ].map( ( rule ) => {
 							rule.facility = {
 								_id: facility._id
 							};
@@ -237,24 +188,18 @@ Facilities.actions(
 					}
 				} )
 				//console.log(services);
-			Meteor.call( 'Facilities.save', facility,
-			{
+			Meteor.call( 'Facilities.save', facility, {
 				servicesRequired: services
 			} );
 		}
 	},
 
-	setTeam:
-	{
+	setTeam: {
 		authentication: AuthHelpers.managerOfRelatedTeam,
-		helper: function( facility, team )
-		{
-			Facilities.update( facility._id,
-			{
-				$set:
-				{
-					team:
-					{
+		helper: function( facility, team ) {
+			Facilities.update( facility._id, {
+				$set: {
+					team: {
 						_id: team._id,
 						name: team.name
 					}
@@ -262,15 +207,12 @@ Facilities.actions(
 			} );
 		}
 	},
-	getAddress:
-	{
+	getAddress: {
 		authentication: true,
-		helper: function( facility )
-		{
+		helper: function( facility ) {
 			var str = '';
 			var a = facility.address;
-			if ( a )
-			{
+			if ( a ) {
 				str =
 					( a.streetNumber ? a.streetNumber : '' ) +
 					( a.streetName ? ( ' ' + a.streetName ) : '' ) +
@@ -281,56 +223,42 @@ Facilities.actions(
 			return str.length ? str : null;
 		}
 	},
-	getPrimaryContact:
-	{
+	getPrimaryContact: {
 		authentication: true,
-		helper: function( facility )
-		{
-			var contacts = facility.getMembers(
-			{
+		helper: function( facility ) {
+			var contacts = facility.getMembers( {
 				role: "manager"
 			} );
-			if ( contacts && contacts.length )
-			{
+			if ( contacts && contacts.length ) {
 				return contacts[ 0 ]
 			}
 		}
 	},
 	//this is not allowing for suppliers who have a request with this facility
-	getIssues:
-	{
+	getIssues: {
 		authentication: true,
-		helper: function( facility )
-		{
+		helper: function( facility ) {
 			var team = Session.getSelectedTeam();
-			if ( team )
-			{
-				return team.getIssues(
-				{
+			if ( team ) {
+				return team.getIssues( {
 					"facility._id": facility._id
 				} );
 			}
 		}
 	},
-	getIssueCount:
-	{
+	getIssueCount: {
 		authentication: true,
-		helper: function( facility )
-		{
+		helper: function( facility ) {
 			return facility.getIssues()
 				.length;
 		}
 	}
 } )
 
-if ( Meteor.isServer )
-{
-	Meteor.publish( 'facilities', function()
-	{
+if ( Meteor.isServer ) {
+	Meteor.publish( 'facilities', function() {
 		return Facilities.find();
 	} );
-}
-else
-{
+} else {
 	Meteor.subscribe( 'facilities' );
 }

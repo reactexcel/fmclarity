@@ -2,23 +2,27 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-export default function FacilityListTile( props )
-{
-	let { item, notification } = props;
-		contact = null;
 
-	if( item==null )
-	{
+let css = {
+	'facility-list-tile': {
+		overflow: 'hidden'
+	}
+}
+
+export default function FacilityListTile( props ) {
+	let { item, notification } = props;
+	contact = null;
+
+	if ( item == null ) {
 		return <div/>
 	}
 
-	if( item.contact != null)
-	{
+	if ( item.contact != null ) {
 		contact = item.contact.profile;
 	}
 
 	return (
-		<div>
+		<div style={css['facility-list-tile']} className="facility-list-tile">
 
 			<div className="facility-thumbnail pull-left">
 				<div style={{width:"37px",height:"37px",backgroundImage:"url('"+item.thumbUrl+"')",backgroundSize:"cover"}}/>
@@ -52,8 +56,3 @@ export default function FacilityListTile( props )
 		</div>
 	)
 }
-
-
-
-
-

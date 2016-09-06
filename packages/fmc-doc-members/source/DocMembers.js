@@ -4,60 +4,46 @@ export default DocMembers = {
 	config: getRegistrationFunc
 }
 
-function ucfirst( string )
-{
+function ucfirst( string ) {
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1, -1 );
 }
 
-function getRegistrationFunc( opts )
-{
-	if ( !_.isArray( opts ) )
-	{
+function getRegistrationFunc( opts ) {
+	if ( !_.isArray( opts ) ) {
 		opts = [ opts ];
 	}
-	return function( collection )
-	{
-		opts.map( function( o )
-		{
+	return function( collection ) {
+		opts.map( function( o ) {
 			registerCollection( collection, o );
 		} )
 	}
 }
 
-function registerCollection( collection, opts )
-{
-	opts = opts ||
-	{};
-	var fieldName = opts.fieldName || 'members';
-	var authentication = opts.authentication || AuthHelpers.managerOrOwner;
-	var membersCollection = opts.membersCollection || Users;
+function registerCollection( collection, opts ) {
+	opts = opts || {};
+	let fieldName = opts.fieldName || 'members',
+		authentication = opts.authentication || AuthHelpers.managerOrOwner,
+		membersCollection = opts.membersCollection || Users,
+		auth = null;
 
-	var auth;
-
-	if ( _.isFunction( authentication ) )
-	{
+	if ( _.isFunction( authentication ) ) {
 		auth = {
 			add: authentication,
 			remove: authentication,
 			setRole: authentication
 		}
-	}
-	else
-	{
-		var auth = {
-			add: authentication.add || function()
-			{
+	} else {
+		auth = {
+			add: authentication.add || function() {
 				return false;
 			},
-			remove: authentication.remove || function()
-			{
+			remove: authentication.remove || function() {
 				return false;
 			},
-			setRole: authentication.setRole || function()
-			{
+			setRole: authentication.setRole || function() {
 				return false;
 			}
-		};
+		}
 	}
 
 	var fn = ucfirst( fieldName );
@@ -105,60 +91,47 @@ function registerCollection( collection, opts )
 	collection.helpers( helpers );
 }
 
-function replaceMembers( collection, fieldName )
-{
-	return function( item, obj, options = {} )
-	{
+function replaceMembers( collection, fieldName ) {
+	return function( item, obj, options = {} ) {
 		//remove members with given role
 		var role = options.role;
-		if ( !role )
-		{
+		if ( !role ) {
 			return;
 		}
 		var q = {};
 		q[ fieldName ] = {
 			role: role
 		};
-		collection.update( item._id,
-		{
+		collection.update( item._id, {
 			$pull: q
 		} );
 
 		//add new member
-		if ( !_.isArray( obj ) )
-		{
+		if ( !_.isArray( obj ) ) {
 			obj = [ obj ];
 		}
 
 		var newObject = {};
-		obj.map( function( o )
-		{
-			newObject[ fieldName ] = _.extend(
-			{},
-			{
+		obj.map( function( o ) {
+			newObject[ fieldName ] = _.extend( {}, {
 				_id: o._id,
 				role: role,
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			collection.update( item._id,
-			{
+			collection.update( item._id, {
 				$push: newObject
 			} );
 		} )
 	}
 }
 
-function addMember( collection, fieldName )
-{
-	return function( item, obj, options )
-	{
+function addMember( collection, fieldName ) {
+	return function( item, obj, options ) {
 
-		options = options ||
-		{};
+		options = options || {};
 
-		if ( !_.isArray( obj ) )
-		{
+		if ( !_.isArray( obj ) ) {
 			obj = [ obj ];
 		}
 
@@ -167,18 +140,14 @@ function addMember( collection, fieldName )
 
 		//console.log([obj,options]);
 
-		obj.map( function( o )
-		{
-			newObject[ fieldName ] = _.extend(
-			{},
-			{
+		obj.map( function( o ) {
+			newObject[ fieldName ] = _.extend( {}, {
 				_id: o._id,
 				role: role,
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			collection.update( item._id,
-			{
+			collection.update( item._id, {
 				$push: newObject
 			} );
 		} )
@@ -187,18 +156,13 @@ function addMember( collection, fieldName )
 	}
 }
 
-function hasMember( collection, fieldName )
-{
-	return function( item )
-	{
+function hasMember( collection, fieldName ) {
+	return function( item ) {
 		var members = this[ fieldName ];
-		if ( item && members && members.length )
-		{
-			for ( var i in members )
-			{
+		if ( item && members && members.length ) {
+			for ( var i in members ) {
 				var member = members[ i ];
-				if ( item._id == member._id )
-				{
+				if ( item._id == member._id ) {
 					return true;
 				}
 			}
@@ -207,26 +171,20 @@ function hasMember( collection, fieldName )
 	}
 }
 
-function removeMember( collection, fieldName )
-{
-	return function( item, obj )
-	{
+function removeMember( collection, fieldName ) {
+	return function( item, obj ) {
 		var newObject = {};
-		newObject[ fieldName ] = obj._id ?
-		{
+		newObject[ fieldName ] = obj._id ? {
 			_id: obj._id
 		} : obj;
-		collection.update( item._id,
-		{
+		collection.update( item._id, {
 			$pull: newObject
 		} );
 	}
 }
 
-function setMemberRole( collection, fieldName )
-{
-	return function( team, user, role )
-	{
+function setMemberRole( collection, fieldName ) {
+	return function( team, user, role ) {
 		var query = {},
 			action = {};
 		query[ '_id' ] = team._id;
@@ -239,70 +197,53 @@ function setMemberRole( collection, fieldName )
 	}
 }
 
-function getMembers( collection, fieldName )
-{
-	return function( filter )
-	{
+function getMembers( collection, fieldName ) {
+	return function( filter ) {
 		let item = this,
 			ids = [],
 			names = [],
 			members = item[ fieldName ];
 
-		members ? members.map( ( m ) =>
-		{
-			if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) )
-			{
-				if ( m._id )
-				{
+		members ? members.map( ( m ) => {
+			if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
+				if ( m._id ) {
 					ids.push( m._id );
-				}
-				else if ( m.name )
-				{
+				} else if ( m.name ) {
 					names.push( m.name );
 				}
 			}
 		} ) : null;
 
-		return collection.find( 
-			{
+		return collection.find( {
 				$or: [
 					{ _id: { $in: ids } },
 					{ name: { $in: names } }
 				]
-			}, 
-			{ 
-				sort: { name: 1, _id: 1 } 
-			}
-		)
-		.fetch();
+			}, {
+				sort: { name: 1, _id: 1 }
+			} )
+			.fetch();
 	}
 }
 
-function getMemberRelation( collection, fieldName )
-{
-	return function( member )
-	{
+function getMemberRelation( collection, fieldName ) {
+	return function( member ) {
 		var group = this;
 		//console.log([group,group[fieldName]]);
-		for ( var i in group[ fieldName ] )
-		{
+		for ( var i in group[ fieldName ] ) {
 			var relation = group[ fieldName ][ i ];
-			if ( relation && member && relation._id == member._id )
-			{
+			if ( relation && member && relation._id == member._id ) {
 				return relation;
 			}
 		}
 	}
 }
 
-function getMemberRole( collection, fieldName )
-{
-	return function( member )
-	{
+function getMemberRole( collection, fieldName ) {
+	return function( member ) {
 		var group = this;
 		var relation = group.getMemberRelation( member );
-		if ( relation )
-		{
+		if ( relation ) {
 			return relation.role;
 		}
 	}

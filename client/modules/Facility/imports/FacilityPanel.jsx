@@ -4,54 +4,43 @@ import ActionsMenu from 'meteor/fmc:actions-menu';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 import '/client/modules/Compliance/PMPList.jsx';
 
-export default function FacilityPanel( props )
-{
-	let { team, facility } = props;
+export default function FacilityPanel( props ) {
+    let { team, facility } = props;
 
-	function getMenu()
-	{
-		let menu = [];
+    function getMenu() {
+        let menu = [];
 
-		if ( facility && facility.canSave() )
-		{
-			menu.push(
-			{
-				label: "Edit",
-				action()
-				{
-					Modal.show(
-					{
-						content: <FacilityViewEdit item={ facility } />
-					} )
-				}
-			} );
-		}
+        if ( facility && facility.canSave() ) {
+            menu.push( {
+                label: "Edit",
+                action() {
+                    Modal.show( {
+                        content: <FacilityViewEdit item={ facility } />
+                    } )
+                }
+            } );
+        }
 
-		if ( facility.canDestroy() )
-		{
-			menu.push(
-			{
-				label: "Delete",
-				action()
-				{
-					facility.destroy();
-				}
-			} );
-		}
+        if ( facility.canDestroy() ) {
+            menu.push( {
+                label: "Delete",
+                action() {
+                    facility.destroy();
+                }
+            } );
+        }
 
-		menu.push(
-		{
-			label: "Back",
-			action()
-			{
-				Session.selectFacility( 0 );
-			}
-		} )
-		return menu;
-	}
+        menu.push( {
+            label: "Back",
+            action() {
+                Session.selectFacility( 0 );
+            }
+        } )
+        return menu;
+    }
 
-	return (
-		<div>
+    return (
+        <div>
             <div className="facility-card">
 
                 <div className="contact-thumbnail">
@@ -115,7 +104,7 @@ export default function FacilityPanel( props )
                     }
                 ]} />                
             </div>
-        	<ActionsMenu items={getMenu()} />
-		</div>
-	)
+            <ActionsMenu items={getMenu()} />
+        </div>
+    )
 }

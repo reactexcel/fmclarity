@@ -8,11 +8,9 @@ import './Requests.jsx';
 // for starters I should probably put them in another file - and then think of 
 // what to do with them ultimately later...
 Issues.actions = {
-    search( params )
-    {
+    search( params ) {
         var q = _.omit( params, 'month' );
-        if ( params.month )
-        {
+        if ( params.month ) {
             var month = parseInt( params.month );
             var now = moment()
                 .setMonth( month );
@@ -26,8 +24,7 @@ Issues.actions = {
         }
         return Issues.find( q );
     },
-    searchByDate( args )
-    {
+    searchByDate( args ) {
         var q = args.q;
         var config = args.config;
 
@@ -49,18 +46,14 @@ Issues.actions = {
 
         var now = start.clone();
         var lastLabel = '';
-        while ( !now.isAfter( end ) )
-        {
+        while ( !now.isAfter( end ) ) {
             var startDate = now.clone();
             var endDate = now.clone()
                 .endOf( groupBy );
             var label = startDate.format( format );
-            if ( label != lastLabel )
-            {
+            if ( label != lastLabel ) {
                 lastLabel = label;
-            }
-            else
-            {
+            } else {
                 label = '';
             }
             q.createdAt = {
@@ -75,13 +68,11 @@ Issues.actions = {
         //console.log(rs);
         return rs;
     },
-    find( params )
-    {
+    find( params ) {
         return this.search( params )
             .fetch();
     },
-    count( params )
-    {
+    count( params ) {
         return this.search( params )
             .count();
     }

@@ -1,39 +1,31 @@
 import React from "react";
 
-IpsoTabso = class IpsoTabso extends React.Component
-{
-    constructor()
-    {
+IpsoTabso = class IpsoTabso extends React.Component {
+    constructor() {
         super();
         this.state = {
             active: 0
         }
     }
 
-    selectTab( idx )
-    {
-        if ( this.props.tabs[ idx ].onClick )
-        {
+    selectTab( idx ) {
+        if ( this.props.tabs[ idx ].onClick ) {
             idx = this.props.tabs[ idx ].onClick();
         }
-        this.setState(
-        {
+        this.setState( {
             active: idx
         } );
     }
 
-    render()
-    {
-        let active      = this.state.active,
-            content     = null;
+    render() {
+        let active = this.state.active,
+            content = null;
 
-        let tabs = _.filter( this.props.tabs, function( t )
-        {
+        let tabs = _.filter( this.props.tabs, function( t ) {
             return !t.hide;
         } )
 
-        if ( tabs[active] != null )
-        {
+        if ( tabs[ active ] != null ) {
             content = tabs[ active ].content;
         }
 

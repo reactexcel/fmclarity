@@ -4,45 +4,36 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 //todo - create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
 
-const Calendar = React.createClass(
-{
+const Calendar = React.createClass( {
     mixins: [ ReactMeteorData ],
 
-    getMeteorData()
-    {
+    getMeteorData() {
         var data = {
             user: Meteor.user()
         };
 
-        if ( data.user )
-        {
+        if ( data.user ) {
             data.team = data.user.getTeam();
-            if ( data.team )
-            {
+            if ( data.team ) {
                 var query = {
                     "team._id": data.team._id
                 };
                 var facility = Session.get( "selectedFacility" );
-                if ( facility )
-                {
+                if ( facility ) {
                     query[ "facility._id" ] = facility._id;
                 }
-                query.$or = [
-                {
+                query.$or = [ {
                     status: Issues.STATUS_NEW
-                },
-                {
+                }, {
                     status: Issues.STATUS_ISSUED
-                },
-                {
+                }, {
                     status: "PMP"
-                }];
+                } ];
                 /*query.dueDate = {
                     $gte:moment().startOf('month').toDate(),
                     $lte:moment().endOf('month').toDate()
                 }*/
-                data.requests = data.user.getRequests( query,
-                {
+                data.requests = data.user.getRequests( query, {
                     expandPMP: true
                 } );
             }
@@ -50,8 +41,7 @@ const Calendar = React.createClass(
         return data;
     },
 
-    addEvents()
-    {
+    addEvents() {
         if ( !this.data.requests )
             return;
 
@@ -65,12 +55,9 @@ const Calendar = React.createClass(
 
         var events = this.events.events;
         events.length = 0;
-        this.data.requests.map( ( i ) =>
-        {
-            if ( i.dueDate )
-            {
-                events.push(
-                {
+        this.data.requests.map( ( i ) => {
+            if ( i.dueDate ) {
+                events.push( {
                     title: `#${i.code} ${i.name}`,
                     color: colors[ i.priority ],
                     start: i.dueDate,
@@ -84,24 +71,19 @@ const Calendar = React.createClass(
         $( this.refs.calendar ).fullCalendar( 'addEventSource', events );
     },
 
-    componentDidMount()
-    {
+    componentDidMount() {
         this.events = {
             events: []
         };
-        $( this.refs.calendar ).fullCalendar(
-        {
+        $( this.refs.calendar ).fullCalendar( {
             //height:500,
-            eventClick( event )
-            {
-                if ( event.request )
-                {
+            eventClick( event ) {
+                if ( event.request ) {
                     FABActions.viewRequest( event.request );
                 }
             },
             eventLimit: true,
-            header:
-            {
+            header: {
                 left: 'prev',
                 center: 'title,today',
                 right: 'next'
@@ -110,24 +92,20 @@ const Calendar = React.createClass(
         this.addEvents();
     },
 
-    componentDidUpdate()
-    {
+    componentDidUpdate() {
         this.addEvents();
     },
 
-    render()
-    {
+    render() {
         return (
             <div ref="calendar"></div>
         )
     }
 
-})
+} )
 
-CalendarPage = React.createClass(
-{
-    render()
-    {
+CalendarPage = React.createClass( {
+    render() {
         return (
             <div style={{display:"inline"}}>
             <FacilityFilter/>
@@ -140,8 +118,7 @@ CalendarPage = React.createClass(
 } )
 
 
-export
-{
+export {
     Calendar,
     CalendarPage
 }

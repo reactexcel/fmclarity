@@ -12,76 +12,65 @@ TeamSchema = {
     //////////////////////////////////////////////
     // Basic info
     //////////////////////////////////////////////
-    name:
-    {
+    name: {
         type: String,
         label: "Company Name",
     },
 
-    type:
-    {
+    type: {
         type: String,
         label: "Account type",
         description: "Is this an account for facility managers or suppliers?",
         input: "MDSelect",
-        condition: ( item ) =>
-        {
+        condition: ( item ) => {
             return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
         },
-        options:
-        {
+        options: {
             items: [ "fm", "contractor" ]
         },
     },
 
-    description:
-    {
+    description: {
         label: "Description",
         description: "Brief summary of services provided by this team",
         input: "mdtextarea",
         condition: "contractor"
     },
 
-    email:
-    {
+    email: {
         type: String,
         description: "The primary email contact for this team",
         label: "Email",
         //regEx:        ORM.RegEx.Email,
     },
 
-    phone:
-    {
+    phone: {
         label: "Primary phone",
         description: "Primary phone contact number",
         icon: "phone",
         type: String,
     },
 
-    phone2:
-    {
+    phone2: {
         label: "Seconday phone",
         type: String,
         description: "Secondary phone contact number",
         icon: "phone",
     },
 
-    abn:
-    {
+    abn: {
         label: "ABN",
         description: "Australian Business Number",
         type: String,
     },
 
-    address:
-    {
+    address: {
         label: "Address",
         description: "Location of primary office",
         schema: AddressSchema,
     },
 
-    thumb:
-    {
+    thumb: {
         type: String,
         label: "Thumbnail",
     },
@@ -89,8 +78,7 @@ TeamSchema = {
     //////////////////////////////////////////////
     // Settings
     //////////////////////////////////////////////      
-    defaultWorkOrderValue:
-    {
+    defaultWorkOrderValue: {
         label: "Default value for work orders",
         description: "Preset initial value for all newly created work orders",
         type: Number,
@@ -98,25 +86,21 @@ TeamSchema = {
         condition: "fm"
     },
 
-    services:
-    {
+    services: {
         label: "Services",
         type: [ String ],
         description: "Services provided by this team",
         input: "MDSelect",
-        defaultValue: () =>
-        {
+        defaultValue: () => {
             return JSON.parse( JSON.stringify( Config.services ) )
         }
     },
 
-    timeframes:
-    {
+    timeframes: {
         label: "Time frames",
         type: Object,
         description: "Acceptable turnaround time for jobs of different priorities",
-        defaultValue: () =>
-        {
+        defaultValue: () => {
             return {
                 'Scheduled': 24 * 7 * 3600,
                 'Standard': 24 * 3600,
@@ -129,22 +113,21 @@ TeamSchema = {
     //////////////////////////////////////////////
     // Relations      
     //////////////////////////////////////////////
-    facilities:
-    {
+    facilities: {
         label: "Facilities",
         description: "Sites maintained by this team",
-        relation:
-        {
+        relation: {
             //type: ORM.OneToMany,
             //source: "Facilities",
             //key: "team._id"
-            join: ( team ) => { return Facilities.findAll( {'team._id': team._id} ) },
-            unjoin: ( team ) => { return null }
+            join: ( team ) => {
+                return Facilities.findAll( { 'team._id': team._id } ) },
+            unjoin: ( team ) => {
+                return null }
         }
     },
 
-    members:
-    {
+    members: {
         label: "Members",
         description: "Members of this team",
         /*relation:     
@@ -154,8 +137,7 @@ TeamSchema = {
         }*/
     },
 
-    suppliers:
-    {
+    suppliers: {
         label: "Suppliers",
         description: "Common suppliers for facilities within this team",
         /*relation:
@@ -166,8 +148,7 @@ TeamSchema = {
         }*/
     },
 
-    documents:
-    {
+    documents: {
         label: "Documents",
         description: "Saved team documents",
         /*relation:

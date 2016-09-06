@@ -19,6 +19,7 @@ fmc:calendar
 fmc:layout
 fmc:material-navigation
 fmc:material-misc
+fmc:material-inputs
 
 fmc:workflow-helper
 

@@ -1,17 +1,14 @@
 import React from "react";
 
-export default function Contact2Line( props )
-{
+export default function Contact2Line( props ) {
 	let contact = props.item,
 		profile = {},
 		role = props.role,
 		tenancy = "";
 
-	if ( contact )
-	{
+	if ( contact ) {
 		profile = contact.getProfile ? contact.getProfile() : contact;
-		if ( profile )
-		{
+		if ( profile ) {
 			tenancy = profile.tenancy;
 		}
 	}

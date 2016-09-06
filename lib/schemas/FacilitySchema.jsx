@@ -13,27 +13,23 @@ FacilitySchema = {
 	// Basic info
 	////////////////////////////////////////////////////
 
-	name:
-	{
+	name: {
 		label: "Name",
 		description: "A short identifier for the building (ie 12 Smith St)",
 		type: String,
 		autoFocus: true
 	},
 
-	address:
-	{
+	address: {
 		label: "Address",
 		description: "The location of the site",
 		schema: AddressSchema,
 	},
 
-	type:
-	{
+	type: {
 		label: "Property type",
 		input: "MDSelect",
-		options:
-		{
+		options: {
 			items: [
 				"Commercial",
 				"Retail",
@@ -43,24 +39,21 @@ FacilitySchema = {
 		}
 	},
 
-	description:
-	{
+	description: {
 		label: "Description",
 		description: "A brief description of the site",
 		type: String,
 		input: "mdtextarea",
 	},
 
-	size:
-	{
+	size: {
 		label: "Size",
 		description: "The net lettable area in metres squared",
 		type: Number,
 		size: 6
 	},
 
-	operatingTimes:
-	{
+	operatingTimes: {
 		label: "Operating times",
 		description: "When this site is open",
 		type: "period",
@@ -71,37 +64,31 @@ FacilitySchema = {
 	// Configuration
 	////////////////////////////////////////////////////		
 
-	levels:
-	{
+	levels: {
 		label: "Areas",
 		description: "The primary areas or zones for this site",
 		type: [ Object ],
-		defaultValue: () =>
-		{
+		defaultValue: () => {
 			return JSON.parse( JSON.stringify( Config.defaultLevels ) )
 		},
 		//input 			levels editor
 	},
 
-	areas:
-	{
+	areas: {
 		label: "Building areas",
 		description: "The main bookable or maintainable secondary areas for this site",
 		type: [ Object ],
-		defaultValue: () =>
-			{
+		defaultValue: () => {
 				return JSON.parse( JSON.stringify( Config.defaultAreas ) )
 			}
 			//input 			areas editor
 	},
 
-	servicesRequired:
-	{
+	servicesRequired: {
 		label: "Services Required",
 		description: "The services required to maintain this site",
 		type: [ Object ],
-		defaultValue: () =>
-		{
+		defaultValue: () => {
 			return JSON.parse( JSON.stringify( Config.services ) )
 		}
 	},
@@ -110,19 +97,16 @@ FacilitySchema = {
 	// Relations		
 	////////////////////////////////////////////////////
 
-	team:
-	{
+	team: {
 		label: "Team",
 		description: "The team that maintains this site",
-		relation:
-		{
+		relation: {
 			type: ORM.BelongsTo,
 			source: "Teams",
 			key: "team._id"
 		},
 		input: "MDSelect",
-		options: ( item ) =>
-		{
+		options: ( item ) => {
 
 			return {
 				items: Meteor.user().getTeams()
@@ -131,8 +115,7 @@ FacilitySchema = {
 		}
 	},
 
-	members:
-	{
+	members: {
 		label: "Members",
 		description: "Stakeholders and staff for this site",
 		/*relation:
@@ -142,8 +125,7 @@ FacilitySchema = {
 		}*/
 	},
 
-	suppliers:
-	{
+	suppliers: {
 		label: "Suppliers",
 		description: "Contractors supplying services for this facility",
 		/*relation:
@@ -153,8 +135,7 @@ FacilitySchema = {
 		}*/
 	},
 
-	documents:
-	{
+	documents: {
 		label: "Documents",
 		description: "Documents pertaining to this facility",
 		/*relation:
@@ -165,25 +146,25 @@ FacilitySchema = {
 		input: DocAttachments.DocumentExplorer
 	},
 
-	thumbUrl:
-	{
+	thumbUrl: {
 		label: "Thumbnail URL",
 		description: "URL for an icon-sized image of the facility",
-		relation:
-		{
-			join: ( facility ) => { return facility.getThumbUrl() },
-			unjoin: ( facility ) => { return null }
+		relation: {
+			join: ( facility ) => {
+				return facility.getThumbUrl() },
+			unjoin: ( facility ) => {
+				return null }
 		}
 	},
 
-	contact:
-	{
+	contact: {
 		label: "Primary contact",
 		description: "Primary contact for the facility",
-		relation:
-		{
-			join: ( facility ) => { return facility.getPrimaryContact() },
-			unjoin: ( facility ) => { return null }
+		relation: {
+			join: ( facility ) => {
+				return facility.getPrimaryContact() },
+			unjoin: ( facility ) => {
+				return null }
 		}
 	}
 

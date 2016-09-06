@@ -1,34 +1,34 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-Stepper = React.createClass({
+Stepper = React.createClass( {
     getInitialState() {
         return {
-            active:0
+            active: 0
         }
     },
 
-    selectTab(idx) {
-        if(this.props.tabs[idx]&&this.props.tabs[idx].onClick) {
-            idx = this.props.tabs[idx].onClick();
+    selectTab( idx ) {
+        if ( this.props.tabs[ idx ] && this.props.tabs[ idx ].onClick ) {
+            idx = this.props.tabs[ idx ].onClick();
         }
-        this.setState({
-            active:idx
-        });
+        this.setState( {
+            active: idx
+        } );
     },
 
     selectNext() {
-    	var idx = parseInt(this.state.active);
-    	this.selectTab(idx+1);
-    	if(this.state.active>=this.props.tabs.length-1) {
-    		Modal.hide();
-    	}
+        var idx = parseInt( this.state.active );
+        this.selectTab( idx + 1 );
+        if ( this.state.active >= this.props.tabs.length - 1 ) {
+            Modal.hide();
+        }
     },
 
     selectPrev() {
-    	var idx = this.state.active;
-    	this.selectTab(parseInt(idx)-1);
+        var idx = this.state.active;
+        this.selectTab( parseInt( idx ) - 1 );
     },
 
     render() {
@@ -49,24 +49,24 @@ Stepper = React.createClass({
                                     {i.tab}
                                 </div>
                                 {active==idx?
-                                	<div className="ipso-stepso-instructions">
-                                		{i.instructions||i.guide}
-                                	</div>
-                            	    :null
-                            	}
+                                    <div className="ipso-stepso-instructions">
+                                        {i.instructions||i.guide}
+                                    </div>
+                                    :null
+                                }
 
                                 <div className="ipso-stepso-content">
-                                	{active==idx?
-                                		<div>
-                                			{i.content}
-			                                <div>
-												<button onClick={selectNext} type="button" className="btn btn-primary">
-													<span>{idx<(tabs.length-1)?"Next":"Finish"}</span>
-												</button>
-			                                </div>
-                                		</div>
-                                		:null
-                                	}
+                                    {active==idx?
+                                        <div>
+                                            {i.content}
+                                            <div>
+                                                <button onClick={selectNext} type="button" className="btn btn-primary">
+                                                    <span>{idx<(tabs.length-1)?"Next":"Finish"}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        :null
+                                    }
                                 </div>
 
                             </div>
@@ -77,4 +77,4 @@ Stepper = React.createClass({
         )
     }
 
-});
+} );

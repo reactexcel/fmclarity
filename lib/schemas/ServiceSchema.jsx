@@ -1,30 +1,25 @@
-if ( Meteor.isClient )
-{
+if ( Meteor.isClient ) {
     require( '/client/modules/Compliance/MDPPMEventSelector.jsx' );
 }
 
 ComplianceRuleSchema = {
 
-    facility:
-    {
+    facility: {
         label: "Facility",
         description: "The site for this job",
-        relation:
-        {
+        relation: {
             type: ORM.OneToOne,
             source: Facilities
         },
         input: "MDSelect",
 
-        options: ( item ) =>
-        {
+        options: ( item ) => {
             return {
                 items: ( item.team ? item.team.facilities : null ),
                 view: ( Meteor.isClient ? FacilitySummary : null ),
 
-                transform: ( item ) =>
-                {
-                    if( item == null) {
+                transform: ( item ) => {
+                    if ( item == null ) {
                         return;
                     }
                     item.level = null;
@@ -39,12 +34,10 @@ ComplianceRuleSchema = {
     },
 
 
-    type:
-    {
+    type: {
         label: "Check type",
         input: "MDSelect",
-        options:
-        {
+        options: {
             items: [
                 "Document exists",
                 "Document is current",
@@ -53,30 +46,24 @@ ComplianceRuleSchema = {
             ]
         }
     },
-    docType:
-    {
+    docType: {
         label: "Document type",
         input: "MDSelect",
         condition: [ "Document exists", "Document is current" ],
-        options:
-        {
+        options: {
             items: DocTypes
         },
     },
-    docName:
-    {
+    docName: {
         label: "Document name",
         condition: [ "Document exists", "Document is current" ]
     },
-    service:
-    {
+    service: {
         type: Object,
         input: "MDSelect",
         condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
-        options: function( item )
-        {
-            if ( item.facility )
-            {
+        options: function( item ) {
+            if ( item.facility ) {
                 return {
                     items: item.facility.servicesRequired,
                     view: ServiceListTile
@@ -84,8 +71,7 @@ ComplianceRuleSchema = {
             }
         }
     },
-    event:
-    {
+    event: {
         label: "PMP event",
         condition: "PPM event completed",
         /*
@@ -97,8 +83,7 @@ ComplianceRuleSchema = {
         }
         */
     },
-    frequency:
-    {
+    frequency: {
         condition: "PPM event completed",
         schema: RequestFrequencySchema
     },

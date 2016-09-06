@@ -5,17 +5,15 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { WorkflowButtons } from 'meteor/fmc:workflow-helper';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 
-IssueDetail = React.createClass(
-{
+import { FartoForm as AutoForm } from 'meteor/fmc:autoform';
+
+IssueDetail = React.createClass( {
     mixins: [ ReactMeteorData ],
-    getMeteorData()
-    {
+    getMeteorData() {
         var data = {};
-        if ( this.props.item && this.props.item._id )
-        {
+        if ( this.props.item && this.props.item._id ) {
             data.request = Issues.findOne( this.props.item._id );
-            if ( data.request )
-            {
+            if ( data.request ) {
                 data.owner = data.request.getOwner();
                 data.team = data.request.team;
                 data.supplier = data.request.supplier;
@@ -25,8 +23,7 @@ IssueDetail = React.createClass(
                 data.attachmentCount = data.request.attachments.length ? data.request.attachments.length : 0;
 
                 data.facility = data.request.facility;
-                if ( data.facility )
-                {
+                if ( data.facility ) {
                     data.facilityContact = data.facility.contact;
                 }
             }
@@ -34,13 +31,11 @@ IssueDetail = React.createClass(
         return data;
     },
 
-    formatDate( date )
-    {
+    formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     },
 
-    render()
-    {
+    render() {
         var request = this.data.request;
 
         if ( !request ) return <div/>
@@ -48,18 +43,13 @@ IssueDetail = React.createClass(
         var notifications = this.data.notifications;
         var thumb = request.service && request.service.name ? "img/services/" + request.service.name + ".jpg" : null;
         var contacts;
-        if ( request.members )
-        {
+        if ( request.members ) {
             contacts = request.getMembers();
-        }
-        else
-        {
+        } else {
             contacts = [];
             var data = this.data;
-            [ 'owner', 'supplier', 'assignee', 'facilityContact' ].map( function( item )
-            {
-                if ( data[ item ] )
-                {
+            [ 'owner', 'supplier', 'assignee', 'facilityContact' ].map( function( item ) {
+                if ( data[ item ] ) {
                     contacts.push( data[ item ] );
                 }
             } );

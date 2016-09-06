@@ -1,38 +1,29 @@
-Files = new FS.Collection( "File",
-{
+Files = new FS.Collection( "File", {
     stores: [ new FS.Store.GridFS( "master" ) ]
 } );
 
 
-if ( Meteor.isServer )
-{
-    Files.allow(
-    {
-        'insert': function()
-        {
+if ( Meteor.isServer ) {
+    Files.allow( {
+        'insert': function() {
             // add custom authentication code here
             return true;
         },
-        'update': function()
-        {
+        'update': function() {
             return true;
         },
-        'remove': function()
-        {
+        'remove': function() {
             return true;
         },
-        'download': function()
-        {
+        'download': function() {
             return true;
         }
     } );
 }
 
-if ( Meteor.isServer )
-{
+if ( Meteor.isServer ) {
 
-    Meteor.publish( 'File', function()
-    {
+    Meteor.publish( 'File', function() {
         /*Uncomment this and comment out returning the cursor to see publication issue*/
 
         // var self = this;
@@ -58,8 +49,6 @@ if ( Meteor.isServer )
         return Files.find();
     } );
 
-}
-else
-{
+} else {
     Meteor.subscribe( 'File' );
 }

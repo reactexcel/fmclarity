@@ -5,13 +5,11 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-export default ContactList = React.createClass(
-{
+export default ContactList = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
-	getMeteorData()
-	{
+	getMeteorData() {
 		let team = this.props.team,
 			role = this.props.defaultRole,
 			group = this.props.group,
@@ -22,13 +20,10 @@ export default ContactList = React.createClass(
 		// 1.passed in from members prop
 		// 2.loaded from group
 		// 3.initiated as blank array
-		if ( members == null )
-		{
-			if( group != null ) 
-			{
+		if ( members == null ) {
+			if ( group != null ) {
 				members = group.getMembers( filter );
-			}
-			else {
+			} else {
 				members = [];
 			}
 		}
@@ -42,25 +37,19 @@ export default ContactList = React.createClass(
 	},
 
 	// Display a pop up modal for the selected user 
-	showModal( selectedUser )
-	{
+	showModal( selectedUser ) {
 		//switch based on "type" sent into component
 		//this is a temporary work around as we transition into non-team supplier contacts
-		if ( this.props.type == "team" || ( selectedUser && selectedUser.collectionName == "Team" ) )
-		{
-			Modal.show(
-			{
+		if ( this.props.type == "team" || ( selectedUser && selectedUser.collectionName == "Team" ) ) {
+			Modal.show( {
 				content: <TeamCard 
 	            	item={selectedUser} 
 	            	team={this.data.team}
 	            	role={this.data.role}
 	            	group={this.data.group}/>
 			} )
-		}
-		else
-		{
-			Modal.show(
-			{
+		} else {
+			Modal.show( {
 				content: <UserCard 
 	            	item={selectedUser} 
 	            	team={this.data.team}
@@ -70,10 +59,8 @@ export default ContactList = React.createClass(
 		}
 	},
 
-	render()
-	{
-		var members = _.uniq( this.data.members, false, function( i )
-		{
+	render() {
+		var members = _.uniq( this.data.members, false, function( i ) {
 			return i._id;
 		} );
 		var component = this;

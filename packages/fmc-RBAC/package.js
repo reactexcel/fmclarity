@@ -1,28 +1,28 @@
-Package.describe({  
+Package.describe( {
 	name: 'fmc:rbac',
 	version: '0.0.1',
 	summary: 'A simple implementation of Role Based Access Control for FM Clarity'
-});
+} );
 
-Package.onUse(function(api) { 
-	api.use([
+Package.onUse( function( api ) {
+	api.use( [
 		'chrismbeckett:toastr'
-	],'client');
+	], 'client' );
 
-	api.use([
+	api.use( [
 		'underscore',
 		'dburles:collection-helpers'
-	]);
+	] );
 
-	api.addFiles([
+	api.addFiles( [
 		'RBAC.js',
 		'AccessHelpers.js',
 		'AuthenticationHelpers.js'
-	]);
+	] );
 
-	api.export([
+	api.export( [
 		'RBAC',
 		'AuthHelpers',
 		'AccessHelpers'
-	]);
-});
+	] );
+} );
