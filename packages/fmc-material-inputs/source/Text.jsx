@@ -14,7 +14,9 @@ export default Text = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
-		this.handleChange( null );
+		if ( this.props.onChange ) {
+			this.props.onChange( null );
+		}
 		this.refs.input.value = "";
 	},
 

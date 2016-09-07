@@ -1,51 +1,52 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { AutoForm } from 'meteor/fmc:autoform';
 
 import '../Compliance/ComplianceEvaluationService.jsx';
 
-ComplianceListTile = React.createClass({
+ComplianceListTile = React.createClass( {
 
-  mixins: [ReactMeteorData],
+  mixins: [ ReactMeteorData ],
 
   getMeteorData() {
     var rule = this.props.item;
     var name, info, results, message;
-    switch(rule.type) {
+    switch ( rule.type ) {
       case "Document exists":
-        name = rule.docType+" exists";
-        info = ""+rule.docName;
-      break;
+        name = rule.docType + " exists";
+        info = "" + rule.docName;
+        break;
       case "Document is current":
-        name = rule.docType+" document is current";
+        name = rule.docType + " document is current";
         info = rule.docName;
-      break;
+        break;
       case "PPM schedule established":
         name = rule.type;
-        info = (rule.service?rule.service.name:"");
-      break;
+        info = ( rule.service ? rule.service.name : "" );
+        break;
       case "PPM event completed":
         name = rule.type;
-        info = rule.event;//(rule.event?rule.event.name:"");
-      break;
+        info = rule.event; //(rule.event?rule.event.name:"");
+        break;
     }
-    results = ComplianceEvaluationService.evaluateRule(rule)||{};
-    message = results.message||{};
+    results = ComplianceEvaluationService.evaluateRule( rule ) || {};
+    message = results.message || {};
 
-    return {rule,name,info,results,message}
+    return { rule, name, info, results, message }
   },
 
-  showModal(rule) {
+  showModal( rule ) {
     //Need a width option for modals before this can be instantiated
-    Modal.show({
-        content:<AutoForm 
-            item={rule}
-            schema={ComplianceRuleSchema} 
-            onSubmit={()=>{console.log(rule);Modal.hide();}}
+    Modal.show( {
+      content: <AutoForm 
+            item = { rule }
+            form = { ComplianceRuleSchema } 
+            onSubmit={ () => { Modal.hide() } }
         >            
             <h2>Edit Compliance Rule</h2>
         </AutoForm>,
-    })
+    } )
   },
 
   render() {
@@ -86,4 +87,4 @@ ComplianceListTile = React.createClass({
     )
   }
 
-});
+} );

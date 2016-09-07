@@ -32,8 +32,12 @@ export default Select = React.createClass( {
 		this.refs.input.blur();
 	},
 
-	clearItem() {
-		this.handleChange( null );
+	clearItem( event ) {
+		this.refs.input.blur();
+		event.stopPropagation ();
+		if ( this.props.onChange ) {
+			this.props.onChange( null );
+		}
 	},
 
 	inputIsUsed( selectedItem ) {
@@ -92,20 +96,20 @@ export default Select = React.createClass( {
 			return (
 				<div className = {"md-input md-select readonly disabled dropdown"}>
 
-					<span className={ classes.join(' ') }>
-						{used?
+					<span className = { classes.join(' ') }>
+						{ used?
 						<ListTile item = { value }/>
-						:<span>&nbsp;</span>}
+						:<span>&nbsp;</span> }
 					</span>
 
-				    <span className="highlight"></span>
+				    <span className = "highlight"></span>
 
-					<span className="bar"></span>
+					<span className = "bar"></span>
 
 					<label>{ placeholder }</label>
 
 			        {errors?
-					<div className="helper-text">{ errors[0] }</div>
+					<div className = "helper-text">{ errors[0] }</div>
 					:null}
 
 				</div>
@@ -129,7 +133,7 @@ export default Select = React.createClass( {
 				</span>
 
 				{used?
-				<div className = "close-button" onClick={this.clearItem}>&times;</div>
+				<div className = "close-button" onClick = { this.clearItem }>&times;</div>
 				:null}
 
 				<span className = "highlight"></span>
@@ -138,13 +142,13 @@ export default Select = React.createClass( {
 				<label>{ placeholder }</label>
 
 				{errors?
-				<div className="helper-text">{ errors[0] }</div>
+				<div className = "helper-text">{ errors[0] }</div>
 				:null}
 
 				<ul className = "dropdown-menu">
 
 		        	{description?
-		        	<li><div className="helper-text">{ description }</div></li>
+		        	<li><div className = "helper-text">{ description }</div></li>
 		        	:null}
 
 		        	{items.map( ( item, idx ) => { 

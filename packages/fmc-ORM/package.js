@@ -12,8 +12,6 @@ Package.onUse( function( api )
 
 	api.use( [
 		'underscore',
-		'fmc:doc-owners',
-		'matb33:collection-hooks',
 		'dburles:collection-helpers',
 		'ecmascript',
 		'fmc:rbac' //should not be a dependence, refactor by removing line 23 or ORM.js

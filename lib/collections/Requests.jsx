@@ -2,16 +2,24 @@ import { Model } from 'meteor/fmc:orm';
 
 import '../schemas/RequestSchema.jsx';
 import { DocMembers } from 'meteor/fmc:doc-members';
+import { DocOwners } from 'meteor/fmc:doc-owners';
 
 Issues = new Model( IssueSchema, "Issues" );
 
-Issues.save = function( id, obj, callback ) {
-	return Meteor.call( 'Issues.save', id, obj, callback )
-}
+/* Issues = new Model ( {
+	schema: IssuesSchema,
+	collection: "Issues",
+	mixins: [
+		DocOwners,
+		DocMessages,
+		DocMembers
+	]
+})*/
 
 //Issues.addFeature( DocMessages, {} );
 
 Issues.mixins( [
+	DocOwners.config(),
 	DocMessages.config( {
 		helpers: {
 			getInboxName: function() {
@@ -23,7 +31,7 @@ Issues.mixins( [
 					team = this.team,
 					supplier = this.supplier,
 					assignee = this.assignee;
-
+					
 				if ( this.status = Issues.STATUS_DRAFT ) {
 					return [ user, owner ];
 				} else if ( this.status = Issues.STATUS_NEW ) {
@@ -79,16 +87,6 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 
 //maybe actions it better terminology?
 Issues.methods( {
-
-	create: {
-		authentication: true, //AuthHelpers.all
-		method: RBAC.lib.create.bind( Issues ),
-	},
-
-	save: {
-		authentication: true,
-		method: RBAC.lib.save.bind( Issues )
-	},
 
 	updateSupplierManagers: {
 		authentication: true,

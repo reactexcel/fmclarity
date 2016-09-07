@@ -5,7 +5,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { WorkflowButtons } from 'meteor/fmc:workflow-helper';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 
-import { FartoForm as AutoForm } from 'meteor/fmc:autoform';
+import { AutoForm } from 'meteor/fmc:autoform';
 
 IssueDetail = React.createClass( {
     mixins: [ ReactMeteorData ],
@@ -20,7 +20,10 @@ IssueDetail = React.createClass( {
                 data.assignee = data.request.assignee;
                 data.notifications = data.request.notifications;
                 data.messageCount = data.request.messages ? data.request.messages.length : 0;
-                data.attachmentCount = data.request.attachments.length ? data.request.attachments.length : 0;
+
+                if( data.request.attachments ) {
+                    data.attachmentCount = data.request.attachments.length ? data.request.attachments.length : 0;
+                }
 
                 data.facility = data.request.facility;
                 if ( data.facility ) {

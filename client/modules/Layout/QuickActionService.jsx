@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FartoForm as AutoForm } from 'meteor/fmc:autoform';
+import { AutoForm } from 'meteor/fmc:autoform';
 
 export default QuickActions = new function QuickActionService() {
 	function viewRequest( request ) {
@@ -42,18 +42,18 @@ export default QuickActions = new function QuickActionService() {
 						/>
 			*/
 			content: <AutoForm
-			model = { Issues }
-			// not a good choice of propname because it classhes with schema[ fieldName ].options
-			options = { Issues.forms.create }
-			onSubmit = {
-				( request, form ) => {
-					Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
-						Modal.replace( {
-							content: <IssueDetail item = { response }/>
+				model = { Issues }
+				// not a good choice of propname because it classhes with schema[ fieldName ].options
+				form = { Issues.forms.create }
+				onSubmit = {
+					( request, form ) => {
+						Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
+							Modal.replace( {
+								content: <IssueDetail item = { response }/>
+							} );
 						} );
-					} );
+					}
 				}
-			}
 			/>
 		} )
 
@@ -129,9 +129,9 @@ export default QuickActions = new function QuickActionService() {
 	function createComplianceRule() {
 		Modal.show( {
 			content: <AutoForm
-			item = { { facility: Session.getSelectedFacility() } }
-			schema = { ComplianceRuleSchema }
-			onSubmit = { createNewComplianceRule }
+				item = { { facility: Session.getSelectedFacility() } }
+				form = { ComplianceRuleSchema }
+				onSubmit = { createNewComplianceRule }
 			/>
 		} )
 	}

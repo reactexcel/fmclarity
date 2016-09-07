@@ -8,6 +8,7 @@ import './Files.jsx';
 
 import { Model } from 'meteor/fmc:orm';
 import { DocMembers } from 'meteor/fmc:doc-members';
+import { DocOwners } from 'meteor/fmc:doc-owners';
 
 //would like to more closely emulate simpleschema paradigm here
 Facilities = new Model( FacilitySchema, "Facilities" );
@@ -17,6 +18,7 @@ Facilities = new Model( FacilitySchema, "Facilities" );
 //well - I think if we are going to do it this way then we should at least have some sort of placeholder in the schema??
 // but then again these mixins have their own schemas defined - perhaps we shouldn't concern ourselves
 Facilities.mixins( [
+	DocOwners.config(),
 	DocThumb.config( {
 		defaultThumbUrl: 0
 	} ),

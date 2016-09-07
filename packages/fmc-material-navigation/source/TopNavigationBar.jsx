@@ -13,13 +13,12 @@ export default TopNavigationBar = React.createClass(
     getMeteorData()
     {
         //Meteor.subscribe('notifications');
-        Meteor.subscribe( "messages", "users", Meteor.userId() );
-        var user, notifications;
+        let user = Meteor.user(),
+            notifications = null;
 
-        user = Meteor.user();
-        var component = this;
         if ( user )
         {
+            Meteor.subscribe( "messages", "users", user._id );
             notifications = user.getNotifications();
             var count = notifications.length;
             if ( count > this.oldCount )
@@ -31,7 +30,7 @@ export default TopNavigationBar = React.createClass(
                     var suppressFurtherNotifications = false;
                     if ( notifications.length > 2 )
                     {
-                        component.showNotification(
+                        this.showNotification(
                             "You have FM Clarity notifications",
                             "You have more than 3 new notifications from FM Clarity"
                         );
@@ -39,14 +38,14 @@ export default TopNavigationBar = React.createClass(
                     }
                     else
                     {
-                        notifications.map( function( n )
+                        notifications.map( ( n ) =>
                         {
-                            if ( !component.shown[ n._id ] )
+                            if ( !this.shown[ n._id ] )
                             {
-                                component.shown[ n._id ] = true;
+                                this.shown[ n._id ] = true;
                                 if ( !suppressFurtherNotifications )
                                 {
-                                    component.showNotification( n.subject, n.body );
+                                    this.showNotification( n.subject, n.body );
                                 }
                             }
                         } )

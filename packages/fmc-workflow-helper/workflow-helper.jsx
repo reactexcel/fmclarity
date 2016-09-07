@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FartoForm as AutoForm } from 'meteor/fmc:autoform';
+import { AutoForm } from 'meteor/fmc:autoform';
 
 export default function( collection ) {
 
@@ -75,7 +75,7 @@ export default function( collection ) {
 					content:
 						<AutoForm
 							model 		= { Issues }
-							options 	= { form.fields }
+							form 		= { form.fields }
 							item 		= { request }
 							onSubmit 	= {
 								( newRequest ) => {

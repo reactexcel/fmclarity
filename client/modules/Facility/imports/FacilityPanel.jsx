@@ -3,6 +3,7 @@ import React from 'react';
 import ActionsMenu from 'meteor/fmc:actions-menu';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 import '/client/modules/Compliance/PMPList.jsx';
+import { AutoForm } from 'meteor/fmc:autoform';
 
 export default function FacilityPanel( props ) {
     let { team, facility } = props;

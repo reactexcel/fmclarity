@@ -115,7 +115,7 @@ AuthHelpers = {
       $and: [ {
         members: {
           $elemMatch: {
-            _id: Meteor.userId(),
+            _id: Meteor.user()._id,
           }
         }
       }, {

@@ -38,7 +38,6 @@ fortawesome:fontawesome
 ############################
 # HTML5 Helpers
 oaf:html5-desktop-notifications
-mdg:geolocation
 
 ############################
 # Routing
@@ -58,8 +57,8 @@ rochal:slimscroll
 ############################
 # MiniMongo Extensions
 #aldeed:collection2
+#matb33:collection-hooks
 dburles:collection-helpers
-matb33:collection-hooks
 monbro:mongodb-mapreduce-aggregation
 
 ############################
@@ -95,4 +94,7 @@ standard-minifier-css
 standard-minifier-js
 react-meteor-data
 
+############################
+# MDG Extensions
+mdg:geolocation
 mdg:validation-error

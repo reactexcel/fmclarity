@@ -1,25 +1,22 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { ReactMeteorData }
-from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { AutoForm } from 'meteor/fmc:autoform';
 
-UserViewEdit = React.createClass(
-{
+
+UserViewEdit = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
-	getMeteorData()
-	{
+	getMeteorData() {
 		var group, role, member, relation;
 		role = this.props.newMemberRole;
 		member = this.props.member;
-		if ( this.props.group )
-		{
+		if ( this.props.group ) {
 			var collectionName = this.props.group.collectionName;
 			var collection = ORM.collections[ collectionName ];
 			group = collection.findOne( this.props.group._id );
-			if ( group )
-			{
+			if ( group ) {
 				relation = group.getMemberRelation( member );
 				//if(relation) {
 				//	role = relation.role;
@@ -35,67 +32,53 @@ UserViewEdit = React.createClass(
 		}
 	},
 
-	getInitialState()
-	{
+	getInitialState() {
 		return {
 			item: this.props.item
 		}
 	},
 
-	componentWillReceiveProps( newProps )
-	{
+	componentWillReceiveProps( newProps ) {
 		this.setItem( newProps.item );
 	},
 
-	setItem( newItem )
-	{
-		this.setState(
-		{
+	setItem( newItem ) {
+		this.setState( {
 			item: newItem
 		} );
 	},
 
-	save()
-	{
+	save() {
 		Meteor.call( 'Users.save', this.state.item );
 	},
 
-	form1:
-	{
-		firstName:
-		{
+	form1: {
+		firstName: {
 			label: "First name",
 			size: 6
 		},
-		lastName:
-		{
+		lastName: {
 			label: "Last name",
 			size: 6
 		},
-		name:
-		{
+		name: {
 			label: "Display name",
 		},
-		email:
-		{
+		email: {
 			label: "Email address",
 		},
-		phone:
-		{
+		phone: {
 			label: "Phone number",
 		},
-		phone2:
-		{
+		phone2: {
 			label: "Phone number 2",
 		},
-		tenancy:
-		{
+		tenancy: {
 			label: "Tenancy"
 		}
 	},
 
-	handleInvite( event )
-	{
+	handleInvite( event ) {
 		event.preventDefault();
 		var team, group, role, input, email, regex, component;
 		component = this;
@@ -105,39 +88,29 @@ UserViewEdit = React.createClass(
 		input = this.refs.invitationEmail;
 		email = input.value;
 		regex = /.+@.+\..+/i
-		if ( !regex.test( email ) )
-		{
+		if ( !regex.test( email ) ) {
 			alert( 'Please enter a valid email address' );
-		}
-		else
-		{
+		} else {
 			input.value = '';
 			var creatorsTeam = Session.getSelectedTeam();
-			team.inviteMember( email,
-			{
+			team.inviteMember( email, {
 				role: role,
-				owner:
-				{
+				owner: {
 					type: 'team',
 					_id: creatorsTeam._id,
 					name: creatorsTeam.name
 				}
-			}, function( response )
-			{
+			}, function( response ) {
 				var user = Users.findOne( response.user._id );
-				if ( !response.found )
-				{
-					component.setState(
-					{
+				if ( !response.found ) {
+					component.setState( {
 						shouldShowMessage: true
 					} );
 				}
 				component.setItem( user );
 				console.log( role );
-				if ( group && group.canAddMember() )
-				{
-					group.addMember( user,
-					{
+				if ( group && group.canAddMember() ) {
+					group.addMember( user, {
 						role: role
 					} );
 				}
@@ -145,42 +118,34 @@ UserViewEdit = React.createClass(
 		}
 	},
 
-	setThumb( newThumb )
-	{
+	setThumb( newThumb ) {
 		var user = this.state.item;
-		if ( user )
-		{
+		if ( user ) {
 			user.setThumb( newThumb );
 			user.thumb = newThumb;
-			this.setState(
-			{
+			this.setState( {
 				item: user
 			} );
 		}
 	},
 
-	removeMember( team, user )
-	{
+	removeMember( team, user ) {
 		var message = confirm( "Remove " + user.getName() + " from " + team.getName() + "?" );
-		if ( message == true )
-		{
+		if ( message == true ) {
 			team.removeMember( user );
 		}
 	},
 
-	render()
-	{
+	render() {
 		var user, profile, team;
 		var viewer = Meteor.user();
 		user = this.state.item;
 		team = this.data.team;
 		group = this.data.group;
-		if ( user )
-		{
+		if ( user ) {
 			profile = user.profile;
 		}
-		if ( !user || !profile )
-		{
+		if ( !user || !profile ) {
 			return (
 				<form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
@@ -190,9 +155,7 @@ UserViewEdit = React.createClass(
                     </div>
                 </form>
 			)
-		}
-		else if ( !viewer.canSave() )
-		{
+		} else if ( !viewer.canSave() ) {
 			return (
 				<div>
 					<ContactSummary item={user} />

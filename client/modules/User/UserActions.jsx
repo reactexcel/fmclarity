@@ -73,7 +73,7 @@ UserActions = {
 			// Hmm, menu options global and dynamic
 			// can be added within different packages
 			// Probably want to follow flux pattern like modal
-			if ( user._id == Meteor.userId() )
+			if ( user._id == Meteor.user()._id )
 			{
 				menu.push(
 				{

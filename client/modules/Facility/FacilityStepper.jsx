@@ -3,22 +3,21 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { DocOwnerCard } from 'meteor/fmc:doc-owners';
 import { ContactList } from 'meteor/fmc:doc-members';
+import { AutoForm } from 'meteor/fmc:autoform';
 
-FacilityViewEdit = React.createClass(
-{
+
+FacilityViewEdit = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
-	getMeteorData()
-	{
+	getMeteorData() {
 
 		Meteor.subscribe( 'users' );
 
 		var facility, team, suppliers;
 
 		facility = this.state.item ? Facilities.findOne( this.state.item._id ) : null;
-		if ( facility )
-		{
+		if ( facility ) {
 			team = facility.getTeam();
 			suppliers = facility.getSuppliers();
 		}
@@ -30,41 +29,33 @@ FacilityViewEdit = React.createClass(
 		}
 	},
 
-	getInitialState()
-	{
+	getInitialState() {
 		return {
 			item: this.props.item
 		}
 	},
 
-	addSupplier( ext, supplier )
-	{
+	addSupplier( ext, supplier ) {
 		this.data.facility.addSupplier( supplier, ext );
 	},
 
-	setThumb( thumb )
-	{
+	setThumb( thumb ) {
 		var facility = this.data.facility;
 		facility.setThumb( thumb );
 		facility.thumb = thumb;
-		this.setState(
-		{
+		this.setState( {
 			item: facility
 		} );
 	},
 
-	render()
-	{
+	render() {
 		var facility = this.data.facility;
 		var team = this.data.team;
 		var suppliers = this.data.suppliers;
 
-		if ( !facility && facility.canCreate() )
-		{
+		if ( !facility && facility.canCreate() ) {
 			//show facility creation information
-		}
-		else if ( !facility.canSave() )
-		{
+		} else if ( !facility.canSave() ) {
 			return (
 				<FacilityViewDetail item={facility} />
 			)

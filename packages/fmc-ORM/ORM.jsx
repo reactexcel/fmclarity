@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
+
 // http://json-schema.org/
 // http://guides.rubyonrails.org/association_basics.html
 

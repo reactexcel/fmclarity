@@ -2,10 +2,12 @@ import '../schemas/TeamSchema.jsx';
 import './Users.jsx';
 
 import { DocMembers } from 'meteor/fmc:doc-members';
+import { DocOwners } from 'meteor/fmc:doc-owners';
 
 Teams = new Model( TeamSchema, "Teams" );
 
 Teams.mixins( [
+    DocOwners.config(),
     DocThumb.config( {
         defaultThumbUrl: 0
     } ),
@@ -421,23 +423,16 @@ Teams.helpers( {
 
         //console.log(facilityIds);
 
-        var facilities = Facilities.find( {
+        let facilities = Facilities.find( {
                 $or: [ {
-                    $and: [ {
-                        "team._id": this._id
-                    }, {
-                        "members._id": Meteor.userId()
-                    }, ]
+                    $and: [
+                        { "team._id": this._id },
+                        { "members._id": user._id },
+                    ]
                 }, {
-                    _id: {
-                        $in: facilityIds
-                    }
+                    _id: { $in: facilityIds }
                 } ]
-            }, {
-                sort: {
-                    name: 1
-                }
-            } )
+            }, { sort: { name: 1 } } )
             .fetch();
 
         //console.log(facilities);
@@ -467,7 +462,8 @@ Teams.helpers( {
 
     getManagerIssues( filterQuery ) {
 
-        var q;
+        let q = null,
+            user = Meteor.user();
 
         var issuesQuery = {
             $or: [
@@ -481,7 +477,7 @@ Teams.helpers( {
                         } ]
                     }, {
                         $or: [ {
-                            'owner._id': Meteor.userId()
+                            'owner._id': user._id
                         }, {
                             status: {
                                 $nin: [ Issues.STATUS_DRAFT ]
@@ -523,7 +519,8 @@ Teams.helpers( {
 
     getStaffIssues( filterQuery ) {
 
-        var q;
+        let q = null,
+            user = Meteor.user();
 
         var issuesQuery = {
             $or: [
@@ -536,7 +533,7 @@ Teams.helpers( {
                             "team.name": this.name
                         } ]
                     }, {
-                        'owner._id': Meteor.userId()
+                        'owner._id': user._id
                     } ]
                 },
                 //or supplier team member and not draft or new
@@ -549,7 +546,7 @@ Teams.helpers( {
                         } ]
                     }, {
                         $and: [ {
-                            'assignee._id': Meteor.userId()
+                            'assignee._id': user._id
                         }, {
                             status: {
                                 $nin: [ Issues.STATUS_DRAFT, Issues.STATUS_NEW ]

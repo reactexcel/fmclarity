@@ -2,8 +2,11 @@
 import './Files.jsx';
 import '../schemas/UserSchema.jsx';
 
+import { DocOwners } from 'meteor/fmc:doc-owners';
+
 Users = new Model( UserSchema, Meteor.users );
 Users.mixins( [
+    DocOwners.config(),
     DocThumb.config( {
         repo: Files,
         defaultThumb: "/img/ProfilePlaceholderSuit.png"

@@ -26,12 +26,13 @@ export default class Controller {
 
 		if ( this.model == null ) {
 			this.schema = Object.assign( {}, this.options );
+			//this.item = Object.assign( {}, initialItem );
 		} else {
 			this.schema = Object.assign( {}, this.model.schema, this.options );
+			//this.item = this.model.create( initialItem );
 		}
 
 		this.item = Object.assign( {}, initialItem );
-
 		this.collection = [];
 	}
 
@@ -69,8 +70,6 @@ export default class Controller {
 		this.item[ key ] = newValue;
 		delete this.errors[ key ];
 
-		console.log({key, options});
-
 		if ( options != null && _.isFunction( options.afterChange ) ) {
 			options.afterChange( this.item );
 		}
@@ -100,14 +99,7 @@ export default class Controller {
 		this.triggerCallbacks();
 	}
 
-	save( item ) {
-		if( item!=null ) {
-			Object.assign( this.item, item );
-		}
-
-		let error = this.model.update( this.item._id, { $set: this.item } );
-
-		/* function --- process errors */
+	processValidationErrors( error ) {
 		let errorsGroupedByField = {}
 		if ( error!=null && error.details != null ) {
 			error.details.map( ( { name, type } ) => {
@@ -118,10 +110,30 @@ export default class Controller {
 			} )
 		}
 		Object.assign( this.errors, errorsGroupedByField );
-		/**********************************/
+	}
 
-		this.triggerCallbacks();
-		return errorsGroupedByField;
+	save( item ) {
+		if( item!=null ) {
+			Object.assign( this.item, item );
+		}
+
+		let itemId = this.item._id;
+
+		this.model.save.call( this.item )
+		.then( ( response ) => {
+			if( response.insertedId != null ) {
+				itemId = response.insertedId;
+			}
+			this.item = this.model.findOne( itemId );
+			console.log( response);
+			this.triggerCallbacks();
+		})
+		.catch( ( error ) => {
+			console.log( error );
+			this.processValidationErrors( error );
+			this.triggerCallbacks();
+		});
+
 	}
 
 	delete() {

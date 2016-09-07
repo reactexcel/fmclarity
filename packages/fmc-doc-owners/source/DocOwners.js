@@ -10,23 +10,22 @@ function getConfigFunc( options ) {
 }
 
 function registerCollection( collection, options ) {
-	if ( collection.before ) {
-		collection.before.insert( ( userId, doc ) => {
-			if ( doc == null ) {
-				console.log( 'no document' );
-				return;
+
+	collection.save.before( ( doc ) => {
+		if ( doc == null ) {
+			console.log( 'no document' );
+			return;
+		}
+		if ( !doc.owner ) {
+			let user = Meteor.user();
+			if ( user != null ) {
+				doc.owner = {
+					_id: user._id,
+					name: user.getName(),
+				};
 			}
-			if ( !doc.owner ) {
-				let user = Meteor.user();
-				if ( user != null ) {
-					doc.owner = {
-						_id: user._id,
-						name: user.getName(),
-					};
-				}
-			}
-		} );
-	}
+		}
+	} )
 
 	if ( collection.helpers == null ) {
 		return;

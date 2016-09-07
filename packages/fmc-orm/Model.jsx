@@ -1,8 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
-import { DocOwners } from 'meteor/fmc:doc-owners';
+//import { DocOwners } from 'meteor/fmc:doc-owners';
 import ORM from './ORM.jsx';
+import ValidationService from './ValidationService.jsx';
+import ValidatedMethod from './ValidatedMethod.jsx';
 
 export default class Model {
 	constructor( schema, collection ) {
@@ -19,7 +21,7 @@ export default class Model {
 
 		ORM.collections[ this._name ] = this.collection;
 
-		DocOwners.register( this );
+		//DocOwners.register( this );
 		// should be collection.addFeature( DocOwners );
 
 		if ( collection.helpers != null ) {
@@ -30,21 +32,11 @@ export default class Model {
 			} );
 		}
 
-		this.before = {
-			insert: null,
-			upsert: null,
-			update: null,
-			findOne: null,
-			find: null
-		}
-
-		this.after = {
-			insert: null,
-			upsert: null,
-			update: null,
-			findOne: null,
-			find: null
-		}
+		this.save = new ValidatedMethod( {
+			name: `${this._name}.upsert`,
+			validate: ValidationService.validator( this.schema ),
+			run: ( ...args ) => { return this._save( ...args ) }
+		} )
 	}
 
 	// this function may be redundant now that we are using a different autoform architecture
@@ -79,150 +71,39 @@ export default class Model {
 
 		let newItem = {};
 		for ( let fieldName in this.schema ) {
-			newItem[ fieldName ] = getDefaultValue( fieldName, item )
+			newItem[ fieldName ] = this.getDefaultValue( fieldName, item )
 		}
-		_.extend( newItem, item );
+		Object.assign( newItem, item );
 		return newItem;
 	};
 
 
 	findOne( ...args ) {
-		try {
-			if ( this.before.findOne != null ) {
-				this.before.findOne( ...args );
-			}
-			let doc = this.collection.findOne( ...args );
-			//console.log(args);
-			//console.log(doc);
-			//this.authenticate( doc );
-			if ( this.after.findOne != null ) {
-				this.after.findOne( ...args );
-			}
-			return this.join( doc );
-		} catch ( error ) {
-			console.log( error );
-		}
+		let doc = this.collection.findOne( ...args );
+		return this.join( doc );
 	}
 
 	find( ...args ) {
-		try {
-			return this.collection.find( ...args );
-			//cursor = this.authenticate( cursor );
-			//return this.join( cursor );
-		} catch ( error ) {}
+		return this.collection.find( ...args );
 	}
 
 	findAll( ...args ) {
-		try {
-			let docs = this.collection.find( ...args ).fetch();
-			//console.log( ...args );
-			//console.log(docs);
-			docs.map( ( doc ) => {
-				this.join( doc );
-			} );
-			//console.log(docs);
-			return docs;
-		} catch ( error ) {
-			console.log( error );
-		}
+		let docs = this.collection.find( ...args ).fetch();
+		docs.map( ( doc ) => {
+			this.join( doc );
+		} );
+		return docs;
 	}
 
-	insert( doc, options, callback ) {
-		try {
-			if ( this.before.insert != null ) {
-				this.before.insert( doc, options );
-			}
-
-			this.validate( doc );
-			doc = this.unjoin( doc );
-			this.collection.insert( doc, options, callback );
-
-			if ( this.after.insert != null ) {
-				this.after.insert( doc, options );
-			}
-		} catch ( error ) {
-			console.log( error );
+	_save( doc, newValues ) {
+		let selector = null;
+		if( doc._id != null ) {
+			selector = doc._id;
 		}
-	}
+		Object.assign(doc, newValues);
+		doc = this.unjoin( doc );
 
-	// so what I'm seeing here is that this has to be a method like the ones defined in rbac
-	update( selector, modifier, options, callback ) {
-		try {
-			let doc = modifier.$set;
-			this.validate( doc );
-			//this.authenticate( doc, options );
-			doc = this.unjoin( doc );
-			this.collection.update( selector, doc, options, callback );
-		} catch ( error ) {
-			return error;
-		}
-	}
-
-	validate( doc, fields, schema = this.schema ) {
-
-		if ( schema == null ) {
-			throw new Meteor.Error( "Can't validate item with no schema" );
-		}
-
-		let errors = [];
-
-		if ( doc == null ) {
-			return errors;
-		}
-
-		if ( fields == null ) {
-			fields = Object.keys( doc );
-		}
-
-		fields.map( ( fieldName ) => {
-
-			let rule = schema[ fieldName ],
-				item = doc[ fieldName ];
-
-			if ( !rule ) {
-				errors.push( {
-					name: fieldName,
-					type: `${fieldName} is not in schema`
-				} )
-			} else {
-				if ( !rule.optional && ( item == null || _.isEmpty( item ) ) ) {
-					errors.push( {
-						name: fieldName,
-						type: `This is a required field`
-					} )
-				}
-
-				if ( !rule.type ) {
-					rule.type == "string";
-				}
-
-				if ( item && rule.type /* && !check( item, rule.type ) */ ) {
-					let itemType = typeof item,
-						expectedType = rule.type;
-
-					if ( expectedType == "date" ) {
-						if ( !_.isDate( item ) ) {
-							errors.push( {
-								name: fieldName,
-								type: `Invalid format: please enter a valid date`
-							} )
-						}
-					} else if ( itemType != expectedType ) {
-						errors.push( {
-							name: fieldName,
-							type: `Invalid format: expected ${expectedType} got ${itemType}`
-						} )
-					}
-				}
-			}
-		} )
-		if ( errors.length ) {
-			let error = new ValidationError( errors );
-			if ( Meteor.isSimulation ) {
-				return error;
-			}
-			throw error;
-		}
+		return this.collection.upsert( selector, { $set: doc } );
 	}
 
 	join( doc ) {
@@ -345,6 +226,8 @@ export default class Model {
 		if ( doc == null ) {
 			return;
 		}
+
+		delete doc._id;
 
 		//refactor: separate schema fields for properties and relations
 		// then just pull in relations here instead of iterating over all fields

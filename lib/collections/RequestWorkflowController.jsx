@@ -7,12 +7,12 @@ import './Requests.jsx';
 Issues.workflow = new WorkflowHelper( Issues );
 
 Issues.forms = {
-	create: [ 'team', 'name', 'facility', 'level', 'area', 'identifier', 'service', 'subservice', 'supplier', 'type', 'priority', 'dueDate', 'frequency', 'costThreshold', 'description' ]
+	create: [ 'team', 'status', 'name', 'facility', 'level', 'area', 'identifier', 'service', 'subservice', 'supplier', 'type', 'priority', 'dueDate', 'frequency', 'costThreshold', 'description' ]
 }
 
 
 function actionGetQuote( request, user ) {
-	Issues.save( request, {
+	Issues.save.call( request, {
 		quoteIsPreApproved: request.quoteIsPreApproved,
 		status: 'Quoting'
 	} );
@@ -35,7 +35,7 @@ function actionEdit( request, user ) {
 		request.status = "PMP";
 		request.priority = "Scheduled";
 	}
-	Meteor.call( 'Issues.save', request );
+	Issues.save.call( request );
 }
 
 //////////////////////////////////////////////////////
@@ -58,8 +58,7 @@ Issues.workflow.addState( [ 'Draft' ], {
 		label: "Create", //dont think this is used?
 
 		authentication: ( ...args ) => {
-			AuthHelpers.memberOfRelatedTeam( ...args ) && !
-				AuthHelpers.managerOfRelatedTeam( ...args )
+			AuthHelpers.memberOfRelatedTeam( ...args ) && !AuthHelpers.managerOfRelatedTeam( ...args )
 		},
 
 		validation( request ) {
@@ -85,12 +84,7 @@ Issues.workflow.addState( [ 'Draft' ], {
 				request.status = "New";
 			}
 
-			Meteor.call( 'Issues.save', request, ( err, response ) => {
-				console.log( {
-					err,
-					response
-				} );
-			} );
+			Issues.save.call( request );
 
 			request = Issues.findOne( request._id );
 			request.distributeMessage( {
@@ -200,7 +194,7 @@ Issues.workflow.addState( [ 'PMP' ], {
 				request.status = "New";
 			}
 
-			Issues.save( request );
+			Issues.save.call( request );
 			request = Issues.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
@@ -287,9 +281,7 @@ Issues.workflow.addState( [ 'New', 'Quoted' ], {
 			fields: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
-				status: "Rejected"
-			} );
+			Issues.save.call( request, { status: "Rejected" } );
 			request = Issues._transform( request );
 			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
@@ -317,7 +309,7 @@ Issues.workflow.addState( 'Quoting', {
 			fields: [ 'quote', 'quoteValue' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
+			Issues.save.call( request, {
 				costThreshold: parseInt( request.quoteValue ),
 				status: request.quoteIsPreApproved ? 'In Progress' : 'Quoted'
 			} );
@@ -353,7 +345,7 @@ Issues.workflow.addState( 'Issued', {
 		method: function( request, user ) {
 			console.log( request );
 			var assignee = request.assignee;
-			Issues.save( request, {
+			Issues.save.call( request, {
 				status: 'In Progress',
 				eta: request.eta,
 				acceptComment: request.acceptComment
@@ -381,7 +373,7 @@ Issues.workflow.addState( 'Issued', {
 			form: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
+			Issues.save.call( request, {
 				status: "Rejected"
 			} );
 			request = Issues.findOne( request._id );
@@ -405,7 +397,7 @@ Issues.workflow.addState( 'Issued', {
 			fields: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
+			Issues.save.call( request, {
 				status: Issues.STATUS_DELETED
 			} );
 			request = Issues.findOne( request._id );
@@ -449,7 +441,7 @@ Issues.workflow.addState( 'Complete', {
 			fields: [ 'closeComment' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
+			Issues.save.call( request, {
 				status: 'Closed'
 			} );
 			request = Issues._transform( request );
@@ -473,7 +465,7 @@ Issues.workflow.addState( 'Complete', {
 			fields: [ 'reopenReason' ]
 		},
 		method: function( request ) {
-			Issues.save( request, {
+			Issues.save.call( request, {
 				status: 'New'
 			} );
 		}
@@ -518,7 +510,7 @@ Issues.STATUS_ARCHIVED = "Archived";
 // Issue
 //////////////////////////////////////////////////////////
 function actionIssue( request ) {
-	Issues.save( request, {
+	Issues.save.call( request, {
 		status: Issues.STATUS_ISSUED,
 		issuedAt: new Date()
 	} );
@@ -585,10 +577,11 @@ function actionBeforeComplete( request ) {
 
 function actionComplete( request ) {
 
-	Meteor.call( 'Issues.save', request, {
+	Issues.save.call( request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
-	} );
+	} )
+
 	request = Issues.findOne( request._id );
 
 	console.log( request );
@@ -666,7 +659,7 @@ function actionComplete( request ) {
 //////////////////////////////////////////////////////////
 function actionReverse( request ) {
 	//save current request
-	Meteor.call( 'Issues.save', request, {
+	Issues.save.call( request, {
 		status: Issues.STATUS_CLOSED,
 		priority: "Closed",
 		name: "Reversed - " + request.name,
