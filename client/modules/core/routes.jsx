@@ -31,16 +31,13 @@ import { MainLayout } from 'meteor/fmc:layout';
 
 // Route group for admin users
 // probably should go in its own package
-var admin = FlowRouter.group(
-{
+var admin = FlowRouter.group( {
   triggersEnter: [
-    function( context, redirect )
-    {
+    function( context, redirect ) {
       var route;
       var user = Meteor.user();
       //console.log(user);
-      if ( Meteor.loggingIn() || ( user && user.role == 'dev' ) )
-      {
+      if ( Meteor.loggingIn() || ( user && user.role == 'dev' ) ) {
         return;
       }
       FlowRouter.go( '/' );
@@ -49,194 +46,147 @@ var admin = FlowRouter.group(
   ]
 } );
 
-admin.route( '/admin',
-{
+admin.route( '/admin', {
   name: 'admin',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <AdminPage/>
     } );
   }
 } );
 
-loggedIn.route( '/',
-{
+loggedIn.route( '/', {
   name: 'root',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <LandingPage/>
     } );
   }
 } );
 
-loggedIn.route( '/change-password',
-{
+loggedIn.route( '/change-password', {
   name: 'change-password',
-  action()
-  {
-    mount( BlankLayout,
-    {
+  action() {
+    mount( BlankLayout, {
       content: <PageChangePassword />
     } );
   }
 } )
 
-loggedIn.route( '/pmp',
-{
+loggedIn.route( '/pmp', {
   name: 'pmp',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <PageMaintenence />
     } );
   }
 } );
 
-loggedIn.route( '/abc',
-{
+loggedIn.route( '/abc', {
   name: 'abc',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <ServicePageIndex />
     } );
   }
 } );
 
-loggedIn.route( '/requests',
-{
+loggedIn.route( '/requests', {
   name: 'requests',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <RequestsPageIndexContainer />
     } );
   }
 } );
 
-loggedIn.route( '/suppliers',
-{
+loggedIn.route( '/suppliers', {
   name: 'suppliers',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <TeamPageSuppliersContainer />
     } );
   }
 } );
 
-loggedIn.route( '/settings',
-{
+loggedIn.route( '/settings', {
   name: 'settings',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <PageSettings />
     } );
   }
 } );
 
-loggedIn.route( '/account',
-{
+loggedIn.route( '/account', {
   name: 'account',
-  action()
-  {
-    mount( MainLayout,
-    {
-      content: <TeamPageProfile />
+  action() {
+    mount( MainLayout, {
+      content: <TeamPageProfileContainer />
     } );
   }
 } );
 
-loggedIn.route( '/profile',
-{
+loggedIn.route( '/profile', {
   name: 'profile',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <UserPageProfile />
     } );
   }
 } );
 
-loggedIn.route( '/portfolio',
-{
+loggedIn.route( '/portfolio', {
   name: 'portfolio',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <FacilityPageIndexContainer />
     } );
   }
 } );
 
 //this should go in fmc:messages?
-loggedIn.route( '/calendar',
-{
+loggedIn.route( '/calendar', {
   name: 'calendar',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <CalendarPage/>
     } );
   }
 } );
 
 //this should go in fmc:documents
-loggedIn.route( '/documents',
-{
+loggedIn.route( '/documents', {
   name: 'documents',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <DocsPageIndex />
     } );
   }
 } );
 
 //this should go in fmc:messages?
-loggedIn.route( '/messages',
-{
+loggedIn.route( '/messages', {
   name: 'messages',
-  action()
-  {
-    mount( MainLayout,
-    {
+  action() {
+    mount( MainLayout, {
       content: <MessagesPage />
     } );
   }
 } );
 
-loggedIn.route( '/requests/:_id',
-{
+loggedIn.route( '/requests/:_id', {
   name: 'request',
-  action( params )
-  {
-    mount( MainLayout,
-    {
+  action( params ) {
+    mount( MainLayout, {
       content: <IssuePage selected={params._id} />
     } );
   }
 } );
 
 FlowRouter.notFound = {
-  action()
-  {
-    mount( BlankLayout,
-    {
+  action() {
+    mount( BlankLayout, {
       content: <NotFound />
     } );
   }

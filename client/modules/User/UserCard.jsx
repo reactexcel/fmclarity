@@ -33,7 +33,7 @@ UserCard = React.createClass(
 			team: team,
 			facility: group
 		} );
-		if ( user && user.canSave() )
+		if ( true /* user && user.canSave() */ )
 		{
 			menu.unshift(
 			{

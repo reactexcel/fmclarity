@@ -122,6 +122,8 @@ RequestsPageIndexContainer = createContainer( ( params ) =>
 	}, ];	
 
 	return {
+		team,
+		facility,
 		filter,
 		headers
 	}

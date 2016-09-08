@@ -1,6 +1,7 @@
 import React from "react";
-import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
+
+import RequestPriority from './imports/RequestPriority.jsx';
 
 
 IssueSummary = React.createClass({
@@ -43,7 +44,7 @@ IssueSummary = React.createClass({
         <div className={"issue-summary issue-status-"+status}>
           
           <div className="issue-summary-col issue-summary-col-1">
-            <IssuePriority issue={request} />
+            <RequestPriority request = { request } />
             {/*<ContactAvatarSmall item={owner} />*/}
           </div>
           <div className="issue-summary-col issue-summary-col-2">

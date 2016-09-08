@@ -105,10 +105,20 @@ const Calendar = React.createClass( {
 } )
 
 CalendarPage = React.createClass( {
+    /*
+    mixins: [ ReactMeteorData ],
+
+    getMeteorData() {
+        return {
+            team:Session.getSelectedTeam(),
+            facility:Session.getSelectedFacility()
+        }
+    }
+    */
     render() {
         return (
             <div style={{display:"inline"}}>
-            <FacilityFilter/>
+            {/*<FacilityFilter team = { this.data.team } facility = { this.data.facility } />*/}
             <div className="i-box" style={{backgroundColor:"#fff", padding:"15px",marginTop:"50px"}}>
                 <Calendar/>
             </div>

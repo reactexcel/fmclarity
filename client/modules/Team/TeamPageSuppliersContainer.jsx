@@ -9,20 +9,25 @@ TeamPageSuppliersContainer = createContainer ( ( params ) =>
 
     let user = Meteor.user(),
     	facility = Session.getSelectedFacility(),
+        team = Session.getSelectedTeam(),
     	facilities = null,
     	suppliers = null;
 
-    if( user != null ) 
+    if( team != null ) {
+        facilities = team.facilities;
+    }
+    else if( user != null ) 
     {
-        facilities = user.getFacilities();
+        facilities = user.facilities;
     }
 
     if( facility != null ) {
-        suppliers = facility.getSuppliers();
+        suppliers = facility.suppliers;
     }
 
     return {
     	user,
+        team,
     	facility,
     	facilities,
     	suppliers

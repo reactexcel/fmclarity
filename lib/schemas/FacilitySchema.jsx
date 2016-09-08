@@ -118,16 +118,39 @@ FacilitySchema = {
 	members: {
 		label: "Members",
 		description: "Stakeholders and staff for this site",
-		/*relation:
-		{
-			type: ORM.HasMembers,
-			source: "users"
-		}*/
+		relation: {
+			join: ( facility ) => {
+				let ids = _.pluck( facility.members, '_id' );
+				if ( !_.isEmpty( ids ) ) {
+					return Users.find( { _id: { $in: ids } } ).fetch();;
+				}
+			},
+			unjoin: ( facility ) => {
+				let members = [];
+				facility.members.map( ( member ) => {
+					members.push( _.pick( member, '_id', 'name', 'role' ) );
+				} )
+			}
+		}
 	},
 
 	suppliers: {
 		label: "Suppliers",
 		description: "Contractors supplying services for this facility",
+		relation: {
+			join: ( facility ) => {
+				let ids = _.pluck( facility.suppliers, '_id' );
+				if ( !_.isEmpty( ids ) ) {
+					return Teams.find( { _id: { $in: ids } } ).fetch();
+				}
+			},
+			unjoin: ( facility ) => {
+				let suppliers = [];
+				facility.suppliers.map( ( supplier ) => {
+					suppliers.push( _.pick( supplier, '_id', 'name', 'role' ) );
+				} )
+			}
+		}
 		/*relation:
 		{
 			type: ORM.HasMembers,

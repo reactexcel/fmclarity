@@ -1,9 +1,10 @@
 import React from 'react';
-
 import ActionsMenu from 'meteor/fmc:actions-menu';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
-import '/client/modules/Compliance/PMPList.jsx';
 import { AutoForm } from 'meteor/fmc:autoform';
+import FacilityStepper from './FacilityStepper.jsx';
+
+import '/client/modules/Compliance/PMPList.jsx';
 
 export default function FacilityPanel( props ) {
     let { team, facility } = props;
@@ -11,18 +12,18 @@ export default function FacilityPanel( props ) {
     function getMenu() {
         let menu = [];
 
-        if ( facility && facility.canSave() ) {
+        if ( facility /*&& facility.canSave() */ ) {
             menu.push( {
                 label: "Edit",
                 action() {
                     Modal.show( {
-                        content: <FacilityViewEdit item={ facility } />
+                        content: <FacilityStepper item={ facility } />
                     } )
                 }
             } );
         }
 
-        if ( facility.canDestroy() ) {
+        if ( /* facility.canDestroy()*/ true ) {
             menu.push( {
                 label: "Delete",
                 action() {
@@ -59,8 +60,8 @@ export default function FacilityPanel( props ) {
 
                                     <h2>{facility.name}</h2>                        
 
-                                    {facility.address.toString()?
-                                    <b>{facility.address.toString()}</b>
+                                    {facility.address?
+                                    <b>{facility.getAddress()}</b>
                                     :null}
 
                                 </div>
@@ -73,27 +74,27 @@ export default function FacilityPanel( props ) {
 
                 <IpsoTabso tabs={[
                     {
-                        hide:       !facility.canGetMessages(),
+                        //hide:       !facility.canGetMessages(),
                         tab:        <span id="discussion-tab">Updates</span>,
                         content:    <Inbox for={facility} truncate={true}/>
                     },{
-                        hide:       !facility.canAddDocument(),
+                        //hide:       !facility.canAddDocument(),
                         tab:        <span id="documents-tab">Documents</span>,
                         content:    <AutoForm item={facility} form={["documents"]}/>
                     },{
-                        hide:       !facility.canAddMember(),
+                        //hide:       !facility.canAddMember(),
                         tab:        <span id="personnel-tab">Personnel</span>,
                         content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>
                     },{
-                        hide:       !facility.canAddMember(),
+                        //hide:       !facility.canAddMember(),
                         tab:        <span id="tenants-tab">Tenants</span>,
                         content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>
                     },{
-                        hide:       !facility.canSetAreas(),
+                        //hide:       !facility.canSetAreas(),
                         tab:        <span id="areas-tab">Areas</span>,
                         content:    <FacilityAreasSelector item={facility}/>
                     },{
-                        hide:       !facility.canSetServicesRequired(),
+                        //hide:       !facility.canSetServicesRequired(),
                         tab:        <span id="services-tab">Services</span>,
                         content:    <ServicesSelector item={facility} field={"servicesRequired"}/>
                     },{

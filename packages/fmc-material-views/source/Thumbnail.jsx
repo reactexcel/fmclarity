@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FacilityThumbnail( props ) {
+export default function Thumbnail( props ) {
 	let style = _.extend( {
 		backgroundImage: "url('" + props.item.thumbUrl + "')",
 		backgroundSize: "cover"

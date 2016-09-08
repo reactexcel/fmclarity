@@ -1,6 +1,5 @@
 import React from 'react';
-
-import FacilityThumbnail from './FacilityThumbnail.jsx';
+import { Thumbnail } from 'meteor/fmc:material-views';
 
 export default function FacilityCard( props ) {
 	var facility = props.item;
@@ -11,12 +10,12 @@ export default function FacilityCard( props ) {
 	return (
 
 	<div className="facility-card2" onClick={ (e) => { props.onClick ? props.onClick( e ) : null }}>
-		<FacilityThumbnail item = { facility }>
+		<Thumbnail item = { facility }>
 			<div className="thumbnail-overlay">
 		    	<h3 className="title-line">{ facility.name }</h3>
-		    	<span className="address-line"><i className="fa fa-map-marker"></i> { facility.address.toString() }</span>
+		    	<span className="address-line"><i className="fa fa-map-marker"></i> { facility.getAddress() }</span>
 			</div>
-		</FacilityThumbnail>
+		</Thumbnail>
 	</div>
 
 	)

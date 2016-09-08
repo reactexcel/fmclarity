@@ -1,10 +1,16 @@
 import React from "react";
 
+import { NavList } from 'meteor/fmc:material-navigation';
+import { ContactCard } from 'meteor/fmc:doc-members';
+
+import TeamPanel from './TeamPanel.jsx';
+import FacilityFilter from '/client/modules/Facility/imports/FacilityFilter.jsx';
+
 export default class TeamPageSuppliers extends React.Component 
 {
-    constructor()
+    constructor( props )
     {
-        super();
+        super( props );
         this.state = {
             supplier: null
         }
@@ -12,19 +18,23 @@ export default class TeamPageSuppliers extends React.Component
 
     showModal(callback) {
         Modal.show({
-            content:<TeamViewEdit facility={this.data.facility} onChange={callback} />
+            content:<TeamViewEdit facility = { this.props.facility } onChange = { callback } />
         })
     }
 
 	render() {
 		return(
             <div className="suppliers-page animated fadeIn">
-                <FacilityFilter />
+                <FacilityFilter team = { this.props.team } facility = { this.props.facility } />
                 <div className="row" style={{paddingTop:"50px"}}>
                     <div className="col-md-4">
-                        <TeamNavList 
-                            selectedItem = { this.state.supplier }
-                            onChange={ (supplier) => 
+                        <NavList 
+
+                            tile            = { ContactCard }
+                            items           = { this.props.suppliers } 
+                            selectedItem    = { this.state.supplier }
+
+                            onClick = { (supplier) => 
                             {
                                 this.setState({
                                     supplier: supplier
@@ -34,9 +44,9 @@ export default class TeamPageSuppliers extends React.Component
                     </div>
                     <div className="col-md-8"> 
                         <div className="card-body ibox">
-                            {this.state.supplier?
-                            <TeamCard item = { this.state.supplier }/>
-                            :null}
+                            { this.state.supplier ?
+                            <TeamPanel item = { this.state.supplier }/>
+                            :null }
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,7 @@ export default function AddressLink( props ) {
 		};
 
 	return (
-		<span style={style} onClick={()=>{ openMap(addressString) }}>
+		<span style={style} onClick={ () => { openMap(addressString) } }>
   			<i className="fa fa-map-marker"></i> 
   			{addressString}
   		</span>

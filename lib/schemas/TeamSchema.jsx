@@ -121,9 +121,11 @@ TeamSchema = {
             //source: "Facilities",
             //key: "team._id"
             join: ( team ) => {
-                return Facilities.findAll( { 'team._id': team._id } ) },
+                return Facilities.findAll( { 'team._id': team._id } )
+            },
             unjoin: ( team ) => {
-                return null }
+                return null
+            }
         }
     },
 
@@ -135,6 +137,24 @@ TeamSchema = {
             type: ORM.HasMembers, 
             source: "users" 
         }*/
+    },
+
+    contact: {
+        label: "Primary contact",
+        description: "Primary contact for the facility",
+        relation: {
+            join: ( team ) => {
+                var managers = team.getMembers( {
+                    role: "manager"
+                } );
+                if ( managers && managers.length ) {
+                    return managers[ 0 ];
+                }
+            },
+            unjoin: ( team ) => {
+                return null;
+            }
+        }
     },
 
     suppliers: {

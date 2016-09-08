@@ -5,31 +5,23 @@ import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 import { ContactCard } from 'meteor/fmc:doc-members';
 
-export default UserProfileMenu = React.createClass(
-{
+export default UserProfileMenu = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
-    getMeteorData()
-    {
+    getMeteorData() {
         Meteor.subscribe( 'teamsAndFacilitiesForUser' );
         Meteor.subscribe( 'notifications' );
         var user, team, role, teams, notifications;
         user = Meteor.user();
-        if ( user )
-        {
+        if ( user ) {
             notifications = user.getNotifications();
             teams = user.getTeams();
             team = user.getTeam();
-            if ( !teams || !teams.length )
-            {}
-            else if ( !team )
-            {
+            if ( !teams || !teams.length ) {} else if ( !team ) {
                 team = teams[ 0 ];
                 user.selectTeam( team );
-            }
-            else if ( !team.name && !this.showingModal )
-            {
+            } else if ( !team.name && !this.showingModal ) {
                 this.showingModal = true;
                 FABActions.editTeam( team );
             }
@@ -42,35 +34,27 @@ export default UserProfileMenu = React.createClass(
         }
     },
 
-    selectTeam( team )
-    {
+    selectTeam( team ) {
         Meteor.user().selectTeam( team );
     },
 
-    createTeam()
-    {
-        Meteor.call( 'Teams.create',
-        {}, function( err, response )
-        {
+    createTeam() {
+        Meteor.call( 'Teams.create', {}, function( err, response ) {
             //console.log(response);
             var team = Teams.findOne( response );
             //console.log(team);
-            Modal.show(
-            {
+            Modal.show( {
                 content: <TeamViewEdit item={team}/>
             } )
         } )
     },
 
-    resetTestData()
-    {
+    resetTestData() {
         Meteor.call( "resetTestData" );
     },
 
-    render()
-    {
-        if ( !this.data.team )
-        {
+    render() {
+        if ( !this.data.team ) {
             return ( < div style = {
                     {
                         background: "rgba(0,0,0,0.5)",
@@ -98,7 +82,7 @@ export default UserProfileMenu = React.createClass(
                             left={0}
                             top={0}
                             status="loading"
-                        /> < /div> < /div>
+                        /> < /div> < /div >
             )
         }
         var userEmail = Meteor.user() && Meteor.user().emails ? Meteor.user().emails[ 0 ].address : '';
@@ -117,8 +101,8 @@ export default UserProfileMenu = React.createClass(
                         <ContactCard item={this.data.user}/>
                     </a>
                 </li>
-                {this.data.teams&&this.data.teams.length?<li className="divider"></li>:null}
-                {this.data.teams&&this.data.teams.length?this.data.teams.map(function(team){
+                {this.data.teams && this.data.teams.length?<li className="divider"></li>:null}
+                {this.data.teams && this.data.teams.length?this.data.teams.map(function(team){
                     return (
                         <li key={team._id} className={(team&&selectedTeam&&team._id==selectedTeam._id)?"active":''} onClick={component.selectTeam.bind(component,team)}>
                             <a style={{padding:"7px 0px 6px 7px"}}><ContactCard item={team}/></a>
@@ -127,7 +111,7 @@ export default UserProfileMenu = React.createClass(
                 }):null}
                 <li className="divider"></li>
 
-                {selectedTeam&&selectedTeam.canSave()?
+                {selectedTeam /*&& Teams.save.allowed( selectedTeam )*/?
 
                 <li>
                     <a href={FlowRouter.path('account')}>

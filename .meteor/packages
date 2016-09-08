@@ -17,9 +17,11 @@ fmc:doc-owners
 fmc:reports
 fmc:calendar
 fmc:layout
+
+fmc:material-views
+fmc:material-inputs
 fmc:material-navigation
 fmc:material-misc
-fmc:material-inputs
 
 fmc:workflow-helper
 

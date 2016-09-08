@@ -1,17 +1,18 @@
 import React from 'react';
 
 import { AutoForm } from 'meteor/fmc:autoform';
+import RequestPanel from '/client/modules/Request/imports/RequestPanel.jsx';
 
 export default QuickActions = new function QuickActionService() {
 	function viewRequest( request ) {
 		Modal.show( {
-			content: <IssueDetail item={request}/>
+			content: <RequestPanel item={request}/>
 		} )
 	}
 
 	function editTeam( team ) {
 		Modal.show( {
-			content: <TeamViewEdit item={team}/>
+			content: <TeamStepper item={team}/>
 		} )
 	}
 
@@ -35,7 +36,7 @@ export default QuickActions = new function QuickActionService() {
 							afterSubmit = ( error, response ) => {
 								if( error==null ) {
 									Modal.replace( {
-										content: <IssueDetail item = { response } />
+										content: <RequestPanel item = { response } />
 									})
 								}
 							}
@@ -49,7 +50,7 @@ export default QuickActions = new function QuickActionService() {
 					( request, form ) => {
 						Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
 							Modal.replace( {
-								content: <IssueDetail item = { response }/>
+								content: <RequestPanel item = { response }/>
 							} );
 						} );
 					}
@@ -78,7 +79,7 @@ export default QuickActions = new function QuickActionService() {
 			var newItem = Facilities.findOne( response._id );
 			newItem.setupCompliance( Config.compliance );
 			Modal.show( {
-				content: <FacilityViewEdit item={newItem} />
+				content: <FacilityStepper item={newItem} />
 			} );
 		} )
 	}

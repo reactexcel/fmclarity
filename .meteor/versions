@@ -61,6 +61,7 @@ fmc:login-tokens@0.0.1
 fmc:material-inputs@0.0.1
 fmc:material-misc@0.0.1
 fmc:material-navigation@0.0.1
+fmc:material-views@0.0.1
 fmc:modal@0.0.1
 fmc:orm@0.0.1
 fmc:rbac@0.0.1
@@ -85,7 +86,6 @@ livedata@1.0.18
 localstorage@1.0.11
 logging@1.0.14
 mdg:geolocation@1.3.0
-mdg:validated-method@0.2.3
 mdg:validation-error@0.5.1
 meteor@1.1.16
 meteor-base@1.0.4

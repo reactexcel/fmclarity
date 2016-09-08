@@ -1,5 +1,4 @@
 import React from "react";
-
 import FacilityCard from './FacilityCard.jsx';
 import FacilityPanel from './FacilityPanel.jsx';
 

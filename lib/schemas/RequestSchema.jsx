@@ -304,22 +304,25 @@ IssueSchema = {
 		label: "Owner",
 		description: "The creator or owner of this request",
 		relation: {
-			type: ORM.OneToOne,
-			source: Users
+			join: ( request ) => {
+				return Users.findOne( request.owner._id );
+			},
+			unjoin: ( request ) => {
+				return _.pick( request.owner, '_id', 'name' );
+			}
 		},
-		input: Input.Select,
 	},
 
 	team: {
 		label: "Owning team",
 		description: "The team who created this work request",
 		relation: {
-			//type: ORM.OneToOne,
-			//source: Teams
 			join: ( item ) => {
-				return Teams.findOne( item.team._id ) },
+				return Teams.findOne( item.team._id )
+			},
 			unjoin: ( item ) => {
-				return _.pick( item.team, [ '_id', 'name' ] ) }
+				return _.pick( item.team, [ '_id', 'name' ] )
+			}
 		},
 		input: Input.Select,
 		defaultValue: ( item ) => {
@@ -332,8 +335,12 @@ IssueSchema = {
 		description: "The site for this job",
 		type: "object",
 		relation: {
-			type: ORM.OneToOne,
-			source: Facilities
+			join: ( request ) => {
+				return Facilities.findOne( request.facility._id );
+			},
+			unjoin: ( request ) => {
+				return _.pick( request.facility, '_id', 'name' );
+			}
 		},
 		input: Input.Select,
 
@@ -394,11 +401,20 @@ IssueSchema = {
 	members: {
 		label: "Contacts",
 		description: "Stakeholders for this work request",
-		/*relation:
-		{
-			type: ORM.ManyToMany,
-			source: "users"
-		},*/
+		relation: {
+			join: ( facility ) => {
+				let ids = _.pluck( facility.members, '_id' );
+				if ( !_.isEmpty( ids ) ) {
+					return Users.find( { _id: { $in: ids } } ).fetch();
+				}
+			},
+			unjoin: ( facility ) => {
+				let members = [];
+				facility.members.map( ( member ) => {
+					members.push( _.pick( member, '_id', 'name', 'role' ) );
+				} )
+			}
+		},
 		defaultValue: getMembersDefaultValue
 	},
 
@@ -437,7 +453,7 @@ IssueSchema = {
 function getMembersDefaultValue( item ) {
 	console.log( item );
 
-	if( item.team == null) {
+	if ( item.team == null ) {
 		return;
 	}
 

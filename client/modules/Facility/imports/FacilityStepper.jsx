@@ -1,63 +1,32 @@
 import React from "react";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { DocOwnerCard } from 'meteor/fmc:doc-owners';
 import { ContactList } from 'meteor/fmc:doc-members';
 import { AutoForm } from 'meteor/fmc:autoform';
 
+function FacilityStepper( props ) {
 
-FacilityViewEdit = React.createClass( {
-
-	mixins: [ ReactMeteorData ],
-
-	getMeteorData() {
-
-		Meteor.subscribe( 'users' );
-
-		var facility, team, suppliers;
-
-		facility = this.state.item ? Facilities.findOne( this.state.item._id ) : null;
+	function setThumb( thumb ) {
+		let facility = props.item;
 		if ( facility ) {
-			team = facility.getTeam();
-			suppliers = facility.suppliers;
+			facility.setThumb( thumb );
+			facility.thumb = thumb;
 		}
+	}
 
-		return {
-			facility,
-			team,
-			suppliers,
-		}
-	},
+	let facility = props.item;
 
-	getInitialState() {
-		return {
-			item: this.props.item
-		}
-	},
-
-	setThumb( thumb ) {
-		var facility = this.data.facility;
-		facility.setThumb( thumb );
-		facility.thumb = thumb;
-		this.setState( {
-			item: facility
-		} );
-	},
-
-	render() {
-		var facility = this.data.facility;
-		var team = this.data.team;
-		var suppliers = this.data.suppliers;
-
-		if ( !facility && facility.canCreate() ) {
-			//show facility creation information
-		} else if ( !facility.canSave() ) {
-			return (
-				<FacilityViewDetail item={facility} />
-			)
-		}
+	/*
+	if ( !facility && facility.canCreate() ) {
+		//show facility creation information
+	} else if ( !facility.canSave() ) {
 		return (
-			<div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+			<FacilityViewDetail item={facility} />
+		)
+	}
+	*/
+	return (
+		<div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 			    <h2 style={{marginTop:"0px"}}>Edit facility</h2>
                 {facility.owner?<div>
                     <b>Facility owner:</b>
@@ -83,26 +52,25 @@ FacilityViewEdit = React.createClass( {
 			        	guide: 		<div>Enter the services required by this facility. If you want you can also match there services to a supplier. If you want to configure this later simply his finish.</div>
                     },{
                         tab: 		<span id="personnel-tab">Personnel</span>,
-                        content: 	<ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>,
+                        content: 	<ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={facility.team}/>,
 			        	guide: 		<div>Enter the facility personnel here by clicking on add member.</div>
                     },{
                         tab: 		<span id="tenants-tab">Tenants</span>,
-                        content: 	<ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>,
+                        content: 	<ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={facility.team}/>,
 			        	guide: 		<div>Enter tenants to the property by clicking on add member here.</div>
                     },{
                         tab: 		<span id="documents-tab">Documents</span>,
                         content: 	<AutoForm item={facility} form={["documents"]}/>,
 			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
-                    },{
+                    }/*,{
                         tab:        <span id="requests-tab">Plugins</span>,
                         content:    <FacilityPluginSelector/>
-                    }/*{
+                    },{
                         tab: 		<span id="suppliers-tab"><span>Suppliers</span></span>,
                         content: 	<ContactList members={suppliers} group={facility} type="team"/>,
 			        	guide: 		<div>Add the suppliers employed by this facility here. If you want to configure this later simply press next.</div>
                     },*/
                 ]}/>				
 			</div>
-		)
-	}
-} );
+	)
+}

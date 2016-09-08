@@ -1,10 +1,8 @@
 import React from "react";
-import AddressLink from './imports/AddressLink.jsx';
+import AddressLink from './AddressLink.jsx';
 
-function FacilityDetails( props ) {
-{
-	if ( !props.item )
-	{
+export default function FacilityDetails( props ) {
+	if ( !props.item ) {
 		return <div/>
 	}
 
@@ -13,5 +11,5 @@ function FacilityDetails( props ) {
         	<span className="contact-title">Site: {props.item.name}<br/></span>
         	<span><AddressLink item={props.item.address}/><br/></span>
     	</div>
-    )
+	)
 }

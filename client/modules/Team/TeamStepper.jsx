@@ -1,11 +1,13 @@
 import React from "react";
-import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+
+import { AutoForm } from 'meteor/fmc:autoform';
+import { ContactList } from 'meteor/fmc:doc-members';
 
 /*
 TODO: remove tour, add additional instructions into stepper
 */
-TeamViewEdit = React.createClass(
+TeamStepper = React.createClass(
 {
 
     mixins: [ ReactMeteorData ],
@@ -155,12 +157,14 @@ TeamViewEdit = React.createClass(
                 </form>
             )
         }
+        /*
         else if ( !viewingTeam.canSave() )
         {
             return (
                 <TeamViewDetail item={viewingTeam} />
             )
         }
+        */
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
                 {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}

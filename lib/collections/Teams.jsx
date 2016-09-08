@@ -136,16 +136,6 @@ function getSuppliers() {
 		.fetch();
 }
 
-function getPrimaryContact( team ) {
-	team = team || this;
-	var managers = team.getMembers( {
-		role: "manager"
-	} );
-	if ( managers && managers.length ) {
-		return managers[ 0 ];
-	}
-}
-
 function inviteSupplier( team, searchName, ext ) {
 	var supplier;
 	searchName = searchName.trim();
@@ -257,9 +247,6 @@ Teams.helpers( {
 		var timeframe = timeframes[ priority ] ? timeframes[ priority ] : timeframes[ 'Standard' ];
 		return timeframe;
 	},
-
-
-	getPrimaryContact,
 
 	getNextWOCode() {
 		if ( !this.counters ) {
