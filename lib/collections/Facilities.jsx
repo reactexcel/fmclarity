@@ -59,18 +59,6 @@ Facilities = new Model( {
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
 Facilities.actions( {
-	create: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: RBAC.lib.create.bind( Facilities )
-	},
-	save: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: RBAC.lib.save.bind( Facilities )
-	},
-	destroy: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		method: RBAC.lib.destroy.bind( Facilities )
-	},
 	getAreas: {
 		authentication: AuthHelpers.memberOfRelatedTeam,
 		helper: function( facility, parent ) {
@@ -155,13 +143,6 @@ Facilities.actions( {
 		}
 	},
 
-	getTeam: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		helper: function( facility ) {
-			return Teams.findOne( facility.team._id );
-		}
-	},
-
 	setupCompliance: {
 		authentication: true,
 		method: function( facility, rules ) {
@@ -190,19 +171,6 @@ Facilities.actions( {
 		}
 	},
 
-	setTeam: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		helper: function( facility, team ) {
-			Facilities.update( facility._id, {
-				$set: {
-					team: {
-						_id: team._id,
-						name: team.name
-					}
-				}
-			} );
-		}
-	},
 	getAddress: {
 		authentication: true,
 		helper: function( facility ) {

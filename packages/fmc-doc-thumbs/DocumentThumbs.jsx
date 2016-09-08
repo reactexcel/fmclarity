@@ -1,21 +1,14 @@
 
 //should be called docthumbs
 DocThumb = {
-	register:registerCollection,
-	config:getInitFunc,
-	File:File
+	register,
+	File
 }
 
 var Thumbs = null;
 
-function getInitFunc(opts) {
-	return function(collection) {
-		registerCollection(collection,opts);
-	}
-}
 
-
-function registerCollection(collection,opts) {
+function register(collection,opts) {
 	Thumbs = opts.repo||Files;
 
 	collection.helpers({

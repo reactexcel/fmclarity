@@ -13,10 +13,9 @@ Messages = new Model( {
 } )
 
 DocMessages = {
-    register: registerCollection,
-    isValidEmail: isValidEmail,
-    config: getConfigurationFunction,
-    render: render
+    register,
+    isValidEmail,
+    render
 }
 
 //Message.addFeature( DocOwners );
@@ -34,7 +33,7 @@ var defaultHelpers = {
     //getRecipients:getRecipients,
 }
 
-function registerCollection( collection, opts ) {
+function register( collection, opts ) {
     opts = opts || {};
     var authentication = opts.authentication || true;
     var customHelpers = opts.helpers || {};
@@ -45,6 +44,7 @@ function registerCollection( collection, opts ) {
 
 
     collection.helpers( helpers );
+
     collection.actions( {
         getMessages: {
             authentication: authentication,
@@ -61,6 +61,7 @@ function registerCollection( collection, opts ) {
             }
         }
     } )
+
 }
 
 //this is repeated accross all of my document packages

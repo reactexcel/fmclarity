@@ -1,15 +1,6 @@
-export default DocOwners = {
-	register: registerCollection,
-	config: getConfigFunc
-}
+export default DocOwners = { register }
 
-function getConfigFunc( options ) {
-	return function( collection ) {
-		registerCollection( collection, options );
-	}
-}
-
-function registerCollection( collection, options ) {
+function register( collection, options ) {
 
 	collection.save.before( ( doc ) => {
 		if ( doc == null ) {

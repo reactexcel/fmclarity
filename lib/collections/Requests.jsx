@@ -42,12 +42,6 @@ Issues = new Model( {
 	]
 } )
 
-function isEditable( request ) {
-	return (
-		request.status == "Draft" || request.status == "New"
-	)
-}
-
 var accessForTeamMembers = function( role, user, request ) {
 	return (
 		isEditable( request ) &&
@@ -110,6 +104,8 @@ Issues.methods( {
 			return str;
 		}
 	},
+
+	/* services toString()*/
 
 	getServiceString: {
 		authentication: true,

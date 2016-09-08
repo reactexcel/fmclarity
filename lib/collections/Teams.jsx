@@ -50,23 +50,6 @@ Teams = new Model( {
 } );
 
 Teams.methods( {
-	create: {
-		authentication: true,
-		method: RBAC.lib.create.bind( Teams )
-	},
-	save: {
-		authentication: AuthHelpers.adminManagerOrOwner,
-		method: RBAC.lib.save.bind( Teams )
-	},
-	destroy: {
-		authentication: false,
-		method: RBAC.lib.destroy.bind( Teams )
-	},
-
-	createRequest: {
-		authentication: AuthHelpers.manager,
-		method: createRequest,
-	},
 
 	inviteMember: {
 		authentication: AuthHelpers.managerOrOwner,
@@ -77,36 +60,12 @@ Teams.methods( {
 		authentication: AuthHelpers.manager,
 		method: inviteSupplier,
 	},
-	/*
-	addSupplier:{
-	  authentication:AuthHelpers.manager,
-	  method:RBAC.lib.addMember(Teams,'suppliers')
-	},
-	removeSupplier:{
-	  authentication:AuthHelpers.manager,
-	  method:RBAC.lib.removeMember(Teams,'suppliers')
-	},
-	*/
 
-	addFacility: {
-		authentication: AuthHelpers.adminManagerOrOwner,
-		method: addFacility,
-	},
-	addFacilities: {
-		authentication: AuthHelpers.adminManagerOrOwner,
-		method: addFacilities,
-	},
-	destroyFacility: {
-		authentication: AuthHelpers.adminManagerOrOwner,
-		method: destroyFacility,
-	},
-	editFacility: {
-		authentication: AuthHelpers.managerOrOwner,
-	},
 	sendMemberInvite: {
 		authentication: true,
 		method: sendMemberInvite
 	},
+
 	setServicesRequired: {
 		authentication: AuthHelpers.managerOrOwner,
 		method: function( team, servicesRequired ) {
@@ -214,18 +173,6 @@ function inviteSupplier( team, searchName, ext ) {
 	return supplier;
 }
 
-function createRequest( team, options ) {
-	team = Teams._transform( team );
-	var data = _.extend( {}, options, {
-		team: {
-			_id: team._id,
-			name: team.getName()
-		}
-	} )
-	var result = Issues.create( data );
-	return Issues._transform( result );
-}
-
 function inviteMember( team, email, ext ) {
 	var user, id;
 	var found = false;
@@ -287,35 +234,6 @@ function sendMemberInvite( team, member ) {
 	} )
 }
 
-function addFacility( team, facility ) {
-	facility = facility || {};
-	var newFacility = Facilities.createNewItemUsingSchema( {
-		team: {
-			_id: team._id,
-			name: team.name
-		}
-	} );
-	var id = Facilities.insert( newFacility );
-	return Facilities.findOne( id );
-}
-
-function addFacilities( team, facilities ) {
-	if ( _.isArray( facilities ) ) {
-		//throw an error
-	}
-	//if(!team._helpers) {
-	team = Teams.findOne( team._id );
-	//}
-	facilities.map( function( f ) {
-		team.addFacility( f );
-	} )
-}
-
-function destroyFacility( team, facility ) {
-	return Facilities.remove( facility._id );
-}
-
-
 Teams.helpers( {
 
 	//this is just used for new and sticky
@@ -341,9 +259,7 @@ Teams.helpers( {
 	},
 
 
-	getPrimaryContact: getPrimaryContact,
-
-	getSuppliers: getSuppliers,
+	getPrimaryContact,
 
 	getNextWOCode() {
 		if ( !this.counters ) {

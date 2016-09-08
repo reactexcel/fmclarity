@@ -15,18 +15,6 @@ Users = new Model( {
 } )
 
 Users.actions( {
-    create: {
-        authentication: true,
-        method: createUser
-    },
-    save: {
-        authentication: AuthHelpers.currentUserOrOwner,
-        method: RBAC.lib.save.bind( Users )
-    },
-    destroy: {
-        authentication: true, //AuthHelpers.userIsManagerofMembersTeam,
-        method: RBAC.lib.destroy.bind( Users )
-    },
     getTeam: {
         authentication: true,
         helper: function() {
@@ -47,16 +35,6 @@ Users.actions( {
                     } ]
                 } )
                 .fetch()
-        }
-    },
-    getFacilities: {
-        authentication: true,
-        helper: function( user, q ) {
-            var team = user.getTeam();
-            //console.log(team);
-            if ( team ) {
-                return team.getFacilities( q );
-            }
         }
     },
     getRole: {
