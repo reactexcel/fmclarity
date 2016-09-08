@@ -7,7 +7,7 @@ import ValidationService from './ValidationService.jsx';
 import ValidatedMethod from './ValidatedMethod.jsx';
 
 export default class Model {
-	constructor( schema, collection ) {
+	constructor( { schema, collection, mixins } ) {
 		this.schema = schema;
 
 		// either create or register the current collection
@@ -35,8 +35,23 @@ export default class Model {
 		this.save = new ValidatedMethod( {
 			name: `${this._name}.upsert`,
 			validate: ValidationService.validator( this.schema ),
-			run: ( ...args ) => { return this._save( ...args ) }
+			run: ( ...args ) => {
+				return this._save( ...args ) }
 		} )
+
+		this.registerMixins( mixins );		
+	}
+
+	registerMixins( mixins ) {
+		mixins.map( ( mixin ) => {
+			if ( _.isArray( mixin ) ) {
+				let [ module, options ] = mixin;
+				module.register( this, options );
+			}
+			else {
+				mixin.register( this )
+			}
+		} );
 	}
 
 	// this function may be redundant now that we are using a different autoform architecture
@@ -75,16 +90,17 @@ export default class Model {
 		}
 		Object.assign( newItem, item );
 		return newItem;
-	};
+	}
+
+
+	find( ...args ) {
+		return this.collection.find( ...args );
+	}
 
 
 	findOne( ...args ) {
 		let doc = this.collection.findOne( ...args );
 		return this.join( doc );
-	}
-
-	find( ...args ) {
-		return this.collection.find( ...args );
 	}
 
 	findAll( ...args ) {
@@ -97,10 +113,10 @@ export default class Model {
 
 	_save( doc, newValues ) {
 		let selector = null;
-		if( doc._id != null ) {
+		if ( doc._id != null ) {
 			selector = doc._id;
 		}
-		Object.assign(doc, newValues);
+		Object.assign( doc, newValues );
 		doc = this.unjoin( doc );
 
 		return this.collection.upsert( selector, { $set: doc } );

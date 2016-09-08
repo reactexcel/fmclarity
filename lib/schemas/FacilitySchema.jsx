@@ -151,9 +151,11 @@ FacilitySchema = {
 		description: "URL for an icon-sized image of the facility",
 		relation: {
 			join: ( facility ) => {
-				return facility.getThumbUrl() },
+				return facility.getThumbUrl()
+			},
 			unjoin: ( facility ) => {
-				return null }
+				return null
+			}
 		}
 	},
 
@@ -162,9 +164,16 @@ FacilitySchema = {
 		description: "Primary contact for the facility",
 		relation: {
 			join: ( facility ) => {
-				return facility.getPrimaryContact() },
+				var contacts = facility.getMembers( {
+					role: "manager"
+				} );
+				if ( contacts && contacts.length ) {
+					return contacts[ 0 ]
+				}
+			},
 			unjoin: ( facility ) => {
-				return null }
+				return null
+			}
 		}
 	}
 

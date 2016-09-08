@@ -19,7 +19,7 @@ FacilityViewEdit = React.createClass( {
 		facility = this.state.item ? Facilities.findOne( this.state.item._id ) : null;
 		if ( facility ) {
 			team = facility.getTeam();
-			suppliers = facility.getSuppliers();
+			suppliers = facility.suppliers;
 		}
 
 		return {
@@ -33,10 +33,6 @@ FacilityViewEdit = React.createClass( {
 		return {
 			item: this.props.item
 		}
-	},
-
-	addSupplier( ext, supplier ) {
-		this.data.facility.addSupplier( supplier, ext );
 	},
 
 	setThumb( thumb ) {

@@ -18,7 +18,8 @@ Package.onUse(function(api) {
 		'less',
 		'react-meteor-data',
 		'fmc:orm',
-		'fmc:rbac'
+		'fmc:rbac',
+		'fmc:doc-owners'
 		//'dburles:collection-helpers',
 		//'matb33:collection-hooks'
 	]);

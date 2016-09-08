@@ -15,6 +15,7 @@ Package.onUse(function(api) {
 		'ecmascript',
 		'react-meteor-data',
 		'fmc:orm',
+		'fmc:doc-owners',
 		'fmc:rbac'
 	]);
 

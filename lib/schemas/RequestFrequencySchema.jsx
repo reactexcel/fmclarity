@@ -1,10 +1,10 @@
-import * as Input from 'meteor/fmc:material-inputs';
+import { Text, Select } from 'meteor/fmc:material-inputs';
 
 RequestFrequencySchema = {
 	repeats: {
 		label: "Repeats",
 		description: "The number of times this item should happen",
-		input: Input.Text,
+		input: Text,
 		type: "number",
 		defaultValue: 6,
 		size: 6
@@ -12,7 +12,7 @@ RequestFrequencySchema = {
 	number: {
 		label: "Frequency (number)",
 		description: "The number of days, weeks, months etc between repeats",
-		input: Input.Text,
+		input: Text,
 		type: "number",
 		defaultValue: 6,
 		size: 6
@@ -20,7 +20,7 @@ RequestFrequencySchema = {
 	unit: {
 		label: "Frequency (unit)",
 		description: "The unit (days, weeks, months etc) of the repeats",
-		input: Input.Select,
+		input: Select,
 		defaultValue: "months",
 		type: "string",
 		size: 6,

@@ -4,53 +4,43 @@ import '../schemas/RequestSchema.jsx';
 import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
 
-Issues = new Model( IssueSchema, "Issues" );
-
-/* Issues = new Model ( {
-	schema: IssuesSchema,
+Issues = new Model( {
+	schema: IssueSchema,
 	collection: "Issues",
 	mixins: [
-		DocOwners,
-		DocMessages,
-		DocMembers
-	]
-})*/
+		DocOwners, 
+		[ DocMessages, {
+			helpers: {
+				getInboxName() {
+					return "work order #" + this.code + ' "' + this.getName() + '"';
+				},
+				getWatchers() {
+					let user = Meteor.user(),
+						owner = this.getOwner(),
+						team = this.team,
+						supplier = this.supplier,
+						assignee = this.assignee;
 
-//Issues.addFeature( DocMessages, {} );
-
-Issues.mixins( [
-	DocOwners.config(),
-	DocMessages.config( {
-		helpers: {
-			getInboxName: function() {
-				return "work order #" + this.code + ' "' + this.getName() + '"';
-			},
-			getWatchers: function() {
-				let user = Meteor.user(),
-					owner = this.getOwner(),
-					team = this.team,
-					supplier = this.supplier,
-					assignee = this.assignee;
-					
-				if ( this.status = Issues.STATUS_DRAFT ) {
-					return [ user, owner ];
-				} else if ( this.status = Issues.STATUS_NEW ) {
-					return [ user, owner, team ];
-				} else {
-					return [ user, owner, team, supplier, assignee ];
+					if ( this.status = Issues.STATUS_DRAFT ) {
+						return [ user, owner ];
+					} else if ( this.status = Issues.STATUS_NEW ) {
+						return [ user, owner, team ];
+					} else {
+						return [ user, owner, team, supplier, assignee ];
+					}
 				}
 			}
-		}
-	} ),
-	DocMembers.config( {
-		authentication: function( role, user, request ) {
-			return (
-				AuthHelpers.memberOfRelatedTeam( role, user, request ) ||
-				AuthHelpers.managerOfSuppliersTeam( role, user, request )
-			)
-		}
-	} )
-] )
+		} ],
+		[ DocMembers, {
+			authentication(...args) {
+				return (
+					AuthHelpers.memberOfRelatedTeam(...args) ||
+					AuthHelpers.managerOfSuppliersTeam(...args)
+				)
+			}
+		} ]
+	]
+} )
 
 function isEditable( request ) {
 	return (
@@ -88,6 +78,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 //maybe actions it better terminology?
 Issues.methods( {
 
+	/* funtionality should be encapsulated in members */
 	updateSupplierManagers: {
 		authentication: true,
 		helper: function( request ) {
@@ -102,6 +93,7 @@ Issues.methods( {
 		}
 	},
 
+	/* just seems to be a simple calculated field - in schema??, location.toString(), address.toString() */
 	getLocationString: {
 		authentication: true,
 		helper: function( request ) {

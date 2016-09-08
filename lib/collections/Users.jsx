@@ -4,15 +4,15 @@ import '../schemas/UserSchema.jsx';
 
 import { DocOwners } from 'meteor/fmc:doc-owners';
 
-Users = new Model( UserSchema, Meteor.users );
-Users.mixins( [
-    DocOwners.config(),
-    DocThumb.config( {
-        repo: Files,
-        defaultThumb: "/img/ProfilePlaceholderSuit.png"
-    } ),
-    DocMessages.config()
-] )
+Users = new Model( {
+    schema: UserSchema,
+    collection: Meteor.users,
+    mixins: [
+        DocOwners, 
+        DocMessages,
+        [ DocThumb, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+    ]
+} )
 
 Users.actions( {
     create: {

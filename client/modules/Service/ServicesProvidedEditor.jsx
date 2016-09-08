@@ -2,6 +2,8 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Switch } from 'meteor/fmc:material-inputs';
+
 ServicesProvidedEditor = React.createClass(
 {
 
@@ -151,7 +153,6 @@ ServicesProvidedEditor = React.createClass(
 	{
 		var component = this;
 		var services = this.state.services;
-		var Menu = AutoInput.MDDataTableMenu;
 		var readOnly = false;
 		return (
 			<div className="services-editor">
@@ -240,7 +241,6 @@ ServicesProvidedEditorRow = React.createClass(
 	{
 		service = this.props.service;
 		clickExpand = this.props.clickExpand;
-		var Switch = AutoInput.switch;
 		var onChange = this.props.onChange;
 		readOnly = this.props.readOnly;
 		return (

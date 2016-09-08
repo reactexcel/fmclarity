@@ -1,38 +1,34 @@
 import { Model } from 'meteor/fmc:orm';
+import { DocOwners } from 'meteor/fmc:doc-owners';
 
-Documents = new Model( DocumentSchema, "Files" );
+Documents = new Model( {
+	schema: DocumentSchema,
+	collection: "Files",
+	mixins: [ DocOwners ]
+} )
 
-if ( Meteor.isServer )
-{
-    Meteor.publish( 'docs', function()
-    {
-        return Documents.find(
-        {} );
-    } );
-}
-else
-{
-    Meteor.subscribe( 'docs' );
+if ( Meteor.isServer ) {
+	Meteor.publish( 'docs', function() {
+		return Documents.find( {} );
+	} );
+} else {
+	Meteor.subscribe( 'docs' );
 }
 
 //this should be a wrapper for CollectionFS, then we can, in theory, unplug it in due course
 //come to think of it could have a wrapper for user as well - would fix that profile malarkey
 
-Documents.methods(
-{
-    create:
-    {
-        authentication: true,
-        method: RBAC.lib.create.bind( Documents )
-    },
-    save:
-    {
-        authentication: true,
-        method: RBAC.lib.save.bind( Documents )
-    },
-    destroy:
-    {
-        authentication: true,
-        method: RBAC.lib.destroy.bind( Documents )
-    }
+Documents.methods( {
+	create: {
+		authentication: true,
+		method: RBAC.lib.create.bind( Documents )
+	},
+	save: {
+		authentication: true,
+		method: RBAC.lib.save.bind( Documents )
+	},
+	destroy: {
+		authentication: true,
+		method: RBAC.lib.destroy.bind( Documents )
+	}
 } )

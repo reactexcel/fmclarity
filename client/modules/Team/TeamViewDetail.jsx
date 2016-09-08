@@ -3,6 +3,8 @@ import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { ContactList } from 'meteor/fmc:doc-members';
 
+import { AutoForm } from 'meteor/fmc:autoform';
+
 TeamViewDetail = React.createClass(
 {
 

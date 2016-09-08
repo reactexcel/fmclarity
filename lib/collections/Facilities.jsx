@@ -11,56 +11,50 @@ import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
 
 //would like to more closely emulate simpleschema paradigm here
-Facilities = new Model( FacilitySchema, "Facilities" );
-
-//Yes - but doesn't this mean that the schema is not a complete document
-//and what about validation?
-//well - I think if we are going to do it this way then we should at least have some sort of placeholder in the schema??
-// but then again these mixins have their own schemas defined - perhaps we shouldn't concern ourselves
-Facilities.mixins( [
-	DocOwners.config(),
-	DocThumb.config( {
-		defaultThumbUrl: 0
-	} ),
-	DocAttachments.config( {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-	} ),
-	DocMessages.config( {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		helpers: {
-			getInboxName: function() {
-				return this.getName() + " announcements"
-			},
-			getWatchers: function() {
-				var members = this.getMembers();
-				var watchers = [];
-				if ( members && members.length ) {
-					members.map( function( m ) {
-						watchers.push( m );
-					} )
+Facilities = new Model( {
+	schema: FacilitySchema,
+	collection: "Facilities",
+	mixins: [
+		[ DocOwners ],
+		[ DocThumb, { defaultThumbUrl: 0 } ],
+		[ DocAttachments, { authentication: AuthHelpers.managerOfRelatedTeam } ],
+		[ DocMessages, {
+			authentication: AuthHelpers.managerOfRelatedTeam,
+			helpers: {
+				getInboxName() {
+					return this.getName() + " announcements"
+				},
+				getWatchers() {
+					var members = this.getMembers();
+					var watchers = [];
+					if ( members && members.length ) {
+						members.map( ( m ) => {
+							watchers.push( m );
+						} )
+					}
+					return watchers;
 				}
-				return watchers;
 			}
-		}
-	} ),
-	DocMembers.config( [ {
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		fieldName: "members",
-	}, {
-		fieldName: "suppliers",
-		authentication: AuthHelpers.managerOfRelatedTeam,
-		membersCollection: Teams,
-		/*
-		// or???
-		authentication:{
-		  create:AuthHelpers.managerOfRelatedTeam,
-		  read:AuthHelpers.managerOfRelatedTeam,
-		  update:AuthHelpers.managerOfRelatedTeam,
-		  delete:AuthHelpers.managerOfRelatedTeam,
-		}
-		*/
-	} ] )
-] );
+		} ],
+		[ DocMembers, [ {
+			authentication: AuthHelpers.managerOfRelatedTeam,
+			fieldName: "members",
+		}, {
+			fieldName: "suppliers",
+			authentication: AuthHelpers.managerOfRelatedTeam,
+			membersCollection: Teams,
+			/*
+			// or???
+			authentication:{
+			  create:AuthHelpers.managerOfRelatedTeam,
+			  read:AuthHelpers.managerOfRelatedTeam,
+			  update:AuthHelpers.managerOfRelatedTeam,
+			  delete:AuthHelpers.managerOfRelatedTeam,
+			}
+			*/
+		} ] ]
+	]
+} )
 
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
@@ -225,17 +219,7 @@ Facilities.actions( {
 			return str.length ? str : null;
 		}
 	},
-	getPrimaryContact: {
-		authentication: true,
-		helper: function( facility ) {
-			var contacts = facility.getMembers( {
-				role: "manager"
-			} );
-			if ( contacts && contacts.length ) {
-				return contacts[ 0 ]
-			}
-		}
-	},
+
 	//this is not allowing for suppliers who have a request with this facility
 	getIssues: {
 		authentication: true,
