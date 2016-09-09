@@ -25,13 +25,12 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-function RequestPanelInner( props ) {
+const RequestPanelInner = ( { request } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
 
-    let request = props.request;
     if ( !request ) {
         return <div/>
     }

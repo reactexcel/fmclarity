@@ -3,6 +3,7 @@ import { mount } from 'react-mounter';
 import { CalendarPage } from 'meteor/fmc:calendar';
 
 import { MainLayout } from 'meteor/fmc:layout';
+import { BlankLayout } from 'meteor/fmc:layout';
 
 // ROUTER
 // Includes all url route for the App

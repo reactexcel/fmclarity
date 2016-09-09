@@ -4,15 +4,38 @@ import { AutoForm } from 'meteor/fmc:autoform';
 import RequestPanel from '/client/modules/Request/imports/RequestPanel.jsx';
 
 export default QuickActions = new function QuickActionService() {
+
+	function createFacility( template = {} ) {
+		Modal.show( {
+			content: <FacilityStepper item = { template } />
+		} )
+	}
+
+	function viewFacility( facility ) {
+		Model.show( {
+			content: <FacilityPanel item = { facility } />
+		})
+	}
+
+	function editFacility( facility ) {
+		Modal.show( {
+			content: <FacilityStepper item = { facility } />
+		} )
+	}
+
+	function deleteFacility( facility ) {
+		facility.destroy();
+	}
+
 	function viewRequest( request ) {
 		Modal.show( {
-			content: <RequestPanel item={request}/>
+			content: <RequestPanel item = { request } />
 		} )
 	}
 
 	function editTeam( team ) {
 		Modal.show( {
-			content: <TeamStepper item={team}/>
+			content: <TeamStepper item = { team } />
 		} )
 	}
 
@@ -61,16 +84,16 @@ export default QuickActions = new function QuickActionService() {
 		//request = Issues._transform(request);
 		//request.doAction("create");	    
 		/*
-	    Meteor.call('Issues.create',request,function(err,response){
-	    	if(err) {
-	    		console.log(err);
-	    	}
-	    	if(response) {
-	    		var newRequest = Issues.findOne(response._id);
-		    	newRequest.doAction("create");
-    		}
-	    });
-	    */
+		Meteor.call('Issues.create',request,function(err,response){
+			if(err) {
+				console.log(err);
+			}
+			if(response) {
+				var newRequest = Issues.findOne(response._id);
+				newRequest.doAction("create");
+			}
+		});
+		*/
 	}
 
 	function createFacility() {
@@ -114,8 +137,8 @@ export default QuickActions = new function QuickActionService() {
 					copy.facility = _.pick( newRule.facility, 'name', '_id' );
 				}
 				/*if(newRule.event) {
-	                copy.event = _.pick(newRule.event,'name','_id');
-	            }*/
+					copy.event = _.pick(newRule.event,'name','_id');
+				}*/
 				if ( newRule.service ) {
 					copy.service = _.pick( newRule.service, 'name' );
 				}
@@ -138,6 +161,10 @@ export default QuickActions = new function QuickActionService() {
 	}
 
 	return {
+		createFacility,
+		viewFacility,
+		editFacility,
+		deleteFacility,
 		viewRequest,
 		editTeam,
 		createRequest,

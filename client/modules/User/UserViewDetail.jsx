@@ -1,24 +1,24 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 
-UserViewDetail = React.createClass({
+UserViewDetail = React.createClass( {
 	render() {
 		var contact, profile, availableServices;
-	    contact = this.props.item;
-	    if(!contact) {
-	    	return <div/>
-	    }
-	    if(contact.getProfile) {
-	    	profile = contact.getProfile();
-	    }
-	    if(contact.getAvailableServices) {
-	    	availableServices = contact.getAvailableServices();	    	
-	    }
-	    
-	    return (
-	    	<div className="business-card">				
+		contact = this.props.item;
+		if ( !contact ) {
+			return <div/>
+		}
+		if ( contact.getProfile ) {
+			profile = contact.getProfile();
+		}
+		if ( contact.getAvailableServices ) {
+			availableServices = contact.getAvailableServices();
+		}
+
+		return (
+			<div className="business-card">				
 				<div className="contact-thumbnail pull-left">
 				    <img alt="image" src={contact.getThumbUrl()} />
 				 </div>
@@ -43,4 +43,4 @@ UserViewDetail = React.createClass({
 		)
 	}
 
-});
+} );

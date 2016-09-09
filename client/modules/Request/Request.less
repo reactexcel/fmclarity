@@ -1,256 +1,351 @@
-.issue-detail {
-  background-color: #eee;
-  padding: 20px;
-  padding-top: 15px;
-  max-width: 960px;
-}
-
-.wo-detail {
-    border-top: 10px solid #333;
+.issue-detail
+{
+    max-width: 960px;
     padding: 20px;
+    padding-top: 15px;
+
+    background-color: #eee;
+    .tab-panel
+    {
+        .tab-pane
+        {
+            border: 1px solid #ddd;
+            border-radius: 0;
+        }
+        .tab-row
+        {
+            background-color: transparent;
+        }
+    }
 }
 
-.issue-detail .tab-panel .tab-pane {
-  border: 1px solid #ddd;
-  border-radius: 0px;
+.priority-Scheduled
+{
+    color: #70aaee;
+}
+.priority-Standard
+{
+    color: #0152b5;
+}
+.priority-Urgent
+{
+    color: #f5a623;
+}
+.priority-Critical
+{
+    color: #d0021b;
+}
+.priority-Closed
+{
+    color: transparent;
 }
 
-.issue-detail .tab-panel .tab-row {
-  background-color: transparent;
+.wo-detail
+{
+    padding: 20px;
+
+    border-top: 10px solid #333;
 }
 
-.issue-dynamic-area {
-  background-color: #fff;
-  box-shadow: inset 0px 1px 2px 2px #ececec;
-  border: 1px solid #ddd;
-  border-radius: 0px;
-  margin: 0;
-  padding: 20px;
+.issue-dynamic-area
+{
+    margin: 0;
+    padding: 20px;
+
+    border: 1px solid #ddd;
+    border-radius: 0;
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px 2px #ececec;
 }
 
-.issue-icon-col {
-  text-align: center;
-  width: 50px;
-  padding: 0;
-  margin-right: 30px;
+.issue-icon-col
+{
+    width: 50px;
+    margin-right: 30px;
+    padding: 0;
+
+    text-align: center;
 }
 
-.issue-icon-col > div {
-  display: inline-block;
+.issue-icon-col > div
+{
+    display: inline-block;
 }
 
 .issue-nav-btn,
-.issue-nav-btn:hover {
-  text-transform: uppercase;
-  background-color: transparent!important;
-  padding: 0;
-  font-weight: bold;
-  padding-right: 10px;
-  color: #333;
-  border: none;
-  box-shadow: none;
+.issue-nav-btn:hover
+{
+    font-weight: bold;
+
+    padding: 0;
+    padding-right: 10px;
+
+    text-transform: uppercase;
+
+    color: #333;
+    border: none;
+    background-color: transparent!important;
+    box-shadow: none;
 }
 
-.active-link {
-  cursor: pointer;
+.active-link
+{
+    cursor: pointer;
 }
 
 .active-link-light:hover,
-.issue-nav-btn:hover {
-  color: inherit;
+.issue-nav-btn:hover
+{
+    color: inherit;
 }
 
-.active-link-light {
-  color: #999;
+.active-link-light
+{
+    color: #999;
 }
 
 .readonly .dropdown-label,
 .readonly .issue-nav-btn,
 .readonly .md-skin .btn,
-.readonly .active-link {
-  cursor: default!important;
+.readonly .active-link
+{
+    cursor: default!important;
 }
 
 .readonly .active-link-light,
 .readonly .active-link-light:hover,
-.readonly .issue-nav-btn:hover {
-  color: inherit;
+.readonly .issue-nav-btn:hover
+{
+    color: inherit;
 }
 
-.issue-nav-btn.active {
-  text-decoration: underline;
+.issue-nav-btn.active
+{
+    text-decoration: underline;
 }
 
-.close-order-popup {
-  position: absolute;
-  width: 600px;
-  left: 100px;
-  top: 0px;
-  border: 1px solid #bbb;
-  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+.close-order-popup
+{
+    position: absolute;
+    top: 0;
+    left: 100px;
+
+    width: 600px;
+
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, .3);
 }
 
-.issue-summary-col {
-  float: left;
-  white-space: nowrap;
-  cursor: pointer;
-  padding-right: 10px;
-  padding-top: 10px;
-  margin-left: 10px;
-  min-height:48px;
-  background:#fff;
+.issue-summary-col
+{
+    float: left;
+
+    min-height: 48px;
+    margin-left: 10px;
+    padding-top: 10px;
+    padding-right: 10px;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    background: #fff;
 }
 
-.card-table-header > .issue-summary-col {
-  height: 30px;
+.card-table-header > .issue-summary-col
+{
+    height: 30px;
 }
 
 /* priority */
 
-.issue-summary-col-1 {
-  width: 45px;
-  padding-top: 2px;
-  text-align: center;
-  margin-left: 5px;
+.issue-summary-col-1
+{
+    width: 45px;
+    margin-left: 5px;
+    padding-top: 2px;
+
+    text-align: center;
 }
 
-@media (max-width: 768px) {
-  .issue-summary-col-1 {
-    display: none;
-  }
+@media (max-width: 768px)
+{
+    .issue-summary-col-1
+    {
+        display: none;
+    }
 }
 
 /* status */
 
-.issue-summary-col-2 {
-  width: 65px;
-  text-align: center;
-  margin-left: 0px;
+.issue-summary-col-2
+{
+    width: 65px;
+    margin-left: 0;
+
+    text-align: center;
 }
 
 /* facility */
 
-.issue-summary-col-3 {
-  width: 15%;
-  margin-left: 0px;
-  margin-right: 10px;
+.issue-summary-col-3
+{
+    width: 15%;
+    margin-right: 10px;
+    margin-left: 0;
 }
 
 /* supplier name */
 
-.issue-summary-col-4 {
-  float: right;
-  width: 15%;
+.issue-summary-col-4
+{
+    float: right;
+
+    width: 15%;
 }
 
 /* when */
 
-.issue-summary-col-5 {
-  float: right;
-  width: 12%;
+.issue-summary-col-5
+{
+    float: right;
+
+    width: 12%;
 }
 
 /* when */
 
-.issue-summary-col-6 {
-  float: right;
-  width: 12%;
+.issue-summary-col-6
+{
+    float: right;
+
+    width: 12%;
 }
 
 /* issue */
 
-.issue-summary-col-7 {
-  float: none;
-  margin-left: 0px;
-  display: inline-block;
+.issue-summary-col-7
+{
+    display: inline-block;
+    float: none;
+
+    margin-left: 0;
 }
 
-.dl-horizontal dt {
-  width: 90px;
+.dl-horizontal dt
+{
+    width: 90px;
 }
 
-.dl-horizontal dd {
-  margin-left: 110px;
+.dl-horizontal dd
+{
+    margin-left: 110px;
 }
 
-.issue-status-New .issue-summary-facility-name {
-  font-weight: bold;
+.issue-status-New .issue-summary-facility-name
+{
+    font-weight: bold;
 }
 
-.issue-status-New .issue-summary-name {
-  font-weight: bold;
+.issue-status-New .issue-summary-name
+{
+    font-weight: bold;
 }
 
-.issue-summary-description {
-  color: #999;
+.issue-summary-description
+{
+    color: #999;
 }
 
-.issue-summary-description:before {
-  content: ' - ';
+.issue-summary-description:before
+{
+    content: ' - ';
 }
 
-.issue-page .card-header {
-  height: 47px;
+.issue-page .card-header
+{
+    height: 47px;
 }
 
-.issue-page .dropzone {
-  border: 3px dashed #ddd;
-  background-color: #f6f6f6;
-  /* font-weight: bold; */
-  border-radius: 5px;
-  text-align: center;
-  /*height: 185px;*/
-  padding: 50px;
-  width: 100%;
-  font-size: 15px;
-  color: #ddd;
+.issue-page .dropzone
+{
+    font-size: 15px;
+
+    width: 100%;
+    /*height: 185px;*/
+    padding: 50px;
+
+    text-align: center;
+
+    color: #ddd;
+    border: 3px dashed #ddd;
+    /* font-weight: bold; */
+    border-radius: 5px;
+    background-color: #f6f6f6;
 }
 
-.file-panel {
-  border-left: 1px solid #ddd;
-  padding-left: 10px;
+.file-panel
+{
+    padding-left: 10px;
+
+    border-left: 1px solid #ddd;
 }
 
-.issue-card-status-col {
-  float: left;
-  width: 80px;
-  text-align: left;
-  margin-top: 10px;
+.issue-card-status-col
+{
+    float: left;
+
+    width: 80px;
+    margin-top: 10px;
+
+    text-align: left;
 }
 
-.issue-card-info-col {
-  float: left;
-  padding: 0 5px;
-  width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
+.issue-card-info-col
+{
+    float: left;
+    overflow: hidden;
+
+    width: 250px;
+    padding: 0 5px;
+
+    white-space: nowrap;
 }
 
-.issue-card-contact-col {
-  float: left;
-  padding: 0 5px;
-  width: 200px;
+.issue-card-contact-col
+{
+    float: left;
+
+    width: 200px;
+    padding: 0 5px;
 }
 
-.issue-card-date-col {
-  height: 100%;
-  padding: 0 5px;
-  width: 70px;
-  line-height: 20px;
-  padding-top: 10px;
-  text-align: center;
-  float: right;
+.issue-card-date-col
+{
+    line-height: 20px;
+
+    float: right;
+
+    width: 70px;
+    height: 100%;
+    padding: 0 5px;
+    padding-top: 10px;
+
+    text-align: center;
 }
 
-.issue-card-thumbnail-col img {
-  width: 50px;
-  border-radius: 50%;
+.issue-card-thumbnail-col img
+{
+    width: 50px;
+
+    border-radius: 50%;
 }
 
-.issue-card-image img {
-  width: 200px;
-  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
-  border-radius: 0;
-  border: 1px solid #999;
-  border-left-color: #777;
+.issue-card-image img
+{
+    width: 200px;
+
+    border: 1px solid #999;
+    border-left-color: #777;
+    border-radius: 0;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, .3);
 }

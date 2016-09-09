@@ -1,186 +1,187 @@
 import React from "react";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import { Menu } from 'meteor/fmc:material-navigation';
 
 import Chart from 'chart.js';
 
-RequestActivityChart = React.createClass({
+RequestActivityChart = React.createClass( {
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData() {
 
-    	var openQuery = {
-    	}
-    	var closedQuery = {
-    		status:"Closed",
-    	}
+		var openQuery = {}
+		var closedQuery = {
+			status: "Closed",
+		}
 
-    	var team = Session.get('selectedTeam');
-        //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-    	if(team) {
-    		openQuery["team._id"] = team._id;
-    		closedQuery["team._id"] = team._id;
-    	}
+		var team = Session.get( 'selectedTeam' );
+		//var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
+		if ( team ) {
+			openQuery[ "team._id" ] = team._id;
+			closedQuery[ "team._id" ] = team._id;
+		}
 
-    	var facility = Session.get('selectedFacility');    	
-    	if(facility) {
-    		openQuery["facility._id"] = facility._id;
-    		closedQuery["facility._id"] = facility._id;
-    	}
+		var facility = Session.get( 'selectedFacility' );
+		if ( facility ) {
+			openQuery[ "facility._id" ] = facility._id;
+			closedQuery[ "facility._id" ] = facility._id;
+		}
 
-    	var viewConfig = this.state.viewConfig;
-		var open = Issues.actions.searchByDate({q:openQuery,config:viewConfig});
-		var closed = Issues.actions.searchByDate({q:closedQuery,config:viewConfig});
+		var viewConfig = this.state.viewConfig;
+		var open = Issues.actions.searchByDate( { q: openQuery, config: viewConfig } );
+		var closed = Issues.actions.searchByDate( { q: closedQuery, config: viewConfig } );
 		var labels = open.labels;
-		var title = viewConfig.startDate.format(viewConfig.title);
+		var title = viewConfig.startDate.format( viewConfig.title );
 
-    	return {
-    		facility:facility,
-    		openSeries:open.sets,
-    		closedSeries:closed.sets,
-    		labels:labels,
-    		title:title
-    	}
-    },
+		return {
+			facility: facility,
+			openSeries: open.sets,
+			closedSeries: closed.sets,
+			labels: labels,
+			title: title
+		}
+	},
 
-    getInitialState() {
-    	return {
-			viewConfig:{
-	    		format:'MMM',
-	    		title:"[since] MMMM YYYY",
-	    		startDate:moment().subtract(2,'months').startOf('month'),
-	    		endDate:moment().endOf('month'),
-   			}
-    	}
-    },
+	getInitialState() {
+		return {
+			viewConfig: {
+				format: 'MMM',
+				title: "[since] MMMM YYYY",
+				startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
+				endDate: moment().endOf( 'month' ),
+			}
+		}
+	},
 
 	getMenu() {
 		var component = this;
-		return [
-			{
-				label:("Day"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'hA',
-	    				title:"dddd Do MMMM",
-	    				startDate:moment().startOf('day'),
-	    				endDate:moment().endOf('day'),
-	    				groupBy:'hour'
-	    			}});
-				}
-			},
-			{
-				label:("Week"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'ddd',
-	    				title:"for [week starting] Do MMMM",
-	    				startDate:moment().startOf('week'),
-	    				endDate:moment().endOf('week'),
-	    				groupBy:'day'
-	    			}});
-				}
-			},
-			{
-				label:("Month"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'D',
-	    				title:"MMMM YYYY",
-	    				startDate:moment().startOf('month'),
-	    				endDate:moment().endOf('month'),
-	    				groupBy:'day'
-	    			}});
-				}
-			},
-			{
-				label:("3 Months"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'MMM',
-	    				title:"[since] MMMM YYYY",
-	    				startDate:moment().subtract(2,'months').startOf('month'),
-	    				endDate:moment().endOf('month'),
-	    			}});
-				}
-			},
-			{
-				label:("6 Months"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'MMM',
-	    				title:"[since] MMMM YYYY",
-	    				startDate:moment().subtract(5,'months').startOf('month'),
-	    				endDate:moment().endOf('month'),
-	    			}});
-				}
-			},
-			{
-				label:("Year"),
-				action(){
-	    			component.setState({viewConfig:{
-	    				format:'MMM',
-	    				title:"YYYY",
-	    				startDate:moment().startOf('year'),
-	    				endDate:moment().endOf('year'),
-	    				groupBy:'month',
-	    			}});
-				}
+		return [ {
+			label: ( "Day" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'hA',
+						title: "dddd Do MMMM",
+						startDate: moment().startOf( 'day' ),
+						endDate: moment().endOf( 'day' ),
+						groupBy: 'hour'
+					}
+				} );
 			}
-		];
+		}, {
+			label: ( "Week" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'ddd',
+						title: "for [week starting] Do MMMM",
+						startDate: moment().startOf( 'week' ),
+						endDate: moment().endOf( 'week' ),
+						groupBy: 'day'
+					}
+				} );
+			}
+		}, {
+			label: ( "Month" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'D',
+						title: "MMMM YYYY",
+						startDate: moment().startOf( 'month' ),
+						endDate: moment().endOf( 'month' ),
+						groupBy: 'day'
+					}
+				} );
+			}
+		}, {
+			label: ( "3 Months" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'MMM',
+						title: "[since] MMMM YYYY",
+						startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
+						endDate: moment().endOf( 'month' ),
+					}
+				} );
+			}
+		}, {
+			label: ( "6 Months" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'MMM',
+						title: "[since] MMMM YYYY",
+						startDate: moment().subtract( 5, 'months' ).startOf( 'month' ),
+						endDate: moment().endOf( 'month' ),
+					}
+				} );
+			}
+		}, {
+			label: ( "Year" ),
+			action() {
+				component.setState( {
+					viewConfig: {
+						format: 'MMM',
+						title: "YYYY",
+						startDate: moment().startOf( 'year' ),
+						endDate: moment().endOf( 'year' ),
+						groupBy: 'month',
+					}
+				} );
+			}
+		} ];
 	},
 
-    getChartConfiguration() {
-    	return {
-    		lineData:{
-		        labels: this.data.labels||[''],
-		        datasets: [
-		            {
-		                label: "Closed",
+	getChartConfiguration() {
+		return {
+			lineData: {
+				labels: this.data.labels || [ '' ],
+				datasets: [ {
+					label: "Closed",
 
-		                backgroundColor: "rgba(193,217,245,0.3)",
-		                borderColor: "rgba(193,217,245,1)",
+					backgroundColor: "rgba(193,217,245,0.3)",
+					borderColor: "rgba(193,217,245,1)",
 
-		                pointBackgroundColor: "rgba(193,217,245,1)",
-		                pointBorderColor: "#fff",
+					pointBackgroundColor: "rgba(193,217,245,1)",
+					pointBorderColor: "#fff",
 
-		                pointHoverBackgroundColor: "#fff",
-		                pointHoverBorderColor: "rgba(220,220,220,1)",
+					pointHoverBackgroundColor: "#fff",
+					pointHoverBorderColor: "rgba(220,220,220,1)",
 
-		                data: this.data.closedSeries||[0]
-		            },
-		            {
-		                label: "Open",
+					data: this.data.closedSeries || [ 0 ]
+				}, {
+					label: "Open",
 
-		                backgroundColor: "rgba(117,170,238,0.3)",
-		                borderColor: "rgba(117,170,238,1)",
+					backgroundColor: "rgba(117,170,238,0.3)",
+					borderColor: "rgba(117,170,238,1)",
 
-		                pointBackgroundColor: "rgba(117,170,238,1)",
-		                pointBorderColor: "#fff",
+					pointBackgroundColor: "rgba(117,170,238,1)",
+					pointBorderColor: "#fff",
 
-		                pointHoverBackgroundColor: "#fff",
-		                pointHoverBorderColor: "rgba(220,220,220,1)",
+					pointHoverBackgroundColor: "#fff",
+					pointHoverBorderColor: "rgba(220,220,220,1)",
 
-		                data: this.data.openSeries||[0]
-		            }
-		        ]
-		    },
-	    	lineOptions:{
-	    		scales:{
-	    			xAxes:[{
-			    		gridLines:{
-			    			display:false,
-			    		}
-	    			}],
-	    			yAxes:[{
-	    				ticks:{
-	    					beginAtZero:true
-	    				}
-	    			}]
-	    		}
-	    		/*
+					data: this.data.openSeries || [ 0 ]
+				} ]
+			},
+			lineOptions: {
+				scales: {
+					xAxes: [ {
+						gridLines: {
+							display: false,
+						}
+					} ],
+					yAxes: [ {
+						ticks: {
+							beginAtZero: true
+						}
+					} ]
+				}
+				/*
 		        scaleShowGridLines: true,
 		        scaleGridLineColor: "rgba(0,0,0,.05)",
 		        scaleGridLineWidth: 1,
@@ -196,23 +197,23 @@ RequestActivityChart = React.createClass({
 		        responsive: true,
 				legendTemplate : "<ul class=\"chart-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
 				*/
-		    }
-    	}
-    },
+			}
+		}
+	},
 
 
 	resetChart() {
 		var config = this.getChartConfiguration();
-		if(this.chart) {
+		if ( this.chart ) {
 			this.chart.destroy();
 		}
-	    var ctx = document.getElementById("line-chart").getContext("2d");
-	    this.chart = new Chart(ctx,{
-	    	type:"line",
-	    	data:config.lineData,
-	    	options:config.lineOptions
-	    });
-	    /*
+		var ctx = document.getElementById( "line-chart" ).getContext( "2d" );
+		this.chart = new Chart( ctx, {
+			type: "line",
+			data: config.lineData,
+			options: config.lineOptions
+		} );
+		/*
 	    if(!this.legend) {
 			this.legend = this.chart.generateLegend();
 	  		$('#line-chart-wrapper').append(this.legend);
@@ -221,33 +222,33 @@ RequestActivityChart = React.createClass({
 	},
 
 	updateChart() {
-        //for(var i=0;i<this.data.labels.length;i++) {
-	        this.chart.data.datasets[0].data = this.data.openSeries;
-	        this.chart.data.datasets[1].data = this.data.closedSeries;
-        //}
-	    this.chart.data.labels = this.data.labels;
-        this.chart.update();
+		//for(var i=0;i<this.data.labels.length;i++) {
+		this.chart.data.datasets[ 0 ].data = this.data.openSeries;
+		this.chart.data.datasets[ 1 ].data = this.data.closedSeries;
+		//}
+		this.chart.data.labels = this.data.labels;
+		this.chart.update();
 	},
 
 	componentDidMount() {
-        this.resetChart();
+		this.resetChart();
 	},
 
-	componentDidUpdate(){
+	componentDidUpdate() {
 		//console.log(this.chart.data);
 		//if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
-			this.updateChart();
+		this.updateChart();
 		//}
 		//else {
-	        //this.resetChart();
-	    //}
+		//this.resetChart();
+		//}
 	},
 
 
 	render() {
-	    return (
-	    	<div>
-		        <ActionsMenu items={this.getMenu()} icon="eye" />
+		return (
+			<div>
+		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
 		        	<h2>Request activity {this.data.title}</h2>
 		        </div>
@@ -261,13 +262,13 @@ RequestActivityChart = React.createClass({
 				    </div>
 				</div>
 			</div>
-	    )
+		)
 	}
 
-});
+} );
 
-Reports.register({
-	id:"request-activity-chart",
-	name:"Request Activity Chart",
-	content:RequestActivityChart
-})
+Reports.register( {
+	id: "request-activity-chart",
+	name: "Request Activity Chart",
+	content: RequestActivityChart
+} )

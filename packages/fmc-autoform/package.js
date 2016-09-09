@@ -8,6 +8,7 @@ Package.onUse(function(api) {
 	api.use([
 		'less',
 		'ecmascript',
+		'fmc:material-inputs'
 	]);
 
 	api.addFiles([

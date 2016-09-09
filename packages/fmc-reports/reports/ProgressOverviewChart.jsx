@@ -1,7 +1,7 @@
 import React from "react";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import { Menu } from 'meteor/fmc:material-navigation';
 
 
 ProgressOverviewChart = React.createClass({
@@ -163,7 +163,7 @@ ProgressOverviewChart = React.createClass({
         var results = this.data.results;
         return (
             <div>
-                <ActionsMenu items={this.getMenu()} icon="eye" />
+                <Menu items={this.getMenu()} />
                 <div className="ibox-title">
                     <h2>Overview {this.state.title}</h2>
                 </div>

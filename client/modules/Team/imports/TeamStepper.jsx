@@ -7,19 +7,17 @@ import { ContactList } from 'meteor/fmc:doc-members';
 /*
 TODO: remove tour, add additional instructions into stepper
 */
-TeamStepper = React.createClass(
-{
+export default TeamStepper = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
-    getMeteorData()
-    {
+    getMeteorData() {
 
         var viewer, viewersTeam, viewingTeam, group;
 
         viewer = Meteor.user();
         viewersTeam = this.props.team ? Teams.findOne( this.props.team._id ) : Session.getSelectedTeam();
-        viewingTeam = this.state.item ? Teams.findOne( this.state.item._id ) : null;
+        viewingTeam = this.props.item ? Teams.findOne( this.props.item._id ) : null;
         //if this team is a member of a group, group may be included as one of the props
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
@@ -33,35 +31,29 @@ TeamStepper = React.createClass(
         }
     },
 
-    tour:
-    {
+    tour: {
         id: "team-edit-page",
-        steps: [
-        {
+        steps: [ {
             title: "This is your team profile.",
             content: "In FM Clarity all suppliers are part of a team. This is the team settings page where you can check that your client has entered your details correctly, and update company files such as insurance documents, SWMS, references, etc",
             target: "fm-logo",
             arrowOffset: "center",
-            onShow: function()
-            {
+            onShow: function() {
                 $( '.hopscotch-bubble-arrow-container' )
                     .css( 'visibility', 'hidden' );
             },
             placement: "bottom"
-        },
-        {
+        }, {
             title: "Company documents",
             content: "This is where you can upload your company specific documents. Clients may request documents such as insurance policies or compliance info and that can be uploaded here",
             target: "company-documents",
             placement: "bottom"
-        },
-        {
+        }, {
             title: "Members",
             content: "Adding staff members will enable you to assign jobs to members of your team. New members will be given the role of staff meaning they can only view requests assigned to them. If you want them to see all jobs you can promote them to manager by selecting the member and clicking promote from the tool icon at the top right of their profile. You can also invite them to use FMC from this same menu",
             target: "members",
             placement: "bottom"
-        },
-        {
+        }, {
             title: "Services",
             content: "Jobs will be matched to suppliers based on the services profile which can be configured here. Consumed services are those that you employ suppliers to complete, provided services are those that you can perform as a supplier.",
             target: "services-provided",
@@ -69,84 +61,54 @@ TeamStepper = React.createClass(
         } ]
     },
 
-    getInitialState()
-    {
+    getInitialState() {
         return {
-            item: this.props.item
+            shouldShowMessage: false
         }
     },
 
-    componentWillReceiveProps( newProps )
-    {
-        this.setItem( newProps.item );
-    },
-
-    setItem( newItem )
-    {
-        this.setState(
-        {
-            item: newItem
-        } );
-    },
-
-    handleInvite( event )
-    {
+    handleInvite( event ) {
         event.preventDefault();
-        var component = this;
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
         var searchName = input.value;
-        if ( !searchName )
-        {
+        if ( !searchName ) {
             alert( 'Please enter a valid name.' );
-        }
-        else
-        {
+        } else {
             input.value = '';
-            viewersTeam.inviteSupplier( searchName, null, function( invitee )
-            {
+            viewersTeam.inviteSupplier( searchName, null, ( invitee ) => {
                 invitee = Teams._transform( invitee );
-                if ( group && group.addSupplier )
-                {
+                if ( group && group.addSupplier ) {
                     group.addSupplier( invitee );
                 }
-                component.setItem( invitee );
-                if ( component.props.onChange )
-                {
-                    component.props.onChange( invitee );
+                this.setItem( invitee );
+                if ( component.props.onChange ) {
+                    this.props.onChange( invitee );
                 }
-                if ( !invitee.email )
-                {
-                    component.setState(
-                    {
+                if ( !invitee.email ) {
+                    this.setState( {
                         shouldShowMessage: true
                     } );
-                }
-                else
-                {
+                } else {
                     Modal.hide();
                 }
             } );
         }
     },
 
-    setThumb( thumb )
-    {
+    setThumb( thumb ) {
         var viewingTeam = this.data.viewingTeam;
         viewingTeam.setThumb( thumb );
         viewingTeam.thumb = thumb;
-        this.setState(
-        {
+        this.setState( {
             item: viewingTeam
         } );
     },
 
-    render()
-    {
+    render() {
         var viewingTeam = this.data.viewingTeam;
-        if ( !viewingTeam )
-        {
+        if ( !viewingTeam ) {
             return (
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">

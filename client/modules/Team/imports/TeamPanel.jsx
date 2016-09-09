@@ -1,7 +1,8 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import { Menu } from 'meteor/fmc:material-navigation';
+import * as Actions from './actions/TeamActions.jsx';
 
 import { ContactList } from 'meteor/fmc:doc-members';
 import { AutoForm } from 'meteor/fmc:autoform';
@@ -59,29 +60,13 @@ export default TeamPanel = React.createClass( {
 	},
 
 	getMenu() {
-		var supplier = this.props.item;
-		var parentTeam = Session.getSelectedTeam();
-		var parentFacility = Session.getSelectedFacility();
-		var menu = [];
+		let supplier = this.props.item,
+			facility = Session.getSelectedFacility();
 
-		if ( supplier ) {
-
-			if ( /*supplier.canSave()*/ true ) {
-				menu.push( {
-					label: "Edit",
-					action: () => {
-						Modal.show( {
-							content: <TeamStepper item = { this.props.item } />
-						} )
-					}
-				} );
-			}
-
-			addTeamMenuItem( menu, supplier, parentTeam );
-			addTeamMenuItem( menu, supplier, parentFacility );
-
-		}
-		return menu;
+		return [ 
+			Actions.editTeam( supplier ), 
+			Actions.removeSupplier( facility, supplier ) 
+		];
 	},
 
 	render() {
@@ -153,7 +138,7 @@ export default TeamPanel = React.createClass( {
 				}
 			]}/> 
 			
-			<ActionsMenu items = { this.getMenu() } />
+			<Menu items = { this.getMenu() } />
 
 		</div>
 		)

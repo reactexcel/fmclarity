@@ -28,6 +28,7 @@ Package.onUse(function(api) {
 		'methods.js',
 		'publish.js',
 		'views/InboxView.jsx',
+		'views/InboxWidget.jsx',
 		'views/MessagePage.jsx',
 		'views/MessageView.jsx',
 		'views/NotificationList.jsx',
@@ -42,6 +43,7 @@ Package.onUse(function(api) {
 		'Messages',
 		'NotificationList',
 		'MessagesPage',
+		'UpdatesWidget',
 		'Inbox'
 	]);
 });

@@ -14,9 +14,9 @@ Package.onUse(function(api) {
 
 	api.use([
 		'fmc:login-tokens',
-		'fmc:actions-menu',
 		'fmc:layout',
 		'fmc:calendar',
+		'fmc:data-table',
 		'ecmascript',
 		'accounts-base',
 		'base64',
@@ -37,19 +37,13 @@ Package.onUse(function(api) {
 		'components/iBox.jsx',				//perhaps in its own package
 		'components/iBox.less',
 		'components/ProgressArc.jsx',		//as above
-		'components/DataGrid.jsx',			//as above
-		'components/DataGrid.less',
 
 		'pages/DashboardPage.jsx',
 		'pages/ReportsPageIndex.jsx',
 		'pages/ReportsPageSingle.jsx',
 		'pages/Reports.less',
 
-
 		'plugins/jsKnob/jquery.knob.js',	//is there a nodejs module or meteor package?
-
-		//'reports/Calendar.jsx',				//will go in it's own package eventually
-		'reports/InboxWidget.jsx',			//move to fmc-messages
 
 		'reports/ProgressOverviewChart.jsx',
 		'reports/RequestActivityChart.jsx',

@@ -1,22 +1,22 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 // User profile page
 // A simple page which displays only the edit view for the currently logged in user
-UserPageProfile = React.createClass({
+UserPageProfile = React.createClass( {
 
-    mixins: [ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData() {
 		return {
-			user:Meteor.user()
+			user: Meteor.user()
 		}
 	},
 
 	render() {
 		return (
-		    <div className="user-page animated fadeIn">
+			<div className="user-page animated fadeIn">
 		        <div className="row">
 		            <div className="col-lg-6">
 		            	<div className="ibox">
@@ -27,4 +27,4 @@ UserPageProfile = React.createClass({
 			</div>
 		)
 	}
-})
+} )

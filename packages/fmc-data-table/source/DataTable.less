@@ -1,0 +1,76 @@
+.data-grid {
+    position: relative;
+    overflow-x: auto;
+    width: 100%;
+    white-space: nowrap;
+    .tools-icon {
+        line-height: 37px;
+    }
+    /*
+    .data-grid-title-row {
+        line-height: 64px;
+        position: relative;
+        height: 64px;
+    }
+    */
+    .table {
+        width: 100%;
+    }
+    .data-grid-header-row {
+        line-height: 56px;
+        height: 56px;
+        .data-grid-header-cell {
+            font-size: 12px;
+            cursor: pointer;
+            color: #999;
+        }
+        .data-grid-header-cell,
+        .data-grid-select-col-header {
+            border-bottom: 1px solid #ccc;
+            &:hover {
+                color: #111;
+            }
+        }
+    }
+    .data-grid-row {
+        line-height: 48px;
+        height: 48px;
+        &:hover {
+            border-bottom-color: #ddd;
+            background-color: #eee;
+        }
+        .data-grid-cell {
+            overflow: hidden;
+            max-width: 200px;
+            color: #111;
+        }
+        .data-grid-cell,
+        .data-grid-select-col {
+            border-top: 1px solid #ddd;
+        }
+    }
+}
+
+.print .data-grid-select-col,
+.print .data-grid-select-col-header {
+    display: none;
+}
+
+.data-grid-select-col,
+.data-grid-select-col-header {
+    width: 24px;
+}
+
+.report-toolbar {
+    font-size: 19px;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+
+.report-toolbar a,
+.report-toolbar span {
+    padding: 10px;
+    opacity: .5;
+    color: #000;
+}

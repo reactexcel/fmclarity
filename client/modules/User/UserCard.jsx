@@ -2,44 +2,35 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import Menu from 'meteor/fmc:material-navigation';
 
-UserCard = React.createClass(
-{
+UserCard = React.createClass( {
 
-	getInitialState()
-	{
+	getInitialState() {
 		return {
 			edit: this.props.edit || this.props.item == null || false
 		}
 	},
 
-	toggleEdit()
-	{
-		this.setState(
-		{
+	toggleEdit() {
+		this.setState( {
 			edit: !this.state.edit
 		} )
 	},
 
-	getMenu()
-	{
+	getMenu() {
 		var component = this;
 		var user = this.props.item;
 		var team = this.props.team;
 		var group = this.props.group;
-		var menu = UserActions.getMenu( user,
-		{
+		var menu = UserActions.getMenu( user, {
 			team: team,
 			facility: group
 		} );
-		if ( true /* user && user.canSave() */ )
-		{
-			menu.unshift(
-			{
+		if ( true /* user && user.canSave() */ ) {
+			menu.unshift( {
 				label: this.state.edit ? "View as card" : "Edit",
-				action()
-				{
+				action() {
 					component.toggleEdit()
 				}
 			} );
@@ -47,8 +38,7 @@ UserCard = React.createClass(
 		return menu;
 	},
 
-	render()
-	{
+	render() {
 
 		var menu = this.getMenu();
 		var user = this.props.item;
@@ -56,15 +46,15 @@ UserCard = React.createClass(
 			<div>
 				{(!user||user.canSave())&&this.state.edit?
 					<UserViewEdit 
-						item={user} 
-						team={this.props.team}
-						role={this.props.role}
-						group={this.props.group}
-						onChange={this.props.onChange}/>
+						item 		= { user } 
+						team 		= { this.props.team }
+						role 		= { this.props.role }
+						group 		= { this.props.group }
+						onChange 	= { this.props.onChange }/>
 				:
 					<UserViewDetail item={user} role={this.props.role}/>
 				}
-            	<ActionsMenu items={menu} />
+            	<Menu items={menu} />
 			</div>
 		)
 	}

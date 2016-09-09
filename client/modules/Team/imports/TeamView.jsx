@@ -1,5 +1,5 @@
 import React from "react";
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import { Menu } from 'meteor/fmc:material-navigation';
 
 export default function TeamView( props ) {
 	if ( !props.item ) {

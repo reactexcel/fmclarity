@@ -2,8 +2,7 @@ import React from "react";
 import { createContainer } from 'meteor/react-meteor-data';
 import RequestsPageIndex from './imports/RequestsPageIndex.jsx';
 
-RequestsPageIndexContainer = createContainer( ( params ) =>
-{
+RequestsPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'contractors' );
 	Meteor.subscribe( 'services' );
 	Meteor.subscribe( 'teamsAndFacilitiesForUser' );
@@ -13,20 +12,15 @@ RequestsPageIndexContainer = createContainer( ( params ) =>
 		team = Session.getSelectedTeam(),
 		filter = {};
 
-	if ( facility )
-	{
+	if ( facility ) {
 		filter[ 'facility._id' ] = facility._id;
-	}
-	else if ( team )
-	{
+	} else if ( team ) {
 		filter[ 'team._id' ] = team._id;
 	}
 
-	let headers = [
-	{
+	let headers = [ {
 		text: "Priority",
-		sortFunction( a, b )
-		{
+		sortFunction( a, b ) {
 			var weight = {
 				'Closed': 0,
 				'Scheduled': 1,
@@ -36,11 +30,9 @@ RequestsPageIndexContainer = createContainer( ( params ) =>
 			};
 			return ( weight[ a.priority ] < weight[ b.priority ] ) ? -1 : 1;
 		},
-	},
-	{
+	}, {
 		text: "Status",
-		sortFunction( a, b )
-		{
+		sortFunction( a, b ) {
 			var weight = {
 				'Draft': 0,
 				'New': 1,
@@ -51,75 +43,50 @@ RequestsPageIndexContainer = createContainer( ( params ) =>
 			};
 			return ( weight[ a.status ] < weight[ b.status ] ) ? -1 : 1;
 		},
-	},
-	{
+	}, {
 		text: "Facility",
-		sortFunction( a, b )
-		{
+		sortFunction( a, b ) {
 			return ( a.facility.name < b.facility.name ) ? -1 : 1;
 		},
-	},
-	{
+	}, {
 		text: ( team && team.type == "contractor" ) ? "Client" : "Supplier",
-		sortFunction( a, b )
-		{
-			if ( !b.supplier )
-			{
+		sortFunction( a, b ) {
+			if ( !b.supplier ) {
 				return 1;
-			}
-			else if ( !a.supplier )
-			{
+			} else if ( !a.supplier ) {
 				return -1;
-			}
-			else
-			{
+			} else {
 				return ( a.supplier.name > b.supplier.name ) ? -1 : 1;
 			}
 		},
-	},
-	{
+	}, {
 		text: "Due",
-		sortFunction( a, b )
-		{
-			if ( !b.dueDate )
-			{
+		sortFunction( a, b ) {
+			if ( !b.dueDate ) {
 				return 1;
-			}
-			else if ( !a.dueDate )
-			{
+			} else if ( !a.dueDate ) {
 				return -1;
-			}
-			else
-			{
+			} else {
 				return ( a.dueDate > b.dueDate ) ? -1 : 1;
 			}
 		},
-	},
-	{
+	}, {
 		text: "Issued",
-		sortFunction( a, b )
-		{
-			if ( !b.issuedAt )
-			{
+		sortFunction( a, b ) {
+			if ( !b.issuedAt ) {
 				return 1;
-			}
-			else if ( !a.issuedAt )
-			{
+			} else if ( !a.issuedAt ) {
 				return -1;
-			}
-			else
-			{
+			} else {
 				return ( a.issuedAt > b.issuedAt ) ? -1 : 1;
 			}
 		},
-	},
-	{
+	}, {
 		text: "Issue",
-		sortFunction( a, b )
-		{
+		sortFunction( a, b ) {
 			return ( a.name < b.name ) ? -1 : 1;
 		},
-	}, ];	
+	}, ];
 
 	return {
 		team,

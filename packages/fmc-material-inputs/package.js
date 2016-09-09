@@ -7,7 +7,8 @@ Package.describe({
 Package.onUse(function(api) {
 	api.use([
 		'less',
-		'ecmascript'
+		'ecmascript',
+		'react-meteor-data'
 	]);
 
 	api.addFiles([
@@ -16,8 +17,7 @@ Package.onUse(function(api) {
 		'source/TextArea.less',
 		'source/Select.less',
 		'source/Date.less',
-		'source/Switch.less',
-		'source/DataTableSelect.less'
+		'source/Switch.less'
 	],'client');
 
 	api.mainModule( 'index.js' );

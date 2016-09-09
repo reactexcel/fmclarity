@@ -1,17 +1,23 @@
-.chart-legend {
-	list-style: none;
-	padding:0;
+.chart-legend
+{
+    padding: 0;
+
+    list-style: none;
 }
 
-.chart-legend li {
-	float:left;
+.chart-legend li
+{
+    float: left;
 }
 
-.chart-legend span {
-	float:left;
-	display:inline-block;
-	border:1px solid #bbb;
-	width:30px;
-	height:13px;
-	margin:2px;
+.chart-legend span
+{
+    display: inline-block;
+    float: left;
+
+    width: 30px;
+    height: 13px;
+    margin: 2px;
+
+    border: 1px solid #bbb;
 }

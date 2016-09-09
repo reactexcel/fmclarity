@@ -9,7 +9,8 @@ Package.onUse( function ( api )
 {
 	api.use( [
 		'less',
-		'ecmascript'
+		'ecmascript',
+		'fmc:doc-members'
 	] );
 
 	api.addFiles( [
@@ -18,7 +19,6 @@ Package.onUse( function ( api )
 		'./source/TopNavigationBar.jsx',
 		'./source/TopNavigationBar.less',
 		'./source/UserProfileMenu.less',
-		'./source/Menu.less',
 		'./source/NavList.less'
 	] );
 

@@ -1,50 +1,28 @@
 import React from 'react';
-import ActionsMenu from 'meteor/fmc:actions-menu';
+import { Menu } from 'meteor/fmc:material-navigation';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 import { AutoForm } from 'meteor/fmc:autoform';
 import FacilityStepper from './FacilityStepper.jsx';
 
 import '/client/modules/Compliance/PMPList.jsx';
 
-export default function FacilityPanel( props ) {
-    let { team, facility } = props;
+import * as Actions from './actions/FacilityActions';
+
+export default function FacilityPanel( { facility } ) {
 
     function getMenu() {
-        let menu = [];
-
-        if ( facility /*&& facility.canSave() */ ) {
-            menu.push( {
-                label: "Edit",
-                action() {
-                    Modal.show( {
-                        content: <FacilityStepper item={ facility } />
-                    } )
-                }
-            } );
-        }
-
-        if ( /* facility.canDestroy()*/ true ) {
-            menu.push( {
-                label: "Delete",
-                action() {
-                    facility.destroy();
-                }
-            } );
-        }
-
-        menu.push( {
-            label: "Back",
-            action() {
-                Session.selectFacility( 0 );
-            }
-        } )
-        return menu;
+        return [
+            Actions.viewFacility( facility ),
+            Actions.editFacility( facility ),
+            Actions.deleteFacility( facility )
+        ]
     }
 
     return (
         <div>
             <div className="facility-card">
 
+                {/* standfirst, banner??? */}
                 <div className="contact-thumbnail">
 
                     {facility.thumbUrl?
@@ -71,7 +49,7 @@ export default function FacilityPanel( props ) {
                     </div>
                 </div>
 
-
+                {/* tabs - this it the part that can be data driven using autoform */}
                 <IpsoTabso tabs={[
                     {
                         //hide:       !facility.canGetMessages(),
@@ -84,11 +62,11 @@ export default function FacilityPanel( props ) {
                     },{
                         //hide:       !facility.canAddMember(),
                         tab:        <span id="personnel-tab">Personnel</span>,
-                        content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={team}/>
+                        content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={facility.team}/>
                     },{
                         //hide:       !facility.canAddMember(),
                         tab:        <span id="tenants-tab">Tenants</span>,
-                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={team}/>
+                        content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={facility.team}/>
                     },{
                         //hide:       !facility.canSetAreas(),
                         tab:        <span id="areas-tab">Areas</span>,
@@ -106,7 +84,7 @@ export default function FacilityPanel( props ) {
                     }
                 ]} />                
             </div>
-            <ActionsMenu items={getMenu()} />
+            <Menu items={getMenu()} />
         </div>
     )
 }

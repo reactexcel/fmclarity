@@ -8,30 +8,34 @@
 # FMC Core
 fmc:rbac
 fmc:orm
+fmc:workflow-helper
+fmc:layout
+
+############################
+# FMC Document Mixins
 fmc:doc-thumbs
 fmc:doc-attachments
 fmc:doc-members
 fmc:doc-messages
 fmc:login-tokens
 fmc:doc-owners
-fmc:reports
-fmc:calendar
-fmc:layout
 
+############################
+# FMC MD Components
 fmc:material-views
 fmc:material-inputs
 fmc:material-navigation
 fmc:material-misc
-
-fmc:workflow-helper
 
 ############################
 # FMC UI
 fmc:tabs
 fmc:stepper
 fmc:modal
-fmc:actions-menu
 fmc:autoform
+fmc:reports
+fmc:calendar
+fmc:data-table
 
 ############################
 # Styles & Presentation

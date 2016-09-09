@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-ReportsNavWidget = React.createClass({
+ReportsNavWidget = React.createClass( {
 
 	render() {
 		var reports = Reports.getAll();
-		var reportIds = Object.keys(reports);
-	    return (
-	    	<div>
+		var reportIds = Object.keys( reports );
+		return (
+			<div>
 		        {/*<ActionsMenu items={this.getMenu()} icon="eye" />*/}
 		        <div className="ibox-title">
 		        	<h2>Available Reports</h2>
@@ -28,6 +28,6 @@ ReportsNavWidget = React.createClass({
 					</div>
 				</div>
 			</div>
-	    )
+		)
 	}
-})
+} )

@@ -1,4 +1,3 @@
-import DataTableSelect from './source/DataTableSelect.jsx';
 import DateInput from './source/DateInput.jsx';
 import DateTime from './source/DateTime.jsx';
 import File from './source/File.jsx';
@@ -9,7 +8,6 @@ import Text from './source/Text.jsx';
 import TextArea from './source/TextArea.jsx';
 
 export {
-	DataTableSelect,
 	DateInput,
 	DateTime,
 	File,

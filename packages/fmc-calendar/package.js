@@ -9,7 +9,6 @@ Package.onUse(function(api) {
 		'less',
 		'ecmascript',
 		'react-meteor-data',
-		'fmc:actions-menu',
 		'rzymek:fullcalendar',
 	]);
 

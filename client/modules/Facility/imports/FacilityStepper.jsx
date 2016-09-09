@@ -4,17 +4,14 @@ import { DocOwnerCard } from 'meteor/fmc:doc-owners';
 import { ContactList } from 'meteor/fmc:doc-members';
 import { AutoForm } from 'meteor/fmc:autoform';
 
-function FacilityStepper( props ) {
+export default function FacilityStepper( { facility } ) {
 
 	function setThumb( thumb ) {
-		let facility = props.item;
 		if ( facility ) {
 			facility.setThumb( thumb );
 			facility.thumb = thumb;
 		}
 	}
-
-	let facility = props.item;
 
 	/*
 	if ( !facility && facility.canCreate() ) {

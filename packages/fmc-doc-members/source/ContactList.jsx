@@ -61,36 +61,54 @@ export default ContactList = React.createClass( {
 	},
 
 	render() {
-		var members = _.uniq( this.data.members, false, function( i ) {
+		var members = _.uniq( this.data.members, false, ( i ) => {
 			return i._id;
 		} );
-		var component = this;
 		var team = this.data.team;
 		var group = this.data.group;
-		var canCreate = !this.props.readOnly && ( team && team.canAddMember() || group && group.canAddMember() );
+		var canCreate = !this.props.readOnly;// && ( team && team.canAddMember() || group && group.canAddMember() );
 		return (
 			<div className="contact-list">
-			    {members?members.map(function(member,idx){
+			    {members?members.map( ( member,idx ) => {
 			        return (
 			            <div 
 			            	className="contact-list-item"
 			                key={idx}
 			            >
 			            	{false&&team.canRemoveMember()?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
-			            	<div className="active-link" onClick={component.showModal.bind(null,member)}>
-					            <ContactCard item={member} team={team} group={group}/>
+			            	<div 
+			            		className = "active-link" 
+			            		onClick = { 
+			            			() => { this.showModal( member ) }
+			            		}
+			            	>
+
+					            <ContactCard 
+					            	item = { member }
+					            	team = { team }
+					            	group = { group }
+					            />
+
 					        </div>
+
 			            </div>	
 		            )
 			    }):null}
 			    {canCreate?
 			    <div 
-			    	className="contact-list-item"
-			        onClick={component.showModal.bind(null,null)}
-			        style={{paddingLeft:"24px"}}
+			    	className	= "contact-list-item"
+			        onClick		= { () => { this.showModal() } }
+			        style 		= { { paddingLeft:"24px" } }
 			    >
-					<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-			        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
+					
+					<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
+						<i className="fa fa-plus"></i>
+					</span>
+
+			        <span className="active-link" style={{fontStyle:"italic"}}>
+			        	Add another
+			        </span>
+
 			    </div>
 			    :null}
 			</div>
