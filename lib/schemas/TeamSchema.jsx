@@ -1,4 +1,6 @@
 import './AddressSchema.jsx';
+import { DocExplorer } from 'meteor/fmc:doc-attachments';
+import { Text, TextArea, Select } from 'meteor/fmc:doc-attachments';
 
 TeamSchema = {
 
@@ -13,15 +15,15 @@ TeamSchema = {
     // Basic info
     //////////////////////////////////////////////
     name: {
-        type: String,
+        type: "string",
         label: "Company Name",
     },
 
     type: {
-        type: String,
+        type: "string",
         label: "Account type",
         description: "Is this an account for facility managers or suppliers?",
-        input: "MDSelect",
+        input: Select,
         condition: ( item ) => {
             return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
         },
@@ -33,12 +35,12 @@ TeamSchema = {
     description: {
         label: "Description",
         description: "Brief summary of services provided by this team",
-        input: "mdtextarea",
+        input: TextArea,
         condition: "contractor"
     },
 
     email: {
-        type: String,
+        type: "string",
         description: "The primary email contact for this team",
         label: "Email",
         //regEx:        ORM.RegEx.Email,
@@ -48,12 +50,12 @@ TeamSchema = {
         label: "Primary phone",
         description: "Primary phone contact number",
         icon: "phone",
-        type: String,
+        type: "string",
     },
 
     phone2: {
         label: "Seconday phone",
-        type: String,
+        type: "string",
         description: "Secondary phone contact number",
         icon: "phone",
     },
@@ -61,7 +63,7 @@ TeamSchema = {
     abn: {
         label: "ABN",
         description: "Australian Business Number",
-        type: String,
+        type: "string",
     },
 
     address: {
@@ -71,7 +73,7 @@ TeamSchema = {
     },
 
     thumb: {
-        type: String,
+        type: "string",
         label: "Thumbnail",
     },
 
@@ -81,16 +83,16 @@ TeamSchema = {
     defaultWorkOrderValue: {
         label: "Default value for work orders",
         description: "Preset initial value for all newly created work orders",
-        type: Number,
+        type: "number",
         defaultValue: 500,
         condition: "fm"
     },
 
     services: {
         label: "Services",
-        type: [ String ],
+        type: [ "string" ],
         description: "Services provided by this team",
-        input: "MDSelect",
+        input: Select,
         defaultValue: () => {
             return JSON.parse( JSON.stringify( Config.services ) )
         }
@@ -98,7 +100,7 @@ TeamSchema = {
 
     timeframes: {
         label: "Time frames",
-        type: Object,
+        type: "object",
         description: "Acceptable turnaround time for jobs of different priorities",
         defaultValue: () => {
             return {
@@ -177,7 +179,7 @@ TeamSchema = {
             source: "Files",
             key: "team._id"
         },*/
-        input: DocAttachments.DocumentExplorer
+        input: DocExplorer
     },
 
     /*

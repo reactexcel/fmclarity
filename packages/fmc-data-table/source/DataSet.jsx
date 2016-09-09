@@ -36,8 +36,6 @@ export default function DataSet( items ) {
 			}
 			data.push( newItem );
 		} )
-
-		console.log( data );
 	}
 
 	function defaultFormatFunc( item, fieldName ) {

@@ -54,11 +54,11 @@ export default function FacilityPanel( { facility } ) {
                     {
                         //hide:       !facility.canGetMessages(),
                         tab:        <span id="discussion-tab">Updates</span>,
-                        content:    <Inbox for={facility} truncate={true}/>
+                        content:    <Inbox for = { facility } truncate = { true }/>
                     },{
                         //hide:       !facility.canAddDocument(),
                         tab:        <span id="documents-tab">Documents</span>,
-                        content:    <AutoForm item={facility} form={["documents"]}/>
+                        content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] }/>
                     },{
                         //hide:       !facility.canAddMember(),
                         tab:        <span id="personnel-tab">Personnel</span>,

@@ -1,7 +1,9 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import DocumentIcon from './DocumentIcon.jsx';
+import DocIcon from './DocIcon.jsx';
+import DocIconHeader from './DocIconHeader.jsx';
+import Documents from '../model/Documents.jsx';
 
 export default DocsPageIndex = React.createClass( {
 
@@ -55,9 +57,14 @@ export default DocsPageIndex = React.createClass( {
 				</div>
 				{/*newItemCallback could be a collection helper - then we pass in the collection to the filterbox*/}
 				<div className="issue-page wrapper wrapper-content animated fadeIn">
-					{ this.data.docs.map( ( doc ) => {
-		 				return < key={doc._id}>{doc.name}</span>
-					} ) }
+					<div className="ibox">
+						<DocumentIconHeader/>
+						<div>
+						{ this.data.docs.map( ( doc ) => {
+			 				return <DocumentIcon key={doc._id} item={doc}/>
+						} ) }
+						</div>
+					</div>
 				</div>
 			</div>
 		);

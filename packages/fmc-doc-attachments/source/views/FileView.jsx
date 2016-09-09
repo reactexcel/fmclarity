@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-File = React.createClass( {
+export default FileView = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 

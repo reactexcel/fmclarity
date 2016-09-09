@@ -1,7 +1,9 @@
 import { Model } from 'meteor/fmc:orm';
 import { DocOwners } from 'meteor/fmc:doc-owners';
 
-Documents = new Model( {
+import DocumentSchema from './DocumentSchema.jsx';
+
+export default Documents = new Model( {
 	schema: DocumentSchema,
 	collection: "Files",
 	mixins: [ DocOwners ]

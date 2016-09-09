@@ -1,0 +1,143 @@
+@import '/client/stylesheets/variables.import.less';
+
+.panel-wrapper
+{
+    position: absolute;
+
+    width: 100%;
+    min-height: 100%;
+
+    background: @default-bg;
+}
+
+@cover-image-min-height:150px;
+
+.request-panel
+{
+    min-width: 800px;
+
+    background-color: #00b89e;
+    .contact-title
+    {
+        font-size: 14px;
+        font-weight: bold;
+
+        display: block;
+    }
+    table
+    {
+        width: 100%;
+
+        border-top: 4px solid #bbb;
+        tr
+        {
+            line-height: 48px;
+
+            margin: 0;
+            padding: 0;
+        }
+        th,
+        td
+        {
+            margin: 0;
+            padding: 0;
+            padding-left: 16px;
+
+            border-top: 1px solid #ddd;
+        }
+        th
+        {
+            font-weight: normal;
+
+            width: 35px;
+
+            color: #aaa;
+        }
+    }
+    h2
+    {
+        /*font-weight:bold;*/
+        margin: 0 0 10px 0;
+    }
+    .contact-thumbnail
+    {
+        position: relative;
+
+        overflow: hidden;
+
+        width: 100%;
+        min-height: @cover-image-min-height;
+        div.cover-image
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            background-position: 50% 30%;
+            background-size: cover;
+            img
+            {
+                visibility: hidden;
+
+                width: 100%;
+            }
+        }
+    }
+    .title-padding
+    {
+        height: 150px;
+    }
+    .title-overlay
+    {
+        position: relative;
+        z-index: 1001;
+
+        padding: 10px 0;
+
+        color: white;
+        background-color: rgba(0, 0, 0, .5);
+    }
+    .facility-title
+    {
+        overflow: visible;
+
+        padding: 20px 0 10px 20px;
+
+        white-space: nowrap;
+    }
+    .contact-info
+    {
+        position: relative;
+        z-index: 1001;
+
+        padding: 10px 20px;
+
+        white-space: nowrap;
+        /*text-align:right;*/
+    }
+    .services-overview
+    {
+        position: relative;
+        z-index: 1001;
+
+        overflow: hidden;
+
+        padding: 10px;
+    }
+    .tab-panel
+    {
+        position: relative;
+        z-index: 1001;
+        .tab-row
+        {
+            color: #fff;
+            background-color: #01a68f;
+        }
+        .tab-pane
+        {
+            max-height: initial;
+        }
+    }
+}

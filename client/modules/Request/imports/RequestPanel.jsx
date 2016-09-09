@@ -35,7 +35,7 @@ const RequestPanelInner = ( { request } ) => {
         return <div/>
     }
     return (
-        <div className="facility-card" style={{background:"#eee"}}>
+        <div className="request-panel" style={{background:"#eee"}}>
 
             <div className="wo-detail">
                 <div className="row">
@@ -117,7 +117,7 @@ const RequestPanelInner = ( { request } ) => {
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>{ request.attachmentCount?<span>({ request.attachmentCount })</span>:null}</span>,
-                    content:    <AutoForm item={request} form={['documents']} save={()=>request.save}/>
+                    content:    <AutoForm model = { Issues } item = { request } form = { ['documents'] } save ={ () => request.save }/>
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     content:    <ContactList group = { request } readOnly = { true }/>

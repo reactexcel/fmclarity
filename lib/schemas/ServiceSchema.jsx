@@ -2,6 +2,8 @@ if ( Meteor.isClient ) {
     require( '/client/modules/Compliance/MDPPMEventSelector.jsx' );
 }
 
+import { DocTypes } from 'meteor/fmc:doc-attachments';
+
 ComplianceRuleSchema = {
 
     facility: {

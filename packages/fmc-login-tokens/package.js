@@ -10,9 +10,6 @@ Package.onUse(function(api) {
 
 	api.use([
 		'kadira:flow-router',
-	],'client');
-
-	api.use([
 		'fmc:doc-messages',
 		'ecmascript',
 		'less',
@@ -41,4 +38,6 @@ Package.onUse(function(api) {
 		'PageChangePassword',
 		'loggedIn'
 	]);
+
+	api.mainModule( 'index.js' )
 });

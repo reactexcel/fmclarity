@@ -3,6 +3,8 @@ import './Users.jsx';
 
 import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
+import { DocAttachments } from 'meteor/fmc:doc-attachments';
+
 
 Teams = new Model( {
 	schema: TeamSchema,

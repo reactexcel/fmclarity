@@ -126,7 +126,7 @@ export default TeamPanel = React.createClass( {
 				},{
 					//hide: 		!team.canAddDocument(),
 					tab: 		<span id = "documents-tab"><span style = {{color:"black"}}>Documents</span></span>,
-					content: 	<AutoForm item = { team } form = { ["documents"] }/>
+					content: 	<AutoForm model = { Teams } item = { team } form = { ["documents"] }/>
 				},{
 					//hide: 		!team.canAddMember(),
 					tab: 		<span id="personnel-tab"><span style={{color:"black"}}>Personnel</span></span>,

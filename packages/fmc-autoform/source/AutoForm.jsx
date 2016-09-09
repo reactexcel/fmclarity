@@ -73,8 +73,8 @@ export default class AutoForm extends React.Component {
 							item		= { item[ key ] }
 							errors 		= { errors[ key ] }
 							hideSubmit 	= { true }
-							options		= { schema } 
-										  {...others} 
+							form		= { schema } 
+										  { ...others } 
 						/>
 
 					</div>

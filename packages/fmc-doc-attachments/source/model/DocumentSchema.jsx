@@ -1,47 +1,25 @@
-import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import FileExplorer from '../views/FileExplorer.jsx';
 
-DocTypes = [
-    "Audit",
-    "Bank Guarantee",
-    "Budget",
-    "Contract",
-    "Emergency Management",
-    "House Rules",
-    "Induction",
-    "Inspection",
-    "Insurance",
-    "Invoice",
-    "Lease",
-    "MSDS",
-    "Plan",
-    "Procedure",
-    "Quote",
-    "Register",
-    "Registration",
-    "Service Report",
-    "SWMS",
-];
+import { Text, TextArea, Select, DateInput } from 'meteor/fmc:material-inputs';
 
-DocumentSchema = {
+export default DocumentSchema = {
     name: {
         label: "Name",
-        input: "mdtext",
+        input: Text,
         size: 6,
     },
     type: {
         label: "Document type",
         size: 6,
-        type: String,
-        input: "MDSelect",
+        type: "string",
+        input: Select,
         options: {
             items: DocTypes
         }
     },
     description: {
         label: "Description",
-        input: "mdtextarea"
+        input: TextArea
     },
     documentNumber: {
         label: "Document #",
@@ -193,7 +171,7 @@ DocumentSchema = {
         },
     },
     applicablePeriodStartDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -211,10 +189,10 @@ DocumentSchema = {
         },
         label: "Applicable period start",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     applicablePeriodEndDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -232,10 +210,10 @@ DocumentSchema = {
         },
         label: "Applicable period end",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     tenantExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -244,10 +222,10 @@ DocumentSchema = {
         },
         label: "Date tenant executed",
         size: 6,
-        input: "MDDate"
+        input: DateInput
     },
     lessorExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -256,7 +234,7 @@ DocumentSchema = {
         },
         label: "Date lessor executed",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     tenant: {
         condition: function( item ) {
@@ -278,7 +256,7 @@ DocumentSchema = {
         label: "Commencing term rent pa (ex GST)"
     },
     commencementDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 'Contract',
@@ -292,10 +270,10 @@ DocumentSchema = {
         },
         label: "Commencement",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     expiryDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 'Bank Guarantee',
@@ -313,10 +291,10 @@ DocumentSchema = {
         },
         label: "Expiry",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     issueDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -343,10 +321,10 @@ DocumentSchema = {
         },
         label: "Issue date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     clientExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Contract' ].indexOf( item.type ) > -1;
         },
@@ -355,10 +333,10 @@ DocumentSchema = {
         },
         label: "Date client executed",
         size: 6,
-        input: "MDDate"
+        input: DateInput
     },
     supplierExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Contract' ].indexOf( item.type ) > -1;
         },
@@ -367,10 +345,10 @@ DocumentSchema = {
         },
         label: "Date supplier executed",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     annualReview: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -379,7 +357,7 @@ DocumentSchema = {
         },
         label: "Annual review",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     reviewMethod: {
         condition: function( item ) {
@@ -402,7 +380,7 @@ DocumentSchema = {
         size: 6
     },
     optionExerciseFromDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -411,10 +389,10 @@ DocumentSchema = {
         },
         label: "Option exercise from date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     optionExerciseToDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -423,7 +401,7 @@ DocumentSchema = {
         },
         label: "Option exercise to date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     area: {
         condition: function( item ) {

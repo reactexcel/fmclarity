@@ -5,6 +5,7 @@ import './RequestFrequencySchema.jsx';
 import '../collections/Facilities';
 import { ContactCard } from 'meteor/fmc:doc-members';
 import * as Input from 'meteor/fmc:material-inputs';
+import { FileExplorer, DocExplorer } from 'meteor/fmc:doc-attachments';
 
 if ( Meteor.isClient ) {
 	import FacilityListTile from '/client/modules/Facility/imports/FacilityListTile.jsx';
@@ -427,7 +428,7 @@ IssueSchema = {
 			source: "Files"
 		},
 		*/
-		input: DocAttachments.FileExplorer
+		input: FileExplorer
 	},
 
 	documents: {
@@ -438,7 +439,7 @@ IssueSchema = {
 			type: ORM.ManyToMany,
 			source: "Files"
 		},*/
-		input: DocAttachments.DocumentExplorer,
+		input: DocExplorer
 	},
 
 	//////////////////////////////////////////////////  		

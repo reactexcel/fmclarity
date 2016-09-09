@@ -1,5 +1,6 @@
 import './AddressSchema.jsx';
-
+import { DocExplorer } from 'meteor/fmc:doc-attachments';
+import { Text, TextArea, Select } from 'meteor/fmc:doc-attachments';
 
 FacilitySchema = {
 	//$schema:              "http://json-schema.org/draft-04/schema#",
@@ -16,7 +17,7 @@ FacilitySchema = {
 	name: {
 		label: "Name",
 		description: "A short identifier for the building (ie 12 Smith St)",
-		type: String,
+		type: "string",
 		autoFocus: true
 	},
 
@@ -28,7 +29,7 @@ FacilitySchema = {
 
 	type: {
 		label: "Property type",
-		input: "MDSelect",
+		input: Select,
 		options: {
 			items: [
 				"Commercial",
@@ -42,14 +43,14 @@ FacilitySchema = {
 	description: {
 		label: "Description",
 		description: "A brief description of the site",
-		type: String,
-		input: "mdtextarea",
+		type: "string",
+		input: TextArea,
 	},
 
 	size: {
 		label: "Size",
 		description: "The net lettable area in metres squared",
-		type: Number,
+		type: "number",
 		size: 6
 	},
 
@@ -57,7 +58,7 @@ FacilitySchema = {
 		label: "Operating times",
 		description: "When this site is open",
 		type: "period",
-		input: "mdtext"
+		input: Text
 	},
 
 	////////////////////////////////////////////////////
@@ -105,7 +106,7 @@ FacilitySchema = {
 			source: "Teams",
 			key: "team._id"
 		},
-		input: "MDSelect",
+		input: Select,
 		options: ( item ) => {
 
 			return {
@@ -166,7 +167,7 @@ FacilitySchema = {
 			type: ORM.ManyToMany,
 			source: "Files"
 		},*/
-		input: DocAttachments.DocumentExplorer
+		input: DocExplorer
 	},
 
 	thumbUrl: {

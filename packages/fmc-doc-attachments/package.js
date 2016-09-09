@@ -5,41 +5,30 @@
 // ...real plugin components
 
 
-Package.describe({  
+Package.describe( {
 	name: 'fmc:doc-attachments',
 	version: '0.0.1',
 	summary: 'Document attachments helper for Meteor+React'
-});
+} );
 
-Package.onUse(function(api) { 
+Package.onUse( function( api ) {
 
-	api.use([
+	api.use( [
+		'kadira:flow-router',
 		'ecmascript',
 		'less',
 		'react-meteor-data',
 		'fmc:orm',
 		'fmc:rbac',
-		'fmc:doc-owners'
-		//'dburles:collection-helpers',
-		//'matb33:collection-hooks'
-	]);
+		'fmc:doc-owners',
+		'fmc:login-tokens'
+	] );
 
-	api.addFiles([
-		'controller.jsx',
-		'DocViewEdit.jsx',
-		'DocViewItem.jsx',
-		'FileView.jsx',
-		'FileExplorerView.jsx',
-		'FileSchema.jsx',
-		'style.less',
-		'DocumentAttachments.jsx'
-	]);
+	api.addFiles( [
+		'source/routes.jsx',
+		'source/style.less',
+	] );
 
-	api.export([
-		'DocAttachments',
-		'DocViewItem',
-		'DocViewEdit',
-		'Documents',
-		'DocTypes'
-	]);
-});
+	api.mainModule( 'index.js' );
+
+} );
