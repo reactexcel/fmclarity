@@ -6,7 +6,8 @@ FacilityPageIndexContainer = createContainer( ( params ) =>
 	Meteor.subscribe( 'teamsAndFacilitiesForUser' );
 	Meteor.subscribe( 'facilities' );
 	Meteor.subscribe( 'users' );
-    Meteor.subscribe( "contractors" );
+    Meteor.subscribe( 'contractors' );
+    Meteor.subscribe( 'documents' );
 
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility();

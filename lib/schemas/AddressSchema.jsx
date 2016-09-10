@@ -1,17 +1,21 @@
+import { Text, Select } from 'meteor/fmc:material-inputs';
+
 export default AddressSchema = {
 
 	streetNumber: {
+		input: Text,
 		label: "Number",
 		size: 3
 	},
 	streetName: {
+		input: Text,
 		label: "Street name",
 		size: 6
 	},
 	streetType: {
 		label: "Type",
 		size: 3,
-		input: "MDSelect",
+		input: Select,
 		options: {
 			items: [
 				"Avenue",
@@ -31,14 +35,14 @@ export default AddressSchema = {
 		}
 	},
 	city: {
+		input: Text,
 		label: "City",
-		defaultValue: "",
 		size: 6,
 	},
 	state: {
 		label: "State",
 		size: 3,
-		input: "MDSelect",
+		input: Select,
 		options: {
 			items: [
 				"ACT",
@@ -53,6 +57,7 @@ export default AddressSchema = {
 		}
 	},
 	postcode: {
+		input: Text,
 		label: "Postcode",
 		size: 3
 	}

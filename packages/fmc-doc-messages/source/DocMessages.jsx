@@ -1,26 +1,13 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { Model } from 'meteor/fmc:orm';
-import './models/MessageSchema.jsx';
-import { DocOwners } from 'meteor/fmc:doc-owners';
+import Messages from './models/Messages.jsx';
 
-
-Messages = new Model( {
-    schema: MessageSchema,
-    collection: "Messages",
-    mixins: [ DocOwners ]
-} )
-
-DocMessages = {
+export default DocMessages = {
     register,
     isValidEmail,
     render
 }
-
-//Message.addFeature( DocOwners );
-
-//DocOwners.register( Messages );
 
 var defaultHelpers = {
     distributeMessage: distributeMessage,

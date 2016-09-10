@@ -1,7 +1,7 @@
 import DocAttachments from './source/DocAttachments.jsx';
-import FileExplorer from './source/views/FileExplorer.jsx';
-import DocExplorer from './source/views/DocExplorer.jsx';
-import DocTypes from './source/model/DocTypes.jsx';
+import FileExplorer from './source/components/FileExplorer.jsx';
+import DocExplorer from './source/components/DocExplorer.jsx';
+import DocTypes from './source/models/DocTypes.jsx';
 
 export {
 	DocAttachments,

@@ -1,5 +1,7 @@
 export default DocOwners = { register }
 
+import { Select } from 'meteor/fmc:material-inputs';
+
 function register( collection, options ) {
 
 	collection.save.before( ( doc ) => {
@@ -17,6 +19,22 @@ function register( collection, options ) {
 			}
 		}
 	} )
+
+	collection.schema.owner = {
+		label: "Owner",
+		input: Select,
+		description: "The creator or owner",
+		relation: {
+			join: ( item ) => {
+				if ( item.owner && item.owner._id ) {
+					return Users.findOne( item.owner._id );
+				}
+			},
+			unjoin: ( item ) => {
+				return _.pick( item.owner, '_id', 'name' );
+			}
+		},
+	}
 
 	if ( collection.helpers == null ) {
 		return;

@@ -1,6 +1,6 @@
 import './AddressSchema.jsx';
 import { DocExplorer } from 'meteor/fmc:doc-attachments';
-import { Text, TextArea, Select } from 'meteor/fmc:doc-attachments';
+import { Text, TextArea, Select } from 'meteor/fmc:material-inputs';
 
 FacilitySchema = {
 	//$schema:              "http://json-schema.org/draft-04/schema#",
@@ -18,13 +18,15 @@ FacilitySchema = {
 		label: "Name",
 		description: "A short identifier for the building (ie 12 Smith St)",
 		type: "string",
+		input: Text,
 		autoFocus: true
 	},
 
 	address: {
 		label: "Address",
 		description: "The location of the site",
-		schema: AddressSchema,
+		type: "object",
+		subschema: AddressSchema,
 	},
 
 	type: {
@@ -51,6 +53,7 @@ FacilitySchema = {
 		label: "Size",
 		description: "The net lettable area in metres squared",
 		type: "number",
+		input: Text,
 		size: 6
 	},
 
@@ -157,17 +160,6 @@ FacilitySchema = {
 			type: ORM.HasMembers,
 			source: "Teams"
 		}*/
-	},
-
-	documents: {
-		label: "Documents",
-		description: "Documents pertaining to this facility",
-		/*relation:
-		{
-			type: ORM.ManyToMany,
-			source: "Files"
-		},*/
-		input: DocExplorer
 	},
 
 	thumbUrl: {

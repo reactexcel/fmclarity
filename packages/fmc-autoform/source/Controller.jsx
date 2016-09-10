@@ -8,31 +8,27 @@ import React from "react";
 ///////// a view???
 export default class Controller {
 
-	constructor( model, options = {}, initialItem = {} ) {
-		if ( _.isArray( options ) ) {
-			this.keys = options;
-			this.options = {};
-		} else if ( _.isObject( options ) ) {
-			this.keys = Object.keys( options );
-			this.options = options;
+	constructor( model, schema = {}, item = {} ) {
+
+		if ( _.isArray( schema ) ) {
+			this.keys = schema;
+		} else if ( _.isObject( schema ) ) {
+			this.keys = Object.keys( schema );
 		} else {
 			throw new Error( "Options should be sent through to Controller so that the keys can be initialised" )
 		}
 
 		this.model = model;
-		this.options = options;
 		this.errors = {};
 		this.callbacks = [];
 
 		if ( this.model == null ) {
-			this.schema = Object.assign( {}, this.options );
-			//this.item = Object.assign( {}, initialItem );
+			this.schema = Object.assign( {}, schema );
 		} else {
-			this.schema = Object.assign( {}, this.model.schema, this.options );
-			//this.item = this.model.create( initialItem );
+			this.schema = Object.assign( {}, this.model.schema, schema );
 		}
 
-		this.item = Object.assign( {}, initialItem );
+		this.item = Object.assign( {}, item );
 		this.collection = [];
 	}
 

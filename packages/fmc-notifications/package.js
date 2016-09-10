@@ -1,14 +1,14 @@
-Package.describe( {
-	name: 'fmc:doc-messages',
+Package.describe({  
+	name: 'fmc:notifications',
 	version: '0.0.1',
 	summary: 'Message system for FM Clarity'
-} );
+});
 
 //TODO - mode actual pages into this package
 
-Package.onUse( function( api ) {
+Package.onUse(function(api) { 
 
-	api.use( [
+	api.use([
 		'underscore',
 		'accounts-base',
 		'less',
@@ -17,16 +17,20 @@ Package.onUse( function( api ) {
 		'fmc:orm',
 		'fmc:doc-owners',
 		'fmc:rbac'
-	] );
+	]);
 
-	api.addFiles( [
+	api.addFiles([
 		'source/plugins/jquery.elastic.source.js',
-	], 'client' );
+	],'client');
 
-	api.addFiles( [
+	api.addFiles([
+		'source/methods.js',
+		'source/components/NotificationList.jsx',
+		'source/components/NotificationViewSummary.jsx',
 		'source/components/Message.less',
-	] );
+	]);
 
-	api.mainModule( 'index.js' );
-
-} );
+	api.export([
+		'NotificationList',
+	]);
+});

@@ -1,43 +1,46 @@
 import React from "react";
 import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-EmailMessageView = React.createClass({
+EmailMessageView = React.createClass( {
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
     getMeteorData() {
         var query, message, user, owner, target, facility;
         query = this.props.item;
 
-        user = Users.findOne(this.props.user._id);
-        message = Messages.findOne(query);
-        if(message) {
+        user = Users.findOne( this.props.user._id );
+        message = Messages.findOne( query );
+        if ( message ) {
             owner = message.getOwner();
             target = message.getTarget();
-            if(target&&target.getFacility) {
+            if ( target && target.getFacility ) {
                 //I have a concern that this could be blocked by RBAC
                 //if the user sending the email does not have access
                 facility = target.getFacility();
             }
         }
         return {
-            user:user,
-            owner:owner,
-            inbox:this.props.inbox,
-            message:message,
-            facility:facility
+            user: user,
+            owner: owner,
+            inbox: this.props.inbox,
+            message: message,
+            facility: facility
         }
     },
 
     render() {
-        var message = this.data.message||{};
+        var message = this.data.message || {};
         var facility = this.data.facility;
         var owner = this.data.owner;
+        if( !owner ) {
+            return <div/>
+        }
         var user = this.data.user;
-        var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName()
+        var userName = ( user.profile && user.profile.firstName ) ? user.profile.firstName : user.getName()
         var createdAt = message.createdAt;
-        return(
+        return (
             <div>
                 <p>Hi {userName},</p>
 
@@ -53,4 +56,4 @@ EmailMessageView = React.createClass({
             </div>
         )
     }
-});
+} );

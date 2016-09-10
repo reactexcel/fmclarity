@@ -3,12 +3,15 @@ import { Menu } from 'meteor/fmc:material-navigation';
 import { ContactDetails, ContactList } from 'meteor/fmc:doc-members';
 import { AutoForm } from 'meteor/fmc:autoform';
 import FacilityStepper from './FacilityStepper.jsx';
+import { Inbox } from 'meteor/fmc:doc-messages';
 
 import '/client/modules/Compliance/PMPList.jsx';
 
 import * as Actions from './actions/FacilityActions';
 
 export default function FacilityPanel( { facility } ) {
+
+    //console.log( facility );
 
     function getMenu() {
         return [

@@ -3,6 +3,7 @@ import './Files.jsx';
 import '../schemas/UserSchema.jsx';
 
 import { DocOwners } from 'meteor/fmc:doc-owners';
+import { DocMessages } from 'meteor/fmc:doc-messages';
 
 Users = new Model( {
     schema: UserSchema,

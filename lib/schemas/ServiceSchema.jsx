@@ -87,7 +87,7 @@ ComplianceRuleSchema = {
     },
     frequency: {
         condition: "PPM event completed",
-        schema: RequestFrequencySchema
+        subschema: RequestFrequencySchema
     },
 
 }

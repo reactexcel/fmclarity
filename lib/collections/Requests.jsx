@@ -3,6 +3,7 @@ import { Model } from 'meteor/fmc:orm';
 import '../schemas/RequestSchema.jsx';
 import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
+import { DocMessages } from 'meteor/fmc:doc-messages';
 
 Issues = new Model( {
 	schema: IssueSchema,

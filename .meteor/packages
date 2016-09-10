@@ -19,6 +19,7 @@ fmc:doc-members
 fmc:doc-messages
 fmc:login-tokens
 fmc:doc-owners
+fmc:notifications
 
 ############################
 # FMC MD Components

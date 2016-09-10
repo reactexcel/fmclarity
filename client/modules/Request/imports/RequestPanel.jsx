@@ -6,6 +6,7 @@ import { AutoForm } from 'meteor/fmc:autoform';
 
 import FacilityDetails from '/client/modules/Facility/imports/FacilityDetails.jsx';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { Inbox } from 'meteor/fmc:doc-messages';
 
 export default RequestPanel = React.createClass( {
 

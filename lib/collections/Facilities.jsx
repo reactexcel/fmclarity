@@ -10,6 +10,7 @@ import { Model } from 'meteor/fmc:orm';
 import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
 import { DocAttachments } from 'meteor/fmc:doc-attachments';
+import { DocMessages } from 'meteor/fmc:doc-messages';
 
 //would like to more closely emulate simpleschema paradigm here
 Facilities = new Model( {

@@ -4,6 +4,7 @@ import './Users.jsx';
 import { DocMembers } from 'meteor/fmc:doc-members';
 import { DocOwners } from 'meteor/fmc:doc-owners';
 import { DocAttachments } from 'meteor/fmc:doc-attachments';
+import { DocMessages } from 'meteor/fmc:doc-messages';
 
 
 Teams = new Model( {

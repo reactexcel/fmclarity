@@ -4,11 +4,11 @@ import { mount } from 'react-mounter';
 import { MainLayout, WideLayout } from 'meteor/fmc:layout';
 import { loggedIn } from 'meteor/fmc:login-tokens';
 
-import DocsPageIndex from './views/DocsPageIndex.jsx';
+import DocsPageIndexContainer from './containers/DocsPageIndexContainer.jsx';
 
 loggedIn.route( '/docs', {
 	name: 'docs',
 	action( params ) {
-		mount( MainLayout, { content: <DocsPageIndex/> } );
+		mount( MainLayout, { content: <DocsPageIndexContainer/> } );
 	}
 } );

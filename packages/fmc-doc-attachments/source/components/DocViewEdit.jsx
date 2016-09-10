@@ -1,8 +1,8 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from 'meteor/fmc:autoform';
-import Documents from '../model/Documents.jsx';
-import DocumentSchema from '../model/DocumentSchema.jsx';
+import Documents from '../models/Documents.jsx';
+import DocumentSchema from '../models/DocumentSchema.jsx';
 
 export default DocViewEdit = React.createClass( {
 
@@ -46,6 +46,7 @@ export default DocViewEdit = React.createClass( {
 
 	handleChange( item ) {
 		if ( !item._id ) {
+			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
 			item.save();
@@ -57,6 +58,7 @@ export default DocViewEdit = React.createClass( {
 		return (
 			<div style={{padding:"15px"}}>
 				<AutoForm 
+					model 	= { Documents }
 					form 	= { DocumentSchema } 
 					item 	= { this.data.doc } 
 				/>

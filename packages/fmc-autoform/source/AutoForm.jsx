@@ -37,15 +37,12 @@ export default class AutoForm extends React.Component {
 		let { keys, schema } = form;
 
 		return keys.map( ( key ) => {
-			let props = Object.assign( {
-				input: Text,
-				size: 12,
-				type: "string"
-			}, schema[ key ] );
+
+			console.log( { schema, key } );
 
 			// Check visibility condition specified in schema
-			if ( props.condition != null ) {
-				if ( !this.checkCondition( props.condition, item ) ) {
+			if ( schema[ key ].condition != null ) {
+				if ( !this.checkCondition( schema[ key ].condition, item ) ) {
 					return;
 				}
 			}
@@ -58,13 +55,13 @@ export default class AutoForm extends React.Component {
 			}
 
 			// Unpack options for this field (if the field is a generator)
-			if ( _.isFunction( props.options ) ) {
-				props.options = props.options( item );
+			if ( _.isFunction( schema[ key ].options ) ) {
+				schema[ key ].options = schema[ key ].options( item );
 			}
 
-			// If this field in the schema has it's own 'schema' then recursively run autoform
-			if ( props.schema != null ) {
-				let { schema, size, ...others } = props;
+			// If this field in the schema has it's own subschema then recursively run autoform
+			if ( schema[ key ].subschema != null ) {
+				let { subschema, size, ...others } = schema[ key ];
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
@@ -73,7 +70,7 @@ export default class AutoForm extends React.Component {
 							item		= { item[ key ] }
 							errors 		= { errors[ key ] }
 							hideSubmit 	= { true }
-							form		= { schema } 
+							form		= { subschema } 
 										  { ...others } 
 						/>
 
@@ -84,7 +81,7 @@ export default class AutoForm extends React.Component {
 			// otherwise determine the type of input to create and make it,
 			//  passing on the fields options as params
 			else {
-				let { input, size = 12, label, description, options } = props,
+				let { input, size = 12, label, description, options } = schema[ key ],
 				placeholder = label,
 					Input = null;
 
@@ -93,8 +90,8 @@ export default class AutoForm extends React.Component {
 				}
 
 				if ( Input == null ) {
-					console.log( { key, props } );
-					throw new Error( `You have tried to render a input type "${props.input}" that does not exist` );
+					console.log( { key, fields:schema[ key ] } );
+					throw new Error( `You have tried to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
 				return (
@@ -122,15 +119,10 @@ export default class AutoForm extends React.Component {
 
 		return (
 			<div className="autoform row">
-				{ 
-					this.getForm() 
-				}
 
-				{ this.props.fart }
+				{ this.getForm() }
 
-		        {
-
-		        !this.props.hideSubmit ?
+		        { ! this.props.hideSubmit ?
 
 				<div style={ {textAlign:"right", clear:"both"}}>
 					<button 
@@ -141,10 +133,7 @@ export default class AutoForm extends React.Component {
 					</button>
 				</div>
 
-				: null
-
-				}
-
+				: null }
 
 			</div>
 		)

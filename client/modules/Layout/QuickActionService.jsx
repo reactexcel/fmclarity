@@ -3,11 +3,13 @@ import React from 'react';
 import { AutoForm } from 'meteor/fmc:autoform';
 import RequestPanel from '/client/modules/Request/imports/RequestPanel.jsx';
 
+import FacilityStepper from '/client/modules/Facility/imports/FacilityStepper.jsx';
+
 export default QuickActions = new function QuickActionService() {
 
 	function createFacility( template = {} ) {
 		Modal.show( {
-			content: <FacilityStepper item = { template } />
+			content: <FacilityStepper facility = { Facilities.create( template ) } />
 		} )
 	}
 
@@ -19,7 +21,7 @@ export default QuickActions = new function QuickActionService() {
 
 	function editFacility( facility ) {
 		Modal.show( {
-			content: <FacilityStepper item = { facility } />
+			content: <FacilityStepper facility = { facility } />
 		} )
 	}
 
@@ -96,6 +98,7 @@ export default QuickActions = new function QuickActionService() {
 		*/
 	}
 
+	/*
 	function createFacility() {
 		var selectedTeam = Session.getSelectedTeam();
 		selectedTeam.addFacility( ( response ) => {
@@ -106,7 +109,7 @@ export default QuickActions = new function QuickActionService() {
 			} );
 		} )
 	}
-
+	*/
 	function createNewComplianceRule( newRule ) {
 		var facility = newRule.facility;
 		if ( facility ) {

@@ -63,6 +63,7 @@ fmc:material-misc@0.0.1
 fmc:material-navigation@0.0.1
 fmc:material-views@0.0.1
 fmc:modal@0.0.1
+fmc:notifications@0.0.1
 fmc:orm@0.0.1
 fmc:rbac@0.0.1
 fmc:reports@0.0.1

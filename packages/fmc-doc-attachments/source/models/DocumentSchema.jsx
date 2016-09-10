@@ -1,49 +1,29 @@
-import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import FileExplorer from '../components/FileExplorer.jsx';
+import DocTypes from './DocTypes.jsx';
 
-DocTypes = [
-    "Audit",
-    "Bank Guarantee",
-    "Budget",
-    "Contract",
-    "Emergency Management",
-    "House Rules",
-    "Induction",
-    "Inspection",
-    "Insurance",
-    "Invoice",
-    "Lease",
-    "MSDS",
-    "Plan",
-    "Procedure",
-    "Quote",
-    "Register",
-    "Registration",
-    "Service Report",
-    "SWMS",
-];
+import { Text, TextArea, Select, DateInput } from 'meteor/fmc:material-inputs';
 
-DocumentSchema = {
+export default DocumentSchema = {
     name: {
         label: "Name",
-        input: "mdtext",
+        input: Text,
         size: 6,
     },
     type: {
         label: "Document type",
         size: 6,
-        type: String,
-        input: "MDSelect",
+        type: "string",
+        input: Select,
         options: {
             items: DocTypes
         }
     },
     description: {
         label: "Description",
-        input: "mdtextarea"
+        input: TextArea
     },
     documentNumber: {
+        input: Text,
         label: "Document #",
         size: 6,
         condition: function( item ) {
@@ -64,6 +44,7 @@ DocumentSchema = {
         },
     },
     gst: {
+        input: Text,
         label: "GST",
         size: 6,
         condition: function( item ) {
@@ -74,6 +55,7 @@ DocumentSchema = {
         },
     },
     totalValue: {
+        input: Text,
         label: "Total value",
         size: 6,
         condition: function( item ) {
@@ -87,6 +69,7 @@ DocumentSchema = {
 
     },
     subjectAddress: {
+        input: Text,
         label: "Subject Address",
         condition: function( item ) {
             return [
@@ -97,6 +80,7 @@ DocumentSchema = {
         },
     },
     currentYear: {
+        input: Text,
         label: "Current year value",
         size: 6,
         condition: function( item ) {
@@ -109,6 +93,7 @@ DocumentSchema = {
 
     },
     'currentYear+1': {
+        input: Text,
         label: "Current year +1 value",
         size: 6,
         condition: function( item ) {
@@ -121,6 +106,7 @@ DocumentSchema = {
 
     },
     'currentYear+2': {
+        input: Text,
         label: "Current year +2 value",
         size: 6,
         condition: function( item ) {
@@ -133,6 +119,7 @@ DocumentSchema = {
 
     },
     serviceType: {
+        input: Text,
         label: "Service type",
         size: 6,
         condition: function( item ) {
@@ -153,6 +140,7 @@ DocumentSchema = {
         },
     },
     supplier: {
+        input: Text,
         label: "Supplier",
         size: 6,
         condition: function( item ) {
@@ -174,6 +162,7 @@ DocumentSchema = {
         },
     },
     issuer: {
+        input: Text,
         label: "Issuer",
         size: 6,
         condition: function( item ) {
@@ -184,6 +173,7 @@ DocumentSchema = {
         },
     },
     insuranceType: {
+        input: Text,
         label: "Insurance type",
         size: 6,
         condition: function( item ) {
@@ -193,7 +183,7 @@ DocumentSchema = {
         },
     },
     applicablePeriodStartDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -211,10 +201,10 @@ DocumentSchema = {
         },
         label: "Applicable period start",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     applicablePeriodEndDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -232,10 +222,10 @@ DocumentSchema = {
         },
         label: "Applicable period end",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     tenantExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -244,10 +234,10 @@ DocumentSchema = {
         },
         label: "Date tenant executed",
         size: 6,
-        input: "MDDate"
+        input: DateInput
     },
     lessorExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -256,21 +246,24 @@ DocumentSchema = {
         },
         label: "Date lessor executed",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     tenant: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
         size: 6
     },
     landlord: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
         size: 6
     },
     commencingRent: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -278,7 +271,7 @@ DocumentSchema = {
         label: "Commencing term rent pa (ex GST)"
     },
     commencementDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 'Contract',
@@ -292,10 +285,10 @@ DocumentSchema = {
         },
         label: "Commencement",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     expiryDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 'Bank Guarantee',
@@ -313,10 +306,10 @@ DocumentSchema = {
         },
         label: "Expiry",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     issueDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [
                 "Audit",
@@ -343,10 +336,10 @@ DocumentSchema = {
         },
         label: "Issue date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     clientExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Contract' ].indexOf( item.type ) > -1;
         },
@@ -355,10 +348,10 @@ DocumentSchema = {
         },
         label: "Date client executed",
         size: 6,
-        input: "MDDate"
+        input: DateInput
     },
     supplierExecutedDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Contract' ].indexOf( item.type ) > -1;
         },
@@ -367,10 +360,10 @@ DocumentSchema = {
         },
         label: "Date supplier executed",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     annualReview: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -379,9 +372,10 @@ DocumentSchema = {
         },
         label: "Annual review",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     reviewMethod: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -389,6 +383,7 @@ DocumentSchema = {
         label: "Review method"
     },
     reviewAmount: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -396,13 +391,14 @@ DocumentSchema = {
         label: "Review amount"
     },
     options: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
         size: 6
     },
     optionExerciseFromDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -411,10 +407,10 @@ DocumentSchema = {
         },
         label: "Option exercise from date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     optionExerciseToDate: {
-        type: Date,
+        type: "date",
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },
@@ -423,9 +419,10 @@ DocumentSchema = {
         },
         label: "Option exercise to date",
         size: 6,
-        input: "MDDate",
+        input: DateInput,
     },
     area: {
+        input: Text,
         condition: function( item ) {
             return [ 'Lease' ].indexOf( item.type ) > -1;
         },

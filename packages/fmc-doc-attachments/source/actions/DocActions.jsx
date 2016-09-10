@@ -14,8 +14,6 @@ function edit( doc ) {
 	}
 }
 
-function actionEdit
-
 export {
 	edit
 }

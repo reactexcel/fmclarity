@@ -69,7 +69,7 @@ TeamSchema = {
     address: {
         label: "Address",
         description: "Location of primary office",
-        schema: AddressSchema,
+        subschema: AddressSchema,
     },
 
     thumb: {
