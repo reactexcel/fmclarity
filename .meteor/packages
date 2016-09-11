@@ -6,37 +6,43 @@
 
 ############################
 # FMC Core
+
 fmc:rbac
 fmc:orm
-fmc:workflow-helper
-fmc:layout
+
+#fmc:workflow-helper
+#fmc:layout
 
 ############################
 # FMC Document Mixins
-fmc:doc-thumbs
-fmc:doc-attachments
-fmc:doc-members
-fmc:doc-messages
-fmc:login-tokens
-fmc:doc-owners
-fmc:notifications
+
+#fmc:doc-thumbs
+#fmc:doc-attachments
+#fmc:doc-members
+#fmc:doc-messages
+#fmc:login-tokens
+#fmc:doc-owners
+#fmc:notifications
 
 ############################
 # FMC MD Components
-fmc:material-views
-fmc:material-inputs
-fmc:material-navigation
-fmc:material-misc
+
+#fmc:material-views
+#fmc:material-inputs
+#fmc:material-navigation
+#fmc:material-misc
 
 ############################
 # FMC UI
+
 fmc:tabs
 fmc:stepper
 fmc:modal
-fmc:autoform
-fmc:reports
 fmc:calendar
-fmc:data-table
+
+#fmc:autoform
+#fmc:reports
+#fmc:data-table
 
 ############################
 # Styles & Presentation
@@ -100,6 +106,7 @@ base64
 standard-minifier-css
 standard-minifier-js
 react-meteor-data
+jquery
 
 ############################
 # MDG Extensions

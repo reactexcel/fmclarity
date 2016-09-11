@@ -1,0 +1,18 @@
+.autoinput-rating {
+    font-size: 20px;
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+
+rating > span {
+    position: relative;
+    display: inline-block;
+    width: 1.1em;
+}
+
+.autoinput-rating > span:hover:before,
+.autoinput-rating > span:hover ~ span:before {
+    position: absolute;
+    content: '\2605';
+    color: #ffd700;
+}

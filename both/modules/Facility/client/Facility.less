@@ -1,0 +1,180 @@
+@import './variables.import.less';
+
+.panel-wrapper
+{
+    position: absolute;
+
+    width: 100%;
+    min-height: 100%;
+
+    background: @default-bg;
+}
+
+.facility-info
+{
+    overflow: hidden;
+
+    padding: 0 5px;
+
+    white-space: nowrap;
+}
+
+.facility-thumbnail
+{
+    position: relative;
+
+    float: left;
+}
+
+.facility-card2
+{
+    float: left;
+
+    width: 200px;
+    height: 150px;
+    margin: 0 10px 10px 0;
+
+    cursor: pointer;
+    transition: box-shadow .5s;
+
+    border-radius: 2px;
+    background: @default-bg;
+    box-shadow: @card-shadow;
+    &:hover
+    {
+        box-shadow: @card-shadow-hover;
+    }
+    .title-line
+    {
+        margin: 0;
+        margin-bottom: 5px;
+    }
+    .facility-thumbnail
+    {
+        width: 100%;
+        height: 100%;
+    }
+    .thumbnail-overlay
+    {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        padding: 10px;
+
+        color: #fff;
+        background: rgba(0,0,0,.5);
+    }
+    .facility-detail
+    {
+        text-align: left;
+    }
+    .facility.contact
+    {
+        text-align: left;
+    }
+}
+
+@cover-image-min-height:150px;
+
+/*peraps fm-panel?*/
+.facility-card
+{
+    min-width: 800px;
+
+    background-color: #00b89e;
+    .contact-title
+    {
+        font-size: 14px;
+        font-weight: bold;
+
+        display: block;
+    }
+    h2
+    {
+        /*font-weight:bold;*/
+        margin: 0 0 10px 0;
+    }
+    .contact-thumbnail
+    {
+        position: relative;
+
+        overflow: hidden;
+
+        width: 100%;
+        min-height: @cover-image-min-height;
+        div.cover-image
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            background-position: 50% 30%;
+            background-size: cover;
+            img
+            {
+                visibility: hidden;
+
+                width: 100%;
+            }
+        }
+    }
+    .title-padding
+    {
+        height: 150px;
+    }
+    .title-overlay
+    {
+        position: relative;
+        z-index: 1001;
+
+        padding: 10px 0;
+
+        color: white;
+        background-color: rgba(0, 0, 0, .5);
+    }
+    .facility-title
+    {
+        overflow: visible;
+
+        padding: 20px 0 10px 20px;
+
+        white-space: nowrap;
+    }
+    .contact-info
+    {
+        position: relative;
+        z-index: 1001;
+
+        padding: 10px 20px;
+
+        white-space: nowrap;
+        /*text-align:right;*/
+    }
+    .services-overview
+    {
+        position: relative;
+        z-index: 1001;
+
+        overflow: hidden;
+
+        padding: 10px;
+    }
+    .tab-panel
+    {
+        position: relative;
+        z-index: 1001;
+        .tab-row
+        {
+            color: #fff;
+            background-color: #01a68f;
+        }
+        .tab-pane
+        {
+            max-height: initial;
+        }
+    }
+}

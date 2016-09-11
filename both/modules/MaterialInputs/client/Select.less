@@ -1,0 +1,39 @@
+.md-input.md-select {
+    .dropdown-menu {
+        font-size: inherit;
+        position: relative;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        .helper-text {
+            position: relative;
+            top: 4px;
+            bottom: auto;
+            visibility: visible;
+            height: auto;
+            height: auto;
+            padding: 10px;
+        }
+        .dropdown-menu-item {
+            font-size: inherit;
+            float: left;
+            width: 100%;
+            min-height: 32px;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            &:hover {
+                background-color: #eee;
+            }
+        }
+    }
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+    &.readonly .dropdown-toggle {
+        cursor: default;
+        &:hover {
+            color: inherit;
+        }
+    }
+}
