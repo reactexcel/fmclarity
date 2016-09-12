@@ -3,6 +3,7 @@ import React from "react";
 import { DocOwnerCard } from '/both/modules/DocOwners';
 import { ContactList } from '/both/modules/DocMembers';
 import { AutoForm } from '/both/modules/AutoForm';
+import { Stepper } from '/both/modules/Stepper';
 
 export default function FacilityStepper( { facility } ) {
 

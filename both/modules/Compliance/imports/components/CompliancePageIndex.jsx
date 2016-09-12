@@ -10,7 +10,9 @@ export default CompliancePageIndex = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
+		Meteor.subscribe( 'Teams' );
+		Meteor.subscribe( 'Facilities' );
+		
 		var data = {};
 		data.facility = Session.getSelectedFacility();
 		if ( data.facility ) {

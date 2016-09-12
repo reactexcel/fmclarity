@@ -7,11 +7,12 @@ import { Inbox } from '/both/modules/DocMessages';
 
 import FacilityStepper from './FacilityStepper.jsx';
 import FacilityAreasEditor from './FacilityAreasEditor.jsx';
-import { ServicesRequiredEditor } from '/both/modules/Service';
+import * as Actions from '../actions/FacilityActions.jsx';
 
+import { ServicesRequiredEditor } from '/both/modules/Service';
 import { PMPList } from '/both/modules/Compliance';
 
-import * as Actions from '../actions/FacilityActions.jsx';
+import { Tabs } from '/both/modules/Tabs';
 
 export default function FacilityPanel( { facility } ) {
 
@@ -57,7 +58,7 @@ export default function FacilityPanel( { facility } ) {
 				</div>
 
 				{/* tabs - this it the part that can be data driven using autoform */}
-				<IpsoTabso tabs={[
+				<Tabs tabs={[
 					{
 						//hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,

@@ -20,7 +20,7 @@ Dispatcher = {
     }
 }
 
-Modal = React.createClass( {
+export default Modal = React.createClass( {
 
     statics: {
         show( args ) {

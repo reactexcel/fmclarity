@@ -3,11 +3,12 @@ import { createContainer } from 'meteor/react-meteor-data';
 import RequestsPageIndex from '../components/RequestsPageIndex.jsx';
 
 export default RequestsPageIndexContainer = createContainer( ( params ) => {
-	Meteor.subscribe( 'contractors' );
-	Meteor.subscribe( 'services' );
-	Meteor.subscribe( 'teamsAndFacilitiesForUser' );
-	Meteor.subscribe( 'users' );
-	Meteor.subscribe( 'AllRequests' );
+	Meteor.subscribe( 'Teams' );
+	Meteor.subscribe( 'Users' );
+	Meteor.subscribe( 'Facilities' );
+	Meteor.subscribe( 'Requests' );
+	Meteor.subscribe( 'Files' );
+	Meteor.subscribe( 'Documents' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),

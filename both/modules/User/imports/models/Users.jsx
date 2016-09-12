@@ -1,5 +1,4 @@
-
-import UserSchema from  './UserSchema.jsx';
+import UserSchema from './UserSchema.jsx';
 
 import { Model } from 'meteor/fmc:orm';
 
@@ -8,13 +7,18 @@ import { DocOwners } from '/both/modules/DocOwners';
 import { Files } from '/both/modules/DocAttachments';
 import { DocMessages } from '/both/modules/DocMessages';
 
+if ( Meteor.isServer ) {
+    Meteor.publish( 'Users', () => {
+        return Users.find();
+    } );
+}
+
 export default Users = new Model( {
     schema: UserSchema,
     collection: Meteor.users,
     mixins: [
-        DocOwners, 
-        DocMessages,
-        [ DocThumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        DocOwners,
+        DocMessages, [ DocThumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 

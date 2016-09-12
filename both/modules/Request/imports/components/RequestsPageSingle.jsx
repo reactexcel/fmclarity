@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-export default IssuePage = React.createClass( {
+export default RequestsPageSingle = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 

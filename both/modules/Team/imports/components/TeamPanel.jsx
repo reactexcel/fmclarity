@@ -6,6 +6,7 @@ import * as Actions from '../actions/TeamActions.jsx';
 
 import { ContactList } from '/both/modules/DocMembers';
 import { AutoForm } from '/both/modules/AutoForm';
+import { Tabs } from '/both/modules/Tabs';
 
 
 function addTeamMenuItem( menu, item, team ) {
@@ -118,7 +119,7 @@ export default TeamPanel = React.createClass( {
 				</div>
 			</div>
 
-			<IpsoTabso tabs={[
+			<Tabs tabs={[
 				{
 					//hide: 		!team.canGetMessages(),
 					tab: 		<span id = "discussion-tab"><span style = {{color:"black"}}>Updates</span></span>,

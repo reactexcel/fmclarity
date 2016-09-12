@@ -4,7 +4,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 import { AutoForm } from '/both/modules/AutoForm';
 
 
-import './PMPListTile.jsx';
+import PMPListTile from './PMPListTile.jsx';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -18,7 +18,7 @@ import './PMPListTile.jsx';
 // filter (object)
 //      a mongodb query object used to filter the request results
 //
-PMPList = React.createClass({
+export default PMPList = React.createClass({
 
     mixins: [ReactMeteorData],
 

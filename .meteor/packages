@@ -35,11 +35,11 @@ fmc:orm
 ############################
 # FMC UI
 
-fmc:tabs
-fmc:stepper
-fmc:modal
-fmc:calendar
+#fmc:tabs
+#fmc:stepper
+#fmc:modal
 
+#fmc:calendar
 #fmc:autoform
 #fmc:reports
 #fmc:data-table
@@ -66,6 +66,7 @@ momentjs:moment
 pfafman:filesaver
 harrison:papa-parse
 rochal:slimscroll
+rzymek:fullcalendar
 
 ############################
 # MiniMongo Extensions

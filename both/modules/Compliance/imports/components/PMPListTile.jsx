@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
-PMPListTile = React.createClass({
+export default PMPListTile = React.createClass({
 
     mixins: [ReactMeteorData],
 

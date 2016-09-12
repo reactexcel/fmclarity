@@ -1,6 +1,6 @@
 import React from "react";
 
-IpsoTabso = class IpsoTabso extends React.Component {
+export default class IpsoTabso extends React.Component {
     constructor() {
         super();
         this.state = {

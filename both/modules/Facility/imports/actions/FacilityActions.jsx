@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from 'meteor/fmc:modal';
+import { Modal } from '/both/modules/Modal';
 import FacilityStepper from '../components/FacilityStepper.jsx';
 import FacilityPanel from '../components/FacilityPanel.jsx';
 

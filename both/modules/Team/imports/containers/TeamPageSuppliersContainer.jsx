@@ -1,36 +1,33 @@
-
 import { createContainer } from 'meteor/react-meteor-data';
 import TeamPageSuppliers from '../components/TeamPageSuppliers.jsx';
 
-export default TeamPageSuppliersContainer = createContainer ( ( params ) => 
-{
-    Meteor.subscribe('contractors');
-    Meteor.subscribe('teamsAndFacilitiesForUser');
+export default TeamPageSuppliersContainer = createContainer( ( params ) => {
+    Meteor.subscribe( 'Teams' );
+    Meteor.subscribe( 'Users' );
+    Meteor.subscribe( 'Documents' );
 
     let user = Meteor.user(),
-    	facility = Session.getSelectedFacility(),
+        facility = Session.getSelectedFacility(),
         team = Session.getSelectedTeam(),
-    	facilities = null,
-    	suppliers = null;
+        facilities = null,
+        suppliers = null;
 
-    if( team != null ) {
+    if ( team != null ) {
         facilities = team.facilities;
-    }
-    else if( user != null ) 
-    {
+    } else if ( user != null ) {
         facilities = user.facilities;
     }
 
-    if( facility != null ) {
+    if ( facility != null ) {
         suppliers = facility.suppliers;
     }
 
     return {
-    	user,
+        user,
         team,
-    	facility,
-    	facilities,
-    	suppliers
+        facility,
+        facilities,
+        suppliers
     }
 
 }, TeamPageSuppliers );

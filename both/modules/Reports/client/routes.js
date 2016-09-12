@@ -3,9 +3,9 @@ import { mount } from 'react-mounter';
 
 import { MainLayout, WideLayout, PrintLayout } from '/both/modules/LayoutManager';
 
-import DashboardPage from '../imports/pages/DashboardPage.jsx';
-import ReportsPageIndex from '../imports/pages/ReportsPageIndex.jsx';
-import ReportsPageSingle from '../imports/pages/ReportsPageSingle.jsx';
+import DashboardPageContainer from '../imports/containers/DashboardPageContainer.jsx';
+import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
+import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 
 import { loggedIn } from '/both/modules/Authentication';
 
@@ -44,7 +44,7 @@ loggedIn.route( '/dashboard', {
     name: 'dashboard',
     action() {
         mount( MainLayout, {
-            content: <DashboardPage/>
+            content: <DashboardPageContainer />
         } );
     }
 } );

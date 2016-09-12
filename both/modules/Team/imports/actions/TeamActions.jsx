@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from 'meteor/fmc:modal';
+import { Modal } from '/both/modules/Modal';
 import { TeamStepper } from '../components/TeamStepper.jsx';
 import { TeamPanel } from '../components/TeamPanel.jsx';
 

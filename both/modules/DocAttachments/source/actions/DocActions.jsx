@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Modal } from 'meteor/fmc:modal';
+import { Modal } from '/both/modules/Modal';
 import DocViewEdit from '../components/DocViewEdit.jsx';
 
 function edit( doc ) {

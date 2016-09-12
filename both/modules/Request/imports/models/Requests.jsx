@@ -5,6 +5,12 @@ import { DocMembers } from '/both/modules/DocMembers';
 import { DocOwners } from '/both/modules/DocOwners';
 import { DocMessages } from '/both/modules/DocMessages';
 
+if ( Meteor.isServer ) {
+	Meteor.publish( 'Requests', () => {
+		return Issues.find();
+	} );
+}
+
 export default Issues = new Model( {
 	schema: RequestSchema,
 	collection: "Issues",
@@ -154,9 +160,3 @@ Issues.helpers( {
 		return 0;
 	},
 } );
-
-if ( Meteor.isServer ) {
-	Meteor.publish( 'AllRequests', () => {
-		return Issues.find();
-	} );
-}

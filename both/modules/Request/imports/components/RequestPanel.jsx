@@ -6,6 +6,7 @@ import { AutoForm } from '/both/modules/AutoForm';
 import { FacilityDetails } from '/both/modules/Facility';
 import { WorkflowButtons } from '/both/modules/WorkflowHelper';
 import { ContactDetails, ContactList } from '/both/modules/DocMembers';
+import { Tabs } from '/both/modules/Tabs';
 
 export default RequestPanel = React.createClass( {
 
@@ -111,7 +112,7 @@ const RequestPanelInner = ( { request } ) => {
                 </tbody>
             </table>
 
-            <IpsoTabso tabs={[
+            <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>

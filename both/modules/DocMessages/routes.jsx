@@ -4,13 +4,13 @@ import { mount } from 'react-mounter';
 import { loggedIn } from '/both/modules/Authentication';
 import { MainLayout, BlankLayout } 	from '/both/modules/LayoutManager';
 
-import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
+import MessagesPage from './imports/components/MessagesPage.jsx';
 
-loggedIn.route( '/requests', {
-	name: 'requests',
+loggedIn.route( '/messages', {
+	name: 'messages',
 	action() {
 		mount( MainLayout, {
-			content: <RequestsPageIndexContainer />
+			content: <MessagesPage />
 		} );
 	}
 } );

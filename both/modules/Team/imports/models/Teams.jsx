@@ -9,6 +9,12 @@ import { DocThumbs } from '/both/modules/DocThumbs';
 import { DocMessages } from '/both/modules/DocMessages';
 import { DocAttachments } from '/both/modules/DocAttachments';
 
+if ( Meteor.isServer ) {
+	Meteor.publish( 'Teams', () => {
+		return Teams.find();
+	} )
+}
+
 export default Teams = new Model( {
 	schema: TeamSchema,
 	collection: "Teams",

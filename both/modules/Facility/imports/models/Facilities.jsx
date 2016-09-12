@@ -9,6 +9,12 @@ import { DocMembers } from '/both/modules/DocMembers';
 import { DocMessages } from '/both/modules/DocMessages';
 import { DocAttachments } from '/both/modules/DocAttachments';
 
+if ( Meteor.isServer ) {
+	Meteor.publish( 'Facilities', () => {
+		return Facilities.find();
+	} )
+}
+
 export default Facilities = new Model( {
 	schema: FacilitySchema,
 	collection: "Facilities",

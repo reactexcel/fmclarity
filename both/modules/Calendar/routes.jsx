@@ -4,13 +4,13 @@ import { mount } from 'react-mounter';
 import { loggedIn } from '/both/modules/Authentication';
 import { MainLayout, BlankLayout } 	from '/both/modules/LayoutManager';
 
-import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
+import CalendarPage from './imports/components/CalendarPage.jsx';
 
-loggedIn.route( '/requests', {
-	name: 'requests',
+loggedIn.route( '/calendar', {
+	name: 'calendar',
 	action() {
 		mount( MainLayout, {
-			content: <RequestsPageIndexContainer />
+			content: <CalendarPage/>
 		} );
 	}
 } );

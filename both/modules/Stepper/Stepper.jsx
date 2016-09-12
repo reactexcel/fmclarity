@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-Stepper = React.createClass( {
+export default Stepper = React.createClass( {
     getInitialState() {
         return {
             active: 0

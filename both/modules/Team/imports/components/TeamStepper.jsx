@@ -5,6 +5,7 @@ import { AutoForm } from '/both/modules/AutoForm';
 import { ThumbView } from '/both/modules/DocThumbs';
 import { ContactList } from '/both/modules/DocMembers';
 import { ServicesProvidedEditor } from '/both/modules/Service';
+import { Stepper } from '/both/modules/Stepper';
 
 /*
 TODO: remove tour, add additional instructions into stepper
