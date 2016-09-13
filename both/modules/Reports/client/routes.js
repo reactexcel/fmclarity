@@ -7,9 +7,9 @@ import DashboardPageContainer from '../imports/containers/DashboardPageContainer
 import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
 import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 
-import { loggedIn } from '/both/modules/Authentication';
+import { Routes } from '/both/modules/Authentication';
 
-loggedIn.route( '/reports', {
+Routes.loggedIn.route( '/reports', {
     name: 'reports',
     action( params ) {
         mount( MainLayout, {
@@ -18,7 +18,7 @@ loggedIn.route( '/reports', {
     }
 } );
 
-loggedIn.route( '/report/:reportId', {
+Routes.loggedIn.route( '/report/:reportId', {
     name: 'report',
     action( params ) {
         mount( WideLayout, {
@@ -27,7 +27,7 @@ loggedIn.route( '/report/:reportId', {
     }
 } );
 
-loggedIn.route( '/report/:reportId/:view', {
+Routes.loggedIn.route( '/report/:reportId/:view', {
     name: 'report',
     action( params ) {
         var Layout = WideLayout;
@@ -40,7 +40,7 @@ loggedIn.route( '/report/:reportId/:view', {
     }
 } );
 
-loggedIn.route( '/dashboard', {
+Routes.loggedIn.route( '/dashboard', {
     name: 'dashboard',
     action() {
         mount( MainLayout, {

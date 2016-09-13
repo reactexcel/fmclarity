@@ -1,4 +1,4 @@
-import { Users } from '/both/modules/User';
+import { Users } from '/modules/models/User';
 
 export default DocMembers = {
 	register

@@ -1,5 +1,5 @@
 
-import { Files } from '/both/modules/DocAttachments';
+import { Files } from '/modules/models/Document';
 
 //should be called docthumbs
 export default DocThumbs = {

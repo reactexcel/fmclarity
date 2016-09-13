@@ -2,7 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/both/modules/MaterialNavigation';
-import { RequestActions } from '/both/modules/Request';
+import { RequestActions } from '/modules/models/Request';
 
 import Chart from 'chart.js';
 import Reports from '../Reports.js';

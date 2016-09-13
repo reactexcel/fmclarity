@@ -1,5 +1,5 @@
-import loggedIn from './routes.jsx';
+import Routes from './imports/routes/RouteGroups.jsx';
 
 export {
-	loggedIn
+	Routes
 }

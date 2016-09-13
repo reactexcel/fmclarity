@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Calendar } from '/both/modules/Calendar';
-import { InboxWidget } from '/both/modules/DocMessages';
-import { FacilityFilter } from '/both/modules/Facility';
+import { InboxWidget } from '/modules/models/Message';
+import { FacilityFilter } from '/modules/models/Facility';
 
 import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
 import RequestActivityChart from '../reports/RequestActivityChart.jsx';

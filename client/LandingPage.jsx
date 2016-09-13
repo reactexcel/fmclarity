@@ -17,6 +17,7 @@ LandingPage = React.createClass(
 
     getMeteorData()
     {
+        Meteor.subscribe( 'Teams' );
         var user, team, role;
         user = Meteor.user();
         team = Session.getSelectedTeam();
