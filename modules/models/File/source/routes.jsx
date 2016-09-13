@@ -6,8 +6,9 @@ import { Routes } from '/both/modules/Authentication';
 
 import FilesPageIndexContainer from './containers/FilesPageIndexContainer.jsx';
 
-Routes.loggedIn.route( '/files', {
+Routes.loggedIn.add( {
 	name: 'files',
+	path: '/files',
 	action( params ) {
 		mount( MainLayout, { content: <FilesPageIndexContainer/> } );
 	}

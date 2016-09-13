@@ -322,11 +322,15 @@ export default RequestSchema = {
 		description: "The site for this job",
 		type: "object",
 		relation: {
-			join: ( request ) => {
-				return Facilities.findOne( request.facility._id );
+			join: ( item ) => {
+				if( item.facility && item.facility._id ) {
+					return Facilities.findOne( item.facility._id );
+				}
 			},
-			unjoin: ( request ) => {
-				return _.pick( request.facility, '_id', 'name' );
+			unjoin: ( item ) => {
+				if( item.facility && item.facility._id ) {
+					return _.pick( item.facility, '_id', 'name' );
+				}
 			}
 		},
 		input: Select,

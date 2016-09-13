@@ -4,7 +4,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-PageLogin = React.createClass({
+export default PageLogin = React.createClass({
 
     getInitialState() {
         return {

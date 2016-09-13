@@ -4,6 +4,7 @@ import TeamPageSuppliers from '../components/TeamPageSuppliers.jsx';
 export default TeamPageSuppliersContainer = createContainer( ( params ) => {
     Meteor.subscribe( 'Teams' );
     Meteor.subscribe( 'Users' );
+    Meteor.subscribe( 'Files' );
     Meteor.subscribe( 'Documents' );
 
     let user = Meteor.user(),

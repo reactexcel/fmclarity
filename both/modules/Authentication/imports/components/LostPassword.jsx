@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-PageLostPassword = React.createClass({
+export default PageLostPassword = React.createClass({
 
     getInitialState() {
         return {

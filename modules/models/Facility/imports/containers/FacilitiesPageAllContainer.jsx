@@ -1,8 +1,9 @@
 import { createContainer } from 'meteor/react-meteor-data';
 import FacilityPageIndex from '../components/FacilityPageIndex.jsx';
 
-export default FacilityPageIndexContainer = createContainer( ( params ) =>
-{
+import { Facilities } from '/modules/models/Facility';
+
+export default FacilityPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Users' );
@@ -13,6 +14,7 @@ export default FacilityPageIndexContainer = createContainer( ( params ) =>
 
 	return {
 		team: Session.getSelectedTeam(),
-		facility: Session.getSelectedFacility()
+		facility: Session.getSelectedFacility(),
+		facilities: Facilities.findAll()
 	}
-}, FacilityPageIndex);
+}, FacilityPageIndex );

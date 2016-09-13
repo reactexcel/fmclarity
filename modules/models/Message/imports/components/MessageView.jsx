@@ -20,9 +20,9 @@ export default MessageView = React.createClass( {
             message = Messages.findOne( this.props.item._id );
         }
 
-        if ( message ) {
+        if ( message != null ) {
             owner = message.getOwner();
-            if ( message.getTargetId() == inbox._id ) {
+            if ( inbox != null && message.getTargetId() == inbox._id ) {
                 messageIsInContext = true;
             }
 

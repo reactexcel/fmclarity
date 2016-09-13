@@ -6,6 +6,7 @@ export default DashboardPageContainer = createContainer( ( params ) => {
 	// this is dud - they should be saved in global state
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
+	Meteor.subscribe( 'Files' );
 	return {
 		team: Session.getSelectedTeam(),
 		facility: Session.getSelectedFacility()

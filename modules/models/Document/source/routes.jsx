@@ -6,8 +6,9 @@ import { Routes } from '/both/modules/Authentication';
 
 import DocsPageIndexContainer from './containers/DocsPageIndexContainer.jsx';
 
-Routes.loggedIn.route( '/docs', {
+Routes.loggedIn.add( {
 	name: 'docs',
+	path: '/docs',
 	action( params ) {
 		mount( MainLayout, { content: <DocsPageIndexContainer/> } );
 	}

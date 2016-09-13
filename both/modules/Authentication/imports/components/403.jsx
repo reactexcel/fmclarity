@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-Page403 = React.createClass({
+export default Page403 = React.createClass({
   render() {return (
     <div className="middle-box text-center animated fadeInDown">
         <h1>403</h1>

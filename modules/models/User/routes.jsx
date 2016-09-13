@@ -1,17 +1,28 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
+import { Routes } from '/both/modules/Authentication';
 import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
 
-import { UserPageProfile } from './imports/components/UserPageProfile.jsx';
+import UserPageProfileContainer from './imports/containers/UserPageProfileContainer.jsx';
+import UsersPageIndexContainer from './imports/containers/UsersPageIndexContainer.jsx';
 
-import { Routes } from '/both/modules/Authentication';
+Routes.loggedIn.add( {
+	name: 'profile',
+	path: '/profile',
+	action() {
+		mount( MainLayout, {
+			content: <UserPageProfileContainer />
+		} );
+	}
+} );
 
-Routes.loggedIn.route( '/profile', {
-  name: 'profile',
-  action() {
-    mount( MainLayout, {
-      content: <UserPageProfile />
-    } );
-  }
+Routes.loggedIn.add( { 
+	name: 'users',
+	path: '/users',
+	action() {
+		mount( MainLayout, {
+			content: <UsersPageIndexContainer />
+		} );
+	}
 } );

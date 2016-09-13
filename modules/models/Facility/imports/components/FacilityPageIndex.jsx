@@ -20,7 +20,7 @@ export default class FacilityPageIndex extends React.Component {
 	}
 
 	render() {
-		let { team, facility, ...other } = this.props;
+		let { team, facility, facilities, ...other } = this.props;
 
 		if ( !team ) {
 			return <div/>
@@ -29,18 +29,18 @@ export default class FacilityPageIndex extends React.Component {
 		return <div className="facility-page animated fadeIn">
 			{/*<ClientFilter/>*/}
 	        {/*<FacilityFilter/>*/}
-	        { team.facilities.map( (f) => {
+	        { facilities.map( (f) => {
 	        	return <FacilityCard key={f._id} item={f} onClick={ () => {
 	        		this.handleSelect(f);
 	        	}}/>
 	        } ) }
 	    	{/*should be in a layout class - should this be fm-layout?*/}
 
-            {facility?
+            { facility ?
             <div className="panel-wrapper animated slideInRight">
 				<FacilityPanel team = { team } facility = { facility } { ...other } />
             </div>
-            :null}
+            : null }
 
 		</div>
 	}

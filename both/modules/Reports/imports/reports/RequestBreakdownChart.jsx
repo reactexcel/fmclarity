@@ -3,8 +3,9 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/both/modules/MaterialNavigation';
 
-import Chart from 'chart.js';
-
+if ( Meteor.isClient ) {
+    import Chart from 'chart.js';
+}
 
 export default RequestBreakdownChart = React.createClass( {
 
@@ -20,63 +21,62 @@ export default RequestBreakdownChart = React.createClass( {
     },
 
     getMenu() {
-        var component = this;
         return [ {
             label: ( "Day" ),
-            action() {
+            action: () => {
                 var startDate = moment().startOf( 'day' );
                 var title = startDate.format( "[on] dddd Do MMMM" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )
             }
         }, {
             label: ( "Week" ),
-            action() {
+            action: () => {
                 var startDate = moment().startOf( 'week' );
                 var title = startDate.format( "[for week starting] Do MMMM" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )
             }
         }, {
             label: ( "Month" ),
-            action() {
+            action: () => {
                 var startDate = moment().startOf( 'month' );
                 var title = startDate.format( "[for] MMMM YYYY" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )
             }
         }, {
             label: ( "3 Months" ),
-            action() {
+            action: () => {
                 var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
                 var title = startDate.format( "[since] MMMM YYYY" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )
             }
         }, {
             label: ( "6 Months" ),
-            action() {
+            action: () => {
                 var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
                 var title = startDate.format( "[since] MMMM YYYY" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )
             }
         }, {
             label: ( "Year" ),
-            action() {
+            action: () => {
                 var startDate = moment().startOf( 'year' );
                 var title = startDate.format( "YYYY" )
-                component.setState( {
+                this.setState( {
                     startDate: startDate,
                     title: title
                 } )

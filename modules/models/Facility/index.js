@@ -6,6 +6,8 @@ import FacilityStepper from './imports/components/FacilityStepper.jsx';
 import FacilityDetails from './imports/components/FacilityDetails.jsx';
 import FacilityListTile from './imports/components/FacilityListTile.jsx';
 
+import { PortfolioRoute } from './routes.jsx';
+
 export {
 	Facilities,
 	AddressSchema,
@@ -13,4 +15,5 @@ export {
 	FacilityDetails,
 	FacilityStepper,
 	FacilityListTile,
+	PortfolioRoute
 }

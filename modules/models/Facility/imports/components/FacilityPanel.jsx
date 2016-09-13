@@ -11,6 +11,7 @@ import * as Actions from '../actions/FacilityActions.jsx';
 
 import { ServicesRequiredEditor } from '/both/modules/DocServices';
 import { PMPList } from '/both/modules/Compliance';
+import { RequestsTable } from '/modules/models/Request';
 
 import { Tabs } from '/both/modules/Tabs';
 

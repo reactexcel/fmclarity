@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { ReactMeteorData }
-from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 // so this should perhaps be included in the docmembers package??
 UserViewRelationEdit = React.createClass( {

@@ -4,7 +4,10 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Menu } from '/both/modules/MaterialNavigation';
 import { RequestActions } from '/modules/models/Request';
 
-import Chart from 'chart.js';
+if ( Meteor.isClient ) {
+	import Chart from 'chart.js';
+}
+
 import Reports from '../Reports.js';
 import ProgressArc from '../components/ProgressArc';
 

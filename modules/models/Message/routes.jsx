@@ -4,13 +4,14 @@ import { mount } from 'react-mounter';
 import { Routes } from '/both/modules/Authentication';
 import { MainLayout, BlankLayout } 	from '/both/modules/LayoutManager';
 
-import MessagesPage from './imports/components/MessagesPage.jsx';
+import MessagesPage from './imports/containers/MessagesPageContainer.jsx';
 
-Routes.loggedIn.route( '/messages', {
+Routes.loggedIn.add( {
 	name: 'messages',
+	path: '/messages',
 	action() {
 		mount( MainLayout, {
-			content: <MessagesPage />
+			content: <MessagesPageContainer />
 		} );
 	}
 } );

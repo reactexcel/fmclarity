@@ -1,43 +1,42 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Accounts } from 'meteor/accounts-base';
-import { NotFound } from '../components/NotFound.jsx';
 import { BlankLayout } from '/both/modules/LayoutManager';
 
-const exposed = FlowRouter.group();
+import { Action, RouteGroup } from '/both/modules/Action';
 
-const  loggedIn = FlowRouter.group( {
-	triggersEnter: [
-		( context, redirect ) => {
-			if ( !( Meteor.loggingIn() || Meteor.userId() ) ) {
-				let route = FlowRouter.current();
-				if ( route.route.name == 'login' ) {
-					Session.set( 'redirectAfterLogin', '/' );
-				} else {
-					Session.set( 'redirectAfterLogin', route.path );
-				}
-				redirect( '/login' );
-			}
-		}
-	]
-} )
+import NotFound from '../components/NotFound.jsx';
 
-const admin = FlowRouter.group( {
-	triggersEnter: [
-		( context, redirect ) => {
-			var route;
-			var user = Meteor.user();
-			//console.log(user);
-			if ( Meteor.loggingIn() || ( user && user.role == 'dev' ) ) {
-				return;
+const exposed = new RouteGroup( {
+	name: 'exposed'
+} );
+
+const loggedIn = new RouteGroup( {
+	name: 'loggedIn',
+	onEnter: ( context, redirect ) => {
+		if ( !( Meteor.loggingIn() || Meteor.userId() ) ) {
+			let route = FlowRouter.current();
+			if ( route.route.name == 'login' ) {
+				Session.set( 'redirectAfterLogin', '/' );
+			} else {
+				Session.set( 'redirectAfterLogin', route.path );
 			}
-			FlowRouter.go( '/' );
-			//if (!(Roles.userIsInRole(Meteor.user(),['admin']))) {
+			redirect( '/login' );
 		}
-	]
-} )
+	}
+} );
+
+const admin = new RouteGroup( {
+	name: 'admin',
+	onEnter: ( context, redirect ) => {
+		let user = Meteor.user();
+		if ( Meteor.loggingIn() || ( user && user.role == 'dev' ) ) {
+			return;
+		}
+		FlowRouter.go( '/' );
+	}
+} );
 
 if ( Meteor.isClient ) {
 	Accounts.onLogin( () => {
