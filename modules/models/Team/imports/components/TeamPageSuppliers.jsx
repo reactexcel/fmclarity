@@ -1,7 +1,7 @@
 import React from "react";
 
 import { NavList } from '/both/modules/MaterialNavigation';
-import { ContactCard } from '/both/modules/DocMembers';
+import { ContactCard } from '/modules/model-mixins/Members';
 
 import TeamPanel from './TeamPanel.jsx';
 import { FacilityFilter } from '/modules/models/Facility';

@@ -8,6 +8,9 @@ export default class RouteGroup {
 
 	addOne( { name, path, action } ) {
 		console.log( { name, path, action } );
+		if( action == null ) {
+			throw new Meteor.Error(`Route creation failed`, `Tried to create route "${name}" with no action`);
+		}
 		this.group.route( path, { name, action } );
 	}
 

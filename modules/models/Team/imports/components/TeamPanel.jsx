@@ -2,9 +2,9 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/both/modules/MaterialNavigation';
-import * as Actions from '../actions/TeamActions.jsx';
+import TeamActions from '../../actions.jsx';
 
-import { ContactList } from '/both/modules/DocMembers';
+import { ContactList } from '/modules/model-mixins/Members';
 import { AutoForm } from '/both/modules/AutoForm';
 import { Tabs } from '/both/modules/Tabs';
 
@@ -65,8 +65,8 @@ export default TeamPanel = React.createClass( {
 			facility = Session.getSelectedFacility();
 
 		return [ 
-			Actions.editTeam( supplier ), 
-			Actions.removeSupplier( facility, supplier ) 
+			TeamActions.edit.bind( supplier ), 
+			TeamActions.removeSupplier.bind( facility, supplier ) 
 		];
 	},
 

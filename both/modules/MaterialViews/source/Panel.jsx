@@ -2,7 +2,7 @@ import React from 'react';
 
 import { AutoForm } from '/both/modules/AutoForm';
 import { Menu } from '/both/modules/MaterialNavigation';
-import { ContactDetails, ContactList } from '/both/modules/DocMembers';
+import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
 
 import { PMPList } from '/both/modules/Compliance';
 

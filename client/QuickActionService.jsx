@@ -7,28 +7,6 @@ import { Modal } from '/both/modules/Modal';
 
 export default QuickActions = new function QuickActionService() {
 
-	function createFacility( template = {} ) {
-		Modal.show( {
-			content: <FacilityStepper facility = { Facilities.create( template ) } />
-		} )
-	}
-
-	function viewFacility( facility ) {
-		Model.show( {
-			content: <FacilityPanel item = { facility } />
-		})
-	}
-
-	function editFacility( facility ) {
-		Modal.show( {
-			content: <FacilityStepper facility = { facility } />
-		} )
-	}
-
-	function deleteFacility( facility ) {
-		facility.destroy();
-	}
-
 	function viewRequest( request ) {
 		Modal.show( {
 			content: <RequestPanel item = { request } />
@@ -164,14 +142,9 @@ export default QuickActions = new function QuickActionService() {
 	}
 
 	return {
-		createFacility,
-		viewFacility,
-		editFacility,
-		deleteFacility,
 		viewRequest,
 		editTeam,
 		createRequest,
-		createFacility,
 		createComplianceRule
 	}
 }

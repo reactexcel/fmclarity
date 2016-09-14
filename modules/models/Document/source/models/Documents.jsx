@@ -1,12 +1,12 @@
 import { Model } from 'meteor/fmc:orm';
-import { DocOwners } from '/both/modules/DocOwners';
+import { Owners } from '/modules/model-mixins/Owners';
 
 import DocumentSchema from './DocumentSchema.jsx';
 
 export default Documents = new Model( {
 	schema: DocumentSchema,
 	collection: "Files",
-	mixins: [ DocOwners ]
+	mixins: [ Owners ]
 } )
 
 if ( Meteor.isServer ) {

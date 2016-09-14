@@ -1,10 +1,10 @@
 import React from "react";
-import ReactDom from "react-dom";
+
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { ContactCard } from '/both/modules/DocMembers';
+import { ContactCard } from '/modules/model-mixins/Members';
 
-export default DocOwnerCard = React.createClass( {
+export default OwnerCard = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 

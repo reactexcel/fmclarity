@@ -72,9 +72,9 @@ export default FacilitySchema = {
 		label: "Areas",
 		description: "The primary areas or zones for this site",
 		type: [ Object ],
-		defaultValue: () => {
-			return JSON.parse( JSON.stringify( Config.defaultLevels ) )
-		},
+		//defaultValue: () => {
+		//return JSON.parse( JSON.stringify( Config.defaultLevels ) )
+		//},
 		//input 			levels editor
 	},
 
@@ -82,19 +82,19 @@ export default FacilitySchema = {
 		label: "Building areas",
 		description: "The main bookable or maintainable secondary areas for this site",
 		type: [ Object ],
-		defaultValue: () => {
-				return JSON.parse( JSON.stringify( Config.defaultAreas ) )
-			}
-			//input 			areas editor
+		//defaultValue: () => {
+		//return JSON.parse( JSON.stringify( Config.defaultAreas ) )
+		//}
+		//input 			areas editor
 	},
 
 	servicesRequired: {
 		label: "Services Required",
 		description: "The services required to maintain this site",
 		type: [ Object ],
-		defaultValue: () => {
-			return JSON.parse( JSON.stringify( Config.services ) )
-		}
+		//defaultValue: () => {
+		//return JSON.parse( JSON.stringify( Config.services ) )
+		//}
 	},
 
 	////////////////////////////////////////////////////
@@ -104,11 +104,16 @@ export default FacilitySchema = {
 	team: {
 		label: "Team",
 		description: "The team that maintains this site",
-		relation: {
-			type: ORM.BelongsTo,
-			source: "Teams",
-			key: "team._id"
-		},
+		/*relation: {
+			join: ( item ) => {
+				if ( item.team && item.team._id ) {
+					return Teams.findOne( item.team._id );
+				}
+			},
+			unjoin: ( item ) => {
+				return _.pick( item.team, '_id', 'name' );
+			}
+		},*/
 		input: Select,
 		options: ( item ) => {
 
@@ -121,45 +126,12 @@ export default FacilitySchema = {
 
 	members: {
 		label: "Members",
-		description: "Stakeholders and staff for this site",
-		relation: {
-			join: ( facility ) => {
-				let ids = _.pluck( facility.members, '_id' );
-				if ( !_.isEmpty( ids ) ) {
-					return Users.find( { _id: { $in: ids } } ).fetch();;
-				}
-			},
-			unjoin: ( facility ) => {
-				let members = [];
-				facility.members.map( ( member ) => {
-					members.push( _.pick( member, '_id', 'name', 'role' ) );
-				} )
-			}
-		}
+		description: "Stakeholders and staff for this site"
 	},
 
 	suppliers: {
 		label: "Suppliers",
 		description: "Contractors supplying services for this facility",
-		relation: {
-			join: ( facility ) => {
-				let ids = _.pluck( facility.suppliers, '_id' );
-				if ( !_.isEmpty( ids ) ) {
-					return Teams.find( { _id: { $in: ids } } ).fetch();
-				}
-			},
-			unjoin: ( facility ) => {
-				let suppliers = [];
-				facility.suppliers.map( ( supplier ) => {
-					suppliers.push( _.pick( supplier, '_id', 'name', 'role' ) );
-				} )
-			}
-		}
-		/*relation:
-		{
-			type: ORM.HasMembers,
-			source: "Teams"
-		}*/
 	},
 
 	thumbUrl: {

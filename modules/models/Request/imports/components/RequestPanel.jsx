@@ -5,8 +5,13 @@ import { Inbox } from '/modules/models/Message';
 import { AutoForm } from '/both/modules/AutoForm';
 import { FacilityDetails } from '/modules/models/Facility';
 import { WorkflowButtons } from '/both/modules/WorkflowHelper';
-import { ContactDetails, ContactList } from '/both/modules/DocMembers';
+import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
 import { Tabs } from '/both/modules/Tabs';
+import { Menu } from '/both/modules/MaterialNavigation';
+// wouldn't it be nice to go import { Tabs, Menu } from '/both/modules/MaterialNavigation'
+
+import { Issues, RequestActions } from '/modules/models/Request';
+
 
 export default RequestPanel = React.createClass( {
 
@@ -124,6 +129,13 @@ const RequestPanelInner = ( { request } ) => {
                     content:    <ContactList group = { request } readOnly = { true }/>
                 }
             ]} />
+
+            <Menu items = { [
+                RequestActions.edit.bind( request ),
+                RequestActions.checkRoles.bind( request )
+            ] } />
+
+
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ContactCard } from '/both/modules/DocMembers';
+import { ContactCard } from '/modules/model-mixins/Members';
 
 export default function TeamsPageIndex( props ) {
 	return (

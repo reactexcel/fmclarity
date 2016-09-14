@@ -2,32 +2,35 @@ import React from "react"
 
 import { ComplianceEvaluationService } from '/both/modules/Compliance';
 
-ServiceListTile = React.createClass({
+ServiceListTile = React.createClass( {
 
-	mixins:[ReactMeteorData],
+	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var service,thumb,numRules=0,numPassed=0,numFailed=0,percPassed=0;
+		var service, thumb, numRules = 0,
+			numPassed = 0,
+			numFailed = 0,
+			percPassed = 0;
 		service = this.props.item;
-		if(service) {
-	        thumb = "img/services/"+service.name+".jpg";
-	        if(service.data&&service.data.complianceRules) {
-	        	numRules = service.data.complianceRules.length;
-	        	results = ComplianceEvaluationService.evaluate(service.data.complianceRules);
-	        	if(results) {
-		        	numPassed = results.passed.length;
-		        	numFailed = results.failed.length;
-		        	percPassed = Math.ceil((numPassed/numRules)*100);
-		        }
-	        }
-	    }
-	    return {service,thumb,numRules,numPassed,numFailed,percPassed}
+		if ( service ) {
+			thumb = "img/services/" + service.name + ".jpg";
+			if ( service.data && service.data.complianceRules ) {
+				numRules = service.data.complianceRules.length;
+				results = ComplianceEvaluationService.evaluate( service.data.complianceRules );
+				if ( results ) {
+					numPassed = results.passed.length;
+					numFailed = results.failed.length;
+					percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
+				}
+			}
+		}
+		return { service, thumb, numRules, numPassed, numFailed, percPassed }
 	},
 
-	render () {
+	render() {
 		var data = this.data;
-	    return (
-	    	<div className="service-list-tile">
+		return (
+			<div className="service-list-tile">
 				<div className="facility-thumbnail">
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+data.thumb+"')",backgroundSize:"cover"}}/>
 				 </div>
@@ -52,4 +55,4 @@ ServiceListTile = React.createClass({
 			</div>
 		)
 	}
-})
+} )

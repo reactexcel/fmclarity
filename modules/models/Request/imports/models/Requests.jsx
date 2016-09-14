@@ -1,9 +1,10 @@
 import { Model } from 'meteor/fmc:orm';
 
 import RequestSchema from './RequestSchema.jsx';
-import { DocMembers } from '/both/modules/DocMembers';
-import { DocOwners } from '/both/modules/DocOwners';
+import { Members } from '/modules/model-mixins/Members';
+import { Owners } from '/modules/model-mixins/Owners';
 import { DocMessages } from '/modules/models/Message';
+import { RolesMixin } from '/modules/model-mixins/Roles';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
@@ -15,7 +16,9 @@ export default Issues = new Model( {
 	schema: RequestSchema,
 	collection: "Issues",
 	mixins: [
-		DocOwners, [ DocMessages, {
+		[ Owners ],
+		[ RolesMixin ],
+		[ DocMessages, {
 			helpers: {
 				getInboxName() {
 					return "work order #" + this.code + ' "' + this.getName() + '"';
@@ -37,7 +40,7 @@ export default Issues = new Model( {
 				}
 			}
 		} ],
-		[ DocMembers, {
+		[ Members, {
 			authentication( ...args ) {
 				return (
 					AuthHelpers.memberOfRelatedTeam( ...args ) ||

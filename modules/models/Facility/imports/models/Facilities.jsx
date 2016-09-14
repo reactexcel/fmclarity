@@ -3,11 +3,12 @@ import FacilitySchema from './FacilitySchema.jsx';
 import { Teams } from '/modules/models/Team';
 
 import { Model } from 'meteor/fmc:orm';
-import { DocThumbs } from '/both/modules/DocThumbs';
-import { DocOwners } from '/both/modules/DocOwners';
-import { DocMembers } from '/both/modules/DocMembers';
+import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
+import { Owners } from '/modules/model-mixins/Owners';
+import { Members } from '/modules/model-mixins/Members';
 import { DocMessages } from '/modules/models/Message';
 import { DocAttachments } from '/modules/models/Document';
+import { RolesMixin } from '/modules/model-mixins/Roles';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', () => {
@@ -19,8 +20,8 @@ export default Facilities = new Model( {
 	schema: FacilitySchema,
 	collection: "Facilities",
 	mixins: [
-		[ DocOwners ],
-		[ DocThumbs, { defaultThumbUrl: 0 } ],
+		[ Owners ],
+		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
 		[ DocAttachments, { authentication: AuthHelpers.managerOfRelatedTeam } ],
 		[ DocMessages, {
 			authentication: AuthHelpers.managerOfRelatedTeam,
@@ -40,22 +41,17 @@ export default Facilities = new Model( {
 				}
 			}
 		} ],
-		[ DocMembers, [ {
+		[ Members, [ {
 			authentication: AuthHelpers.managerOfRelatedTeam,
 			fieldName: "members",
 		}, {
 			fieldName: "suppliers",
 			authentication: AuthHelpers.managerOfRelatedTeam,
 			membersCollection: Teams,
-			/*
-			// or???
-			authentication:{
-			  create:AuthHelpers.managerOfRelatedTeam,
-			  read:AuthHelpers.managerOfRelatedTeam,
-			  update:AuthHelpers.managerOfRelatedTeam,
-			  delete:AuthHelpers.managerOfRelatedTeam,
-			}
-			*/
+		} ] ],
+		[ RolesMixin, [ {
+			primary: [ 'members', 'suppliers' ],
+			secondary: [ 'team' ]
 		} ] ]
 	]
 } )
@@ -63,6 +59,16 @@ export default Facilities = new Model( {
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
 Facilities.actions( {
+
+	getTeam: {
+		authentication: true,
+		helper: ( facility ) => {
+			if( facility.team && facility.team._id ) {
+				return Teams.findOne( facility.team._id );
+			}
+		}
+	},
+
 	getAreas: {
 		authentication: AuthHelpers.memberOfRelatedTeam,
 		helper: function( facility, parent ) {

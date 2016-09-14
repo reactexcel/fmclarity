@@ -1,8 +1,6 @@
 import { Users } from '/modules/models/User';
 
-export default DocMembers = {
-	register
-}
+export default Members = { register }
 
 function ucfirst( string ) {
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1, -1 );
@@ -34,6 +32,34 @@ function register( collection, opts ) {
 			}
 		}
 	}
+
+	collection.schema[ fieldName ].relation = {
+		join: ( item ) => {
+			if ( item != null && _.isArray( item.members ) ) {
+				let members = [];
+				item.members.map( ( member ) => {
+					let foundMember = Users.findOne( member._id );
+					if ( foundMember ) {
+						foundMember.role = member.role;
+						members.push( foundMember );
+					}
+				} )
+				return members;
+			}
+		},
+		unjoin: ( item ) => {
+			let members = [];
+			item.members.map( ( member ) => {
+				members.push( {
+					_id: member._id,
+					name: member.profile ? member.profile.name : member.name,
+					role: member.role,
+				} )
+			} )
+			return members;
+		}
+	}
+
 
 	var fn = ucfirst( fieldName );
 

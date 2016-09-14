@@ -2,7 +2,7 @@ import React from "react";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 
-export default FacilityAreasEditor = React.createClass({
+export default AreasEditor = React.createClass({
 
 	mixins: [ReactMeteorData],
 

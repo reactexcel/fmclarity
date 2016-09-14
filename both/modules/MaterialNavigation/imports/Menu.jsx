@@ -9,7 +9,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 				return;
 			}
 		}
-		item.action( event );
+		item.run( item, event );
 	}
 
 	if ( items == null || items.length == 0 ) {
@@ -24,7 +24,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 	    		{ items.map( ( item, idx ) => {
 	    			if( item != null ) {
 		    			return (
-			    			<li key = { idx } onClick={ () => { this.runAction( item ) } }>
+			    			<li key = { idx } onClick={ () => { runAction( item ) } }>
 			    				<a>{ item.label }</a>
 			    			</li>
 			    		)

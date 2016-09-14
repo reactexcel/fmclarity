@@ -1,10 +1,11 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { ThumbView } from '/modules/model-mixins/Thumbs';
+import { ContactList } from '/modules/model-mixins/Members';
+import { ServicesProvidedEditor } from '/modules/model-mixins/Services';
+
 import { AutoForm } from '/both/modules/AutoForm';
-import { ThumbView } from '/both/modules/DocThumbs';
-import { ContactList } from '/both/modules/DocMembers';
-import { ServicesProvidedEditor } from '/both/modules/DocServices';
 import { Stepper } from '/both/modules/Stepper';
 
 /*

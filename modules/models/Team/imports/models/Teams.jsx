@@ -3,9 +3,9 @@ import TeamSchema from './TeamSchema.jsx';
 import { Users } from '/modules/models/Team';
 
 import { Model } from 'meteor/fmc:orm';
-import { DocOwners } from '/both/modules/DocOwners';
-import { DocMembers } from '/both/modules/DocMembers';
-import { DocThumbs } from '/both/modules/DocThumbs';
+import { Owners } from '/modules/model-mixins/Owners';
+import { Members } from '/modules/model-mixins/Members';
+import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
 import { DocMessages } from '/modules/models/Message';
 import { DocAttachments } from '/modules/models/Document';
 
@@ -19,10 +19,10 @@ export default Teams = new Model( {
 	schema: TeamSchema,
 	collection: "Teams",
 	mixins: [
-		[ DocOwners ],
-		[ DocThumbs, { defaultThumbUrl: 0 } ],
+		[ Owners ],
+		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
-		[ DocMembers, {
+		[ Members, {
 			fieldName: "members",
 			authentication: AuthHelpers.managerOrOwner,
 		}, , {

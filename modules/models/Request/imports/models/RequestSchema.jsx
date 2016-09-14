@@ -3,7 +3,7 @@ import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facility';
-import { ContactCard } from '/both/modules/DocMembers';
+import { ContactCard } from '/modules/model-mixins/Members';
 import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/both/modules/MaterialInputs';
 import { FileExplorer, DocExplorer } from '/both/modules/MaterialInputs';
 
@@ -392,20 +392,6 @@ export default RequestSchema = {
 	members: {
 		label: "Contacts",
 		description: "Stakeholders for this work request",
-		relation: {
-			join: ( facility ) => {
-				let ids = _.pluck( facility.members, '_id' );
-				if ( !_.isEmpty( ids ) ) {
-					return Users.find( { _id: { $in: ids } } ).fetch();
-				}
-			},
-			unjoin: ( facility ) => {
-				let members = [];
-				facility.members.map( ( member ) => {
-					members.push( _.pick( member, '_id', 'name', 'role' ) );
-				} )
-			}
-		},
 		defaultValue: getMembersDefaultValue
 	}
 

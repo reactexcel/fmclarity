@@ -1,12 +1,12 @@
 import { Model } from 'meteor/fmc:orm';
 import MessageSchema from './MessageSchema.jsx';
-import { DocOwners } from '/both/modules/DocOwners';
+import { Owners } from '/modules/model-mixins/Owners';
 
 
 export default Messages = new Model( {
 	schema: MessageSchema,
 	collection: "Messages",
-	mixins: [ DocOwners ]
+	mixins: [ Owners ]
 } );
 
 Messages.helpers( {

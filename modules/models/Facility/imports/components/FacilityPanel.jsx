@@ -1,31 +1,23 @@
 import React from 'react';
 
 import { Menu } from '/both/modules/MaterialNavigation';
-import { ContactDetails, ContactList } from '/both/modules/DocMembers';
+import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
 import { AutoForm } from '/both/modules/AutoForm';
 import { Inbox } from '/modules/models/Message';
 
 import FacilityStepper from './FacilityStepper.jsx';
-import FacilityAreasEditor from './FacilityAreasEditor.jsx';
-import * as Actions from '../actions/FacilityActions.jsx';
 
-import { ServicesRequiredEditor } from '/both/modules/DocServices';
+import { FacilityActions } from '/modules/models/Facility';
+
 import { PMPList } from '/both/modules/Compliance';
 import { RequestsTable } from '/modules/models/Request';
+
+import { AreasEditor } from '/modules/model-mixins/Areas';
+import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
 
 import { Tabs } from '/both/modules/Tabs';
 
 export default function FacilityPanel( { facility } ) {
-
-	//console.log( facility );
-
-	function getMenu() {
-		return [
-			Actions.viewFacility( facility ),
-			Actions.editFacility( facility ),
-			Actions.deleteFacility( facility )
-		]
-	}
 
 	return (
 		<div>
@@ -71,7 +63,7 @@ export default function FacilityPanel( { facility } ) {
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group={facility} filter={{role:{$in:["staff","manager"]}}} defaultRole="staff" team={facility.team}/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="tenants-tab">Tenants</span>,
@@ -79,7 +71,7 @@ export default function FacilityPanel( { facility } ) {
 					},{
 						//hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
-						content:    <FacilityAreasEditor item={facility}/>
+						content:    <AreasEditor item = { facility }/>
 					},{
 						//hide:       !facility.canSetServicesRequired(),
 						tab:        <span id="services-tab">Services</span>,
@@ -93,7 +85,14 @@ export default function FacilityPanel( { facility } ) {
 					}
 				]} />                
 			</div>
-			<Menu items={getMenu()} />
+
+			<Menu items = { [
+				FacilityActions.view.bind( facility ),
+				FacilityActions.edit.bind( facility ),
+				FacilityActions.destroy.bind( facility ),
+				FacilityActions.checkRoles.bind( facility )
+			] } />
+
 		</div>
 	)
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { createFacilityAction } from '/modules/models/Facility';
+
 export default class FloatingActionButton extends React.Component
 {
 
@@ -26,13 +28,13 @@ export default class FloatingActionButton extends React.Component
 						+
 				</button>
 				<button 
-					style={{backgroundColor:"red",color:"#fff"}}
-					rel="tooltip"
-					data-toggle="tooltip" 
-					data-placement="left" 
-					title="Create new facility"
-					onClick={QuickActions.createFacility} 
-					className="fab fab-2">
+					style = { {backgroundColor:"red", color:"#fff"} }
+					rel = "tooltip"
+					data-toggle = "tooltip" 
+					data-placement = "left" 
+					title = "Create new facility"
+					onClick = { () => { createFacilityAction.run() } } 
+					className = "fab fab-2">
 						<i className="fa fa-building"></i>
 				</button>				
 				<button 

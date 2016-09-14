@@ -1,4 +1,4 @@
-export default DocOwners = { register }
+export default Owners = { register }
 
 import { Select } from '/both/modules/MaterialInputs';
 

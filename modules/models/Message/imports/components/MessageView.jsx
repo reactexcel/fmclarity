@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { ContactAvatarSmall } from '/both/modules/DocMembers';
+import { ContactAvatarSmall } from '/modules/model-mixins/Members';
 
 import Messages from '../models/Messages.jsx';
 

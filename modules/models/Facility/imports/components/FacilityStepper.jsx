@@ -1,9 +1,16 @@
 import React from "react";
 
-import { DocOwnerCard } from '/both/modules/DocOwners';
-import { ContactList } from '/both/modules/DocMembers';
-import { AutoForm } from '/both/modules/AutoForm';
+import { OwnerCard } from '/modules/model-mixins/Owners';
 import { Stepper } from '/both/modules/Stepper';
+
+import { ThumbView } from '/modules/model-mixins/Thumbs';
+
+import { Facilities } from '/modules/models';
+
+import { AutoForm } from '/both/modules/AutoForm';
+import { AreasEditor } from '/modules/model-mixins/Areas';
+import { ContactList } from '/modules/model-mixins/Members';
+import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
 
 export default function FacilityStepper( { facility } ) {
 
@@ -28,7 +35,7 @@ export default function FacilityStepper( { facility } ) {
 			    <h2 style={{marginTop:"0px"}}>Edit facility</h2>
                 {facility.owner?<div>
                     <b>Facility owner:</b>
-                    <DocOwnerCard item={facility}/>
+                    <OwnerCard item={facility}/>
                 </div>
                 :
                 null
@@ -41,16 +48,16 @@ export default function FacilityStepper( { facility } ) {
                                             <AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] }/>
                                         </div>
 					        			<div className = "col-sm-5">
-                                            <DocThumb.File item = { facility.thumb } onChange = { this.setThumb } />
+                                            <ThumbView item = { facility.thumb } onChange = { this.setThumb } />
                                         </div>
 			        				</div>,
 			        	guide: 		<div>Enter the basic facility info here including name, address, and image.</div>
                     },{
                         tab: 		<span id = "areas-tab"><span>Areas</span></span>,
-                        content: 	<FacilityAreasSelector item={facility}/>
+                        content: 	<AreasEditor item = { facility }/>
                     },{
                         tab: 		<span id = "services-tab">Services</span>,
-                        content: 	<ServicesSelector item = { facility } field = { "servicesRequired" }/>,
+                        content: 	<ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>,
 			        	guide: 		<div>Enter the services required by this facility. If you want you can also match there services to a supplier. If you want to configure this later simply his finish.</div>
                     },{
                         tab: 		<span id="personnel-tab">Personnel</span>,

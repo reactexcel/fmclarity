@@ -8,16 +8,15 @@ import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
 import FacilitiesPageIndexContainer from './imports/containers/FacilitiesPageIndexContainer.jsx';
 import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllContainer.jsx';
 
-Routes.loggedIn.add({
+Routes.loggedIn.add( {
 	name: 'facilities-all',
 	path: '/facilities-all',
 	action() {
 		mount( MainLayout, {
 			content: <FacilitiesPageAllContainer />
-		})
+		} )
 	}
-})
-
+} );
 
 const PortfolioRoute = new Action( {
 	name: 'portfolio',

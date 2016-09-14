@@ -1,7 +1,7 @@
-import DocThumbs from './imports/DocThumbs.jsx';
+import ThumbsMixin from './imports/ThumbsMixin.jsx';
 import ThumbView from './imports/ThumbView.jsx';
 
 export {
-	DocThumbs,
+	ThumbsMixin,
 	ThumbView
 }

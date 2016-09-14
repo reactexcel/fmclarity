@@ -134,11 +134,6 @@ export default TeamSchema = {
     members: {
         label: "Members",
         description: "Members of this team",
-        /*relation:     
-        { 
-            type: ORM.HasMembers, 
-            source: "users" 
-        }*/
     },
 
     contact: {
@@ -159,6 +154,7 @@ export default TeamSchema = {
         }
     },
 
+    // cull
     suppliers: {
         label: "Suppliers",
         description: "Common suppliers for facilities within this team",

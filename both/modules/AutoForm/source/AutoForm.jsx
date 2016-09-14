@@ -59,6 +59,11 @@ export default class AutoForm extends React.Component {
 				schema[ key ].options = schema[ key ].options( item );
 			}
 
+			let { input, size = 12, label, description, options } = schema[ key ],
+				placeholder = label,
+				Input = null;
+
+
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
 				let { subschema, size, ...others } = schema[ key ];
@@ -81,16 +86,13 @@ export default class AutoForm extends React.Component {
 			// otherwise determine the type of input to create and make it,
 			//  passing on the fields options as params
 			else {
-				let { input, size = 12, label, description, options } = schema[ key ],
-				placeholder = label,
-					Input = null;
 
 				if ( _.isObject( input ) ) {
 					Input = input;
 				}
 
 				if ( Input == null ) {
-					console.log( { key, fields:schema[ key ] } );
+					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `You have tried to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 

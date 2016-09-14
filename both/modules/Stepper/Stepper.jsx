@@ -39,7 +39,7 @@ export default Stepper = React.createClass( {
         var tabs = this.props.tabs;
         return (
             <div className="ipso-stepso row">
-                {tabs.map(function(i,idx){
+                { tabs.map( (i,idx) => {
                     return (
                         <div key={idx} className="col-md-12">
                             <div className={(idx==active?"ipso-stepso active":"ipso-stepso")}>

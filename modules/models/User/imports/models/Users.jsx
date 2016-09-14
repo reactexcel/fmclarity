@@ -2,8 +2,8 @@ import UserSchema from './UserSchema.jsx';
 
 import { Model } from 'meteor/fmc:orm';
 
-import { DocThumbs } from '/both/modules/DocThumbs';
-import { DocOwners } from '/both/modules/DocOwners';
+import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
+import { Owners } from '/modules/model-mixins/Owners';
 import { Files } from '/modules/models/Document';
 import { DocMessages } from '/modules/models/Message';
 
@@ -17,8 +17,8 @@ export default Users = new Model( {
     schema: UserSchema,
     collection: Meteor.users,
     mixins: [
-        DocOwners,
-        DocMessages, [ DocThumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        Owners,
+        DocMessages, [ ThumbsMixin, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 

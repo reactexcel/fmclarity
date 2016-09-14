@@ -15,11 +15,11 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		user = Meteor.user(),
 		requests = null,
 		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
-		contextFilter = null;
+		contextFilter = {};
 
-	if ( facility ) {
+	if ( facility && facility._id ) {
 		contextFilter[ 'facility._id' ] = facility._id;
-	} else if ( team ) {
+	} else if ( team && team._id ) {
 		contextFilter[ 'team._id' ] = team._id;
 	}
 

@@ -2,9 +2,7 @@
 import { Files } from '/modules/models/File';
 
 //should be called docthumbs
-export default DocThumbs = {
-	register
-}
+export default ThumbsMixin = { register }
 
 var Thumbs = null;
 
