@@ -9,6 +9,7 @@ import TeamStepper from './imports/components/TeamStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
 
 const create = new Action( {
+	name: 'create team',
 	label: "Create team",
 	run: ( template ) => {
 		let team = Teams.create( template );
@@ -19,8 +20,11 @@ const create = new Action( {
 } )
 
 const edit = new Action( {
+	name: 'edit team',
 	label: "Edit team",
-	run: ( teams ) => {
+	run: ( team ) => {
+		let { roles, actors } = Teams.getRoles( team );
+		console.log( Teams.getRoles( team ) );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )
@@ -28,6 +32,7 @@ const edit = new Action( {
 } )
 
 const view = new Action( {
+	name: 'view teams',
 	label: "View teams",
 	run: ( team ) => {
 		Modal.show( {
@@ -37,14 +42,16 @@ const view = new Action( {
 } )
 
 const destroy = new Action( {
-	label: "Delete teams",
+	name: 'delete team',
+	label: "Delete team",
 	run: ( team ) => {
 		//Facilities.destroy( teams );
-		teams.destroy();
+		team.destroy();
 	}
 } )
 
 const checkRoles = new Action( {
+	name: 'check team roles',
 	label: "Check roles",
 	run: ( team ) => {
 		console.log( Teams.getRoles( team ) );

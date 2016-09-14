@@ -2,7 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/both/modules/MaterialNavigation';
-import { RequestActions } from '/modules/models/Request';
+import { RequestSearch } from '/modules/models/Request';
 
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
@@ -36,8 +36,8 @@ export default RequestActivityChart = React.createClass( {
 		}
 
 		var viewConfig = this.state.viewConfig;
-		var open = RequestActions.searchByDate( { q: openQuery, config: viewConfig } );
-		var closed = RequestActions.searchByDate( { q: closedQuery, config: viewConfig } );
+		var open = RequestSearch.searchByDate( { q: openQuery, config: viewConfig } );
+		var closed = RequestSearch.searchByDate( { q: closedQuery, config: viewConfig } );
 		var labels = open.labels;
 		var title = viewConfig.startDate.format( viewConfig.title );
 

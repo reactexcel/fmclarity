@@ -40,6 +40,10 @@ export default class AutoForm extends React.Component {
 
 			console.log( { schema, key } );
 
+			if( !schema[ key ] ) {
+				throw new Meteor.Error(`No schema definition for field: ${key}`)
+			}
+
 			// Check visibility condition specified in schema
 			if ( schema[ key ].condition != null ) {
 				if ( !this.checkCondition( schema[ key ].condition, item ) ) {
@@ -93,7 +97,7 @@ export default class AutoForm extends React.Component {
 
 				if ( Input == null ) {
 					console.log( { key, fields: schema[ key ] } );
-					throw new Error( `You have tried to render a input type "${schema[ key ].input}" that does not exist` );
+					throw new Error(`Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
 				return (

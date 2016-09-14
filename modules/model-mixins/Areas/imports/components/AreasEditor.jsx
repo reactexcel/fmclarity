@@ -37,6 +37,13 @@ FacilityAreasEditorInner = React.createClass({
     	}
     },
 
+    componentWillReceiveProps(props) {
+        this.setState({
+            facility:props.facility,
+            selection:[{name:"Root",children:props.areas}]
+        })
+    },
+    
     selectItem(col,item) {
     	var selection = this.state.selection;
     	selection[col] = item;

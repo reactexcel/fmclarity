@@ -61,12 +61,12 @@ export default TeamPanel = React.createClass( {
 	},
 
 	getMenu() {
-		let supplier = this.props.item,
 			facility = Session.getSelectedFacility();
 
 		return [ 
-			TeamActions.edit.bind( supplier ), 
-			TeamActions.removeSupplier.bind( facility, supplier ) 
+			TeamActions.edit.bind( this.props.item ), 
+			TeamActions.removeSupplier.bind( facility, this.props.item ),
+			TeamActions.checkRoles.bind( this.props.item ) 
 		];
 	},
 

@@ -20,7 +20,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const SuppliersIndexRoute = new Action( {
+const SuppliersIndex = new Action( {
 	name: 'suppliers',
 	path: '/suppliers',
 	action() {
@@ -30,7 +30,7 @@ const SuppliersIndexRoute = new Action( {
 	}
 } );
 
-const AccountProfileRoute = new Action( {
+const AccountProfile = new Action( {
 	name: 'account',
 	path: '/account',
 	action() {
@@ -41,6 +41,6 @@ const AccountProfileRoute = new Action( {
 } );
 
 export {
-	SuppliersIndexRoute,
-	AccountProfileRoute
+	SuppliersIndex,
+	AccountProfile
 }

@@ -1,6 +1,6 @@
 import { AddressSchema } from '/modules/models/Facility';
 import { DocExplorer } from '/modules/models/Document';
-import { Text, TextArea, Select } from '/modules/models/Document';
+import { Text, TextArea, Select } from '/both/modules/MaterialInputs';
 
 export default TeamSchema = {
 
@@ -17,6 +17,7 @@ export default TeamSchema = {
     name: {
         type: "string",
         label: "Company Name",
+        input: Text,
     },
 
     type: {
@@ -42,6 +43,7 @@ export default TeamSchema = {
     email: {
         type: "string",
         description: "The primary email contact for this team",
+        input: Text,
         label: "Email",
         //regEx:        ORM.RegEx.Email,
     },
@@ -50,6 +52,7 @@ export default TeamSchema = {
         label: "Primary phone",
         description: "Primary phone contact number",
         icon: "phone",
+        input: Text,
         type: "string",
     },
 
@@ -58,12 +61,14 @@ export default TeamSchema = {
         type: "string",
         description: "Secondary phone contact number",
         icon: "phone",
+        input: Text,
     },
 
     abn: {
         label: "ABN",
         description: "Australian Business Number",
         type: "string",
+        input: Text,
     },
 
     address: {
@@ -80,10 +85,12 @@ export default TeamSchema = {
     //////////////////////////////////////////////
     // Settings
     //////////////////////////////////////////////      
+    
     defaultWorkOrderValue: {
         label: "Default value for work orders",
         description: "Preset initial value for all newly created work orders",
         type: "number",
+        input: Text,
         defaultValue: 500,
         condition: "fm"
     },

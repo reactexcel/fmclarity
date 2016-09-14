@@ -35,9 +35,9 @@ function register( collection, opts ) {
 
 	collection.schema[ fieldName ].relation = {
 		join: ( item ) => {
-			if ( item != null && _.isArray( item.members ) ) {
+			if ( item != null && _.isArray( item[ fieldName ] ) ) {
 				let members = [];
-				item.members.map( ( member ) => {
+				item[ fieldName ].map( ( member ) => {
 					let foundMember = Users.findOne( member._id );
 					if ( foundMember ) {
 						foundMember.role = member.role;
@@ -49,7 +49,7 @@ function register( collection, opts ) {
 		},
 		unjoin: ( item ) => {
 			let members = [];
-			item.members.map( ( member ) => {
+			item[ fieldName ].map( ( member ) => {
 				members.push( {
 					_id: member._id,
 					name: member.profile ? member.profile.name : member.name,

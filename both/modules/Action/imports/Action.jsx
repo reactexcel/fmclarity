@@ -1,3 +1,5 @@
+import { Permissions } from '/modules/model-mixins/Roles';
+
 export default class Action {
 
 	constructor( { name, path, label, icon, description, action, run } ) {
@@ -13,7 +15,14 @@ export default class Action {
 		}
 	}
 
-	run() {
+	runnnn( item ) {
+		let user = Meteor.user();
+		console.log( Permissions.checkAlerts( this, item ) );
+		console.log( Permissions.checkPermission( this, item, user ) );
+		this.run( item );
+	}
+
+	run( item ) {
 		FlowRouter.go( this.path );
 	}
 
@@ -23,6 +32,9 @@ export default class Action {
 			icon: this.icon,
 			run: () => {
 				return this.run( ...args );
+			},
+			runnnn: () => {
+				return this.runnnn( ...args );
 			}
 		}
 	}

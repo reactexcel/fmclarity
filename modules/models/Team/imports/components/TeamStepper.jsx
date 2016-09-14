@@ -133,35 +133,40 @@ export default TeamStepper = React.createClass( {
         */
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
-                {this.state.shouldShowMessage?<b>Team not found, please enter the details to add to your contact.</b>:null}
-                <h2 style={{marginTop:"0px"}}>Edit team</h2>
-                {(false&&viewingTeam.owner)?<div>
+
+                { this.state.shouldShowMessage ? 
+                <b>Team not found, please enter the details to add to your contact.</b>
+                : null }
+
+                <h2 style = { { marginTop:"0px" } }>Edit team</h2>
+
+                { ( false && viewingTeam.owner ) ? 
+                <div>
                     <b>Team owner:</b>
-                    <DocOwnerCard item={viewingTeam}/>
+                    <DocOwnerCard item = { viewingTeam }/>
                 </div>
-                :
-                null
-                }
+                : null }
+
                 <Stepper tabs={[
                     {
-                        tab:        <span id="discussion-tab">Basic Details</span>,
-                        content:    <div className="row">
-                                        <div className="col-sm-7"><AutoForm item={viewingTeam} form={["name","type","abn","email","phone","phone2"]} /></div>
-                                        <div className="col-sm-5"><ThumbView item={viewingTeam.thumb} onChange={this.setThumb} /></div>
-                                        <div className="col-sm-12"><AutoForm item={viewingTeam} form={["defaultWorkOrderValue","description"]} /></div>
+                        tab:        <span id = "discussion-tab">Basic Details</span>,
+                        content:    <div className = "row">
+                                        <div className = "col-sm-7"><AutoForm model = { Teams } item = { viewingTeam } form = { ["name","type","abn","email","phone","phone2"] } /></div>
+                                        <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>
+                                        <div className = "col-sm-12"><AutoForm model = { Teams } item = { viewingTeam } form = { ["defaultWorkOrderValue","description"] }/></div>
                                     </div>,
                         guide:      <div>Enter the basic account info here including your teams name, address and image.</div>
                     },{
-                        tab:        <span id="documents-tab">Documents</span>,
-                        content:    <AutoForm item={viewingTeam} form={["documents"]}/>,
+                        tab:        <span id = "documents-tab">Documents</span>,
+                        content:    <AutoForm model = { Teams } item = { viewingTeam } form = { ["documents"] }/>,
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
-                        tab:        <span id="members-tab">Members</span>,
-                        content:    <ContactList group={viewingTeam} team={viewingTeam}/>,
+                        tab:        <span id = "members-tab">Members</span>,
+                        content:    <ContactList group = { viewingTeam } team = { viewingTeam }/>,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
-                        tab:        <span id="services-provided-tab">Services provided</span>,
-                        content:    <ServicesProvidedEditor item={viewingTeam} save={viewingTeam.setServicesProvided.bind(viewingTeam)}/>,
+                        tab:        <span id = "services-provided-tab">Services provided</span>,
+                        content:    <ServicesProvidedEditor item = { viewingTeam } save = { viewingTeam.setServicesProvided.bind(viewingTeam) }/>,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     }
                 ]}/>

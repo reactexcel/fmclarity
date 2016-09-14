@@ -13,6 +13,8 @@ export default TeamPageSuppliersContainer = createContainer( ( params ) => {
         facilities = null,
         suppliers = null;
 
+    console.log( facility );
+
     if ( team != null ) {
         facilities = team.facilities;
     } else if ( user != null ) {

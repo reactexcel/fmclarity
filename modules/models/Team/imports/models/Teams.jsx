@@ -5,6 +5,7 @@ import { Users } from '/modules/models/Team';
 import { Model } from 'meteor/fmc:orm';
 import { Owners } from '/modules/model-mixins/Owners';
 import { Members } from '/modules/model-mixins/Members';
+import { RolesMixin } from '/modules/model-mixins/Roles';
 import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
 import { DocMessages } from '/modules/models/Message';
 import { DocAttachments } from '/modules/models/Document';
@@ -20,6 +21,7 @@ export default Teams = new Model( {
 	collection: "Teams",
 	mixins: [
 		[ Owners ],
+		[ RolesMixin ],
 		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {

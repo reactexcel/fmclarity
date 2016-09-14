@@ -8,7 +8,7 @@ import './Requests.jsx';
 // for starters I should probably put them in another file - and then think of 
 // what to do with them ultimately later...
 
-export default RequestActions = {
+export default RequestSearch = {
     search( params ) {
         var q = _.omit( params, 'month' );
         if ( params.month ) {
