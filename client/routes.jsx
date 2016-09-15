@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Routes } from '/both/modules/Authentication';
-import { MainLayout } from '/both/modules/LayoutManager';
+import { Routes } from '/modules/core/Authentication';
+import { MainLayout } from '/modules/core/LayoutManager';
 
 import { PortfolioRoute } from '/modules/models/Facility';
 import { TeamRoutes } from '/modules/models/Team';

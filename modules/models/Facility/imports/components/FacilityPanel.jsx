@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Menu } from '/both/modules/MaterialNavigation';
 import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { Inbox } from '/modules/models/Message';
 
 import FacilityStepper from './FacilityStepper.jsx';

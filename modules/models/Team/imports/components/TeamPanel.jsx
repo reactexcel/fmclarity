@@ -5,7 +5,7 @@ import { Menu } from '/both/modules/MaterialNavigation';
 import TeamActions from '../../actions.jsx';
 
 import { ContactList } from '/modules/model-mixins/Members';
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { Tabs } from '/both/modules/Tabs';
 
 

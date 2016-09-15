@@ -8,7 +8,7 @@
 # FMC Core
 
 fmc:rbac
-fmc:orm
+#fmc:orm
 
 #fmc:workflow-helper
 #fmc:layout

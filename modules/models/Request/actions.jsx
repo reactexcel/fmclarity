@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Action } from '/both/modules/Action';
+import { Action } from '/modules/core/Action';
 import { Modal } from '/both/modules/Modal';
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 
 import { Issues, CreateRequestForm } from '/modules/models/Request';
 
@@ -11,7 +11,7 @@ import RequestPanel from './imports/components/RequestPanel.jsx';
 /*
 const create = new Action( {
 	label: "Create request",
-	run: ( template ) => {
+	action: ( template ) => {
 		let facility = Facilities.create( template );
 		Modal.show( {
 			content: <FacilityStepper item = { request } />
@@ -21,8 +21,9 @@ const create = new Action( {
 */
 
 const edit = new Action( {
+	name: "edit request",
 	label: "Edit request",
-	run: ( request ) => {
+	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
 				model = { Issues }
@@ -34,8 +35,9 @@ const edit = new Action( {
 } )
 
 const view = new Action( {
+	name: "view request",
 	label: "View request",
-	run: ( request ) => {
+	action: ( request ) => {
 		Modal.show( {
 			content: <RequestPanel item = { request } />
 		} )
@@ -43,16 +45,18 @@ const view = new Action( {
 } )
 
 const destroy = new Action( {
+	name: "delete request",
 	label: "Delete request",
-	run: ( request ) => {
+	action: ( request ) => {
 		//Facilities.destroy( request );
 		request.destroy();
 	}
 } )
 
 const checkRoles = new Action( {
+	name: "check request roles",
 	label: "Check roles",
-	run: ( request ) => {
+	action: ( request ) => {
 		console.log( Issues.getRoles( request ) );
 	}
 } )

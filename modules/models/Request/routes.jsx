@@ -1,9 +1,9 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Action } from '/both/modules/Action';
-import { Routes } from '/both/modules/Authentication';
-import { MainLayout, BlankLayout } from '/both/modules/LayoutManager';
+import { Action } from '/modules/core/Action';
+import { Routes } from '/modules/core/Authentication';
+import { MainLayout, BlankLayout } from '/modules/core/LayoutManager';
 
 import RequestsPageSingle from './imports/components/RequestsPageSingle.jsx';
 import RequestsPageAllContainer from './imports/containers/RequestsPageAllContainer.jsx';

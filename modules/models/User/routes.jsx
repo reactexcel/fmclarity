@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Routes } from '/both/modules/Authentication';
-import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
+import { Routes } from '/modules/core/Authentication';
+import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
 
 import UserPageProfileContainer from './imports/containers/UserPageProfileContainer.jsx';
 import UsersPageIndexContainer from './imports/containers/UsersPageIndexContainer.jsx';

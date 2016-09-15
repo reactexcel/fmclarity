@@ -1,4 +1,4 @@
-import { Model } from 'meteor/fmc:orm';
+import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/model-mixins/Owners';
 
 import DocumentSchema from './DocumentSchema.jsx';

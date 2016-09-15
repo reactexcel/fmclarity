@@ -9,7 +9,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 				return;
 			}
 		}
-		item.runnnn( item, event );
+		item.run( item, event );
 	}
 
 	if ( items == null || items.length == 0 ) {

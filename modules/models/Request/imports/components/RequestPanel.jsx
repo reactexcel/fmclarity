@@ -2,7 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Inbox } from '/modules/models/Message';
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { FacilityDetails } from '/modules/models/Facility';
 import { WorkflowButtons } from '/both/modules/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/model-mixins/Members';

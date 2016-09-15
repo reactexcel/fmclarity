@@ -15,7 +15,7 @@ function getRoles( item ) {
 		actors: {}
 	}
 
-	console.log( item );
+	//console.log( item );
 	// okay so this autojoin works reasonably well but we should perhaps only do it with teams, members, suppliers, owners and assignees
 	//  that is to say not with facilities
 
@@ -84,6 +84,6 @@ function addRole( results, member, role ) {
 		results.roles[ role ] = [];
 	}
 
-	results.actors[ member._id ].push( member.role );
+	results.actors[ member._id ].push( role );
 	results.roles[ role ].push( member );
 }

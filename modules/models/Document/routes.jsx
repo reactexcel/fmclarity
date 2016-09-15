@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
-import { Routes } from '/both/modules/Authentication';
+import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
+import { Routes } from '/modules/core/Authentication';
 
-import DocsPageIndexContainer from './containers/DocsPageIndexContainer.jsx';
+import DocsPageIndexContainer from './source/containers/DocsPageIndexContainer.jsx';
 
 Routes.loggedIn.add( {
 	name: 'docs',

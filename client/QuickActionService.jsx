@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { FacilityStepper } from '/modules/models/Facility';
 import { RequestPanel, CreateRequestForm } from '/modules/models/Request';
 import { Modal } from '/both/modules/Modal';

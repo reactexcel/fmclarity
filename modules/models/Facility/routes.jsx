@@ -1,9 +1,9 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Action } from '/both/modules/Action';
-import { Routes } from '/both/modules/Authentication';
-import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
+import { Action } from '/modules/core/Action';
+import { Routes } from '/modules/core/Authentication';
+import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
 
 import FacilitiesPageIndexContainer from './imports/containers/FacilitiesPageIndexContainer.jsx';
 import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllContainer.jsx';

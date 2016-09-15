@@ -5,7 +5,7 @@ import { ThumbView } from '/modules/model-mixins/Thumbs';
 import { ContactList } from '/modules/model-mixins/Members';
 import { ServicesProvidedEditor } from '/modules/model-mixins/Services';
 
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { Stepper } from '/both/modules/Stepper';
 
 /*

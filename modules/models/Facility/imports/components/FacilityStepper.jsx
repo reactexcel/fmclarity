@@ -7,7 +7,7 @@ import { ThumbView } from '/modules/model-mixins/Thumbs';
 
 import { Facilities } from '/modules/models';
 
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import { AreasEditor } from '/modules/model-mixins/Areas';
 import { ContactList } from '/modules/model-mixins/Members';
 import { ServicesRequiredEditor } from '/modules/model-mixins/Services';

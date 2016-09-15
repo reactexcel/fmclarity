@@ -1,8 +1,8 @@
 import React from "react";
 
 import { mount } from 'react-mounter';
-import { MainLayout, WideLayout, PrintLayout } from '/both/modules/LayoutManager';
-import { Action } from '/both/modules/Action';
+import { MainLayout, WideLayout, PrintLayout } from '/modules/core/LayoutManager';
+import { Action } from '/modules/core/Action';
 
 
 import DashboardPageContainer from '../imports/containers/DashboardPageContainer.jsx';

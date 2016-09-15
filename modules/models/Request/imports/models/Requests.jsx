@@ -1,4 +1,4 @@
-import { Model } from 'meteor/fmc:orm';
+import { Model } from '/modules/core/ORM';
 
 import RequestSchema from './RequestSchema.jsx';
 import { Members } from '/modules/model-mixins/Members';

@@ -1,4 +1,7 @@
 import { Permissions } from '/modules/model-mixins/Roles';
+//import { NotificationEngine } from '/modules/models/Notification';
+
+import Actions from './Actions.js';
 
 export default class Action {
 
@@ -13,18 +16,17 @@ export default class Action {
 		if ( run != null ) {
 			this.run = run;
 		}
-	}
 
-	runnnn( item ) {
-		let user = Meteor.user();
-		console.log( Permissions.checkAlerts( this, item ) );
-		console.log( Permissions.checkPermission( this, item, user ) );
-		this.run( item );
+		Actions.add(this);
 	}
 
 	run( item ) {
-		FlowRouter.go( this.path );
+		this.action( item );
 	}
+
+	/*action( item ) {
+		FlowRouter.go( this.path );
+	}*/
 
 	bind( ...args ) {
 		return {
@@ -32,9 +34,6 @@ export default class Action {
 			icon: this.icon,
 			run: () => {
 				return this.run( ...args );
-			},
-			runnnn: () => {
-				return this.runnnn( ...args );
 			}
 		}
 	}

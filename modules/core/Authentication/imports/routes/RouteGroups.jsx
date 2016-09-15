@@ -2,9 +2,9 @@ import React from 'react';
 import { mount } from 'react-mounter';
 
 import { Accounts } from 'meteor/accounts-base';
-import { BlankLayout } from '/both/modules/LayoutManager';
+import { BlankLayout } from '/modules/core/LayoutManager';
 
-import { Action, RouteGroup } from '/both/modules/Action';
+import { Action, RouteGroup } from '/modules/core/Action';
 
 import NotFound from '../components/NotFound.jsx';
 

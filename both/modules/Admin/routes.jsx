@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Routes } from '/both/modules/Authentication';
-import { MainLayout, BlankLayout } 	from '/both/modules/LayoutManager';
+import { Routes } from '/modules/core/Authentication';
+import { MainLayout, BlankLayout } 	from '/modules/core/LayoutManager';
 
 Routes.admin.add( {
 	name: 'admin',

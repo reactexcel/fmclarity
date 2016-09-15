@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 import Files from '../models/Files.jsx';
 import FileSchema from '../models/FileSchema.jsx';
 

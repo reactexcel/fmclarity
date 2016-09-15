@@ -36,10 +36,11 @@ export default class Model {
 			name: `${this._name}.upsert`,
 			validate: ValidationService.validator( this.schema ),
 			run: ( ...args ) => {
-				return this._save( ...args ) }
+				return this._save( ...args )
+			}
 		} )
 
-		this.registerMixins( mixins );		
+		this.registerMixins( mixins );
 	}
 
 	registerMixins( mixins ) {
@@ -47,8 +48,7 @@ export default class Model {
 			if ( _.isArray( mixin ) ) {
 				let [ module, options ] = mixin;
 				module.register( this, options );
-			}
-			else {
+			} else {
 				mixin.register( this )
 			}
 		} );
@@ -124,113 +124,19 @@ export default class Model {
 
 	join( doc ) {
 		if ( doc == null ) {
-			//console.log( 'No doc');
+			//console.log( 'Tried to call "join" but no document provided' );
 			return;
 		}
 
-		//refactor: separate schema fields for properties and relations
-		// then just pull in relations here instead of iterating over all fields
-
-		let schema = this.schema,
-			fieldNames = [];
-
-		if ( schema != null ) {
-			fieldNames = Object.keys( schema );
-		}
-
+		let fieldNames = Object.keys( this.schema );
 		fieldNames.map( ( fieldName ) => {
-			let rules = schema[ fieldName ];
-
-			if ( rules.relation != null ) {
-
+			let rules = this.schema[ fieldName ];
+			if ( rules.relation == null ) {
+				//console.log( 'Tried to call join on a document with no "relation" property in the schema' );
+			} else {
 				if ( _.isFunction( rules.relation.join ) ) {
 					doc[ fieldName ] = rules.relation.join( doc );
 					return;
-				}
-				let Source = rules.relation.source,
-					query = {};
-
-				// this is a workaround required because of the shitty Meteor import implementation
-				if ( _.isString( Source ) ) {
-					//console.log(Source);
-					Source = ORM.collections[ Source ];
-					//console.log(Source);
-				}
-
-				if ( Source == null ) {
-					throw new Meteor.Error( "Selected a source that does not exist" );
-				} else if ( Source.findOne == null ) {
-					console.log( Source );
-					throw new Meteor.Error( "Bad source for relation" );
-				}
-
-				switch ( rules.relation.type ) {
-
-					case ORM.HasOne:
-
-						query = doc[ fieldName ];
-
-						if ( query == null ) {
-							/* shouldn't happen */
-						} else if ( query._id ) {
-
-							doc[ fieldName ] = Source.findOne( query._id );
-						} else {
-							doc[ fieldName ] = Source.findOne( query );
-						}
-
-						break;
-
-					case ORM.BelongsTo:
-
-						key = rules.relation.key;
-						query = doc[ key ];
-						if ( query == null ) {
-							/* shouldn't happen */
-						} else if ( query._id ) {
-							doc[ fieldName ] = Source.findOne( query._id );
-						} else {
-							doc[ fieldName ] = Source.findOne( query );
-						}
-
-						break;
-
-					case ORM.HasMany:
-
-						key = rules.relation.key;
-						query[ key ] = doc._id;
-						doc[ fieldName ] = Source.find( query ).fetch();
-
-						break;
-
-					case ORM.ManyToMany:
-
-						let queries = doc[ fieldName ],
-							ids = [],
-							names = [];
-
-						if ( queries == null || queries.length == 0 ) {
-							return;
-						}
-
-						queries.map( ( query ) => {
-							if ( query._id != null ) {
-								ids.push( query._id );
-							}
-							if ( query.name != null ) {
-								names.push( query.name );
-							}
-						} )
-
-						doc[ fieldName ] = Source.find( {
-							$or: [
-								{ _id: { $in: ids } },
-								{ name: { $in: names } }
-							]
-						} ).fetch();
-
-						break;
-
 				}
 			}
 		} )
@@ -240,27 +146,16 @@ export default class Model {
 
 	unjoin( doc ) {
 		if ( doc == null ) {
+			//console.log( 'Tried to call "join" but no document provided' );
 			return;
 		}
 
-		delete doc._id;
-
-		//refactor: separate schema fields for properties and relations
-		// then just pull in relations here instead of iterating over all fields
-
-		let schema = this.schema,
-			fieldNames = [];
-
-		if ( schema != null ) {
-			fieldNames = Object.keys( doc );
-		}
-
+		let fieldNames = Object.keys( this.schema );
 		fieldNames.map( ( fieldName ) => {
 			let rules = schema[ fieldName ];
-			if ( rules == null ) {
-				console.log( "No schema specified for " + fieldName );
+			if ( rules.relation == null ) {
+				//console.log( 'Tried to call join on a document with no "relation" property in the schema' );
 			} else if ( rules.relation ) {
-
 				if ( _.isFunction( rules.relation.unjoin ) ) {
 					doc[ fieldName ] = rules.relation.unjoin( doc );
 					if ( doc[ fieldName ] == null ) {
@@ -268,49 +163,12 @@ export default class Model {
 					}
 					return;
 				}
-
-				switch ( rules.relation.type ) {
-
-					case ORM.HasOne:
-					case ORM.BelongsTo:
-
-						if ( doc[ fieldName ] != null && _.isObject( doc[ fieldName ] ) ) {
-							//console.log( doc[ fieldName ] );
-							doc[ fieldName ] = {
-								_id: doc[ fieldName ]._id,
-								name: doc[ fieldName ].name
-							}
-						}
-
-						break;
-
-					case ORM.HasMany:
-
-						delete doc[ fieldName ];
-
-						break;
-
-					case ORM.ManyToMany:
-
-						let items = doc[ fieldName ];
-						if ( items != null && items.length ) {
-							for ( let i in items ) {
-								items[ i ] = {
-									_id: items[ i ]._id,
-									name: items[ i ].name
-								}
-							}
-							items = _.uniq( items );
-						}
-
-						break;
-
-				}
 			}
 		} )
 
 		return doc;
 	}
+
 	methods( functions ) {
 		return RBAC.methods( functions, this )
 	}

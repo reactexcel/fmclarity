@@ -1,6 +1,6 @@
 import React from "react";
 
-import { AutoForm } from '/both/modules/AutoForm';
+import { AutoForm } from '/modules/core/AutoForm';
 
 export default function( collection ) {
 

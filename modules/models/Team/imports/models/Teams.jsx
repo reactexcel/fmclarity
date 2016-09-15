@@ -2,7 +2,7 @@ import TeamSchema from './TeamSchema.jsx';
 
 import { Users } from '/modules/models/Team';
 
-import { Model } from 'meteor/fmc:orm';
+import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/model-mixins/Owners';
 import { Members } from '/modules/model-mixins/Members';
 import { RolesMixin } from '/modules/model-mixins/Roles';

@@ -2,7 +2,7 @@ import FacilitySchema from './FacilitySchema.jsx';
 
 import { Teams } from '/modules/models/Team';
 
-import { Model } from 'meteor/fmc:orm';
+import { Model } from '/modules/core/ORM';
 import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
 import { Owners } from '/modules/model-mixins/Owners';
 import { Members } from '/modules/model-mixins/Members';

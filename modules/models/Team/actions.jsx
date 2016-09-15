@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Action } from '/both/modules/Action';
+import { Action } from '/modules/core/Action';
 import { Modal } from '/both/modules/Modal';
 
 import { Teams } from '/modules/models/Team';
@@ -11,7 +11,7 @@ import TeamPanel from './imports/components/TeamPanel.jsx';
 const create = new Action( {
 	name: 'create team',
 	label: "Create team",
-	run: ( template ) => {
+	action: ( template ) => {
 		let team = Teams.create( template );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
@@ -22,7 +22,7 @@ const create = new Action( {
 const edit = new Action( {
 	name: 'edit team',
 	label: "Edit team",
-	run: ( team ) => {
+	action: ( team ) => {
 		let { roles, actors } = Teams.getRoles( team );
 		console.log( Teams.getRoles( team ) );
 		Modal.show( {
@@ -32,9 +32,9 @@ const edit = new Action( {
 } )
 
 const view = new Action( {
-	name: 'view teams',
-	label: "View teams",
-	run: ( team ) => {
+	name: 'view team',
+	label: "View team",
+	action: ( team ) => {
 		Modal.show( {
 			content: <TeamPanel item = { team } />
 		} )
@@ -44,8 +44,8 @@ const view = new Action( {
 const destroy = new Action( {
 	name: 'delete team',
 	label: "Delete team",
-	run: ( team ) => {
-		//Facilities.destroy( teams );
+	action: ( team ) => {
+		//Facilities.destroy( team );
 		team.destroy();
 	}
 } )
@@ -53,15 +53,19 @@ const destroy = new Action( {
 const checkRoles = new Action( {
 	name: 'check team roles',
 	label: "Check roles",
-	run: ( team ) => {
+	action: ( team ) => {
+		if( !team ) {
+			throw new Meteor.Error('Action - check team roles: team required');
+		}
 		console.log( Teams.getRoles( team ) );
 	}
 } )
 
 const removeSupplier = new Action( {
+	name: "remove supplier",
 	label: "Remove supplier",
 	shouldConfirm: true,
-	run: ( team, supplier ) => {
+	action: ( team, supplier ) => {
 		// could put validated action with minimongo logic here???
 		team.removeSupplier( supplier );
 	}

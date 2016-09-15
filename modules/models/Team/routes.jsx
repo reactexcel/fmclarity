@@ -1,14 +1,14 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { MainLayout, WideLayout } from '/both/modules/LayoutManager';
+import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
 
 import TeamPageProfileContainer from './imports/containers/TeamPageProfileContainer.jsx';
 import TeamPageSuppliersContainer from './imports/containers/TeamPageSuppliersContainer.jsx';
 import TeamsPageIndexContainer from './imports/containers/TeamsPageIndexContainer.jsx';
 
-import { Action } from '/both/modules/Action';
-import { Routes } from '/both/modules/Authentication';
+import { Action } from '/modules/core/Action';
+import { Routes } from '/modules/core/Authentication';
 
 Routes.loggedIn.add( {
 	name: 'teams',

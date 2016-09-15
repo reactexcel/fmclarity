@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Action } from '/both/modules/Action';
+import { Action } from '/modules/core/Action';
 import { Modal } from '/both/modules/Modal';
 
 import { Facilities } from '/modules/models/Facility';
@@ -9,8 +9,9 @@ import FacilityStepper from './imports/components/FacilityStepper.jsx';
 import FacilityPanel from './imports/components/FacilityPanel.jsx';
 
 const create = new Action( {
+	name: "create facility",
 	label: "Create facility",
-	run: ( template ) => {
+	action: ( template ) => {
 		let facility = Facilities.create( template );
 		Modal.show( {
 			content: <FacilityStepper facility = { facility } />
@@ -19,8 +20,9 @@ const create = new Action( {
 } )
 
 const edit = new Action( {
+	name: "edit facility",
 	label: "Edit facility",
-	run: ( facility ) => {
+	action: ( facility ) => {
 		Modal.show( {
 			content: <FacilityStepper facility = { facility } />
 		} )
@@ -28,8 +30,9 @@ const edit = new Action( {
 } )
 
 const view = new Action( {
+	name: "view facility",
 	label: "View facility",
-	run: ( facility ) => {
+	action: ( facility ) => {
 		Modal.show( {
 			content: <FacilityPanel facility = { facility } />
 		} )
@@ -37,16 +40,18 @@ const view = new Action( {
 } )
 
 const destroy = new Action( {
+	name: "destroy facility",
 	label: "Delete facility",
-	run: ( facility ) => {
+	action: ( facility ) => {
 		//Facilities.destroy( facility );
 		facility.destroy();
 	}
 } )
 
 const checkRoles = new Action( {
+	name: "check facility roles",
 	label: "Check roles",
-	run: ( facility ) => {
+	action: ( facility ) => {
 		console.log( Facilities.getRoles( facility ) );
 	}
 } )

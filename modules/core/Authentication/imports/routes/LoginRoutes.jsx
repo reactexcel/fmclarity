@@ -2,7 +2,7 @@ import React from "react";
 import { mount } from 'react-mounter';
 
 import Routes from './RouteGroups.jsx';
-import { BlankLayout } from '/both/modules/LayoutManager';
+import { BlankLayout } from '/modules/core/LayoutManager';
 
 Routes.exposed.add( {
 	name: 'login',

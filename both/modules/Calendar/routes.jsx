@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Action } from '/both/modules/Action';
-import { MainLayout, BlankLayout } from '/both/modules/LayoutManager';
+import { Action } from '/modules/core/Action';
+import { MainLayout, BlankLayout } from '/modules/core/LayoutManager';
 
 import CalendarPage from './imports/components/CalendarPage.jsx';
 
