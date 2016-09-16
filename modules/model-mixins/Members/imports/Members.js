@@ -2,6 +2,8 @@ import { Users } from '/modules/models/User';
 
 export default Members = { register }
 
+
+
 function ucfirst( string ) {
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1, -1 );
 }

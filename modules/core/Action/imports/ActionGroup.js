@@ -30,32 +30,21 @@ export default class ActionGroup {
 		this.accessRules[ actionName ][ role ] = rule;
 	}
 
-	run( actionName, item, user ) {
+	run( actionName, item ) {
 
-		if ( user == null ) {
-			user = Meteor.user();
-		}
-
-		if ( item == null ) {
-			item = Session.getSelectedTeam();
-		}
-
-		let rules = this.accessRules[ actionName ],
-			relationships = RolesMixin.getRoles( item );
-
-
-		console.log( relationships );
+		// getting the rules and relationships is an expensive operation so we only want to do it
+		//  once before running an action
+		let { rules, relationships } = this.getRulesAndRelationships( actionName, item ),
+			alerts = this.checkAlerts( actionName, item, rules, relationships ),
+			access = this.checkAccess( actionName, item, rules, relationships );
 
 		if ( rules == null ) {
 			throw new Meteor.Error( `Tried to perform action '${actionName}' but access rules have not been defined` );
 		}
 
-		let alerts = this.checkAlerts( rules, relationships ),
-			allowed = this.checkAccess( rules, relationships, user );
-
-		console.log( alerts );
-		console.log( allowed );
-		if ( allowed ) {
+		if ( access.allowed ) {
+			// perhaps this.actions[ actionName ].action( item );
+			//  then [action].run() can be reserved for calling back to Actions.run( this ) so that access control can be enforced
 			this.actions[ actionName ].run( item );
 		} else {
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
@@ -64,40 +53,85 @@ export default class ActionGroup {
 		//NotificationEngine.send( alerts );
 	}
 
+	getRulesAndRelationships( actionName, item ) {
 
-	checkAccess( rules, relationships, user ) {
-		let allowed = false;
-		if ( relationships ) {
-			userRoles = relationships.actors[ user._id ];
-			console.log( userRoles );
-			// if any one of my relationships permits this action then I can do it
-			userRoles.map( ( role ) => {
-				if ( rules[ role ] ) {
-					allowed = allowed || rules[ role ].allowed;
-				}
-			} )
+		if ( !item ) {
+			item = Session.getSelectedTeam();
 		}
-		return allowed;
+
+		let rules = this.accessRules[ actionName ],
+			relationships = RolesMixin.getRoles( item );
+
+		return { rules, relationships };
 	}
 
-	checkAlerts( rules, relationships ) {
+	getType( actionName ) {
+		return this.actions[ actionName ].type;
+	}
+
+
+	checkAccess( actionName, item, rules, relationships ) {
+
+		if ( !item ) {
+			item = Session.getSelectedTeam();
+		}
+
+		let user = Meteor.user(),
+			access = {
+				allowed: false,
+				alert: false,
+				email: false
+			};
+
+		if ( !rules && !relationships ) {
+			var { rules, relationships } = this.getRulesAndRelationships( actionName, item, user );
+		}
+
+		if ( rules && relationships ) {
+			userRoles = relationships.actors[ user._id ];
+			//console.log( userRoles );
+			if ( userRoles ) {
+				// if any one of my relationships permits this action then I can do it
+				userRoles.map( ( role ) => {
+					if ( rules[ role ] ) {
+						access.allowed = access.allowed || rules[ role ].allowed;
+						access.alert = access.alert || rules[ role ].alert;
+						access.email = access.email || rules[ role ].email;
+					}
+				} )
+			}
+			else {
+				console.log( `Action '${actionName}' has no members` );
+			}
+		}
+		return access;
+	}
+
+	checkAlerts( actionName, item, rules, relationships ) {
+
+		if ( !rules && !relationships ) {
+			var { rules, relationships } = this.getRulesAndRelationships( actionName, item );
+		}
+
 		let roleGroups = null,
 			recipients = {
 				alert: [],
 				email: []
 			};
 
-		roleGroups = Object.keys( relationships.roles );
-		roleGroups.map( ( role ) => {
-			if ( rules[ role ] ) {
-				if ( rules[ role ].alert ) {
-					recipients.alert = recipients.alert.concat( relationships.roles[ role ] );
+		if ( rules && relationships ) {
+			roleGroups = Object.keys( relationships.roles );
+			roleGroups.map( ( role ) => {
+				if ( rules[ role ] ) {
+					if ( rules[ role ].alert ) {
+						recipients.alert = recipients.alert.concat( relationships.roles[ role ] );
+					}
+					if ( rules[ role ].email ) {
+						recipients.email = recipients.email.concat( relationships.roles[ role ] );
+					}
 				}
-				if ( rules[ role ].email ) {
-					recipients.email = recipients.email.concat( relationships.roles[ role ] );
-				}
-			}
-		} )
+			} )
+		}
 		return recipients;
 	}
 }

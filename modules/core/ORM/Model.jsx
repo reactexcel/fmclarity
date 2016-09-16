@@ -45,9 +45,12 @@ export default class Model {
 
 	registerMixins( mixins ) {
 		mixins.map( ( mixin ) => {
+			//console.log( mixin );
 			if ( _.isArray( mixin ) ) {
 				let [ module, options ] = mixin;
-				module.register( this, options );
+				if( module ) {
+					module.register( this, options );
+				}
 			} else {
 				mixin.register( this )
 			}

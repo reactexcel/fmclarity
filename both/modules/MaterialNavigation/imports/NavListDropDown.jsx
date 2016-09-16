@@ -18,6 +18,11 @@ export default class NavListDropDown extends React.Component
 	{
 		var items = this.props.items;
 		var ListTile = this.props.tile;
+
+		if( !ListTile ) {
+			throw new Meteor.Error
+		}
+
 		if ( this.state.open )
 		{
 			return (

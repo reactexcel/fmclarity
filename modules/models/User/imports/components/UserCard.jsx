@@ -4,7 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import Menu from '/both/modules/MaterialNavigation';
 
-UserCard = React.createClass( {
+export default UserCard = React.createClass( {
 
 	getInitialState() {
 		return {

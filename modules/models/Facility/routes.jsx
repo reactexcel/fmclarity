@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Action } from '/modules/core/Action';
+import { Route } from '/modules/core/Action';
 import { Routes } from '/modules/core/Authentication';
 import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
 
@@ -9,8 +9,8 @@ import FacilitiesPageIndexContainer from './imports/containers/FacilitiesPageInd
 import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllContainer.jsx';
 
 Routes.loggedIn.add( {
-	name: 'facilities-all',
-	path: '/facilities-all',
+	name: 'all-facilities',
+	path: '/all-facilities',
 	action() {
 		mount( MainLayout, {
 			content: <FacilitiesPageAllContainer />
@@ -18,7 +18,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const PortfolioRoute = new Action( {
+const PortfolioRoute = new Route( {
 	name: 'portfolio',
 	path: '/portfolio',
 	action() {

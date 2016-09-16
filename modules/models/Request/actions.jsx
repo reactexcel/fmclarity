@@ -22,6 +22,7 @@ const create = new Action( {
 
 const edit = new Action( {
 	name: "edit request",
+	type: 'request',
 	label: "Edit request",
 	action: ( request ) => {
 		Modal.show( {
@@ -36,6 +37,7 @@ const edit = new Action( {
 
 const view = new Action( {
 	name: "view request",
+	type: 'request',
 	label: "View request",
 	action: ( request ) => {
 		Modal.show( {
@@ -46,6 +48,7 @@ const view = new Action( {
 
 const destroy = new Action( {
 	name: "delete request",
+	type: 'request',
 	label: "Delete request",
 	action: ( request ) => {
 		//Facilities.destroy( request );
@@ -55,6 +58,7 @@ const destroy = new Action( {
 
 const checkRoles = new Action( {
 	name: "check request roles",
+	type: 'request',
 	label: "Check roles",
 	action: ( request ) => {
 		console.log( Issues.getRoles( request ) );

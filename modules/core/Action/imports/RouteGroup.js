@@ -1,3 +1,4 @@
+import Route from './Route.js';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 
 export default class RouteGroup {
@@ -6,10 +7,13 @@ export default class RouteGroup {
 		this.group = FlowRouter.group( { triggersEnter: [ onEnter ] } );
 	}
 
-	addOne( { name, path, action } ) {
-		//console.log( { name, path, action } );
-		if( action == null ) {
-			throw new Meteor.Error(`Route creation failed`, `Tried to create route "${name}" with no action`);
+	addOne( route ) {
+		let { name, path, action } = route;
+		if ( action == null ) {
+			throw new Meteor.Error( `Route creation failed`, `Tried to create route "${name}" with no action` );
+		}
+		if ( !( route instanceof Route ) ) {
+			new Route( route );
 		}
 		this.group.route( path, { name, action } );
 	}

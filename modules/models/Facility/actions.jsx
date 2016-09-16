@@ -10,6 +10,7 @@ import FacilityPanel from './imports/components/FacilityPanel.jsx';
 
 const create = new Action( {
 	name: "create facility",
+	type: 'facility',
 	label: "Create facility",
 	action: ( template ) => {
 		let facility = Facilities.create( template );
@@ -21,6 +22,7 @@ const create = new Action( {
 
 const edit = new Action( {
 	name: "edit facility",
+	type: 'facility',
 	label: "Edit facility",
 	action: ( facility ) => {
 		Modal.show( {
@@ -31,6 +33,8 @@ const edit = new Action( {
 
 const view = new Action( {
 	name: "view facility",
+	path: "/facility",
+	type: 'facility',
 	label: "View facility",
 	action: ( facility ) => {
 		Modal.show( {
@@ -41,6 +45,7 @@ const view = new Action( {
 
 const destroy = new Action( {
 	name: "destroy facility",
+	type: 'facility',
 	label: "Delete facility",
 	action: ( facility ) => {
 		//Facilities.destroy( facility );
@@ -50,6 +55,7 @@ const destroy = new Action( {
 
 const checkRoles = new Action( {
 	name: "check facility roles",
+	type: 'facility',
 	label: "Check roles",
 	action: ( facility ) => {
 		console.log( Facilities.getRoles( facility ) );

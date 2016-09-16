@@ -1,7 +1,5 @@
 import TeamSchema from './TeamSchema.jsx';
 
-import { Users } from '/modules/models/Team';
-
 import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/model-mixins/Owners';
 import { Members } from '/modules/model-mixins/Members';
@@ -10,10 +8,21 @@ import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
 import { DocMessages } from '/modules/models/Message';
 import { DocAttachments } from '/modules/models/Document';
 
+
+console.log( {
+	Owners,
+	RolesMixin,
+	ThumbsMixin,
+	DocAttachments,
+	Members
+} );
+
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Teams', () => {
 		return Teams.find();
 	} )
+} else {
+	Meteor.subscribe( 'Teams' );
 }
 
 export default Teams = new Model( {

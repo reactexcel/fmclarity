@@ -29,13 +29,7 @@ const loggedIn = new RouteGroup( {
 
 const admin = new RouteGroup( {
 	name: 'admin',
-	onEnter: ( context, redirect ) => {
-		let user = Meteor.user();
-		if ( Meteor.loggingIn() || ( user && user.role == 'dev' ) ) {
-			return;
-		}
-		FlowRouter.go( '/' );
-	}
+	onEnter: ( context, redirect ) => {}
 } );
 
 if ( Meteor.isClient ) {

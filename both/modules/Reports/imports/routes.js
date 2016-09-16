@@ -2,14 +2,14 @@ import React from "react";
 
 import { mount } from 'react-mounter';
 import { MainLayout, WideLayout, PrintLayout } from '/modules/core/LayoutManager';
-import { Action } from '/modules/core/Action';
+import { Route } from '/modules/core/Action';
 
 
 import DashboardPageContainer from '../imports/containers/DashboardPageContainer.jsx';
 import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
 import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 
-const ReportsIndexRoute = new Action( {
+const ReportsIndexRoute = new Route( {
     name: 'reports',
     path: '/reports',
     action( params ) {
@@ -19,7 +19,7 @@ const ReportsIndexRoute = new Action( {
     }
 } );
 
-const ReportRoute = new Action( {
+const ReportRoute = new Route( {
     name: 'report',
     path: '/report/:reportId',
     action( params ) {
@@ -29,7 +29,7 @@ const ReportRoute = new Action( {
     }
 } );
 
-const ReportPrintRoute = new Action( {
+const ReportPrintRoute = new Route( {
     name: 'report',
     path: '/report/:reportId/:view',
     action( params ) {
@@ -43,7 +43,7 @@ const ReportPrintRoute = new Action( {
     }
 } );
 
-const DashboardRoute = new Action( {
+const DashboardRoute = new Route( {
     name: 'dashboard',
     path: '/dashboard',
     action() {

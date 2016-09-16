@@ -7,12 +7,12 @@ import TeamPageProfileContainer from './imports/containers/TeamPageProfileContai
 import TeamPageSuppliersContainer from './imports/containers/TeamPageSuppliersContainer.jsx';
 import TeamsPageIndexContainer from './imports/containers/TeamsPageIndexContainer.jsx';
 
-import { Action } from '/modules/core/Action';
+import { Route } from '/modules/core/Action';
 import { Routes } from '/modules/core/Authentication';
 
 Routes.loggedIn.add( {
-	name: 'teams',
-	path: '/teams',
+	name: 'all-teams',
+	path: '/all-teams',
 	action() {
 		mount( MainLayout, {
 			content: <TeamsPageIndexContainer />
@@ -20,7 +20,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const SuppliersIndex = new Action( {
+const SuppliersIndex = new Route( {
 	name: 'suppliers',
 	path: '/suppliers',
 	action() {
@@ -30,7 +30,7 @@ const SuppliersIndex = new Action( {
 	}
 } );
 
-const AccountProfile = new Action( {
+const AccountProfile = new Route( {
 	name: 'account',
 	path: '/account',
 	action() {

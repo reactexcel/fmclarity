@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Action } from '/modules/core/Action';
+import { Route } from '/modules/core/Action';
 import { Routes } from '/modules/core/Authentication';
 import { MainLayout, BlankLayout } from '/modules/core/LayoutManager';
 
@@ -10,8 +10,8 @@ import RequestsPageAllContainer from './imports/containers/RequestsPageAllContai
 import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
 
 Routes.loggedIn.add( {
-	name: 'requests-all',
-	path: '/requests-all',
+	name: 'all-requests',
+	path: '/all-requests',
 	action() {
 		mount( MainLayout, {
 			content: <RequestsPageAllContainer />
@@ -19,7 +19,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const RequestsIndexRoute = new Action( {
+const RequestsIndexRoute = new Route( {
 	name: 'requests',
 	path: '/requests',
 	action() {
@@ -29,7 +29,7 @@ const RequestsIndexRoute = new Action( {
 	}
 } );
 
-const RequestRoute = new Action( {
+const RequestRoute = new Route( {
 	name: 'request',
 	path: '/requests/:_id',
 	action( params ) {

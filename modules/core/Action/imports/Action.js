@@ -5,9 +5,10 @@ import Actions from './Actions.js';
 
 export default class Action {
 
-	constructor( { name, path, label, icon, description, action, run } ) {
+	constructor( { name, type, path, label, icon, description, action, run } ) {
 		this.name = name;
 		this.path = path;
+		this.type = type || 'team';
 		this.label = label;
 		this.icon = icon;
 		this.description = description;
@@ -16,12 +17,18 @@ export default class Action {
 		if ( run != null ) {
 			this.run = run;
 		}
-
-		Actions.add(this);
+		this.register();
 	}
 
-	run( item ) {
-		this.action( item );
+	register() {
+		Actions.add( this );
+	}
+
+	run( ...args ) {
+		this.action( ...args );
+		if( this.path ) {
+			history.pushState({}, '', this.path);
+		}
 	}
 
 	/*action( item ) {

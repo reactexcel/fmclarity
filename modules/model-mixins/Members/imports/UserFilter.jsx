@@ -1,18 +1,18 @@
 import React from "react";
 
 import { NavListDropDown } from '/both/modules/MaterialNavigation';
-import FacilityListTile from './FacilityListTile.jsx';
+import { LoginService } from '/modules/core/Authentication';
+import ContactCard from './ContactCard.jsx';
 
-export default function FacilityFilter( props ) {
-    //<div style={{position:"absolute",zIndex:1300}}>
+export default function UserFilter( props ) {
     return (
         <div style = { { overflow: "hidden" }}>
         <NavListDropDown
             { ...props }
-            tile = { FacilityListTile }
+            tile = { ContactCard }
             startOpen = { false }
-            onChange = { ( facility ) => { 
-                Session.set( "selectedFacility", facility );
+            onChange = { ( user ) => { 
+                LoginService.loginUser( user );
             } }
             multiple = { true }
         />

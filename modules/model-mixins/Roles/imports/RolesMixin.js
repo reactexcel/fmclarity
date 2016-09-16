@@ -18,46 +18,47 @@ function getRoles( item ) {
 	//console.log( item );
 	// okay so this autojoin works reasonably well but we should perhaps only do it with teams, members, suppliers, owners and assignees
 	//  that is to say not with facilities
+	let { owner, team, supplier, facility, facilities, members, assignee } = item;
 
-	if ( item.owner != null ) {
-		addRole( results, item.owner, 'owner' );
+	if ( owner != null ) {
+		addRole( results, owner, 'owner' );
 	}
 
-	if ( item.assignee != null ) {
-		addRole( results, item.assignee, 'assignee' );
+	if ( assignee != null ) {
+		addRole( results, assignee, 'assignee' );
 	}
 
-	if ( item.team && item.team._id ) {
-		item.team = Teams.findOne( item.team._id );
-		if ( item.team.members && item.team.members.length ) {
-			item.team.members.map( ( member ) => {
-				addRole( results, member, `team ${member.role}` );
+	if ( team && team._id ) {
+		team = Teams.findOne( team._id );
+		if ( team.members && team.members.length ) {
+			team.members.map( ( member ) => {
+				addRole( results, member, `${team.type} team ${member.role}` );
 			} )
 		}
 	}
 
-	if ( item.supplier && item.supplier._id ) {
-		item.supplier = Teams.findOne( item.supplier._id );
-		if ( item.supplier.members && item.supplier.members.length ) {
-			item.supplier.members.map( ( member ) => {
+	if ( supplier && supplier._id ) {
+		supplier = Teams.findOne( supplier._id );
+		if ( supplier.members && supplier.members.length ) {
+			supplier.members.map( ( member ) => {
 				addRole( results, member, `supplier ${member.role}` );
 			} )
 		}
 	}
 
-	if ( item.facility && item.facility._id ) {
-		item.facility = Facilities.findOne( item.facility._id );
-		if ( item.facility.members && item.facility.members.length ) {
-			item.facility.members.map( ( member ) => {
+	if ( facility && facility._id ) {
+		facility = Facilities.findOne( facility._id );
+		if ( facility.members && facility.members.length ) {
+			facility.members.map( ( member ) => {
 				addRole( results, member, `facility ${member.role} (${facility.name})` );
 			} )
 		}
 	}
 
-	if ( item.facilities && item.facilities.length ) {
-		let ids = _.pluck( item.facilities, '_id' );
-		item.facilities = Facilities.findAll( { _id: { $in: ids } } );
-		item.facilities.map( ( facility ) => {
+	if ( facilities && facilities.length ) {
+		let ids = _.pluck( facilities, '_id' );
+		facilities = Facilities.findAll( { _id: { $in: ids } } );
+		facilities.map( ( facility ) => {
 			if ( facility.members && facility.members.length ) {
 				facility.members.map( ( member ) => {
 					addRole( results, member, `facility ${member.role} (${facility.name})` );
@@ -66,8 +67,8 @@ function getRoles( item ) {
 		} )
 	}
 
-	if ( item.members && item.members.length ) {
-		item.members.map( ( member ) => {
+	if ( members && members.length ) {
+		members.map( ( member ) => {
 			addRole( results, member, member.role );
 			// if the member is a team perform secondary search
 		} )

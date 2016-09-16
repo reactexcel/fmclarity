@@ -18,8 +18,8 @@ Routes.loggedIn.add( {
 } );
 
 Routes.loggedIn.add( { 
-	name: 'users',
-	path: '/users',
+	name: 'all-users',
+	path: '/all-users',
 	action() {
 		mount( MainLayout, {
 			content: <UsersPageIndexContainer />

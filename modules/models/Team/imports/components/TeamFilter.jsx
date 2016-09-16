@@ -1,18 +1,17 @@
 import React from "react";
 
 import { NavListDropDown } from '/both/modules/MaterialNavigation';
-import FacilityListTile from './FacilityListTile.jsx';
+import { ContactCard } from '/modules/model-mixins/Members';
 
-export default function FacilityFilter( props ) {
-    //<div style={{position:"absolute",zIndex:1300}}>
+export default function TeamFilter( props ) {
     return (
         <div style = { { overflow: "hidden" }}>
         <NavListDropDown
             { ...props }
-            tile = { FacilityListTile }
+            tile = { ContactCard }
             startOpen = { false }
-            onChange = { ( facility ) => { 
-                Session.set( "selectedFacility", facility );
+            onChange = { ( team ) => { 
+                Session.selectTeam( team );
             } }
             multiple = { true }
         />
