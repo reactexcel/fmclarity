@@ -53,15 +53,6 @@ const destroy = new Action( {
 	}
 } )
 
-const checkRoles = new Action( {
-	name: "check facility roles",
-	type: 'facility',
-	label: "Check roles",
-	action: ( facility ) => {
-		console.log( Facilities.getRoles( facility ) );
-	}
-} )
-
 export {
 	create,
 	edit,

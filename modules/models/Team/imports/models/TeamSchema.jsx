@@ -85,7 +85,7 @@ export default TeamSchema = {
     //////////////////////////////////////////////
     // Settings
     //////////////////////////////////////////////      
-    
+
     defaultWorkOrderValue: {
         label: "Default value for work orders",
         description: "Preset initial value for all newly created work orders",
@@ -130,7 +130,7 @@ export default TeamSchema = {
             //source: "Facilities",
             //key: "team._id"
             join: ( team ) => {
-                return Facilities.findAll( { 'team._id': team._id } )
+                return Facilities.findAll( { 'team._id': team._id }, { sort: { name: 1 } } )
             },
             unjoin: ( team ) => {
                 return null

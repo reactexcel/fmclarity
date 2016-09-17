@@ -1,10 +1,10 @@
 import React from "react";
-import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
+import { ThumbView } from '/modules/model-mixins/Thumbs';
+import UserViewRelationEdit from './UserViewRelationEdit.jsx';
 
-
-UserViewEdit = React.createClass( {
+export default UserViewEdit = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
@@ -155,12 +155,6 @@ UserViewEdit = React.createClass( {
                     </div>
                 </form>
 			)
-		} else if ( !viewer.canSave() ) {
-			return (
-				<div>
-					<ContactSummary item={user} />
-				</div>
-			)
 		}
 		return (
 			<div className="user-profile-card">
@@ -180,7 +174,7 @@ UserViewEdit = React.createClass( {
 			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
 			        </div>
 			   		<div className="col-sm-5">
-				        <DocThumb.File item={user.thumb} onChange={this.setThumb} />
+				        <ThumbView item={user.thumb} onChange={this.setThumb} />
 				    </div>
 		        </div>
 			</div>

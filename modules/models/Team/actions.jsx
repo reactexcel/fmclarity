@@ -7,6 +7,7 @@ import { Teams } from '/modules/models/Team';
 
 import TeamStepper from './imports/components/TeamStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
+import { UserPanel, UserViewEdit } from '/modules/ui/contact-views';
 
 const create = new Action( {
 	name: 'create team',
@@ -50,17 +51,6 @@ const destroy = new Action( {
 	}
 } )
 
-const checkRoles = new Action( {
-	name: 'check team roles',
-	label: "Check roles",
-	action: ( team ) => {
-		if( !team ) {
-			throw new Meteor.Error('Action - check team roles: team required');
-		}
-		console.log( Teams.getRoles( team ) );
-	}
-} )
-
 const removeSupplier = new Action( {
 	name: "remove supplier",
 	label: "Remove supplier",
@@ -71,11 +61,100 @@ const removeSupplier = new Action( {
 	}
 } )
 
+const createMember = new Action( {
+	name: 'create member',
+	label: "Create member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		let user = Users.create( member );
+		Modal.show( {
+			content: <UserViewEdit item = { user } />
+		} )
+	}
+} )
+
+const editMember = new Action( {
+	name: 'edit member',
+	label: "Edit member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		Modal.show( {
+			content: <UserViewEdit item = { member } />
+		} )
+	}
+} )
+
+const viewMember = new Action( {
+	name: 'view member',
+	label: "View member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		Modal.show( {
+			content: <UserPanel item = { member } />
+		} )
+	}
+} )
+
+const destroyMember = new Action( {
+	name: 'delete member',
+	label: "Delete member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		//Facilities.destroy( member );
+		member.destroy();
+	}
+} )
+
+const removeMember = new Action( {
+	name: 'remove member',
+	label: "Delete member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		team.removeMember( member );
+	}
+} )
+
+const inviteMember = new Action( {
+	name: 'send invite to member',
+	label: "Send invite to member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		team.sendMemberInvite( member )
+	}
+} )
+
+const resetMemberTours = new Action ({
+	name: 'reset tours',
+	label: "Reset tours",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		member.resetTours();
+	}
+})
+
+
+const loginMember = new Action ({
+	name: 'login member',
+	label: "Login member",
+	type: ['team','user'],
+	action: ( team, member ) => {
+		member.login();
+	}
+})
+
+
 export {
 	create,
 	edit,
 	view,
 	destroy,
-	checkRoles,
-	removeSupplier
+	removeSupplier,
+	createMember,
+	editMember,
+	viewMember,
+	destroyMember,
+	removeMember,
+	inviteMember,
+	resetMemberTours,
+	loginMember
 }

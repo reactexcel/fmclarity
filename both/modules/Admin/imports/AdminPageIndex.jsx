@@ -7,12 +7,10 @@ import { Actions, Routes } from '/modules/core/Action';
 import { Users } from '/modules/models/User';
 import { Teams, TeamFilter } from '/modules/models/Team';
 import { Facilities, FacilityFilter } from '/modules/models/Facility';
-import {UserFilter} from '/modules/model-mixins/Members';
+import { UserFilter } from '/modules/model-mixins/Members';
+import { UserPanel } from '/modules/ui/contact-views';
 
 import { Issues } from '/modules/models/Request';
-
-console.log( Routes );
-console.log( Actions );
 
 export default AdminPageIndex = React.createClass( {
 
@@ -26,14 +24,15 @@ export default AdminPageIndex = React.createClass( {
 		Meteor.subscribe( 'Files' );
 		Meteor.subscribe( 'Messages' );
 		Meteor.subscribe( 'Requests' );
+		Meteor.subscribe( 'Notifications' );
 
 		let user = Meteor.user(),
-			users = Users.findAll(),
+			users = Users.findAll( {}, { sort: { 'profile.lastName': 1 } } ),
 			team = Session.getSelectedTeam(),
-			teams = Teams.findAll(),
+			teams = Teams.findAll( {}, { sort: { name: 1 } } ),
 			facility = Session.getSelectedFacility(),
-			facilities = Facilities.findAll(),
-			request = Issues.findOne({name:{$exists:true}});
+			facilities = Facilities.findAll( {}, { sort: { name: 1 } } ),
+			request = Issues.findOne( { name: { $exists: true } } );
 
 
 		return {
@@ -45,6 +44,17 @@ export default AdminPageIndex = React.createClass( {
 			facilities,
 			request,
 		}
+	},
+
+	getArgs( types ) {
+		let args = [];
+		if ( !_.isArray( types ) ) {
+			types = [ types ];
+		}
+		types.map( ( type, idx ) => {
+			args[ idx ] = this.data[ type ];
+		} )
+		return args;
 	},
 
 	render() {
@@ -73,6 +83,9 @@ export default AdminPageIndex = React.createClass( {
 				</div>
 
 				<div className = "col-md-6">
+					<div className="ibox">
+						<UserPanel item = { user } />
+					</div>
 				</div>
 
 			</div>
@@ -129,15 +142,19 @@ export default AdminPageIndex = React.createClass( {
 								</tr>
 								{ actionKeys.map( ( key ) => {
 									let type = Actions.getType( key ),
-										arg = this.data[type],
-										access = Actions.checkAccess( key, arg );
+										args = this.getArgs(type),
+										access = Actions.checkAccess( key, args[0],/* refact should be ...args*/ );
 
 									return (
 										<tr className = "data-grid-row" key = { key }>
 											<td className = "data-grid-select-col"></td>
 											<td className = "data-grid-cell" onClick={ () => {
-												Actions.run( key, arg );
-											} }>{key} ({ type }:{ arg?arg.name:'null' })</td>
+												Actions.run( key, ...args );
+											} }>{key} ({
+												args.map( (arg, idx) => {
+													return <span key = { idx }>{ arg?arg.name||arg.profile.name:'null' }, </span>
+												})
+											})</td>
 											<td className = "data-grid-cell">{ access.allowed?'✔':'' }</td>
 											<td className = "data-grid-cell">{ access.alert?'✔':'' }</td>
 											<td className = "data-grid-cell">{ access.email?'✔':'' }</td>

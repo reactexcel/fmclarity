@@ -1,15 +1,22 @@
 import React from "react";
-import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Menu } from '/both/modules/MaterialNavigation';
 
-UserViewDetail = React.createClass( {
+export default UserPanel = React.createClass( {
+
 	render() {
+
 		var contact, profile, availableServices;
 		contact = this.props.item;
+
 		if ( !contact ) {
 			return <div/>
 		}
+
+		let roles = RolesMixin.getUserRoles( contact );
+		console.log( roles );
+
 		if ( contact.getProfile ) {
 			profile = contact.getProfile();
 		}
@@ -31,16 +38,18 @@ UserViewDetail = React.createClass( {
 						{profile.phone2?<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>:null}
 						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
 						</div>
-						{availableServices?
-						availableServices.map(function(service,index){
-							return <span key={service.name}>{index?' | ':''}{service.name}</span>
+						{roles?
+						roles.map( ( role, idx ) => {
+							return <span key = { idx }><b style={ {textTransform:'uppercase'} }>{role.name}</b><span> at {role.context}</span><br/></span>
 						})
 						:null}
 
 					</div>
 			    </div>
+			    {/*
+            	<Menu items={menu} />
+            	*/}
 			</div>
 		)
 	}
-
 } );

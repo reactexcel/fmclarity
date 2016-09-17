@@ -2,8 +2,10 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-NotificationViewSummary = React.createClass({
+import { ContactAvatarSmall } from '/modules/model-mixins/Members';
 
+export default NotificationViewSummary = React.createClass({
+/*
     mixins: [ReactMeteorData],
 
     getMeteorData() {
@@ -38,4 +40,28 @@ NotificationViewSummary = React.createClass({
             </div>
 		)
 	}
+    */
+
+    render() {
+        // action arguments are going to have to be sent as an object
+        //  they can then be checked using action.type
+        let notification = this.props.item,
+            { actor, action, object } = notification,
+            target = object?object[0]:{};
+
+        console.log(this.props.item);
+
+        return (
+            <div>
+                <ContactAvatarSmall item = { actor }/>
+                <small>{moment(notification.createdAt).fromNow()}</small>
+                <div>
+                    <strong>{actor.profile.name}</strong>&nbsp;
+                    <span>{action.name}</span>&nbsp;
+                    <strong><a href="">{target.name||target.profile.name}</a></strong>
+                    <br/>
+                </div>
+            </div>            
+        )
+    }
 })

@@ -18,14 +18,30 @@ DocHead.addMeta( {
 	content: 'width=device-width, initial-scale=1.0'
 } );
 
-Actions.addAccessRule( 'view team', 'fm portfolio manager', { allowed: true, alert: true, email: false } );
-Actions.addAccessRule( 'edit team', 'fm portfolio manager', { allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view team', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit team', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view team', 'manager', 						{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit team', 'manager', 						{ allowed: true, alert: true, email: false } );
 
-Actions.addAccessRule( 'view facility', 'fm team portfolio manager', { allowed: true, alert: true, email: false } );
-Actions.addAccessRule( 'edit facility', 'fm team portfolio manager', { allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view member', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit member', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view member', 'manager', 					{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit member', 'manager', 					{ allowed: true, alert: true, email: false } );
 
-Actions.addAccessRule( 'view request', 'fm team portfolio manager', { allowed: true, alert: true, email: false } );
-Actions.addAccessRule( 'edit request', 'fm team portfolio manager', { allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view facility', 'team portfolio manager', 	{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit facility', 'team portfolio manager', 	{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view facility', 'team manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit facility', 'team manager', 			{ allowed: true, alert: true, email: false } );
 
-Routes.addAccessRule( 'abc', 'fm portfolio manager', { allowed: true, alert: true, email: false } );
-Routes.addAccessRule( 'all-teams', 'fm portfolio manager', { allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view request', 'team portfolio manager', 	{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit request', 'team portfolio manager', 	{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view request', 'team manager', 				{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit request', 'team manager', 				{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view request', 'supplier manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit request', 'supplier manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'view request', 'facility manager', 			{ allowed: true, alert: true, email: false } );
+Actions.addAccessRule( 'edit request', 'facility manager', 			{ allowed: true, alert: true, email: false } );
+
+Routes.addAccessRule( 'abc', 'portfolio manager', 					{ allowed: true, alert: true, email: false } );
+Routes.addAccessRule( 'all-teams', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );
+Routes.addAccessRule( 'all-users', 'portfolio manager', 			{ allowed: true, alert: true, email: false } );

@@ -1,6 +1,8 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Notifications } from '/modules/models/Notification';
+
 import UserProfileMenu from './UserProfileMenu.jsx';
 
 export default TopNavigationBar = React.createClass(
@@ -19,7 +21,8 @@ export default TopNavigationBar = React.createClass(
         if ( user )
         {
             Meteor.subscribe( "messages", "users", user._id );
-            notifications = user.getNotifications();
+            //notifications = user.getNotifications();
+            notifications = Notifications.find().fetch();
             var count = notifications.length;
             if ( count > this.oldCount )
             {

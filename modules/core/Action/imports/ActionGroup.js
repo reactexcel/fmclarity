@@ -1,4 +1,5 @@
 import { RolesMixin } from '/modules/model-mixins/Roles';
+import { Notifications } from '/modules/models/Notification';
 
 export default class ActionGroup {
 	constructor() {
@@ -30,8 +31,8 @@ export default class ActionGroup {
 		this.accessRules[ actionName ][ role ] = rule;
 	}
 
-	run( actionName, item ) {
-
+	run( actionName, ...args ) {
+		let item = args[ 0 ];
 		// getting the rules and relationships is an expensive operation so we only want to do it
 		//  once before running an action
 		let { rules, relationships } = this.getRulesAndRelationships( actionName, item ),
@@ -39,18 +40,22 @@ export default class ActionGroup {
 			access = this.checkAccess( actionName, item, rules, relationships );
 
 		if ( rules == null ) {
-			throw new Meteor.Error( `Tried to perform action '${actionName}' but access rules have not been defined` );
+			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
 		}
 
 		if ( access.allowed ) {
 			// perhaps this.actions[ actionName ].action( item );
 			//  then [action].run() can be reserved for calling back to Actions.run( this ) so that access control can be enforced
-			this.actions[ actionName ].run( item );
+			this.actions[ actionName ].run( ...args );
+			Notifications.save.call( {
+				actor: Meteor.user(),
+				action: this.actions[ actionName ],
+				object: args
+			} );
 		} else {
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
 		}
 
-		//NotificationEngine.send( alerts );
 	}
 
 	getRulesAndRelationships( actionName, item ) {
@@ -87,10 +92,10 @@ export default class ActionGroup {
 			var { rules, relationships } = this.getRulesAndRelationships( actionName, item, user );
 		}
 
-		if ( rules && relationships ) {
+		if ( relationships ) {
 			userRoles = relationships.actors[ user._id ];
 			//console.log( userRoles );
-			if ( userRoles ) {
+			if ( rules && userRoles ) {
 				// if any one of my relationships permits this action then I can do it
 				userRoles.map( ( role ) => {
 					if ( rules[ role ] ) {
@@ -99,9 +104,8 @@ export default class ActionGroup {
 						access.email = access.email || rules[ role ].email;
 					}
 				} )
-			}
-			else {
-				console.log( `Action '${actionName}' has no members` );
+			} else {
+				//console.log( `Action '${actionName}' has no members` );
 			}
 		}
 		return access;

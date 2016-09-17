@@ -65,8 +65,7 @@ export default TeamPanel = React.createClass( {
 
 		return [ 
 			TeamActions.edit.bind( this.props.item ), 
-			TeamActions.removeSupplier.bind( facility, this.props.item ),
-			TeamActions.checkRoles.bind( this.props.item ) 
+			TeamActions.removeSupplier.bind( facility, this.props.item )
 		];
 	},
 

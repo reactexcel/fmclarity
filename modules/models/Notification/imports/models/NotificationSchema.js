@@ -3,14 +3,14 @@
 export default NotificationSchema = {
 	actor: {
 		type: "object",
-		input: UserSelector
+		input: Text
 	},
-	verb: {
-		type: "string",
+	action: {
+		type: "object",
 		input: Text
 	},
 	object: {
-		type: "object",
+		type: "array",
 		subschema: NotificationObjectSchema
 	},
 	tags: {

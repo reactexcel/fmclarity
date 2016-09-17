@@ -38,7 +38,7 @@ export default class AutoForm extends React.Component {
 
 		return keys.map( ( key ) => {
 
-			console.log( { schema, key } );
+			//console.log( { schema, key } );
 
 			if( !schema[ key ] ) {
 				throw new Meteor.Error(`No schema definition for field: ${key}`)

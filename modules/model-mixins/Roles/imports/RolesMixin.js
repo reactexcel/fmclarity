@@ -6,7 +6,37 @@ export default RolesMixin = {
 		} )
 
 	},
-	getRoles
+	getRoles,
+	getUserRoles
+}
+
+function getUserRoles( user ) {
+	let roles = [];
+	let teams = user.getTeams();
+	teams.map( ( team ) => {
+		if ( team && team._id ) {
+			team = Teams.findOne( team._id );
+			if ( team.members && team.members.length ) {
+				team.members.map( ( member ) => {
+					if ( member._id == user._id ) {
+						roles.push( { name: `${member.role}`, context: team.name } );
+					}
+				} )
+			}
+			if ( team.facilities ) {
+				team.facilities.map( ( facility ) => {
+					if ( facility.members && facility.members.length ) {
+						facility.members.map( ( member ) => {
+							if ( member._id == user._id ) {
+								roles.push( { name: `facility ${member.role}`, context: facility.name } );
+							}
+						} )
+					}
+				} )
+			}
+		}
+	} );
+	return roles;
 }
 
 function getRoles( item ) {
@@ -32,7 +62,7 @@ function getRoles( item ) {
 		team = Teams.findOne( team._id );
 		if ( team.members && team.members.length ) {
 			team.members.map( ( member ) => {
-				addRole( results, member, `${team.type} team ${member.role}` );
+				addRole( results, member, `team ${member.role}` );
 			} )
 		}
 	}

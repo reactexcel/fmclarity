@@ -56,19 +56,9 @@ const destroy = new Action( {
 	}
 } )
 
-const checkRoles = new Action( {
-	name: "check request roles",
-	type: 'request',
-	label: "Check roles",
-	action: ( request ) => {
-		console.log( Issues.getRoles( request ) );
-	}
-} )
-
 export {
 	//create,
 	edit,
 	view,
 	destroy,
-	checkRoles
 }

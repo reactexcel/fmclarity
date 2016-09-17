@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 // so this should perhaps be included in the docmembers package??
-UserViewRelationEdit = React.createClass( {
+export default UserViewRelationEdit = React.createClass( {
 
 	handleRoleChange( role ) {
 		var member, group;

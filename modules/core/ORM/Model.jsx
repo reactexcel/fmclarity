@@ -40,7 +40,9 @@ export default class Model {
 			}
 		} )
 
-		this.registerMixins( mixins );
+		if( mixins ) {
+			this.registerMixins( mixins );
+		}
 	}
 
 	registerMixins( mixins ) {
@@ -155,7 +157,7 @@ export default class Model {
 
 		let fieldNames = Object.keys( this.schema );
 		fieldNames.map( ( fieldName ) => {
-			let rules = schema[ fieldName ];
+			let rules = this.schema[ fieldName ];
 			if ( rules.relation == null ) {
 				//console.log( 'Tried to call join on a document with no "relation" property in the schema' );
 			} else if ( rules.relation ) {
