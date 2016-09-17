@@ -4,11 +4,11 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Inbox } from '/modules/models/Message';
 import { AutoForm } from '/modules/core/AutoForm';
 import { FacilityDetails } from '/modules/models/Facility';
-import { WorkflowButtons } from '/both/modules/WorkflowHelper';
+import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
-import { Tabs } from '/both/modules/Tabs';
-import { Menu } from '/both/modules/MaterialNavigation';
-// wouldn't it be nice to go import { Tabs, Menu } from '/both/modules/MaterialNavigation'
+import { Tabs } from '/modules/ui/Tabs';
+import { Menu } from '/modules/ui/MaterialNavigation';
+// wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Issues, RequestActions } from '/modules/models/Request';
 
@@ -131,8 +131,7 @@ const RequestPanelInner = ( { request } ) => {
             ]} />
 
             <Menu items = { [
-                RequestActions.edit.bind( request ),
-                RequestActions.checkRoles.bind( request )
+                RequestActions.edit.bind( request )
             ] } />
 
 

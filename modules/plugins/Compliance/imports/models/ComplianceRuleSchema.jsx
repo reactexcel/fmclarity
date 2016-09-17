@@ -1,4 +1,4 @@
-import { MDPPMEventSelector } from '/both/modules/Compliance';
+import { MDPPMEventSelector } from '/modules/plugins/Compliance';
 import { DocTypes } from '/modules/models/Document';
 
 ComplianceRuleSchema = {

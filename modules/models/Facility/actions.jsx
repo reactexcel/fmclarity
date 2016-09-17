@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Action } from '/modules/core/Action';
-import { Modal } from '/both/modules/Modal';
+import { Modal } from '/modules/ui/Modal';
 
 import { Facilities } from '/modules/models/Facility';
 

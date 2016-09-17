@@ -1,4 +1,4 @@
-import { Text, Select } from '/both/modules/MaterialInputs';
+import { Text, Select } from '/modules/ui/MaterialInputs';
 
 export default RequestFrequencySchema = {
 	repeats: {

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { NavListDropDown } from '/both/modules/MaterialNavigation';
+import { NavListDropDown } from '/modules/ui/MaterialNavigation';
 import { LoginService } from '/modules/core/Authentication';
 import ContactCard from './ContactCard.jsx';
 

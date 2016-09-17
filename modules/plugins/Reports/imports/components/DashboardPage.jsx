@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Calendar } from '/both/modules/Calendar';
+import { Calendar } from '/modules/ui/Calendar';
 import { InboxWidget } from '/modules/models/Message';
 import { FacilityFilter } from '/modules/models/Facility';
 

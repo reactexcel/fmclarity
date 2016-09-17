@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Switch } from '/both/modules/MaterialInputs';
+import { Switch } from '/modules/ui/MaterialInputs';
 
 export default ServicesProvidedEditor = React.createClass( {
 

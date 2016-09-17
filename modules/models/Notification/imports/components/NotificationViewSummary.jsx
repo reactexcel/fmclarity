@@ -49,6 +49,7 @@ export default NotificationViewSummary = React.createClass({
             { actor, action, object } = notification,
             target = object?object[0]:{};
 
+
         console.log(this.props.item);
 
         return (
@@ -58,7 +59,7 @@ export default NotificationViewSummary = React.createClass({
                 <div>
                     <strong>{actor.profile.name}</strong>&nbsp;
                     <span>{action.name}</span>&nbsp;
-                    <strong><a href="">{target.name||target.profile.name}</a></strong>
+                    <strong><a href="">{target?(target.name||target.profile.name):''}</a></strong>
                     <br/>
                 </div>
             </div>            

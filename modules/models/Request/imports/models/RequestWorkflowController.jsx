@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { WorkflowHelper } from '/both/modules/WorkflowHelper';
+import { WorkflowHelper } from '/modules/core/WorkflowHelper';
 
 import Issues from './Requests.jsx';
 

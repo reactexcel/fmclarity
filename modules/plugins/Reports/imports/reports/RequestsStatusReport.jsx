@@ -1,9 +1,9 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Menu } 				from '/both/modules/MaterialNavigation';
-import { DataTable } 			from '/both/modules/DataTable';
-import { DateTime, Select } 	from '/both/modules/MaterialInputs';
+import { Menu } 				from '/modules/ui/MaterialNavigation';
+import { DataTable } 			from '/modules/ui/DataTable';
+import { DateTime, Select } 	from '/modules/ui/MaterialInputs';
 
 export default StatusReport = React.createClass( {
 

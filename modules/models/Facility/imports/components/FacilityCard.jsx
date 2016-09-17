@@ -1,5 +1,5 @@
 import React from 'react';
-import { Thumbnail } from '/both/modules/MaterialViews';
+import { Thumbnail } from '/modules/ui/MaterialViews';
 
 export default function FacilityCard( props ) {
 	var facility = props.item;

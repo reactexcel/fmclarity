@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { Action } from '/modules/core/Action';
-import { Modal } from '/both/modules/Modal';
+import { Modal } from '/modules/ui/Modal';
 
 import { Teams } from '/modules/models/Team';
 
 import TeamStepper from './imports/components/TeamStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
-import { UserPanel, UserViewEdit } from '/modules/ui/contact-views';
+import { UserPanel, UserViewEdit } from '/modules/models/UserViews';
 
 const create = new Action( {
 	name: 'create team',

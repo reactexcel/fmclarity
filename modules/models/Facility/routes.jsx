@@ -53,12 +53,12 @@ let portfolio = new Route({
 
 loggedIn.add( portfolio );
 
-import { DashboardRoute } from '/both/modules/Reports';
+import { DashboardRoute } from '/modules/plugins/Reports';
 import { PortfolioRoute } from '/modules/models/Facility';
 import { SuppliersRoute } from '/modules/models/Team';
 import { RequestsRoute } from '/modules/models/Request';
-import { CalendarRoute } from '/both/modules/Calendar';
-import { ComplianceRoute } from '/both/modules/Compliance';
+import { CalendarRoute } from '/modules/ui/Calendar';
+import { ComplianceRoute } from '/modules/plugins/Compliance';
 
 let navMenu = new RouteGroup({
 	name:'navMenu'

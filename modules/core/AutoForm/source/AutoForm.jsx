@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from '/both/modules/MaterialInputs';
+import { Text } from '/modules/ui/MaterialInputs';
 import Controller from './Controller.jsx';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';

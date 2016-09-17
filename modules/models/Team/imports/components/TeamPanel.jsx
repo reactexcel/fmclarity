@@ -1,12 +1,12 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Menu } from '/both/modules/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
 import TeamActions from '../../actions.jsx';
 
 import { ContactList } from '/modules/model-mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
-import { Tabs } from '/both/modules/Tabs';
+import { Tabs } from '/modules/ui/Tabs';
 
 
 function addTeamMenuItem( menu, item, team ) {

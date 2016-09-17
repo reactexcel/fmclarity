@@ -1,6 +1,6 @@
 import './AddressSchema.jsx';
 import { DocExplorer } from '/modules/models/Document';
-import { Text, TextArea, Select } from '/both/modules/MaterialInputs';
+import { Text, TextArea, Select } from '/modules/ui/MaterialInputs';
 
 export default FacilitySchema = {
 	//$schema:              "http://json-schema.org/draft-04/schema#",

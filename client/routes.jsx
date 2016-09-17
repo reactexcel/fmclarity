@@ -8,9 +8,9 @@ import { PortfolioRoute } from '/modules/models/Facility';
 import { TeamRoutes } from '/modules/models/Team';
 import { RequestsIndexRoute } from '/modules/models/Request';
 
-import { CalendarRoute } from '/both/modules/Calendar';
-import { ComplianceIndexRoute } from '/both/modules/Compliance';
-import { DashboardRoute } from '/both/modules/Reports';
+import { CalendarRoute } from '/modules/ui/Calendar';
+import { ComplianceIndexRoute } from '/modules/plugins/Compliance';
+import { DashboardRoute } from '/modules/plugins/Reports';
 
 
 console.log( TeamRoutes );

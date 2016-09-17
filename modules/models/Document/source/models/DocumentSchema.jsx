@@ -1,7 +1,7 @@
 import FileExplorer from '/modules/models/File';
 import DocTypes from './DocTypes.jsx';
 
-import { Text, TextArea, Select, DateInput } from '/both/modules/MaterialInputs';
+import { Text, TextArea, Select, DateInput } from '/modules/ui/MaterialInputs';
 
 export default DocumentSchema = {
     name: {

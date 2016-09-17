@@ -1,7 +1,7 @@
 import React from "react";
 
 import { OwnerCard } from '/modules/model-mixins/Owners';
-import { Stepper } from '/both/modules/Stepper';
+import { Stepper } from '/modules/ui/Stepper';
 
 import { ThumbView } from '/modules/model-mixins/Thumbs';
 

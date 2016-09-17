@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Modal } from '/both/modules/Modal';
+import { Modal } from '/modules/ui/Modal';
 import DocViewEdit from './source/components/DocViewEdit.jsx';
 
 function edit( doc ) {

@@ -3,7 +3,7 @@ import React from 'react';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import { NavigationDrawer, TopNavigationBar, FloatingActionButton } from '/both/modules/MaterialNavigation';
+import { NavigationDrawer, TopNavigationBar, FloatingActionButton } from '/modules/ui/MaterialNavigation';
 
 export default function WideLayout( { content } )
 {

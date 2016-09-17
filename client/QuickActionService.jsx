@@ -3,7 +3,7 @@ import React from 'react';
 import { AutoForm } from '/modules/core/AutoForm';
 import { FacilityStepper } from '/modules/models/Facility';
 import { RequestPanel, CreateRequestForm } from '/modules/models/Request';
-import { Modal } from '/both/modules/Modal';
+import { Modal } from '/modules/ui/Modal';
 
 export default QuickActions = new function QuickActionService() {
 

@@ -6,7 +6,7 @@ import { ContactList } from '/modules/model-mixins/Members';
 import { ServicesProvidedEditor } from '/modules/model-mixins/Services';
 
 import { AutoForm } from '/modules/core/AutoForm';
-import { Stepper } from '/both/modules/Stepper';
+import { Stepper } from '/modules/ui/Stepper';
 
 /*
 TODO: remove tour, add additional instructions into stepper

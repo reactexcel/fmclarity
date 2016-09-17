@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Menu } from '/both/modules/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
 import { RequestSearch } from '/modules/models/Request';
 
 if ( Meteor.isClient ) {

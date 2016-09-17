@@ -4,7 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import DataSet from './DataSet.jsx';
 import { download, print } from './DataSetActions.jsx';
-import { Menu } from '/both/modules/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
 
 export default DataTable = React.createClass( {
 

@@ -1,6 +1,6 @@
 export default Owners = { register }
 
-import { Select } from '/both/modules/MaterialInputs';
+import { Select } from '/modules/ui/MaterialInputs';
 
 function register( collection, options ) {
 

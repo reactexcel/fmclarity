@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu } from '/both/modules/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
 
 export default function TeamView( props ) {
 	if ( !props.item ) {

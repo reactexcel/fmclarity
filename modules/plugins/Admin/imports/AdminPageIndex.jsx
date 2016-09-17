@@ -8,7 +8,7 @@ import { Users } from '/modules/models/User';
 import { Teams, TeamFilter } from '/modules/models/Team';
 import { Facilities, FacilityFilter } from '/modules/models/Facility';
 import { UserFilter } from '/modules/model-mixins/Members';
-import { UserPanel } from '/modules/ui/contact-views';
+import { UserPanel } from '/modules/models/UserViews';
 
 import { Issues } from '/modules/models/Request';
 

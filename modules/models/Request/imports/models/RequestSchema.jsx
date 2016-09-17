@@ -4,8 +4,8 @@ import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facility';
 import { ContactCard } from '/modules/model-mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/both/modules/MaterialInputs';
-import { FileExplorer, DocExplorer } from '/both/modules/MaterialInputs';
+import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
+import { FileExplorer, DocExplorer } from '/modules/ui/MaterialInputs';
 
 export default RequestSchema = {
 

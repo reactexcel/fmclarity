@@ -1,6 +1,6 @@
 import React from "react";
 
-import { UserPanel } from '/modules/ui/contact-views';
+import { UserPanel } from '/modules/models/UserViews';
 
 export default function UserPageProfile( props ) {
 	return (

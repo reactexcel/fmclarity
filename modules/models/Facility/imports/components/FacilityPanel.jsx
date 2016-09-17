@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Menu } from '/both/modules/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
 import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Inbox } from '/modules/models/Message';
@@ -9,13 +9,13 @@ import FacilityStepper from './FacilityStepper.jsx';
 
 import { FacilityActions } from '/modules/models/Facility';
 
-import { PMPList } from '/both/modules/Compliance';
+import { PMPList } from '/modules/plugins/Compliance';
 import { RequestsTable } from '/modules/models/Request';
 
 import { AreasEditor } from '/modules/model-mixins/Areas';
 import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
 
-import { Tabs } from '/both/modules/Tabs';
+import { Tabs } from '/modules/ui/Tabs';
 
 export default function FacilityPanel( { facility } ) {
 
@@ -89,8 +89,7 @@ export default function FacilityPanel( { facility } ) {
 			<Menu items = { [
 				FacilityActions.view.bind( facility ),
 				FacilityActions.edit.bind( facility ),
-				FacilityActions.destroy.bind( facility ),
-				FacilityActions.checkRoles.bind( facility )
+				FacilityActions.destroy.bind( facility )
 			] } />
 
 		</div>

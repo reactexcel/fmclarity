@@ -1,4 +1,4 @@
-import * as Input from '/both/modules/MaterialInputs';
+import * as Input from '/modules/ui/MaterialInputs';
 
 export default RequestLocationSchema = {
 	area: {
