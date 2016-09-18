@@ -11,6 +11,8 @@ import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllCo
 Routes.loggedIn.add( {
 	name: 'all-facilities',
 	path: '/all-facilities',
+	label: "All facilities",
+	icon: "fa fa-building-o",
 	action() {
 		mount( MainLayout, {
 			content: <FacilitiesPageAllContainer />
@@ -18,9 +20,11 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const PortfolioRoute = new Route( {
+Routes.loggedIn.add( {
 	name: 'portfolio',
 	path: '/portfolio',
+	label: "Porffolio",
+	icon: 'fa fa-building',
 	action() {
 		mount( MainLayout, {
 			content: <FacilityPageIndexContainer />

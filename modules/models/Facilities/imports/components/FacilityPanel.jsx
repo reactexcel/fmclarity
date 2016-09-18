@@ -17,7 +17,9 @@ import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
 
 import { Tabs } from '/modules/ui/Tabs';
 
-export default function FacilityPanel( { facility } ) {
+export default function FacilityPanel( { item } ) {
+
+	let facility = item;
 
 	return (
 		<div>

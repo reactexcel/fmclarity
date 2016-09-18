@@ -8,25 +8,13 @@ import { Facilities } from '/modules/models/Facilities';
 import FacilityStepper from './imports/components/FacilityStepper.jsx';
 import FacilityPanel from './imports/components/FacilityPanel.jsx';
 
-const create = new Action( {
-	name: "create facility",
-	type: 'facility',
-	label: "Create facility",
-	action: ( template ) => {
-		let facility = Facilities.create( template );
-		Modal.show( {
-			content: <FacilityStepper facility = { facility } />
-		} )
-	}
-} )
-
 const edit = new Action( {
 	name: "edit facility",
 	type: 'facility',
 	label: "Edit facility",
 	action: ( facility ) => {
 		Modal.show( {
-			content: <FacilityStepper facility = { facility } />
+			content: <FacilityStepper item = { facility } />
 		} )
 	}
 } )
@@ -38,7 +26,7 @@ const view = new Action( {
 	label: "View facility",
 	action: ( facility ) => {
 		Modal.show( {
-			content: <FacilityPanel facility = { facility } />
+			content: <FacilityPanel item = { facility } />
 		} )
 	}
 } )
@@ -54,9 +42,7 @@ const destroy = new Action( {
 } )
 
 export {
-	create,
 	edit,
 	view,
-	destroy,
-	checkRoles
+	destroy
 }

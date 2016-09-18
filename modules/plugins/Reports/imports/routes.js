@@ -3,6 +3,7 @@ import React from "react";
 import { mount } from 'react-mounter';
 import { MainLayout, WideLayout, PrintLayout } from '/modules/core/LayoutManager';
 import { Route } from '/modules/core/Action';
+import { Routes } from '/modules/core/Authentication';
 
 
 import DashboardPageContainer from '../imports/containers/DashboardPageContainer.jsx';
@@ -12,6 +13,8 @@ import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 const ReportsIndexRoute = new Route( {
     name: 'reports',
     path: '/reports',
+    label: "Reports",
+    icon: 'fa fa-line-chart',
     action( params ) {
         mount( MainLayout, {
             content: <ReportsPageIndex/>
@@ -43,9 +46,11 @@ const ReportPrintRoute = new Route( {
     }
 } );
 
-const DashboardRoute = new Route( {
+Routes.loggedIn.add( {
     name: 'dashboard',
     path: '/dashboard',
+    label: "Dashboard",
+    icon: 'fa fa-newspaper-o',
     action() {
         mount( MainLayout, {
             content: <DashboardPageContainer />

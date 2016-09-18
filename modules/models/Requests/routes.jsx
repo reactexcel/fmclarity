@@ -19,9 +19,11 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const RequestsIndexRoute = new Route( {
+Routes.loggedIn.add( {
 	name: 'requests',
 	path: '/requests',
+	label: "Requests",
+	icon: 'fa fa-wrench',
 	action() {
 		mount( MainLayout, {
 			content: <RequestsPageIndexContainer />

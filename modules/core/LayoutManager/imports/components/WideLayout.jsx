@@ -3,7 +3,9 @@ import React from 'react';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import { NavigationDrawer, TopNavigationBar, FloatingActionButton } from '/modules/ui/MaterialNavigation';
+import NavigationDrawerContainer from '../containers/NavigationDrawerContainer.jsx';
+import TopNavigationBarContainer from '../containers/TopNavigationBarContainer.jsx';
+import FloatingActionButtonContainer from '../containers/FloatingActionButtonContainer.jsx';
 
 export default function WideLayout( { content } )
 {
@@ -12,8 +14,8 @@ export default function WideLayout( { content } )
         
         <div>
         	<div className = "body-background"/>
-        	<NavigationDrawer />
-        	<TopNavigationBar />
+        	<NavigationDrawerContainer />
+        	<TopNavigationBarContainer />
 
         	<main className = "page-wrapper">
             	<div className = "page-wrapper-inner">
@@ -21,7 +23,7 @@ export default function WideLayout( { content } )
            		</div>
         	</main>
 
-        	<FloatingActionButton/>
+        	<FloatingActionButtonContainer />
         	<Modal/>
     	</div>
 

@@ -18,6 +18,7 @@ console.log( TeamRoutes );
 // TODO: Differentiate for different team types
 //  link this to navdrawer
 //  create similar setup for actions and and FAB
+/*
 Routes.loggedIn.add( [
 	DashboardRoute,
 	PortfolioRoute,
@@ -27,7 +28,7 @@ Routes.loggedIn.add( [
 	CalendarRoute,
 	ComplianceIndexRoute
 ] );
-
+*/
 // Differentiate home page depending on team type
 Routes.loggedIn.add( {
 	name: 'root',

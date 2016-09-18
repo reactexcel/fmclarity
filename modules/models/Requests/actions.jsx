@@ -8,21 +8,6 @@ import { Issues, CreateRequestForm } from '/modules/models/Requests';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
-const create = new Action( {
-	name: "create request",
-	label: "Create request",
-	action: ( request ) => {
-		let newRequest = Issues.create( request );
-		Modal.show( {
-			content: <AutoForm
-				model = { Issues }
-				item = { newRequest }
-				form = { CreateRequestForm }
-			/>
-		} )
-	}
-} )
-
 const view = new Action( {
 	name: "view request",
 	type: 'request',
@@ -240,7 +225,6 @@ const reverse = new Action( {
 } )
 
 export {
-	create,
 	view,
 	edit,
 	destroy,

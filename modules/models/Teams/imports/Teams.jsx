@@ -8,15 +8,6 @@ import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
 import { DocMessages } from '/modules/models/Message';
 import { DocAttachments } from '/modules/models/Document';
 
-
-console.log( {
-	Owners,
-	RolesMixin,
-	ThumbsMixin,
-	DocAttachments,
-	Members
-} );
-
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Teams', () => {
 		return Teams.find();
@@ -278,13 +269,16 @@ Teams.helpers( {
 			this.counters.WO = 0;
 		}
 		this.counters.WO = this.counters.WO + 1;
-		Teams.update( {
+		Team.save.call();
+		/*
+		Teams.collection.update( {
 			_id: this._id
 		}, {
 			$inc: {
 				"counters.WO": 1
 			}
 		} );
+		*/
 		//this.save();
 		return this.counters.WO;
 	},

@@ -12,7 +12,9 @@ import { AreasEditor } from '/modules/model-mixins/Areas';
 import { ContactList } from '/modules/model-mixins/Members';
 import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
 
-export default function FacilityStepper( { facility } ) {
+export default function FacilityStepper( { item } ) {
+
+    let facility = item;
 
 	function setThumb( thumb ) {
 		if ( facility ) {

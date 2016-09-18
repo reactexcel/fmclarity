@@ -13,6 +13,8 @@ import { Routes } from '/modules/core/Authentication';
 Routes.loggedIn.add( {
 	name: 'all-teams',
 	path: '/all-teams',
+	label: "All teams",
+	icon: "fa fa-group",
 	action() {
 		mount( MainLayout, {
 			content: <TeamsPageIndexContainer />
@@ -20,9 +22,11 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const SuppliersIndex = new Route( {
+Routes.loggedIn.add( {
 	name: 'suppliers',
 	path: '/suppliers',
+	label: "Suppliers",
+	icon: 'fa fa-group',
 	action() {
 		mount( MainLayout, {
 			content: <TeamPageSuppliersContainer />
@@ -30,7 +34,7 @@ const SuppliersIndex = new Route( {
 	}
 } );
 
-const AccountProfile = new Route( {
+Routes.loggedIn.add( {
 	name: 'account',
 	path: '/account',
 	action() {

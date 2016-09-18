@@ -1,21 +1,15 @@
 import React from 'react';
 
-import { createFacilityAction } from '/modules/models/Facilities';
+export default class FloatingActionButton extends React.Component {
 
-export default class FloatingActionButton extends React.Component
-{
-
-	componentDidMount()
-	{
+	componentDidMount() {
 		$( '.fab-panel button[rel=tooltip]' )
-			.tooltip(
-			{
+			.tooltip( {
 				container: 'body'
 			} );
 	}
 
-	render()
-	{
+	render() {
 		return (
 			<div className="fab-panel">
 				<button 
@@ -23,7 +17,7 @@ export default class FloatingActionButton extends React.Component
 					data-toggle="tooltip" 
 					data-placement="left" 
 					title="Create new work request"
-					onClick={()=>{QuickActions.createRequest()}} 
+					onClick={() => { }} 
 					className="fab fab-1">
 						+
 				</button>
@@ -33,7 +27,7 @@ export default class FloatingActionButton extends React.Component
 					data-toggle = "tooltip" 
 					data-placement = "left" 
 					title = "Create new facility"
-					onClick = { () => { createFacilityAction.run() } } 
+					onClick = { () => { } } 
 					className = "fab fab-2">
 						<i className="fa fa-building"></i>
 				</button>				
@@ -43,7 +37,7 @@ export default class FloatingActionButton extends React.Component
 					data-toggle="tooltip" 
 					data-placement="left" 
 					title="Create new compliance rule"
-					onClick={QuickActions.createComplianceRule} 
+					onClick={ () => { } } 
 					className="fab fab-3">
 						<i className="fa fa-check"></i>
 				</button>
@@ -53,11 +47,7 @@ export default class FloatingActionButton extends React.Component
 					data-toggle="tooltip" 
 					data-placement="left" 
 					title="Create new preventative maintenence event"
-					onClick={()=>{QuickActions.createRequest({
-						type:"Preventative",
-						priority:"Scheduled",
-						status:"PMP"
-					})}} 
+					onClick={ () => { } }
 					className="fab fab-4">
 						<i className="fa fa-recycle"></i>
 				</button>				
@@ -67,7 +57,7 @@ export default class FloatingActionButton extends React.Component
 					data-toggle="tooltip" 
 					data-placement="left" 
 					title="Create new document"
-					onClick={()=>{QuickActions.createRequest()}} 
+					onClick={ () => {} } 
 					className="fab fab-5">
 						<i className="fa fa-file"></i>
 				</button>				

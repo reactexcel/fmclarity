@@ -1,13 +1,14 @@
 import React from 'react';
 
 import { Action } from '/modules/core/Action';
+import { AutoForm } from '/modules/core/AutoForm';
+
 import { Modal } from '/modules/ui/Modal';
 
-import { Teams } from '/modules/models/Teams';
-
-import TeamStepper from './imports/components/TeamStepper.jsx';
-import TeamPanel from './imports/components/TeamPanel.jsx';
+import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { UserPanel, UserViewEdit } from '/modules/models/UserViews';
+import { Issues, CreateRequestForm } from '/modules/models/Requests';
+
 
 const create = new Action( {
 	name: 'create team',
@@ -48,6 +49,47 @@ const destroy = new Action( {
 	action: ( team ) => {
 		//Facilities.destroy( team );
 		team.destroy();
+	}
+} )
+
+const createFacility = new Action( {
+	name: "create team facility",
+	type: ['team'],
+	label: "Create team facility",
+	action: ( team ) => {
+		let item = { team };
+			newItem = Facilities.create( item );
+		newItem.setupCompliance( Config.compliance );
+
+		Modal.show( {
+			content: <FacilityStepper item = { item } />
+		} )
+	}
+} )
+
+const createRequest = new Action( {
+	name: "create team request",
+	type: ['team'],
+	label: "Create team request",
+	action: ( team ) => {
+		let item = { team };
+			newItem = Issues.create( item );
+		Modal.show( {
+			content: <AutoForm
+				model = { Issues }
+				form = { CreateRequestForm }
+				item = { newItem }
+				onSubmit = {
+					( request, form ) => {
+						Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
+							Modal.replace( {
+								content: <RequestPanel item = { response }/>
+							} );
+						} );
+					}
+				}
+			/>
+		} )
 	}
 } )
 
@@ -148,13 +190,19 @@ export {
 	edit,
 	view,
 	destroy,
-	removeSupplier,
+
+	createFacility,
+	createRequest,
+
 	createMember,
-	editMember,
 	viewMember,
+	inviteMember,
+	editMember,
 	destroyMember,
 	removeMember,
-	inviteMember,
+
 	resetMemberTours,
-	loginMember
+	loginMember,
+
+
 }

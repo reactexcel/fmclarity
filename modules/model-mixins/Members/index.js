@@ -5,8 +5,6 @@ import ContactAvatarSmall from './imports/ContactAvatarSmall.jsx';
 import Members from './imports/Members.js';
 import UserFilter from './imports/UserFilter.jsx';
 
-console.log(Members);
-
 export {
 	ContactCard,
 	ContactList,

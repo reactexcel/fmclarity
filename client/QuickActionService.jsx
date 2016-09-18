@@ -7,87 +7,6 @@ import { Modal } from '/modules/ui/Modal';
 
 export default QuickActions = new function QuickActionService() {
 
-	function viewRequest( request ) {
-		Modal.show( {
-			content: <RequestPanel item = { request } />
-		} )
-	}
-
-	function editTeam( team ) {
-		Modal.show( {
-			content: <TeamStepper item = { team } />
-		} )
-	}
-
-	function createRequest( template = {} ) {
-		//look below at new compliance rule created with AutoForm, that is the way to do this...
-		let selectedFacility = Session.getSelectedFacility(),
-			selectedTeam = Session.getSelectedTeam(),
-			request = Object.assign( {
-				type: 'Ad Hoc',
-				team: selectedTeam,
-				facility: selectedFacility,
-				priority: 'Standard',
-				dueDate: new Date(),
-				costThreshold: selectedTeam.defaultWorkOrderValue
-			}, template );
-
-
-		Modal.show( {
-			/*content: 	<AutoForm 
-							form = { Issues.forms.newRequest } 
-							afterSubmit = ( error, response ) => {
-								if( error==null ) {
-									Modal.replace( {
-										content: <RequestPanel item = { response } />
-									})
-								}
-							}
-						/>
-			*/
-			content: <AutoForm
-				model = { Issues }
-				// not a good choice of propname because it classhes with schema[ fieldName ].options
-				form = { CreateRequestForm }
-				onSubmit = {
-					( request, form ) => {
-						Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
-							Modal.replace( {
-								content: <RequestPanel item = { response }/>
-							} );
-						} );
-					}
-				}
-			/>
-		} )
-
-		//request = Issues._transform(request);
-		//request.doAction("create");	    
-		/*
-		Meteor.call('Issues.create',request,function(err,response){
-			if(err) {
-				console.log(err);
-			}
-			if(response) {
-				var newRequest = Issues.findOne(response._id);
-				newRequest.doAction("create");
-			}
-		});
-		*/
-	}
-
-	/*
-	function createFacility() {
-		var selectedTeam = Session.getSelectedTeam();
-		selectedTeam.addFacility( ( response ) => {
-			var newItem = Facilities.findOne( response._id );
-			newItem.setupCompliance( Config.compliance );
-			Modal.show( {
-				content: <FacilityStepper item={newItem} />
-			} );
-		} )
-	}
-	*/
 	function createNewComplianceRule( newRule ) {
 		var facility = newRule.facility;
 		if ( facility ) {
@@ -142,9 +61,6 @@ export default QuickActions = new function QuickActionService() {
 	}
 
 	return {
-		viewRequest,
-		editTeam,
-		createRequest,
 		createComplianceRule
 	}
 }

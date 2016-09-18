@@ -1,7 +1,7 @@
-import BlankLayout from "./source/BlankLayout.jsx";
-import MainLayout from "./source/MainLayout.jsx";
-import PrintLayout from "./source/PrintLayout.jsx";
-import WideLayout from "./source/WideLayout.jsx";
+import BlankLayout from "./imports/components/BlankLayout.jsx";
+import MainLayout from "./imports/components/MainLayout.jsx";
+import PrintLayout from "./imports/components/PrintLayout.jsx";
+import WideLayout from "./imports/components/WideLayout.jsx";
 
 export {
 	BlankLayout,

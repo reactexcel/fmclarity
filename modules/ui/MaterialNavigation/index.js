@@ -1,12 +1,13 @@
-import FloatingActionButton from './imports/FloatingActionButton.jsx';
-import NavigationDrawer from './imports/NavigationDrawer.jsx';
-import TopNavigationBar from './imports/TopNavigationBar.jsx';
+import FloatingActionButton from './imports/components/FloatingActionButton.jsx';
+import NavigationDrawer from './imports/components/NavigationDrawer.jsx';
+import TopNavigationBar from './imports/components/TopNavigationBar.jsx';
 
-import NavList from './imports/NavList.jsx';
-import NavListDropDown from './imports/NavListDropDown.jsx';
-import NavListTileMultiple from './imports/NavListTileMultiple.jsx';
+import NavList from './imports/components/NavList.jsx';
+import NavListDropDown from './imports/components/NavListDropDown.jsx';
+import NavListTileMultiple from './imports/components/NavListTileMultiple.jsx';
 
-import Menu from './imports/Menu.jsx';
+import Menu from './imports/components/Menu.jsx';
+
 
 export {
 	FloatingActionButton,

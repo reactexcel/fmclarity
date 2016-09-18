@@ -2,7 +2,7 @@ import { DocHead } from 'meteor/kadira:dochead';
 
 import { Actions, Routes } from '/modules/core/Action';
 
-console.log( Actions );
+console.log( { Actions, Routes } );
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
@@ -19,8 +19,14 @@ DocHead.addMeta( {
 } );
 
 Actions.addAccessRule( {
-	action: [ 'edit team', 'view team' ],
+	action: [ 'edit team', 'view team', 'create team request', 'create team member', 'create team facility' ],
 	role: [ 'portfolio manager', 'manager' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	action: [ 'issue request', 'get request quote', 'cancel request', 'delete request' ],
+	role: [ 'owner' ],
 	rule: { alert: true }
 } )
 
@@ -43,8 +49,8 @@ Actions.addAccessRule( {
 } )
 
 Routes.addAccessRule( {
-	action: [ 'abc', 'all-teams', 'all-users' ],
-	role: [ 'portfolio manager' ],
+	action: [ 'dashboard', 'portfolio', 'suppliers', 'request', 'calendar', 'abc' ],
+	role: [ 'portfolio manager', 'manager' ],
 	rule: { alert: true }
 } )
 
