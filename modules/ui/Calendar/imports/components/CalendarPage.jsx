@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FacilityFilter } from '/modules/models/Facility';
+import { FacilityFilter } from '/modules/models/Facilities';
 import Calendar from './Calendar.jsx';
 
 export default CalendarPage = React.createClass( {

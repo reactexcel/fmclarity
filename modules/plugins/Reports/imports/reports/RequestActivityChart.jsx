@@ -2,7 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { RequestSearch } from '/modules/models/Request';
+import { RequestSearch } from '/modules/models/Requests';
 
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';

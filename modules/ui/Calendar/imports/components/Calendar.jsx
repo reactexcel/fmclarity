@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Issues } from '/modules/models/Request';
+import { Issues } from '/modules/models/Requests';
 
 //todo - create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
 

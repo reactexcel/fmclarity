@@ -4,9 +4,9 @@ import { mount } from 'react-mounter';
 import { Routes } from '/modules/core/Authentication';
 import { MainLayout } from '/modules/core/LayoutManager';
 
-import { PortfolioRoute } from '/modules/models/Facility';
-import { TeamRoutes } from '/modules/models/Team';
-import { RequestsIndexRoute } from '/modules/models/Request';
+import { PortfolioRoute } from '/modules/models/Facilities';
+import { TeamRoutes } from '/modules/models/Teams';
+import { RequestsIndexRoute } from '/modules/models/Requests';
 
 import { CalendarRoute } from '/modules/ui/Calendar';
 import { ComplianceIndexRoute } from '/modules/plugins/Compliance';

@@ -15,7 +15,7 @@ export default UserPanel = React.createClass( {
 		}
 
 		let roles = RolesMixin.getUserRoles( contact );
-		console.log( roles );
+		//console.log( roles );
 
 		if ( contact.getProfile ) {
 			profile = contact.getProfile();

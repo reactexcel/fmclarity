@@ -24,11 +24,28 @@ export default class ActionGroup {
 		} )
 	}
 
-	addAccessRule( actionName, role, rule ) {
-		if ( this.accessRules[ actionName ] == null ) {
-			this.accessRules[ actionName ] = {};
+	addOneAccessRule( action, roles, condition, rule ) {
+		if ( this.accessRules[ action ] == null ) {
+			this.accessRules[ action ] = {};
 		}
-		this.accessRules[ actionName ][ role ] = rule;
+		if ( !_.isArray( roles ) ) {
+			roles = [ roles ];
+		}
+		roles.map( ( role ) => {
+			this.accessRules[ action ][ role ] = { rule, condition };
+		} )
+	}
+
+	addAccessRule( { action, role, condition, rule = {} } ) {
+		if ( !_.isArray( action ) ) {
+			action = [ action ];
+		}
+		if( !rule.allowed ) {
+			rule.allowed = true;
+		}
+		action.map( ( a ) => {
+			this.addOneAccessRule( a, role, condition, rule );
+		} )
 	}
 
 	run( actionName, ...args ) {
@@ -98,10 +115,10 @@ export default class ActionGroup {
 			if ( rules && userRoles ) {
 				// if any one of my relationships permits this action then I can do it
 				userRoles.map( ( role ) => {
-					if ( rules[ role ] ) {
-						access.allowed = access.allowed || rules[ role ].allowed;
-						access.alert = access.alert || rules[ role ].alert;
-						access.email = access.email || rules[ role ].email;
+					if ( rules[ role ] /* && rules[role].condition( item )*/ ) {
+						access.allowed = access.allowed || rules[ role ].rule.allowed;
+						access.alert = access.alert || rules[ role ].rule.alert;
+						access.email = access.email || rules[ role ].rule.email;
 					}
 				} )
 			} else {
@@ -126,11 +143,11 @@ export default class ActionGroup {
 		if ( rules && relationships ) {
 			roleGroups = Object.keys( relationships.roles );
 			roleGroups.map( ( role ) => {
-				if ( rules[ role ] ) {
-					if ( rules[ role ].alert ) {
+				if ( rules[ role ] /* && rules[role].condition( item )*/ ) {
+					if ( rules[ role ].rule.alert ) {
 						recipients.alert = recipients.alert.concat( relationships.roles[ role ] );
 					}
-					if ( rules[ role ].email ) {
+					if ( rules[ role ].rule.email ) {
 						recipients.email = recipients.email.concat( relationships.roles[ role ] );
 					}
 				}

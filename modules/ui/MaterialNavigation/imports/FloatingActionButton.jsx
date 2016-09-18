@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { createFacilityAction } from '/modules/models/Facility';
+import { createFacilityAction } from '/modules/models/Facilities';
 
 export default class FloatingActionButton extends React.Component
 {

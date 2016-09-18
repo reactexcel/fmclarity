@@ -3,7 +3,7 @@ import { mount } from 'react-mounter';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import ComplianceViewDetail from './ComplianceViewDetail.jsx';
-import { FacilityFilter } from '/modules/models/Facility';
+import { FacilityFilter } from '/modules/models/Facilities';
 
 export default CompliancePageIndex = React.createClass( {
 

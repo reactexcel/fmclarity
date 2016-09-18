@@ -1,9 +1,9 @@
 import { Documents } from './Document';
-import { Facilities } from './Facility';
+import { Facilities } from './Facilities';
 import { Files } from './File';
 import { Messages } from './Message';
-import { Requests } from './Request';
-import { Teams } from './Team';
+import { Requests } from './Requests';
+import { Teams } from './Teams';
 import { Users } from './User';
 
 export {

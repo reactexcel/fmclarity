@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Calendar } from '/modules/ui/Calendar';
 import { InboxWidget } from '/modules/models/Message';
-import { FacilityFilter } from '/modules/models/Facility';
+import { FacilityFilter } from '/modules/models/Facilities';
 
 import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
 import RequestActivityChart from '../reports/RequestActivityChart.jsx';

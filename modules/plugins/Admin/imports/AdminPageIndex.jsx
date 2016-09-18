@@ -5,12 +5,12 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Actions, Routes } from '/modules/core/Action';
 
 import { Users } from '/modules/models/User';
-import { Teams, TeamFilter } from '/modules/models/Team';
-import { Facilities, FacilityFilter } from '/modules/models/Facility';
+import { Teams, TeamFilter } from '/modules/models/Teams';
+import { Facilities, FacilityFilter } from '/modules/models/Facilities';
 import { UserFilter } from '/modules/model-mixins/Members';
 import { UserPanel } from '/modules/models/UserViews';
 
-import { Issues } from '/modules/models/Request';
+import { Issues } from '/modules/models/Requests';
 
 export default AdminPageIndex = React.createClass( {
 

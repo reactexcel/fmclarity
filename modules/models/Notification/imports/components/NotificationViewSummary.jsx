@@ -50,7 +50,7 @@ export default NotificationViewSummary = React.createClass({
             target = object?object[0]:{};
 
 
-        console.log(this.props.item);
+        //console.log(this.props.item);
 
         return (
             <div>
