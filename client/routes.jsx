@@ -13,7 +13,7 @@ import { ComplianceIndexRoute } from '/modules/plugins/Compliance';
 import { DashboardRoute } from '/modules/plugins/Reports';
 
 
-console.log( TeamRoutes );
+//console.log( TeamRoutes );
 
 // TODO: Differentiate for different team types
 //  link this to navdrawer

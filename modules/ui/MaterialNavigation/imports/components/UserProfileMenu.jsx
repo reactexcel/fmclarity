@@ -1,6 +1,7 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/model-mixins/Members';
+import { Routes } from '/modules/core/Action';
 
 export default function UserProfileMenu( props ) {
 
@@ -83,7 +84,7 @@ export default function UserProfileMenu( props ) {
                 { team /*&& Teams.save.allowed( selectedTeam )*/?
 
                 <li>
-                    <a href={FlowRouter.path('account')}>
+                    <a onClick = { () => { Actions.run("edit team", team) } }>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
                         <span className="nav-label">Team Settings</span>
                     </a>
@@ -92,7 +93,7 @@ export default function UserProfileMenu( props ) {
 
                 {Meteor.isDevelopment?
                 <li>
-                    <a href={FlowRouter.path('admin')}>
+                    <a onClick = { () => { Routes.run("admin") } }>
                         <i className="fa fa-cog"></i>&nbsp;&nbsp;
                         <span className="nav-label">Admin Tools</span>
                     </a>
@@ -109,7 +110,7 @@ export default function UserProfileMenu( props ) {
                 :null}
 
                 <li>
-                    <a href={FlowRouter.path('logout')}>
+                    <a onClick = { () => { Routes.run("logout") } }>
                         <i className="fa fa-sign-out"></i> Log out
                     </a>
                 </li>

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { DataTable } from '/modules/ui/DataTable';
+import { RequestActions } from '/modules/models';
 
 export default function RequestsTable( props ) {
 
@@ -19,7 +20,7 @@ export default function RequestsTable( props ) {
         <DataTable 
             items   = { props.requests } 
             fields  = { this.fields }
-            onClick = { ( request ) => { QuickActions.viewRequest( request ) } }
+            onClick = { ( request ) => { RequestActions.view.run( request ) } } // need a better solution for this
         />
     )
 }

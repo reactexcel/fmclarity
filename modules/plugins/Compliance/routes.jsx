@@ -18,7 +18,3 @@ Routes.loggedIn.add( {
 		} );
 	}
 } );
-
-export {
-	ComplianceIndexRoute
-}

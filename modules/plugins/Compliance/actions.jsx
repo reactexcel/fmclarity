@@ -1,11 +1,6 @@
 import React from 'react';
-
-import { AutoForm } from '/modules/core/AutoForm';
-import { FacilityStepper } from '/modules/models/Facilities';
-import { RequestPanel, CreateRequestForm } from '/modules/models/Requests';
 import { Modal } from '/modules/ui/Modal';
-
-export default QuickActions = new function QuickActionService() {
+import { AutoForm } from '/modules/core/AutoForm';
 
 	function createNewComplianceRule( newRule ) {
 		var facility = newRule.facility;
@@ -59,8 +54,3 @@ export default QuickActions = new function QuickActionService() {
 			/>
 		} )
 	}
-
-	return {
-		createComplianceRule
-	}
-}

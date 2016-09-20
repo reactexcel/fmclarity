@@ -40,7 +40,7 @@ export default class Model {
 			}
 		} )
 
-		if( mixins ) {
+		if ( mixins ) {
 			this.registerMixins( mixins );
 		}
 	}
@@ -50,7 +50,7 @@ export default class Model {
 			//console.log( mixin );
 			if ( _.isArray( mixin ) ) {
 				let [ module, options ] = mixin;
-				if( module ) {
+				if ( module ) {
 					module.register( this, options );
 				}
 			} else {
@@ -124,7 +124,7 @@ export default class Model {
 		Object.assign( doc, newValues );
 		doc = this.unjoin( doc );
 
-		return this.collection.upsert( selector, { $set: doc } );
+		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
 	}
 
 	join( doc ) {

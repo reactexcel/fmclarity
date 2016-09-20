@@ -32,10 +32,6 @@ Routes.loggedIn.add( {
 	}
 } );
 
-export {
-	PortfolioRoute
-}
-
 /*
 
 let loggedIn = new RouteGroup({

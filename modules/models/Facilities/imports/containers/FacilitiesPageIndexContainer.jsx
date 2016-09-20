@@ -3,8 +3,7 @@ import FacilityPageIndex from '../components/FacilityPageIndex.jsx';
 
 import { Files } from '/modules/models';
 
-export default FacilitiesPageIndexContainer = createContainer( ( params ) =>
-{
+export default FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Users' );
@@ -17,13 +16,14 @@ export default FacilitiesPageIndexContainer = createContainer( ( params ) =>
 		facility = Session.getSelectedFacility(),
 		facilities = [];
 
-	if (team ) {
-		facilities = team.facilities;
+	if ( team ) {
+		facilities = Facilities.findAll( { 'team._id': team._id } );
 	}
 
 	return {
-		team: Session.getSelectedTeam(),
-		facility: Session.getSelectedFacility(),
-		facilities: facilities
+		team,
+		facility,
+		facilities
 	}
-}, FacilityPageIndex);
+
+}, FacilityPageIndex );

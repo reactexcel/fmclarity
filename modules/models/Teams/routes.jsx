@@ -43,8 +43,3 @@ Routes.loggedIn.add( {
 		} );
 	}
 } );
-
-export {
-	SuppliersIndex,
-	AccountProfile
-}

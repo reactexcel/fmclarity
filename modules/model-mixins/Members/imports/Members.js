@@ -50,14 +50,18 @@ function register( collection, opts ) {
 			}
 		},
 		unjoin: ( item ) => {
-			let members = [];
-			item[ fieldName ].map( ( member ) => {
-				members.push( {
-					_id: member._id,
-					name: member.profile ? member.profile.name : member.name,
-					role: member.role,
+			let members = [],
+				values = item[ fieldName ];
+
+			if ( values ) {
+				values.map( ( member ) => {
+					members.push( {
+						_id: member._id,
+						name: member.profile ? member.profile.name : member.name,
+						role: member.role,
+					} )
 				} )
-			} )
+			}
 			return members;
 		}
 	}

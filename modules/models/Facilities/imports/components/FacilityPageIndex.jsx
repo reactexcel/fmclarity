@@ -38,7 +38,7 @@ export default class FacilityPageIndex extends React.Component {
 
             { facility ?
             <div className="panel-wrapper animated slideInRight">
-				<FacilityPanel team = { team } facility = { facility } { ...other } />
+				<FacilityPanel team = { team } item = { facility } { ...other } />
             </div>
             : null }
 

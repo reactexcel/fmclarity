@@ -1,9 +1,13 @@
 import React from "react";
+import { Actions } from '/modules/core/Action';
 
-export default function WorkflowButtons( { item, width = "100px" } ) {
-    let actions = null;//item.getActions();
+export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
-    if ( actions == null || actions.length == 0 ) {
+    actions = Actions.filter( actions, item );
+
+    let actionNames = Object.keys( actions );
+
+    if ( actions == null || actionNames.length == 0 ) {
         return (
             <div/>
         )
@@ -11,24 +15,27 @@ export default function WorkflowButtons( { item, width = "100px" } ) {
 
     return (
         <div>
-            { actions.map( (action) => {
+            { actionNames.map( ( actionName, idx ) => {
 
-                let permitted = ( !action.authenticate || action.authenticate() ),
+                let action = actions[ actionName ],
+                    permitted = ( !action.authenticate || action.authenticate() ),
                     classes = ['btn','btn-flat'];
 
                 if( !permitted ) {
                     classes.push('disabled');
                 }
 
+                //console.log(actions);
+
                 return (
 
                 <button 
-                    key = { action.name }
+                    key = { idx }
                     onClick = { () => { action.run( item ) } }
                     style = { { width:width } } 
                     type = "button" 
                     className = {classes.join(' ')}>
-                    { action }
+                    { action.label }
                 </button>
 
                 )

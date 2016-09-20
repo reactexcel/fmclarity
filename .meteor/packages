@@ -49,29 +49,30 @@ kadira:dochead
 
 ############################
 # Meteor Core
-accounts-password
-static-html
-check
-ecmascript
-ejson
-email
-less
-logging
-meteor-base
-mobile-experience
-mongo
-reload
-random
-session
-spacebars
-tracker
-base64
-standard-minifier-css
-standard-minifier-js
+accounts-password@1.3.0
+static-html@1.1.12
+check@1.2.3
+ecmascript@0.5.8
+ejson@1.0.12
+email@1.1.17
+less@2.7.5
+logging@1.1.15
+meteor-base@1.0.4
+mobile-experience@1.0.4
+mongo@1.1.12
+reload@1.1.10
+random@1.0.10
+session@1.1.6
+spacebars@1.0.12
+tracker@1.1.0
+base64@1.0.9
+standard-minifier-css@1.2.0
+standard-minifier-js@1.2.0
 react-meteor-data
-jquery
+jquery@1.11.9
 
 ############################
 # MDG Extensions
 mdg:geolocation
 mdg:validation-error
+shell-server

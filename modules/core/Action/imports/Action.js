@@ -25,15 +25,8 @@ export default class Action {
 	}
 
 	run( ...args ) {
-		this.action( ...args );
-		if( this.path ) {
-			history.pushState({}, '', this.path);
-		}
+		Actions.run( this, ...args );
 	}
-
-	/*action( item ) {
-		FlowRouter.go( this.path );
-	}*/
 
 	bind( ...args ) {
 		return {

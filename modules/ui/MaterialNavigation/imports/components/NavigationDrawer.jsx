@@ -3,7 +3,7 @@ import React from "react";
 export default function NavigationDrawer( props ) {
     let { userRole, routes } = props;
 
-    console.log( routes );
+    //console.log( routes );
 
     if ( routes == null || routes.length <= 1 ) {
         return <div/>
@@ -20,7 +20,6 @@ export default function NavigationDrawer( props ) {
             routeNames.map( ( routeName ) => { 
 
                 let route = routes.actions[ routeName ];
-                console.log(route);
 
                 if( !routes.accessRules[ routeName ] || !routes.accessRules[ routeName ][ userRole ]  ) {
                     return;
@@ -32,7 +31,7 @@ export default function NavigationDrawer( props ) {
                     //path        = FlowRouter.path( pathName ),
                     classes     = [];
 
-                if( FlowRouter.getRouteName() == pathName ) {
+                if( window.location.pathname == route.path ) {
                     classes.push("active");
                 }
 

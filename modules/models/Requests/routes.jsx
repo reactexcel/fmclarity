@@ -31,7 +31,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-const RequestRoute = new Route( {
+Routes.loggedIn.add( {
 	name: 'request',
 	path: '/requests/:_id',
 	action( params ) {
@@ -40,8 +40,3 @@ const RequestRoute = new Route( {
 		} );
 	}
 } );
-
-export {
-	RequestsIndexRoute,
-	RequestRoute
-}

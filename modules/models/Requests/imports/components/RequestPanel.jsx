@@ -83,7 +83,7 @@ const RequestPanelInner = ( { request } ) => {
             </div>
             
             <div style={{textAlign:"right",paddingRight:"20px"}}>
-                <WorkflowButtons item={ request }/>
+                <WorkflowButtons actions = { RequestActions } item = { request }/>
             </div>
 
             <table>

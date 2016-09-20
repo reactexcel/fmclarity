@@ -25,6 +25,19 @@ function register(collection,opts) {
 			return getThumbUrl(this);
 		}
 	})
+
+	collection.schema.thumbUrl = {
+		label: "Thumbnail URL",
+		description: "URL for thumbnail image",
+		relation: {
+			join: ( item ) => {
+				return item.getThumbUrl()
+			},
+			unjoin: ( item ) => {
+				return null
+			}
+		}
+	}
 }
 
 function uploadThumb(doc,url) {

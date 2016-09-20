@@ -8,8 +8,6 @@ import FacilityListTile from './imports/components/FacilityListTile.jsx';
 
 import FacilityActions from './actions.jsx'
 
-import { PortfolioRoute } from './routes.jsx';
-
 export {
 	Facilities,
 	AddressSchema,
@@ -17,7 +15,6 @@ export {
 	FacilityDetails,
 	FacilityStepper,
 	FacilityListTile,
-	PortfolioRoute,
 	
 	FacilityActions
 }

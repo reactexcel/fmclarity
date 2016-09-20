@@ -2,7 +2,7 @@ import { DocHead } from 'meteor/kadira:dochead';
 
 import { Actions, Routes } from '/modules/core/Action';
 
-console.log( { Actions, Routes } );
+//console.log( { Actions, Routes } );
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
@@ -25,12 +25,6 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	action: [ 'issue request', 'get request quote', 'cancel request', 'delete request' ],
-	role: [ 'owner' ],
-	rule: { alert: true }
-} )
-
-Actions.addAccessRule( {
 	action: [ 'edit team member', 'view team member' ],
 	role: [ 'portfolio manager', 'manager' ],
 	rule: { alert: true }
@@ -43,16 +37,92 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	action: [ 'edit request', 'view request' ],
+	action: [ 'view request' ],
 	role: [ 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],
 	rule: { alert: true }
 } )
 
 Routes.addAccessRule( {
-	action: [ 'dashboard', 'portfolio', 'suppliers', 'request', 'calendar', 'abc' ],
+	action: [ 'dashboard', 'portfolio', 'suppliers', 'requests', 'calendar', 'abc' ],
 	role: [ 'portfolio manager', 'manager' ],
 	rule: { alert: true }
 } )
+
+Routes.addAccessRule( {
+	action: [ 'admin', 'account', 'logout' ],
+	role: [ 'portfolio manager', 'manager' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Draft' },
+	action: [
+		'create request',
+		'delete request',
+	],
+	role: [ 'owner' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'New' },
+	action: [
+		'edit request',
+		'issue request',
+		'reject request',
+		'get request quote',
+	],
+	role: [ 'owner' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Issued' },
+	action: [
+		'delete request',
+	],
+	role: [ 'owner' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Issued' },
+	action: [
+		'accept request',
+		'reject request',
+	],
+	role: [ 'supplier manager', 'assignee' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'In Progress' },
+	action: [
+		'complete request',
+	],
+	role: [ 'supplier manager', 'assignee' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Complete' },
+	action: [
+		'delete request',
+		'cancel request',
+		'issue request',
+		'accept request',
+		'reject request',
+		'get request quote',
+		'send request quote',
+		'complete request',
+		'close request',
+		'reopen request',
+		'reverse request'
+	],
+	role: [ 'supplier manager', 'assignee' ],
+	rule: { alert: true }
+} )
+
 
 /*
 Actions.addAccessRule( {
