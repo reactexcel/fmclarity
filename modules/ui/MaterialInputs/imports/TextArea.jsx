@@ -1,7 +1,10 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 import ReactDom from "react-dom";
-import { ReactMeteorData }
-from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 /*
 class Input {
@@ -20,25 +23,24 @@ class Input {
 }
 */
 
-export default Textarea = React.createClass(
-{
+/**
+ * @class 			TextArea
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const TextArea = React.createClass( {
 
-	componentDidMount()
-	{
-		this.handleChange = _.debounce(this.handleChange, 500);
-		setTimeout( () =>
-		{
+	componentDidMount() {
+		this.handleChange = _.debounce( this.handleChange, 500 );
+		setTimeout( () => {
 			$( this.refs.input ).elastic();
 		}, 400 );
 	},
 
-	handleChange( newValue )
-	{
+	handleChange( newValue ) {
 		this.props.onChange( newValue );
 	},
 
-	render()
-	{
+	render() {
 		let value = this.props.value || '',
 			used = false,
 			invalid = false,
@@ -47,14 +49,12 @@ export default Textarea = React.createClass(
 
 		//console.log(value);
 
-		if ( ( _.isString( value ) && value.length ) )
-		{
+		if ( ( _.isString( value ) && value.length ) ) {
 			used = true;
 			classes.push( "used" );
 		}
 
-		if ( errors != null && errors.length )
-		{
+		if ( errors != null && errors.length ) {
 			invalid = true;
 			classes.push( "invalid" );
 		}
@@ -79,3 +79,5 @@ export default Textarea = React.createClass(
 		)
 	}
 } );
+
+export default TextArea;

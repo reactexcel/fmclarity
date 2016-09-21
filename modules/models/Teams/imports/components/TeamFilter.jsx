@@ -1,7 +1,7 @@
 import React from "react";
 
 import { NavListDropDown } from '/modules/ui/MaterialNavigation';
-import { ContactCard } from '/modules/model-mixins/Members';
+import { ContactCard } from '/modules/mixins/Members';
 
 export default function TeamFilter( props ) {
     return (

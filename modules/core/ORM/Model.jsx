@@ -1,3 +1,8 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 
@@ -6,7 +11,10 @@ import ORM from './ORM.jsx';
 import ValidationService from './ValidationService.jsx';
 import ValidatedMethod from './ValidatedMethod.jsx';
 
-export default class Model {
+/**
+ * @memberOf 		module:core/ORM
+ */
+class Model {
 	constructor( { schema, collection, mixins } ) {
 		this.schema = schema;
 
@@ -187,3 +195,5 @@ export default class Model {
 		return this.collection.helpers( ...args );
 	}
 }
+
+export default Model;

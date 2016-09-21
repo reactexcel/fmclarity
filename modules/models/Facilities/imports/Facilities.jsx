@@ -1,14 +1,19 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import FacilitySchema from './schemas/FacilitySchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
 
 import { Model } from '/modules/core/ORM';
-import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
-import { Owners } from '/modules/model-mixins/Owners';
-import { Members } from '/modules/model-mixins/Members';
-import { DocMessages } from '/modules/models/Message';
-import { DocAttachments } from '/modules/models/Document';
-import { RolesMixin } from '/modules/model-mixins/Roles';
+import { ThumbsMixin } from '/modules/mixins/Thumbs';
+import { Owners } from '/modules/mixins/Owners';
+import { Members } from '/modules/mixins/Members';
+import { DocMessages } from '/modules/models/Messages';
+import { DocAttachments } from '/modules/models/Documents';
+import { RolesMixin } from '/modules/mixins/Roles';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', () => {
@@ -16,7 +21,10 @@ if ( Meteor.isServer ) {
 	} )
 }
 
-export default Facilities = new Model( {
+/**
+ * @memberOf 		module:models/Facilities
+ */
+const Facilities = new Model( {
 	schema: FacilitySchema,
 	collection: "Facilities",
 	mixins: [
@@ -226,3 +234,6 @@ if ( Meteor.isServer ) {
 } else {
 	Meteor.subscribe( 'facilities' );
 }
+
+
+export default Facilities;

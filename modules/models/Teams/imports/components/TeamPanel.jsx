@@ -4,7 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import TeamActions from '../../actions.jsx';
 
-import { ContactList } from '/modules/model-mixins/Members';
+import { ContactList } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Tabs } from '/modules/ui/Tabs';
 

@@ -1,6 +1,8 @@
 import { AddressSchema } from '/modules/models/Facilities';
-import { DocExplorer } from '/modules/models/Document';
+import { DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select } from '/modules/ui/MaterialInputs';
+
+import { Facilities } from '/modules/models/Facilities';
 
 export default TeamSchema = {
 

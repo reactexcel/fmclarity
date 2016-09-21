@@ -1,5 +1,5 @@
 import React from "react";
-import { Actions } from '/modules/core/Action';
+import { Actions } from '/modules/core/Actions';
 
 export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 

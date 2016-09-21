@@ -1,3 +1,7 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import Facilities from './imports/Facilities.jsx';
 import AddressSchema from './imports/schemas/AddressSchema.jsx';
 
@@ -8,6 +12,9 @@ import FacilityListTile from './imports/components/FacilityListTile.jsx';
 
 import FacilityActions from './actions.jsx'
 
+/**
+ * @module 			models/Facilities
+ */
 export {
 	Facilities,
 	AddressSchema,

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { DataTable } from '/modules/ui/DataTable';
-import { RequestActions } from '/modules/models';
+import { RequestActions } from '/modules/models/Requests';
 
 export default function RequestsTable( props ) {
 

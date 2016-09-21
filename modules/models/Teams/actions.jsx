@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Action } from '/modules/core/Action';
+import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
 import { Modal } from '/modules/ui/Modal';
@@ -8,7 +8,6 @@ import { Modal } from '/modules/ui/Modal';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { UserPanel, UserViewEdit } from '/modules/models/UserViews';
 import { Issues, CreateRequestForm } from '/modules/models/Requests';
-
 
 const create = new Action( {
 	name: 'create team',

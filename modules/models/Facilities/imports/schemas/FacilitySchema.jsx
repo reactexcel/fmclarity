@@ -1,8 +1,15 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import './AddressSchema.jsx';
-import { DocExplorer } from '/modules/models/Document';
+import { Documents, DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select } from '/modules/ui/MaterialInputs';
 
-export default FacilitySchema = {
+/**
+ * @memberOf 		module:models/Facilities
+ */
+const FacilitySchema = {
 	//$schema:              "http://json-schema.org/draft-04/schema#",
 	//title:                "Facility",
 	//description:          "A site maintained by a team",
@@ -154,3 +161,5 @@ export default FacilitySchema = {
 
 	//}
 }
+
+export default FacilitySchema;

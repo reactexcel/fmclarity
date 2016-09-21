@@ -1,11 +1,11 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Inbox } from '/modules/models/Message';
+import { Inbox } from '/modules/models/Messages';
 import { AutoForm } from '/modules/core/AutoForm';
 import { FacilityDetails } from '/modules/models/Facilities';
 import { WorkflowButtons } from '/modules/core/WorkflowHelper';
-import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
+import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'

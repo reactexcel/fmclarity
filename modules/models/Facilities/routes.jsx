@@ -1,14 +1,14 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { Route } from '/modules/core/Action';
-import { Routes } from '/modules/core/Authentication';
-import { MainLayout, WideLayout } from '/modules/core/LayoutManager';
+import { Route } from '/modules/core/Actions';
+import { AccessGroups } from '/modules/core/Authentication';
+import { MainLayout, WideLayout } from '/modules/core/Layouts';
 
 import FacilitiesPageIndexContainer from './imports/containers/FacilitiesPageIndexContainer.jsx';
 import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllContainer.jsx';
 
-Routes.loggedIn.add( {
+AccessGroups.loggedIn.add( {
 	name: 'all-facilities',
 	path: '/all-facilities',
 	label: "All facilities",
@@ -20,7 +20,7 @@ Routes.loggedIn.add( {
 	}
 } );
 
-Routes.loggedIn.add( {
+AccessGroups.loggedIn.add( {
 	name: 'portfolio',
 	path: '/portfolio',
 	label: "Porffolio",
@@ -53,12 +53,12 @@ let portfolio = new Route({
 
 loggedIn.add( portfolio );
 
-import { DashboardRoute } from '/modules/plugins/Reports';
+import { DashboardRoute } from '/modules/features/Reports';
 import { PortfolioRoute } from '/modules/models/Facilities';
 import { SuppliersRoute } from '/modules/models/Teams';
 import { RequestsRoute } from '/modules/models/Requests';
 import { CalendarRoute } from '/modules/ui/Calendar';
-import { ComplianceRoute } from '/modules/plugins/Compliance';
+import { ComplianceRoute } from '/modules/features/Compliance';
 
 let navMenu = new RouteGroup({
 	name:'navMenu'

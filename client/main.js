@@ -1,6 +1,6 @@
 import { DocHead } from 'meteor/kadira:dochead';
 
-import { Actions, Routes } from '/modules/core/Action';
+import { Actions, Routes } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 

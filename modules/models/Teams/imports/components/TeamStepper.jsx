@@ -1,9 +1,9 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { ThumbView } from '/modules/model-mixins/Thumbs';
-import { ContactList } from '/modules/model-mixins/Members';
-import { ServicesProvidedEditor } from '/modules/model-mixins/Services';
+import { ThumbView } from '/modules/mixins/Thumbs';
+import { ContactList } from '/modules/mixins/Members';
+import { ServicesProvidedEditor } from '/modules/mixins/Services';
 
 import { AutoForm } from '/modules/core/AutoForm';
 import { Stepper } from '/modules/ui/Stepper';

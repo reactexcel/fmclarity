@@ -1,6 +1,14 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 
-export default Text = React.createClass( {
+/**
+ * @class 			Text
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const Text = React.createClass( {
 	handleChange( event ) {
 		let newValue = event.target.value;
 		if ( this.props.onChange ) {
@@ -77,3 +85,5 @@ export default Text = React.createClass( {
 		)
 	}
 } );
+
+export default Text;

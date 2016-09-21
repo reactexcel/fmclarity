@@ -2,9 +2,9 @@ import React from 'react';
 
 import { AutoForm } from '/modules/core/AutoForm';
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
+import { ContactDetails, ContactList } from '/modules/mixins/Members';
 
-import { PMPList } from '/modules/plugins/Compliance';
+import { PMPList } from '/modules/features/Compliance';
 
 export default function FacilityPanel( props ) {
     let { team, facility } = props;

@@ -1,16 +1,16 @@
 import React from "react";
 
-import { OwnerCard } from '/modules/model-mixins/Owners';
+import { OwnerCard } from '/modules/mixins/Owners';
 import { Stepper } from '/modules/ui/Stepper';
 
-import { ThumbView } from '/modules/model-mixins/Thumbs';
+import { ThumbView } from '/modules/mixins/Thumbs';
 
-import { Facilities } from '/modules/models';
+import { Facilities } from '/modules/models/Facilities';
 
 import { AutoForm } from '/modules/core/AutoForm';
-import { AreasEditor } from '/modules/model-mixins/Areas';
-import { ContactList } from '/modules/model-mixins/Members';
-import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
+import { AreasEditor } from '/modules/mixins/Areas';
+import { ContactList } from '/modules/mixins/Members';
+import { ServicesRequiredEditor } from '/modules/mixins/Services';
 
 export default function FacilityStepper( { item } ) {
 

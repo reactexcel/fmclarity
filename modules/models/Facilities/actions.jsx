@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Action } from '/modules/core/Action';
+import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
 
 import { Facilities } from '/modules/models/Facilities';

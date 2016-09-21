@@ -1,10 +1,10 @@
 import { Model } from '/modules/core/ORM';
 
 import RequestSchema from './schemas/RequestSchema.jsx';
-import { Members } from '/modules/model-mixins/Members';
-import { Owners } from '/modules/model-mixins/Owners';
-import { DocMessages } from '/modules/models/Message';
-import { RolesMixin } from '/modules/model-mixins/Roles';
+import { Members } from '/modules/mixins/Members';
+import { Owners } from '/modules/mixins/Owners';
+import { DocMessages } from '/modules/models/Messages';
+import { RolesMixin } from '/modules/mixins/Roles';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {

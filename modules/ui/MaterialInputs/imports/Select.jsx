@@ -1,8 +1,16 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-PlainCard = React.createClass( {
+/**
+ * @class 			PlainCard
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const PlainCard = React.createClass( {
 	render() {
 		let item = this.props.item,
 			val = "";
@@ -19,7 +27,11 @@ PlainCard = React.createClass( {
 	}
 } )
 
-export default Select = React.createClass( {
+/**
+ * @class 			Select
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const Select = React.createClass( {
 
 	getInitialState() {
 		return { open: false }
@@ -170,3 +182,5 @@ export default Select = React.createClass( {
 		)
 	}
 } )
+
+export default Select;

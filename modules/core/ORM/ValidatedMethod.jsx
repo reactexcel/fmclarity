@@ -1,4 +1,12 @@
-export default class ValidatedMethod {
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
+ /**
+ * @memberOf		module:core/ORM
+ */
+class ValidatedMethod {
 	constructor( { name, validate, authenticate, run, notify } ) {
 		this.name = name;
 		this.validate = validate;
@@ -56,3 +64,6 @@ export default class ValidatedMethod {
 		this._after.push(callback);
 	}
 }
+
+
+export default ValidatedMethod;

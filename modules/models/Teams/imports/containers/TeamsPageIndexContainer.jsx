@@ -1,6 +1,6 @@
 import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
-import { Teams } from '/modules/models';
+import { Teams } from '/modules/models/Teams';
 
 import TeamsPageIndex from '../components/TeamsPageIndex.jsx';
 

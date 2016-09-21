@@ -1,7 +1,7 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
-import { ContactCard } from '/modules/model-mixins/Members';
-import { Routes } from '/modules/core/Action';
+import { ContactCard } from '/modules/mixins/Members';
+import { Routes } from '/modules/core/Actions';
 
 export default function UserProfileMenu( props ) {
 

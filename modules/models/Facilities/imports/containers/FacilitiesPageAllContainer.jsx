@@ -1,7 +1,7 @@
 import { createContainer } from 'meteor/react-meteor-data';
 import FacilityPageIndex from '../components/FacilityPageIndex.jsx';
 
-import { Facilities } from '/modules/models';
+import { Facilities } from '/modules/models/Facilities';
 
 export default FacilityPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );

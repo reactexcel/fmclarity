@@ -1,13 +1,25 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
+import { Users } from '/modules/models/Users';
+import { Teams } from '/modules/models/Teams';
+import { DocExplorer } from '/modules/models/Documents';
+import { FileExplorer } from '/modules/models/File';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
-import { ContactCard } from '/modules/model-mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
-import { FileExplorer, DocExplorer } from '/modules/ui/MaterialInputs';
 
-export default RequestSchema = {
+import { ContactCard } from '/modules/mixins/Members';
+import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
+
+/**
+ * @memberOf 		module:models/Requests
+ */
+const RequestSchema = {
 
 	//$schema: 				"http://json-schema.org/draft-04/schema#",
 	//title:       			"Request",
@@ -480,3 +492,5 @@ function getDefaultDueDate( item ) {
 
 	return new Date( now.getTime() + timeframe );
 }
+
+export default RequestSchema;

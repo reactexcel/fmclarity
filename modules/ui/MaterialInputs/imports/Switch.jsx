@@ -1,43 +1,43 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-export default Switch = React.createClass(
-{
+/**
+ * @class 			Switch
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const Switch = React.createClass( {
 
-	componentDidMount()
-	{
+	componentDidMount() {
 		var component = this;
 		var save = this.props.onChange;
 		var input = this.refs.input;
-		new Switchery( this.refs.input,
-		{
+		new Switchery( this.refs.input, {
 			size: 'small',
 			color: '#db4437'
 		} );
-		input.onchange = function( e )
-		{
-			if ( component.blockNextSave )
-			{
+		input.onchange = function( e ) {
+			if ( component.blockNextSave ) {
 				component.blockNextSave = false;
 				return;
 			}
 			var oldValue = component.props.value;
 			var newValue = e.target.checked;
-			if ( oldValue != newValue )
-			{
+			if ( oldValue != newValue ) {
 				save( e.target.checked );
 			}
 		}
 	},
 
-	componentWillReceiveProps( newProps )
-	{
+	componentWillReceiveProps( newProps ) {
 		var input = this.refs.input;
 		var oldValue = input.checked;
 		var newValue = newProps.value;
-		if ( oldValue != newValue )
-		{
+		if ( oldValue != newValue ) {
 			this.blockNextSave = true;
 			input.checked = newValue;
 			var event = document.createEvent( 'HTMLEvents' );
@@ -46,8 +46,7 @@ export default Switch = React.createClass(
 		}
 	},
 
-	render()
-	{
+	render() {
 		var value = this.props.value;
 		var label = this.props.placeholder;
 		return (
@@ -66,3 +65,5 @@ export default Switch = React.createClass(
 		)
 	}
 } );
+
+export default Switch;

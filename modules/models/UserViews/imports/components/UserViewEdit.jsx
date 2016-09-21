@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
-import { ThumbView } from '/modules/model-mixins/Thumbs';
+import { ThumbView } from '/modules/mixins/Thumbs';
 import UserViewRelationEdit from './UserViewRelationEdit.jsx';
 
 export default UserViewEdit = React.createClass( {

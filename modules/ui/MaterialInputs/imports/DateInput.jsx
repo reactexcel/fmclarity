@@ -1,10 +1,18 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import Text from './Text.jsx';
 
-export default DateInput = React.createClass( {
+/**
+ * @class 			DateInput
+ * @memberOf 		module:ui/MaterialInputs
+ */
+const DateInput = React.createClass( {
 
 	getInitialState() {
 		var valueString = this.props.value ? moment( this.props.value ).format( "D-MMM-YY" ) : "";
@@ -66,3 +74,5 @@ export default DateInput = React.createClass( {
 		)
 	}
 } );
+
+export default DateInput

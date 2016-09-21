@@ -1,23 +1,31 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { ContactDetails, ContactList } from '/modules/model-mixins/Members';
+import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
-import { Inbox } from '/modules/models/Message';
+import { Inbox } from '/modules/models/Messages';
 
 import FacilityStepper from './FacilityStepper.jsx';
 
-import { FacilityActions } from '/modules/models/Facilities';
+import { Facilities, FacilityActions } from '/modules/models/Facilities';
 
-import { PMPList } from '/modules/plugins/Compliance';
+import { PMPList } from '/modules/features/Compliance';
 import { RequestsTable } from '/modules/models/Requests';
 
-import { AreasEditor } from '/modules/model-mixins/Areas';
-import { ServicesRequiredEditor } from '/modules/model-mixins/Services';
+import { AreasEditor } from '/modules/mixins/Areas';
+import { ServicesRequiredEditor } from '/modules/mixins/Services';
 
 import { Tabs } from '/modules/ui/Tabs';
 
-export default function FacilityPanel( { item } ) {
+/**
+ * @class 			FacilityPanel
+ * @memberOf		module:models/Facilities
+ */
+function FacilityPanel( { item } ) {
 
 	let facility = item;
 
@@ -97,3 +105,5 @@ export default function FacilityPanel( { item } ) {
 		</div>
 	)
 }
+
+export default FacilityPanel;

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-import { ContactAvatarSmall } from '/modules/model-mixins/Members';
+import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 export default NotificationViewSummary = React.createClass({
 /*

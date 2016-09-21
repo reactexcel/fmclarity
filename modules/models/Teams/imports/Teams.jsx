@@ -1,12 +1,23 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import TeamSchema from './schemas/TeamSchema.jsx';
 
 import { Model } from '/modules/core/ORM';
-import { Owners } from '/modules/model-mixins/Owners';
-import { Members } from '/modules/model-mixins/Members';
-import { RolesMixin } from '/modules/model-mixins/Roles';
-import { ThumbsMixin } from '/modules/model-mixins/Thumbs';
-import { DocMessages } from '/modules/models/Message';
-import { DocAttachments } from '/modules/models/Document';
+
+// requires users
+import { Owners } from '/modules/mixins/Owners';
+import { Members } from '/modules/mixins/Members';
+
+import { RolesMixin } from '/modules/mixins/Roles';
+import { ThumbsMixin } from '/modules/mixins/Thumbs';
+
+import { DocMessages } from '/modules/models/Messages';
+import { Documents, DocAttachments } from '/modules/models/Documents';
+import { Facilities } from '/modules/models/Facilities';
+
+console.log( Members );
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Teams', () => {
@@ -16,7 +27,10 @@ if ( Meteor.isServer ) {
 	Meteor.subscribe( 'Teams' );
 }
 
-export default Teams = new Model( {
+/**
+ * @memberOf 		module:models/Teams
+ */
+const Teams = new Model( {
 	schema: TeamSchema,
 	collection: "Teams",
 	mixins: [
@@ -490,3 +504,6 @@ Teams.helpers( {
 	}
 
 } );
+
+
+export default Teams;

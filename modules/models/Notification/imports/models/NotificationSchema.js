@@ -1,6 +1,14 @@
-// move this to messages package
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 
-export default NotificationSchema = {
+import { Text } from '/modules/ui/MaterialInputs';
+
+/**
+ * @memberOf 		module:models/Notifications
+ */
+const NotificationSchema = {
 	actor: {
 		type: "object",
 		input: Text
@@ -29,6 +37,9 @@ export default NotificationSchema = {
 	}
 }
 
+/**
+ * @memberOf 		module:models/Notifications
+ */
 const NotificationObjectSchema = {
 	type: {
 		type: "string",
@@ -39,3 +50,5 @@ const NotificationObjectSchema = {
 		input: Text
 	}
 }
+
+export default NotificationSchema;
