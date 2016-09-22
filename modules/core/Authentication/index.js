@@ -3,8 +3,8 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
-import AccessGroups from './imports/routes/AccessGroups.jsx';
-import LoginService from './imports/services/LoginService.js';
+import AccessGroups from './imports/AccessGroups.jsx';
+import LoginService from './imports/LoginService.js';
 
 /**
  * @module 			core/Authentication

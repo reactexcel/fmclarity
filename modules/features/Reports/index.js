@@ -4,7 +4,7 @@
  */
 import ReportsNavWidget from './imports/reports/ReportsNavWidget.jsx';
 import { ReportsIndexRoute, ReportRoute, ReportPrintRoute, DashboardRoute } from './imports/routes.js';
-import DashboardPageContainer from './imports/containers/DashboardPageContainer.jsx';
+import PageDashboardContainer from './imports/containers/PageDashboardContainer.jsx';
 
 /**
  * @module 			features/Reports
@@ -15,5 +15,5 @@ export {
 	ReportsNavWidget,
     ReportPrintRoute,
     ReportsIndexRoute,
-    DashboardPageContainer
+    PageDashboardContainer
 }

@@ -8,7 +8,7 @@ import ServicesRequiredEditorRow from './ServicesRequiredEditorRow.jsx';
 
 /**
  * @class 			ServicesRequiredEditor
- * @memberOr 		module:mixins/Services
+ * @memberOf 		module:mixins/Services
  */
 const ServicesRequiredEditor = React.createClass( {
 

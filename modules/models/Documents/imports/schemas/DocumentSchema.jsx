@@ -1,4 +1,4 @@
-import FileExplorer from '/modules/models/File';
+import FileExplorer from '/modules/models/Files';
 import DocTypes from './DocTypes.jsx';
 
 import { Text, TextArea, Select, DateInput } from '/modules/ui/MaterialInputs';

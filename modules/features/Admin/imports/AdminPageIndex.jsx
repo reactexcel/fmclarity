@@ -154,13 +154,30 @@ const AdminPageIndex = React.createClass( {
 									return (
 										<tr className = "data-grid-row" key = { key }>
 											<td className = "data-grid-select-col"></td>
-											<td className = "data-grid-cell" onClick={ () => {
-												Actions.run( key, ...args );
-											} }>{key} ({
-												args.map( (arg, idx) => {
-													return <span key = { idx }>{ arg?arg.name||arg.profile.name:'null' }, </span>
+
+											<td className = "data-grid-cell" 
+												onClick={ () => {
+													Actions.run( key, ...args );
+												}}
+											>
+													{key}
+											({ args.map( 
+												(arg, idx) => {
+													let name = null;
+													if( !arg ) {
+														name = 'null';
+													}
+													else if( arg.profile ) {
+														name = arg.profile.name;
+													}
+													else if ( arg.name ) {
+														name = arg.name;
+													}
+													return <span key = { idx }>{ name }, </span>
 												})
-											})</td>
+											})
+											</td>
+
 											<td className = "data-grid-cell">{ access.allowed?'✔':'' }</td>
 											<td className = "data-grid-cell">{ access.alert?'✔':'' }</td>
 											<td className = "data-grid-cell">{ access.email?'✔':'' }</td>

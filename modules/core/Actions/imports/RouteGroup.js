@@ -12,7 +12,11 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 class RouteGroup {
 	constructor( { name, onEnter } ) {
 		this.name = name;
-		this.group = FlowRouter.group( { triggersEnter: [ onEnter ] } );
+		if ( onEnter ) {
+			this.group = FlowRouter.group( { triggersEnter: [ onEnter ] } );
+		} else {
+			this.group = FlowRouter.group();
+		}
 	}
 
 	addOne( route ) {

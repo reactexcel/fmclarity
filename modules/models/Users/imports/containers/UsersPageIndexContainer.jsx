@@ -10,6 +10,7 @@ export default UsersPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Files' );
 	return {
+		team: Session.getSelectedTeam(),
 		users: Users.findAll()
 	}
 }, UsersPageIndex );

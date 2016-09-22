@@ -8,7 +8,7 @@ import UserSchema from './schemas/UserSchema.jsx';
 import { Model } from '/modules/core/ORM';
 
 import { Documents } from '/modules/models/Documents';
-import { Files } from '/modules/models/File';
+import { Files } from '/modules/models/Files';
 
 
 import { ThumbsMixin } from '/modules/mixins/Thumbs';

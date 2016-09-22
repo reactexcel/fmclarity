@@ -6,7 +6,7 @@ import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
 
 
-import DashboardPageContainer from '../imports/containers/DashboardPageContainer.jsx';
+import PageDashboardContainer from '../imports/containers/PageDashboardContainer.jsx';
 import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
 import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 
@@ -53,7 +53,7 @@ AccessGroups.loggedIn.add( {
     icon: 'fa fa-newspaper-o',
     action() {
         mount( LayoutMain, {
-            content: <DashboardPageContainer />
+            content: <PageDashboardContainer />
         } );
     }
 } );

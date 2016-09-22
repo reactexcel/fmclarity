@@ -5,7 +5,7 @@
 
 import { Documents, DocActions } from './Documents';
 import { Facilities, FacilityActions } from './Facilities';
-import { Files } from './File';
+import { Files } from './Files';
 import { Messages } from './Messages';
 import { Issues, RequestActions } from './Requests';
 import { Teams, TeamActions } from './Teams';

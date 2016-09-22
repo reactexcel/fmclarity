@@ -10,7 +10,7 @@ import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 import { Users } from '/modules/models/Users';
 import { Teams } from '/modules/models/Teams';
 import { DocExplorer } from '/modules/models/Documents';
-import { FileExplorer } from '/modules/models/File';
+import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';

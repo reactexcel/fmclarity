@@ -1,6 +1,6 @@
 import { DocHead } from 'meteor/kadira:dochead';
 
-import { Actions, Routes } from '/modules/core/Actions';
+import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 
@@ -39,18 +39,6 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [ 'view request' ],
 	role: [ 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],
-	rule: { alert: true }
-} )
-
-Routes.addAccessRule( {
-	action: [ 'dashboard', 'portfolio', 'suppliers', 'requests', 'calendar', 'abc' ],
-	role: [ 'portfolio manager', 'manager' ],
-	rule: { alert: true }
-} )
-
-Routes.addAccessRule( {
-	action: [ 'admin', 'account', 'logout' ],
-	role: [ 'portfolio manager', 'manager' ],
 	rule: { alert: true }
 } )
 

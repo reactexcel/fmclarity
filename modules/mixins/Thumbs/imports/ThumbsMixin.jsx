@@ -1,5 +1,5 @@
 
-import { Files } from '/modules/models/File';
+import { Files } from '/modules/models/Files';
 
 //should be called docthumbs
 export default ThumbsMixin = { register }

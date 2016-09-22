@@ -4,7 +4,7 @@
  */
 
 import { RolesMixin } from '/modules/mixins/Roles';
-import { Notifications } from '/modules/models/Notification';
+import { Notifications } from '/modules/models/Notifications';
 
 /**
  * An ActionGroup holds a collection of actions. 

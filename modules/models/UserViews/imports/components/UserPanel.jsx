@@ -1,10 +1,18 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { RolesMixin } from '/modules/mixins/Roles';
 
-export default UserPanel = React.createClass( {
+/**
+ * @class 			UserPanel
+ * @membersOf 		module:models/Users
+ */
+const UserPanel = React.createClass( {
 
 	render() {
 
@@ -69,4 +77,6 @@ export default UserPanel = React.createClass( {
 			</div>
 		)
 	}
-} );
+} )
+
+export default UserPanel;

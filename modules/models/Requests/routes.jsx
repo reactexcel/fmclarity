@@ -12,6 +12,8 @@ import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexCo
 AccessGroups.loggedIn.add( {
 	name: 'all-requests',
 	path: '/all-requests',
+	label: "All requests",
+	icon: 'fa fa-cubes',
 	action() {
 		mount( LayoutMain, {
 			content: <RequestsPageAllContainer />
