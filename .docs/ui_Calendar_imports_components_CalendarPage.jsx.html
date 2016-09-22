@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ui/Calendar/imports/components/CalendarPage.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ui/Calendar/imports/components/CalendarPage.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author          Leo Keith &lt;leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+import React from "react";
+
+import { FacilityFilter } from '/modules/models/Facilities';
+import Calendar from './Calendar.jsx';
+
+/**
+ * @class           CalendarPage
+ * @memberOf        module:ui/Calendar
+ */
+const CalendarPage = React.createClass( {
+    mixins: [ ReactMeteorData ],
+
+    getMeteorData() {
+        Meteor.subscribe( 'Teams' );
+        Meteor.subscribe( 'Users' );
+        Meteor.subscribe( 'Facilities' );
+        Meteor.subscribe( 'Requests' );
+        Meteor.subscribe( 'Files' );
+        return {
+            team: Session.getSelectedTeam(),
+            facility: Session.getSelectedFacility()
+        }
+    },
+
+    render() {
+        let { team, facility } = this.data;
+        if( !team ) {
+            return &lt;div/>
+        }
+        return (
+            &lt;div className = "animated fadeIn">
+                &lt;FacilityFilter items = { team.facilities } selectedItem = { facility } />
+                &lt;div style = { {paddingTop:"50px 15px 15px 15px"} }>
+                    &lt;div className="card-body ibox">
+                        &lt;Calendar/>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+        )
+    }
+} )
+
+export default CalendarPage;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core.html">core</a></li><li><a href="module-core_Actions.html">core/Actions</a></li><li><a href="module-core_Authentication.html">core/Authentication</a></li><li><a href="module-core_AutoForm.html">core/AutoForm</a></li><li><a href="module-core_Layouts.html">core/Layouts</a></li><li><a href="module-core_ORM.html">core/ORM</a></li><li><a href="module-features.html">features</a></li><li><a href="module-features_Admin.html">features/Admin</a></li><li><a href="module-features_Compliance.html">features/Compliance</a></li><li><a href="module-features_Reports.html">features/Reports</a></li><li><a href="module-mixins.html">mixins</a></li><li><a href="module-mixins_Areas.html">mixins/Areas</a></li><li><a href="module-mixins_Members.html">mixins/Members</a></li><li><a href="module-mixins_Owners.html">mixins/Owners</a></li><li><a href="module-mixins_Roles.html">mixins/Roles</a></li><li><a href="module-mixins_Services.html">mixins/Services</a></li><li><a href="module-mixins_Thumbs.html">mixins/Thumbs</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_Documents.html">models/Documents</a></li><li><a href="module-models_Facilities.html">models/Facilities</a></li><li><a href="module-models_Files.html">models/Files</a></li><li><a href="module-models_Messages.html">models/Messages</a></li><li><a href="module-models_Notifications.html">models/Notifications</a></li><li><a href="module-models_Requests.html">models/Requests</a></li><li><a href="module-models_Teams.html">models/Teams</a></li><li><a href="module-models_Users.html">models/Users</a></li><li><a href="module-ui.html">ui</a></li><li><a href="module-ui_Calendar.html">ui/Calendar</a></li><li><a href="module-ui_DataTable.html">ui/DataTable</a></li><li><a href="module-ui_MaterialInputs.html">ui/MaterialInputs</a></li><li><a href="module-ui_MaterialMisc.html">ui/MaterialMisc</a></li><li><a href="module-ui_MaterialNavigation.html">ui/MaterialNavigation</a></li><li><a href="module-ui_MaterialViews.html">ui/MaterialViews</a></li><li><a href="module-ui_Modal.html">ui/Modal</a></li><li><a href="module-ui_Stepper.html">ui/Stepper</a></li><li><a href="module-ui_Tabs.html">ui/Tabs</a></li></ul><h3>Classes</h3><ul><li><a href="module-core_Actions.Action.html">Action</a></li><li><a href="module-core_Actions.ActionGroup.html">ActionGroup</a></li><li><a href="module-core_Actions.Route.html">Route</a></li><li><a href="module-core_Actions.RouteGroup.html">RouteGroup</a></li><li><a href="module-core_AutoForm.AutoForm.html">AutoForm</a></li><li><a href="module-core_AutoForm.FormController.html">FormController</a></li><li><a href="module-core_Layouts.FloatingActionButtonContainer.html">FloatingActionButtonContainer</a></li><li><a href="module-core_Layouts.LayoutBlank.html">LayoutBlank</a></li><li><a href="module-core_Layouts.LayoutMain.html">LayoutMain</a></li><li><a href="module-core_Layouts.LayoutPrint.html">LayoutPrint</a></li><li><a href="module-core_Layouts.LayoutWide.html">LayoutWide</a></li><li><a href="module-core_Layouts.NavigationDrawerContainer.html">NavigationDrawerContainer</a></li><li><a href="module-core_Layouts.TopNavigationBarContainer.html">TopNavigationBarContainer</a></li><li><a href="module-core_ORM.Model.html">Model</a></li><li><a href="module-core_ORM.ValidatedMethod.html">ValidatedMethod</a></li><li><a href="module-features_Admin.AdminPageIndex.html">AdminPageIndex</a></li><li><a href="module-features_Compliance.CompliancePageIndex.html">CompliancePageIndex</a></li><li><a href="module-features_Compliance.CompliancePageIndexContainer.html">CompliancePageIndexContainer</a></li><li><a href="module-features_Reports.DashboardPage.html">DashboardPage</a></li><li><a href="module-mixins_Areas.AreasEditor.html">AreasEditor</a></li><li><a href="module-mixins_Services.ServicesProvidedEditor.html">ServicesProvidedEditor</a></li><li><a href="module-mixins_Services.ServicesProvidedEditorRow.html">ServicesProvidedEditorRow</a></li><li><a href="module-mixins_Services.ServicesRequiredEditorRow.html">ServicesRequiredEditorRow</a></li><li><a href="module-models_Facilities.FacilityFilter.html">FacilityFilter</a></li><li><a href="module-models_Facilities.FacilityListTile.html">FacilityListTile</a></li><li><a href="module-models_Facilities.FacilityPanel.html">FacilityPanel</a></li><li><a href="module-models_Users.UserPageProfileContainer.html">UserPageProfileContainer</a></li><li><a href="module-ui_Calendar.CalendarPage.html">CalendarPage</a></li><li><a href="module-ui_MaterialInputs.DateInput.html">DateInput</a></li><li><a href="module-ui_MaterialInputs.DateTime.html">DateTime</a></li><li><a href="module-ui_MaterialInputs.FileField.html">FileField</a></li><li><a href="module-ui_MaterialInputs.PlainCard.html">PlainCard</a></li><li><a href="module-ui_MaterialInputs.Rating.html">Rating</a></li><li><a href="module-ui_MaterialInputs.Select.html">Select</a></li><li><a href="module-ui_MaterialInputs.Switch.html">Switch</a></li><li><a href="module-ui_MaterialInputs.Text.html">Text</a></li><li><a href="module-ui_MaterialInputs.TextArea.html">TextArea</a></li><li><a href="module-ui_MaterialNavigation.NavListDropDown.html">NavListDropDown</a></li><li><a href="module-ui_MaterialNavigation.NavListTileMultiple.html">NavListTileMultiple</a></li><li><a href="module-ui_MaterialViews.ListTile.html">ListTile</a></li><li><a href="module-ui_MaterialViews.Thumbnail.html">Thumbnail</a></li><li><a href="ServicesRequiredEditor.html">ServicesRequiredEditor</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Elastic">Elastic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 22 2016 16:48:40 GMT+1000 (E. Australia Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,3 +1,7 @@
+/**
+ * @class 			Thumbnail
+ * @memberOf 		module:ui/MaterialViews
+ */
 import React from "react";
 
 let css = {
@@ -6,7 +10,11 @@ let css = {
 	}
 }
 
-export default function FacilityListTile( props ) {
+/**
+ * @class 			FacilityListTile
+ * @memberOf 		module:models/Facilities
+ */
+function FacilityListTile( props ) {
 	let { item, notification } = props;
 	contact = null;
 
@@ -53,3 +61,5 @@ export default function FacilityListTile( props ) {
 		</div>
 	)
 }
+
+export default FacilityListTile;

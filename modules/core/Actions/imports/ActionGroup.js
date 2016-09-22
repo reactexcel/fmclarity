@@ -242,7 +242,7 @@ class ActionGroup {
 				userRoles.map( ( role ) => {
 					if ( rules[ role ] ) {
 						let condition = rules[ role ].condition;
-						console.log( condition );
+						//console.log( condition );
 						if ( !condition || _.findWhere( [ item ], condition ) ) {
 							access.allowed = access.allowed || rules[ role ].rule.allowed;
 							access.alert = access.alert || rules[ role ].rule.alert;

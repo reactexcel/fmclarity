@@ -17,7 +17,7 @@ import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
 import { Facilities } from '/modules/models/Facilities';
 
-console.log( Members );
+//console.log( Members );
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Teams', () => {

@@ -6,6 +6,7 @@
 import FacilitySchema from './schemas/FacilitySchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 
 import { Model } from '/modules/core/ORM';
 import { ThumbsMixin } from '/modules/mixins/Thumbs';
@@ -30,9 +31,8 @@ const Facilities = new Model( {
 	mixins: [
 		[ Owners ],
 		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
-		[ DocAttachments, { authentication: AuthHelpers.managerOfRelatedTeam } ],
+		[ DocAttachments ],
 		[ DocMessages, {
-			authentication: AuthHelpers.managerOfRelatedTeam,
 			helpers: {
 				getInboxName() {
 					return this.getName() + " announcements"
@@ -50,11 +50,10 @@ const Facilities = new Model( {
 			}
 		} ],
 		[ Members, [ {
-			authentication: AuthHelpers.managerOfRelatedTeam,
 			fieldName: "members",
+			membersCollection: Users,
 		}, {
 			fieldName: "suppliers",
-			authentication: AuthHelpers.managerOfRelatedTeam,
 			membersCollection: Teams,
 		} ] ],
 		[ RolesMixin, [ {
@@ -78,7 +77,7 @@ Facilities.actions( {
 	},
 
 	getAreas: {
-		authentication: AuthHelpers.memberOfRelatedTeam,
+		authentication: true,
 		helper: function( facility, parent ) {
 			var areas;
 			if ( parent ) {
@@ -94,7 +93,7 @@ Facilities.actions( {
 		}
 	},
 	setAreas: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
+		authentication: true,
 		method: function( facility, areas ) {
 			Facilities.update( facility._id, {
 				$set: {
@@ -104,7 +103,7 @@ Facilities.actions( {
 		}
 	},
 	getServices: {
-		authentication: AuthHelpers.memberOfRelatedTeam,
+		authentication: true,
 		helper: function( facility, parent ) {
 			var services;
 			if ( parent ) {
@@ -121,7 +120,7 @@ Facilities.actions( {
 		}
 	},
 	setServicesRequired: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
+		authentication: true,
 		method: function( facility, servicesRequired ) {
 			Facilities.update( facility._id, {
 				$set: {
@@ -131,7 +130,7 @@ Facilities.actions( {
 		}
 	},
 	setServiceSupplier: {
-		authentication: AuthHelpers.managerOfRelatedTeam,
+		authentication: true,
 		method: function( facility, serviceIdx, subserviceIdx, supplier ) {
 			console.log( supplier );
 			console.log( facility );

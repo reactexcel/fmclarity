@@ -10,10 +10,6 @@ import { Users } from '/modules/models/Users';
  */
 const Members = { register }
 
-function ucfirst( string ) {
-	return string.charAt( 0 ).toUpperCase() + string.slice( 1, -1 );
-}
-
 function register( collection, opts ) {
 	opts = opts || {};
 	let fieldName = opts.fieldName || 'members',

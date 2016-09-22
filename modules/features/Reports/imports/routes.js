@@ -1,7 +1,7 @@
 import React from "react";
 
 import { mount } from 'react-mounter';
-import { MainLayout, WideLayout, PrintLayout } from '/modules/core/Layouts';
+import { LayoutMain, LayoutWide, LayoutPrint } from '/modules/core/Layouts';
 import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
 
@@ -16,7 +16,7 @@ const ReportsIndexRoute = new Route( {
     label: "Reports",
     icon: 'fa fa-line-chart',
     action( params ) {
-        mount( MainLayout, {
+        mount( LayoutMain, {
             content: <ReportsPageIndex/>
         } );
     }
@@ -26,7 +26,7 @@ const ReportRoute = new Route( {
     name: 'report',
     path: '/report/:reportId',
     action( params ) {
-        mount( MainLayout, {
+        mount( LayoutMain, {
             content: <ReportsPageIndex/>
         } );
     }
@@ -36,9 +36,9 @@ const ReportPrintRoute = new Route( {
     name: 'report',
     path: '/report/:reportId/:view',
     action( params ) {
-        var Layout = WideLayout;
+        var Layout = LayoutWide;
         if ( params.view == "print" ) {
-            Layout = PrintLayout;
+            Layout = LayoutPrint;
         }
         mount( Layout, {
             content: <ReportsPageSingle id={params.reportId}/>
@@ -52,7 +52,7 @@ AccessGroups.loggedIn.add( {
     label: "Dashboard",
     icon: 'fa fa-newspaper-o',
     action() {
-        mount( MainLayout, {
+        mount( LayoutMain, {
             content: <DashboardPageContainer />
         } );
     }

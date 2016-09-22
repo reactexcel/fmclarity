@@ -1,8 +1,15 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Teams } from '/modules/models/Teams';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import TeamActions from '../../actions.jsx';
+import { ServicesProvidedEditor } from '/modules/mixins/Services';
 
 import { ContactList } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
@@ -37,7 +44,11 @@ function addTeamMenuItem( menu, item, team ) {
 	}
 }
 
-export default TeamPanel = React.createClass( {
+/**
+ * @class 			TeamPanel
+ * @memberOf 		module:models/Teams
+ */
+const TeamPanel = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
@@ -61,12 +72,7 @@ export default TeamPanel = React.createClass( {
 	},
 
 	getMenu() {
-			facility = Session.getSelectedFacility();
-
-		return [ 
-			TeamActions.edit.bind( this.props.item ), 
-			TeamActions.removeSupplier.bind( facility, this.props.item )
-		];
+		return [ TeamActions.edit.bind( this.props.item ) ];
 	},
 
 	render() {
@@ -144,3 +150,5 @@ export default TeamPanel = React.createClass( {
 		)
 	}
 } );
+
+export default TeamPanel;

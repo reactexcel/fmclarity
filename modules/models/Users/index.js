@@ -4,7 +4,7 @@
  */
 import Users from './imports/Users.jsx';
 
-console.log( { Users } );
+checkModules( { Users } );
 
 /**
  * @module 			models/Users

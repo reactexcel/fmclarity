@@ -1,7 +1,16 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import { createContainer } from 'meteor/react-meteor-data';
 import TeamPageSuppliers from '../components/TeamPageSuppliers.jsx';
 
-export default TeamPageSuppliersContainer = createContainer( ( params ) => {
+/**
+ * @class           TeamPageSuppliersContainer
+ * @memberOf        module:models/Teams
+ */
+const TeamPageSuppliersContainer = createContainer( ( params ) => {
     Meteor.subscribe( 'Teams' );
     Meteor.subscribe( 'Users' );
     Meteor.subscribe( 'Files' );
@@ -12,8 +21,6 @@ export default TeamPageSuppliersContainer = createContainer( ( params ) => {
         team = Session.getSelectedTeam(),
         facilities = null,
         suppliers = null;
-
-    console.log( facility );
 
     if ( team != null ) {
         facilities = team.facilities;
@@ -34,3 +41,5 @@ export default TeamPageSuppliersContainer = createContainer( ( params ) => {
     }
 
 }, TeamPageSuppliers );
+
+export default TeamPageSuppliersContainer;

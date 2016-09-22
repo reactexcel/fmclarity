@@ -1,7 +1,8 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-
 
 let css = {
 	'facility-list-tile': {
@@ -9,9 +10,14 @@ let css = {
 	}
 }
 
-export default function ListTile( props ) {
-	let { item, notification } = props;
-	contact = null;
+/**
+ * @class 			ListTile
+ * @memberOf 		module:ui/MaterialViews
+ */
+function ListTile( props ) {
+
+	let { item, notification } = props,
+		contact = null;
 
 	if ( item == null ) {
 		return <div/>
@@ -56,3 +62,5 @@ export default function ListTile( props ) {
 		</div>
 	)
 }
+
+export default ListTile;

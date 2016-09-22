@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: features/Admin/imports/AdminPageIndex.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: features/Admin/imports/AdminPageIndex.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author          Leo Keith &lt;leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+import React from 'react';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+
+import { Actions, Routes } from '/modules/core/Actions';
+
+import { Users } from '/modules/models/Users';
+import { Issues } from '/modules/models/Requests';
+import { UserFilter } from '/modules/mixins/Members';
+import { UserPanel } from '/modules/models/UserViews';
+import { Teams, TeamFilter } from '/modules/models/Teams';
+import { Facilities, FacilityFilter } from '/modules/models/Facilities';
+
+/**
+ * @class 			AdminPageIndex
+ * @memberOf 		module:features/Admin
+ */
+const AdminPageIndex = React.createClass( {
+
+	mixins: [ ReactMeteorData ],
+
+	getMeteorData() {
+
+		Meteor.subscribe( 'Users' );
+		Meteor.subscribe( 'Facilities' );
+		Meteor.subscribe( 'Documents' );
+		Meteor.subscribe( 'Files' );
+		Meteor.subscribe( 'Messages' );
+		Meteor.subscribe( 'Requests' );
+		Meteor.subscribe( 'Notifications' );
+
+		let user = Meteor.user(),
+			users = Users.findAll( {}, { sort: { 'profile.lastName': 1 } } ),
+			team = Session.getSelectedTeam(),
+			teams = Teams.findAll( {}, { sort: { name: 1 } } ),
+			facility = Session.getSelectedFacility(),
+			facilities = Facilities.findAll( {}, { sort: { name: 1 } } ),
+			request = Issues.findOne( { name: { $exists: true } } );
+
+
+		return {
+			user,
+			users,
+			team,
+			teams,
+			facility,
+			facilities,
+			request,
+		}
+	},
+
+	getArgs( types ) {
+		let args = [];
+		if ( !_.isArray( types ) ) {
+			types = [ types ];
+		}
+		types.map( ( type, idx ) => {
+			args[ idx ] = this.data[ type ];
+		} )
+		return args;
+	},
+
+	render() {
+
+		let { user, users, team, teams, facility, facilities, request } = this.data;
+
+		if ( !team ) {
+			return &lt;div/>
+		}
+
+		let routeKeys = Object.keys( Routes.actions ),
+			actionKeys = Object.keys( Actions.actions );
+
+		routeKeys.sort();
+		actionKeys.sort();
+
+		return (
+			&lt;div>
+
+			&lt;div className = "row">
+
+				&lt;div className = "col-md-6">
+					&lt;UserFilter selectedItem = { user } items = { users }/>
+					&lt;TeamFilter selectedItem = { team } items = { teams }/>
+					&lt;FacilityFilter selectedItem = { facility } items = { facilities }/>
+				&lt;/div>
+
+				&lt;div className = "col-md-6">
+					&lt;div className="ibox">
+						&lt;UserPanel item = { user } />
+					&lt;/div>
+				&lt;/div>
+
+			&lt;/div>
+
+			&lt;div className = "row">
+
+				&lt;div className = "col-md-6">
+					&lt;div className = "ibox">
+						&lt;div className = "data-grid">
+							&lt;table className = "table">
+							&lt;tbody>
+								&lt;tr className = "data-grid-header-row">
+									&lt;td className = "data-grid-select-col-header">&lt;/td>
+									&lt;td className = "data-grid-header-cell">Route&lt;/td>
+									&lt;td className = "data-grid-header-cell">Allowed&lt;/td>
+								&lt;/tr>
+								{ routeKeys.map( ( key ) => {
+									let route = Routes.actions[ key ],
+										access = Routes.checkAccess( key, team );
+
+									return (
+										&lt;tr key = { key } className = "data-grid-row">
+
+											&lt;td className = "data-grid-select-col">&lt;/td>
+
+											&lt;td className = "data-grid-cell" onClick={ () => {
+												Routes.run( key );
+											} }>
+												{route.path}
+											&lt;/td>
+
+											&lt;td className = "data-grid-cell">{ access.allowed?'✔':'' }&lt;/td>
+
+										&lt;/tr>
+									)
+								} ) }
+							&lt;/tbody>
+							&lt;/table>
+						&lt;/div>
+					&lt;/div>
+				&lt;/div> 
+
+				&lt;div className = "col-md-6">
+					&lt;div className = "ibox">
+						&lt;div className = "data-grid">
+							&lt;table className = "table">
+							&lt;tbody>
+								&lt;tr className = "data-grid-header-row">
+									&lt;td className = "data-grid-select-col-header">&lt;/td>
+									&lt;td className = "data-grid-header-cell">Action&lt;/td>
+									&lt;td className = "data-grid-header-cell">Allowed&lt;/td>
+									&lt;td className = "data-grid-header-cell">Alert&lt;/td>
+									&lt;td className = "data-grid-header-cell">Email&lt;/td>
+								&lt;/tr>
+								{ actionKeys.map( ( key ) => {
+									let type = Actions.getType( key ),
+										args = this.getArgs(type),
+										access = Actions.checkAccess( key, args[0]); // refact should be ...args
+
+									return (
+										&lt;tr className = "data-grid-row" key = { key }>
+											&lt;td className = "data-grid-select-col">&lt;/td>
+											&lt;td className = "data-grid-cell" onClick={ () => {
+												Actions.run( key, ...args );
+											} }>{key} ({
+												args.map( (arg, idx) => {
+													return &lt;span key = { idx }>{ arg?arg.name||arg.profile.name:'null' }, &lt;/span>
+												})
+											})&lt;/td>
+											&lt;td className = "data-grid-cell">{ access.allowed?'✔':'' }&lt;/td>
+											&lt;td className = "data-grid-cell">{ access.alert?'✔':'' }&lt;/td>
+											&lt;td className = "data-grid-cell">{ access.email?'✔':'' }&lt;/td>
+										&lt;/tr>
+									)
+								} ) }
+							&lt;/tbody>
+							&lt;/table>
+
+						&lt;/div>
+					&lt;/div>
+				&lt;/div>
+			&lt;/div>
+		&lt;/div>
+		)
+	}
+
+} )
+
+export default AdminPageIndex;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-core.html">core</a></li><li><a href="module-core_Actions.html">core/Actions</a></li><li><a href="module-core_Authentication.html">core/Authentication</a></li><li><a href="module-core_AutoForm.html">core/AutoForm</a></li><li><a href="module-core_Layouts.html">core/Layouts</a></li><li><a href="module-core_ORM.html">core/ORM</a></li><li><a href="module-features.html">features</a></li><li><a href="module-features_Admin.html">features/Admin</a></li><li><a href="module-features_Compliance.html">features/Compliance</a></li><li><a href="module-features_Reports.html">features/Reports</a></li><li><a href="module-mixins.html">mixins</a></li><li><a href="module-mixins_Areas.html">mixins/Areas</a></li><li><a href="module-mixins_Members.html">mixins/Members</a></li><li><a href="module-mixins_Owners.html">mixins/Owners</a></li><li><a href="module-mixins_Roles.html">mixins/Roles</a></li><li><a href="module-mixins_Services.html">mixins/Services</a></li><li><a href="module-mixins_Thumbs.html">mixins/Thumbs</a></li><li><a href="module-models.html">models</a></li><li><a href="module-models_Documents.html">models/Documents</a></li><li><a href="module-models_Facilities.html">models/Facilities</a></li><li><a href="module-models_Files.html">models/Files</a></li><li><a href="module-models_Messages.html">models/Messages</a></li><li><a href="module-models_Notifications.html">models/Notifications</a></li><li><a href="module-models_Requests.html">models/Requests</a></li><li><a href="module-models_Teams.html">models/Teams</a></li><li><a href="module-models_Users.html">models/Users</a></li><li><a href="module-ui.html">ui</a></li><li><a href="module-ui_Calendar.html">ui/Calendar</a></li><li><a href="module-ui_DataTable.html">ui/DataTable</a></li><li><a href="module-ui_MaterialInputs.html">ui/MaterialInputs</a></li><li><a href="module-ui_MaterialMisc.html">ui/MaterialMisc</a></li><li><a href="module-ui_MaterialNavigation.html">ui/MaterialNavigation</a></li><li><a href="module-ui_MaterialViews.html">ui/MaterialViews</a></li><li><a href="module-ui_Modal.html">ui/Modal</a></li><li><a href="module-ui_Stepper.html">ui/Stepper</a></li><li><a href="module-ui_Tabs.html">ui/Tabs</a></li></ul><h3>Classes</h3><ul><li><a href="module-core_Actions.Action.html">Action</a></li><li><a href="module-core_Actions.ActionGroup.html">ActionGroup</a></li><li><a href="module-core_Actions.Route.html">Route</a></li><li><a href="module-core_Actions.RouteGroup.html">RouteGroup</a></li><li><a href="module-core_AutoForm.AutoForm.html">AutoForm</a></li><li><a href="module-core_AutoForm.FormController.html">FormController</a></li><li><a href="module-core_Layouts.FloatingActionButtonContainer.html">FloatingActionButtonContainer</a></li><li><a href="module-core_Layouts.LayoutBlank.html">LayoutBlank</a></li><li><a href="module-core_Layouts.LayoutMain.html">LayoutMain</a></li><li><a href="module-core_Layouts.LayoutPrint.html">LayoutPrint</a></li><li><a href="module-core_Layouts.LayoutWide.html">LayoutWide</a></li><li><a href="module-core_Layouts.NavigationDrawerContainer.html">NavigationDrawerContainer</a></li><li><a href="module-core_Layouts.TopNavigationBarContainer.html">TopNavigationBarContainer</a></li><li><a href="module-core_ORM.Model.html">Model</a></li><li><a href="module-core_ORM.ValidatedMethod.html">ValidatedMethod</a></li><li><a href="module-features_Admin.AdminPageIndex.html">AdminPageIndex</a></li><li><a href="module-features_Compliance.CompliancePageIndex.html">CompliancePageIndex</a></li><li><a href="module-features_Compliance.CompliancePageIndexContainer.html">CompliancePageIndexContainer</a></li><li><a href="module-features_Reports.DashboardPage.html">DashboardPage</a></li><li><a href="module-mixins_Areas.AreasEditor.html">AreasEditor</a></li><li><a href="module-mixins_Services.ServicesProvidedEditor.html">ServicesProvidedEditor</a></li><li><a href="module-mixins_Services.ServicesProvidedEditorRow.html">ServicesProvidedEditorRow</a></li><li><a href="module-mixins_Services.ServicesRequiredEditorRow.html">ServicesRequiredEditorRow</a></li><li><a href="module-models_Facilities.FacilityFilter.html">FacilityFilter</a></li><li><a href="module-models_Facilities.FacilityListTile.html">FacilityListTile</a></li><li><a href="module-models_Facilities.FacilityPanel.html">FacilityPanel</a></li><li><a href="module-models_Users.UserPageProfileContainer.html">UserPageProfileContainer</a></li><li><a href="module-ui_Calendar.CalendarPage.html">CalendarPage</a></li><li><a href="module-ui_MaterialInputs.DateInput.html">DateInput</a></li><li><a href="module-ui_MaterialInputs.DateTime.html">DateTime</a></li><li><a href="module-ui_MaterialInputs.FileField.html">FileField</a></li><li><a href="module-ui_MaterialInputs.PlainCard.html">PlainCard</a></li><li><a href="module-ui_MaterialInputs.Rating.html">Rating</a></li><li><a href="module-ui_MaterialInputs.Select.html">Select</a></li><li><a href="module-ui_MaterialInputs.Switch.html">Switch</a></li><li><a href="module-ui_MaterialInputs.Text.html">Text</a></li><li><a href="module-ui_MaterialInputs.TextArea.html">TextArea</a></li><li><a href="module-ui_MaterialNavigation.NavListDropDown.html">NavListDropDown</a></li><li><a href="module-ui_MaterialNavigation.NavListTileMultiple.html">NavListTileMultiple</a></li><li><a href="module-ui_MaterialViews.ListTile.html">ListTile</a></li><li><a href="module-ui_MaterialViews.Thumbnail.html">Thumbnail</a></li><li><a href="ServicesRequiredEditor.html">ServicesRequiredEditor</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Elastic">Elastic</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 22 2016 16:48:40 GMT+1000 (E. Australia Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

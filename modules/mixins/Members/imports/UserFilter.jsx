@@ -9,7 +9,7 @@ export default function UserFilter( props ) {
         <div style = { { overflow: "hidden" }}>
         <NavListDropDown
             { ...props }
-            tile = { ContactCard }
+            ListTile = { ContactCard }
             startOpen = { false }
             onChange = { ( user ) => { 
                 LoginService.loginUser( user );

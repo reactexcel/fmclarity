@@ -4,14 +4,16 @@
  */
 import ReportsNavWidget from './imports/reports/ReportsNavWidget.jsx';
 import { ReportsIndexRoute, ReportRoute, ReportPrintRoute, DashboardRoute } from './imports/routes.js';
+import DashboardPageContainer from './imports/containers/DashboardPageContainer.jsx';
 
 /**
  * @module 			features/Reports
  */
 export {
-	ReportsNavWidget,
-    ReportsIndexRoute,
     ReportRoute,
+    DashboardRoute,
+	ReportsNavWidget,
     ReportPrintRoute,
-    DashboardRoute	
+    ReportsIndexRoute,
+    DashboardPageContainer
 }

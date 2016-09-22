@@ -2,7 +2,7 @@ import React from "react";
 import { mount } from 'react-mounter';
 
 import AccessGroups from './AccessGroups.jsx';
-import { BlankLayout } from '/modules/core/Layouts';
+import { LayoutBlank } from '/modules/core/Layouts';
 
 AccessGroups.exposed.add( {
 	name: 'login',
@@ -12,7 +12,7 @@ AccessGroups.exposed.add( {
 		if ( !redirect ) {
 			Session.set( 'redirectAfterLogin', '/' );
 		}
-		mount( BlankLayout, { content: <PageLogin/> } );
+		mount( LayoutBlank, { content: <PageLogin/> } );
 	},
 } );
 
@@ -30,7 +30,7 @@ AccessGroups.exposed.add( {
 	name: 'register',
 	path: '/register',
 	action() {
-		mount( BlankLayout, { content: <PageRegister/> } );
+		mount( LayoutBlank, { content: <PageRegister/> } );
 	}
 } );
 
@@ -38,7 +38,7 @@ AccessGroups.exposed.add( {
 	name: 'lost-password',
 	path: '/lost-password',
 	action() {
-		mount( BlankLayout, { content: <PageLostPassword/> } );
+		mount( LayoutBlank, { content: <PageLostPassword/> } );
 	}
 } );
 
@@ -83,7 +83,7 @@ AccessGroups.loggedIn.add( {
 	name: 'change-password',
 	path: '/change-password',
 	action() {
-		mount( BlankLayout, {
+		mount( LayoutBlank, {
 			content: <PageChangePassword />
 		} );
 	}

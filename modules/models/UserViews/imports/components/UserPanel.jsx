@@ -2,6 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
+import { RolesMixin } from '/modules/mixins/Roles';
 
 export default UserPanel = React.createClass( {
 
@@ -32,17 +33,33 @@ export default UserPanel = React.createClass( {
 				 <div className="contact-info">
 				 	<div>
 						<h2>{contact.getName()}</h2>
-						{this.props.role?<span>{this.props.role}<br/></span>:null}
-						{profile.email?<span><b>Email</b> {profile.email}<br/></span>:null}
-						{profile.phone||profile.phone2?<span><b>Phone</b> {profile.phone}<br/></span>:null}
-						{profile.phone2?<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>:null}
-						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}>
-						</div>
-						{roles?
-						roles.map( ( role, idx ) => {
-							return <span key = { idx }><b style={ {textTransform:'uppercase'} }>{role.name}</b><span> at {role.context}</span><br/></span>
-						})
-						:null}
+
+						{ this.props.role ? 
+							<span>{this.props.role}<br/></span>
+						: null }
+
+						{ profile.email ?
+							<span><b>Email</b> {profile.email}<br/></span>
+						: null }
+
+						{ profile.phone || profile.phone2 ? 
+							<span><b>Phone</b> {profile.phone}<br/></span>
+						: null }
+
+						{ profile.phone2 ? 
+							<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>
+						: null }
+
+						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
+
+						{ !roles ? null : roles.map( ( role, idx ) => {
+							return (
+								<span key = { idx }>
+									<b style={ {textTransform:'uppercase'} }>{role.name}</b>
+									<span> at {role.context}</span><br/>
+								</span>
+							)
+						} ) }
 
 					</div>
 			    </div>

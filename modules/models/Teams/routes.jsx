@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { MainLayout, WideLayout } from '/modules/core/Layouts';
+import { LayoutMain, LayoutWide } from '/modules/core/Layouts';
 
 import TeamPageProfileContainer from './imports/containers/TeamPageProfileContainer.jsx';
 import TeamPageSuppliersContainer from './imports/containers/TeamPageSuppliersContainer.jsx';
@@ -16,7 +16,7 @@ AccessGroups.loggedIn.add( {
 	label: "All teams",
 	icon: "fa fa-group",
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <TeamsPageIndexContainer />
 		})
 	}
@@ -28,7 +28,7 @@ AccessGroups.loggedIn.add( {
 	label: "Suppliers",
 	icon: 'fa fa-group',
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <TeamPageSuppliersContainer />
 		} );
 	}
@@ -37,8 +37,10 @@ AccessGroups.loggedIn.add( {
 AccessGroups.loggedIn.add( {
 	name: 'account',
 	path: '/account',
+	label: 'Account',
+	icon: 'fa fa-cog',
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <TeamPageProfileContainer />
 		} );
 	}

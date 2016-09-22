@@ -3,7 +3,7 @@ import { mount } from 'react-mounter';
 
 import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
-import { MainLayout, WideLayout } from '/modules/core/Layouts';
+import { LayoutMain, LayoutWide } from '/modules/core/Layouts';
 
 import FacilitiesPageIndexContainer from './imports/containers/FacilitiesPageIndexContainer.jsx';
 import FacilitiesPageAllContainer from './imports/containers/FacilitiesPageAllContainer.jsx';
@@ -14,7 +14,7 @@ AccessGroups.loggedIn.add( {
 	label: "All facilities",
 	icon: "fa fa-building-o",
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <FacilitiesPageAllContainer />
 		} )
 	}
@@ -26,7 +26,7 @@ AccessGroups.loggedIn.add( {
 	label: "Porffolio",
 	icon: 'fa fa-building',
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <FacilityPageIndexContainer />
 		} );
 	}
@@ -45,7 +45,7 @@ let portfolio = new Route({
 	name:'portfolio',
 	path:'/portfolio',
 	action:() => {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <FacilityPageIndexContainer />
 		})
 	}

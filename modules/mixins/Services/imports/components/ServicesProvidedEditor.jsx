@@ -1,23 +1,26 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import ServicesProvidedEditorRow from './ServicesProvidedEditorRow.jsx';
 
-import { Switch } from '/modules/ui/MaterialInputs';
+/**
+ * @class 			ServicesProvidedEditor
+ * @memberOf 		module:mixins/Services
+ */
+class ServicesProvidedEditor extends React.Component {
 
-export default ServicesProvidedEditor = React.createClass( {
-
-	getInitialState() {
-		var item, field, services;
-		item = this.props.item;
-		field = this.props.field || "services";
-		services = item && field ? item[ field ] : [];
-		return {
-			item: item,
-			field: field,
-			services: services || [],
+	constructor( props ) {
+		super( props );
+		let { item, field = "services" } = props;
+		this.state = {
+			item,
+			field,
+			services: item && field ? item[ field ] : [],
 			expanded: {}
 		}
-	},
+	}
 
 	componentWillReceiveProps( props ) {
 		//only update if the item (facility) being displayed has changed
@@ -35,11 +38,11 @@ export default ServicesProvidedEditor = React.createClass( {
 				expanded: {}
 			} );
 		}
-	},
+	}
 
 	componentDidMount() {
 		this.save = _.debounce( this.save, 1000 );
-	},
+	}
 
 	save() {
 		var item = this.state.item;
@@ -50,7 +53,7 @@ export default ServicesProvidedEditor = React.createClass( {
 			this.props.onChange(this.state.services);
 		}
 		*/
-	},
+	}
 
 	updateService( idx, newValue ) {
 		var services = this.state.services;
@@ -63,7 +66,7 @@ export default ServicesProvidedEditor = React.createClass( {
 			services: services
 		} )
 		this.save();
-	},
+	}
 
 	updateSubService( idx, subIdx, newValue ) {
 		var services = this.state.services;
@@ -78,7 +81,7 @@ export default ServicesProvidedEditor = React.createClass( {
 			services: services
 		} )
 		this.save();
-	},
+	}
 
 	addService() {
 		var services = this.state.services;
@@ -93,7 +96,7 @@ export default ServicesProvidedEditor = React.createClass( {
 			} )
 			this.save();
 		}
-	},
+	}
 
 	addSubService( idx ) {
 		var services = this.state.services;
@@ -110,7 +113,7 @@ export default ServicesProvidedEditor = React.createClass( {
 			} )
 			this.save();
 		}
-	},
+	}
 
 	toggleExpanded( supplierName ) {
 		var expanded = this.state.expanded;
@@ -118,7 +121,7 @@ export default ServicesProvidedEditor = React.createClass( {
 		this.setState( {
 			expanded: expanded
 		} )
-	},
+	}
 
 	render() {
 		var component = this;
@@ -180,51 +183,6 @@ export default ServicesProvidedEditor = React.createClass( {
 			</div>
 		)
 	}
-} )
+}
 
-ServicesProvidedEditorRow = React.createClass( {
-
-	updateServiceName( event ) {
-		var service = this.props.service;
-		var newValue = event.target.value;
-		service.name = newValue;
-		if ( this.props.onChange ) {
-			this.props.onChange( service );
-		}
-	},
-
-	toggleActive( value ) {
-		var service = this.props.service;
-		var newValue = value;
-		service.active = newValue;
-		if ( this.props.onChange ) {
-			this.props.onChange( service );
-		}
-	},
-
-	render() {
-		service = this.props.service;
-		clickExpand = this.props.clickExpand;
-		var onChange = this.props.onChange;
-		readOnly = this.props.readOnly;
-		return (
-			<div>
-				<div className="services-editor-col services-editor-col-service">
-					{clickExpand?<span onClick={clickExpand} className="services-editor-expand-icon"><i className="fa fmc-fa-icon-expand"></i></span>:null}
-
-		    		<input
-		    			defaultValue={service.name||undefined}
-		    			readOnly={readOnly}
-		    			onChange={this.updateServiceName}/>
-
-			    	{!readOnly?<span className="services-editor-delete-icon" onClick={onChange.bind(null,null)}>&times;</span>:null}
-				</div>
-				<div className="services-editor-col services-editor-col-supplier" style={{padding:"10px"}}>
-					<Switch value={service.active} onChange={this.toggleActive}>
-						<b>Active</b>
-					</Switch>
-				</div>
-			</div>
-		)
-	}
-} )
+export default ServicesProvidedEditor;

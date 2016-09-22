@@ -3,7 +3,7 @@ import { mount } from 'react-mounter';
 
 import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
-import { MainLayout, BlankLayout } from '/modules/core/Layouts';
+import { LayoutMain, LayoutBlank } from '/modules/core/Layouts';
 
 import CalendarPage from './imports/components/CalendarPage.jsx';
 
@@ -13,7 +13,7 @@ AccessGroups.loggedIn.add( {
 	label: "Calendar",
 	icon: 'fa fa-calendar',
 	action() {
-		mount( MainLayout, {
+		mount( LayoutMain, {
 			content: <CalendarPage/>
 		} );
 	}

@@ -7,7 +7,7 @@ import React from 'react';
 import { mount } from 'react-mounter';
 import { Accounts } from 'meteor/accounts-base';
 
-import { BlankLayout } from '/modules/core/Layouts';
+import { LayoutBlank } from '/modules/core/Layouts';
 import { Action, RouteGroup } from '/modules/core/Actions';
 
 import NotFound from '../components/NotFound.jsx';
@@ -72,7 +72,7 @@ if ( Meteor.isClient ) {
 
 FlowRouter.notFound = {
 	action() {
-		mount( BlankLayout, {
+		mount( LayoutBlank, {
 			content: <NotFound />
 		} );
 	}

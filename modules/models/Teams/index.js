@@ -8,7 +8,7 @@ import TeamFilter from './imports/components/TeamFilter.jsx';
 import TeamStepper from './imports/components/TeamStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
 
-console.log( {
+checkModules( {
 	Teams,
 	TeamActions,
 	TeamFilter,

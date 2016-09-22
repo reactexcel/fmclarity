@@ -8,7 +8,7 @@ export default DocAttachments = {
 	register
 }
 
-function register( collection, { fieldName, authentication } ) {
+function register( collection, { fieldName, authentication } = {} ) {
 
 	if ( fieldName == null ) {
 		fieldName = "documents";

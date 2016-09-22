@@ -1,6 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Teams } from '/modules/models/Teams';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import { ContactList } from '/modules/mixins/Members';
 import { ServicesProvidedEditor } from '/modules/mixins/Services';

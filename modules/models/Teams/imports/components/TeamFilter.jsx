@@ -8,7 +8,7 @@ export default function TeamFilter( props ) {
         <div style = { { overflow: "hidden" }}>
         <NavListDropDown
             { ...props }
-            tile = { ContactCard }
+            ListTile = { ContactCard }
             startOpen = { false }
             onChange = { ( team ) => { 
                 Session.selectTeam( team );

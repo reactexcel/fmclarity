@@ -1,20 +1,24 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
-
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Actions, Routes } from '/modules/core/Actions';
 
 import { Users } from '/modules/models/Users';
-
+import { Issues } from '/modules/models/Requests';
+import { UserFilter } from '/modules/mixins/Members';
+import { UserPanel } from '/modules/models/UserViews';
 import { Teams, TeamFilter } from '/modules/models/Teams';
 import { Facilities, FacilityFilter } from '/modules/models/Facilities';
-import { UserFilter } from '/modules/mixins/Members';
 
-import { UserPanel } from '/modules/models/UserViews';
-
-import { Issues } from '/modules/models/Requests';
-
-export default AdminPageIndex = React.createClass( {
+/**
+ * @class 			AdminPageIndex
+ * @memberOf 		module:features/Admin
+ */
+const AdminPageIndex = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
@@ -175,3 +179,5 @@ export default AdminPageIndex = React.createClass( {
 	}
 
 } )
+
+export default AdminPageIndex;

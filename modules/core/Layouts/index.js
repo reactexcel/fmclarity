@@ -3,17 +3,17 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
-import BlankLayout from "./imports/components/BlankLayout.jsx";
-import MainLayout from "./imports/components/MainLayout.jsx";
-import PrintLayout from "./imports/components/PrintLayout.jsx";
-import WideLayout from "./imports/components/WideLayout.jsx";
+import LayoutBlank from "./imports/components/LayoutBlank.jsx";
+import LayoutMain from "./imports/components/LayoutMain.jsx";
+import LayoutPrint from "./imports/components/LayoutPrint.jsx";
+import LayoutWide from "./imports/components/LayoutWide.jsx";
 
 /**
  * @module 			core/Layouts
  */
 export {
-	BlankLayout,
-	MainLayout,
-	PrintLayout,
-	WideLayout
+	LayoutBlank,
+	LayoutMain,
+	LayoutPrint,
+	LayoutWide
 }

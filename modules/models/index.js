@@ -11,25 +11,6 @@ import { Issues, RequestActions } from './Requests';
 import { Teams, TeamActions } from './Teams';
 import { Users } from './Users';
 
-console.log( {
-	Issues,
-	RequestActions,
-
-	Documents,
-	DocActions,
-
-	Facilities,
-	FacilityActions,
-
-	Files,
-	Messages,
-
-	Teams,
-	TeamActions,
-
-	Users
-} );
-
 checkModules( {
 	Issues,
 	RequestActions,

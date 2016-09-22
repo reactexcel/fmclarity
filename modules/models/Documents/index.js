@@ -9,7 +9,7 @@ import DocExplorer from './imports/components/DocExplorer.jsx';
 import DocTypes from './imports/schemas/DocTypes.jsx';
 import DocActions from './actions.jsx';
 
-console.log( {
+checkModules( {
 	Documents,
 	DocAttachments,
 	DocExplorer,

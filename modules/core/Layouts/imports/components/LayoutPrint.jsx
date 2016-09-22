@@ -7,10 +7,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 /**
- * @class           PrintLayout
+ * @class           LayoutPrint
  * @memberOf        module:core/Layouts
  */
-class PrintLayout extends React.Component {
+class LayoutPrint extends React.Component {
 	componentDidMount() {
 		setTimeout( () => {
 			window.print();
@@ -29,4 +29,4 @@ class PrintLayout extends React.Component {
 	}
 }
 
-export default PrintLayout;
+export default LayoutPrint;

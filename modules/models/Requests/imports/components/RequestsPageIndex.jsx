@@ -1,19 +1,32 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 
 import { FacilityFilter } from '/modules/models/Facilities';
 import { RequestsTable } from '/modules/models/Requests';
 
-export default function RequestsPageIndex( props ) {
+/**
+ * @class 			RequestsPageIndex
+ * @memberOf 		module:models/Requests
+ */
+function RequestsPageIndex( props ) {
 	let { team, facility, requests } = props;
 
+	if( !team ) {
+		return <div/>
+	}
 	return (
 		<div>
-			<FacilityFilter team = { team } facility = { facility }/>
+			<FacilityFilter items = { team.facilities } selectedItem = { facility } />
 			<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 				<div className = "ibox">
 					<RequestsTable requests = { props.requests }/>
 				</div>
 			</div>
 		</div>
-	);
+	)
 }
+
+export default RequestsPageIndex;

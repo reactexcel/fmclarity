@@ -1,6 +1,14 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
 
-export default function Thumbnail( props ) {
+/**
+ * @class 			Thumbnail
+ * @memberOf 		module:ui/MaterialViews
+ */
+function Thumbnail( props ) {
 	let style = _.extend( {
 		backgroundImage: "url('" + props.item.thumbUrl + "')",
 		backgroundSize: "cover"
@@ -12,3 +20,5 @@ export default function Thumbnail( props ) {
 		</div>
 	)
 }
+
+export default Thumbnail;

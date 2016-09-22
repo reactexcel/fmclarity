@@ -7,10 +7,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 /**
- * @class           BlankLayout
+ * @class           LayoutBlank
  * @memberOf 		module:core/Layouts
  */
-function BlankLayout( props ) {
+function LayoutBlank( props ) {
 	return (
 		<MuiThemeProvider muiTheme={getMuiTheme()}>
 			<main>{props.content}</main>
@@ -18,4 +18,4 @@ function BlankLayout( props ) {
 	)
 }
 
-export default BlankLayout;
+export default LayoutBlank;

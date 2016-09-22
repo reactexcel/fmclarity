@@ -4,6 +4,7 @@
  */
 
 /**
+ * @class 			RolesMixin
  * @memberOf		module:mixins/Roles
  */
 const RolesMixin = {
@@ -18,7 +19,13 @@ const RolesMixin = {
 	getUserRoles
 }
 
+/**
+ * @memberOf 		RolesMixin
+ */
 function getUserRoles( user ) {
+	/**
+	 * @ignore
+	 */
 	import { Teams } from '/modules/models/Teams';
 	import { Facilities } from '/modules/models/Facilities';
 	let roles = [];
@@ -49,6 +56,9 @@ function getUserRoles( user ) {
 	return roles;
 }
 
+/**
+ * @memberOf 		RolesMixin
+ */
 function getRoles( item ) {
 	import { Teams } from '/modules/models/Teams';
 	import { Facilities } from '/modules/models/Facilities';
@@ -119,6 +129,9 @@ function getRoles( item ) {
 	return results;
 }
 
+/**
+ * @memberOf 		RolesMixin
+ */
 function addRole( results, member, role ) {
 	if ( !results.actors[ member._id ] ) {
 		results.actors[ member._id ] = [];

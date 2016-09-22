@@ -9,7 +9,7 @@ import ContactDetails from './imports/ContactDetails.jsx';
 import ContactAvatarSmall from './imports/ContactAvatarSmall.jsx';
 import UserFilter from './imports/UserFilter.jsx';
 
-console.log( {
+checkModules( {
 	Members,
 	ContactCard,
 	ContactList,

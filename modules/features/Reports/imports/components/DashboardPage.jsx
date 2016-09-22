@@ -1,3 +1,7 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
 
 import { Calendar } from '/modules/ui/Calendar';
@@ -8,17 +12,20 @@ import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
 import RequestActivityChart from '../reports/RequestActivityChart.jsx';
 import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
 
-
-// Dashboard
-// The main landing page for FMs which is intended to give a broad overview of job status
-export default function DashboardPage( props ) {
+/**
+ * The main landing page for FMs which is intended to give a broad overview of job status
+ * @class 			DashboardPage
+ * @memberOf 		module:features/Reports
+ */
+function DashboardPage( props ) {
 	let canGetMessages = false;
-	if ( props.team != null ) {
-		props.team.canGetMessages();
+	let { team, facility } = props;
+	if( !team ) {
+		return <div/>
 	}
 	return (
 		<div className="dashboard-page animated fadeIn">
-			<FacilityFilter team = { props.team }/>
+			<FacilityFilter items = { team.facilities } selectedItem = { facility }/>
 	        <div className="row" style={{paddingTop:"50px"}}>
 	            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 		            <div className="ibox">
@@ -29,9 +36,13 @@ export default function DashboardPage( props ) {
 		            <div className="ibox">
 		            	<ReportsNavWidget />
 		            </div>
-		            {canGetMessages?<div className="ibox">
+
+		            { canGetMessages ?
+		            <div className="ibox">
 		            	<InboxWidget/>
-		            </div>:null}
+		            </div>
+		            : null }
+
 		        </div>
 	            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 		            <div className="ibox">
@@ -48,3 +59,5 @@ export default function DashboardPage( props ) {
 		</div>
 	);
 }
+
+export default DashboardPage;
