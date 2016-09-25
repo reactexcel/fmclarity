@@ -1,6 +1,7 @@
 export default Owners = { register }
 
-import { Users } from '/modules/models/Users';
+// Have had to remove this because of dysfunctional implementation of es6 circular dependencies
+//import { Users } from '/modules/models/Users';
 import { Select } from '/modules/ui/MaterialInputs';
 
 function register( collection, options ) {
@@ -28,7 +29,7 @@ function register( collection, options ) {
 		relation: {
 			join: ( item ) => {
 				if ( item.owner && item.owner._id ) {
-					return Users.findOne( item.owner._id );
+					return Meteor.users.findOne( item.owner._id );
 				}
 			},
 			unjoin: ( item ) => {
@@ -46,7 +47,7 @@ function register( collection, options ) {
 		},
 		getOwner: function() {
 			if ( this.owner ) {
-				return Users.findOne( this.owner._id );
+				return Meteor.users.findOne( this.owner._id );
 			}
 		},
 		setOwner: function( owner ) {

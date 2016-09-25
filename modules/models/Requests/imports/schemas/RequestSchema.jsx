@@ -7,7 +7,6 @@ import CloseDetailsSchema from './CloseDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
-import { Users } from '/modules/models/Users';
 import { Teams } from '/modules/models/Teams';
 import { DocExplorer } from '/modules/models/Documents';
 import { FileExplorer } from '/modules/models/Files';
@@ -389,8 +388,18 @@ const RequestSchema = {
 		label: "Assignee",
 		description: "The individual who has been allocated to this job",
 		relation: {
-			type: ORM.HasOne,
-			source: Users
+			join:( item ) => {
+				if( item.assignee && item.assignee._id ) {
+					import { Users } from '/modules/models/Users';
+					return Users.findOne( item.assignee._id )
+				}
+			},
+			unjoin:( item ) => {
+				return {
+					_id: item.assignee._id,
+					name: item.assignee.profile.name
+				}
+			}
 		},
 		input: Select,
 		options: ( item ) => {

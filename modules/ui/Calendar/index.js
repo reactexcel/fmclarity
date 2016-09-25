@@ -3,7 +3,7 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import Calendar from './imports/components/Calendar.jsx';
-import CalendarPage from './imports/components/CalendarPage.jsx';
+import PageCalendar from './imports/components/PageCalendar.jsx';
 import { CalendarRoute } from './routes.jsx';
 
 /**
@@ -11,6 +11,6 @@ import { CalendarRoute } from './routes.jsx';
  */
 export {
 	Calendar,
-	CalendarPage,
+	PageCalendar,
 	CalendarRoute
 }

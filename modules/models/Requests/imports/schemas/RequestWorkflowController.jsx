@@ -4,19 +4,19 @@ import React from 'react';
 
 import { WorkflowHelper } from '/modules/core/WorkflowHelper';
 
-import Issues from '../Requests.jsx';
+import Requests from '../Requests.jsx';
 
-Issues.workflow = new WorkflowHelper( Issues );
+Requests.workflow = new WorkflowHelper( Requests );
 
 function actionGetQuote( request, user ) {
-	Issues.save.call( request, {
+	Requests.save.call( request, {
 		quoteIsPreApproved: request.quoteIsPreApproved,
 		status: 'Quoting'
 	} );
 
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 	request.updateSupplierManagers();
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 
 	request.distributeMessage( {
 		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier manager" ],
@@ -32,20 +32,20 @@ function actionEdit( request, user ) {
 		request.status = "PMP";
 		request.priority = "Scheduled";
 	}
-	Issues.save.call( request );
+	Requests.save.call( request );
 }
 
 //////////////////////////////////////////////////////
 // Draft
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'Draft' ], {
+Requests.workflow.addState( [ 'Draft' ], {
 	edit: {
 		label: 'Edit',
 		authentication: AuthHelpers.managerOfRelatedTeam,
 		validation: true,
 		form: {
 			title: "Edit request.",
-			fields: Issues.forms.create,
+			fields: Requests.forms.create,
 			//onSubmit: actionEdit
 		},
 		method: actionEdit
@@ -70,7 +70,7 @@ Issues.workflow.addState( [ 'Draft' ], {
 
 		form: {
 			title: "Please tell us a little bit more about the work that is required.",
-			fields: Issues.forms.create
+			fields: Requests.forms.create
 		},
 
 		method: function( request ) {
@@ -81,9 +81,9 @@ Issues.workflow.addState( [ 'Draft' ], {
 				request.status = "New";
 			}
 
-			Issues.save.call( request );
+			Requests.save.call( request );
 
-			request = Issues.findOne( request._id );
+			request = Requests.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
 				message: {
@@ -125,7 +125,7 @@ Issues.workflow.addState( [ 'Draft' ], {
 		label: 'Delete',
 		authentication: [ "owner", "facility manager", "team manager" ],
 		method: function( request ) {
-			Issues.remove( request._id );
+			Requests.remove( request._id );
 			Modal.hide();
 		}
 	}
@@ -134,7 +134,7 @@ Issues.workflow.addState( [ 'Draft' ], {
 //////////////////////////////////////////////////////
 // PMP
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'PMP' ], {
+Requests.workflow.addState( [ 'PMP' ], {
 
 	edit: {
 		label: 'Edit',
@@ -142,7 +142,7 @@ Issues.workflow.addState( [ 'PMP' ], {
 		validation: true,
 		form: {
 			title: "Edit request.",
-			fields: Issues.forms.create,
+			fields: Requests.forms.create,
 			//onSubmit: actionEdit
 		},
 		method: actionEdit
@@ -169,7 +169,7 @@ Issues.workflow.addState( [ 'PMP' ], {
 
 		form: {
 			title: "Please tell us a little bit more about the work that is required.",
-			fields: Issues.forms.create,
+			fields: Requests.forms.create,
 			/*validation: function( request )
 			{
 				//console.log(request);
@@ -191,8 +191,8 @@ Issues.workflow.addState( [ 'PMP' ], {
 				request.status = "New";
 			}
 
-			Issues.save.call( request );
-			request = Issues.findOne( request._id );
+			Requests.save.call( request );
+			request = Requests.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
 				message: {
@@ -221,7 +221,7 @@ Issues.workflow.addState( [ 'PMP' ], {
 		label: 'Delete',
 		authentication: [ "owner", "facility manager", "team manager" ],
 		method: function( request ) {
-			Issues.remove( request._id );
+			Requests.remove( request._id );
 			Modal.hide();
 		}
 	}
@@ -230,7 +230,7 @@ Issues.workflow.addState( [ 'PMP' ], {
 //////////////////////////////////////////////////////
 // New, Quoted
 //////////////////////////////////////////////////////
-Issues.workflow.addState( [ 'New', 'Quoted' ], {
+Requests.workflow.addState( [ 'New', 'Quoted' ], {
 
 	edit: {
 		label: 'Edit',
@@ -238,7 +238,7 @@ Issues.workflow.addState( [ 'New', 'Quoted' ], {
 		validation: true,
 		form: {
 			title: "Edit request.",
-			fields: Issues.forms.create,
+			fields: Requests.forms.create,
 			//onSubmit: actionEdit
 		},
 		method: actionEdit
@@ -278,8 +278,8 @@ Issues.workflow.addState( [ 'New', 'Quoted' ], {
 			fields: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, { status: "Rejected" } );
-			request = Issues._transform( request );
+			Requests.save.call( request, { status: "Rejected" } );
+			request = Requests._transform( request );
 			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
 				message: {
@@ -295,7 +295,7 @@ Issues.workflow.addState( [ 'New', 'Quoted' ], {
 //////////////////////////////////////////////////////
 // Quoting
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Quoting', {
+Requests.workflow.addState( 'Quoting', {
 	'send quote': {
 		label: "Quote",
 		authentication: AuthHelpers.memberOfSuppliersTeam,
@@ -306,11 +306,11 @@ Issues.workflow.addState( 'Quoting', {
 			fields: [ 'quote', 'quoteValue' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, {
+			Requests.save.call( request, {
 				costThreshold: parseInt( request.quoteValue ),
 				status: request.quoteIsPreApproved ? 'In Progress' : 'Quoted'
 			} );
-			request = Issues.findOne( request._id );
+			request = Requests.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility manager" ],
 				message: {
@@ -326,7 +326,7 @@ Issues.workflow.addState( 'Quoting', {
 //////////////////////////////////////////////////////
 // Issued
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Issued', {
+Requests.workflow.addState( 'Issued', {
 	accept: {
 		label: "Accept",
 		//so this should be more of a hide:function() pattern
@@ -342,12 +342,12 @@ Issues.workflow.addState( 'Issued', {
 		method: function( request, user ) {
 			console.log( request );
 			var assignee = request.assignee;
-			Issues.save.call( request, {
+			Requests.save.call( request, {
 				status: 'In Progress',
 				eta: request.eta,
 				acceptComment: request.acceptComment
 			} );
-			request = Issues._transform( request );
+			request = Requests._transform( request );
 			request.setAssignee( request.assignee );
 			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility manager" ],
@@ -370,10 +370,10 @@ Issues.workflow.addState( 'Issued', {
 			form: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, {
+			Requests.save.call( request, {
 				status: "Rejected"
 			} );
-			request = Issues.findOne( request._id );
+			request = Requests.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
 				message: {
@@ -394,10 +394,10 @@ Issues.workflow.addState( 'Issued', {
 			fields: [ 'rejectDescription' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, {
-				status: Issues.STATUS_DELETED
+			Requests.save.call( request, {
+				status: Requests.STATUS_DELETED
 			} );
-			request = Issues.findOne( request._id );
+			request = Requests.findOne( request._id );
 			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
 				message: {
@@ -414,7 +414,7 @@ Issues.workflow.addState( 'Issued', {
 //////////////////////////////////////////////////////
 // In Progress
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'In Progress', {
+Requests.workflow.addState( 'In Progress', {
 	complete: {
 		label: 'Complete',
 		authentication: AuthHelpers.memberOfSuppliersTeam,
@@ -427,7 +427,7 @@ Issues.workflow.addState( 'In Progress', {
 //////////////////////////////////////////////////////
 // Complete
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Complete', {
+Requests.workflow.addState( 'Complete', {
 
 	close: {
 		label: 'Close',
@@ -438,10 +438,10 @@ Issues.workflow.addState( 'Complete', {
 			fields: [ 'closeComment' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, {
+			Requests.save.call( request, {
 				status: 'Closed'
 			} );
-			request = Issues._transform( request );
+			request = Requests._transform( request );
 			request.distributeMessage( {
 				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
 				message: {
@@ -462,7 +462,7 @@ Issues.workflow.addState( 'Complete', {
 			fields: [ 'reopenReason' ]
 		},
 		method: function( request ) {
-			Issues.save.call( request, {
+			Requests.save.call( request, {
 				status: 'New'
 			} );
 		}
@@ -473,7 +473,7 @@ Issues.workflow.addState( 'Complete', {
 //////////////////////////////////////////////////////
 // Closed
 //////////////////////////////////////////////////////
-Issues.workflow.addState( 'Closed', {
+Requests.workflow.addState( 'Closed', {
 	reverse: {
 		label: 'Reverse',
 		authentication: AuthHelpers.managerOfRelatedTeam,
@@ -492,28 +492,28 @@ Issues.workflow.addState( 'Closed', {
 //Closed = ["Closed"]
 //Rejected = ["Rejected","Cancelled","Deleted"]
 
-Issues.STATUS_DRAFT = "Draft";
-Issues.STATUS_NEW = "New";
-Issues.STATUS_ISSUED = "Issued";
-Issues.STATUS_ASSIGNED = "Issued";
-Issues.STATUS_CLOSING = "Closing";
-Issues.STATUS_CLOSED = "Closed";
-Issues.STATUS_REVIEWED = "Reviewed";
-Issues.STATUS_CANCELLED = "Cancelled";
-Issues.STATUS_DELETED = "Deleted";
-Issues.STATUS_ARCHIVED = "Archived";
+Requests.STATUS_DRAFT = "Draft";
+Requests.STATUS_NEW = "New";
+Requests.STATUS_ISSUED = "Issued";
+Requests.STATUS_ASSIGNED = "Issued";
+Requests.STATUS_CLOSING = "Closing";
+Requests.STATUS_CLOSED = "Closed";
+Requests.STATUS_REVIEWED = "Reviewed";
+Requests.STATUS_CANCELLED = "Cancelled";
+Requests.STATUS_DELETED = "Deleted";
+Requests.STATUS_ARCHIVED = "Archived";
 
 //////////////////////////////////////////////////////////
 // Issue
 //////////////////////////////////////////////////////////
 function actionIssue( request ) {
-	Issues.save.call( request, {
-		status: Issues.STATUS_ISSUED,
+	Requests.save.call( request, {
+		status: Requests.STATUS_ISSUED,
 		issuedAt: new Date()
 	} );
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 	request.updateSupplierManagers();
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 	request.distributeMessage( {
 		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
 		message: {
@@ -556,7 +556,7 @@ function actionIssue( request ) {
 //////////////////////////////////////////////////////////
 function actionBeforeComplete( request ) {
 
-	request = Issues._transform( request );
+	request = Requests._transform( request );
 	var now = new Date();
 
 	request.closeDetails = {
@@ -574,12 +574,12 @@ function actionBeforeComplete( request ) {
 
 function actionComplete( request ) {
 
-	Issues.save.call( request, {
+	Requests.save.call( request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
 	} )
 
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 
 	console.log( request );
 
@@ -597,7 +597,7 @@ function actionComplete( request ) {
 			location: request.location,
 			level: request.level,
 			area: request.area,
-			status: Issues.STATUS_NEW,
+			status: Requests.STATUS_NEW,
 			service: request.service,
 			subservice: request.subservice,
 			name: "FOLLOW UP - " + request.name,
@@ -610,9 +610,9 @@ function actionComplete( request ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
-		var response = Meteor.call( 'Issues.create', newRequest );
+		var response = Meteor.call( 'Requests.create', newRequest );
 		console.log( response );
-		var newRequest = Issues._transform( response );
+		var newRequest = Requests._transform( response );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
 		//I think this needs to be replaced with distribute message
@@ -656,8 +656,8 @@ function actionComplete( request ) {
 //////////////////////////////////////////////////////////
 function actionReverse( request ) {
 	//save current request
-	Issues.save.call( request, {
-		status: Issues.STATUS_CLOSED,
+	Requests.save.call( request, {
+		status: Requests.STATUS_CLOSED,
 		priority: "Closed",
 		name: "Reversed - " + request.name,
 		reversed: true
@@ -672,9 +672,9 @@ function actionReverse( request ) {
 		costThreshold: request.costThreshold * -1,
 		name: "Reversal - " + request.name
 	} );
-	var response = Meteor.call( 'Issues.create', newRequest );
+	var response = Meteor.call( 'Requests.create', newRequest );
 	//distribute message on new request
-	request = Issues.findOne( request._id );
+	request = Requests.findOne( request._id );
 	request.distributeMessage( {
 		recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
 		message: {
@@ -687,7 +687,7 @@ function actionReverse( request ) {
 
 
 /*
-Issues.methods({
+Requests.methods({
   close:{
 	 method:actionClose,
 	 authentication:truefunction(role,user,request) {
@@ -704,7 +704,7 @@ Issues.methods({
 	 method:reverse,
 	 authentication:function(role,user,request) {
 		return (
-		  request.exported&&request.status==Issues.STATUS_ISSUED&&
+		  request.exported&&request.status==Requests.STATUS_ISSUED&&
 		  AuthHelpers.managerOfRelatedTeam(role,user,request)
 		)
 	 }
@@ -731,7 +731,7 @@ Issues.methods({
 	 method:startClosure,
 	 authentication:function(role,user,request) {
 		return (
-		  request.status==Issues.STATUS_ISSUED&&
+		  request.status==Requests.STATUS_ISSUED&&
 		  (
 			 AuthHelpers.managerOfRelatedTeam(role,user,request)||
 			 AuthHelpers.memberOfSuppliersTeam(role,user,request)

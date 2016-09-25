@@ -16,6 +16,8 @@ export default function RequestsTable( props ) {
         Supplier: "supplier.name"
     }
 
+    console.log( props.requests );
+
     return (
         <DataTable 
             items   = { props.requests } 

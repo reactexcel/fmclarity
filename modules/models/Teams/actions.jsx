@@ -5,9 +5,11 @@ import { AutoForm } from '/modules/core/AutoForm';
 
 import { Modal } from '/modules/ui/Modal';
 
+import { Roles } from '/modules/mixins/Roles';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
-import { UserPanel, UserViewEdit } from '/modules/models/UserViews';
-import { Issues, CreateRequestForm } from '/modules/models/Requests';
+import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
+import { Requests, CreateRequestForm } from '/modules/models/Requests';
+import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 
 const create = new Action( {
 	name: 'create team',
@@ -24,8 +26,8 @@ const edit = new Action( {
 	name: 'edit team',
 	label: "Edit team",
 	action: ( team ) => {
-		let { roles, actors } = Teams.getRoles( team );
-		console.log( Teams.getRoles( team ) );
+		let { roles, actors } = Roles.getRoles( team );
+		console.log( Roles.getRoles( team ) );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )
@@ -58,7 +60,8 @@ const createFacility = new Action( {
 	action: ( team ) => {
 		let item = { team };
 			newItem = Facilities.create( item );
-		newItem.setupCompliance( Config.compliance );
+
+		//newItem.setupCompliance( Config.compliance );
 
 		Modal.show( {
 			content: <FacilityStepper item = { item } />
@@ -72,15 +75,15 @@ const createRequest = new Action( {
 	label: "Create team request",
 	action: ( team ) => {
 		let item = { team };
-			newItem = Issues.create( item );
+			newItem = Requests.create( item );
 		Modal.show( {
 			content: <AutoForm
-				model = { Issues }
+				model = { Requests }
 				form = { CreateRequestForm }
 				item = { newItem }
 				onSubmit = {
 					( request, form ) => {
-						Meteor.call( 'Issues.create', request, {}, ( err, response ) => {
+						Meteor.call( 'Requests.create', request, {}, ( err, response ) => {
 							Modal.replace( {
 								content: <RequestPanel item = { response }/>
 							} );
@@ -107,9 +110,8 @@ const createMember = new Action( {
 	label: "Create member",
 	type: ['team','user'],
 	action: ( team, member ) => {
-		let user = Users.create( member );
 		Modal.show( {
-			content: <UserViewEdit item = { user } />
+			content: <UserViewEdit/>
 		} )
 	}
 } )

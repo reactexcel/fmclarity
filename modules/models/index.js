@@ -7,12 +7,12 @@ import { Documents, DocActions } from './Documents';
 import { Facilities, FacilityActions } from './Facilities';
 import { Files } from './Files';
 import { Messages } from './Messages';
-import { Issues, RequestActions } from './Requests';
+import { Requests, RequestActions } from './Requests';
 import { Teams, TeamActions } from './Teams';
 import { Users } from './Users';
 
 checkModules( {
-	Issues,
+	Requests,
 	RequestActions,
 
 	Documents,
@@ -34,7 +34,7 @@ checkModules( {
  * @module 			models
  */
 export {
-	Issues,
+	Requests,
 	RequestActions,
 
 	Documents,

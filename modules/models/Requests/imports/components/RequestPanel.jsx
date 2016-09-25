@@ -10,7 +10,7 @@ import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
-import { Issues, RequestActions } from '/modules/models/Requests';
+import { Requests, RequestActions } from '/modules/models/Requests';
 
 
 export default RequestPanel = React.createClass( {
@@ -20,7 +20,7 @@ export default RequestPanel = React.createClass( {
     getMeteorData() {
         let request = null;
         if ( this.props.item && this.props.item._id ) {
-            request = Issues.findOne( this.props.item._id );
+            request = Requests.findOne( this.props.item._id );
         }
         return { request }
     },
@@ -123,7 +123,7 @@ const RequestPanelInner = ( { request } ) => {
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>{ request.attachmentCount?<span>({ request.attachmentCount })</span>:null}</span>,
-                    content:    <AutoForm model = { Issues } item = { request } form = { ['documents'] } save ={ () => request.save }/>
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['documents'] } save ={ () => request.save }/>
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     content:    <ContactList group = { request } readOnly = { true }/>

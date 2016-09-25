@@ -3,18 +3,22 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
-import { Users } from '/modules/models/Users';
+// Have had to remove this because of dysfunctional implementation of es6 circular dependencies
+//import { Users } from '/modules/models/Users';
 
 /**
  * @module 			module:mixins/Members
  */
-const Members = { register }
+const Members = {
+	register,
+	getMembers
+}
 
 function register( collection, opts ) {
 	opts = opts || {};
 	let fieldName = opts.fieldName || 'members',
 		authentication = opts.authentication || AuthHelpers.managerOrOwner,
-		membersCollection = opts.membersCollection || Users,
+		membersCollection = opts.membersCollection || Meteor.users,
 		auth = null;
 
 	if ( _.isFunction( authentication ) ) {
@@ -37,12 +41,13 @@ function register( collection, opts ) {
 		}
 	}
 
+	/*
 	collection.schema[ fieldName ].relation = {
 		join: ( item ) => {
 			if ( item != null && _.isArray( item[ fieldName ] ) ) {
 				let members = [];
 				item[ fieldName ].map( ( member ) => {
-					let foundMember = Users.findOne( member._id );
+					let foundMember = membersCollection.findOne( member._id );
 					if ( foundMember ) {
 						foundMember.role = member.role;
 						members.push( foundMember );
@@ -67,7 +72,7 @@ function register( collection, opts ) {
 			return members;
 		}
 	}
-
+	*/
 
 	var fn = ucfirst( fieldName );
 
@@ -104,7 +109,14 @@ function register( collection, opts ) {
 		method: replaceMembers( collection, fieldName )
 	}
 
-	helpers[ 'get' + fn + 's' ] = getMembers( membersCollection, fieldName );
+	collection[ 'get' + fn + 's' ] = getMembersGenerator( membersCollection, fieldName );
+
+
+	methods[ 'get' + fn + 's' ] = {
+		authentication: true,
+		helper: getMembersGenerator( membersCollection, fieldName )
+	}
+
 	helpers[ 'get' + fn + 'Role' ] = getMemberRole( membersCollection, fieldName );
 	helpers[ 'get' + fn + 'Relation' ] = getMemberRelation( membersCollection, fieldName );
 	helpers[ 'has' + fn ] = hasMember( membersCollection, fieldName );
@@ -220,14 +232,13 @@ function setMemberRole( collection, fieldName ) {
 	}
 }
 
-function getMembers( collection, fieldName ) {
-	return function( filter ) {
-		let item = this,
-			ids = [],
-			names = [],
-			members = item[ fieldName ];
+function getMembers( item, { collection = Meteor.users, fieldName = "members", filter } ) {
+	let ids = [],
+		names = [],
+		members = item[ fieldName ];
 
-		members ? members.map( ( m ) => {
+	if ( members ) {
+		members.map( ( m ) => {
 			if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
 				if ( m._id ) {
 					ids.push( m._id );
@@ -235,7 +246,41 @@ function getMembers( collection, fieldName ) {
 					names.push( m.name );
 				}
 			}
-		} ) : null;
+		} )
+	}
+
+	//console.log( {fieldName, name:collection._name, ids} );
+
+	return collection.find( {
+			$or: [
+				{ _id: { $in: ids } },
+				{ name: { $in: names } }
+			]
+		}, {
+			sort: { name: 1, _id: 1 }
+		} )
+		.fetch();
+}
+
+function getMembersGenerator( collection, fieldName ) {
+	return function( item, filter ) {
+		let ids = [],
+			names = [],
+			members = item[ fieldName ];
+
+		if ( members ) {
+			members.map( ( m ) => {
+				if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
+					if ( m._id ) {
+						ids.push( m._id );
+					} else if ( m.name ) {
+						names.push( m.name );
+					}
+				}
+			} )
+		}
+
+		//console.log( {fieldName, name:collection._name, ids} );
 
 		return collection.find( {
 				$or: [

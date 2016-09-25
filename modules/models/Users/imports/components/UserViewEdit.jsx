@@ -4,6 +4,8 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import UserViewRelationEdit from './UserViewRelationEdit.jsx';
 
+import { Users } from '/modules/models/Users';
+
 export default UserViewEdit = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
@@ -50,32 +52,6 @@ export default UserViewEdit = React.createClass( {
 
 	save() {
 		Meteor.call( 'Users.save', this.state.item );
-	},
-
-	form1: {
-		firstName: {
-			label: "First name",
-			size: 6
-		},
-		lastName: {
-			label: "Last name",
-			size: 6
-		},
-		name: {
-			label: "Display name",
-		},
-		email: {
-			label: "Email address",
-		},
-		phone: {
-			label: "Phone number",
-		},
-		phone2: {
-			label: "Phone number 2",
-		},
-		tenancy: {
-			label: "Tenancy"
-		}
 	},
 
 	handleInvite( event ) {
@@ -166,15 +142,15 @@ export default UserViewEdit = React.createClass( {
 
 		    		{team?
 		    			<div className="col-sm-12">
-		    				<UserViewRelationEdit member={user} group={group} team={team}/>
+		    				<UserViewRelationEdit member = { user } team = { team } group = { group }/>
 		    			</div>
 		    		:null}
 
 				    <div className="col-sm-7">
-			        	<AutoForm item={profile} schema={this.form1} save={this.save} />
+			        	<AutoForm item = { user } model = { Users } form = {['profile']} />
 			        </div>
 			   		<div className="col-sm-5">
-				        <ThumbView item={user.thumb} onChange={this.setThumb} />
+				        <ThumbView item = { user.thumb } onChange = { this.setThumb } />
 				    </div>
 		        </div>
 			</div>

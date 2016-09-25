@@ -74,7 +74,7 @@ export default function( collection ) {
 				Modal.show( {
 					content:
 						<AutoForm
-							model 		= { Issues }
+							model 		= { Requests }
 							form 		= { form.fields }
 							item 		= { request }
 							onSubmit 	= {

@@ -1,7 +1,7 @@
 import { Model } from '/modules/core/ORM';
-import MessageSchema from './schemas/MessageSchema.jsx';
 import { Owners } from '/modules/mixins/Owners';
 
+import MessageSchema from './schemas/MessageSchema.jsx';
 
 export default Messages = new Model( {
 	schema: MessageSchema,

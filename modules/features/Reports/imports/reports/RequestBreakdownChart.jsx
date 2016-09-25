@@ -2,6 +2,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
+import { Requests } from '/modules/models/Requests';
 
 if ( Meteor.isClient ) {
     import Chart from 'chart.js';
@@ -104,14 +105,14 @@ export default RequestBreakdownChart = React.createClass( {
             query[ "team._id" ] = team._id;
         }
 
-        var issues = Issues.find( query );
+        var requests = Requests.find( query );
 
         var buckets = {};
         var costs = {};
         var labels = [];
         var counts = [];
         var set = [];
-        issues.map( function( i ) {
+        requests.map( function( i ) {
             var serviceName;
             if ( i.service && i.service.name ) {
                 serviceName = i.service.name;

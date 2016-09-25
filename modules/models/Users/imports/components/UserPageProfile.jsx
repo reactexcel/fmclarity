@@ -1,6 +1,6 @@
 import React from "react";
 
-import { UserPanel } from '/modules/models/UserViews';
+import { UserPanel } from '/modules/models/Users';
 
 export default function UserPageProfile( props ) {
 	return (

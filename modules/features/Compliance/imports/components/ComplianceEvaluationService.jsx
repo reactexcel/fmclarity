@@ -37,7 +37,7 @@ ComplianceEvaluationService = new function() {
           }
         })
       }
-      var numEvents = Issues.find({'facility._id':facility._id,'service.name':rule.service.name,type:"Preventative"}).count();
+      var numEvents = Requests.find({'facility._id':facility._id,'service.name':rule.service.name,type:"Preventative"}).count();
       if(numEvents) {
         return _.extend({},defaultResult,{
           passed:true,
@@ -66,8 +66,8 @@ ComplianceEvaluationService = new function() {
     "PPM event completed":function(rule,facility,service){
       var event;
       if(rule.event) {
-        //event = Issues.findOne(rule.event._id);
-        event = Issues.findOne({
+        //event = Requests.findOne(rule.event._id);
+        event = Requests.findOne({
           'facility._id':rule.facility._id,
           name:rule.event
         });

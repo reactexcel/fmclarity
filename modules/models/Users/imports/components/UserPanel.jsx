@@ -6,7 +6,7 @@
 import React from "react";
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { RolesMixin } from '/modules/mixins/Roles';
+import { Roles } from '/modules/mixins/Roles';
 
 /**
  * @class 			UserPanel
@@ -23,7 +23,7 @@ const UserPanel = React.createClass( {
 			return <div/>
 		}
 
-		let roles = RolesMixin.getUserRoles( contact );
+		let roles = Roles.getUserRoles( contact );
 		//console.log( roles );
 
 		if ( contact.getProfile ) {

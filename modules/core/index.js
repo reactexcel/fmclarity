@@ -7,6 +7,6 @@ export default core;
 
 /**
  * A collection of classes relating to the creation and management of actions and routes.
- * @module core
+ * @module 			core
  */
 const core = {}

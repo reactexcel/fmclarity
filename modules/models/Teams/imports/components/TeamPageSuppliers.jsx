@@ -31,7 +31,7 @@ class TeamPageSuppliers extends React.Component {
     }
 
     render() {
-        let { team, facility, suppliers } = this.props;
+        let { team, facility, facilities, suppliers } = this.props;
         if( !team ) { 
             return <div/>
         }
@@ -39,7 +39,7 @@ class TeamPageSuppliers extends React.Component {
             <div className = "suppliers-page animated fadeIn">
 
                 <FacilityFilter 
-                    items           = { team.facilities } 
+                    items           = { facilities } 
                     selectedItem    = { facility } 
                 />
 

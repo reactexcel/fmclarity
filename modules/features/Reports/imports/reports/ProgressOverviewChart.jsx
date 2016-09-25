@@ -1,6 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { Requests } from '/modules/models/Requests';
 import { Menu } from '/modules/ui/MaterialNavigation';
 
 
@@ -48,8 +49,8 @@ export default ProgressOverviewChart = React.createClass({
                         $lte:lastEndDate.toDate()
                     }
                 });
-                queries[status].thisPeriod = Issues.find(qThisMonth).count();
-                queries[status].lastPeriod = Issues.find(qLastMonth).count();
+                queries[status].thisPeriod = Requests.find(qThisMonth).count();
+                queries[status].lastPeriod = Requests.find(qLastMonth).count();
             }
         }
 

@@ -8,7 +8,7 @@ SupplierRequestEmailView = React.createClass({
 
     getMeteorData() {
         var recipient, request, secret, expiry;
-        request = Issues.findOne(this.props.item);
+        request = Requests.findOne(this.props.item);
         recipient = Users.findOne(this.props.recipient);
         if(this.props.token) {
             secret = this.props.token.token;

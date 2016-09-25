@@ -20,6 +20,8 @@ AccessGroups.loggedIn.add( {
 AccessGroups.loggedIn.add( { 
 	name: 'all-users',
 	path: '/all-users',
+	label: "All users",
+	icon: 'fa fa-group',
 	action() {
 		mount( LayoutMain, {
 			content: <UsersPageIndexContainer />

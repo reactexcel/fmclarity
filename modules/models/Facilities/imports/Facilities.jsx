@@ -5,16 +5,16 @@
 
 import FacilitySchema from './schemas/FacilitySchema.jsx';
 
-import { Teams } from '/modules/models/Teams';
-import { Users } from '/modules/models/Users';
+//import { Teams } from '/modules/models/Teams';
 
 import { Model } from '/modules/core/ORM';
-import { ThumbsMixin } from '/modules/mixins/Thumbs';
+import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 import { DocAttachments } from '/modules/models/Documents';
-import { RolesMixin } from '/modules/mixins/Roles';
+
+//console.log( Teams );
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', () => {
@@ -30,7 +30,7 @@ const Facilities = new Model( {
 	collection: "Facilities",
 	mixins: [
 		[ Owners ],
-		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
+		[ Thumbs, { defaultThumbUrl: 0 } ],
 		[ DocAttachments ],
 		[ DocMessages, {
 			helpers: {
@@ -49,33 +49,23 @@ const Facilities = new Model( {
 				}
 			}
 		} ],
-		[ Members, [ {
-			fieldName: "members",
-			membersCollection: Users,
-		}, {
+		[ Members, {
+			fieldName: "members"
+		} ],
+		/*
+		[ Members, {
 			fieldName: "suppliers",
 			membersCollection: Teams,
-		} ] ],
-		[ RolesMixin, [ {
-			primary: [ 'members', 'suppliers' ],
-			secondary: [ 'team' ]
-		} ] ]
+		} ]
+		*/
 	]
 } )
+
+console.log( Facilities );
 
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
 Facilities.actions( {
-
-	getTeam: {
-		authentication: true,
-		helper: ( facility ) => {
-			if( facility.team && facility.team._id ) {
-				return Teams.findOne( facility.team._id );
-			}
-		}
-	},
-
 	getAreas: {
 		authentication: true,
 		helper: function( facility, parent ) {
@@ -206,12 +196,12 @@ Facilities.actions( {
 	},
 
 	//this is not allowing for suppliers who have a request with this facility
-	getIssues: {
+	getRequests: {
 		authentication: true,
 		helper: function( facility ) {
 			var team = Session.getSelectedTeam();
 			if ( team ) {
-				return team.getIssues( {
+				return team.getRequests( {
 					"facility._id": facility._id
 				} );
 			}
@@ -220,15 +210,20 @@ Facilities.actions( {
 	getIssueCount: {
 		authentication: true,
 		helper: function( facility ) {
-			return facility.getIssues()
+			return facility.getRequests()
 				.length;
 		}
 	}
 } )
 
 if ( Meteor.isServer ) {
-	Meteor.publish( 'facilities', function() {
-		return Facilities.find();
+	Meteor.publish( 'facilities', function( teamId ) {
+		console.log( teamId );
+		let q = {};
+		if ( teamId ) {
+			q[ 'team._id' ] = teamId;
+		}
+		return Facilities.find( q );
 	} );
 } else {
 	Meteor.subscribe( 'facilities' );

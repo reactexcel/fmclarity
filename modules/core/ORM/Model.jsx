@@ -15,6 +15,14 @@ import ValidatedMethod from './ValidatedMethod.jsx';
  * @memberOf 		module:core/ORM
  */
 class Model {
+
+	/**
+	 * @constructor
+	 * @param 			{object} config
+	 * @param 			{object} config.schema
+	 * @param 			{Collection} config.collection
+	 * @param 			{mixins} config.mixins
+	 */
 	constructor( { schema, collection, mixins } ) {
 		this.schema = schema;
 
@@ -53,6 +61,10 @@ class Model {
 		}
 	}
 
+	/**
+	 * Call the register function of any included mixins so that they can add their features to this model
+	 * @param			{array} mixins - A list of mixins to register
+	 */
 	registerMixins( mixins ) {
 		mixins.map( ( mixin ) => {
 			//console.log( mixin );
@@ -67,7 +79,12 @@ class Model {
 		} );
 	}
 
-	// this function may be redundant now that we are using a different autoform architecture
+	/**
+	 * Return the default value for the provided field
+	 * @param 			{string} fieldName - The name of the field to retrieve default value for
+	 * @param 			{Document} item - The document or object that we want to get the default value for
+	 * @todo 			This function may be deprecated now that we are using a different autoform architecture - confirm
+	 */
 	getDefaultValue( fieldName, item ) {
 		let field = this.schema[ fieldName ];
 		if ( _.isFunction( field.defaultValue ) ) {
@@ -92,6 +109,10 @@ class Model {
 		}
 	}
 
+	/**
+	 * Create a new item using this model
+	 * @param 			{Document} [item] - A template item whose values will be added to the newly created item
+	 */
 	create( item = {} ) {
 		if ( this.schema == null ) {
 			throw new Meteor.Error( "Can't create item with no schema" );

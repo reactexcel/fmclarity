@@ -4,8 +4,8 @@
  */
 import { Owners } from './Owners';
 import { Members } from './Members';
-import { RolesMixin } from './Roles';
-import { ThumbsMixin } from './Thumbs';
+import { Roles } from './Roles';
+import { Thumbs } from './Thumbs';
 
 /**
  * @module 			mixins

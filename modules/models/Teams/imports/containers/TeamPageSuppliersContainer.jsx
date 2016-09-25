@@ -6,6 +6,12 @@
 import { createContainer } from 'meteor/react-meteor-data';
 import TeamPageSuppliers from '../components/TeamPageSuppliers.jsx';
 
+import { Teams } from '/modules/models/Teams';
+import { Facilities } from '/modules/models/Facilities';
+
+import { Members } from '/modules/mixins/Members';
+
+
 /**
  * @class           TeamPageSuppliersContainer
  * @memberOf        module:models/Teams
@@ -23,13 +29,18 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
         suppliers = null;
 
     if ( team != null ) {
-        facilities = team.facilities;
+        Meteor.subscribe( 'Facilities', team._id );
+        facilities = Facilities.findAll( { 'team._id': team._id } );
     } else if ( user != null ) {
         facilities = user.facilities;
     }
+    console.log( facilities );
 
     if ( facility != null ) {
-        suppliers = facility.suppliers;
+        suppliers = Members.getMembers( facility, {
+            collection: Teams,
+            fieldName: 'suppliers'
+        } );
     }
 
     return {

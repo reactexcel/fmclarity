@@ -2,13 +2,13 @@
 import { Files } from '/modules/models/Files';
 
 //should be called docthumbs
-export default ThumbsMixin = { register }
+export default ThumbStoreMixin = { register }
 
-var Thumbs = null;
+var ThumbStore = null;
 
 
 function register(collection,opts) {
-	Thumbs = opts.repo||Files;
+	ThumbStore = opts.repo||Files;
 
 	collection.helpers({
 		defaultThumbUrl:(opts.defaultThumbUrl!=null?opts.defaultThumbUrl:"/img/default-placeholder.jpg"),
@@ -41,7 +41,7 @@ function register(collection,opts) {
 }
 
 function uploadThumb(doc,url) {
-	Thumbs.insert(url, function (error, fileObj) {
+	ThumbStore.insert(url, function (error, fileObj) {
 	    if(!error) {
 	    	doc.setThumb(fileObj);
 	    }
@@ -50,8 +50,8 @@ function uploadThumb(doc,url) {
 
 function getThumb(doc) {
 	var thumb;
-	if(Thumbs&&doc.thumb&&doc.thumb._id) {
-		thumb = Thumbs.findOne(doc.thumb._id);
+	if(ThumbStore&&doc.thumb&&doc.thumb._id) {
+		thumb = ThumbStore.findOne(doc.thumb._id);
 	}
 	return thumb;
 }

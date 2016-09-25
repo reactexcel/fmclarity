@@ -15,7 +15,7 @@ export default RequestsPageSingle = React.createClass( {
         Meteor.subscribe( 'users' );
         Meteor.subscribe( 'allTeams' );
         var request, facility, dueDate, address;
-        request = Issues.findOne( id );
+        request = Requests.findOne( id );
         if ( request ) {
             facility = request.getFacility();
             dueDate = moment( request.dueDate ).format( 'MMMM Do YYYY, h:mm:ss a' );

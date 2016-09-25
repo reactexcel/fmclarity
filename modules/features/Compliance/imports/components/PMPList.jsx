@@ -61,7 +61,7 @@ PMPGroup = React.createClass({
         Modal.show({
             content:<AutoForm 
                 item={request} 
-                form={Issues.forms.create}
+                form={Requests.forms.create}
             >            
                 <h2>Edit Preventative Maintenence Event</h2>
             </AutoForm>,

@@ -8,9 +8,9 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Actions, Routes } from '/modules/core/Actions';
 
 import { Users } from '/modules/models/Users';
-import { Issues } from '/modules/models/Requests';
+import { Requests } from '/modules/models/Requests';
 import { UserFilter } from '/modules/mixins/Members';
-import { UserPanel } from '/modules/models/UserViews';
+import { UserPanel } from '/modules/models/Users';
 import { Teams, TeamFilter } from '/modules/models/Teams';
 import { Facilities, FacilityFilter } from '/modules/models/Facilities';
 
@@ -38,7 +38,7 @@ const AdminPageIndex = React.createClass( {
 			teams = Teams.findAll( {}, { sort: { name: 1 } } ),
 			facility = Session.getSelectedFacility(),
 			facilities = Facilities.findAll( {}, { sort: { name: 1 } } ),
-			request = Issues.findOne( { name: { $exists: true } } );
+			request = Requests.findOne( { name: { $exists: true } } );
 
 
 		return {

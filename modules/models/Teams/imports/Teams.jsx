@@ -9,12 +9,11 @@ import { Model } from '/modules/core/ORM';
 // requires users
 import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
-
-import { RolesMixin } from '/modules/mixins/Roles';
-import { ThumbsMixin } from '/modules/mixins/Thumbs';
-
+import { Thumbs } from '/modules/mixins/Thumbs';
 import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
+
+// to be removed
 import { Facilities } from '/modules/models/Facilities';
 
 //console.log( Members );
@@ -35,18 +34,14 @@ const Teams = new Model( {
 	collection: "Teams",
 	mixins: [
 		[ Owners ],
-		[ RolesMixin ],
-		[ ThumbsMixin, { defaultThumbUrl: 0 } ],
+		[ Thumbs, { defaultThumbUrl: 0 } ],
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			authentication: AuthHelpers.managerOrOwner,
-		}, , {
-			fieldName: "suppliers",
-			authentication: AuthHelpers.managerOrOwner,
+			authentication: true,
 		} ],
 		[ DocMessages, {
-			authentication: AuthHelpers.adminManagerOrOwner,
+			authentication: true,
 			helpers: {
 				getInboxName() {
 					return this.getName();
@@ -140,10 +135,10 @@ function getSuppliers() {
 		} )
 	}
 
-	//also add any suppliers of the issues allocated to us
-	var issues = this.getIssues();
-	if ( issues && issues.length ) {
-		issues.map( function( i ) {
+	//also add any suppliers of the requests allocated to us
+	var requests = this.getRequests();
+	if ( requests && requests.length ) {
+		requests.map( function( i ) {
 			if ( i.team ) {
 				ids.push( i.team._id );
 			}
@@ -195,7 +190,7 @@ function inviteMember( team, email, ext ) {
 	var found = false;
 	ext = ext || {};
 	//user = Accounts.findUserByEmail(email);
-	user = Users.findOne( {
+	user = Meteor.users.findOne( {
 		emails: {
 			$elemMatch: {
 				address: email
@@ -381,22 +376,22 @@ Teams.helpers( {
 		return this.getStaffFacilities( q );
 	},
 
-	getIssues( q ) {
+	getRequests( q ) {
 		//this is vulnerable to error - what if the name changes
 		//of course if we only have the name then we need to add the id at some point
 		var role = this.getMemberRole( Meteor.user() );
 		if ( role == "manager" || role == "fmc support" ) {
-			return this.getManagerIssues( q );
+			return this.getManagerRequests( q );
 		}
-		return this.getStaffIssues( q );
+		return this.getStaffRequests( q );
 	},
 
-	getManagerIssues( filterQuery ) {
+	getManagerRequests( filterQuery ) {
 
 		let q = null,
 			user = Meteor.user();
 
-		var issuesQuery = {
+		var requestsQuery = {
 			$or: [
 				//or team member or assignee and not draft
 				{
@@ -411,7 +406,7 @@ Teams.helpers( {
 							'owner._id': user._id
 						}, {
 							status: {
-								$nin: [ Issues.STATUS_DRAFT ]
+								$nin: [ Requests.STATUS_DRAFT ]
 							}
 						} ]
 					} ]
@@ -426,7 +421,7 @@ Teams.helpers( {
 						} ]
 					}, {
 						status: {
-							$nin: [ Issues.STATUS_DRAFT, Issues.STATUS_NEW ]
+							$nin: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW ]
 						}
 					} ]
 				}
@@ -436,24 +431,24 @@ Teams.helpers( {
 		if ( filterQuery ) {
 			q = {
 				$and: [
-					issuesQuery,
+					requestsQuery,
 					filterQuery
 				]
 			};
 		} else {
-			q = issuesQuery;
+			q = requestsQuery;
 		}
 
-		return Issues.find( q )
+		return Requests.find( q )
 			.fetch();
 	},
 
-	getStaffIssues( filterQuery ) {
+	getStaffRequests( filterQuery ) {
 
 		let q = null,
 			user = Meteor.user();
 
-		var issuesQuery = {
+		var requestsQuery = {
 			$or: [
 				//or team member or assignee and not draft
 				{
@@ -480,7 +475,7 @@ Teams.helpers( {
 							'assignee._id': user._id
 						}, {
 							status: {
-								$nin: [ Issues.STATUS_DRAFT, Issues.STATUS_NEW ]
+								$nin: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW ]
 							}
 						} ]
 					} ]
@@ -491,15 +486,15 @@ Teams.helpers( {
 		if ( filterQuery ) {
 			q = {
 				$and: [
-					issuesQuery,
+					requestsQuery,
 					filterQuery
 				]
 			};
 		} else {
-			q = issuesQuery;
+			q = requestsQuery;
 		}
 
-		return Issues.find( q )
+		return Requests.find( q )
 			.fetch();
 	}
 

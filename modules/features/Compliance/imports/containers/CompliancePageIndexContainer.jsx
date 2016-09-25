@@ -4,6 +4,7 @@
  */
 import { createContainer } from 'meteor/react-meteor-data';
 import CompliancePageIndex from '../components/CompliancePageIndex.jsx';
+import { Facilities } from '/modules/models/Facilities';
 
 /**
  * @class 			CompliancePageIndexContainer
@@ -17,7 +18,12 @@ const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
+		facilities = null,
 		services = null;
+
+	if ( team ) {
+		facilities = Facilities.findAll( { 'team._id': team._id } );
+	}
 
 	if ( facility ) {
 		services = _.filter( facility.servicesRequired, ( service ) => {
@@ -28,6 +34,7 @@ const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 	return {
 		facility,
 		team,
+		facilities,
 		services
 	}
 

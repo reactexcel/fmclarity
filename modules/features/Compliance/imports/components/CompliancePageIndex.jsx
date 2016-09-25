@@ -11,7 +11,7 @@ import { FacilityFilter } from '/modules/models/Facilities';
  * @memberOf		module:features/Compliance
  */
 function CompliancePageIndex( props ) {
-	let { team, services, facility } = props;
+	let { team, services, facility, facilities } = props;
 
 	if( !team ) {
 		return <div/>
@@ -20,7 +20,7 @@ function CompliancePageIndex( props ) {
 	return (
 		<div className = "facility-page animated fadeIn">
 
-	        <FacilityFilter items = { team.facilities }/>
+	        <FacilityFilter items = { facilities }/>
 	        <div style = { {paddingTop:"50px"} }>
 				<div className="card-body ibox">
 					<ComplianceViewDetail items = { services } item = { facility } />

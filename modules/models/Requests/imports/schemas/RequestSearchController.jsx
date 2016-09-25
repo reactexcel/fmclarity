@@ -1,4 +1,4 @@
-import '../Requests.jsx';
+import { Requests } from '/modules/models/Requests';
 
 // doc-custom-queries
 // Used by calendar - this is quite ugly
@@ -23,7 +23,7 @@ export default RequestSearch = {
                 $lte: end.toDate()
             }
         }
-        return Issues.find( q );
+        return Requests.find( q );
     },
     searchByDate( args ) {
         var q = args.q;
@@ -62,7 +62,7 @@ export default RequestSearch = {
                 $lte: endDate.toDate()
             }
             rs.labels.push( label );
-            rs.sets.push( Issues.find( q )
+            rs.sets.push( Requests.find( q )
                 .count() );
             now.add( 1, groupBy );
         }

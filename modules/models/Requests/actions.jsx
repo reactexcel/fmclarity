@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
+import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
-import { Issues, CreateRequestForm } from '/modules/models/Requests';
+import { Requests, CreateRequestForm } from '/modules/models/Requests';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
@@ -13,7 +13,7 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		Issues.save.call( request, { status: 'New' } );
+		Requests.save.call( request, { status: 'New' } );
 		Modal.hide();
 	}
 } )
@@ -36,7 +36,7 @@ const edit = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Issues }
+				model = { Requests }
 				item = { request }
 				form = { CreateRequestForm }
 			/>
@@ -61,7 +61,7 @@ const cancel = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -81,7 +81,7 @@ const issue = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -101,7 +101,7 @@ const accept = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -121,7 +121,7 @@ const reject = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -141,7 +141,7 @@ const getQuote = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -161,7 +161,7 @@ const sendQuote = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -181,7 +181,7 @@ const complete = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -201,7 +201,7 @@ const close = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -221,7 +221,7 @@ const reopen = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {
@@ -241,7 +241,7 @@ const reverse = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Issues }
+			model = { Requests }
 			item = { request }
 			form = { CreateRequestForm }
 			onSubmit = {

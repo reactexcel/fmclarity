@@ -19,13 +19,13 @@ import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
  */
 function PageDashboard( props ) {
 	let canGetMessages = false;
-	let { team, facility } = props;
+	let { team, facilities, facility } = props;
 	if( !team ) {
 		return <div/>
 	}
 	return (
 		<div className="dashboard-page animated fadeIn">
-			<FacilityFilter items = { team.facilities } selectedItem = { facility }/>
+			<FacilityFilter items = { facilities } selectedItem = { facility }/>
 	        <div className="row" style={{paddingTop:"50px"}}>
 	            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 		            <div className="ibox">

@@ -3,14 +3,14 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
-import { RolesMixin } from '/modules/mixins/Roles';
+import { Roles } from '/modules/mixins/Roles';
 import { Notifications } from '/modules/models/Notifications';
 
 /**
  * An ActionGroup holds a collection of actions. 
  * It is the primary structure used for passing around Action Groups and performing role based access control.
  * @memberOf		module:core/Actions
- * @requires 		module:mixins/Roles.RolesMixin
+ * @requires 		module:mixins/Roles.Roles
  * @requires 		Notifications
  */
 class ActionGroup {
@@ -123,7 +123,7 @@ class ActionGroup {
 	filter( actions, ...args ) {
 		let validActions = {},
 			item = args[ 0 ],
-			relationships = RolesMixin.getRoles( item );
+			relationships = Roles.getRoles( item );
 
 		// this is phrased in a slightly awkward way because we don't know that the keys
 		//  of the passed in will actually match the name property of the action itself
@@ -207,7 +207,7 @@ class ActionGroup {
 		}
 
 		let rules = this.accessRules[ actionName ],
-			relationships = RolesMixin.getRoles( item );
+			relationships = Roles.getRoles( item );
 
 		return { rules, relationships };
 	}

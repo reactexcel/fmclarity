@@ -1,7 +1,7 @@
 import React from "react";
-import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import CircularProgress from 'material-ui/CircularProgress';
+import { Files } from '/modules/models/Files';
 
 export default ThumbView = React.createClass( {
 

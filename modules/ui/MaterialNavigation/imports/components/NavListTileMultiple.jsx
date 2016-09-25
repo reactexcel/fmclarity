@@ -22,7 +22,7 @@ function NavListTileMultiple( props )
 		{
 			if ( items[ i ] )
 			{
-				images.push( items[ i ].getThumbUrl() );
+				images.push( items[ i ].thumbUrl );
 			}
 		}
 	}

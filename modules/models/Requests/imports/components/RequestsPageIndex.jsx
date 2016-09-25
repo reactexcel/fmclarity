@@ -12,17 +12,17 @@ import { RequestsTable } from '/modules/models/Requests';
  * @memberOf 		module:models/Requests
  */
 function RequestsPageIndex( props ) {
-	let { team, facility, requests } = props;
+	let { team, facility, teamFacilities, requests } = props;
 
 	if( !team ) {
 		return <div/>
 	}
 	return (
 		<div>
-			<FacilityFilter items = { team.facilities } selectedItem = { facility } />
+			<FacilityFilter items = { teamFacilities } selectedItem = { facility } />
 			<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 				<div className = "ibox">
-					<RequestsTable requests = { props.requests }/>
+					<RequestsTable requests = { requests }/>
 				</div>
 			</div>
 		</div>

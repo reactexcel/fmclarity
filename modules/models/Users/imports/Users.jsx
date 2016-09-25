@@ -7,11 +7,11 @@ import UserSchema from './schemas/UserSchema.jsx';
 
 import { Model } from '/modules/core/ORM';
 
-import { Documents } from '/modules/models/Documents';
 import { Files } from '/modules/models/Files';
+import { Requests } from '/modules/models/Requests';
+import { Documents } from '/modules/models/Documents';
 
-
-import { ThumbsMixin } from '/modules/mixins/Thumbs';
+import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { DocMessages } from '/modules/models/Messages';
 
@@ -23,7 +23,7 @@ const Users = new Model( {
     collection: Meteor.users,
     mixins: [
         Owners,
-        DocMessages, [ ThumbsMixin, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        DocMessages, [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 
@@ -110,22 +110,22 @@ Users.actions( {
             //fragments to use in query
             var isNotDraft = {
                 status: {
-                    $in: [ Issues.STATUS_NEW, Issues.STATUS_ISSUED, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Issues.STATUS_CLOSED ]
+                    $in: [ Requests.STATUS_NEW, Requests.STATUS_ISSUED, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_CLOSED ]
                 }
             };
             var isIssued = {
                 status: {
-                    $in: [ Issues.STATUS_ISSUED, "In Progress", "Progress", "Quoting", "Quoted", Issues.STATUS_CLOSED ]
+                    $in: [ Requests.STATUS_ISSUED, "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_CLOSED ]
                 }
             };
             var isOpen = {
                 status: {
-                    $in: [ Issues.STATUS_NEW, "PMP", "In Progress", "Progress", Issues.STATUS_ISSUED ]
+                    $in: [ Requests.STATUS_NEW, "PMP", "In Progress", "Progress", Requests.STATUS_ISSUED ]
                 }
             };
             var isNotClosed = {
                 status: {
-                    $in: [ Issues.STATUS_DRAFT, Issues.STATUS_NEW, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Issues.STATUS_ISSUED ]
+                    $in: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_ISSUED ]
                 }
             };
             var createdByMe = {
@@ -161,7 +161,7 @@ Users.actions( {
 
             var query = [];
 
-            //if staff or tenant restrict to issues created by or assigned to me
+            //if staff or tenant restrict to requests created by or assigned to me
             if ( role == "portfolio manager" ) {
                 query.push( {
                     $or: [ issuedToMyTeam, createdByMyTeam, createdByMe, assignedToMe ]
@@ -192,7 +192,7 @@ Users.actions( {
                 query.push( filter );
             }
 
-            var requests = Issues.find( {
+            var requests = Requests.find( {
                     $and: query
                 } )
                 .fetch( {
@@ -205,7 +205,7 @@ Users.actions( {
                 query.push( {
                     type: "Preventative"
                 } );
-                var PMPRequests = Issues.find( {
+                var PMPRequests = Requests.find( {
                         $and: query
                     } )
                     .fetch();
@@ -220,7 +220,7 @@ Users.actions( {
                             var copy = Object.assign( {}, r ); //_.omit(r,'_id');
                             copy.dueDate = date.add( period )
                                 .toDate();
-                            copy = Issues._transform( copy );
+                            copy = Requests._transform( copy );
                             requests.push( copy );
                         }
                     }
@@ -229,7 +229,7 @@ Users.actions( {
 
             return requests;
             //perform and return the query
-            return Issues.find( {
+            return Requests.find( {
                     $and: query
                 } )
                 .fetch( {

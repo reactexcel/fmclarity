@@ -7,13 +7,16 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Teams } from '/modules/models/Teams';
+
+import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
-import TeamActions from '../../actions.jsx';
-import { ServicesProvidedEditor } from '/modules/mixins/Services';
 
 import { ContactList } from '/modules/mixins/Members';
+import { ServicesProvidedEditor } from '/modules/mixins/Services';
+
 import { AutoForm } from '/modules/core/AutoForm';
-import { Tabs } from '/modules/ui/Tabs';
+
+import TeamActions from '../../actions.jsx';
 
 
 function addTeamMenuItem( menu, item, team ) {
@@ -61,9 +64,16 @@ const TeamPanel = React.createClass( {
 		if ( team ) {
 			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract( { days: 7 } ).toDate() );
 			services = team.getAvailableServices();
+
+			/*
+			insuranceDocs = Documents.findAll( {'team._id':team._id, type:'Insurance'} );
+			need to migrate schema by moving references out to document
+
 			insuranceDocs = team.getDocs( {
 				type: "Insurance"
 			} );
+			*/
+
 		}
 		return {
 			services: services,

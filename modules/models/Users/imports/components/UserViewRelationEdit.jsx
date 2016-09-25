@@ -19,7 +19,7 @@ export default UserViewRelationEdit = React.createClass( {
 		var member, group, team, relation, role;
 		member = this.props.member;
 		group = this.props.group;
-		if ( group && group.collectionName != "Issues" ) {
+		if ( group && group.collectionName != "Requests" ) {
 			relation = group.getMemberRelation( member );
 			if ( relation ) {
 				role = relation.role;

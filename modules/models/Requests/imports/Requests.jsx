@@ -1,23 +1,30 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import { Model } from '/modules/core/ORM';
 
 import RequestSchema from './schemas/RequestSchema.jsx';
-import { Members } from '/modules/mixins/Members';
+
 import { Owners } from '/modules/mixins/Owners';
+import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
-import { RolesMixin } from '/modules/mixins/Roles';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
-		return Issues.find();
+		return Requests.find();
 	} );
 }
 
-export default Issues = new Model( {
+/**
+ * @memberOf 		module:models/Requests
+ */
+const Requests = new Model( {
 	schema: RequestSchema,
-	collection: "Issues",
+	collection: "Requests",
 	mixins: [
 		[ Owners ],
-		[ RolesMixin ],
 		[ DocMessages, {
 			helpers: {
 				getInboxName() {
@@ -30,9 +37,9 @@ export default Issues = new Model( {
 						supplier = this.supplier,
 						assignee = this.assignee;
 
-					if ( this.status = Issues.STATUS_DRAFT ) {
+					if ( this.status = Requests.STATUS_DRAFT ) {
 						return [ user, owner ];
-					} else if ( this.status = Issues.STATUS_NEW ) {
+					} else if ( this.status = Requests.STATUS_NEW ) {
 						return [ user, owner, team ];
 					} else {
 						return [ user, owner, team, supplier, assignee ];
@@ -40,14 +47,7 @@ export default Issues = new Model( {
 				}
 			}
 		} ],
-		[ Members, {
-			authentication( ...args ) {
-				return (
-					AuthHelpers.memberOfRelatedTeam( ...args ) ||
-					AuthHelpers.managerOfSuppliersTeam( ...args )
-				)
-			}
-		} ]
+		//[ Members ]
 	]
 } )
 
@@ -79,7 +79,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 }
 
 //maybe actions it better terminology?
-Issues.methods( {
+Requests.methods( {
 
 	/* funtionality should be encapsulated in members */
 	updateSupplierManagers: {
@@ -132,7 +132,7 @@ Issues.methods( {
 
 } )
 
-Issues.helpers( {
+Requests.helpers( {
 	// this sent to schema config
 	// or put in another package document-urls
 	path: 'requests',
@@ -144,7 +144,7 @@ Issues.helpers( {
 	}
 } );
 
-Issues.helpers( {
+Requests.helpers( {
 	isOverdue: function() {
 		return moment( this.dueDate )
 			.isBefore();
@@ -154,7 +154,7 @@ Issues.helpers( {
 	},
 } );
 
-Issues.helpers( {
+Requests.helpers( {
 	//doc-attachments
 	getAttachmentCount() {
 		if ( this.attachments ) {
@@ -163,3 +163,5 @@ Issues.helpers( {
 		return 0;
 	},
 } );
+
+export default Requests;
