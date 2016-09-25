@@ -30,7 +30,6 @@ const PageDashboardContainer = createContainer( ( params ) => {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
 		if( facilities ) {
 			let thumbs = _.pluck( facilities, 'thumb');
-			console.log( thumbs );
 			Meteor.subscribe( 'Thumbs', thumbs );
 		}
 	}
@@ -44,7 +43,6 @@ const PageDashboardContainer = createContainer( ( params ) => {
 	if ( user != null ) {
 		// Requests.findForUser( Meteor.user() )...???
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
-		console.log( requests );
 	}
 
 	return {
