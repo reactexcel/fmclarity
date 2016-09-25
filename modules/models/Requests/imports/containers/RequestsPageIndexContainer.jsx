@@ -9,19 +9,19 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Files' );
-	Meteor.subscribe( 'Documents' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
 		requests = null,
-		teamFacilities = null,
+		facilities = null,
 		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
 		contextFilter = {};
 
 	if ( team ) {
-		teamFacilities = Facilities.findAll( { 'team._id': team._id } );
+		facilities = Facilities.findAll( { 'team._id': team._id } );
+		let thumbs = _.pluck( facilities, 'thumb');
+		Meteor.subscribe( 'Thumbs', thumbs );
 	}
 
 	if ( facility && facility._id ) {
@@ -38,7 +38,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 
 	return {
 		team,
-		teamFacilities,
+		facilities,
 		facility,
 		requests
 	}

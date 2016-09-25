@@ -21,13 +21,14 @@ import { FloatingActionButton } from '/modules/ui/MaterialNavigation';
  * @requires 		module:core/Actions.ActionGroup
  */
 const FloatingActionButtonContainer = createContainer( ( { params } ) => {
-	let actions = new ActionGroup( [
-		TeamActions.createRequest,
-		TeamActions.createFacility,
-		TeamActions.createFacility,
-		TeamActions.createRequest, //.bind({})
-		DocActions.create
-	] );
+	let team = Session.getSelectedTeam(),
+		actions = [
+			TeamActions.createRequest.bind( team ),
+			TeamActions.createFacility.bind( team ),
+			TeamActions.createFacility.bind( team ),
+			TeamActions.createRequest.bind( team ),
+			DocActions.create
+		];
 
 	return {
 		actions

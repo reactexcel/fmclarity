@@ -12,16 +12,16 @@ import Calendar from './Calendar.jsx';
  * @memberOf        module:ui/Calendar
  */
 function PageCalendar( props ) {
-    let { team, facility, facilities } = props;
+    let { team, facility, facilities, requests } = props;
     if ( !team ) {
         return <div/>
     }
     return (
         <div className = "animated fadeIn">
             <FacilityFilter items = { facilities } selectedItem = { facility } />
-            <div style={{paddingTop:"50px 15px 15px 15px"}}>
-                <div className="card-body ibox">
-                    <Calendar/>
+            <div style = { { paddingTop:"50px" } }>
+                <div className="card-body ibox" style = { {padding:"10px"} }>
+                    <Calendar requests = { requests } />
                 </div>
             </div>
         </div>

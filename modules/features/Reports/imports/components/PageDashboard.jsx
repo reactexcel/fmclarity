@@ -19,7 +19,7 @@ import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
  */
 function PageDashboard( props ) {
 	let canGetMessages = false;
-	let { team, facilities, facility } = props;
+	let { team, facilities, facility, requests } = props;
 	if( !team ) {
 		return <div/>
 	}
@@ -30,7 +30,7 @@ function PageDashboard( props ) {
 	            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 		            <div className="ibox">
 		            	<div className="ibox-content" style={{padding:"7px"}}>
-			            	<Calendar />
+			            	<Calendar requests = { requests } />
 			            </div>
 		            </div>
 		            <div className="ibox">

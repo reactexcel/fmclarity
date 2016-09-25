@@ -6,24 +6,25 @@ import { Facilities } from '/modules/models/Facilities';
 
 export default RequestsPageAllContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Files' );
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 
-	let team = Session.getSelectedTeam,
+	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
 		requests = Requests.findAll(),
-		teamFacilities = null;
+		facilities = null;
 
 	if ( team ) {
-		teamFacilities = Facilities.findAll( { 'team._id': team._id } );
+		facilities = Facilities.findAll( { 'team._id': team._id } );
+		let thumbs = _.pluck( facilities, 'thumb');
+		Meteor.subscribe( 'Thumbs', thumbs );
 	}
 
 	return {
 		team,
 		facility,
-		teamFacilities,
+		facilities,
 		requests
 	}
 

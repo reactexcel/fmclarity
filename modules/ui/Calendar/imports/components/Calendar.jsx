@@ -4,8 +4,7 @@
  */
 
 import React from "react";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
-import { Requests } from '/modules/models/Requests';
+import { RequestActions } from '/modules/models/Requests';
 
 /**
  * An ui component that renders a calendar with requests appearing as events.
@@ -15,47 +14,14 @@ import { Requests } from '/modules/models/Requests';
  * @param           {string} props.example
  * @todo            Create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
  */
-const Calendar = React.createClass( {
-
-    mixins: [ ReactMeteorData ],
-
-    /**
-     * Reactively retrieves required data from Meteor/Mongo.
-     * @memberOf    module:ui/Calendar.Calendar
-     * @todo        Should be converted to createContainer implementation
-     */
-    getMeteorData() {
-        let user = Meteor.user(),
-            team = null,
-            requests = null;
-
-        if ( user != null ) {
-
-            team = Session.getSelectedTeam();
-            if ( team != null ) {
-                let query = {
-                    "team._id": team._id,
-                    status: { $in: [ Requests.STATUS_NEW, Requests.STATUS_ISSUED, "PMP" ] }
-                };
-
-                /*query.dueDate = {
-                    $gte:moment().startOf('month').toDate(),
-                    $lte:moment().endOf('month').toDate()
-                }*/
-                requests = user.getRequests( query, { expandPMP: true } );
-            }
-        }
-        console.log( { team, requests } );
-        return { requests };
-    },
+class Calendar extends React.Component {
 
     /**
      * Takes the retrieved data and adds events to the calendar
      * @memberOf    module:ui/Calendar.Calendar
      * @private
      */
-    _addEvents( data ) {
-        let { requests } = data;
+    _addEvents( { requests } ) {
 
         if ( requests == null ) {
             return;
@@ -85,7 +51,7 @@ const Calendar = React.createClass( {
         } );
         $( this.refs.calendar ).fullCalendar( 'removeEventSource', events );
         $( this.refs.calendar ).fullCalendar( 'addEventSource', events );
-    },
+    }
 
     /**
      * Add events when component mounts
@@ -99,7 +65,7 @@ const Calendar = React.createClass( {
             //height:500,
             eventClick( event ) {
                 if ( event.request ) {
-                    QuickActions.viewRequest( event.request );
+                    RequestActions.view.run( event.request );
                 }
             },
             eventLimit: true,
@@ -109,8 +75,8 @@ const Calendar = React.createClass( {
                 right: 'next'
             }
         } );
-        this._addEvents( this.data );
-    },
+        this._addEvents( this.props );
+    }
 
 
     /**
@@ -118,8 +84,8 @@ const Calendar = React.createClass( {
      * @memberOf    module:ui/Calendar.Calendar
      */
     componentDidUpdate() {
-        this._addEvents( this.data );
-    },
+        this._addEvents( this.props );
+    }
 
     /**
      * Render the component
@@ -130,7 +96,6 @@ const Calendar = React.createClass( {
             <div ref="calendar"></div>
         )
     }
-
-} )
+}
 
 export default Calendar;

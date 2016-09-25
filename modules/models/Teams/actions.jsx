@@ -14,6 +14,7 @@ import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 const create = new Action( {
 	name: 'create team',
 	label: "Create team",
+	icon: 'fa fa-group',
 	action: ( template ) => {
 		let team = Teams.create( template );
 		Modal.show( {
@@ -25,6 +26,7 @@ const create = new Action( {
 const edit = new Action( {
 	name: 'edit team',
 	label: "Edit team",
+	icon: 'fa fa-group',
 	action: ( team ) => {
 		let { roles, actors } = Roles.getRoles( team );
 		console.log( Roles.getRoles( team ) );
@@ -37,6 +39,7 @@ const edit = new Action( {
 const view = new Action( {
 	name: 'view team',
 	label: "View team",
+	icon: 'fa fa-group',
 	action: ( team ) => {
 		Modal.show( {
 			content: <TeamPanel item = { team } />
@@ -57,6 +60,7 @@ const createFacility = new Action( {
 	name: "create team facility",
 	type: ['team'],
 	label: "Create team facility",
+	icon: 'fa fa-building',
 	action: ( team ) => {
 		let item = { team };
 			newItem = Facilities.create( item );
@@ -73,6 +77,7 @@ const createRequest = new Action( {
 	name: "create team request",
 	type: ['team'],
 	label: "Create team request",
+	icon: 'fa fa-plus',
 	action: ( team ) => {
 		let item = { team };
 			newItem = Requests.create( item );

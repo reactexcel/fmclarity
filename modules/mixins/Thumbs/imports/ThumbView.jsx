@@ -1,9 +1,18 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import CircularProgress from 'material-ui/CircularProgress';
 import { Files } from '/modules/models/Files';
 
-export default ThumbView = React.createClass( {
+/**
+ * @class 			ThumbView
+ * @memberOf 		module:mixins/Thumbs
+ */
+const ThumbView = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
@@ -108,4 +117,6 @@ export default ThumbView = React.createClass( {
 			</div>
 		)
 	}
-} );
+} )
+
+export default ThumbView;

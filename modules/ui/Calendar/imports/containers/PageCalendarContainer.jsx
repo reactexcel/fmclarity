@@ -11,24 +11,42 @@ import { Facilities } from '/modules/models/Facilities';
  * @memberOf        module:ui/Calendar
  */
 const PageCalendarContainer = createContainer( ( { params } ) => {
-	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Users' );
+	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Files' );
 
-	let team = Session.getSelectedTeam();
-	facility = Session.getSelectedFacility(),
-		facilities = null;
+	let facility = Session.getSelectedFacility(),
+		team = Session.getSelectedTeam(),
+		user = Meteor.user(),
+		requests = null,
+		facilities = null,
+		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
+		contextFilter = {};
 
 	if ( team ) {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
+		let thumbs = _.pluck( facilities, 'thumb');
+		Meteor.subscribe( 'Thumbs', thumbs );
+	}
+
+	if ( facility && facility._id ) {
+		contextFilter[ 'facility._id' ] = facility._id;
+	} else if ( team && team._id ) {
+		contextFilter[ 'team._id' ] = team._id;
+	}
+
+	if ( user != null ) {
+		// Requests.findForUser( Meteor.user() )...???
+		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		console.log( requests );
 	}
 
 	return {
 		team,
+		facilities,
 		facility,
-		facilities
+		requests
 	}
 }, PageCalendar );
 
