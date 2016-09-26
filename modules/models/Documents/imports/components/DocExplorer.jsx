@@ -1,3 +1,8 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import DocIconHeader from './DocIconHeader.jsx';
 import DocIcon from './DocIcon.jsx';

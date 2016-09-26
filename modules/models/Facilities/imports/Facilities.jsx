@@ -61,7 +61,7 @@ const Facilities = new Model( {
 	]
 } )
 
-console.log( Facilities );
+//console.log( Facilities );
 
 //suggestion:
 //rename method to writeFunction and helper to readFunction?

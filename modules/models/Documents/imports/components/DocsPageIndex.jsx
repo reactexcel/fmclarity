@@ -1,10 +1,19 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 
 import DocIcon from './DocIcon.jsx';
 import DocIconHeader from './DocIconHeader.jsx';
 import { Documents } from '/modules/models/Documents';
 
-export default function DocsPageIndex( props ) {
+/**
+ * @class 			DocsPageIndex
+ * @memberOf 		module:models/Documents
+ */
+function DocsPageIndex( props ) {
 
 	return (
 		<div>
@@ -27,3 +36,5 @@ export default function DocsPageIndex( props ) {
 		</div>
 	)
 }
+
+export default DocsPageIndex;

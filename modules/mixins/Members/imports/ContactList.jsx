@@ -4,6 +4,8 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ContactCard from './ContactCard.jsx';
+import { UserPanel } from '/modules/models/Users';
+import { TeamActions } from '/modules/models/Teams';
 
 export default ContactList = React.createClass( {
 
@@ -50,7 +52,7 @@ export default ContactList = React.createClass( {
 			} )
 		} else {
 			Modal.show( {
-				content: <UserCard 
+				content: <UserPanel 
 	            	item={selectedUser} 
 	            	team={this.data.team}
 	            	role={this.data.role}
@@ -96,7 +98,7 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div 
 			    	className	= "contact-list-item"
-			        onClick		= { () => { this.showModal() } }
+			        onClick		= { () => { TeamActions.createMember.run( team ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 					

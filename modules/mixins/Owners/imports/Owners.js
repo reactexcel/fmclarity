@@ -2,7 +2,7 @@ export default Owners = { register }
 
 // Have had to remove this because of dysfunctional implementation of es6 circular dependencies
 //import { Users } from '/modules/models/Users';
-import { Select } from '/modules/ui/MaterialInputs';
+import { Text } from '/modules/ui/MaterialInputs';
 
 function register( collection, options ) {
 
@@ -24,7 +24,10 @@ function register( collection, options ) {
 
 	collection.schema.owner = {
 		label: "Owner",
-		input: Select,
+		input: Text, //OwnerCard
+		options: {
+			readOnly: true
+		},
 		description: "The creator or owner",
 		relation: {
 			join: ( item ) => {

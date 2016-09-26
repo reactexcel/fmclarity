@@ -19,8 +19,8 @@ DocHead.addMeta( {
 } );
 
 Actions.addAccessRule( {
-	action: [ 'edit team', 'view team', 'create team request', 'create team member', 'create team facility' ],
-	role: [ 'portfolio manager', 'manager' ],
+	action: [ 'edit team', 'view team', 'create team request', 'create team member', 'create team facility', 'create team document' ],
+	role: [ 'portfolio manager', 'manager', 'owner' ],
 	rule: { alert: true }
 } )
 

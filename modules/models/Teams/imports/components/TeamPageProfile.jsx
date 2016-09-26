@@ -1,7 +1,15 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 import TeamView from './TeamView.jsx';
 
-export default function TeamPageProfile( props ) {
+/**
+ * @class           TeamPageProfile
+ * @memberOf        module:models/Teams
+ */
+function TeamPageProfile( props ) {
 	if ( !props.team ) {
 		return <div/>
 	}
@@ -19,3 +27,4 @@ export default function TeamPageProfile( props ) {
 		</div>
 	)
 }
+export default TeamPageProfile;

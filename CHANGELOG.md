@@ -24,11 +24,61 @@ CHANGELOG.md
 * Manager should be able to go straight to issued or quoted from draft
 * New instructions needed for suppliers who are sent a quote request
 
+**v1.6.0**
 
-
-* Moved schemas into new Model class
-* Refactor react components by moving data retrieval into meteor createComponent blocks
+* Updated README.md
+* Activated dynamic FAB
+* Created "thumbs" subscription"
+* Added .docs folder to .gitignore
+* Rename Issues to Requests
+* Rename ThumbsMixin to Thumbs and RolesMixin to Roles - then reconcile any clashes
+* Move UserViews back into User
+* Rename models so they are all in the plural ( File, Notification )
+* All models should have their main model file in the root imports folder, current models folder renamed to schemas
+* Rename "model-mixins" to "mixins"
+* Rename "plugins" to "features"
+* Rename LayoutManager to layouts
+* Rename action module Actions
+* Rename Authentication/Routes to AccessGroups
+* Rename individual layouts so that "Layout" is the prefix
+* Added jsdoc documentation stubs to all files
+* Documented Actions
+* Refactored a number of modules
+* Worked on circular dependency problem, began to introduce some deferred dependencies using reify
+* Access filter function added to ActionGroup - used to filter available options on request workflow buttons
+* Navigation drawer now users globally registered routes and their permissions to determine display status of each item
+* Added "condition" field to access roles ( to be used to filter request workflow actions by request status )
+* Created basic request workflow actions
+* Moved remaining prior Meteor-style packages from /both/modules to /modules/[type]
+* Converted user components to ES6 modules
+* Created new notification model and integrated it with ActionGroup class
+* Created admin data inspection console
+* Created "ActionGroup" mediator class and moved access control to instance "Actions"
+* Set up Roles and Permissions services for new RBAC architecture
+* Created new roles mixin for dynamic role identification
+* Created actions matrix for Facilities, Requests, Teams
+* Create router module and use "pull" for registering routes
+* Convert messages, files, documents, notifications to entities
+* Ensure views for all entities are split into components and containers
+* Create admin index page for all entities
+* Move entities into collections/entities folder
+* Split Mixin "DocAttachments" into two models, Document and File
+* Removed old server publications and replaced with temporary "publish all"
+* Converted remaining FMC Meteor packages to ES6 modules (except for ORM which will be completed later)
+* Converted Meteor packages to ES6 modules
+* Made some other Mantra compliant modifications to directory structure
+* Removed notification functionality from fmc:doc-messages
+* Applied mantra architecture to fmc:doc-attachments
+* Updated fmc:doc-attachment to work with new AutoForm api
+* Removed request table component, replace with global fmc:data-table table
+* Converted bulk of view to pure functional components
+* Consolidation of functions for RBAC revision
+* Changed configuration style for Model mixins
+* Added ValidationService and ValidatedMethod
+* Conversion of AutoForm to Model, Form and FormView classes
 * Recreated AutoForm to use separate Form/Container/Controller structure
+* Refactor react components by moving data retrieval into meteor createComponent blocks
+* Moved schemas into new Model class
 
 **v1.5.4-01**
 

@@ -8,13 +8,23 @@ export default FacilityPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Files' );
 	Meteor.subscribe( 'Documents' );
 	Meteor.subscribe( 'Messages' );
+	Meteor.subscribe( 'Files' );
+
+	let team = Session.getSelectedTeam(),
+		facility = Session.getSelectedFacility(),
+		facilities = Facilities.findAll();
+
+	if( facilities ) {
+		//let thumbs = _.pluck( facilities, 'thumb' );
+		//Meteor.subscribe( 'Thumbs', thumbs );
+	}
 
 	return {
-		team: Session.getSelectedTeam(),
-		facility: Session.getSelectedFacility(),
-		facilities: Facilities.findAll()
+		team,
+		facility,
+		facilities
 	}
+
 }, FacilityPageIndex );

@@ -3,11 +3,12 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
-import Documents from './imports/Documents.jsx';
-import DocAttachments from './imports/DocAttachments.jsx';
-import DocExplorer from './imports/components/DocExplorer.jsx';
-import DocTypes from './imports/schemas/DocTypes.jsx';
-import DocActions from './actions.jsx';
+import DocExplorer 		from './imports/components/DocExplorer.jsx';
+import DocViewEdit 		from './imports/components/DocViewEdit.jsx';
+import Documents 		from './imports/Documents.jsx';
+import DocAttachments 	from './imports/DocAttachments.jsx';
+import DocTypes 		from './imports/schemas/DocTypes.jsx';
+import DocActions 		from './actions.jsx';
 
 checkModules( {
 	Documents,
@@ -15,6 +16,7 @@ checkModules( {
 	DocExplorer,
 	DocTypes,
 	DocActions,
+	DocViewEdit
 } );
 
 /**
@@ -26,4 +28,5 @@ export {
 	DocExplorer,
 	DocTypes,
 	DocActions,
+	DocViewEdit
 }

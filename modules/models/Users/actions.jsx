@@ -1,3 +1,8 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import React from 'react';
 
 import { Action } from '/modules/core/Actions';

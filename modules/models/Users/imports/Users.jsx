@@ -3,19 +3,20 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import UserSchema from './schemas/UserSchema.jsx';
+import UserSchema       from './schemas/UserSchema.jsx';
 
-import { Model } from '/modules/core/ORM';
+import { Model }        from '/modules/core/ORM';
 
-import { Files } from '/modules/models/Files';
-import { Requests } from '/modules/models/Requests';
-import { Documents } from '/modules/models/Documents';
+import { Documents }    from '/modules/models/Documents';
+import { Files }        from '/modules/models/Files';
+import { Requests }     from '/modules/models/Requests';
 
-import { Thumbs } from '/modules/mixins/Thumbs';
-import { Owners } from '/modules/mixins/Owners';
-import { DocMessages } from '/modules/models/Messages';
+import { Thumbs }       from '/modules/mixins/Thumbs';
+import { Owners }       from '/modules/mixins/Owners';
+import { DocMessages }  from '/modules/models/Messages';
 
 /**
+ * Users model - unlink the other models in FMC this is not a new collection but an extension of the Meteor.users collection.
  * @memberOf        module:models/Users
  */
 const Users = new Model( {

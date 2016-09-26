@@ -1,7 +1,16 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-export default ContactAvatarSmall = React.createClass( {
+/**
+ * @class 			ContactAvatarSmall
+ * @memberOf	 	module:mixins/Members
+ */
+const ContactAvatarSmall = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
@@ -16,8 +25,8 @@ export default ContactAvatarSmall = React.createClass( {
 			initials = "";
 
 		if ( contact ) {
-			if ( contact.getProfile ) {
-				profile = contact.getProfile();
+			if ( contact.profile ) {
+				profile = contact.profile;
 				name = profile.name;
 			}
 
@@ -65,4 +74,6 @@ export default ContactAvatarSmall = React.createClass( {
 			</div>
 		)
 	}
-} );
+} )
+
+export default ContactAvatarSmall;

@@ -8,9 +8,9 @@ export default FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Files' );
 	Meteor.subscribe( 'Documents' );
 	Meteor.subscribe( 'Messages' );
+	Meteor.subscribe( 'Files' );
 
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
@@ -18,6 +18,10 @@ export default FacilitiesPageIndexContainer = createContainer( ( params ) => {
 
 	if ( team ) {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
+		if ( facilities ) {
+			//let thumbs = _.pluck( facilities, 'thumb' );
+			//Meteor.subscribe( 'Thumbs', thumbs );
+		}
 	}
 
 	return {

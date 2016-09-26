@@ -1,8 +1,16 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from 'react';
-
 import { ContactCard } from '/modules/mixins/Members';
+import { TeamActions } from '/modules/models/Teams';
 
-export default function TeamsPageIndex( props ) {
+/**
+ * @class           TeamsPageIndex
+ * @memberOf        module:models/Teams
+ */
+function TeamsPageIndex( props ) {
 	return (
 		<div className = "user-page animated fadeIn">
 			<div className="ibox">
@@ -14,7 +22,7 @@ export default function TeamsPageIndex( props ) {
 								<div 
 									className = "active-link" 
 									onClick = { 
-										() => { this.showModal( team ) }
+										() => { TeamActions.view.run( team ) }
 									}
 								>
 
@@ -32,3 +40,5 @@ export default function TeamsPageIndex( props ) {
 		</div>
 	)
 }
+
+export default TeamsPageIndex;

@@ -1,3 +1,7 @@
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
@@ -9,10 +13,13 @@ import { ServicesProvidedEditor } from '/modules/mixins/Services';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Stepper } from '/modules/ui/Stepper';
 
-/*
-TODO: remove tour, add additional instructions into stepper
-*/
-export default TeamStepper = React.createClass( {
+
+/**
+ * @class           TeamStepper
+ * @memberOf        module:models/Teams
+ * @todo            Remove tour, add additional instructions into stepper
+ */
+const TeamStepper = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
@@ -175,3 +182,5 @@ export default TeamStepper = React.createClass( {
         )
     }
 } );
+
+export default TeamStepper;
