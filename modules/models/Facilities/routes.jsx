@@ -27,7 +27,7 @@ AccessGroups.loggedIn.add( {
 	icon: 'fa fa-building',
 	action() {
 		mount( LayoutMain, {
-			content: <FacilityPageIndexContainer />
+			content: <FacilitiesPageIndexContainer />
 		} );
 	}
 } );

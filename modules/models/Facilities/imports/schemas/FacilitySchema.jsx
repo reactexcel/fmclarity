@@ -157,7 +157,20 @@ const FacilitySchema = {
 				return null
 			}
 		}
-	}
+	},
+
+    documents: {
+        label: "Documents",
+        description: "Saved team documents",
+        /*relation:
+        {
+            type: ORM.HasMembers,
+            source: "Files",
+            key: "team._id"
+        },*/
+        input: DocExplorer
+    },
+
 
 	//}
 }

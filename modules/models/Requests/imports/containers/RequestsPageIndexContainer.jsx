@@ -33,7 +33,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	if ( user != null ) {
 		// Requests.findForUser( Meteor.user() )...???
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
-		console.log( requests );
+		//console.log( requests );
 	}
 
 	return {

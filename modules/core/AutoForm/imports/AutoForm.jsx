@@ -109,7 +109,7 @@ class AutoForm extends React.Component {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
-				console.log ( key );
+				//console.log ( key );
 
 				return (
 

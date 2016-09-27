@@ -89,7 +89,7 @@ export default UserViewEdit = React.createClass( {
 					} );
 				}
 				component.setItem( user );
-				console.log( role );
+				//console.log( role );
 				if ( group && group.canAddMember() ) {
 					group.addMember( user, {
 						role: role

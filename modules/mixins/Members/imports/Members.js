@@ -41,7 +41,6 @@ function register( collection, opts ) {
 		}
 	}
 
-	/*
 	collection.schema[ fieldName ].relation = {
 		join: ( item ) => {
 			if ( item != null && _.isArray( item[ fieldName ] ) ) {
@@ -72,7 +71,6 @@ function register( collection, opts ) {
 			return members;
 		}
 	}
-	*/
 
 	var fn = ucfirst( fieldName );
 

@@ -28,7 +28,7 @@ const edit = new Action( {
 	icon: 'fa fa-group',
 	action: ( team ) => {
 		let { roles, actors } = Roles.getRoles( team );
-		console.log( Roles.getRoles( team ) );
+		//console.log( Roles.getRoles( team ) );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )

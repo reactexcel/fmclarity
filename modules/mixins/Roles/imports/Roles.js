@@ -38,8 +38,9 @@ Roles = new class {
 						}
 					} )
 				}
-				if ( team.facilities ) {
-					team.facilities.map( ( facility ) => {
+				let facilities = Facilities.findAll( { 'team._id': team._id } );
+				if ( facilities && facilities.length ) {
+					facilities.map( ( facility ) => {
 						if ( facility.members && facility.members.length ) {
 							facility.members.map( ( member ) => {
 								if ( member._id == user._id ) {

@@ -28,7 +28,7 @@ import { Tabs } from '/modules/ui/Tabs';
 function FacilityPanel( { item } ) {
 
 	let facility = item;
-
+//console.log( Facilities );
 	return (
 		<div>
 			<div className="facility-card">
@@ -77,7 +77,7 @@ function FacilityPanel( { item } ) {
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="tenants-tab">Tenants</span>,
-						content:    <ContactList group={facility} filter={{role:"tenant"}} defaultRole="tenant" team={facility.team}/>
+						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.team }/>
 					},{
 						//hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,

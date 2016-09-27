@@ -10,7 +10,7 @@ export default FilesPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Files' );
 
 	let files = Files.find().fetch();
-	console.log(files);
+	//console.log(files);
 	return {
 		items: files
 	}

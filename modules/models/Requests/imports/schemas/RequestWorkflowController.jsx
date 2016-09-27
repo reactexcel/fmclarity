@@ -340,7 +340,7 @@ Requests.workflow.addState( 'Issued', {
 			return !request.quoteRequired || request.quote;
 		},
 		method: function( request, user ) {
-			console.log( request );
+			//console.log( request );
 			var assignee = request.assignee;
 			Requests.save.call( request, {
 				status: 'In Progress',
@@ -581,7 +581,7 @@ function actionComplete( request ) {
 
 	request = Requests.findOne( request._id );
 
-	console.log( request );
+	//console.log( request );
 
 	if ( request.closeDetails.furtherWorkRequired ) {
 
@@ -611,7 +611,7 @@ function actionComplete( request ) {
 		}
 
 		var response = Meteor.call( 'Requests.create', newRequest );
-		console.log( response );
+		//console.log( response );
 		var newRequest = Requests._transform( response );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients

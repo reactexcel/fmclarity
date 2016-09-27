@@ -173,6 +173,7 @@ class ActionGroup {
 		// getting the rules and relationships is an expensive operation so we only want to do it
 		//  once before running an action...
 		let { rules, relationships } = this.getRulesAndRelationships( actionName, item );
+		//console.log( { rules, relationships } );
 
 		if ( rules == null ) {
 			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
@@ -200,6 +201,10 @@ class ActionGroup {
 
 	}
 
+	/*
+	 * @param 		{string} actionName
+	 * @param 		{object} item
+	 */
 	getRulesAndRelationships( actionName, item ) {
 
 		if ( !item ) {
@@ -212,11 +217,21 @@ class ActionGroup {
 		return { rules, relationships };
 	}
 
+
+	/*
+	 * @param 		{string} actionName
+	 */
 	getType( actionName ) {
 		return this.actions[ actionName ].type;
 	}
 
 
+	/*
+	 * @param 		{string} actionName
+	 * @param 		{object} item
+	 * @param 		{array} [rules]
+	 * @param 		{object} [relationships]
+	 */
 	checkAccess( actionName, item, rules, relationships ) {
 
 		if ( !item ) {
@@ -257,6 +272,12 @@ class ActionGroup {
 		return access;
 	}
 
+	/*
+	 * @param 		{string} actionName
+	 * @param 		{object} item
+	 * @param 		{array} [rules]
+	 * @param 		{object} [relationships]
+	 */
 	checkAlerts( actionName, item, rules, relationships ) {
 
 		if ( !rules && !relationships ) {

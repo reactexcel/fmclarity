@@ -25,7 +25,7 @@ const DateInput = React.createClass( {
 
 	handleDateChange( event, date ) {
 		let value = moment( date ).format( "D-MMM-YY" );
-		console.log( value );
+		//console.log( value );
 		this.setState( {
 			value: value,
 			dateValue: date,

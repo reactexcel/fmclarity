@@ -16,10 +16,7 @@ import { AutoForm } from '/modules/core/AutoForm';
 			}
 			if ( idx >= 0 ) {
 				var service = services[ idx ];
-				console.log( {
-					service,
-					idx
-				} );
+				//console.log( { service, idx } );
 				if ( !service.data ) {
 					service.data = {};
 				}

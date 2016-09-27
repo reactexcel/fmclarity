@@ -18,24 +18,37 @@ DocHead.addMeta( {
 	content: 'width=device-width, initial-scale=1.0'
 } );
 
+// Team rules
+//  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
+//  it should be accessed through a team action. ie edit team member
 Actions.addAccessRule( {
-	action: [ 'edit team', 'view team', 'create team request', 'create team member', 'create team facility', 'create team document' ],
+	action: [ 
+		'edit team', 
+		'view team', 
+		'edit team member',
+		'view team member',
+		'create team request', 
+		'create team member',
+		'create team facility', 
+		'create team document' ,
+		'edit team member',
+		'delete team member',
+	],
 	role: [ 'portfolio manager', 'manager', 'owner' ],
 	rule: { alert: true }
 } )
 
+// Facility rules
 Actions.addAccessRule( {
-	action: [ 'edit team member', 'view team member' ],
-	role: [ 'portfolio manager', 'manager' ],
-	rule: { alert: true }
-} )
-
-Actions.addAccessRule( {
-	action: [ 'edit facility', 'view facility' ],
+	action: [ 
+		'edit facility', 
+		'view facility' 
+	],
 	role: [ 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
 } )
 
+// Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
 	role: [ 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],

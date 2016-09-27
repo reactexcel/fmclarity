@@ -4,11 +4,11 @@
 import { Documents } from '/modules/models/Documents';
 import DocExplorer from './components/DocExplorer.jsx';
 
-export default DocAttachments = {
-	register
-}
+export default DocAttachments = { register }
 
 function register( collection, { fieldName, authentication } = {} ) {
+
+	//console.log(collection);
 
 	if ( fieldName == null ) {
 		fieldName = "documents";
@@ -26,7 +26,7 @@ function register( collection, { fieldName, authentication } = {} ) {
 	} );
 
 	// add the documents field to the schema for this selected collection
-	collection.schema.documents = {
+	collection.schema[fieldName] = {
 		label: "Documents",
 		description: "Documents pertaining to this item",
 		type: "array",

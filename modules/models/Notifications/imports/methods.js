@@ -23,7 +23,7 @@ Meteor.methods({
       var params = args.params;
       var element = React.createElement(Template,params);
       var emailBody = ReactDOMServer.renderToStaticMarkup(element);
-      console.log(emailBody);
+      //console.log(emailBody);
       Meteor.call('Messages.sendEmail',recipient,{
         subject:subject,
         emailBody:emailBody

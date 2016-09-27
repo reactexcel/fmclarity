@@ -126,17 +126,25 @@ class Model {
 		return newItem;
 	}
 
-
+	/* 
+	 * Calls the models collection's find method
+	 */
 	find( ...args ) {
 		return this.collection.find( ...args );
 	}
 
 
+	/* 
+	 * Calls the models collection's findOne method and called the related join function
+	 */
 	findOne( ...args ) {
 		let doc = this.collection.findOne( ...args );
 		return this.join( doc );
 	}
 
+	/* 
+	 * Calls the models collection's find method and calls the respective join function on the results
+	 */
 	findAll( ...args ) {
 		let docs = this.collection.find( ...args ).fetch();
 		docs.map( ( doc ) => {

@@ -1,53 +1,80 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 
-export default function NavigationDrawer( props ) {
-    let { userRole, routes } = props;
+/**
+ * @class 			NavigationDrawer
+ * @memberOf 		module:ui/MaterialNavigation
+ */
+class NavigationDrawer extends React.Component {
 
-    //console.log( routes );
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedRouteName: FlowRouter.getRouteName()
+		}
+	}
 
-    if ( routes == null || routes.length <= 1 ) {
-        return <div/>
-    }
+	selectRoute( route ) {
+		this.setState( {
+			selectedRouteName: route.name
+		} )
+		route.run();
+	}
 
-    let routeNames = Object.keys( routes.actions );
+	render() {
+		let { userRole, routes } = this.props,
+			{ selectedRouteName } = this.state;
 
-    return (
+		if ( routes == null || routes.length <= 1 ) {
+			return <div/>
+		}
 
-        <nav className = "nav-drawer">
-            <ul onClick = { this.onMenuClick }>
+		let routeNames = Object.keys( routes.actions );
 
-            {/*******************************************/
-            routeNames.map( ( routeName ) => { 
+		return (
 
-                let route = routes.actions[ routeName ];
+			<nav className = "nav-drawer">
+			<ul onClick = { this.onMenuClick }>
 
-                if( !routes.accessRules[ routeName ] || !routes.accessRules[ routeName ][ userRole ]  ) {
-                    return;
-                }
+			{/*******************************************/
 
-                let pathName    = route.path,
-                    icon        = route.icon,
-                    label       = route.label,
-                    //path        = FlowRouter.path( pathName ),
-                    classes     = [];
+			routeNames.map( ( routeName ) => { 
 
-                if( window.location.pathname == route.path ) {
-                    classes.push("active");
-                }
+				let route = routes.actions[ routeName ];
 
-                return (
-                <li key = { routeName } className = { classes.join(' ') }>
-                    <a onClick = { () => { route.run() } } >
-                        <i className = { icon }></i>
-                        <span>{ label }</span>
-                    </a>
-                </li>
-                )
+				if( !routes.accessRules[ routeName ] || !routes.accessRules[ routeName ][ userRole ]  ) {
+					return;
+				}
 
-            })/*******************************************/}
+				let pathName    = route.path,
+					icon        = route.icon,
+					label       = route.label,
+					//path        = FlowRouter.path( pathName ),
+					classes     = [];
 
-            </ul>
-        </nav>
+				if( selectedRouteName == routeName ) {
+					classes.push("active");
+				}
 
-    )
+				return (
+				<li key = { routeName } className = { classes.join(' ') }>
+					<a onClick = { () => { this.selectRoute( route ) } } >
+						<i className = { icon }></i>
+						<span>{ label }</span>
+					</a>
+				</li>
+				)
+
+			})/*******************************************/}
+
+			</ul>
+		</nav>
+		)
+	}
 }
+
+export default NavigationDrawer;

@@ -12,9 +12,7 @@ import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
-import { DocAttachments } from '/modules/models/Documents';
-
-//console.log( Teams );
+//import { DocAttachments } from '/modules/models/Documents';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', () => {
@@ -31,7 +29,7 @@ const Facilities = new Model( {
 	mixins: [
 		[ Owners ],
 		[ Thumbs, { defaultThumbUrl: 0 } ],
-		[ DocAttachments ],
+		//[ DocAttachments ],
 		[ DocMessages, {
 			helpers: {
 				getInboxName() {

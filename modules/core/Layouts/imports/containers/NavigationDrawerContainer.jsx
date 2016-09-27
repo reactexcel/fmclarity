@@ -2,10 +2,11 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
-import React from 'react';
-import { createContainer } from 'meteor/react-meteor-data';
-import { NavigationDrawer } from '/modules/ui/MaterialNavigation';
-import { Routes } from '/modules/core/Actions';
+ 
+import React 					from 'react';
+import { createContainer } 		from 'meteor/react-meteor-data';
+import { NavigationDrawer } 	from '/modules/ui/MaterialNavigation';
+import { Routes } 				from '/modules/core/Actions';
 
 /**
  * @class 			NavigationDrawerContainer
@@ -19,11 +20,11 @@ const NavigationDrawerContainer = createContainer( ( { params } ) => {
 		team = Session.getSelectedTeam(),
 		role = null;
 
-	if( user && team ) {
+	if ( user && team ) {
 		role = user.getRole( team );
 	}
 
-	return { user, team, userRole: role, routes:Routes }
+	return { user, team, userRole: role, routes: Routes }
 }, NavigationDrawer );
 
 export default NavigationDrawerContainer;
