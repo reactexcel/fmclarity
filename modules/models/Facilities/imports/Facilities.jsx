@@ -214,18 +214,4 @@ Facilities.actions( {
 	}
 } )
 
-if ( Meteor.isServer ) {
-	Meteor.publish( 'facilities', function( teamId ) {
-		console.log( teamId );
-		let q = {};
-		if ( teamId ) {
-			q[ 'team._id' ] = teamId;
-		}
-		return Facilities.find( q );
-	} );
-} else {
-	Meteor.subscribe( 'facilities' );
-}
-
-
 export default Facilities;

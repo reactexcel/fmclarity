@@ -79,6 +79,11 @@ CHANGELOG.md
 * Recreated AutoForm to use separate Form/Container/Controller structure
 * Refactor react components by moving data retrieval into meteor createComponent blocks
 * Moved schemas into new Model class
+* Fixed an issue that was causing navigation bar inaccurately show selected item
+* All facilities seemingly showing where it should just be team facilities
+* FacilityPanel -> documents tab throwing error "no schema definition", not displaying
+* Facility roles not showing on user card in contact list
+* Added "up" button to facility panel
 
 **v1.5.4-01**
 

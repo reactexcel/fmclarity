@@ -59,6 +59,11 @@ Roles = new class {
 	 * @param		{Document} item
 	 */
 	getRoles( item ) {
+
+		if( !item ) {
+			console.log( `Tried to inspect roles for nonexistent item - that shouldn't happen` );
+		}
+
 		import { Teams } from '/modules/models/Teams';
 		import { Facilities } from '/modules/models/Facilities';
 		let results = {

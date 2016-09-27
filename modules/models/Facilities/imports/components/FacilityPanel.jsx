@@ -28,7 +28,7 @@ import { Tabs } from '/modules/ui/Tabs';
 function FacilityPanel( { item } ) {
 
 	let facility = item;
-//console.log( Facilities );
+	//console.log( Facilities );
 	return (
 		<div>
 			<div className="facility-card">
@@ -36,25 +36,31 @@ function FacilityPanel( { item } ) {
 				{/* standfirst, banner??? */}
 				<div className="contact-thumbnail">
 
-					{facility.thumbUrl?
-					<div className="cover-image" style={{backgroundImage:"url('"+facility.thumbUrl+"')"}}></div>
-					:null}
+					{ facility.thumbUrl ?
+					<div className = "cover-image" style = { {backgroundImage:"url('"+facility.thumbUrl+"')"} }></div>
+					: null }
 
 					<div className="title-overlay">
 						<div className="row">
 							<div className="col-md-4">
 								<div 
-									className="facility-title" 
-									style={{borderBottom:facility.contact?"1px solid #fff":"none"}}>
+									className = "facility-title" 
+									style = { {borderBottom:facility.contact?"1px solid #fff":"none"} }>
 
-									<h2>{facility.name}</h2>                        
+									<div style = { { fontSize:"20px", color:"#fff", cursor: "pointer" } }>
+										<i className = "fa fa-arrow-left" onClick = { () => {
+											Session.selectFacility( null );
+										} }/>
+									</div>
 
-									{facility.address?
+									<h2 style = { { marginTop: "20px" }}> { facility.name } </h2>                        
+
+									{ facility.address ?
 									<b>{facility.getAddress()}</b>
-									:null}
+									: null }
 
 								</div>
-								<ContactDetails item={facility.contact}/>
+								<ContactDetails item = { facility.contact }/>
 							</div>
 						</div>
 					</div>
