@@ -378,6 +378,7 @@ Users.helpers( {
         return this.profile;
     },
     selectTeam: function( team ) {
+        console.log( team );
         if ( team ) {
             Session.set( 'selectedTeam', {
                 _id: team._id

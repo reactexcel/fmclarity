@@ -4,15 +4,19 @@
  */
 
 import React from "react";
-
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Roles } from '/modules/mixins/Roles';
+
 
 /**
  * @class 			UserPanel
  * @membersOf 		module:models/Users
  */
-const UserPanel = React.createClass( {
+class UserPanel extends React.Component {
+
+	getMenu() {
+		return [/* TeamActions.edit.bind( this.props.item ) */];
+	}
 
 	render() {
 
@@ -71,12 +75,10 @@ const UserPanel = React.createClass( {
 
 					</div>
 			    </div>
-			    {/*
-            	<Menu items={menu} />
-            	*/}
+            	<Menu items = { this.getMenu() } />
 			</div>
 		)
 	}
-} )
+}
 
 export default UserPanel;

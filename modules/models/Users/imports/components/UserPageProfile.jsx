@@ -4,10 +4,13 @@
  */
 
 import React from "react";
-
 import { UserPanel } from '/modules/models/Users';
 
-export default function UserPageProfile( props ) {
+/**
+ * @class 			UserPageProfile
+ * @memberOf 		module:models/User
+ */
+function UserPageProfile( props ) {
 	return (
 		<div className = "user-page animated fadeIn">
 	        <div className = "row">
@@ -21,3 +24,5 @@ export default function UserPageProfile( props ) {
 		</div>
 	)
 }
+
+export default UserPageProfile;

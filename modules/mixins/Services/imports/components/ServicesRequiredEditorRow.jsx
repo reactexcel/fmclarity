@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
-import { Teams } from '/modules/models/Teams';
+import { Teams, TeamStepper } from '/modules/models/Teams';
 import { ContactCard } from '/modules/mixins/Members';
 
 
@@ -71,7 +71,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 	showSupplierModal( supplier ) {
 		var facility = Session.getSelectedFacility();
 		Modal.show( {
-			content: <TeamViewEdit item={supplier} facility={facility} onChange={this.updateSupplier}/>
+			content: <TeamStepper item={supplier} facility={facility} onChange={this.updateSupplier}/>
 		} )
 	},
 

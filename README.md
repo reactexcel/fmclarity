@@ -33,6 +33,20 @@ The bulk of the source is written in a series of interdependent ES6 modules divi
 
 For a more detailed breakdown of the contents of each namespace see the JSDOC generated API documentation.
 
+**Module structure**
+
+Each module within these namespaces contains a consistent structure (although there may be some slight variation depending on the size and purpose of the module).
+
+|- index.jx         Imports all submodules from the local namespace and exports them under the module name (todo - link to example)
+|- actions.jsx      Includes any state-changing actions relevant to this module
+|- routes.jsx 	    Includes the routes for any pages implemented by this module
+|- _[stylesheets]_    [any stylesheets required by the module]
+|- imports
+   |- components    Any React component implemented by this model
+   |- containers    Data containers for any React pages pages or components
+   |- schemas       Any schemas required by this model
+   |- _[Module.jsx]_  If this module requires a central point of execution the 'main' file goes here with the same name as the module
+
 ## Database implementation
 
 FMC uses MongoDB/MiniMongo for the database. Collections are wrapped in a custom model class [core/ORM.Model](module-core_ORM.Model.html) that provides validation and limited authentication. Secure code is run in Meteor methods but where possible these are abstracted away using a custom ValidatedMethod ([code/ORM.ValidatedMethod](module-core_ORM.ValidatedMethod.html)) styled after the [mdg:validated-method](https://github.com/meteor/validated-method) package (more information at [Meteor Guide](https://guide.meteor.com/methods.html) ).
