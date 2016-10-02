@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Notifications } from '/modules/models/Notifications';
+import { Notifications, NotificationList } from '/modules/models/Notifications';
 
 import UserProfileMenu from './UserProfileMenu.jsx';
 
