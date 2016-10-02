@@ -4,7 +4,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import Messages from '../Messages.jsx';
 import MessagesPage from '../components/MessagesPage.jsx';
 
-export default MessagesPageContainer = createContainer( ( params ) => {
+export default MessagesPageContainer = createContainer( ( { params } ) => {
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Files' );
 	Meteor.subscribe( 'Messages' );
