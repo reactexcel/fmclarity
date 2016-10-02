@@ -5,12 +5,11 @@ import { LayoutMain, LayoutWide, LayoutPrint } from '/modules/core/Layouts';
 import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
 
-
 import PageDashboardContainer from '../imports/containers/PageDashboardContainer.jsx';
 import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
 import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
 
-const ReportsIndexRoute = new Route( {
+AccessGroups.loggedIn.add( {
     name: 'reports',
     path: '/reports',
     label: "Reports",
@@ -22,18 +21,18 @@ const ReportsIndexRoute = new Route( {
     }
 } );
 
-const ReportRoute = new Route( {
+AccessGroups.loggedIn.add( {
     name: 'report',
     path: '/report/:reportId',
     action( params ) {
         mount( LayoutMain, {
-            content: <ReportsPageIndex/>
+            content: <ReportsPageSingle id = {params.reportId}/>
         } );
     }
 } );
 
-const ReportPrintRoute = new Route( {
-    name: 'report',
+AccessGroups.loggedIn.add( {
+    name: 'report-view',
     path: '/report/:reportId/:view',
     action( params ) {
         var Layout = LayoutWide;
@@ -41,7 +40,7 @@ const ReportPrintRoute = new Route( {
             Layout = LayoutPrint;
         }
         mount( Layout, {
-            content: <ReportsPageSingle id={params.reportId}/>
+            content: <ReportsPageSingle id = {params.reportId}/>
         } );
     }
 } );
@@ -59,8 +58,8 @@ AccessGroups.loggedIn.add( {
 } );
 
 export {
-    ReportsIndexRoute,
-    ReportRoute,
-    ReportPrintRoute,
-    DashboardRoute
+    //ReportsIndexRoute,
+    //ReportRoute,
+    //ReportPrintRoute,
+    //DashboardRoute
 }

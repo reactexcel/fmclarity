@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import Reports from '../Reports.js';
 
 export default ReportsNavWidget = React.createClass( {
 

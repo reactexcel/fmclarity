@@ -1,3 +1,8 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
@@ -11,11 +16,21 @@ if ( Meteor.isClient ) {
 import Reports from '../Reports.js';
 import ProgressArc from '../components/ProgressArc';
 
-export default RequestActivityChart = React.createClass( {
+
+/**
+ * @class 			RequestActivityChart
+ * @memberOf 		module:features/Reports
+ */
+const RequestActivityChart = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
+
+		Meteor.subscribe( 'Users' );
+		Meteor.subscribe( 'Teams' );
+		Meteor.subscribe( 'Facilities' );
+		Meteor.subscribe( 'Requests' );
 
 		var openQuery = {}
 		var closedQuery = {
@@ -273,8 +288,4 @@ export default RequestActivityChart = React.createClass( {
 
 } );
 
-Reports.register( {
-	id: "request-activity-chart",
-	name: "Request Activity Chart",
-	content: RequestActivityChart
-} )
+export default RequestActivityChart;

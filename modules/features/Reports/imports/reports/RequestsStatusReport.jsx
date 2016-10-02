@@ -1,18 +1,28 @@
+/**
+ * @author 			Leo Keith <leo@fmclarity.com>
+ * @copyright 		2016 FM Clarity Pty Ltd.
+ */
+
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Menu } 				from '/modules/ui/MaterialNavigation';
-import { DataTable } 			from '/modules/ui/DataTable';
-import { DateTime, Select } 	from '/modules/ui/MaterialInputs';
+import { Menu } from '/modules/ui/MaterialNavigation';
+import { DataTable } from '/modules/ui/DataTable';
+import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
-export default StatusReport = React.createClass( {
+
+/**
+ * @class 			RequestStatusReport
+ * @memberOf 		module:features/Reports
+ */
+const RequestsStatusReport = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
 	fields: {
 		Priority: "priority",
 		Status: "status",
-		Facility: "facility.name", 
+		Facility: "facility.name",
 		"PO#": "code",
 		Issue: "name",
 		Issued: "issuedAt",
@@ -74,8 +84,12 @@ export default StatusReport = React.createClass( {
 	},
 
 	getMeteorData() {
-		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
-		Meteor.subscribe( 'users' );
+
+		Meteor.subscribe( 'Users' );
+		Meteor.subscribe( 'Teams' );
+		Meteor.subscribe( 'Facilities' );
+		Meteor.subscribe( 'Requests' );
+
 		var user, team, facility, requests, data = {};
 		user = Meteor.user();
 		if ( user ) {
@@ -116,8 +130,7 @@ export default StatusReport = React.createClass( {
 			return <div/>
 		}
 
-		let { team } = this.data,
-			{ facility, service } = this.state;
+		let { team } = this.data, { facility, service } = this.state;
 
 		return (
 			<div>
@@ -184,8 +197,4 @@ export default StatusReport = React.createClass( {
 	}
 } )
 
-Reports.register( {
-	id: "requests-status",
-	name: "Requests Status Report",
-	content: StatusReport
-} )
+export default RequestsStatusReport;
