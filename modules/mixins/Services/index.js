@@ -4,11 +4,13 @@
  */
 import ServicesProvidedEditor from './imports/components/ServicesProvidedEditor.jsx';
 import ServicesRequiredEditor from './imports/components/ServicesRequiredEditor.jsx';
+import ServiceDefaults from './imports/data/ServiceDefaults.js';
 
 /**
  * @module			mixins/Services
  */
 export {
 	ServicesProvidedEditor,
-	ServicesRequiredEditor
+	ServicesRequiredEditor,
+	ServiceDefaults
 }

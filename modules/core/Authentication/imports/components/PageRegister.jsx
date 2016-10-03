@@ -4,51 +4,53 @@
  */
 
 import React from "react";
+import LoginService from '../LoginService.js';
+import { Teams } from '/modules/models/Teams';
 
 /**
  * @class           PageRegister
  * @memberOf        module:core/Authentication
  */
-const PageRegister = React.createClass({
+const PageRegister = React.createClass( {
 
     getInitialState() {
         return {
-            errorMessage:null
+            errorMessage: null
         }
     },
 
-    handleSubmit: function(e) {
+    handleSubmit: function( e ) {
         e.preventDefault();
         var me = this;
         var name = this.refs.name.value.trim();
         var email = this.refs.email.value.trim();
-        if (!email||!name) {
+        if ( !email || !name ) {
             return;
         }
-        Accounts.createUser({
-            email:email,
-            password:Random.secret(),
-            profile:{
-                name:name,
-                email:email
+        Accounts.createUser( {
+            email: email,
+            password: Random.secret(),
+            profile: {
+                name: name,
+                email: email
             }
-        },function(error){
-            if(error) {
-                console.log(error);
-                me.setState({
-                    successMessage:null,
-                    errorMessage:<span>Sorry, that email address is already registered. If you think it should not be please contact <a href="mailto:admin@fmclarity.com">admin@fmclarity.com</a>.</span>
-                })
+        }, function( error ) {
+            if ( error ) {
+                console.log( error );
+                me.setState( {
+                    successMessage: null,
+                    errorMessage: <span>Sorry, that email address is already registered. If you think it should not be please contact <a href="mailto:admin@fmclarity.com">admin@fmclarity.com</a>.</span>
+                } )
+            } else {
+                let newTeam = Teams.create();
+                Teams.save.call( newTeam );
+                me.setState( {
+                    errorMessage: null,
+                    successMessage: <span>A password reset link has been sent to your registered email. Click the email link to continue.</span>
+                } )
+                LoginService.forgotPassword( email );
             }
-            else {
-                Meteor.call('Teams.create');
-                me.setState({
-                    errorMessage:null,
-                    successMessage:<span>A password reset link has been sent to your registered email. Click the email link to continue.</span>
-                })
-                FMCLogin.forgotPassword(email);
-            }
-        });
+        } );
         // TODO: send request to the server
         //React.findDOMNode(this.refs.email).value = '';
         //React.findDOMNode(this.refs.password).value = '';
@@ -56,8 +58,9 @@ const PageRegister = React.createClass({
     },
 
 
-    render() {return (
-    <div className="middle-box loginscreen animated fadeInDown">
+    render() {
+        return (
+            <div className="middle-box loginscreen animated fadeInDown">
         <div>
             <div>
                 <img width="300px" src="img/logo-horizontal-blue.svg"/>
@@ -97,7 +100,8 @@ const PageRegister = React.createClass({
             </div>
         </div>
     </div>
-    )}
-});
+        )
+    }
+} );
 
 export default PageRegister;

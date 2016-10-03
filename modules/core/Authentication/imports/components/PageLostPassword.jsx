@@ -4,6 +4,7 @@
  */
  
 import React from "react";
+import LoginService from '../LoginService.js';
 
 /**
  * @class           PageLostPassword
@@ -25,7 +26,7 @@ const PageLostPassword = React.createClass( {
             this.setState( { errorMessage: <span>Sorry, that email address is not registered on our system. If you think it should be please contact <a href="mailto:admin@fmclarity.com">admin@fmclarity.com</a>.</span> } )
         } else {
             this.setState( { successMessage: <span>A password reset link has been sent to your registered email. Click the email link to continue.</span> } )
-            FMCLogin.forgotPassword( email );
+            LoginService.forgotPassword( email );
         }
         return;
     },

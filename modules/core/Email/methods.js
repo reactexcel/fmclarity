@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import EmailMessageView from './imports/components/EmailMessageView.jsx';
 
 Meteor.methods({
 	//probably Messages.markAllNotificationsRead

@@ -3,6 +3,12 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
+import { Users } from '/modules/models/Users';
+import PasswordResetEmailTemplate from './components/PasswordResetEmailTemplate.jsx';
+
+
+console.log( Users );
+
 /**
  * @class 			LoginService
  * @memberOf 		module:core/Authentication
@@ -17,31 +23,31 @@ const LoginService = {
 }
 
 Meteor.methods( {
-	'FMCLogin.insertLoginToken': function( userId, token ) {
+	'LoginService.insertLoginToken': function( userId, token ) {
 		Meteor.users.update( userId, {
 			$push: {
-				'services.FMCLogin.tokens': token
+				'services.LoginService.tokens': token
 			}
 		} );
 	},
-	'FMCLogin.generateAccountToken': function( user ) {
+	'LoginService.generateAccountToken': function( user ) {
 		if ( Meteor.isServer ) {
 			var stampedLoginToken = Accounts._generateStampedLoginToken();
 			Accounts._insertLoginToken( user._id, stampedLoginToken );
 			return stampedLoginToken.token;
 		}
 	},
-	'FMCLogin.insertPasswordResetToken': function( userId, tokenRecord ) {
+	'LoginService.insertPasswordResetToken': function( userId, tokenRecord ) {
 		Meteor.users.update( userId, {
 			$set: {
 				"services.password.reset": tokenRecord
 			}
 		} );
 	},
-	'FMCLogin.findUserFromToken': function( token ) {
-		return Meteor.users.findOne( { 'services.FMCLogin.tokens': { $elemMatch: { token: token } } } );
+	'LoginService.findUserFromToken': function( token ) {
+		return Meteor.users.findOne( { 'services.LoginService.tokens': { $elemMatch: { token: token } } } );
 	},
-	'FMCLogin.forgotPassword': function( email ) {
+	'LoginService.forgotPassword': function( email ) {
 		var user = Users.findOne( { 'profile.email': email } );
 		if ( !user ) {
 			console.log( 'No account with that email' );
@@ -53,7 +59,7 @@ Meteor.methods( {
 			template: PasswordResetEmailTemplate,
 			params: {
 				user: user,
-				token: FMCLogin.generatePasswordResetToken( user )
+				token: LoginService.generatePasswordResetToken( user )
 			}
 		} );
 	}
@@ -66,7 +72,7 @@ Meteor.methods( {
  * @memberOf 	module:core/Authentication.LoginService 
  */
 function forgotPassword( email ) {
-	Meteor.call( 'FMCLogin.forgotPassword', email );
+	Meteor.call( 'LoginService.forgotPassword', email );
 }
 
 /*
@@ -78,7 +84,7 @@ function generatePasswordResetToken( user ) {
 		email: user.profile.email,
 		when: new Date()
 	};
-	Meteor.call( 'FMCLogin.insertPasswordResetToken', user._id, tokenRecord );
+	Meteor.call( 'LoginService.insertPasswordResetToken', user._id, tokenRecord );
 	return tokenRecord
 }
 
@@ -96,7 +102,7 @@ function generateLoginToken( user, expiry, redirect ) {
 		expiry: expiry,
 		redirect: redirect
 	}
-	Meteor.call( "FMCLogin.insertLoginToken", user._id, tokenRecord );
+	Meteor.call( "LoginService.insertLoginToken", user._id, tokenRecord );
 	return tokenRecord;
 }
 
@@ -111,7 +117,7 @@ function getUrl( token, redirect ) {
  * @memberOf module:core/Authentication.LoginService 
  */
 function loginWithoutPassword( user, callback ) {
-	Meteor.call( "FMCLogin.generateAccountToken", user, function( err, token ) {
+	Meteor.call( "LoginService.generateAccountToken", user, function( err, token ) {
 		if ( err ) {
 			console.log( err )
 		} else {
@@ -126,10 +132,10 @@ function loginWithoutPassword( user, callback ) {
  */
 function loginWithToken( token, callback ) {
 	//console.log(token);
-	Meteor.call( "FMCLogin.findUserFromToken", token, function( err, user ) {
+	Meteor.call( "LoginService.findUserFromToken", token, function( err, user ) {
 		var foundToken, expired;
 		if ( user != null ) {
-			foundToken = _.find( user.services.FMCLogin.tokens, function( item ) {
+			foundToken = _.find( user.services.LoginService.tokens, function( item ) {
 				return item.token == token
 			} );
 			if ( foundToken != null ) {

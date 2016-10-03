@@ -5,6 +5,7 @@
 import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
+import { TeamActions } from '/modules/models/Teams';
 
 /**
  * @class 			TopNavigationBarContainer
@@ -32,7 +33,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 			user.selectTeam( team );
 		} else if ( !team.name && !this.showingModal ) {
 			this.showingModal = true;
-			QuickActions.editTeam( team );
+			TeamActions.edit.run( team );
 		}
 
 		notifications = Notifications.findAll();

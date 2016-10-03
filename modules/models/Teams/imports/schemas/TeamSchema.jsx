@@ -2,6 +2,7 @@ import { AddressSchema } from '/modules/models/Facilities';
 import { DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select } from '/modules/ui/MaterialInputs';
 import { Facilities } from '/modules/models/Facilities';
+import { ServiceDefaults } from '/modules/mixins/Services';
 
 //import { Facilities } from '/modules/models/Facilities';
 
@@ -100,11 +101,11 @@ export default TeamSchema = {
 
     services: {
         label: "Services",
-        type: [ "string" ],
+        type: "object",
         description: "Services provided by this team",
         input: Select,
         defaultValue: () => {
-            return JSON.parse( JSON.stringify( Config.services ) )
+            return Object.assign( {}, ServiceDefaults );
         }
     },
 
