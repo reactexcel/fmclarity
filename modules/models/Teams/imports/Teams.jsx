@@ -13,6 +13,8 @@ import { Thumbs } from '/modules/mixins/Thumbs';
 import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
 
+import { Users } from '/modules/models/Users'
+
 // to be removed
 import { Facilities } from '/modules/models/Facilities';
 
@@ -191,54 +193,15 @@ function inviteMember( team, email, ext ) {
 	var found = false;
 	ext = ext || {};
 	//user = Accounts.findUserByEmail(email);
-	user = Meteor.users.findOne( {
+	user = Users.findOne( {
 		emails: {
 			$elemMatch: {
 				address: email
 			}
 		}
 	} );
-	console.log('A :: ' + user )
 	if ( user ) {
-		console.log( 'B')
 		found = true;
-	} else {
-		console.log( 'C')
-
-		var name = DocMessages.isValidEmail( email );
-
-		console.log('D :: '+ name )
-
-		if ( name ) {
-			console.log('E')
-
-			console.log( "E1 :: " + Meteor.isServer )
-
-			//if ( Meteor.isServer ) {
-			if ( true == true ) {
-				console.log('F')
-				//Accounts.sendEnrollmentEmail(id);
-				var params = {
-					name: name,
-					email: email
-				};
-				if ( ext.owner ) {
-					params.owner = ext.owner;
-				}
-				console.log( 'G :: '+ params)
-				//user = Meteor.call( "Users.createUser", params, "sdsd" );
-
-				user = Users.create( params )
-
-				console.log( "H :: " + user )
-			}
-		} else {
-			console.log( 'I')
-			return RBAC.error( 'email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.' );
-		}
-	}
-	if ( user ) {
-		console.log('DDDD')
 		Meteor.call( "Teams.addMember", team, {
 			_id: user._id
 		}, {
@@ -249,7 +212,36 @@ function inviteMember( team, email, ext ) {
 			user: user,
 			found: found
 		}
+	} else {
+		var name = DocMessages.isValidEmail( email );
+		if ( name ) {
+			if ( Meteor.isServer ) {
+				//Accounts.sendEnrollmentEmail(id);
+				var params = {
+					name: name,
+					email: email
+				};
+				if ( ext.owner ) {
+					params.owner = ext.owner;
+				}
+				/** Added Users.createUser user is added **/
+				user = Meteor.call( "Users.createUser", params,'1234')
+				Meteor.call( "Teams.addMember", team, {
+					_id: user._id
+				}, {
+					role: ext.role
+				});
+
+				return {
+					user: user,
+					found: true
+				}
+			}
+		} else {
+			return RBAC.error( 'email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.' );
+		}
 	}
+	
 }
 
 function sendMemberInvite( team, member ) {

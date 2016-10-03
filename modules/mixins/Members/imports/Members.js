@@ -160,42 +160,25 @@ function replaceMembers( collection, fieldName ) {
 }
 
 function addMember( collection, fieldName ) {
-	console.log('11AA')
 	return function( item, obj, options ) {
-		console.log('11BB')
 		options = options || {};
-
 		if ( !_.isArray( obj ) ) {
 			obj = [ obj ];
 		}
-
 		var newObject = {};
 		var role = options.role ? options.role : "staff";
-
-		//console.log([obj,options]);
-
 		obj.map( function( o ) {
-			console.log('11cc')
 			newObject[ fieldName ] = _.extend( {}, {
 				_id: o._id,
 				role: role,
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			console.log('11DD')
+			/** Added update is changed to save**/
 			collection.update( item._id, {
-			//update is changed to save
-			//collection.save( item._id, {
 				$push: newObject
 			});
 		})
-
-		console.log('*****')
-		console.log('*****')
-		console.log( newObject)
-		console.log('*****')
-		console.log('*****')
-
 		return newObject;
 	}
 }

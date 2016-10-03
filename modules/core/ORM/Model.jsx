@@ -114,10 +114,6 @@ class Model {
 	 * @param 			{Document} [item] - A template item whose values will be added to the newly created item
 	 */
 	create( item = {} ) {
-
-		console.log('AAAAAAAAAAAAAA')
-		console.log( item )
-
 		if ( this.schema == null ) {
 			throw new Meteor.Error( "Can't create item with no schema" );
 		}
@@ -126,8 +122,6 @@ class Model {
 		for ( let fieldName in this.schema ) {
 			newItem[ fieldName ] = this.getDefaultValue( fieldName, item )
 		}
-		console.log('AAA')
-		console.log( newItem )
 		Object.assign( newItem, item );
 		return newItem;
 	}

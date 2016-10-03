@@ -82,6 +82,7 @@ export default UserViewEdit = React.createClass( {
 					name: creatorsTeam.name
 				}
 			}, function( response ) {
+				console.log(response)
 				var user = Users.findOne( response.user._id );
 				if ( !response.found ) {
 					component.setState( {

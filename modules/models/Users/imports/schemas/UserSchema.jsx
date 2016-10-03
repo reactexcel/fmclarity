@@ -13,7 +13,9 @@ const UserProfileSchema = {
 		label: "First name",
 		type: "string",
 		input: Text,
-		size: 6
+		size: 6,
+		options: () => {
+		}
 	},
 	lastName: {
 		label: "Last name",
@@ -54,7 +56,9 @@ const UserProfileSchema = {
 const UserSchema = {
 	profile: {
 		type: "object",
-		subschema: UserProfileSchema
+		subschema: UserProfileSchema,
+		options: () => {
+		}
 	}
 }
 
