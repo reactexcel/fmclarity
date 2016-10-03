@@ -28,8 +28,9 @@ const TeamStepper = React.createClass( {
         var viewer, viewersTeam, viewingTeam, group;
 
         viewer = Meteor.user();
-        viewersTeam = this.props.team ? Teams.findOne( this.props.team._id ) : Session.getSelectedTeam();
-        viewingTeam = this.props.item ? Teams.findOne( this.props.item._id ) : null;
+        viewersTeam = this.state.team ? Teams.findOne( this.state.team._id ) : Session.getSelectedTeam();
+        //getting value of item from state instead of props
+        viewingTeam = this.state.item ? Teams.findOne( this.state.item._id ) : null;
         //if this team is a member of a group, group may be included as one of the props
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
@@ -75,9 +76,16 @@ const TeamStepper = React.createClass( {
 
     getInitialState() {
         return {
-            shouldShowMessage: false
+            shouldShowMessage: false,
+            item: this.props.item
         }
     },
+    //Update the state of ui
+    setItem( newItem ) {
+  		this.setState( {
+  			item: newItem
+  		} );
+  	},
 
     handleInvite( event ) {
         event.preventDefault();
@@ -85,16 +93,18 @@ const TeamStepper = React.createClass( {
         var group = this.data.group;
         var input = this.refs.invitation;
         var searchName = input.value;
+        var component = this;
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
         } else {
             input.value = '';
-            viewersTeam.inviteSupplier( searchName, null, ( invitee ) => {
-                invitee = Teams._transform( invitee );
+            viewersTeam.inviteSupplier( searchName, ( invitee ) => {
+                invitee = Teams.collection._transform( invitee );
+
                 if ( group && group.addSupplier ) {
                     group.addSupplier( invitee );
                 }
-                this.setItem( invitee );
+               this.setItem( invitee );
                 if ( component.props.onChange ) {
                     this.props.onChange( invitee );
                 }
@@ -105,7 +115,7 @@ const TeamStepper = React.createClass( {
                 } else {
                     Modal.hide();
                 }
-            } );
+            }, null );
         }
     },
 
@@ -142,13 +152,13 @@ const TeamStepper = React.createClass( {
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
-                { this.state.shouldShowMessage ? 
+                { this.state.shouldShowMessage ?
                 <b>Team not found, please enter the details to add to your contact.</b>
                 : null }
 
                 <h2 style = { { marginTop:"0px" } }>Edit team</h2>
 
-                { ( false && viewingTeam.owner ) ? 
+                { ( false && viewingTeam.owner ) ?
                 <div>
                     <b>Team owner:</b>
                     <DocOwnerCard item = { viewingTeam }/>

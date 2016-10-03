@@ -126,7 +126,7 @@ class Model {
 		return newItem;
 	}
 
-	/* 
+	/*
 	 * Calls the models collection's find method
 	 */
 	find( ...args ) {
@@ -134,7 +134,7 @@ class Model {
 	}
 
 
-	/* 
+	/*
 	 * Calls the models collection's findOne method and called the related join function
 	 */
 	findOne( ...args ) {
@@ -142,7 +142,7 @@ class Model {
 		return this.join( doc );
 	}
 
-	/* 
+	/*
 	 * Calls the models collection's find method and calls the respective join function on the results
 	 */
 	findAll( ...args ) {
@@ -223,6 +223,10 @@ class Model {
 	helpers( ...args ) {
 		return this.collection.helpers( ...args );
 	}
+	//Update function 
+	update( ...args ){
+			 return this.collection.update( arguments[0], arguments[1] );
+	 }
 }
 
 export default Model;

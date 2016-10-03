@@ -38,7 +38,12 @@ const Teams = new Model( {
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			authentication: true,
+			authentication: () => { return true },
+		} ],
+		//mixins for suppliers added
+		[ Members, {
+			fieldName: "suppliers",
+			authentication: () => { return true },
 		} ],
 		[ DocMessages, {
 			authentication: true,
@@ -159,6 +164,7 @@ function getSuppliers() {
 }
 
 function inviteSupplier( team, searchName, ext ) {
+	console.log(ext);
 	var supplier;
 	searchName = searchName.trim();
 	supplier = Teams.findOne( {
@@ -168,7 +174,8 @@ function inviteSupplier( team, searchName, ext ) {
 		}
 	} );
 	if ( !supplier ) {
-		supplier = Meteor.call( "Teams.create", {
+	//	supplier = Meteor.call( "Teams.create", {
+		supplier = Teams.create( {
 			type: "contractor",
 			name: searchName,
 			owner: {
@@ -177,12 +184,23 @@ function inviteSupplier( team, searchName, ext ) {
 				type: "team"
 			}
 		} );
-		supplier = Teams.findOne( supplier._id );
+		Teams.save.call(supplier)
+			.then(( data ) => {
+				supplier = Teams.findOne( data.insertedId )
+				Meteor.call( "Teams.addSupplier", team, {
+					_id: supplier._id
+				}, ( err ,data ) => {
+					ext(data.suppliers);
+				});
+			});
+	}else{
+		Meteor.call( "Teams.addSupplier", team, {
+			_id: supplier._id
+		}, (err, data ) => {
+			ext(data.suppliers)
+		});
 	}
-	Meteor.call( "Teams.addSupplier", team, {
-		_id: supplier._id
-	}, ext );
-	return supplier;
+	// return supplier;
 }
 
 function inviteMember( team, email, ext ) {
@@ -501,4 +519,4 @@ Teams.helpers( {
 } );
 
 
-export default Teams;
+  export default Teams;
