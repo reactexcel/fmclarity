@@ -89,3 +89,9 @@ In addition to the Mongo collections used by this application, a number of mixin
 
 FMC is hosted on AWS Sydney with the production server at [https://app.fmclarity.com](https://app.fmclarity.com).
 Deployment is currently managed using [mupx](https://github.com/arunoda/meteor-up/tree/mupx). 
+
+* **client** _Run only on client side, mainly layouts, views, stylesheets_
+* **server** _Run only on server, somewhat limited as the bulk of the business logic runs on both client and server. Server-side only views such as email text is in this folder_
+* **both** _Code for both client and server including the bulk of the schemas and business logic_
+* **public** _Other files exposed to public including sprites and other core layout images, fonts, icons etc_
+* **packages** _Internally developed sub-packages including packages for orm, rbac, documents and document explorer, Mongo document thumbnails and more_
