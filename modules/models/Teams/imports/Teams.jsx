@@ -38,7 +38,8 @@ const Teams = new Model( {
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			authentication: true,
+			//authentication: true,
+			authentication : AuthHelpers.managerOrOwner
 		} ],
 		[ DocMessages, {
 			authentication: true,
@@ -197,12 +198,25 @@ function inviteMember( team, email, ext ) {
 			}
 		}
 	} );
+	console.log('A :: ' + user )
 	if ( user ) {
+		console.log( 'B')
 		found = true;
 	} else {
+		console.log( 'C')
+
 		var name = DocMessages.isValidEmail( email );
+
+		console.log('D :: '+ name )
+
 		if ( name ) {
-			if ( Meteor.isServer ) {
+			console.log('E')
+
+			console.log( "E1 :: " + Meteor.isServer )
+
+			//if ( Meteor.isServer ) {
+			if ( true == true ) {
+				console.log('F')
 				//Accounts.sendEnrollmentEmail(id);
 				var params = {
 					name: name,
@@ -211,13 +225,20 @@ function inviteMember( team, email, ext ) {
 				if ( ext.owner ) {
 					params.owner = ext.owner;
 				}
-				user = Meteor.call( "Users.create", params );
+				console.log( 'G :: '+ params)
+				//user = Meteor.call( "Users.createUser", params, "sdsd" );
+
+				user = Users.create( params )
+
+				console.log( "H :: " + user )
 			}
 		} else {
+			console.log( 'I')
 			return RBAC.error( 'email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.' );
 		}
 	}
 	if ( user ) {
+		console.log('DDDD')
 		Meteor.call( "Teams.addMember", team, {
 			_id: user._id
 		}, {

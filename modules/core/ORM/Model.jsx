@@ -114,6 +114,10 @@ class Model {
 	 * @param 			{Document} [item] - A template item whose values will be added to the newly created item
 	 */
 	create( item = {} ) {
+
+		console.log('AAAAAAAAAAAAAA')
+		console.log( item )
+
 		if ( this.schema == null ) {
 			throw new Meteor.Error( "Can't create item with no schema" );
 		}
@@ -122,6 +126,8 @@ class Model {
 		for ( let fieldName in this.schema ) {
 			newItem[ fieldName ] = this.getDefaultValue( fieldName, item )
 		}
+		console.log('AAA')
+		console.log( newItem )
 		Object.assign( newItem, item );
 		return newItem;
 	}
@@ -153,7 +159,7 @@ class Model {
 		return docs;
 	}
 
-	_save( doc, newValues ) {
+	_save( doc, newValues  ) {
 		let selector = null;
 		if ( doc._id != null ) {
 			selector = doc._id;
@@ -162,6 +168,11 @@ class Model {
 		doc = this.unjoin( doc );
 
 		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
+	}
+
+	/** Added update() function to model since it doesnt exist like this **/
+	update( ...args ){
+		return this.collection.update( arguments[0], arguments[1] );
 	}
 
 	join( doc ) {
