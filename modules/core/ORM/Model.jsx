@@ -153,7 +153,7 @@ class Model {
 		return docs;
 	}
 
-	_save( doc, newValues ) {
+	_save( doc, newValues  ) {
 		let selector = null;
 		if ( doc._id != null ) {
 			selector = doc._id;
@@ -162,6 +162,11 @@ class Model {
 		doc = this.unjoin( doc );
 
 		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
+	}
+
+	/** Added update() function to model since it doesnt exist like this **/
+	update( ...args ){
+		return this.collection.update( arguments[0], arguments[1] );
 	}
 
 	join( doc ) {

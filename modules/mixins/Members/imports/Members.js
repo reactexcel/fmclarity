@@ -161,18 +161,12 @@ function replaceMembers( collection, fieldName ) {
 
 function addMember( collection, fieldName ) {
 	return function( item, obj, options ) {
-
 		options = options || {};
-
 		if ( !_.isArray( obj ) ) {
 			obj = [ obj ];
 		}
-
 		var newObject = {};
 		var role = options.role ? options.role : "staff";
-
-		//console.log([obj,options]);
-
 		obj.map( function( o ) {
 			newObject[ fieldName ] = _.extend( {}, {
 				_id: o._id,
@@ -180,11 +174,11 @@ function addMember( collection, fieldName ) {
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			collection.collection.update( item._id, {
+			/** Added update is changed to save**/
+			collection.update( item._id, {
 				$push: newObject
-			} );
-		} )
-
+			});
+		})
 		return newObject;
 	}
 }

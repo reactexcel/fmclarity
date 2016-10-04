@@ -61,7 +61,6 @@ import React from "react";
 	}
 
 	updateField( key, newValue, otherModifications ) {
-
 		let options = this.getOptions( key );
 
 		// update primary value
@@ -113,21 +112,17 @@ import React from "react";
 	save( item ) {
 		if( item!=null ) {
 			Object.assign( this.item, item );
-		}
-
+		} 
 		let itemId = this.item._id;
-
 		this.model.save.call( this.item )
 		.then( ( response ) => {
 			if( response.insertedId != null ) {
 				itemId = response.insertedId;
 			}
 			this.item = this.model.findOne( itemId );
-			console.log( response);
 			this.triggerCallbacks();
 		})
 		.catch( ( error ) => {
-			console.log( error );
 			this.processValidationErrors( error );
 			this.triggerCallbacks();
 		});

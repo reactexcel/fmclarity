@@ -34,12 +34,18 @@ if ( Meteor.isServer ) {
     } );
 }
 
+/** Added method create user is added **/
+Users.methods( {
+    createUser :{
+        authentication: true,
+        method: createUser
+    }
+})
 Users.actions( {
     getTeam: {
         authentication: true,
         helper: function() {
             var team = Session.getSelectedTeam();
-            //console.log(team);
             return team;
             return Session.getSelectedTeam();
         }
@@ -243,7 +249,7 @@ Users.actions( {
 } )
 
 function createUser( item, password ) {
-    if ( Meteor.isServer ) {
+     if ( Meteor.isServer ) {
         var owner = item.owner || {
             _id: Meteor.user()
                 ._id,
@@ -259,7 +265,7 @@ function createUser( item, password ) {
             user.password = password;
         }
         var id = Accounts.createUser( user );
-        var user = Users.findOne( id );
+        var user = Users.findOne( { '_id':id } );
         if ( owner ) {
             Users.update( id, {
                 $set: {
@@ -268,7 +274,7 @@ function createUser( item, password ) {
             } );
         }
         return user;
-    }
+     }
 }
 
 Meteor.methods( {
@@ -282,7 +288,9 @@ Meteor.methods( {
 Users.helpers( {
 
     collectionName: 'users',
-
+    createUser: function(item, password){
+        return createUser(item, password)
+    },
     login: function( callback ) {
         FMCLogin.loginUser( this, callback )
     },

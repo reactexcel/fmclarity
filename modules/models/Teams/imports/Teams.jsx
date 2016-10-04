@@ -13,6 +13,8 @@ import { Thumbs } from '/modules/mixins/Thumbs';
 import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
 
+import { Users } from '/modules/models/Users'
+
 // to be removed
 import { Facilities } from '/modules/models/Facilities';
 
@@ -38,12 +40,8 @@ const Teams = new Model( {
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			authentication: () => { return true },
-		} ],
-		//mixins for suppliers added
-		[ Members, {
-			fieldName: "suppliers",
-			authentication: () => { return true },
+			//authentication: true,
+			authentication : AuthHelpers.managerOrOwner
 		} ],
 		[ DocMessages, {
 			authentication: true,
@@ -164,7 +162,6 @@ function getSuppliers() {
 }
 
 function inviteSupplier( team, searchName, ext ) {
-	console.log(ext);
 	var supplier;
 	searchName = searchName.trim();
 	supplier = Teams.findOne( {
@@ -174,8 +171,7 @@ function inviteSupplier( team, searchName, ext ) {
 		}
 	} );
 	if ( !supplier ) {
-	//	supplier = Meteor.call( "Teams.create", {
-		supplier = Teams.create( {
+		supplier = Meteor.call( "Teams.create", {
 			type: "contractor",
 			name: searchName,
 			owner: {
@@ -184,23 +180,12 @@ function inviteSupplier( team, searchName, ext ) {
 				type: "team"
 			}
 		} );
-		Teams.save.call(supplier)
-			.then(( data ) => {
-				supplier = Teams.findOne( data.insertedId )
-				Meteor.call( "Teams.addSupplier", team, {
-					_id: supplier._id
-				}, ( err ,data ) => {
-					ext(data.suppliers);
-				});
-			});
-	}else{
-		Meteor.call( "Teams.addSupplier", team, {
-			_id: supplier._id
-		}, (err, data ) => {
-			ext(data.suppliers)
-		});
+		supplier = Teams.findOne( supplier._id );
 	}
-	// return supplier;
+	Meteor.call( "Teams.addSupplier", team, {
+		_id: supplier._id
+	}, ext );
+	return supplier;
 }
 
 function inviteMember( team, email, ext ) {
@@ -208,7 +193,7 @@ function inviteMember( team, email, ext ) {
 	var found = false;
 	ext = ext || {};
 	//user = Accounts.findUserByEmail(email);
-	user = Meteor.users.findOne( {
+	user = Users.findOne( {
 		emails: {
 			$elemMatch: {
 				address: email
@@ -217,6 +202,15 @@ function inviteMember( team, email, ext ) {
 	} );
 	if ( user ) {
 		found = true;
+		Meteor.call( "Teams.addMember", team, {
+			_id: user._id
+		}, {
+			role: ext.role
+		} );
+		return {
+			user: user,
+			found: found
+		}
 	} else {
 		var name = DocMessages.isValidEmail( email );
 		if ( name ) {
@@ -229,24 +223,24 @@ function inviteMember( team, email, ext ) {
 				if ( ext.owner ) {
 					params.owner = ext.owner;
 				}
-				user = Meteor.call( "Users.create", params );
+				/** Added Users.createUser user is added **/
+				user = Meteor.call( "Users.createUser", params,'1234')
+				Meteor.call( "Teams.addMember", team, {
+					_id: user._id
+				}, {
+					role: ext.role
+				});
+
+				return {
+					user: user,
+					found: true
+				}
 			}
 		} else {
 			return RBAC.error( 'email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.' );
 		}
 	}
-	if ( user ) {
-		Meteor.call( "Teams.addMember", team, {
-			_id: user._id
-		}, {
-			role: ext.role
-		} );
-		//return user;
-		return {
-			user: user,
-			found: found
-		}
-	}
+	
 }
 
 function sendMemberInvite( team, member ) {
@@ -519,4 +513,4 @@ Teams.helpers( {
 } );
 
 
-  export default Teams;
+export default Teams;
