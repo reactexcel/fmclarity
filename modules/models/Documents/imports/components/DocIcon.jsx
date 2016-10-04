@@ -11,8 +11,12 @@ export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
 		Modal.show( {
-			content: <DocViewEdit item = { props.item } onChange = { props.onChange }/>
+			content: <DocViewEdit item = { props.item } onChange = { (data) => { props.onChange(data); onChange() }}/>
 		} )
+	}
+
+	function onChange(){
+		Modal.hide();
 	}
 
 	function getColorFromString( str ) {

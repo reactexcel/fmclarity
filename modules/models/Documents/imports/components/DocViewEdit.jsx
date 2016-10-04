@@ -59,7 +59,7 @@ const DocViewEdit = React.createClass( {
 			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
-			item.save();
+			Documents.save.call( item, {}, this.handleChangeCallback );
 			this.handleChangeCallback( null, item );
 		}
 	},
@@ -67,10 +67,11 @@ const DocViewEdit = React.createClass( {
 	render() {
 		return (
 			<div style={{padding:"15px"}}>
-				<AutoForm 
+				<AutoForm
 					model 	= { Documents }
-					form 	= { DocumentSchema } 
-					item 	= { this.data.doc } 
+					form 	= { DocumentSchema }
+					item 	= { this.data.doc }
+					onSubmit = { this.handleChange  }
 				/>
 			</div>
 		)

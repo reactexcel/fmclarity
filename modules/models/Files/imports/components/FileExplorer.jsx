@@ -33,15 +33,15 @@ function FileExplorer( props ) {
 		{ attachments.map( ( file, idx ) => {
 			return (
 				<div key={idx} style={{display:"inline-block"}}>
-					<FileView item = { file } onChange = { () => { handleChange( idx ) } } />
+					<FileView item = { file } onChange = { (newFile) => { handleChange( idx, newFile ) } } />
 				</div>
 			)
-		} ) } 
-		
+		} ) }
+
 		<div style = { {display:"inline-block"} }>
-			<FileView onChange = { () => { handleChange( attachments.length ) } } />
+			<FileView onChange = { (newFile) => { handleChange( attachments.length, newFile ) } } />
 		</div>
-	
+
 		</div>
 	)
 }

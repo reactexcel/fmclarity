@@ -62,7 +62,6 @@ import React from "react";
 
 	updateField( key, newValue, otherModifications ) {
 		let options = this.getOptions( key );
-
 		// update primary value
 		this.item[ key ] = newValue;
 		delete this.errors[ key ];
@@ -112,7 +111,7 @@ import React from "react";
 	save( item ) {
 		if( item!=null ) {
 			Object.assign( this.item, item );
-		} 
+		}
 		let itemId = this.item._id;
 		this.model.save.call( this.item )
 		.then( ( response ) => {

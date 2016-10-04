@@ -26,12 +26,12 @@ export default function DocExplorer( props ) {
 			<DocIconHeader />
 			{ documents.map( ( doc, idx ) => {
 			return (
-				<DocIcon key = { idx } item = { doc } onChange = { () => { handleChange( idx ) } } />
+				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } />
 			)
 			})}
-		
-			<DocIcon onChange={ () => { handleChange( documents.length ) } } />
-		
+
+			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } />
+
 		</div>
 	)
 }
