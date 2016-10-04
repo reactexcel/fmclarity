@@ -175,7 +175,7 @@ function addMember( collection, fieldName ) {
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
 			/** Added update is changed to save**/
-			collection.update( item._id, {
+			collection.collection.update( item._id, {
 				$push: newObject
 			});
 		})
