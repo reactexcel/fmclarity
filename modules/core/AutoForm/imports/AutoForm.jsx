@@ -56,11 +56,20 @@ class AutoForm extends React.Component {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
 
+			let { input, size = 12, label, description, options, condition } = schema[ key ],
+				placeholder = label,
+				Input = null;
+
 			// Check visibility condition specified in schema
-			if ( schema[ key ].condition != null ) {
-				if ( !this.checkCondition( schema[ key ].condition, item ) ) {
+			if ( condition != null ) {
+				if ( !this.checkCondition( condition, item ) ) {
 					return;
 				}
+			}
+
+			// Unpack options for this field (if the field is a function)
+			if ( _.isFunction( options ) ) {
+				options = options( item );
 			}
 
 			// Create default value for this field
@@ -69,16 +78,6 @@ class AutoForm extends React.Component {
 			if ( item[ key ] == null ) {
 				item[ key ] = this.form.getDefaultValue( key, item );
 			}
-
-			// Unpack options for this field (if the field is a generator)
-			if ( _.isFunction( schema[ key ].options ) ) {
-				schema[ key ].options = schema[ key ].options( item );
-			}
-
-			let { input, size = 12, label, description, options } = schema[ key ],
-				placeholder = label,
-				Input = null;
-
 
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
@@ -136,6 +135,8 @@ class AutoForm extends React.Component {
 	}
 
 	render() {
+
+		console.log( 'rendering form' );
 
 		return (
 			<div className="autoform row">

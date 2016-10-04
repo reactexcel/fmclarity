@@ -14,7 +14,20 @@ import { Users } from '/modules/models/Users';
 // okay, so these actions should actually be part of team and/or facility
 //  then we can accurately evaluate the roles of the accessor within that context
 
+const edit = new Action( {
+	name: 'edit user',
+	label: "Edit user",
+	type: [ 'user' ],
+	action: ( user ) => {
+		Modal.show( {
+			content: <UserViewEdit item = { user } />
+		} )
+	}
+} )
+
+
 export {
+	edit
 /*	create,
 	edit,
 	view,
