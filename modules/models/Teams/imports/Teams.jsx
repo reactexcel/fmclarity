@@ -207,7 +207,6 @@ function inviteMember( team, email, ext ) {
 		}, {
 			role: ext.role
 		} );
-		//return user;
 		return {
 			user: user,
 			found: found

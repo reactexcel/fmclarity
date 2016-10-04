@@ -82,7 +82,6 @@ export default UserViewEdit = React.createClass( {
 					name: creatorsTeam.name
 				}
 			}, function( response ) {
-				console.log(response)
 				var user = Users.findOne( response.user._id );
 				if ( !response.found ) {
 					component.setState( {
@@ -90,7 +89,6 @@ export default UserViewEdit = React.createClass( {
 					} );
 				}
 				component.setItem( user );
-				//console.log( role );
 				if ( group && group.canAddMember() ) {
 					group.addMember( user, {
 						role: role

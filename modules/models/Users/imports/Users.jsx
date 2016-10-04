@@ -46,7 +46,6 @@ Users.actions( {
         authentication: true,
         helper: function() {
             var team = Session.getSelectedTeam();
-            //console.log(team);
             return team;
             return Session.getSelectedTeam();
         }
@@ -251,8 +250,6 @@ Users.actions( {
 
 function createUser( item, password ) {
      if ( Meteor.isServer ) {
-
-        console.log('create user')
         var owner = item.owner || {
             _id: Meteor.user()
                 ._id,
@@ -276,10 +273,6 @@ function createUser( item, password ) {
                 }
             } );
         }
-
-        console.log('oooo')
-        console.log( user )
-
         return user;
      }
 }
