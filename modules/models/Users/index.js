@@ -5,11 +5,13 @@
  
 import Users from './imports/Users.jsx';
 import UserPanel from './imports/components/UserPanel.jsx';
+import UserActions from './actions.jsx';
 import UserViewEdit from './imports/components/UserViewEdit.jsx';
 
 checkModules( { 
 	Users,
 	UserPanel,
+	UserActions,
 	UserViewEdit
 } );
 
@@ -19,5 +21,6 @@ checkModules( {
 export {
 	Users,
 	UserPanel,
+	UserActions,
 	UserViewEdit
 }

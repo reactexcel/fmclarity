@@ -234,6 +234,8 @@ class ActionGroup {
 	 */
 	checkAccess( actionName, item, rules, relationships ) {
 
+		console.log( { rules, relationships } );
+
 		if ( !item ) {
 			item = Session.getSelectedTeam();
 		}
@@ -252,21 +254,33 @@ class ActionGroup {
 		if ( relationships ) {
 			userRoles = relationships.actors[ user._id ];
 			//console.log( userRoles );
-			if ( rules && userRoles ) {
-				// if any one of my relationships permits this action then I can do it
-				userRoles.map( ( role ) => {
-					if ( rules[ role ] ) {
-						let condition = rules[ role ].condition;
-						//console.log( condition );
-						if ( !condition || _.findWhere( [ item ], condition ) ) {
-							access.allowed = access.allowed || rules[ role ].rule.allowed;
-							access.alert = access.alert || rules[ role ].rule.alert;
-							access.email = access.email || rules[ role ].rule.email;
-						}
+			if ( rules ) {
+
+				// implement wildcard 
+				if ( rules[ '*' ] ) {
+					let condition = rules[ '*' ].condition;
+					//console.log( condition );
+					if ( !condition || _.findWhere( [ item ], condition ) ) {
+						access.allowed = access.allowed || rules[ '*' ].rule.allowed;
+						access.alert = access.alert || rules[ '*' ].rule.alert;
+						access.email = access.email || rules[ '*' ].rule.email;
 					}
-				} )
-			} else {
-				//console.log( `Action '${actionName}' has no members` );
+					
+				} else if ( userRoles ) {
+
+					// if any one of my relationships permits this action then I can do it
+					userRoles.map( ( role ) => {
+						if ( rules[ role ] ) {
+							let condition = rules[ role ].condition;
+							//console.log( condition );
+							if ( !condition || _.findWhere( [ item ], condition ) ) {
+								access.allowed = access.allowed || rules[ role ].rule.allowed;
+								access.alert = access.alert || rules[ role ].rule.alert;
+								access.email = access.email || rules[ role ].rule.email;
+							}
+						}
+					} )
+				}
 			}
 		}
 		return access;

@@ -18,6 +18,14 @@ DocHead.addMeta( {
 	content: 'width=device-width, initial-scale=1.0'
 } );
 
+Actions.addAccessRule( { 
+	action: [
+		'edit user'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
 //  it should be accessed through a team action. ie edit team member

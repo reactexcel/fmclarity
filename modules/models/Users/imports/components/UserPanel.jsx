@@ -6,6 +6,7 @@
 import React from "react";
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Roles } from '/modules/mixins/Roles';
+import { UserActions } from '/modules/models/Users';
 
 
 /**
@@ -15,7 +16,7 @@ import { Roles } from '/modules/mixins/Roles';
 class UserPanel extends React.Component {
 
 	getMenu() {
-		return [/* TeamActions.edit.bind( this.props.item ) */];
+		return [ UserActions.edit.bind( this.props.item ) ];
 	}
 
 	render() {
