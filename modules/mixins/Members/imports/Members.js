@@ -180,7 +180,7 @@ function addMember( collection, fieldName ) {
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			collection.update( item._id, {
+			collection.collection.update( item._id, {
 				$push: newObject
 			} );
 		} )

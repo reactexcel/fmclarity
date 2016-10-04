@@ -50,12 +50,12 @@ const Facilities = new Model( {
 		[ Members, {
 			fieldName: "members"
 		} ],
-		/*
+
 		[ Members, {
 			fieldName: "suppliers",
-			membersCollection: Teams,
+			authentication: () => (true)
 		} ]
-		*/
+
 	]
 } )
 

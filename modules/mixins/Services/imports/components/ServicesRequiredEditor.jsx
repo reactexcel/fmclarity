@@ -152,7 +152,7 @@ const ServicesRequiredEditor = React.createClass( {
 									service 		= { service }
 									readOnly 		= { readOnly }
 									clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
-									onChange 		= { () => { this.updateService( idx ) } }
+									onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
 								/>
 
 							</div>
@@ -169,7 +169,7 @@ const ServicesRequiredEditor = React.createClass( {
 														facility 	= { facility }
 														service 	= { subservice }
 														readOnly 	= { readOnly }
-														onChange 	= { () => { this.updateSubService( idx, subIdx ) } }/>
+														onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }/>
 												</div>
 											)
 										}):null}

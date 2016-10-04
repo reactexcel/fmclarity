@@ -12,7 +12,7 @@ export default TeamSchema = {
     //title:            "Team",
     //description:      "An account holder or contact team",
 
-    //properties: 
+    //properties:
     //{
 
     //////////////////////////////////////////////
@@ -88,7 +88,7 @@ export default TeamSchema = {
 
     //////////////////////////////////////////////
     // Settings
-    //////////////////////////////////////////////      
+    //////////////////////////////////////////////
 
     defaultWorkOrderValue: {
         label: "Default value for work orders",
@@ -124,7 +124,7 @@ export default TeamSchema = {
     },
 
     //////////////////////////////////////////////
-    // Relations      
+    // Relations
     //////////////////////////////////////////////
     facilities: {
         label: "Facilities",
