@@ -114,15 +114,15 @@ const FileView = React.createClass( {
 						!this.data.file.isUploaded()?
 							<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
 
-									<input 
-										ref="progress" 
-										type="text" 
+									<input
+										ref="progress"
+										type="text"
 										defaultValue={0}
-										data-max={100} 
-										className="dial m-r-sm" 
+										data-max={100}
+										className="dial m-r-sm"
 										data-fgcolor="#3ca773"
-										data-width="80" 
-										data-height="80" 
+										data-width="80"
+										data-height="80"
 									/>
 						    </div>
 						:

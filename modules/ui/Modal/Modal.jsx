@@ -178,7 +178,7 @@ ModalInner = React.createClass( {
 
     render() {
         return (
-            <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>        
+            <div ref="modal" className="modal fade" tabIndex="-1" role="dialog" style={{display:"none"}}>
           {this.props.children}
       </div>
         )

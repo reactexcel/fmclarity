@@ -228,7 +228,7 @@ class Model {
 	helpers( ...args ) {
 		return this.collection.helpers( ...args );
 	}
-	//Update function 
+	//Update function
 	update( ...args ){
 			 return this.collection.update( arguments[0], arguments[1] );
 	 }

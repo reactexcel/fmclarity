@@ -36,7 +36,11 @@ function register( collection, options ) {
 				}
 			},
 			unjoin: ( item ) => {
-				return _.pick( item.owner, '_id', 'name' );
+				if(_.isObject(item.owner)){
+					return _.pick( item.owner, '_id', 'name' );
+				}else{
+					return item.owner
+				}
 			}
 		},
 	}

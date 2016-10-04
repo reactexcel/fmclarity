@@ -24,6 +24,9 @@ class AutoForm extends React.Component {
 
 		this.form.addCallback( ( newState ) => {
 			this.setState( newState );
+			if(props.onSubmit){
+				props.onSubmit(newState.item)
+			}
 		} );
 
 		this.state = {
@@ -62,7 +65,7 @@ class AutoForm extends React.Component {
 
 			// Create default value for this field
 			//  I feel like this should be done when initialising the form
-			//  also 
+			//  also
 			if ( item[ key ] == null ) {
 				item[ key ] = this.form.getDefaultValue( key, item );
 			}
@@ -84,12 +87,12 @@ class AutoForm extends React.Component {
 
 					<div key = { key } className = { `col-sm-${size}` }>
 
-						<AutoForm 
+						<AutoForm
 							item		= { item[ key ] }
 							errors 		= { errors[ key ] }
 							hideSubmit 	= { true }
-							form		= { subschema } 
-										  { ...others } 
+							form		= { subschema }
+										  { ...others }
 						/>
 
 					</div>
@@ -115,14 +118,14 @@ class AutoForm extends React.Component {
 
 					<div key = { key } className = { `col-sm-${size}` }>
 
-						<Input 
+						<Input
 							fieldName 	= { key }
-							value 		= { item[ key ] } 
+							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
 							errors 		= { errors[ key ] }
-							placeholder	= { placeholder } 
+							placeholder	= { placeholder }
 							description	= { description }
-										  { ...options } 
+										  { ...options }
 						/>
 
 					</div>
@@ -142,9 +145,9 @@ class AutoForm extends React.Component {
 		        { ! this.props.hideSubmit ?
 
 				<div style={ {textAlign:"right", clear:"both"}}>
-					<button 
-						type="button" 
-						className="btn btn-flat btn-primary" 
+					<button
+						type="button"
+						className="btn btn-flat btn-primary"
 						onClick={ ( ) => { this.form.save( this.item ) } }>
 						Submit
 					</button>
