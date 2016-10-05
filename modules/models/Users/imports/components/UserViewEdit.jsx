@@ -56,7 +56,7 @@ export default UserViewEdit = React.createClass( {
 	},
 
 	save() {
-		Meteor.call( 'Users.save', this.state.item );
+			Users.save.call( this.state.item );
 	},
 
 	handleInvite( event ) {
@@ -107,6 +107,7 @@ export default UserViewEdit = React.createClass( {
 				item: user
 			} );
 		}
+		this.save()
 	},
 
 	removeMember( team, user ) {

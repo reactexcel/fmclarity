@@ -39,7 +39,7 @@ class UserPanel extends React.Component {
 		}
 
 		return (
-			<div className="business-card">				
+			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
 				    <img alt="image" src={contact.getThumbUrl()} />
 				 </div>
@@ -47,7 +47,7 @@ class UserPanel extends React.Component {
 				 	<div>
 						<h2>{contact.getName()}</h2>
 
-						{ this.props.role ? 
+						{ this.props.role ?
 							<span>{this.props.role}<br/></span>
 						: null }
 
@@ -55,11 +55,11 @@ class UserPanel extends React.Component {
 							<span><b>Email</b> {profile.email}<br/></span>
 						: null }
 
-						{ profile.phone || profile.phone2 ? 
+						{ profile.phone || profile.phone2 ?
 							<span><b>Phone</b> {profile.phone}<br/></span>
 						: null }
 
-						{ profile.phone2 ? 
+						{ profile.phone2 ?
 							<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>
 						: null }
 

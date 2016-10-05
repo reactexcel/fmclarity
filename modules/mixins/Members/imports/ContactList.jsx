@@ -38,22 +38,22 @@ export default ContactList = React.createClass( {
 		}
 	},
 
-	// Display a pop up modal for the selected user 
+	// Display a pop up modal for the selected user
 	showModal( selectedUser ) {
 		//switch based on "type" sent into component
 		//this is a temporary work around as we transition into non-team supplier contacts
 		if ( this.props.type == "team" || ( selectedUser && selectedUser.collectionName == "Team" ) ) {
 			Modal.show( {
-				content: <TeamCard 
-	            	item={selectedUser} 
+				content: <TeamCard
+	            	item={selectedUser}
 	            	team={this.data.team}
 	            	role={this.data.role}
 	            	group={this.data.group}/>
 			} )
 		} else {
 			Modal.show( {
-				content: <UserPanel 
-	            	item={selectedUser} 
+				content: <UserPanel
+	            	item={selectedUser}
 	            	team={this.data.team}
 	            	role={this.data.role}
 	            	group={this.data.group}/>
@@ -72,19 +72,19 @@ export default ContactList = React.createClass( {
 			<div className="contact-list">
 			    {members?members.map( ( member,idx ) => {
 			        return (
-			            <div 
+			            <div
 			            	className="contact-list-item"
 			                key={idx}
 			            >
 			            	{false&&team.canRemoveMember()?<span className="active-link pull-right" onClick={component.handleRemove.bind(null,idx)}>delete</span>:null}
-			            	<div 
-			            		className = "active-link" 
-			            		onClick = { 
+			            	<div
+			            		className = "active-link"
+			            		onClick = {
 			            			() => { this.showModal( member ) }
 			            		}
 			            	>
 
-					            <ContactCard 
+					            <ContactCard
 					            	item = { member }
 					            	team = { team }
 					            	group = { group }
@@ -92,16 +92,16 @@ export default ContactList = React.createClass( {
 
 					        </div>
 
-			            </div>	
+			            </div>
 		            )
 			    }):null}
 			    {canCreate?
-			    <div 
+			    <div
 			    	className	= "contact-list-item"
 			        onClick		= { () => { TeamActions.createMember.run( team ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
-					
+
 					<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
 						<i className="fa fa-plus"></i>
 					</span>
