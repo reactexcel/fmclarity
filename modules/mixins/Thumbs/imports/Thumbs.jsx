@@ -4,6 +4,7 @@
  */
 
 import { Files } from '/modules/models/Files';
+import { Users } from '/modules/models/Users';
 
 /**
  * A mixin which adds functionality to a collection for saving and handling thumbnails
@@ -74,11 +75,16 @@ function getThumb( doc ) {
 }
 
 function setThumb( doc, fileObj ) {
-	doc.save( {
-		thumb: {
-			_id: fileObj._id
-		}
-	} );
+  Users.collection.update(
+    doc._id ,
+    {
+      $set: {
+        thumb: {
+          _id: fileObj._id
+        }
+      }
+    }
+  );
 }
 
 function getThumbUrl( doc ) {
