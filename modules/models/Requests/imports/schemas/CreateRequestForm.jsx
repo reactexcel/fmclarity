@@ -1,1 +1,19 @@
-export default CreateRequestForm = [ 'team', 'status', 'name', 'facility', 'level', 'area', 'identifier', 'service', 'subservice', 'supplier', 'type', 'priority', 'dueDate', 'frequency', 'costThreshold', 'description' ];
+export default CreateRequestForm = [
+	'type', 
+	'team', 
+	'status', 
+	'name', 
+	'facility', 
+	'level', 
+	'area', 
+	'identifier', 
+	'service', 
+	'subservice', 
+	'supplier', 
+	'priority', 
+	'dueDate', 
+	'frequency', 
+	'duration',
+	'costThreshold', 
+	'description'
+];

@@ -108,7 +108,7 @@ import React from "react";
 		Object.assign( this.errors, errorsGroupedByField );
 	}
 
-	save( item ) {
+	save( item, callback ) {
 		if( item!=null ) {
 			Object.assign( this.item, item );
 		}
@@ -120,6 +120,9 @@ import React from "react";
 			}
 			this.item = this.model.findOne( itemId );
 			this.triggerCallbacks();
+			if( callback ) {
+				callback( this.item );
+			}
 		})
 		.catch( ( error ) => {
 			this.processValidationErrors( error );

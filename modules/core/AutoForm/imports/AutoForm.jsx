@@ -6,6 +6,7 @@
 import React from "react";
 import { Text } from '/modules/ui/MaterialInputs';
 import FormController from './FormController.jsx';
+import { Modal } from '/modules/ui/Modal'
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -24,9 +25,6 @@ class AutoForm extends React.Component {
 
 		this.form.addCallback( ( newState ) => {
 			this.setState( newState );
-			if(props.onSubmit){
-				props.onSubmit(newState.item)
-			}
 		} );
 
 		this.state = {
@@ -149,7 +147,18 @@ class AutoForm extends React.Component {
 					<button
 						type="button"
 						className="btn btn-flat btn-primary"
-						onClick={ ( ) => { this.form.save( this.item ) } }>
+						onClick={ ( ) => { 
+							let { item } = this.state;
+								this.form.save( item, ( newItem ) => {
+								console.log( newItem );
+								if ( this.props.onSubmit ) {
+									this.props.onSubmit( newItem )
+								}
+								// either this should go into onSubmit
+								// or AutoForm could be charged with opening as well as closing Modal
+								Modal.hide();
+							} );
+						} }>
 						Submit
 					</button>
 				</div>
