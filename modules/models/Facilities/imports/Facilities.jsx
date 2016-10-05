@@ -211,6 +211,13 @@ Facilities.actions( {
 			return facility.getRequests()
 				.length;
 		}
+	},
+	update: {
+		authentication: true,
+		method: function( ...args ) {
+			console.log( ...args);
+			Facilities.collection.update(...args);
+		}
 	}
 } )
 
