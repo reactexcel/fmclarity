@@ -75,13 +75,6 @@ function getThumb( doc ) {
 }
 
 function setThumb( doc, fileObj ) {
-/*
-doc.save( {
-  thumb: {
-    _id: fileObj._id
-  }
-} );
-*/
   Users.collection.update(
     doc._id ,
     {
