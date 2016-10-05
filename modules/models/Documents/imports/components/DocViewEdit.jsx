@@ -56,26 +56,15 @@ const DocViewEdit = React.createClass( {
 
 	handleChange( item ) {
 		let selectedFacility = Session.getSelectedFacility();
-		let documents = selectedFacility.documents;
 		if ( !item._id ) {
 			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
-			Meteor.call('Facilities.update', {
-					_id : selectedFacility._id
-				},
-				{
-					$push:{
-						'documents':{
-							name: item.name,
-							description: item.description,
-							type: item.type,
-							_id: item._id
-						}
-					}
-				}
+			Meteor.call( 'Facilities.addDocument',
+				selectedFacility._id,
+				item,
+				this.handleChangeCallback
 			);
-			this.handleChangeCallback( null, item );
 		}
 	},
 

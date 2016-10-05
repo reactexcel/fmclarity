@@ -212,11 +212,30 @@ Facilities.actions( {
 				.length;
 		}
 	},
-	update: {
+	addDocument: {
 		authentication: true,
-		method: function( ...args ) {
-			console.log( ...args);
-			Facilities.collection.update(...args);
+		method: function( _id, item ) {
+			Facilities.update(
+				{
+						_id : _id
+				},
+				{
+					$push:{
+						documents:{
+							name: item.name,
+							description: item.description,
+							type: item.type,
+							_id: item._id
+						}
+					}
+				}
+			);
+			return {
+				name: item.name,
+				description: item.description,
+				type: item.type,
+				_id: item._id
+			};
 		}
 	}
 } )
