@@ -19,18 +19,25 @@ export default function DocExplorer( props ) {
 		//console.log(documents);
 		props.onChange( documents )
 	}
+	//get Document list
+	function getDocsList () {
+		let item = props.item;
+		let model = props.model;
+		 return item.getDocs();
+	}
 
-	var documents = props.value || [];
+	var documents = getDocsList().concat(props.value || []) || [];
+
 	return (
 		<div>
 			<DocIconHeader />
 			{ documents.map( ( doc, idx ) => {
 			return (
-				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } />
+				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model={props.model} />
 			)
 			})}
 
-			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } />
+			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model={props.model} />
 
 		</div>
 	)

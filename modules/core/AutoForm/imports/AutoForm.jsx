@@ -45,6 +45,7 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 		let form = this.form;
 		let { keys, schema } = form;
+		let self = this;
 
 		return keys.map( ( key ) => {
 
@@ -90,6 +91,7 @@ class AutoForm extends React.Component {
 							hideSubmit 	= { true }
 							form		= { subschema }
 										  { ...others }
+											{ ... self.props}
 						/>
 
 					</div>
@@ -122,7 +124,8 @@ class AutoForm extends React.Component {
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
-										  { ...options }
+										  { ...options}
+											{ ... self.props}
 						/>
 
 					</div>
@@ -147,7 +150,7 @@ class AutoForm extends React.Component {
 					<button
 						type="button"
 						className="btn btn-flat btn-primary"
-						onClick={ ( ) => { 
+						onClick={ ( ) => {
 							let { item } = this.state;
 								this.form.save( item, ( newItem ) => {
 								console.log( newItem );

@@ -60,11 +60,29 @@ const DocViewEdit = React.createClass( {
 			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
-			Meteor.call( 'Facilities.addDocument',
-				selectedFacility._id,
-				item,
-				this.handleChangeCallback
-			);
+
+			let modelName = this.props.model._name;
+			let _id, name;
+			if(modelName == 'Teams'){
+				let team = Session.getSelectedTeam();
+				_id = team._id;
+				name = team.name;
+				item.team = {
+					_id : _id,
+					name: name
+				}
+			}
+			if(modelName == 'Facilities'){
+				let facility = Session.getSelectedFacility();
+				_id = facility._id;
+				name = facility.name;
+				item.facility = {
+					_id : _id,
+					name: name
+				}
+			}
+			Documents.save.call( item );
+			this.handleChangeCallback(null, item);
 		}
 	},
 

@@ -13,6 +13,7 @@ import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 //import { DocAttachments } from '/modules/models/Documents';
+import { Documents } from '/modules/models/Documents';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', () => {
@@ -212,32 +213,20 @@ Facilities.actions( {
 				.length;
 		}
 	},
-	addDocument: {
+	getDocs: {
 		authentication: true,
-		method: function( _id, item ) {
-			Facilities.update(
-				{
-						_id : _id
-				},
-				{
-					$push:{
-						documents:{
-							name: item.name,
-							description: item.description,
-							type: item.type,
-							_id: item._id
-						}
-					}
+		helper: function( facility ) {
+			let docs = Documents.find({ facility: { _id: facility._id, name: facility.name } }).fetch();
+			return _.map(docs, (doc) => {
+				return {
+					_id: doc._id,
+					name: doc.name,
+					type: doc.type,
+					description: doc.description,
 				}
-			);
-			return {
-				name: item.name,
-				description: item.description,
-				type: item.type,
-				_id: item._id
-			};
+			});
 		}
-	}
+	},
 } )
 
 export default Facilities;
