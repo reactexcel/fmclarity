@@ -34,7 +34,9 @@ import React from "react";
 		// to avoid validation errors related to fields we aren't handling
 		console.log({item, keys:this.keys});
 		this.item = _.pick( item||{}, this.keys );
-		this.item._id = item._id;
+		if( item._id ) {
+			this.item._id = item._id;
+		}
 
 		this.collection = [];
 	}

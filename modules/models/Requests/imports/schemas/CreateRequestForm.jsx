@@ -13,7 +13,6 @@ export default CreateRequestForm = [
 	'priority', 
 	'dueDate', 
 	'frequency', 
-	'duration',
 	'costThreshold', 
 	'description'
 ];

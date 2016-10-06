@@ -14,7 +14,7 @@ function NotificationViewSummary( props ) {
     //  they can then be checked using action.type
     let { actor, action, object, createdAt } = props.item,
         target = {},
-        actorName = actor.profile.name,
+        actorName = actor.name,
         actionName = action.name,
         targetName = "Unknown";
 

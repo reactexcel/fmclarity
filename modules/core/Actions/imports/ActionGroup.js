@@ -180,7 +180,7 @@ class ActionGroup {
 		}
 
 		// ...that is why we precalculate rules and relationships then pass them here
-		let alerts = this.checkAlerts( actionName, item, rules, relationships ),
+		let notifications = this.checkAlerts( actionName, item, rules, relationships ),
 			access = this.checkAccess( actionName, item, rules, relationships );
 
 
@@ -190,11 +190,34 @@ class ActionGroup {
 				history.pushState( {}, '', this.path );
 			}
 
-			Notifications.save.call( {
-				actor: Meteor.user(),
-				action: action,
-				object: args
+			console.log( notifications );
+
+			notifications.alert.map( ( recipient ) => {
+				let user = Meteor.user(),
+					userObj = {
+						_id: user._id,
+						name: user.profile.name
+					},
+					recipientObj = {
+						_id: recipient._id,
+						name: recipient.profile.name
+					},
+					read = false;
+
+				// if the current user performed the action then pre-mark the notification as read
+				//if ( user._id == recipient._id ) {
+				//	read = true;
+				//}
+
+				Notifications.save.call( {
+					recipient: recipientObj,
+					actor: userObj,
+					action: action,
+					object: args,
+					read: read
+				} );
 			} );
+
 		} else {
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
 		}
@@ -265,7 +288,7 @@ class ActionGroup {
 						access.alert = access.alert || rules[ '*' ].rule.alert;
 						access.email = access.email || rules[ '*' ].rule.email;
 					}
-					
+
 				} else if ( userRoles ) {
 
 					// if any one of my relationships permits this action then I can do it

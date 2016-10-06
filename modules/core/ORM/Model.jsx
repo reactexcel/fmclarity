@@ -174,6 +174,9 @@ class Model {
 		}
 		Object.assign( doc, newValues );
 		doc = this.unjoin( doc );
+		if( !doc.createdAt ) {
+			doc.createdAt = new Date();
+		}
 
 		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
 	}

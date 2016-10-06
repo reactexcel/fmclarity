@@ -6,12 +6,16 @@ import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
 import { TeamActions } from '/modules/models/Teams';
+import { Notifications } from '/modules/models/Notifications';
 
 /**
  * @class 			TopNavigationBarContainer
  * @memberOf 		module:core/Layouts
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
+
+	console.log( TopNavigationBar );
+
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Messages' );
@@ -36,7 +40,14 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 			TeamActions.edit.run( team );
 		}
 
-		notifications = Notifications.findAll();
+    	function showNotification( title, body ) {
+        	notify.createNotification( title, {
+            	body: body,
+            	icon: "icon-64x64.ico"
+        	} );
+    	}		
+
+		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
 		var count = notifications.length;
 		if ( count > this.oldCount ) {
 			this.oldCount = count;
@@ -44,7 +55,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 				this.audio.play();
 				var suppressFurtherNotifications = false;
 				if ( notifications.length > 2 ) {
-					this.showNotification(
+					showNotification(
 						"You have FM Clarity notifications",
 						"You have more than 3 new notifications from FM Clarity"
 					);
@@ -54,7 +65,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 						if ( !this.shown[ n._id ] ) {
 							this.shown[ n._id ] = true;
 							if ( !suppressFurtherNotifications ) {
-								this.showNotification( n.subject, n.body );
+								showNotification( n.subject, n.body );
 							}
 						}
 					} )
@@ -62,12 +73,22 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 			}
 		}
 	}
+
+	function onNotificationsViewed() {
+		let user = Meteor.user();
+		if( user ) {
+			Notifications.update( { 'recipient._id': user._id }, { $set: { read: true } } );
+		}
+	}
+
 	return {
 		user,
 		team,
 		teams,
-		notifications
+		notifications,
+		onNotificationsViewed
 	}
+
 }, TopNavigationBar );
 
 export default TopNavigationBarContainer;
