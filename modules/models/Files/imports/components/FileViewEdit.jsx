@@ -65,10 +65,10 @@ const FileViewEdit = React.createClass( {
 	render() {
 		return (
 			<div style={{padding:"15px"}}>
-				<AutoForm 
+				<AutoForm
 					model 	= { Documents }
-					form 	= { DocumentSchema } 
-					item 	= { this.data.doc } 
+					form 	= { DocumentSchema }
+					item 	= { this.data.doc }
 				/>
 			</div>
 		)

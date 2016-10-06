@@ -9,7 +9,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocumentSchema from '../schemas/DocumentSchema.jsx';
-
+import { Facilities } from '/modules/models/Facilities';
 /**
  * @class 			DocViewEdit
  * @memberOf 		module:models/Documents
@@ -55,12 +55,16 @@ const DocViewEdit = React.createClass( {
 	},
 
 	handleChange( item ) {
+		let selectedFacility = Session.getSelectedFacility();
 		if ( !item._id ) {
 			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
-			Documents.save.call( item, {}, this.handleChangeCallback );
-			this.handleChangeCallback( null, item );
+			Meteor.call( 'Facilities.addDocument',
+				selectedFacility._id,
+				item,
+				this.handleChangeCallback
+			);
 		}
 	},
 
