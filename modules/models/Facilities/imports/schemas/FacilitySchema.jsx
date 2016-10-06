@@ -53,6 +53,7 @@ const FacilitySchema = {
 		label: "Description",
 		description: "A brief description of the site",
 		type: "string",
+		optional: true,
 		input: TextArea,
 	},
 
@@ -60,6 +61,7 @@ const FacilitySchema = {
 		label: "Size",
 		description: "The net lettable area in metres squared",
 		type: "number",
+		optional: true,
 		input: Text,
 		size: 6
 	},
