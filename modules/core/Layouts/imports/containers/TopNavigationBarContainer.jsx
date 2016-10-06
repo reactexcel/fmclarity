@@ -65,7 +65,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 						if ( !this.shown[ n._id ] ) {
 							this.shown[ n._id ] = true;
 							if ( !suppressFurtherNotifications ) {
-								showNotification( n.subject, n.body );
+								//showNotification( n.subject, n.body );
 							}
 						}
 					} )
