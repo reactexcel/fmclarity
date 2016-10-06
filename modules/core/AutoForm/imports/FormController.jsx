@@ -30,7 +30,14 @@ import React from "react";
 			this.schema = Object.assign( {}, this.model.schema, schema );
 		}
 
-		this.item = Object.assign( {}, item );
+		// remove all extraneous fields from the provided item
+		// to avoid validation errors related to fields we aren't handling
+		console.log({item, keys:this.keys});
+		this.item = _.pick( item||{}, this.keys );
+		if( item._id ) {
+			this.item._id = item._id;
+		}
+
 		this.collection = [];
 	}
 
@@ -108,6 +115,10 @@ import React from "react";
 		Object.assign( this.errors, errorsGroupedByField );
 	}
 
+	/**
+	 * @param 			{Document} item
+	 * @param 			{function} callback
+	 */
 	save( item, callback ) {
 		if( item!=null ) {
 			Object.assign( this.item, item );
@@ -125,6 +136,7 @@ import React from "react";
 			}
 		})
 		.catch( ( error ) => {
+			console.log( error );
 			this.processValidationErrors( error );
 			this.triggerCallbacks();
 		});

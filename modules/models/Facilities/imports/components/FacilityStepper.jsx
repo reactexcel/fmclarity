@@ -47,7 +47,11 @@ export default function FacilityStepper( { item } ) {
                     	tab: 		<span id="discussion-tab">Basic Details</span>,
                     	content: 	<div className="row">
 										<div className = "col-sm-7">
-                                            <AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] }/>
+                                            <AutoForm
+                                                model   = { Facilities } 
+                                                item    = { facility } 
+                                                form    = { ["name", "type", "address", "operatingTimes" ] } 
+                                            />
                                         </div>
 					        			<div className = "col-sm-5">
                                             <ThumbView item = { facility.thumb } onChange = { this.setThumb } />

@@ -12,6 +12,20 @@ import ValidationService from './ValidationService.jsx';
 import ValidatedMethod from './ValidatedMethod.jsx';
 
 /**
+ * Implements a data model wrapper with a given schema and collection.
+ * The schema is an object that contains a field for each property.
+ * Valid attributes for each property are:
+ * {
+ *     type:         used for validation, one of "string", "number", "object", "array",
+ *     label:        the label to be shown on the input,
+ *     description:  extra information about the field
+ *     condition:    a function that takes an item and returns true if the field should be shown,
+ *     input:        the input to be used in rendering the item (usually one of /modules/ui/MaterialInputs,
+ *     options:      other information that get sends to the input,
+ *     size:         a number from 1-12 that is used by Autoform to calculate the layout
+ *     relations:    a join and unjoin function that can be used for joining the documents on find
+ * }
+ *
  * @memberOf 		module:core/ORM
  */
 class Model {
@@ -160,6 +174,9 @@ class Model {
 		}
 		Object.assign( doc, newValues );
 		doc = this.unjoin( doc );
+		if( !doc.createdAt ) {
+			doc.createdAt = new Date();
+		}
 
 		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
 	}

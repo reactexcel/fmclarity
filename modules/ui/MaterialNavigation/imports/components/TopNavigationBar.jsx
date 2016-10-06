@@ -7,20 +7,13 @@ import UserProfileMenu from './UserProfileMenu.jsx';
 
 export default function TopNavigationBar( props ) {
 
-    function showNotification( title, body ) {
-        notify.createNotification( title, {
-            body: body,
-            icon: "icon-64x64.ico"
-        } );
-    }
-
-    function componentDidMount() {
+    setTimeout(() => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {
-            if ( this.data.user ) {
-                this.count = 0;
-                this.oldCount = 0;
-                this.data.user.markAllNotificationsAsRead();
+            this.count = 0;
+            this.oldCount = 0;
+            if ( props.onNotificationsViewed ) {
+                props.onNotificationsViewed();
             }
         } )
         this.oldCount = 0;
@@ -30,7 +23,7 @@ export default function TopNavigationBar( props ) {
             pageVisibility: false,
             autoClose: 5000
         } );
-    }
+    },1000);
 
     function toggleLeftSideBar() {
         //should we change some global property?
@@ -41,10 +34,10 @@ export default function TopNavigationBar( props ) {
 
     return (
         <div className="top-navigation-bar">
-            <div className="sidebar-back-screen" onClick={this.toggleLeftSideBar}></div>      
+            <div className="sidebar-back-screen" onClick = {toggleLeftSideBar }></div>
             <nav className="nav-bar">
                 <div className="icon-region-1">
-                    <span id="nav-menu-icon" className="topnav-icon" onClick={this.toggleLeftSideBar}><i className="fa fa-bars"></i></span>
+                    <span id="nav-menu-icon" className="topnav-icon" onClick = { toggleLeftSideBar }><i className="fa fa-bars"></i></span>
                 </div>
 
                 <div className="logo-region">
@@ -60,9 +53,9 @@ export default function TopNavigationBar( props ) {
                         <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
                             <i className="fa fa-bell"></i>
                             <div style={{float:"right",width:"15px"}}>
-                                {notifications&&notifications.length?
+                                { notifications && notifications.length ?
                                     <span className="label label-notification">{notifications.length}</span>
-                                :null}
+                                : null }
                             </div>
                         </span>
                         <NotificationList items={notifications}/>

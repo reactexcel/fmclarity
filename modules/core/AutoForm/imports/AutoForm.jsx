@@ -17,6 +17,9 @@ injectTapEventPlugin();
  */
 class AutoForm extends React.Component {
 
+	/**
+	 * @param 		{object} props
+	 */
 	constructor( props ) {
 		super( props );
 		let { model, form, item } = props;
@@ -24,7 +27,7 @@ class AutoForm extends React.Component {
 		this.form = new FormController( model, form, item );
 
 		this.form.addCallback( ( newState ) => {
-			this.setState( newState );
+			this.onChange( newState );
 		} );
 
 		this.state = {
@@ -33,6 +36,12 @@ class AutoForm extends React.Component {
 		}
 	}
 
+	/**
+	 * Takes the condition field from a schema and a document item and returns true if the item passes the condition
+	 * @param 		{object} condition
+	 * @param 		{Document} item
+	 * @return 		{boolean}
+	 */
 	checkCondition( condition, item ) {
 		return (
 			( _.isString( condition ) && item.type == condition ) ||
@@ -41,6 +50,16 @@ class AutoForm extends React.Component {
 		)
 	}
 
+	onChange( newState ) {
+		if ( this.props.onChange ) {
+			this.props.onChange( newState );
+		}
+		this.setState( newState );
+	}
+
+	/**
+	 * Returns the react xml that can be used to create a form with the requested properties and values
+	 */
 	getForm() {
 		let { item, errors } = this.state;
 		let form = this.form;
@@ -80,7 +99,7 @@ class AutoForm extends React.Component {
 
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
-				let { subschema, size, ...others } = schema[ key ];
+				let { subschema, size = 12, ...others } = schema[ key ];
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
@@ -90,6 +109,16 @@ class AutoForm extends React.Component {
 							errors 		= { errors[ key ] }
 							hideSubmit 	= { true }
 							form		= { subschema }
+
+							// since we are calling this recursively we need to update the parent state with the changes from the child
+							onChange 	= { ( newState ) => { 
+												let item = this.state.item,
+													newItem = newState.item;
+
+												Object.assign( item[ key ], newItem)
+												this.setState( { item } );
+											}
+										  }
 										  { ...others }
 											{ ... self.props}
 						/>
@@ -152,14 +181,12 @@ class AutoForm extends React.Component {
 						className="btn btn-flat btn-primary"
 						onClick={ ( ) => {
 							let { item } = this.state;
-								this.form.save( item, ( newItem ) => {
+							console.log( item );
+							this.form.save( item, ( newItem ) => {
 								console.log( newItem );
 								if ( this.props.onSubmit ) {
 									this.props.onSubmit( newItem )
 								}
-								// either this should go into onSubmit
-								// or AutoForm could be charged with opening as well as closing Modal
-								Modal.hide();
 							} );
 						} }>
 						Submit
