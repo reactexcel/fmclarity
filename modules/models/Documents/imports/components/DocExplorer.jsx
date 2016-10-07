@@ -10,30 +10,26 @@ import DocIcon from './DocIcon.jsx';
 export default function DocExplorer( props ) {
 
 	function handleChange( index, newValue ) {
-		var documents = props.value || [];
-		if ( newValue ) {
-			documents[ index ] = newValue;
-		} else {
-			documents.splice( index, 1 );
+		Modal.hide();
+		if( props.onChange ) {
+			props.onChange( documents );
 		}
-		//console.log(documents);
-		props.onChange( documents )
 	}
 	//get Document list
-	function getDocsList () {
+	function getDocsList() {
 		let item = props.item;
 		let model = props.model;
-		 return item.getDocs();
+		return item.getDocs();
 	}
 
-	var documents = getDocsList().concat(props.value || []) || [];
+	var documents = getDocsList();//.concat( props.value || [] ) || [];
 
 	return (
 		<div>
 			<DocIconHeader />
 			{ documents.map( ( doc, idx ) => {
 			return (
-				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model={props.model} />
+				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } />
 			)
 			})}
 
