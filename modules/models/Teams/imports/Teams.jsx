@@ -131,7 +131,21 @@ Teams.methods( {
 			} );
 			return availableServices;
 		}
-	}
+	},
+	getDocs: {
+		authentication: true,
+		helper: function( team ) {
+			let docs = Documents.find({ team: { _id: team._id, name: team.name } }).fetch();
+			return _.map(docs, (doc) => {
+				return {
+					_id: doc._id,
+					name: doc.name,
+					type: doc.type,
+					description: doc.description,
+				}
+			});
+		}
+	},
 } );
 
 function getSuppliers() {

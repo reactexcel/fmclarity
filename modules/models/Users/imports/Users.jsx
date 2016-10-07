@@ -93,6 +93,20 @@ Users.actions( {
             return Session.getSelectedFacility()
         }
     },
+    getDocs: {
+      authentication: true,
+      helper: function( user ) {
+        let docs = Documents.find({ user: { _id: user._id, name: user.name } }).fetch();
+        return _.map(docs, (doc) => {
+          return {
+            _id: doc._id,
+            name: doc.name,
+            type: doc.type,
+            description: doc.description,
+          }
+        });
+      }
+    },
     getRequests: {
         authentication: true,
         //subscription:???
