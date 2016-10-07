@@ -49,12 +49,12 @@ const Text = React.createClass( {
 		}
 
 		return (
-			<div className = "md-input">      
+			<div className = "md-input">
 
-      		<input 
-      			className		= { classes.join(' ') } 
+      		<input
+      			className		= { classes.join(' ') }
       			ref 			= "input"
-      			type 			= "text" 
+      			type 			= "text"
       			value 			= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
@@ -62,8 +62,8 @@ const Text = React.createClass( {
 
 	        {
         	used?
-    		<div 
-    			className	= "close-button" 
+    		<div
+    			className	= "close-button"
     			onClick		= { this.handleClear }>
     			&times;
     		</div>

@@ -5,16 +5,19 @@ export default AddressSchema = {
 	streetNumber: {
 		input: Text,
 		label: "Number",
+		type: "string",
 		size: 3
 	},
 	streetName: {
 		input: Text,
+		type: "string",
 		label: "Street name",
 		size: 6
 	},
 	streetType: {
 		label: "Type",
 		size: 3,
+		type: "string",
 		input: Select,
 		options: {
 			items: [
@@ -38,11 +41,13 @@ export default AddressSchema = {
 		input: Text,
 		label: "City",
 		size: 6,
+		type: "string",
 	},
 	state: {
 		label: "State",
 		size: 3,
 		input: Select,
+		type: "string",
 		options: {
 			items: [
 				"ACT",
@@ -59,6 +64,7 @@ export default AddressSchema = {
 	postcode: {
 		input: Text,
 		label: "Postcode",
+		type: "string",
 		size: 3
 	}
 }

@@ -14,7 +14,7 @@ function validator( schema ) {
 			else {
 				throw error;
 			}
-		}		
+		}
 	}
 }
 
@@ -33,21 +33,35 @@ function validate( doc, schema, errors ) {
 	if ( errors == null ) {
 		errors = [];
 	}
+	if( _.isObject( doc ) && Object.keys( doc ).length == 0 ){
+			_.forEach( schema, ( v, k ) => {
+				doc[ k ] =  "";
+			});
+	}
+	console.log('----------------');
+	console.log(doc);
+	console.log(Object.keys( doc ).length);
+	console.log('----------------');
 	let keys = Object.keys( doc );
 	keys.map( ( key ) => {
 		let rule = schema[ key ],
 			value = doc[ key ];
 
 		if ( rule != null ) {
-			let validationFunction = validators[ rule.type ];
-			if ( validationFunction == null ) {
-				validationFunction = checkUnknown;
-				console.log( "No validator defined for " + key );
+			if( rule.subschema  != null ){
+				validate( doc[key], rule.subschema, errors);
 			}
-			if ( checkExistence( rule, value, key, errors ) ) {
-				validationFunction( rule, value, key, errors );
+			else{
+				let validationFunction = validators[ rule.type ];
+				if ( validationFunction == null ) {
+					validationFunction = checkUnknown;
+					console.log( "No validator defined for " + key );
+				}
+				if ( checkExistence( rule, value, key, errors ) ) {
+					validationFunction( rule, value, key, errors );
+				}
 			}
-		}
+			}
 	} );
 	return errors;
 }
@@ -68,7 +82,7 @@ function checkDate( rule, value, key, errors ) {
 
 function checkString( rule, value, key, errors ) {
 	if ( !rule.optional &&  value == '' ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
@@ -83,7 +97,7 @@ function checkNumber( rule, value, key, errors ) {
 
 function checkObject( rule, value, key, errors ) {
 	if ( !rule.optional &&  _.isEmpty(value) ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isObject( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an object" } );
@@ -95,7 +109,7 @@ function checkObject( rule, value, key, errors ) {
 
 function checkArray( rule, value, key, errors ) {
 	if ( !rule.optional &&  _.isEmpty(value) ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isArray( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an array" } );
