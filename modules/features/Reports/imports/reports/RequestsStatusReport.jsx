@@ -95,7 +95,7 @@ const RequestsStatusReport = React.createClass( {
 		if ( user ) {
 			var q = {};
 			team = user.getSelectedTeam();
-			facility = user.getSelectedFacility();
+			facility = this.state.facility || user.getSelectedFacility();
 			service = this.state.service;
 			if ( facility ) {
 				q[ "facility._id" ] = facility._id;
@@ -141,9 +141,9 @@ const RequestsStatusReport = React.createClass( {
 					<div className="row">
 						<div className="col-md-4">
 
-							<Select 
+							<Select
 								placeholder = "Team"
-								value       = { team } 
+								value       = { team }
 								items       = { Meteor.user().getTeams() }
 								onChange    = { ( team ) => { Session.selectTeam( team ) } }
 							/>
@@ -151,19 +151,20 @@ const RequestsStatusReport = React.createClass( {
 						</div>
 						<div className="col-md-4">
 
-							<Select 
+							<Select
 								placeholder = "Facility"
-								value       = { facility } 
+								value       = { facility }
 								items       = { team ? team.facilities : null }
-								onChange    = { ( facility ) => { this.setState( { facility } ) } }
+								onChange    = { ( facility ) => {
+									this.setState( { facility } ) } }
 							/>
 
 						</div>
 						<div className="col-md-4">
 
-							<Select 
+							<Select
 								placeholder = "Service"
-								value       = { this.state.service } 
+								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.services : null }
 								onChange    = { ( service ) => { this.setState( { service } ) } }
 							/>
@@ -173,16 +174,16 @@ const RequestsStatusReport = React.createClass( {
 					<div className="row">
 						<div className="col-md-4">
 
-							<DateTime 
-								placeholder = "Start Date" 
+							<DateTime
+								placeholder = "Start Date"
 								onChange    = { ( startDate ) => { this.setState( { startDate } ) } }
 							/>
 
 						</div>
 						<div className="col-md-4">
 
-							<DateTime 
-								placeholder = "End Date" 
+							<DateTime
+								placeholder = "End Date"
 								onChange    = { ( endDate ) => { this.setState( { endDate } ) } }
 							/>
 
