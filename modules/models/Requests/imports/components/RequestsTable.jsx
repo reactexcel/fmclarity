@@ -16,11 +16,15 @@ export default function RequestsTable( props ) {
         Supplier: "supplier.name"
     }
 
+    var user = Meteor.user();
+
+    var data = user.getRequests( props.filter );
+
     //console.log( props.requests );
 
     return (
-        <DataTable 
-            items   = { props.requests } 
+        <DataTable
+            items   = { data } 
             fields  = { this.fields }
             onClick = { ( request ) => { RequestActions.view.run( request ) } } // need a better solution for this
         />
