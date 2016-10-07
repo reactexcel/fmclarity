@@ -130,7 +130,7 @@ const Select = React.createClass( {
 
 		return (
 			<div
-				ref = "input" 
+				ref = "input"
 				className = {"md-input md-select dropdown" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
 				onFocus = { () => { this.setOpen( true ) } }
@@ -163,11 +163,11 @@ const Select = React.createClass( {
 		        	<li><div className = "helper-text">{ description }</div></li>
 		        	:null}
 
-		        	{items.map( ( item, idx ) => { 
+		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
 		        	return (
-			    	<li key = { idx+'-'+(item._id || item.name) } 
-			    		className = "dropdown-menu-item" 
+			    	<li key = { idx+'-'+(item._id || item.name) }
+			    		className = "dropdown-menu-item"
 			    		onClick = { () => { this.handleChange( item ) } }>
 
 			    		<ListTile item = { item } />
