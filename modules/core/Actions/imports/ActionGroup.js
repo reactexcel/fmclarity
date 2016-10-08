@@ -205,9 +205,10 @@ class ActionGroup {
 					read = false;
 
 				// if the current user performed the action then pre-mark the notification as read
-				//if ( user._id == recipient._id ) {
-				//	read = true;
-				//}
+				if ( user._id == recipient._id ) {
+					read = true;
+					//wasShown = true;
+				}
 
 				Notifications.save.call( {
 					recipient: recipientObj,

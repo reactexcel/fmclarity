@@ -14,70 +14,56 @@ import { Notifications } from '/modules/models/Notifications';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
-	console.log( TopNavigationBar );
-
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Messages' );
 	Meteor.subscribe( 'Notifications' );
 
-	//Meteor.subscribe('notifications');
 	let user = Meteor.user(),
 		team = null,
 		teams = null,
 		role = null,
-		notifications = null;
+		notifications = null,
+		chime = new Audio( '/audio/alert3.wav' );
 
 	if ( user ) {
 
+		// select initial team
 		team = user.getTeam();
 		teams = user.getTeams();
 		if ( !teams || !teams.length ) {} else if ( !team ) {
 			team = teams[ 0 ];
 			user.selectTeam( team );
+			// if user has no teams then this is most likely first visit after account creation
+			//  so prompt to create team
 		} else if ( !team.name && !this.showingModal ) {
 			this.showingModal = true;
 			TeamActions.edit.run( team );
 		}
 
-    	function showNotification( title, body ) {
-        	notify.createNotification( title, {
-            	body: body,
-            	icon: "icon-64x64.ico"
-        	} );
-    	}		
-
+		// get notifications
 		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
-		var count = notifications.length;
-		if ( count > this.oldCount ) {
-			this.oldCount = count;
-			if ( notifications && notifications.length ) {
-				this.audio.play();
-				var suppressFurtherNotifications = false;
-				if ( notifications.length > 2 ) {
-					showNotification(
-						"You have FM Clarity notifications",
-						"You have more than 3 new notifications from FM Clarity"
-					);
-					suppressFurtherNotifications = true;
-				} else {
-					notifications.map( ( n ) => {
-						if ( !this.shown[ n._id ] ) {
-							this.shown[ n._id ] = true;
-							if ( !suppressFurtherNotifications ) {
-								//showNotification( n.subject, n.body );
-							}
-						}
-					} )
-				}
-			}
+		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
+		if ( unshownNotifications.length ) {
+			chime.play();
+			showNotifications( unshownNotifications );
 		}
+	}
+
+	function showNotifications( notifications ) {
+		notifications.map( ( notification ) => {
+			notify.createNotification( notification.getSubject(), {
+				body: notification.getBody(),
+				icon: "icon-64x64.ico"
+			} );
+			Meteor.call( 'Notifications.setShown', notification );
+		} )
 	}
 
 	function onNotificationsViewed() {
 		let user = Meteor.user();
-		if( user ) {
-			Notifications.update( { 'recipient._id': user._id }, { $set: { read: true } } );
+		if ( user ) {
+			Meteor.call( 'Notifications.markAsRead', { user } );
 		}
 	}
 

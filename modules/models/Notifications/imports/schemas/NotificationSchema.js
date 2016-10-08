@@ -31,6 +31,10 @@ const NotificationSchema = {
 		type: "boolean",
 		defaultValue: false
 	},
+	wasShown: {
+		type: "boolean",
+		defaultValue: false
+	},
 	sticky: {
 		type: "boolean",
 		defaultValue: false

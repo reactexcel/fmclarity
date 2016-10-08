@@ -42,7 +42,7 @@ Actions.addAccessRule( {
 		'edit team member',
 		'delete team member',
 	],
-	role: [ 'portfolio manager', 'manager', 'owner' ],
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner' ],
 	rule: { alert: true }
 } )
 
@@ -52,14 +52,14 @@ Actions.addAccessRule( {
 		'edit facility', 
 		'view facility' 
 	],
-	role: [ 'team portfolio manager', 'team manager' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
 } )
 
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],
 	rule: { alert: true }
 } )
 

@@ -134,7 +134,6 @@ export default TeamSchema = {
             //source: "Facilities",
             //key: "team._id"
             join: ( team ) => {
-                import { Facilities } from '/modules/models/Facilities';
                 return Facilities.findAll( { 'team._id': team._id }, { sort: { name: 1 } } )
             },
             unjoin: ( team ) => {

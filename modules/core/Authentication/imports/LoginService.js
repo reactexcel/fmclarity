@@ -7,7 +7,7 @@ import { Users } from '/modules/models/Users';
 import PasswordResetEmailTemplate from './components/PasswordResetEmailTemplate.jsx';
 
 
-console.log( Users );
+//console.log( Users );
 
 /**
  * @class 			LoginService

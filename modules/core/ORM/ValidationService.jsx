@@ -8,19 +8,19 @@ function validator( schema ) {
 		validate( doc, schema, errors );
 		if ( errors.length ) {
 			let error = new ValidationError( errors );
-			if( Meteor.isClient ) {
+			if ( Meteor.isClient ) {
 				return error;
-			}
-			else {
+			} else {
 				throw error;
 			}
-		}		
+		}
 	}
 }
 
 let validators = {
 	string: checkString,
 	number: checkNumber,
+	boolean: checkBoolean,
 	date: checkDate,
 	function: checkFunction,
 	object: checkObject,
@@ -42,7 +42,7 @@ function validate( doc, schema, errors ) {
 			let validationFunction = validators[ rule.type ];
 			if ( validationFunction == null ) {
 				validationFunction = checkUnknown;
-				console.log( "No validator defined for " + key );
+				console.log( `No validation function defined for (${rule.type}) ${key}` );
 			}
 			if ( checkExistence( rule, value, key, errors ) ) {
 				validationFunction( rule, value, key, errors );
@@ -66,9 +66,15 @@ function checkDate( rule, value, key, errors ) {
 	}
 }
 
+function checkBoolean( rule, value, key, errors ) {
+	if ( !_.isBoolean( value ) ) {
+		errors.push( { name: key, type: "Invalid type: expected a boolean" } );
+	}
+}
+
 function checkString( rule, value, key, errors ) {
-	if ( !rule.optional &&  value == '' ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+	if ( !rule.optional && value == '' ) {
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
@@ -82,8 +88,8 @@ function checkNumber( rule, value, key, errors ) {
 }
 
 function checkObject( rule, value, key, errors ) {
-	if ( !rule.optional &&  _.isEmpty(value) ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+	if ( !rule.optional && _.isEmpty( value ) ) {
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isObject( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an object" } );
@@ -94,8 +100,8 @@ function checkObject( rule, value, key, errors ) {
 }
 
 function checkArray( rule, value, key, errors ) {
-	if ( !rule.optional &&  _.isEmpty(value) ) {
-		errors.push( { name: key, type: "This is a required field" } );		
+	if ( !rule.optional && _.isEmpty( value ) ) {
+		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isArray( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an array" } );

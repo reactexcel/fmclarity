@@ -23,23 +23,23 @@ Routes.addAccessRule( {
 		'suppliers', 
 		'requests', 
 		'calendar', 
+		'account', 
+		'logout',
 		'abc' 
 	],
-	role: [ 'portfolio manager', 'manager' ],
+	role: [ 'fmc support', 'portfolio manager', 'manager' ],
 	rule: { alert: true }
 } )
 
 Routes.addAccessRule( {
 	action: [ 
 		'admin', 
-		'account', 
-		'logout',
 		'all-facilities',
 		'all-files',
 		'all-teams',
 		'all-users',
 		'all-requests'
 	],
-	role: [ 'portfolio manager', 'manager' ],
+	role: [ 'fmc support' ],
 	rule: { alert: true }
 } )

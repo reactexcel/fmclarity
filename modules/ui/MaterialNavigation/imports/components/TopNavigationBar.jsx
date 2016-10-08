@@ -10,19 +10,16 @@ export default function TopNavigationBar( props ) {
     setTimeout(() => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {
-            this.count = 0;
-            this.oldCount = 0;
             if ( props.onNotificationsViewed ) {
                 props.onNotificationsViewed();
             }
         } )
-        this.oldCount = 0;
-        this.audio = new Audio( '/audio/alert3.wav' );
         notify.requestPermission();
         notify.config( {
             pageVisibility: false,
             autoClose: 5000
         } );
+
     },1000);
 
     function toggleLeftSideBar() {

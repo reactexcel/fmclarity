@@ -247,7 +247,7 @@ class Model {
 	}
 	//Update function
 	update( ...args ){
-			 return this.collection.update( arguments[0], arguments[1] );
+			 return this.collection.update( ...args );
 	 }
 }
 
