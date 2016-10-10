@@ -38,10 +38,6 @@ function validate( doc, schema, errors ) {
 				doc[ k ] =  "";
 			});
 	}
-	console.log('----------------');
-	console.log(doc);
-	console.log(Object.keys( doc ).length);
-	console.log('----------------');
 	let keys = Object.keys( doc );
 	keys.map( ( key ) => {
 		let rule = schema[ key ],
