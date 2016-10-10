@@ -87,17 +87,10 @@ const createRequest = new Action( {
 			form = { CreateRequestForm }
 			item = { newItem }
 			onSubmit = {
-				( request, form ) => {
-					Meteor.call( 'Requests.create', request, {}, ( err, response ) => {
-						console.log( { err, response } );
-						notify( response );
-						// add result to the notification object ---
-						// actually notification should be created here
-						// ?????
-						// so action needs a callback 'createNotification(result)'???
-						Modal.replace( {
-							content: <RequestPanel item = { response }/>
-						} );
+				( newRequest ) => {
+					notify( newRequest );
+					Modal.replace( {
+						content: <RequestPanel item = { newRequest }/>
 					} );
 				}
 			}

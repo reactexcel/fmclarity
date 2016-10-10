@@ -178,7 +178,18 @@ class Model {
 			doc.createdAt = new Date();
 		}
 
-		return this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } );
+		let response = this.collection.upsert( selector, { $set: _.omit( doc, '_id' ) } ),
+			returnObject = {};
+
+		//console.log( response );
+
+		if( response.insertedId ) {
+			returnObject = this.collection.findOne( response.insertedId );
+		}
+		else if ( doc._id ) {
+			returnObject = this.collection.findOne( selector );
+		}
+		return returnObject;
 	}
 
 	/** Added update() function to model since it doesnt exist like this **/

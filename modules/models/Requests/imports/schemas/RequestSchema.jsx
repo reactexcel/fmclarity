@@ -314,6 +314,7 @@ const RequestSchema = {
 	team: {
 		label: "Owning team",
 		description: "The team who created this work request",
+		type: "object",
 		relation: {
 			join: ( item ) => {
 				return Teams.findOne( item.team._id )

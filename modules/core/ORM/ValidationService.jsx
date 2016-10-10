@@ -8,10 +8,9 @@ function validator( schema ) {
 		validate( doc, schema, errors );
 		if ( errors.length ) {
 			let error = new ValidationError( errors );
-			if( Meteor.isClient ) {
+			if ( Meteor.isClient ) {
 				return error;
-			}
-			else {
+			} else {
 				throw error;
 			}
 		}
@@ -22,6 +21,7 @@ let validators = {
 	string: checkString,
 	number: checkNumber,
 	date: checkDate,
+	boolean: checkBoolean,
 	function: checkFunction,
 	object: checkObject,
 	array: checkArray,
@@ -33,35 +33,34 @@ function validate( doc, schema, errors ) {
 	if ( errors == null ) {
 		errors = [];
 	}
-	if( _.isObject( doc ) && Object.keys( doc ).length == 0 ){
-			_.forEach( schema, ( v, k ) => {
-				doc[ k ] =  "";
-			});
+	if ( _.isObject( doc ) && Object.keys( doc ).length == 0 ) {
+		_.forEach( schema, ( v, k ) => {
+			doc[ k ] = "";
+		} );
 	}
-	console.log('----------------');
-	console.log(doc);
-	console.log(Object.keys( doc ).length);
-	console.log('----------------');
+	//console.log('----------------');
+	//console.log(doc);
+	//console.log(Object.keys( doc ).length);
+	//console.log('----------------');
 	let keys = Object.keys( doc );
 	keys.map( ( key ) => {
 		let rule = schema[ key ],
 			value = doc[ key ];
 
 		if ( rule != null ) {
-			if( rule.subschema  != null ){
-				validate( doc[key], rule.subschema, errors);
-			}
-			else{
+			if ( rule.subschema != null ) {
+				validate( doc[ key ], rule.subschema, errors );
+			} else {
 				let validationFunction = validators[ rule.type ];
 				if ( validationFunction == null ) {
 					validationFunction = checkUnknown;
-					console.log( "No validator defined for " + key );
+					console.log( `No validator defined for (${rule.type}) ${key}` );
 				}
 				if ( checkExistence( rule, value, key, errors ) ) {
 					validationFunction( rule, value, key, errors );
 				}
 			}
-			}
+		}
 	} );
 	return errors;
 }
@@ -80,8 +79,14 @@ function checkDate( rule, value, key, errors ) {
 	}
 }
 
+function checkBoolean( rule, value, key, errors ) {
+	if ( !_.isBoolean( value ) ) {
+		errors.push( { name: key, type: "Invalid type: expected a boolean" } );
+	}
+}
+
 function checkString( rule, value, key, errors ) {
-	if ( !rule.optional &&  value == '' ) {
+	if ( !rule.optional && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isString( value ) ) {
@@ -96,7 +101,7 @@ function checkNumber( rule, value, key, errors ) {
 }
 
 function checkObject( rule, value, key, errors ) {
-	if ( !rule.optional &&  _.isEmpty(value) ) {
+	if ( !rule.optional && _.isEmpty( value ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isObject( value ) ) {
@@ -108,7 +113,7 @@ function checkObject( rule, value, key, errors ) {
 }
 
 function checkArray( rule, value, key, errors ) {
-	if ( !rule.optional &&  _.isEmpty(value) ) {
+	if ( !rule.optional && _.isEmpty( value ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isArray( value ) ) {

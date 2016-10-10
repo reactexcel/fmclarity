@@ -126,10 +126,12 @@ import React from "react";
 		let itemId = this.item._id;
 		this.model.save.call( this.item )
 		.then( ( response ) => {
-			if( response.insertedId != null ) {
-				itemId = response.insertedId;
-			}
-			this.item = this.model.findOne( itemId );
+			//if( response.insertedId != null ) {
+				//itemId = response.insertedId;
+			//}
+			//this.item = this.model.findOne( itemId );
+			console.log( response );
+			Object.assign( this.item, response );
 			this.triggerCallbacks();
 			if( callback ) {
 				callback( this.item );
