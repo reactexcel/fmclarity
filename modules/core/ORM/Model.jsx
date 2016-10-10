@@ -101,6 +101,7 @@ class Model {
 	 */
 	getDefaultValue( fieldName, item ) {
 		let field = this.schema[ fieldName ];
+		if(typeof field !== 'undefined'){
 		if ( _.isFunction( field.defaultValue ) ) {
 			return field.defaultValue( item );
 		} else if ( field.defaultValue != null ) {
@@ -121,6 +122,7 @@ class Model {
 		} else if ( field.type == "object" ) {
 			return {};
 		}
+	 }
 	}
 
 	/**
