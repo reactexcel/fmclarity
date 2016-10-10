@@ -116,6 +116,7 @@ Teams.methods( {
 			} );
 		}
 	},
+
 	getAvailableServices: {
 		authentication: true,
 		helper: function( team, parent ) {
@@ -132,6 +133,7 @@ Teams.methods( {
 			return availableServices;
 		}
 	},
+	
 	getDocs: {
 		authentication: true,
 		helper: function( team ) {

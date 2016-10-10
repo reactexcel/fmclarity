@@ -53,6 +53,21 @@ class ActionGroup {
 	}
 
 	/**
+	 * 
+	 */
+	getVerb( { name } ) {
+		console.log( this.actions );
+		console.log( name );
+		let action = this.actions[ name ];
+		console.log( action );
+		if ( action ) {
+
+			return action.verb;
+		}
+		return '';
+	}
+
+	/**
 	 * Adds a single access rule to the group.
 	 *
 	 * Access rules can be added for each action. 
@@ -149,6 +164,40 @@ class ActionGroup {
 		return validActions;
 	}
 
+	getNotificationCallback( notificationsRules, action, args ) {
+
+		let user = Meteor.user(),
+			userObj = {
+				_id: user._id,
+				name: user.profile.name
+			};
+
+		return ( result ) => {
+			notificationsRules.alert.map( ( recipient ) => {
+				let recipientObj = {
+						_id: recipient._id,
+						name: recipient.profile.name
+					},
+					read = false;
+
+				// if the current user performed the action then pre-mark the notification as read
+				if ( user._id == recipient._id ) {
+					read = true;
+					//wasShown = true;
+				}
+
+				Notifications.save.call( {
+					recipient: recipientObj,
+					actor: userObj,
+					action: action,
+					object: args,
+					result: result,
+					read: read
+				} );
+			} );
+		}
+	}
+
 	/**
 	 * Runs the specified action performing checks to verify access and calculate notification requirements.
 	 * The run function of the global ActionGroup store actions is called by individual actions for their rbac.
@@ -180,44 +229,17 @@ class ActionGroup {
 		}
 
 		// ...that is why we precalculate rules and relationships then pass them here
-		let notifications = this.checkAlerts( actionName, item, rules, relationships ),
-			access = this.checkAccess( actionName, item, rules, relationships );
-
+		let access = this.checkAccess( actionName, item, rules, relationships ),
+			notificationsRules = this.checkAlerts( actionName, item, rules, relationships ),
+			notificationCallback = this.getNotificationCallback( notificationsRules, action, args );
 
 		if ( access.allowed ) {
-			action.action( ...args );
+			let result = action.action( ...args, notificationCallback );
 			if ( this.path ) {
 				history.pushState( {}, '', this.path );
 			}
 
-			console.log( notifications );
-
-			notifications.alert.map( ( recipient ) => {
-				let user = Meteor.user(),
-					userObj = {
-						_id: user._id,
-						name: user.profile.name
-					},
-					recipientObj = {
-						_id: recipient._id,
-						name: recipient.profile.name
-					},
-					read = false;
-
-				// if the current user performed the action then pre-mark the notification as read
-				if ( user._id == recipient._id ) {
-					read = true;
-					//wasShown = true;
-				}
-
-				Notifications.save.call( {
-					recipient: recipientObj,
-					actor: userObj,
-					action: action,
-					object: args,
-					read: read
-				} );
-			} );
+			//console.log( notifications );
 
 		} else {
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
@@ -258,7 +280,7 @@ class ActionGroup {
 	 */
 	checkAccess( actionName, item, rules, relationships ) {
 
-		console.log( { rules, relationships } );
+		//console.log( { rules, relationships } );
 
 		if ( !item ) {
 			item = Session.getSelectedTeam();

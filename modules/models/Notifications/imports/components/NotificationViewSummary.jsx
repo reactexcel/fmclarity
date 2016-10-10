@@ -4,6 +4,7 @@
  */
 import React from "react";
 import { ContactAvatarSmall } from '/modules/mixins/Members';
+import { Actions } from '/modules/core/Actions';
 
 /**
  * @class           NotificationViewSummary
@@ -16,6 +17,7 @@ function NotificationViewSummary( props ) {
         target = {},
         actorName = actor.name,
         actionName = action.name,
+        actionVerb = Actions.getVerb( action ),
         targetName = "Unknown";
 
     if ( object ) {
@@ -37,8 +39,8 @@ function NotificationViewSummary( props ) {
             <ContactAvatarSmall item = { actor }/>
             <small>{ moment( createdAt ).fromNow() }</small>
             <div>
-                <strong>{actorName}</strong>&nbsp;
-                <span>{actionName}</span>&nbsp;
+                <strong>{ actorName }</strong>&nbsp;
+                <span>{ actionVerb }</span>&nbsp;
                 <strong><a href = "">{ targetName }</a></strong>
                 <br/>
             </div>

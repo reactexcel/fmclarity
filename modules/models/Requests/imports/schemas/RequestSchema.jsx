@@ -371,6 +371,7 @@ const RequestSchema = {
 		label: "Supplier",
 		description: "The supplier who has been assigned to this job",
 		type: "object",
+		optional: true,
 		relation: {
 			type: ORM.HasOne,
 			source: Teams
@@ -395,9 +396,11 @@ const RequestSchema = {
 				}
 			},
 			unjoin:( item ) => {
-				return {
-					_id: item.assignee._id,
-					name: item.assignee.profile.name
+				if( item.assignee) {
+					return {
+						_id: item.assignee._id,
+						name: item.assignee.profile.name
+					}
 				}
 			}
 		},
@@ -426,7 +429,7 @@ const RequestSchema = {
  *
  */
 function getMembersDefaultValue( item ) {
-	console.log( item );
+	//console.log( item );
 
 	if ( item.team == null ) {
 		return;

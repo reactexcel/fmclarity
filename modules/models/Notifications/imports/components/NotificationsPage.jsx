@@ -15,8 +15,6 @@ import NotificationViewSummary from './NotificationViewSummary.jsx';
  */
 function NotificationsPage( props ) {
 
-	console.log( props );
-
     return (
 		<div>
 			<div className="issue-page wrapper wrapper-content animated fadeIn">
