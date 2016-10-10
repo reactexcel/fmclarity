@@ -227,6 +227,12 @@ Facilities.actions( {
 			});
 		}
 	},
+	getSuppliers: {
+		authentication: true,
+		helper: function( facility, _id ) {
+			return Facilities.collection.find( _id ).fetch()[0].suppliers;
+		}
+	},
 } )
 
 export default Facilities;

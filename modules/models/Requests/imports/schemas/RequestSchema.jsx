@@ -24,7 +24,7 @@ const RequestSchema = {
 	//title:       			"Request",
 	//description: 			"A work request",
 
-	//properties: 
+	//properties:
 	//{
 	_id: {
 		label: "Auto generated document id",
@@ -258,7 +258,7 @@ const RequestSchema = {
 
 	//////////////////////////////////////////////////
 	// Settings
-	//////////////////////////////////////////////////  		
+	//////////////////////////////////////////////////
 	confirmRequired: {
 		label: "Completion confirmation required",
 		description: "Is manager confirmation required before the job can be closed?",
@@ -281,7 +281,7 @@ const RequestSchema = {
 
 	//////////////////////////////////////////////////
 	// Dates & timing
-	//////////////////////////////////////////////////  		
+	//////////////////////////////////////////////////
 	dueDate: {
 		type: "date",
 		label: "Due Date",
@@ -375,12 +375,12 @@ const RequestSchema = {
 		optional: true,
 		relation: {
 			type: ORM.HasOne,
-			source: Teams
+			source: Teams,
 		},
 		input: Select,
 		options: ( item ) => {
 			return {
-				items: ( item.facility ? item.facility.suppliers : null ),
+				items: ( Object.keys( item.facility ).length > 0 ? item.facility.getSuppliers( item.facility._id ) : null ),
 				view: ( Meteor.isClient ? ContactCard : null )
 			}
 		},
@@ -420,7 +420,7 @@ const RequestSchema = {
 		defaultValue: getMembersDefaultValue
 	}
 
-	//////////////////////////////////////////////////  		
+	//////////////////////////////////////////////////
 	//}
 }
 
