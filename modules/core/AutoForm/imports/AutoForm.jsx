@@ -22,15 +22,14 @@ class AutoForm extends React.Component {
 	 */
 	constructor( props ) {
 		super( props );
-		let { model, form, item } = props;
+		let { model, form, item, errors } = props;
 
-		this.form = new FormController( model, form, item );
+		this.form = new FormController( model, form, item, errors );
 
 		this.form.addCallback( ( newState ) => {
 			this.onChange( newState );
 		} );
 
-	console.log(props.errors)
 		this.state = {
 			item: this.form.item,
 			errors: this.form.errors || {}
@@ -65,11 +64,8 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 		let form = this.form;
 		let { keys, schema } = form;
-		let self = this;
 
 		return keys.map( ( key ) => {
-
-			//console.log( { schema, key } );
 
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
@@ -120,8 +116,7 @@ class AutoForm extends React.Component {
 												this.setState( { item } );
 											}
 										  }
-											model={this.props.model}
-											item={this.props.item}
+
 										  { ...others }
 						/>
 
@@ -142,22 +137,17 @@ class AutoForm extends React.Component {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
-				//console.log ( key );
-
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
-					{console.log(this)}
 						<Input
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
-							errors 		= { typeof this.props.errors == 'undefined' ? errors[ key ] : this.props.errors[key]}
+							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
-											model={this.props.model}
-											item={this.props.item}
-											{ ...options}
+										  { ...options}
 						/>
 					</div>
 
@@ -183,9 +173,7 @@ class AutoForm extends React.Component {
 						className="btn btn-flat btn-primary"
 						onClick={ ( ) => {
 							let { item } = this.state;
-							console.log( item );
 							this.form.save( item, ( newItem ) => {
-								console.log( newItem );
 								if ( this.props.onSubmit ) {
 									this.props.onSubmit( newItem )
 								}

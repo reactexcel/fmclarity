@@ -10,7 +10,7 @@ import React from "react";
  */
  class FormController {
 
-	constructor( model, schema = {}, item = {} ) {
+	constructor( model, schema = {}, item = {}, errors = {} ) {
 
 		if ( _.isArray( schema ) ) {
 			this.keys = schema;
@@ -21,7 +21,7 @@ import React from "react";
 		}
 
 		this.model = model;
-		this.errors = {};
+		this.errors = errors;
 		this.callbacks = [];
 
 		if ( this.model == null ) {
@@ -32,7 +32,6 @@ import React from "react";
 
 		// remove all extraneous fields from the provided item
 		// to avoid validation errors related to fields we aren't handling
-		console.log({item, keys:this.keys});
 		this.item = _.pick( item||{}, this.keys );
 		if( item._id ) {
 			this.item._id = item._id;

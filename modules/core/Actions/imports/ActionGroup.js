@@ -56,12 +56,11 @@ class ActionGroup {
 	 * 
 	 */
 	getVerb( { name } ) {
-		console.log( this.actions );
-		console.log( name );
+		//console.log( this.actions );
+		//console.log( name );
 		let action = this.actions[ name ];
-		console.log( action );
+		//console.log( action );
 		if ( action ) {
-
 			return action.verb;
 		}
 		return '';
