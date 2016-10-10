@@ -30,9 +30,10 @@ class AutoForm extends React.Component {
 			this.onChange( newState );
 		} );
 
+	console.log(props.errors)
 		this.state = {
 			item: this.form.item,
-			errors: this.form.errors
+			errors: this.form.errors || {}
 		}
 	}
 
@@ -106,12 +107,12 @@ class AutoForm extends React.Component {
 
 						<AutoForm
 							item		= { item[ key ] }
-							errors 		= { errors[ key ] }
+							errors 		= { errors }
 							hideSubmit 	= { true }
 							form		= { subschema }
 
 							// since we are calling this recursively we need to update the parent state with the changes from the child
-							onChange 	= { ( newState ) => { 
+							onChange 	= { ( newState ) => {
 												let item = this.state.item,
 													newItem = newState.item;
 
@@ -145,18 +146,18 @@ class AutoForm extends React.Component {
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
-
+					{console.log(errors)}
+					{console.log(this.props.errors)}
 						<Input
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
-							errors 		= { errors[ key ] }
+							errors 		= { typeof this.props.errors == 'undefined' ? errors[ key ] : this.props.errors[key]}
 							placeholder	= { placeholder }
 							description	= { description }
 										  { ...options}
 											{ ... self.props}
 						/>
-
 					</div>
 
 				)
@@ -197,7 +198,6 @@ class AutoForm extends React.Component {
 
 			</div>
 		)
-
 	}
 }
 
