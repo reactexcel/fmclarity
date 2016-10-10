@@ -101,25 +101,28 @@ class Model {
 	 */
 	getDefaultValue( fieldName, item ) {
 		let field = this.schema[ fieldName ];
-		if ( _.isFunction( field.defaultValue ) ) {
-			return field.defaultValue( item );
-		} else if ( field.defaultValue != null ) {
-			return field.defaultValue;
-		} else if ( field.type == "string" ) {
-			return "";
-		} else if ( field.type == "number" ) {
-			return 0;
-		} else if ( field.type == "date" ) {
-			return new Date();
-		} else if ( field.schema != null ) {
-			if ( _.isFunction( field.schema.create ) ) {
-				return field.schema.create();
+		if(typeof field !== 'undefined'){
+			if ( _.isFunction( field.defaultValue ) ) {
+				return field.defaultValue( item );
+			} else if ( field.defaultValue != null ) {
+				return field.defaultValue;
+			} else if ( field.type == "string" ) {
+				return "";
+			} else if ( field.type == "number" ) {
+				return 0;
+			} else if ( field.type == "date" ) {
+				return new Date();
+			} else if ( field.schema != null ) {
+				if ( _.isFunction( field.schema.create ) ) {
+					return field.schema.create();
+				}
+				return {};
+			} else if ( _.isArray( field.type ) ) {
+				return [];
+			} else if ( field.type == "object" ) {
+				return {};
 			}
-			return {};
-		} else if ( _.isArray( field.type ) ) {
-			return [];
-		} else if ( field.type == "object" ) {
-			return {};
+
 		}
 	}
 

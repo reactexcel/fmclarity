@@ -120,8 +120,9 @@ class AutoForm extends React.Component {
 												this.setState( { item } );
 											}
 										  }
+											model={this.props.model}
+											item={this.props.item}
 										  { ...others }
-											{ ... self.props}
 						/>
 
 					</div>
@@ -146,8 +147,7 @@ class AutoForm extends React.Component {
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
-					{console.log(errors)}
-					{console.log(this.props.errors)}
+					{console.log(this)}
 						<Input
 							fieldName 	= { key }
 							value 		= { item[ key ] }
@@ -155,8 +155,9 @@ class AutoForm extends React.Component {
 							errors 		= { typeof this.props.errors == 'undefined' ? errors[ key ] : this.props.errors[key]}
 							placeholder	= { placeholder }
 							description	= { description }
-										  { ...options}
-											{ ... self.props}
+											model={this.props.model}
+											item={this.props.item}
+											{ ...options}
 						/>
 					</div>
 
