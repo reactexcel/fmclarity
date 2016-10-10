@@ -96,6 +96,17 @@ const createRequest = new Action( {
 			}
 			/>
 		} )
+	},
+	getResult: ( item ) => {
+		if( item._id ) {
+			let result = Requests.findOne( item._id );
+			if( result ) {
+				return {
+					text: (result.code?`#${result.code} - `:'')+result.name,
+					href: ""
+				}
+			}
+		}
 	}
 } )
 

@@ -66,6 +66,13 @@ class ActionGroup {
 		return '';
 	}
 
+	getResult( { name }, item ) {
+		let action = this.actions[ name ];
+		if ( action && action.getResult ) {
+			return action.getResult( item );
+		}
+	}
+
 	/**
 	 * Adds a single access rule to the group.
 	 *

@@ -13,26 +13,12 @@ import { Actions } from '/modules/core/Actions';
 function NotificationViewSummary( props ) {
     // action arguments are going to have to be sent as an object
     //  they can then be checked using action.type
-    let { actor, action, object, createdAt } = props.item,
+    let { actor, action, object, result, createdAt } = props.item,
         target = {},
         actorName = actor.name,
         actionName = action.name,
         actionVerb = Actions.getVerb( action ),
-        targetName = "Unknown";
-
-    if ( object ) {
-        target = object[ 0 ];
-    }
-
-    if ( target ) {
-        if ( target.profile ) {
-            targetName = target.profile.name;
-        } else {
-            targetName = target.name;
-        }
-    }
-
-    //console.log(this.props.item);
+        resultObject = Actions.getResult( action, result ) || {};
 
     return (
         <div>
@@ -41,7 +27,7 @@ function NotificationViewSummary( props ) {
             <div>
                 <strong>{ actorName }</strong>&nbsp;
                 <span>{ actionVerb }</span>&nbsp;
-                <strong><a href = "">{ targetName }</a></strong>
+                <strong><a href = {resultObject.href}>{ resultObject.text }</a></strong>
                 <br/>
             </div>
         </div>
