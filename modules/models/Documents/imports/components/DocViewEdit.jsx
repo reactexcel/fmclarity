@@ -81,6 +81,15 @@ const DocViewEdit = React.createClass( {
 					name: name
 				}
 			}
+			if(modelName == 'Requests'){
+				let request = this.props.selectedItem;
+				_id = request._id;
+				name = request.name;
+				item.request = {
+					_id : _id,
+					name: name
+				}
+			}
 			Documents.save.call( item );
 			this.handleChangeCallback(null, item);
 		}

@@ -11,7 +11,7 @@ export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
 		Modal.show( {
-			content: <DocViewEdit item = { props.item } onChange = { (data) => { props.onChange(data); }} model={props.model}/>
+			content: <DocViewEdit item = { props.item } onChange = { (data) => { props.onChange(data); }} model={props.model} selectedItem={props.selectedItem}/>
 		} )
 	}
 

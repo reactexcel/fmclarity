@@ -11,6 +11,8 @@ import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
+import { Documents } from '/modules/models/Documents';
+
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
 		return Requests.find();
@@ -127,6 +129,19 @@ Requests.methods( {
 				str += ( ' - ' + request.subservice.name );
 			}
 			return str;
+		}
+	},getDocs: {
+		authentication: true,
+		helper: function( request ) {
+			let docs = Documents.find( { request: { _id: request._id, name: request.name } } ).fetch();
+			return _.map( docs, ( doc ) => {
+				return {
+					_id: doc._id,
+					name: doc.name,
+					type: doc.type,
+					description: doc.description,
+				}
+			} );
 		}
 	}
 

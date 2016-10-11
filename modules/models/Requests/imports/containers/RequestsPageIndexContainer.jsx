@@ -8,6 +8,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Requests' );
+	Meteor.subscribe( 'Files' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),

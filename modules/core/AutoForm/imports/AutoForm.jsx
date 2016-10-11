@@ -1,4 +1,4 @@
-/**
+/**-
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
@@ -114,9 +114,9 @@ class AutoForm extends React.Component {
 
 												Object.assign( item[ key ], newItem)
 												this.setState( { item } );
-											}
-										  }
-
+											}}
+										  item={this.props.item}
+											model={this.props.model}
 										  { ...others }
 						/>
 
@@ -147,6 +147,8 @@ class AutoForm extends React.Component {
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
+							item={this.props.item}
+							model={this.props.model}
 										  { ...options}
 						/>
 					</div>
