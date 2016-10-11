@@ -16,7 +16,10 @@ import { DocMessages } from '/modules/models/Messages';
 import { Documents } from '/modules/models/Documents';
 
 if ( Meteor.isServer ) {
-	Meteor.publish( 'Facilities', () => {
+	Meteor.publish( 'Facilities', function( q = {} ) {
+		if( q.team && q.team._id ) {
+			return Facilities.find( { 'team._id': q.team._id } );
+		}
 		return Facilities.find();
 	} )
 }
@@ -216,15 +219,15 @@ Facilities.actions( {
 	getDocs: {
 		authentication: true,
 		helper: function( facility ) {
-			let docs = Documents.find({ facility: { _id: facility._id, name: facility.name } }).fetch();
-			return _.map(docs, (doc) => {
+			let docs = Documents.find( { facility: { _id: facility._id, name: facility.name } } ).fetch();
+			return _.map( docs, ( doc ) => {
 				return {
 					_id: doc._id,
 					name: doc.name,
 					type: doc.type,
 					description: doc.description,
 				}
-			});
+			} );
 		}
 	},
 	/**
@@ -232,8 +235,7 @@ Facilities.actions( {
 	 */
 	getSuppliers: {
 		authentication: true,
-		helper: function( facility, _id ) {
-			return Facilities.collection.find( _id ).fetch()[0].suppliers;
+		helper: function( facility ) {
 			// import statement placed here to avoid circular reference between Facilities and Teams
 			import { Teams } from '/modules/models/Teams';
 

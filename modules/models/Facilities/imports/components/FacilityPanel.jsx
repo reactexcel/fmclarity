@@ -94,10 +94,10 @@ function FacilityPanel( { item } ) {
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
 						tab:        <span id="pmp-tab">PMP</span>,
-						content:    <PMPList filter={{"facility._id":facility._id}}/>
+						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
 						tab:        <span id="requests-tab">Requests</span>,
-						content:    <RequestsTable filter={{"facility._id":facility._id}}/>
+						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					}
 				]} />                
 			</div>

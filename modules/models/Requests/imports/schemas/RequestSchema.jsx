@@ -419,7 +419,21 @@ const RequestSchema = {
 		label: "Contacts",
 		description: "Stakeholders for this work request",
 		defaultValue: getMembersDefaultValue
-	}
+	},
+
+    documents: {
+        label: "Documents",
+        description: "Saved request documents",
+        type: "array",
+        /*relation:
+        {
+            type: ORM.HasMembers,
+            source: "Files",
+            key: "team._id"
+        },*/
+        input: DocExplorer
+    },
+
 
 	//////////////////////////////////////////////////
 	//}

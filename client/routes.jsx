@@ -16,6 +16,15 @@ AccessGroups.loggedIn.add( {
 	}
 } )
 
+Routes.addAccessRule( { 
+	action: [
+		'logout'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
+
 Routes.addAccessRule( {
 	action: [ 
 		'dashboard', 
@@ -24,7 +33,6 @@ Routes.addAccessRule( {
 		'requests', 
 		'calendar', 
 		'account', 
-		'logout',
 		'abc' 
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager' ],

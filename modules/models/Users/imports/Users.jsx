@@ -3,17 +3,17 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import UserSchema       from './schemas/UserSchema.jsx';
+import UserSchema from './schemas/UserSchema.jsx';
 
-import { Model }        from '/modules/core/ORM';
+import { Model } from '/modules/core/ORM';
 
-import { Documents }    from '/modules/models/Documents';
-import { Files }        from '/modules/models/Files';
-import { Requests }     from '/modules/models/Requests';
+import { Documents } from '/modules/models/Documents';
+import { Files } from '/modules/models/Files';
+import { Requests } from '/modules/models/Requests';
 
-import { Thumbs }       from '/modules/mixins/Thumbs';
-import { Owners }       from '/modules/mixins/Owners';
-import { DocMessages }  from '/modules/models/Messages';
+import { Thumbs } from '/modules/mixins/Thumbs';
+import { Owners } from '/modules/mixins/Owners';
+import { DocMessages } from '/modules/models/Messages';
 
 /**
  * Users model - unlink the other models in FMC this is not a new collection but an extension of the Meteor.users collection.
@@ -36,11 +36,11 @@ if ( Meteor.isServer ) {
 
 /** Added method create user is added **/
 Users.methods( {
-    createUser :{
+    createUser: {
         authentication: true,
         method: createUser
     }
-})
+} )
 Users.actions( {
     getTeam: {
         authentication: true,
@@ -94,19 +94,21 @@ Users.actions( {
         }
     },
     getDocs: {
-      authentication: true,
-      helper: function( user ) {
-        let docs = Documents.find({ user: { _id: user._id, name: user.name } }).fetch();
-        return _.map(docs, (doc) => {
-          return {
-            _id: doc._id,
-            name: doc.name,
-            type: doc.type,
-            description: doc.description,
-          }
-        });
-      }
+        authentication: true,
+        helper: function( user ) {
+            let docs = Documents.find( { user: { _id: user._id, name: user.name } } ).fetch();
+            return _.map( docs, ( doc ) => {
+                return {
+                    _id: doc._id,
+                    name: doc.name,
+                    type: doc.type,
+                    description: doc.description,
+                }
+            } );
+        }
     },
+    // this needs to go into requests
+    //  ie requests.findForUser( userId )
     getRequests: {
         authentication: true,
         //subscription:???
@@ -115,6 +117,8 @@ Users.actions( {
         } ) {
             var team = user.getSelectedTeam();
             var role = user.getRole();
+
+            console.log( role );
 
             if ( !team ) {
                 return [];
@@ -131,22 +135,22 @@ Users.actions( {
             //fragments to use in query
             var isNotDraft = {
                 status: {
-                    $in: [ Requests.STATUS_NEW, Requests.STATUS_ISSUED, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_CLOSED ]
+                    $in: [ "New", "Issued", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Closed" ]
                 }
             };
             var isIssued = {
                 status: {
-                    $in: [ Requests.STATUS_ISSUED, "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_CLOSED ]
+                    $in: [ "Issued", "In Progress", "Progress", "Quoting", "Quoted", "Closed" ]
                 }
             };
             var isOpen = {
                 status: {
-                    $in: [ Requests.STATUS_NEW, "PMP", "In Progress", "Progress", Requests.STATUS_ISSUED ]
+                    $in: [ "New", "PMP", "In Progress", "Progress", "Issued" ]
                 }
             };
             var isNotClosed = {
                 status: {
-                    $in: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW, "PMP", "In Progress", "Progress", "Quoting", "Quoted", Requests.STATUS_ISSUED ]
+                    $in: [ "Draft", "New", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Issued" ]
                 }
             };
             var createdByMe = {
@@ -183,7 +187,7 @@ Users.actions( {
             var query = [];
 
             //if staff or tenant restrict to requests created by or assigned to me
-            if ( role == "portfolio manager" ) {
+            if ( role == "portfolio manager" || role == "fmc support" ) {
                 query.push( {
                     $or: [ issuedToMyTeam, createdByMyTeam, createdByMe, assignedToMe ]
                 } );
@@ -213,6 +217,9 @@ Users.actions( {
                 query.push( filter );
             }
 
+            console.log( query );
+
+            //perform query
             var requests = Requests.find( {
                     $and: query
                 } )
@@ -222,14 +229,17 @@ Users.actions( {
                     }
                 } );
 
+
             if ( options.expandPMP ) {
                 query.push( {
                     type: "Preventative"
                 } );
+
                 var PMPRequests = Requests.find( {
                         $and: query
                     } )
                     .fetch();
+
                 PMPRequests.map( ( r ) => {
                     if ( r.frequency ) {
                         var date = moment( r.dueDate );
@@ -249,21 +259,12 @@ Users.actions( {
             }
 
             return requests;
-            //perform and return the query
-            return Requests.find( {
-                    $and: query
-                } )
-                .fetch( {
-                    sort: {
-                        createdAt: 1
-                    }
-                } );
         }
     }
 } )
 
 function createUser( item, password ) {
-     if ( Meteor.isServer ) {
+    if ( Meteor.isServer ) {
         var owner = item.owner || {
             _id: Meteor.user()
                 ._id,
@@ -279,7 +280,7 @@ function createUser( item, password ) {
             user.password = password;
         }
         var id = Accounts.createUser( user );
-        var user = Users.findOne( { '_id':id } );
+        var user = Users.findOne( { '_id': id } );
         if ( owner ) {
             Users.update( id, {
                 $set: {
@@ -288,7 +289,7 @@ function createUser( item, password ) {
             } );
         }
         return user;
-     }
+    }
 }
 
 Meteor.methods( {
@@ -302,11 +303,8 @@ Meteor.methods( {
 Users.helpers( {
 
     collectionName: 'users',
-    createUser: function(item, password){
-        return createUser(item, password)
-    },
-    login: function( callback ) {
-        FMCLogin.loginUser( this, callback )
+    createUser: function( item, password ) {
+        return createUser( item, password )
     },
 
     sendInvite: function() {

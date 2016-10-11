@@ -163,7 +163,7 @@ const FacilitySchema = {
 
     documents: {
         label: "Documents",
-        description: "Saved team documents",
+        description: "Saved facility documents",
         /*relation:
         {
             type: ORM.HasMembers,

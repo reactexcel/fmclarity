@@ -47,7 +47,7 @@ const Requests = new Model( {
 				}
 			}
 		} ],
-		//[ Members ]
+		[ Members ]
 	]
 } )
 

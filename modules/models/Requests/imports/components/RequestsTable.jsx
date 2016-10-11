@@ -3,7 +3,7 @@ import React from "react";
 import { DataTable } from '/modules/ui/DataTable';
 import { RequestActions } from '/modules/models/Requests';
 
-export default function RequestsTable( props ) {
+export default function RequestsTable( { requests, filter } ) {
 
     this.fields = {
         Priority: "priority",
@@ -16,15 +16,13 @@ export default function RequestsTable( props ) {
         Supplier: "supplier.name"
     }
 
-    var user = Meteor.user();
-
-    var data = user.getRequests( props.filter );
-
-    //console.log( props.requests );
+    if ( filter ) {
+        requests = Meteor.user().getRequests( filter );
+    }
 
     return (
         <DataTable
-            items   = { data } 
+            items   = { requests } 
             fields  = { this.fields }
             onClick = { ( request ) => { RequestActions.view.run( request ) } } // need a better solution for this
         />

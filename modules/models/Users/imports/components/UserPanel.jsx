@@ -16,7 +16,10 @@ import { UserActions } from '/modules/models/Users';
 class UserPanel extends React.Component {
 
 	getMenu() {
-		return [ UserActions.edit.bind( this.props.item ) ];
+		return [ 
+			UserActions.edit.bind( this.props.item ),
+			UserActions.login.bind( this.props.item )
+		];
 	}
 
 	render() {

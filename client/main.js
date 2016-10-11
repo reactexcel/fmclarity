@@ -20,7 +20,8 @@ DocHead.addMeta( {
 
 Actions.addAccessRule( { 
 	action: [
-		'edit user'
+		'edit user',
+		'login as user'
 	],
 	role: [ '*' ],
 	rule: { alert: true }

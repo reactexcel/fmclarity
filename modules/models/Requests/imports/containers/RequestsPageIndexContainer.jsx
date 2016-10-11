@@ -7,7 +7,6 @@ import { Requests } from '/modules/models/Requests';
 export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );
 	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Requests' );
 
 	let facility = Session.getSelectedFacility(),
@@ -19,12 +18,16 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		contextFilter = {};
 
 	if ( team ) {
+		Meteor.subscribe( 'Facilities', { team } );
 		facilities = Facilities.findAll( { 'team._id': team._id } );
 		let thumbs = _.pluck( facilities, 'thumb');
 		Meteor.subscribe( 'Thumbs', thumbs );
 	}
 
 	if ( facility && facility._id ) {
+		if( facility.suppliers ) {
+			Meteor.subscribe( 'Suppliers', facility.suppliers );
+		}
 		contextFilter[ 'facility._id' ] = facility._id;
 	} else if ( team && team._id ) {
 		contextFilter[ 'team._id' ] = team._id;
@@ -33,6 +36,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	if ( user != null ) {
 		// Requests.findForUser( Meteor.user() )...???
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		Meteor.subscribe( 'Suppliers', _.pluck( requests, 'supplier' ) );
 		//console.log( requests );
 	}
 

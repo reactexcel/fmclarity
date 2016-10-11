@@ -10,6 +10,8 @@ import { Modal } from '/modules/ui/Modal';
 
 import { Users } from '/modules/models/Users';
 
+import { LoginService } from '/modules/core/Authentication';
+
 
 // okay, so these actions should actually be part of team and/or facility
 //  then we can accurately evaluate the roles of the accessor within that context
@@ -25,9 +27,21 @@ const edit = new Action( {
 	}
 } )
 
+const login = new Action( {
+	name: 'login as user',
+	label: 'Login as user',
+	type: [ 'user' ],
+	action: ( user ) => {
+		LoginService.loginUser( user, () => {
+			console.log( 'I did it' );
+		} )
+	}
+} )
+
 
 export {
-	edit
+	edit,
+	login
 /*	create,
 	edit,
 	view,

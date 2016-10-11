@@ -21,11 +21,35 @@ import { Facilities } from '/modules/models/Facilities';
 //console.log( Members );
 
 if ( Meteor.isServer ) {
-	Meteor.publish( 'Teams', () => {
-		return Teams.find();
+
+	Meteor.publish( 'Teams', function() {
+		let userId = this.userId;
+		console.log( userId );
+		let teams = Teams.find( {
+			$or: [ {
+				"members._id": userId
+			}, {
+				"owner._id": userId
+			} ]
+		} );
+		return teams;
 	} )
-} else {
-	Meteor.subscribe( 'Teams' );
+
+	Meteor.publish( 'Suppliers', function( suppliers ) {
+		if ( _.isArray( suppliers ) ) {
+			let ids = [];
+			suppliers.map( ( supplier ) => {
+				if( supplier && supplier._id ) {
+					ids.push( supplier._id );
+				}
+			} )
+			if ( ids.length ) {
+				console.log( ids );
+				return Teams.find( { _id: { $in: ids } } );
+			}
+		}
+		return Teams.find( { 'type': 'contractor' } );
+	} )
 }
 
 /**
@@ -41,13 +65,13 @@ const Teams = new Model( {
 		[ Members, {
 			fieldName: "members",
 			//authentication: true,
-			authentication : AuthHelpers.managerOrOwner
+			authentication: AuthHelpers.managerOrOwner
 		} ],
 		//mixins for suppliers
 		[ Members, {
 			fieldName: "suppliers",
 			authentication: AuthHelpers.managerOrOwner
- 		} ],
+		} ],
 		[ DocMessages, {
 			authentication: true,
 			helpers: {
@@ -133,19 +157,19 @@ Teams.methods( {
 			return availableServices;
 		}
 	},
-	
+
 	getDocs: {
 		authentication: true,
 		helper: function( team ) {
-			let docs = Documents.find({ team: { _id: team._id, name: team.name } }).fetch();
-			return _.map(docs, (doc) => {
+			let docs = Documents.find( { team: { _id: team._id, name: team.name } } ).fetch();
+			return _.map( docs, ( doc ) => {
 				return {
 					_id: doc._id,
 					name: doc.name,
 					type: doc.type,
 					description: doc.description,
 				}
-			});
+			} );
 		}
 	},
 } );
@@ -183,41 +207,41 @@ function getSuppliers() {
 }
 
 function inviteSupplier( team, searchName, ext ) {
- 	var supplier;
- 	searchName = searchName.trim();
- 	supplier = Teams.findOne( {
- 		name: {
- 			$regex: searchName,
- 			$options: 'i'
- 		}
- 	} );
- 	if ( !supplier ) {
-	//	supplier = Meteor.call( "Teams.create", {
+	var supplier;
+	searchName = searchName.trim();
+	supplier = Teams.findOne( {
+		name: {
+			$regex: searchName,
+			$options: 'i'
+		}
+	} );
+	if ( !supplier ) {
+		//	supplier = Meteor.call( "Teams.create", {
 		supplier = Teams.create( {
- 			type: "contractor",
- 			name: searchName,
- 			owner: {
- 				_id: team._id,
- 				name: team.name,
- 				type: "team"
- 			}
- 		} );
-		Teams.save.call(supplier)
-			.then(( data ) => {
+			type: "contractor",
+			name: searchName,
+			owner: {
+				_id: team._id,
+				name: team.name,
+				type: "team"
+			}
+		} );
+		Teams.save.call( supplier )
+			.then( ( data ) => {
 				supplier = Teams.findOne( data.insertedId )
 				Meteor.call( "Teams.addSupplier", team, {
 					_id: supplier._id
-				}, ( err ,data ) => {
-					ext(data.suppliers);
-				});
-			});
-	}else{
+				}, ( err, data ) => {
+					ext( data.suppliers );
+				} );
+			} );
+	} else {
 		Meteor.call( "Teams.addSupplier", team, {
 			_id: supplier._id
-		}, (err, data ) => {
-			ext(data.suppliers)
-		});
- 	}
+		}, ( err, data ) => {
+			ext( data.suppliers )
+		} );
+	}
 	// return supplier;
 }
 
@@ -257,12 +281,12 @@ function inviteMember( team, email, ext ) {
 					params.owner = ext.owner;
 				}
 				/** Added Users.createUser user is added **/
-				user = Meteor.call( "Users.createUser", params,'1234')
+				user = Meteor.call( "Users.createUser", params, '1234' )
 				Meteor.call( "Teams.addMember", team, {
 					_id: user._id
 				}, {
 					role: ext.role
-				});
+				} );
 
 				return {
 					user: user,
