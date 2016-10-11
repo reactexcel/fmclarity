@@ -52,10 +52,10 @@ const Facilities = new Model( {
 			fieldName: "members"
 		} ],
 
-		[ Members, {
+		/*[ Members, {
 			fieldName: "suppliers",
 			authentication: () => (true)
-		} ]
+		} ]*/
 
 	]
 } )
@@ -227,12 +227,26 @@ Facilities.actions( {
 			});
 		}
 	},
+	/**
+	 * Returns an array of supplier documents
+	 */
 	getSuppliers: {
 		authentication: true,
 		helper: function( facility, _id ) {
 			return Facilities.collection.find( _id ).fetch()[0].suppliers;
+			// import statement placed here to avoid circular reference between Facilities and Teams
+			import { Teams } from '/modules/models/Teams';
+
+			let ids = null,
+				suppliers = null;
+
+			if ( _.isArray( facility.suppliers ) ) {
+				ids = _.pluck( facility.suppliers, '_id' );
+				suppliers = Teams.findAll( { '_id': { $in: ids } } );
+			}
+			return suppliers;
 		}
-	},
+	}
 } )
 
 export default Facilities;

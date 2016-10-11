@@ -351,7 +351,7 @@ const RequestSchema = {
 			//console.log( item );
 			return {
 				items: ( item.team ? item.team.facilities : null ),
-				view: ( Meteor.isClient ? FacilityListTile : null ),
+				view: FacilityListTile,
 
 				afterChange: ( item ) => {
 					if ( item == null ) {
@@ -379,9 +379,10 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
+			console.log( item );
 			return {
-				items: ( Object.keys( item.facility ).length > 0 ? item.facility.getSuppliers( item.facility._id ) : null ),
-				view: ( Meteor.isClient ? ContactCard : null )
+				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
+				view: ContactCard
 			}
 		},
 	},
