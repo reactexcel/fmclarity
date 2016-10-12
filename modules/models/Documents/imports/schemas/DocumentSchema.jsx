@@ -8,7 +8,7 @@ import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 export default DocumentSchema = {
 
 	name: {
-		label: "Name",
+		label: "Document name",
 		type: "string",
 		input: Text,
 		size: 6,
