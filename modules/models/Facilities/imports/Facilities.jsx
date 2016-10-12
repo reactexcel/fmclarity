@@ -51,9 +51,7 @@ const Facilities = new Model( {
 				}
 			}
 		} ],
-		[ Members, {
-			fieldName: "members"
-		} ],
+		[ Members ],
 
 		/*[ Members, {
 			fieldName: "suppliers",
@@ -219,15 +217,7 @@ Facilities.actions( {
 	getDocs: {
 		authentication: true,
 		helper: function( facility ) {
-			let docs = Documents.find( { facility: { _id: facility._id, name: facility.name } } ).fetch();
-			return _.map( docs, ( doc ) => {
-				return {
-					_id: doc._id,
-					name: doc.name,
-					type: doc.type,
-					description: doc.description,
-				}
-			} );
+			return Documents.find( { 'facility._id': facility._id } ).fetch();
 		}
 	},
 	/**

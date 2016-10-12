@@ -2,14 +2,18 @@ import { FileExplorer } from '/modules/models/Files';
 import DocTypes from './DocTypes.jsx';
 
 import { Text, TextArea, Select, DateInput } from '/modules/ui/MaterialInputs';
+import { Facilities, FacilityListTile } from '/modules/models/Facilities';
+
 
 export default DocumentSchema = {
+
 	name: {
 		label: "Name",
 		type: "string",
 		input: Text,
 		size: 6,
 	},
+
 	type: {
 		label: "Document type",
 		size: 6,
@@ -19,11 +23,42 @@ export default DocumentSchema = {
 			items: DocTypes
 		}
 	},
+
+	facility: {
+		label: "Facility",
+		description: "The site for this job",
+		type: "object",
+		size: 6,
+		relation: {
+			join: ( item ) => {
+				if( item.facility && item.facility._id ) {
+					return Facilities.findOne( item.facility._id );
+				}
+			},
+			unjoin: ( item ) => {
+				if( item.facility && item.facility._id ) {
+					return _.pick( item.facility, '_id', 'name' );
+				}
+			}
+		},
+		input: Select,
+
+		options: ( item ) => {
+			//console.log( item );
+			let team = Session.getSelectedTeam();
+			return {
+				items: ( team ? team.facilities : null ),
+				view: FacilityListTile
+			}
+		},
+	},
+
 	description: {
 		label: "Description",
         type: "string",
 		input: TextArea
 	},
+
 	documentNumber: {
 		input: Text,
 		label: "Document #",

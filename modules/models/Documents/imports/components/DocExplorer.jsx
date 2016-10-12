@@ -28,11 +28,11 @@ export default function DocExplorer( props ) {
 			<DocIconHeader />
 			{ documents.map( ( doc, idx ) => {
 			return (
-				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem={props.item}/>
+				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
 			)
 			})}
 
-			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model={props.model}  selectedItem={props.item}/>
+			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model = { props.model }  selectedItem = { props.item }/>
 
 		</div>
 	)

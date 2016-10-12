@@ -95,6 +95,43 @@ In addition to the Mongo collections used by this application, a number of mixin
 
 [TODO]
 
+## Actions
+
+All of the public user activities that change the state are grouped into actions. The action class is defined in `/modules/core/Actions/imports/Action.jsx`. Actions can be grouped. The action group class defined in `/modules/core/imports/ActionGroup.jsx`
+
+There is a global instance of action group which is just called `Actions` defined in `/modules/core/Actions/imports/Actions.js`
+All of the actions in the system are added to this global group, but some are also added to subgroups (like TeamActions or UserActions)
+
+Action groups can be configured with permissions. All of the main permissions for the app are defined in `client/main.js` at the moment ( although in the long term this might not be the best place for them ). Permissions are added by calling the `addAccessRule` method of the relevant ActionGroup ( this will usually be the global `Actions` group ).
+
+For example:
+```Actions.addAccessRule( { 
+	action: [
+		'edit user',
+		'login as user'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+```
+
+When creating an action - the individual action structure is pretty simple:
+```const view = new Action( {
+    name: 'view team',
+    label: "View team",
+    icon: 'fa fa-group',
+    action: ( team ) => {
+        Modal.show( {
+            content: <TeamPanel item = { team } />
+        } )
+    }
+} )
+```
+
+They can then be run from anywhere using:
+```import { Actions } from '/modules/core/Actions';
+Actions.run('migrate schema');```
+
 ## Pages and routing
 
 [TODO]

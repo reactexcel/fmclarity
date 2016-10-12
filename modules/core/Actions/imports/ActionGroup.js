@@ -52,6 +52,33 @@ class ActionGroup {
 		} )
 	}
 
+	clone( actionNames ) {
+		let newActionGroup = new ActionGroup();
+		if ( _.isArray( actionNames ) ) {
+			//newActionGroup.actions = _.pluck( this.actions, actionNames );
+			//newActionGroup.accessRules = _.pluck( this.actions, actionNames );
+			actionNames.map( ( actionName ) => {
+				let newAction = this.actions[ actionName ];
+				newAccessRule = this.accessRules[ actionName ];
+				if ( newAction ) {
+					newActionGroup.actions[ actionName ] = newAction;
+					newActionGroup.accessRules[ actionName ] = newAccessRule;
+				}
+			} )
+		}
+		return newActionGroup;
+	}
+
+	canAccess( actionName, userRole ) {
+		return (
+			this.accessRules[ actionName ] &&
+			( 
+				this.accessRules[ actionName ][ userRole ] || 
+				this.accessRules[ actionName ][ '*' ] 
+			)
+		)
+	}
+
 	/**
 	 * 
 	 */

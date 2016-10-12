@@ -127,6 +127,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 	// Facility dependant properties
 	//////////////////////////////////////////////////
+
 	level: {
 		label: "Area",
 		size: 4,
@@ -198,6 +199,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 	// Comments
 	//////////////////////////////////////////////////
+
 	description: {
 		label: "Comments",
 		description: "A detailed description of the work to be completed",
@@ -230,6 +232,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 	// Quote related
 	//////////////////////////////////////////////////
+	
 	quoteRequired: {
 		label: "Quote required",
 		description: "Is a quote required for this job?",
@@ -259,6 +262,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 	// Settings
 	//////////////////////////////////////////////////
+
 	confirmRequired: {
 		label: "Completion confirmation required",
 		description: "Is manager confirmation required before the job can be closed?",
@@ -282,6 +286,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 	// Dates & timing
 	//////////////////////////////////////////////////
+
 	dueDate: {
 		type: "date",
 		label: "Due Date",

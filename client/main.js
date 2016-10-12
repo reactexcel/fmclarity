@@ -82,7 +82,7 @@ Actions.addAccessRule( {
 		'reject request',
 		'get request quote',
 	],
-	role: [ 'owner' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
 } )
 
@@ -91,7 +91,7 @@ Actions.addAccessRule( {
 	action: [
 		'delete request',
 	],
-	role: [ 'owner' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
 } )
 
