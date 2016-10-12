@@ -208,6 +208,13 @@ const RequestSchema = {
 		optional: true
 	},
 
+	issueComment: {
+		label: "Comment",
+		description: "Comment about the issuing of this work request",
+		type: "string",
+		input: TextArea,
+	},
+
 	acceptComment: {
 		label: "Comment",
 		description: "Comment about the acceptance of this work request",
@@ -229,10 +236,17 @@ const RequestSchema = {
 		input: TextArea
 	},
 
+	reverseComment: {
+		label: "Comment",
+		description: "Reason for reversal",
+		type: "string",
+		input: TextArea
+	},
+
 	//////////////////////////////////////////////////
 	// Quote related
 	//////////////////////////////////////////////////
-	
+
 	quoteRequired: {
 		label: "Quote required",
 		description: "Is a quote required for this job?",
@@ -325,7 +339,10 @@ const RequestSchema = {
 				return Teams.findOne( item.team._id )
 			},
 			unjoin: ( item ) => {
-				return _.pick( item.team, [ '_id', 'name' ] )
+				console.log( item );
+				if ( item.team ) {
+					return _.pick( item.team, [ '_id', 'name' ] )
+				}
 			}
 		},
 		input: Select,
@@ -340,12 +357,12 @@ const RequestSchema = {
 		type: "object",
 		relation: {
 			join: ( item ) => {
-				if( item.facility && item.facility._id ) {
+				if ( item.facility && item.facility._id ) {
 					return Facilities.findOne( item.facility._id );
 				}
 			},
 			unjoin: ( item ) => {
-				if( item.facility && item.facility._id ) {
+				if ( item.facility && item.facility._id ) {
 					return _.pick( item.facility, '_id', 'name' );
 				}
 			}
@@ -396,14 +413,14 @@ const RequestSchema = {
 		label: "Assignee",
 		description: "The individual who has been allocated to this job",
 		relation: {
-			join:( item ) => {
-				if( item.assignee && item.assignee._id ) {
+			join: ( item ) => {
+				if ( item.assignee && item.assignee._id ) {
 					import { Users } from '/modules/models/Users';
 					return Users.findOne( item.assignee._id )
 				}
 			},
-			unjoin:( item ) => {
-				if( item.assignee) {
+			unjoin: ( item ) => {
+				if ( item.assignee && item.assignee.profile ) {
 					return {
 						_id: item.assignee._id,
 						name: item.assignee.profile.name
@@ -426,18 +443,18 @@ const RequestSchema = {
 		defaultValue: getMembersDefaultValue
 	},
 
-    documents: {
-        label: "Documents",
-        description: "Saved request documents",
-        type: "array",
-        /*relation:
-        {
-            type: ORM.HasMembers,
-            source: "Files",
-            key: "team._id"
-        },*/
-        input: DocExplorer
-    },
+	documents: {
+		label: "Documents",
+		description: "Saved request documents",
+		type: "array",
+		/*relation:
+		{
+		    type: ORM.HasMembers,
+		    source: "Files",
+		    key: "team._id"
+		},*/
+		input: DocExplorer
+	},
 
 
 	//////////////////////////////////////////////////

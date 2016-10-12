@@ -53,6 +53,13 @@ const Requests = new Model( {
 	]
 } )
 
+// *********************** this is an insecure temporary solution for updating status of requests *********************** 
+Requests.collection.allow( {
+	update: function() { return true }
+} );
+// ******************************************
+
+
 var accessForTeamMembers = function( role, user, request ) {
 	return (
 		isEditable( request ) &&

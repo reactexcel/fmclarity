@@ -30,6 +30,8 @@ let validators = {
 
 function validate( doc, schema, errors ) {
 
+	console.log( doc );
+
 	if ( errors == null ) {
 		errors = [];
 	}

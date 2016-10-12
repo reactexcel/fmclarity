@@ -1,9 +1,10 @@
 import React from "react";
 import { Actions } from '/modules/core/Actions';
+import WorkflowActions from './WorkflowActions.jsx';
 
 export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
-    actions = Actions.filter( actions, item );
+    actions = Actions.filter( WorkflowActions, item );
 
     let actionNames = Object.keys( actions );
 

@@ -72,9 +72,9 @@ class ActionGroup {
 	canAccess( actionName, userRole ) {
 		return (
 			this.accessRules[ actionName ] &&
-			( 
-				this.accessRules[ actionName ][ userRole ] || 
-				this.accessRules[ actionName ][ '*' ] 
+			(
+				this.accessRules[ actionName ][ userRole ] ||
+				this.accessRules[ actionName ][ '*' ]
 			)
 		)
 	}
@@ -145,7 +145,7 @@ class ActionGroup {
 	 * @param {Action} action - The action this new rule will pertain to.
 	 * @param {array} roles - The roles that this rule is for.
 	 * @param {object} condition - a "condition" object that will be matched against the access item to check that certain properties pertain
-	 * @param {object} rile - The access rule we will add for this action
+	 * @param {object} rule - The access rule we will add for this action
 	 */
 	addAccessRule( { action, role, condition, rule = {} } ) {
 		if ( !_.isArray( action ) ) {
@@ -168,31 +168,26 @@ class ActionGroup {
 	 * @param {...any} args - Arguments that will be used to check authentication for each action in this group.
 	 * @return {array} An array of actions that are valid for this user with the provided args.
 	 */
-	filter( actions, ...args ) {
+	filter( actionNames, ...args ) {
 		let validActions = {},
 			item = args[ 0 ],
 			relationships = Roles.getRoles( item );
 
 		// this is phrased in a slightly awkward way because we don't know that the keys
 		//  of the passed in will actually match the name property of the action itself
-		for ( i in actions ) {
-			let action = actions[ i ],
-				actionAvailable = true,
-				actionName = action.name,
+		actionNames.map( ( actionName ) => {
+			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
-				continue;
-			}
-
-			if ( actionAvailable ) {
+			} else {
 				access = this.checkAccess( actionName, item, rules, relationships );
 				if ( access.allowed ) {
 					validActions[ actionName ] = action;
 				}
 			}
-		}
+		} )
 
 		return validActions;
 	}
