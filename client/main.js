@@ -18,7 +18,7 @@ DocHead.addMeta( {
 	content: 'width=device-width, initial-scale=1.0'
 } );
 
-Actions.addAccessRule( { 
+Actions.addAccessRule( {
 	action: [
 		'edit user',
 		'login as user'
@@ -27,19 +27,27 @@ Actions.addAccessRule( {
 	rule: { alert: true }
 } )
 
+Actions.addAccessRule( {
+	action: [
+		'migrate schema'
+	],
+	role: [ 'fmc support' ],
+	alert: true
+} );
+
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
 //  it should be accessed through a team action. ie edit team member
 Actions.addAccessRule( {
-	action: [ 
-		'edit team', 
-		'view team', 
+	action: [
+		'edit team',
+		'view team',
 		'edit team member',
 		'view team member',
-		'create team request', 
+		'create team request',
 		'create team member',
-		'create team facility', 
-		'create team document' ,
+		'create team facility',
+		'create team document',
 		'edit team member',
 		'delete team member',
 	],
@@ -49,9 +57,9 @@ Actions.addAccessRule( {
 
 // Facility rules
 Actions.addAccessRule( {
-	action: [ 
-		'edit facility', 
-		'view facility' 
+	action: [
+		'edit facility',
+		'view facility'
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
