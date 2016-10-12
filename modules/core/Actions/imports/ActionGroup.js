@@ -7,7 +7,7 @@ import { Roles } from '/modules/mixins/Roles';
 import { Notifications } from '/modules/models/Notifications';
 
 /**
- * An ActionGroup holds a collection of actions. 
+ * An ActionGroup holds a collection of actions.
  * It is the primary structure used for passing around Action Groups and performing role based access control.
  * @memberOf		module:core/Actions
  * @requires 		module:mixins/Roles.Roles
@@ -80,7 +80,7 @@ class ActionGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	getVerb( { name } ) {
 		//console.log( this.actions );
@@ -103,11 +103,11 @@ class ActionGroup {
 	/**
 	 * Adds a single access rule to the group.
 	 *
-	 * Access rules can be added for each action. 
+	 * Access rules can be added for each action.
 	 * If access rules are added to the global action container "Actions" they will be evaluated before the pertaining action is run in any context.
 	 * If they are added to another group they will be evaluated before the action is run using that group.
 	 * An optional "condition" can be added which will filter available actions by comaparing the properties of the condition object to the access item passed to the action.
-	 * 
+	 *
 	 * The following creates an access rule for the action "complete request" that would apply to request items with the status "In Progress".
 	 * The rule states that request members with the status 'supplier manager' or 'assignee' can perform the action.
 	 * And that they should receive alerts when the action if performed by others.
@@ -330,7 +330,7 @@ class ActionGroup {
 			//console.log( userRoles );
 			if ( rules ) {
 
-				// implement wildcard 
+				// implement wildcard
 				if ( rules[ '*' ] ) {
 					let condition = rules[ '*' ].condition;
 					//console.log( condition );

@@ -87,10 +87,10 @@ function UserProfileMenu( props ) {
 				{ teams && teams.length ? <li className="divider"></li>:null}
 				{ teams && teams.length ? teams.map( ( t ) => {
 					return (
-						<li 
-							key         = { t._id } 
-							className   = { ( team && t && team._id == t._id )?"active":''} 
-							onClick     = { () => { selectTeam( user, t ) } } 
+						<li
+							key         = { t._id }
+							className   = { ( team && t && team._id == t._id )?"active":''}
+							onClick     = { () => { selectTeam( user, t ) } }
 						>
 
 							<a style={{padding:"7px 0px 6px 7px"}}>
@@ -132,6 +132,12 @@ function UserProfileMenu( props ) {
 				<li>
 					<a onClick = { () => { Routes.run("logout") } }>
 						<i className="fa fa-sign-out"></i> Log out
+					</a>
+				</li>
+				<li>
+					<a onClick = { () => { Actions.run('migrate schema'); } }>
+						<i className="fa fa-cog"></i>&nbsp;&nbsp;
+						<span className="nav-label"> Migrate documnets schema </span>
 					</a>
 				</li>
 				<li>
