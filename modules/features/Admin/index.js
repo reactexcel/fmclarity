@@ -6,4 +6,9 @@
 /**
  * @module 			features/Admin
  */
-export {}
+
+import AdminActions from './actions.jsx';
+
+export {
+  AdminActions,
+}
