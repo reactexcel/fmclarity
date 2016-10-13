@@ -228,7 +228,7 @@ function inviteSupplier( team, searchName, ext ) {
 		} );
 		Teams.save.call( supplier )
 			.then( ( data ) => {
-				supplier = Teams.findOne( data.insertedId )
+				supplier = Teams.findOne( data._id )
 				Meteor.call( "Teams.addSupplier", team, {
 					_id: supplier._id
 				}, ( err, data ) => {

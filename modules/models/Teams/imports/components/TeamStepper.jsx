@@ -28,6 +28,9 @@ const TeamStepper = React.createClass( {
         var viewer, viewersTeam, viewingTeam, group;
 
         viewer = Meteor.user();
+        console.log("======================");
+        console.log( this.state.item ? Teams.findOne( this.state.item._id ) : "");
+        console.log("======================");
         viewersTeam = this.state.team ? Teams.findOne( this.state.team._id ) : Session.getSelectedTeam();
         //getting value of item from state instead of props
         viewingTeam = this.state.item ? Teams.findOne( this.state.item._id ) : null;
@@ -98,18 +101,18 @@ const TeamStepper = React.createClass( {
             alert( 'Please enter a valid name.' );
         } else {
             input.value = '';
-            viewersTeam.inviteSupplier( searchName, ( invitee ) => {
+            viewersTeam.inviteSupplier( searchName, function( invitee ){
                 invitee = Teams.collection._transform( invitee );
 
                 if ( group && group.addSupplier ) {
                     group.addSupplier( invitee );
                 }
-               this.setItem( invitee );
+               component.setItem( invitee );
                 if ( component.props.onChange ) {
-                    this.props.onChange( invitee );
+                    component.props.onChange( invitee );
                 }
                 if ( !invitee.email ) {
-                    this.setState( {
+                    component.setState( {
                         shouldShowMessage: true
                     } );
                 } else {

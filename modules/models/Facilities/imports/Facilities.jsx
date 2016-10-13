@@ -55,10 +55,10 @@ const Facilities = new Model( {
 			fieldName: "members"
 		} ],
 
-		/*[ Members, {
+		[ Members, {
 			fieldName: "suppliers",
 			authentication: () => (true)
-		} ]*/
+		} ]
 
 	]
 } )
