@@ -101,7 +101,12 @@ class AutoForm extends React.Component {
 
 					<div key = { key } className = { `col-sm-${size}` }>
 
+						{ this.props.title ?
+						<h2>{this.props.title}</h2>
+						: null }
+
 						<AutoForm
+
 							item		= { item[ key ] }
 							errors 		= { errors }
 							hideSubmit 	= { true }
@@ -114,9 +119,10 @@ class AutoForm extends React.Component {
 
 												Object.assign( item[ key ], newItem)
 												this.setState( { item } );
-											}}
-										  item={this.props.item}
-											model={this.props.model}
+											}
+										  }
+							item 		= {this.props.item}
+							model 		= {this.props.model}
 										  { ...others }
 						/>
 
@@ -140,17 +146,20 @@ class AutoForm extends React.Component {
 				return (
 
 					<div key = { key } className = { `col-sm-${size}` }>
+
 						<Input
+
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
-							item={this.props.item}
-							model={this.props.model}
+							item 		= {this.props.item}
+							model 		= {this.props.model}
 										  { ...options}
 						/>
+						
 					</div>
 
 				)
