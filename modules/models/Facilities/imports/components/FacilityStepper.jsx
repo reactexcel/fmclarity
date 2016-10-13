@@ -50,8 +50,8 @@ export default function FacilityStepper( { item } ) {
                 }
                 <Stepper
                   submitForm = { ( callback ) => {
-                    if(submitFormCallback){
-                      submitFormCallback(callback);
+                    if( submitFormCallback ){
+                      submitFormCallback( callback );
                     }
                   }
                 }
@@ -66,7 +66,7 @@ export default function FacilityStepper( { item } ) {
                                                 form    = { ["name", "type", "address", "operatingTimes" ] }
                                                 onNext = { onNext }
                                                 hideSubmit = { true }
-                                                formSubmmitOnNext = { true }
+                                                submitFormOnStepperNext = { true }
                                               />
                                         </div>
 					        			<div className = "col-sm-5">

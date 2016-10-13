@@ -34,7 +34,7 @@ class AutoForm extends React.Component {
 			item: this.form.item,
 			errors: this.form.errors || {}
 		}
-		this.subnitFormOnStepperNext = this.subnitFormOnStepperNext.bind( this );
+		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 		this.getNewItem = this.getNewItem.bind( this );
 		this.getErrorList = this.getErrorList.bind( this );
 	}
@@ -68,7 +68,7 @@ class AutoForm extends React.Component {
 		return this.state.errors;
 	}
 
-	subnitFormOnStepperNext( ){
+	submitFormOnStepperNext( ){
 		let form = this.form,
 		 	onSubmit = this.props.onSubmit,
 			onNext = this.props.onNext,
@@ -215,7 +215,7 @@ class AutoForm extends React.Component {
 					</button>
 				</div>
 
-				: ( this.props.formSubmmitOnNext ? this.props.onNext( this.subnitFormOnStepperNext() ): null) }
+				: ( this.props.submitFormOnStepperNext ? this.props.onNext( this.submitFormOnStepperNext() ): null) }
 
 			</div>
 		)
