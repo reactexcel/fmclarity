@@ -8,7 +8,7 @@ import React from "react";
 /**
  * @memberOf 		module:core/AutoForm
  */
- class FormController {
+class FormController {
 
 	constructor( model, schema = {}, item = {}, errors = {} ) {
 
@@ -30,13 +30,7 @@ import React from "react";
 			this.schema = Object.assign( {}, this.model.schema, schema );
 		}
 
-		// remove all extraneous fields from the provided item
-		// to avoid validation errors related to fields we aren't handling
-		this.item = _.pick( item||{}, this.keys );
-		if( item._id ) {
-			this.item._id = item._id;
-		}
-
+		this.item = item || {};
 		this.collection = [];
 	}
 
@@ -60,7 +54,7 @@ import React from "react";
 
 	getOptions( key ) {
 		let options = this.schema[ key ].options;
-		if( _.isFunction( options )) {
+		if ( _.isFunction( options ) ) {
 			options = options( this.item );
 		}
 		return options;
@@ -103,7 +97,7 @@ import React from "react";
 
 	processValidationErrors( error ) {
 		let errorsGroupedByField = {}
-		if ( error!=null && error.details != null ) {
+		if ( error != null && error.details != null ) {
 			error.details.map( ( { name, type } ) => {
 				if ( errorsGroupedByField[ name ] == null ) {
 					errorsGroupedByField[ name ] = [];
@@ -119,16 +113,36 @@ import React from "react";
 	 * @param 			{function} callback
 	 */
 	save( item, callback ) {
-		if( item!=null ) {
+		if ( item != null ) {
 			Object.assign( this.item, item );
 		}
-		let itemId = this.item._id;
+
+		// remove all extraneous fields from the provided item
+		// to avoid validation errors related to fields we aren't handling
+		let validationFields = _.pick( this.item, this.keys );
+
+		this.model.validate( validationFields )
+			.then( () => {
+
+				this.model.save.call( this.item )
+					.then( ( savedItem ) => {
+						Object.assign( this.item, savedItem );
+						this.triggerCallbacks();
+						if ( callback ) {
+							callback( this.item );
+						}
+					} );
+
+			} )
+			.catch( ( error ) => {
+				console.log( error );
+				this.processValidationErrors( error );
+				this.triggerCallbacks();
+			} )
+
+		/*
 		this.model.save.call( this.item )
 		.then( ( response ) => {
-			//if( response.insertedId != null ) {
-				//itemId = response.insertedId;
-			//}
-			//this.item = this.model.findOne( itemId );
 			console.log( response );
 			Object.assign( this.item, response );
 			this.triggerCallbacks();
@@ -141,7 +155,7 @@ import React from "react";
 			this.processValidationErrors( error );
 			this.triggerCallbacks();
 		});
-
+		*/
 	}
 
 	delete() {

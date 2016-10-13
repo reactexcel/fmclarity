@@ -62,9 +62,20 @@ class Model {
 			} );
 		}
 
+
+		let validationFunction = ValidationService.validator( this.schema );
+		Meteor.methods( {
+				[ `${this._name}.validate` ]: ( ...args ) => {
+					validationFunction( ...args );
+				}
+			} )
+			// this should be a method
+			//  should run on server also
+			//this.validate = ValidationService.validator( this.schema );
+
 		this.save = new ValidatedMethod( {
 			name: `${this._name}.upsert`,
-			validate: ValidationService.validator( this.schema ),
+			//validate: ValidationService.validator( this.schema ),
 			run: ( ...args ) => {
 				return this._save( ...args )
 			}
@@ -73,6 +84,19 @@ class Model {
 		if ( mixins ) {
 			this.registerMixins( mixins );
 		}
+	}
+
+	validate( ...args ) {
+		return new Promise( ( fulfil, reject ) => {
+			Meteor.call( `${this._name}.validate`, ...args, ( error, response ) => {
+				if ( error ) {
+					reject( error );
+				} else {
+					fulfil( response );
+				}
+
+			} );
+		} )
 	}
 
 	/**
