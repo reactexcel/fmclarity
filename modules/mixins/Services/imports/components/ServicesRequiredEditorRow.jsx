@@ -75,7 +75,6 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	showSupplierModal( supplier ) {
 		var facility = Session.getSelectedFacility();
-		console.log(supplier);
 		Modal.show( {
 			content: <TeamStepper item={supplier} facility={facility} onChange={this.updateSupplier}/>
 		} )
