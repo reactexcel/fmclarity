@@ -86,7 +86,7 @@ Roles = new class {
 
 		if ( team && team._id ) {
 			team = Teams.findOne( team._id );
-			if ( team.members && team.members.length ) {
+			if ( team && team.members && team.members.length ) {
 				team.members.map( ( member ) => {
 					this.addRole( results, member, `team ${member.role}` );
 				} )
@@ -95,7 +95,7 @@ Roles = new class {
 
 		if ( supplier && supplier._id ) {
 			supplier = Teams.findOne( supplier._id );
-			if ( supplier.members && supplier.members.length ) {
+			if ( supplier && supplier.members && supplier.members.length ) {
 				supplier.members.map( ( member ) => {
 					this.addRole( results, member, `supplier ${member.role}` );
 				} )
@@ -104,7 +104,7 @@ Roles = new class {
 
 		if ( facility && facility._id ) {
 			facility = Facilities.findOne( facility._id );
-			if ( facility.members && facility.members.length ) {
+			if ( facility && facility.members && facility.members.length ) {
 				facility.members.map( ( member ) => {
 					this.addRole( results, member, `facility ${member.role} (${facility.name})` );
 				} )

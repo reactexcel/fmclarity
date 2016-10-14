@@ -9,13 +9,14 @@ import React from 'react';
  * @memberOf 		module:ui/MaterialViews
  */
 function Thumbnail( props ) {
+	console.log( props );
 	let style = _.extend( {
 		backgroundImage: "url('" + props.item.thumbUrl + "')",
 		backgroundSize: "cover"
 	}, props.style )
 
 	return (
-		<div className="facility-thumbnail" style={style}>
+		<div className="facility-thumbnail" style = { style }>
 			{ props.children }
 		</div>
 	)

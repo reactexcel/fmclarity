@@ -29,9 +29,9 @@ export default class FacilityPageIndex extends React.Component {
 		return <div className="facility-page animated fadeIn">
 			{/*<ClientFilter/>*/}
 	        {/*<FacilityFilter/>*/}
-	        { facilities.map( (f) => {
-	        	return <FacilityCard key={f._id} item={f} onClick={ () => {
-	        		this.handleSelect(f);
+	        { facilities.map( ( f ) => {
+	        	return <FacilityCard key = { f._id } item = { f } onClick={ () => {
+	        		this.handleSelect( f );
 	        	}}/>
 	        } ) }
 	    	{/*should be in a layout class - should this be fm-layout?*/}

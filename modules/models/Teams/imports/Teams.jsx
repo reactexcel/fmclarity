@@ -384,7 +384,7 @@ Teams.helpers( {
 
 		//console.log(facilityIds);
 
-		var facilities = Facilities.find( {
+		var facilities = Facilities.findAll( {
 				$or: [ {
 					"team._id": this._id
 				}, {
@@ -396,8 +396,7 @@ Teams.helpers( {
 				sort: {
 					name: 1
 				}
-			} )
-			.fetch();
+			} );
 
 		//console.log(facilities);
 		return facilities;
@@ -423,7 +422,7 @@ Teams.helpers( {
 
 		//console.log(facilityIds);
 
-		let facilities = Facilities.find( {
+		let facilities = Facilities.findAll( {
 				$or: [ {
 					$and: [
 						{ "team._id": this._id },
@@ -432,8 +431,7 @@ Teams.helpers( {
 				}, {
 					_id: { $in: facilityIds }
 				} ]
-			}, { sort: { name: 1 } } )
-			.fetch();
+			}, { sort: { name: 1 } } );
 
 		//console.log(facilities);
 		return facilities;

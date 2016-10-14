@@ -75,7 +75,6 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: { status: 'Draft' },
 	action: [
-		'edit request',
 		'create request',
 		'destroy request',
 	],
@@ -84,9 +83,17 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+	condition: ( request ) => { return request.status == 'Draft' || request.status == 'New' },
+	action: [
+		'edit request'
+	],
+	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
 	condition: { status: 'New' },
 	action: [
-		'edit request',
 		'issue request',
 		'reject request',
 	],
@@ -125,19 +132,11 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: { status: 'Complete' },
 	action: [
-		'delete request',
-		'cancel request',
-		'issue request',
-		'accept request',
-		'reject request',
-		'get request quote',
-		'send request quote',
-		'complete request',
 		'close request',
 		'reopen request',
 		'reverse request'
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
 } )
 

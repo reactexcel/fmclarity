@@ -50,11 +50,13 @@ function register( collection, opts ) {
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Thumbs', ( thumbs ) => {
+		console.log( thumbs );
 		let ids = [];
 		if ( _.isArray( thumbs ) ) {
 			ids = _.pluck( thumbs, '_id' );
+			console.log( ids );
 		}
-		return ThumbStore.find( { _id: { $in: ids } } )
+		return ThumbStore.find( { _id: { $in: ids } } );
 	} )
 }
 

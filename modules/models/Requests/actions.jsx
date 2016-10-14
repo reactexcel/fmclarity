@@ -123,7 +123,7 @@ const accept = new Action( {
 				form = { [ 'acceptComment' ] }
 				onSubmit = {
 					( request ) => {
-						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Requests.update( request._id, { $set: { status: 'In Progress' } } );
 						Modal.hide();
 					}
 				}
@@ -165,7 +165,7 @@ const getQuote = new Action( {
 				form = { CreateRequestForm }
 				onSubmit = {
 					( request ) => {
-						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Requests.update( request._id, { $set: { status: 'In Progress' } } );
 						Modal.hide()
 					}
 				}
@@ -186,7 +186,7 @@ const sendQuote = new Action( {
 				form = { CreateRequestForm }
 				onSubmit = {
 					( request ) => {
-						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Requests.update( request._id, { $set: { status: 'In Progress' } } );
 						Modal.hide();
 					}
 				}
@@ -208,6 +208,7 @@ const complete = new Action( {
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Complete' } } );
+						Modal.hide();
 					}
 				}
 			/>
@@ -228,6 +229,7 @@ const close = new Action( {
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Closed' } } );
+						Modal.hide();
 					}
 				}
 			/>

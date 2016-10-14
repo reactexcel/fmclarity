@@ -179,6 +179,8 @@ class ActionGroup {
 			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
+			console.log( { rules, relationships } );
+
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
 			} else {
@@ -327,14 +329,23 @@ class ActionGroup {
 
 		if ( relationships ) {
 			userRoles = relationships.actors[ user._id ];
-			//console.log( userRoles );
+			console.log( userRoles );
+
 			if ( rules ) {
 
 				// implement wildcard
 				if ( rules[ '*' ] ) {
-					let condition = rules[ '*' ].condition;
+					let condition = rules[ '*' ].condition,
+						valid = true;
 					//console.log( condition );
-					if ( !condition || _.findWhere( [ item ], condition ) ) {
+					if ( condition ) {
+						if ( _.isFunction( condition ) ) {
+							valid = _.find( [ item ], condition );
+						} else {
+							valid = _.findWhere( [ item ], condition );
+						}
+					}
+					if ( valid ) {
 						access.allowed = access.allowed || rules[ '*' ].rule.allowed;
 						access.alert = access.alert || rules[ '*' ].rule.alert;
 						access.email = access.email || rules[ '*' ].rule.email;
@@ -345,9 +356,18 @@ class ActionGroup {
 					// if any one of my relationships permits this action then I can do it
 					userRoles.map( ( role ) => {
 						if ( rules[ role ] ) {
-							let condition = rules[ role ].condition;
+							let condition = rules[ role ].condition,
+								valid = true;
 							//console.log( condition );
-							if ( !condition || _.findWhere( [ item ], condition ) ) {
+							if ( condition ) {
+								if ( _.isFunction( condition ) ) {
+									valid = _.find( [ item ], condition );
+								} else {
+									valid = _.findWhere( [ item ], condition );
+								}
+							}
+							//console.log( condition );
+							if ( valid ) {
 								access.allowed = access.allowed || rules[ role ].rule.allowed;
 								access.alert = access.alert || rules[ role ].rule.alert;
 								access.email = access.email || rules[ role ].rule.email;

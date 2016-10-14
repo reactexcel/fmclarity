@@ -33,7 +33,7 @@ const login = new Action( {
 	type: [ 'user' ],
 	action: ( user ) => {
 		LoginService.loginUser( user, () => {
-			console.log( 'I did it' );
+			location.reload();
 		} )
 	}
 } )

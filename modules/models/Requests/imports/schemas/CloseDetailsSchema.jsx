@@ -1,35 +1,37 @@
+import { DateTime, Select, Switch, FileField, TextArea, Text } from '/modules/ui/MaterialInputs';
+
 export default CloseDetailsSchema = {
     attendanceDate: {
         label: "Attendence date and time",
-        input: "MDDateTime",
+        input: DateTime,
         size: 6
     },
     completionDate: {
         label: "Completion date and time",
-        input: "MDDateTime",
+        input: DateTime,
         size: 6
     },
     /*
     serviceReport: {
       label:"Service report",
-      input:"FileField",
+      input:FileField,
     },
     */
     serviceReport: {
         label: "Service report",
-        input: "FileField"
+        input: FileField
     },
     invoice: {
         label: "Invoice",
-        input: "FileField"
+        input: FileField
     },
     furtherWorkRequired: {
         label: "Further work required",
-        input: "switch"
+        input: Switch
     },
     furtherWorkDescription: {
         label: "Details of further work",
-        input: "mdtextarea",
+        input: TextArea,
         condition( item ) {
             //I have a hunch this is broken
             //shouldn't we be sending in the subobject as item?
@@ -38,7 +40,7 @@ export default CloseDetailsSchema = {
     },
     furtherPriority: {
         label: "Priority",
-        input: "MDSelect",
+        input: Select,
         options: {
             items: [ "Scheduled", "Standard", "Urgent", "Critical" ]
         },
@@ -48,13 +50,14 @@ export default CloseDetailsSchema = {
     },
     furtherQuote: {
         label: "Quote",
-        input: "FileField",
+        input: FileField,
         condition( item ) {
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
     },
     furtherQuoteValue: {
         label: "Value of quote",
+        input: Text,
         condition( item ) {
             return item.closeDetails && ( item.closeDetails.furtherWorkRequired == true );
         },
