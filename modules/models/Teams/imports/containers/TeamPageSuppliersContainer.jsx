@@ -18,6 +18,7 @@ import { Members }          from '/modules/mixins/Members';
 const TeamPageSuppliersContainer = createContainer( ( params ) => {
 
     Meteor.subscribe( 'Teams' );
+    Meteor.subscribe( 'Suppliers' );
     Meteor.subscribe( 'Users' );
     Meteor.subscribe( 'Files' );
     Meteor.subscribe( 'Documents' );

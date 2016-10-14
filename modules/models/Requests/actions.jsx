@@ -14,7 +14,6 @@ const create = new Action( {
 	label: "Create",
 	action: ( request ) => {
 		Requests.update( request._id, { $set: { status: 'New' } } );
-		Modal.hide();
 	}
 } )
 
@@ -39,6 +38,9 @@ const edit = new Action( {
 				model = { Requests }
 				item = { request }
 				form = { CreateRequestForm }
+				onSubmit = { () => {
+					Modal.hide();
+				} }
 			/>
 		} )
 	}
@@ -70,6 +72,7 @@ const cancel = new Action( {
 						// should autoform not be in charge of saving and always defer to onsubmit???
 						// I think the answer may be yes
 						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
+						Modal.hide();
 					}
 				}
 			/>

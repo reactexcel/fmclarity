@@ -61,7 +61,7 @@ const Facilities = new Model( {
 	]
 } )
 
-Facilities.allow( {
+Facilities.collection.allow( {
 	update: () => {
 		return true;
 	}
@@ -115,6 +115,7 @@ Facilities.actions( {
 			return services;
 		}
 	},
+	
 	setServicesRequired: {
 		authentication: true,
 		method: function( facility, servicesRequired ) {
@@ -125,6 +126,7 @@ Facilities.actions( {
 			} );
 		}
 	},
+
 	setServiceSupplier: {
 		authentication: true,
 		method: function( facility, serviceIdx, subserviceIdx, supplier ) {
@@ -244,7 +246,7 @@ Facilities.actions( {
 			}
 			return suppliers;
 		}
-	}
+	},
 
 	addSupplier: {
 		authentication: true,

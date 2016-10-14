@@ -8,6 +8,7 @@ import { Model } from '/modules/core/ORM';
 import RequestSchema from './schemas/RequestSchema.jsx';
 
 import { Owners } from '/modules/mixins/Owners';
+import { Roles } from '/modules/mixins/Roles';
 import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
@@ -55,7 +56,8 @@ const Requests = new Model( {
 
 // *********************** this is an insecure temporary solution for updating status of requests *********************** 
 Requests.collection.allow( {
-	update: function() { return true }
+	update: function() {
+		return true }
 } );
 // ******************************************
 
@@ -94,10 +96,11 @@ Requests.methods( {
 	updateSupplierManagers: {
 		authentication: true,
 		helper: function( request ) {
-			if ( request.supplier ) {
-				var supplierManagers = request.supplier.getMembers( {
-					role: "manager"
-				} );
+			console.log( request );
+			let roles = Roles.getRoles( request ),
+				supplierManagers = roles.roles['supplier manager'];
+
+			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
 					role: "supplier manager"
 				} );
@@ -137,7 +140,8 @@ Requests.methods( {
 			}
 			return str;
 		}
-	},getDocs: {
+	},
+	getDocs: {
 		authentication: true,
 		helper: function( request ) {
 			let docs = Documents.find( { request: { _id: request._id, name: request.name } } ).fetch();

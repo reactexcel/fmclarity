@@ -150,3 +150,5 @@ Actions.addAccessRule( {
 	rule: { alert: true }
 } );
 */
+
+Meteor.subscribe( 'Suppliers' );
