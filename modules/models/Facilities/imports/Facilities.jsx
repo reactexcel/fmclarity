@@ -17,7 +17,7 @@ import { Documents } from '/modules/models/Documents';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', function( q = {} ) {
-		if( q.team && q.team._id ) {
+		if ( q.team && q.team._id ) {
 			return Facilities.find( { 'team._id': q.team._id } );
 		}
 		return Facilities.find();
@@ -59,6 +59,12 @@ const Facilities = new Model( {
 		} ]*/
 
 	]
+} )
+
+Facilities.allow( {
+	update: () => {
+		return true;
+	}
 } )
 
 //console.log( Facilities );
@@ -237,6 +243,15 @@ Facilities.actions( {
 				suppliers = Teams.findAll( { '_id': { $in: ids } } );
 			}
 			return suppliers;
+		}
+	}
+
+	addSupplier: {
+		authentication: true,
+		method: function( facility, supplier ) {
+			if ( supplier && supplier._id ) {
+				facility.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
+			}
 		}
 	}
 } )
