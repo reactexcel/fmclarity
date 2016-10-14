@@ -33,7 +33,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		}
 		contextFilter[ 'facility._id' ] = facility._id;
 	} else if ( team && team._id ) {
-		contextFilter[ 'team._id' ] = team._id;
+		//contextFilter[ 'team._id' ] = team._id;
 	}
 
 	if ( user != null ) {

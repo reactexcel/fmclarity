@@ -31,10 +31,13 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	}
 
 	if ( team ) {
-		facilities = Facilities.findAll( { 'team._id': team._id } );
+		// not good enough
+		//  should be something like Facilities.findForUser()
+		facilities = team.getFacilities();
+		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
-			//let thumbs = _.pluck( facilities, 'thumb' );
-			//Meteor.subscribe( 'Thumbs', thumbs );
+			let thumbs = _.pluck( facilities, 'thumb' );
+			Meteor.subscribe( 'Thumbs', thumbs );
 		}
 	}
 

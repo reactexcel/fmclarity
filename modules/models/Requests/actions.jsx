@@ -47,12 +47,22 @@ const edit = new Action( {
 } )
 
 const destroy = new Action( {
-	name: "delete request",
+	name: "destroy request",
 	type: 'request',
 	label: "Delete",
 	action: ( request ) => {
 		//Facilities.destroy( request );
 		request.destroy();
+	}
+} )
+
+const deleteFunction = new Action( {
+	name: "delete request",
+	type: 'request',
+	label: "Delete",
+	action: ( request ) => {
+		Requests.update( request._id, { $set: { status: 'Deleted' } } );
+		Modal.hide();
 	}
 } )
 
@@ -68,9 +78,6 @@ const cancel = new Action( {
 				form = { [ 'rejectComment' ] }
 				onSubmit = {
 						( request ) => {
-						// this will duplicate the save -
-						// should autoform not be in charge of saving and always defer to onsubmit???
-						// I think the answer may be yes
 						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
 						Modal.hide();
 					}

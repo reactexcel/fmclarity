@@ -23,6 +23,7 @@ import { Facilities } from '/modules/models/Facilities';
 if ( Meteor.isServer ) {
 
 	Meteor.publish( 'Teams', function() {
+		/*
 		let userId = this.userId;
 		console.log( userId );
 		let teams = Teams.find( {
@@ -33,6 +34,8 @@ if ( Meteor.isServer ) {
 			} ]
 		} );
 		return teams;
+		*/
+		return Teams.find();
 	} )
 
 	Meteor.publish( 'Suppliers', function( suppliers ) {

@@ -77,7 +77,7 @@ Actions.addAccessRule( {
 	action: [
 		'edit request',
 		'create request',
-		'delete request',
+		'destroy request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
 	rule: { alert: true }
