@@ -23,6 +23,11 @@ const ServicesRequiredEditorRow = React.createClass( {
 			var q = service.data.supplier;
 			if ( q._id ) {
 				supplier = Teams.findOne( q._id );
+				if( !supplier && q.name ){
+					supplier = Teams.findOne( {
+						name: q.name
+					} );
+				}
 			} else if ( q.name ) {
 				supplier = Teams.findOne( {
 					name: q.name

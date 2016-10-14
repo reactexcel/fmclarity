@@ -69,14 +69,14 @@ Meteor.methods( {
  * @function
  * @name 		forgotPassword
  * @param 		{string} email
- * @memberOf 	module:core/Authentication.LoginService 
+ * @memberOf 	module:core/Authentication.LoginService
  */
 function forgotPassword( email ) {
 	Meteor.call( 'LoginService.forgotPassword', email );
 }
 
 /*
- * @memberOf module:core/Authentication.LoginService 
+ * @memberOf module:core/Authentication.LoginService
  */
 function generatePasswordResetToken( user ) {
 	var tokenRecord = {
@@ -90,7 +90,7 @@ function generatePasswordResetToken( user ) {
 
 
 /*
- * @memberOf module:core/Authentication.LoginService 
+ * @memberOf module:core/Authentication.LoginService
  */
 function generateLoginToken( user, expiry, redirect ) {
 	var now = new Date();
@@ -107,14 +107,14 @@ function generateLoginToken( user, expiry, redirect ) {
 }
 
 /*
- * @memberOf module:core/Authentication.LoginService 
+ * @memberOf module:core/Authentication.LoginService
  */
 function getUrl( token, redirect ) {
 	return ( token.token + '/' + encodeURIComponent( Base64.encode( redirect ) ) );
 }
 
 /*
- * @memberOf module:core/Authentication.LoginService 
+ * @memberOf module:core/Authentication.LoginService
  */
 function loginWithoutPassword( user, callback ) {
 	Meteor.call( "LoginService.generateAccountToken", user, function( err, token ) {
@@ -127,7 +127,7 @@ function loginWithoutPassword( user, callback ) {
 }
 
 /*
- * @memberOf module:core/Authentication.LoginService 
+ * @memberOf module:core/Authentication.LoginService
  * @todo - add errors for expiry etc
  */
 function loginWithToken( token, callback ) {
