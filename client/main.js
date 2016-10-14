@@ -75,10 +75,11 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: { status: 'Draft' },
 	action: [
+		'edit request',
 		'create request',
 		'delete request',
 	],
-	role: [ 'owner' ],
+	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
 	rule: { alert: true }
 } )
 
@@ -88,7 +89,6 @@ Actions.addAccessRule( {
 		'edit request',
 		'issue request',
 		'reject request',
-		'get request quote',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }

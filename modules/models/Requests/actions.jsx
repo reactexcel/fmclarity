@@ -92,6 +92,7 @@ const issue = new Action( {
 					( request ) => {
 						console.log( request );
 						Requests.update( request._id, { $set: { status: 'Issued' } } );
+						request.updateSupplierManagers();
 						Modal.hide();
 					}
 				}

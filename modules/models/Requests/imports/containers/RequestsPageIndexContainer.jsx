@@ -10,6 +10,7 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Requests' );
 	Meteor.subscribe( 'Documents' );
 	Meteor.subscribe( 'Files' );
+	Meteor.subscribe( 'Messages' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
