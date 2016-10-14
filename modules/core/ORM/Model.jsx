@@ -62,9 +62,20 @@ class Model {
 			} );
 		}
 
+
+		let validationFunction = ValidationService.validator( this.schema );
+		Meteor.methods( {
+				[ `${this._name}.validate` ]: ( ...args ) => {
+					validationFunction( ...args );
+				}
+			} )
+			// this should be a method
+			//  should run on server also
+			//this.validate = ValidationService.validator( this.schema );
+
 		this.save = new ValidatedMethod( {
 			name: `${this._name}.upsert`,
-			validate: ValidationService.validator( this.schema ),
+			//validate: ValidationService.validator( this.schema ),
 			run: ( ...args ) => {
 				return this._save( ...args )
 			}
@@ -73,6 +84,19 @@ class Model {
 		if ( mixins ) {
 			this.registerMixins( mixins );
 		}
+	}
+
+	validate( ...args ) {
+		return new Promise( ( fulfil, reject ) => {
+			Meteor.call( `${this._name}.validate`, ...args, ( error, response ) => {
+				if ( error ) {
+					reject( error );
+				} else {
+					fulfil( response );
+				}
+
+			} );
+		} )
 	}
 
 	/**
@@ -101,28 +125,28 @@ class Model {
 	 */
 	getDefaultValue( fieldName, item ) {
 		let field = this.schema[ fieldName ];
-		if(typeof field !== 'undefined'){
-		if ( _.isFunction( field.defaultValue ) ) {
-			return field.defaultValue( item );
-		} else if ( field.defaultValue != null ) {
-			return field.defaultValue;
-		} else if ( field.type == "string" ) {
-			return "";
-		} else if ( field.type == "number" ) {
-			return 0;
-		} else if ( field.type == "date" ) {
-			return new Date();
-		} else if ( field.schema != null ) {
-			if ( _.isFunction( field.schema.create ) ) {
-				return field.schema.create();
+		if ( typeof field !== 'undefined' ) {
+			if ( _.isFunction( field.defaultValue ) ) {
+				return field.defaultValue( item );
+			} else if ( field.defaultValue != null ) {
+				return field.defaultValue;
+			} else if ( field.type == "string" ) {
+				return "";
+			} else if ( field.type == "number" ) {
+				return 0;
+			} else if ( field.type == "date" ) {
+				return new Date();
+			} else if ( field.schema != null ) {
+				if ( _.isFunction( field.schema.create ) ) {
+					return field.schema.create();
+				}
+				return {};
+			} else if ( _.isArray( field.type ) ) {
+				return [];
+			} else if ( field.type == "object" ) {
+				return {};
 			}
-			return {};
-		} else if ( _.isArray( field.type ) ) {
-			return [];
-		} else if ( field.type == "object" ) {
-			return {};
 		}
-	 }
 	}
 
 	/**
@@ -169,14 +193,14 @@ class Model {
 		return docs;
 	}
 
-	_save( doc, newValues  ) {
+	_save( doc, newValues ) {
 		let selector = null;
 		if ( doc._id != null ) {
 			selector = doc._id;
 		}
 		Object.assign( doc, newValues );
 		doc = this.unjoin( doc );
-		if( !doc.createdAt ) {
+		if ( !doc.createdAt ) {
 			doc.createdAt = new Date();
 		}
 
@@ -185,18 +209,17 @@ class Model {
 
 		//console.log( response );
 
-		if( response.insertedId ) {
+		if ( response.insertedId ) {
 			returnObject = this.collection.findOne( response.insertedId );
-		}
-		else if ( doc._id ) {
+		} else if ( doc._id ) {
 			returnObject = this.collection.findOne( selector );
 		}
 		return returnObject;
 	}
 
 	/** Added update() function to model since it doesnt exist like this **/
-	update( ...args ){
-		return this.collection.update( arguments[0], arguments[1] );
+	update( ...args ) {
+		return this.collection.update( ...args );
 	}
 
 	join( doc ) {
@@ -256,12 +279,12 @@ class Model {
 		return RBAC.mixins( functions, this );
 	}
 	helpers( ...args ) {
-		return this.collection.helpers( ...args );
+			return this.collection.helpers( ...args );
+		}
+		//Update function
+	update( ...args ) {
+		return this.collection.update( ...args );
 	}
-	//Update function
-	update( ...args ){
-			 return this.collection.update( ...args );
-	 }
 }
 
 export default Model;

@@ -118,7 +118,7 @@ Users.actions( {
             var team = user.getSelectedTeam();
             var role = user.getRole();
 
-            console.log( role );
+            //console.log( role );
 
             if ( !team ) {
                 return [];
@@ -217,7 +217,7 @@ Users.actions( {
                 query.push( filter );
             }
 
-            console.log( query );
+            //console.log( query );
 
             //perform query
             var requests = Requests.find( {

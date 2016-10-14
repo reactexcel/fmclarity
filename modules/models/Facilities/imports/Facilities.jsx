@@ -17,7 +17,7 @@ import { Documents } from '/modules/models/Documents';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', function( q = {} ) {
-		if( q.team && q.team._id ) {
+		if ( q.team && q.team._id ) {
 			return Facilities.find( { 'team._id': q.team._id } );
 		}
 		return Facilities.find();
@@ -51,9 +51,7 @@ const Facilities = new Model( {
 				}
 			}
 		} ],
-		[ Members, {
-			fieldName: "members"
-		} ],
+		[ Members ],
 
 		[ Members, {
 			fieldName: "suppliers",
@@ -61,6 +59,12 @@ const Facilities = new Model( {
 		} ]
 
 	]
+} )
+
+Facilities.allow( {
+	update: () => {
+		return true;
+	}
 } )
 
 //console.log( Facilities );
@@ -75,7 +79,7 @@ Facilities.actions( {
 			if ( parent ) {
 				areas = parent.children || [];
 			}
-			areas = facility.areas;
+			areas = facility.areas || [];
 			areas.sort( function( a, b ) {
 				if ( a && a.name && b && b.name ) {
 					return ( a.name > b.name ) ? 1 : -1;
@@ -219,15 +223,7 @@ Facilities.actions( {
 	getDocs: {
 		authentication: true,
 		helper: function( facility ) {
-			let docs = Documents.find( { facility: { _id: facility._id, name: facility.name } } ).fetch();
-			return _.map( docs, ( doc ) => {
-				return {
-					_id: doc._id,
-					name: doc.name,
-					type: doc.type,
-					description: doc.description,
-				}
-			} );
+			return Documents.find( { 'facility._id': facility._id } ).fetch();
 		}
 	},
 	/**
@@ -247,6 +243,15 @@ Facilities.actions( {
 				suppliers = Teams.findAll( { '_id': { $in: ids } } );
 			}
 			return suppliers;
+		}
+	}
+
+	addSupplier: {
+		authentication: true,
+		method: function( facility, supplier ) {
+			if ( supplier && supplier._id ) {
+				facility.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
+			}
 		}
 	}
 } )

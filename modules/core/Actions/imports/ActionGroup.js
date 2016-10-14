@@ -7,7 +7,7 @@ import { Roles } from '/modules/mixins/Roles';
 import { Notifications } from '/modules/models/Notifications';
 
 /**
- * An ActionGroup holds a collection of actions. 
+ * An ActionGroup holds a collection of actions.
  * It is the primary structure used for passing around Action Groups and performing role based access control.
  * @memberOf		module:core/Actions
  * @requires 		module:mixins/Roles.Roles
@@ -52,8 +52,35 @@ class ActionGroup {
 		} )
 	}
 
+	clone( actionNames ) {
+		let newActionGroup = new ActionGroup();
+		if ( _.isArray( actionNames ) ) {
+			//newActionGroup.actions = _.pluck( this.actions, actionNames );
+			//newActionGroup.accessRules = _.pluck( this.actions, actionNames );
+			actionNames.map( ( actionName ) => {
+				let newAction = this.actions[ actionName ];
+				newAccessRule = this.accessRules[ actionName ];
+				if ( newAction ) {
+					newActionGroup.actions[ actionName ] = newAction;
+					newActionGroup.accessRules[ actionName ] = newAccessRule;
+				}
+			} )
+		}
+		return newActionGroup;
+	}
+
+	canAccess( actionName, userRole ) {
+		return (
+			this.accessRules[ actionName ] &&
+			(
+				this.accessRules[ actionName ][ userRole ] ||
+				this.accessRules[ actionName ][ '*' ]
+			)
+		)
+	}
+
 	/**
-	 * 
+	 *
 	 */
 	getVerb( { name } ) {
 		//console.log( this.actions );
@@ -76,11 +103,11 @@ class ActionGroup {
 	/**
 	 * Adds a single access rule to the group.
 	 *
-	 * Access rules can be added for each action. 
+	 * Access rules can be added for each action.
 	 * If access rules are added to the global action container "Actions" they will be evaluated before the pertaining action is run in any context.
 	 * If they are added to another group they will be evaluated before the action is run using that group.
 	 * An optional "condition" can be added which will filter available actions by comaparing the properties of the condition object to the access item passed to the action.
-	 * 
+	 *
 	 * The following creates an access rule for the action "complete request" that would apply to request items with the status "In Progress".
 	 * The rule states that request members with the status 'supplier manager' or 'assignee' can perform the action.
 	 * And that they should receive alerts when the action if performed by others.
@@ -118,7 +145,7 @@ class ActionGroup {
 	 * @param {Action} action - The action this new rule will pertain to.
 	 * @param {array} roles - The roles that this rule is for.
 	 * @param {object} condition - a "condition" object that will be matched against the access item to check that certain properties pertain
-	 * @param {object} rile - The access rule we will add for this action
+	 * @param {object} rule - The access rule we will add for this action
 	 */
 	addAccessRule( { action, role, condition, rule = {} } ) {
 		if ( !_.isArray( action ) ) {
@@ -141,31 +168,26 @@ class ActionGroup {
 	 * @param {...any} args - Arguments that will be used to check authentication for each action in this group.
 	 * @return {array} An array of actions that are valid for this user with the provided args.
 	 */
-	filter( actions, ...args ) {
+	filter( actionNames, ...args ) {
 		let validActions = {},
 			item = args[ 0 ],
 			relationships = Roles.getRoles( item );
 
 		// this is phrased in a slightly awkward way because we don't know that the keys
 		//  of the passed in will actually match the name property of the action itself
-		for ( i in actions ) {
-			let action = actions[ i ],
-				actionAvailable = true,
-				actionName = action.name,
+		actionNames.map( ( actionName ) => {
+			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
-				continue;
-			}
-
-			if ( actionAvailable ) {
+			} else {
 				access = this.checkAccess( actionName, item, rules, relationships );
 				if ( access.allowed ) {
 					validActions[ actionName ] = action;
 				}
 			}
-		}
+		} )
 
 		return validActions;
 	}
@@ -308,7 +330,7 @@ class ActionGroup {
 			//console.log( userRoles );
 			if ( rules ) {
 
-				// implement wildcard 
+				// implement wildcard
 				if ( rules[ '*' ] ) {
 					let condition = rules[ '*' ].condition;
 					//console.log( condition );

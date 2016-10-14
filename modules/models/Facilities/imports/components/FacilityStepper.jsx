@@ -12,6 +12,8 @@ import { AreasEditor } from '/modules/mixins/Areas';
 import { ContactList } from '/modules/mixins/Members';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
 
+var submitFormCallback = null;
+
 export default function FacilityStepper( { item } ) {
 
     let facility = item;
@@ -22,6 +24,10 @@ export default function FacilityStepper( { item } ) {
 			facility.thumb = thumb;
 		}
 	}
+
+  function onNext( callback, errors ){
+    submitFormCallback = callback;
+  }
 
 	/*
 	if ( !facility && facility.canCreate() ) {
@@ -42,19 +48,29 @@ export default function FacilityStepper( { item } ) {
                 :
                 null
                 }
-                <Stepper tabs={[
+                <Stepper
+                  submitForm = { ( callback ) => {
+                    if( submitFormCallback ){
+                      submitFormCallback( callback );
+                    }
+                  }
+                }
+                   tabs={[
                 	{
                     	tab: 		<span id="discussion-tab">Basic Details</span>,
                     	content: 	<div className="row">
 										<div className = "col-sm-7">
                                             <AutoForm
-                                                model   = { Facilities } 
-                                                item    = { facility } 
-                                                form    = { ["name", "type", "address", "operatingTimes" ] } 
-                                            />
+                                                model   = { Facilities }
+                                                item    = { facility }
+                                                form    = { ["name", "type", "address", "operatingTimes" ] }
+                                                onNext = { onNext }
+                                                hideSubmit = { true }
+                                                submitFormOnStepperNext = { true }
+                                              />
                                         </div>
 					        			<div className = "col-sm-5">
-                                            <ThumbView item = { facility.thumb } onChange = { this.setThumb } />
+                                            <ThumbView item = { facility.thumb } onChange = { setThumb } />
                                         </div>
 			        				</div>,
 			        	guide: 		<div>Enter the basic facility info here including name, address, and image.</div>
@@ -85,7 +101,7 @@ export default function FacilityStepper( { item } ) {
                         content: 	<ContactList members={suppliers} group={facility} type="team"/>,
 			        	guide: 		<div>Add the suppliers employed by this facility here. If you want to configure this later simply press next.</div>
                     },*/
-                ]}/>				
+                ]}/>
 			</div>
 	)
 }

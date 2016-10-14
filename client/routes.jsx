@@ -5,6 +5,7 @@ import { AccessGroups } from '/modules/core/Authentication';
 import { Routes } from '/modules/core/Actions';
 import { PageDashboardContainer } from '/modules/features/Reports';
 import { LayoutMain } from '/modules/core/Layouts';
+import { ActionGroup } from '/modules/core/Actions';
 
 AccessGroups.loggedIn.add( {
 	name: 'root',
@@ -16,32 +17,31 @@ AccessGroups.loggedIn.add( {
 	}
 } )
 
-Routes.addAccessRule( { 
+Routes.addAccessRule( {
 	action: [
-		'logout'
+		'logout',
+		'requests',
+		'portfolio',
 	],
 	role: [ '*' ],
 	rule: { alert: true }
 } )
 
-
 Routes.addAccessRule( {
-	action: [ 
-		'dashboard', 
-		'portfolio', 
-		'suppliers', 
-		'requests', 
-		'calendar', 
-		'account', 
-		'abc' 
+	action: [
+		'dashboard',
+		'suppliers',
+		'calendar',
+		'account',
+		'abc'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager' ],
 	rule: { alert: true }
 } )
 
 Routes.addAccessRule( {
-	action: [ 
-		'admin', 
+	action: [
+		'admin',
 		'all-facilities',
 		'all-files',
 		'all-teams',
@@ -51,3 +51,17 @@ Routes.addAccessRule( {
 	role: [ 'fmc support' ],
 	rule: { alert: true }
 } )
+
+NavigationDrawerRoutes = Routes.clone( [
+	'dashboard',
+	'portfolio',
+	'suppliers',
+	'requests',
+	'calendar',
+	'admin',
+	'all-facilities',
+	'all-files',
+	'all-teams',
+	'all-users',
+	'all-requests'
+] );

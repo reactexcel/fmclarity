@@ -17,7 +17,13 @@ export default function DocExplorer( props ) {
 	}
 	//get Document list
 	function getDocsList() {
-		let item = props.item;
+		let item, keys;
+		keys = Object.keys( props.item );
+		if( keys.length == 1 ){
+			item = props.item [ keys [0] ];
+		}else{
+			item = props.item;
+		}
 		return item.getDocs();
 	}
 
@@ -28,11 +34,11 @@ export default function DocExplorer( props ) {
 			<DocIconHeader />
 			{ documents.map( ( doc, idx ) => {
 			return (
-				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem={props.item}/>
+				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
 			)
 			})}
 
-			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model={props.model}  selectedItem={props.item}/>
+			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model = { props.model }  selectedItem = { props.item }/>
 
 		</div>
 	)

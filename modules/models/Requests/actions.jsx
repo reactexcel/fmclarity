@@ -13,7 +13,7 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		Requests.save.call( request, { status: 'New' } );
+		Requests.update( request._id, { $set: { status: 'New' } } );
 		Modal.hide();
 	}
 } )
@@ -61,14 +61,17 @@ const cancel = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'Cancelled' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'rejectComment' ] }
+				onSubmit = {
+						( request ) => {
+						// this will duplicate the save -
+						// should autoform not be in charge of saving and always defer to onsubmit???
+						// I think the answer may be yes
+						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -79,16 +82,20 @@ const issue = new Action( {
 	type: 'request',
 	label: "Issue",
 	action: ( request ) => {
+		console.log( request );
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'Issued' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'issueComment' ] }
+				onSubmit = {
+					( request ) => {
+						console.log( request );
+						Requests.update( request._id, { $set: { status: 'Issued' } } );
+						request.updateSupplierManagers();
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -101,14 +108,15 @@ const accept = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'acceptComment' ] }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -121,14 +129,15 @@ const reject = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'rejectComment' ] }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'Rejected' } } );
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -141,17 +150,18 @@ const getQuote = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { CreateRequestForm }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Modal.hide()
+					}
 				}
-			}
 			/>
 		} )
-	}
+}
 } )
 
 const sendQuote = new Action( {
@@ -161,17 +171,18 @@ const sendQuote = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { CreateRequestForm }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'In progress' } } );
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
-	}
+}
 } )
 
 const complete = new Action( {
@@ -181,14 +192,14 @@ const complete = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'closeDetails' ] }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'Complete' } } );
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -201,14 +212,14 @@ const close = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'closeComment' ] }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'Closed' } } );
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -221,14 +232,15 @@ const reopen = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { CreateRequestForm }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'New' } } )
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
 	}
@@ -241,14 +253,15 @@ const reverse = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			item = { request }
-			form = { CreateRequestForm }
-			onSubmit = {
-				( request ) => {
-					request.save( { status: 'In progress' } )
+				model = { Requests }
+				item = { request }
+				form = { [ 'reverseComment' ] }
+				onSubmit = {
+					( request ) => {
+						Requests.update( request._id, { $set: { status: 'Reversed' } } )
+						Modal.hide();
+					}
 				}
-			}
 			/>
 		} )
 	}

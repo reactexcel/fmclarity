@@ -6,7 +6,7 @@
 import React 					from 'react';
 import { createContainer } 		from 'meteor/react-meteor-data';
 import { NavigationDrawer } 	from '/modules/ui/MaterialNavigation';
-import { Routes } 				from '/modules/core/Actions';
+//import { Routes } 				from '/modules/core/Actions';
 
 /**
  * @class 			NavigationDrawerContainer
@@ -24,7 +24,7 @@ const NavigationDrawerContainer = createContainer( ( { params } ) => {
 		role = user.getRole( team );
 	}
 
-	return { user, team, userRole: role, routes: Routes }
+	return { user, team, userRole: role, routes: NavigationDrawerRoutes }
 }, NavigationDrawer );
 
 export default NavigationDrawerContainer;

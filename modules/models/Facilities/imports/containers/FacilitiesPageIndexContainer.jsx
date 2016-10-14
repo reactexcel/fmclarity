@@ -14,6 +14,7 @@ import { Roles } from '/modules/mixins/Roles';
  */
 const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	Meteor.subscribe( 'Teams' );
+	Meteor.subscribe( 'Suppliers' ); // should find a way to make this subscription much more narrow
 	Meteor.subscribe( 'Facilities' );
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Requests' );

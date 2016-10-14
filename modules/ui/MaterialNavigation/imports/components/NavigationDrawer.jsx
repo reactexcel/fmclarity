@@ -26,8 +26,7 @@ class NavigationDrawer extends React.Component {
 	}
 
 	render() {
-		let { userRole, routes } = this.props,
-			{ selectedRouteName } = this.state;
+		let { userRole, routes } = this.props, { selectedRouteName } = this.state;
 
 		if ( routes == null || routes.length <= 1 ) {
 			return <div/>
@@ -46,7 +45,7 @@ class NavigationDrawer extends React.Component {
 
 				let route = routes.actions[ routeName ];
 
-				if( !routes.accessRules[ routeName ] || !routes.accessRules[ routeName ][ userRole ]  ) {
+				if( !routes.canAccess( routeName, userRole ) ) {
 					return;
 				}
 

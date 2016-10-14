@@ -20,7 +20,20 @@ export default Stepper = React.createClass( {
 
     selectNext() {
         var idx = parseInt( this.state.active );
-        this.selectTab( idx + 1 );
+
+        if( this.props.submitForm && idx == 0){
+          let self  = this;
+          self.props.submitForm( ( err ) => {
+            if(_.isObject( err )){
+              if( Object.keys( err ).length == 0 ){
+                self.selectTab( idx + 1 );
+              }
+            }
+          });
+        }else{
+          this.selectTab( idx + 1 );
+        }
+
         if ( this.state.active >= this.props.tabs.length - 1 ) {
             Modal.hide();
         }
