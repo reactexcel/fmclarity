@@ -35,7 +35,7 @@ Meteor.methods({
   //no reason why this can't be Messages.sendEmail hey??
   'Messages.sendEmail':function(user,message) {
     if(Meteor.isServer) {
-      //check([to, from, subject, text], [String])      
+      //check([to, from, subject, text], [String])
 
       /*
       if(!FM.inProduction()) {
@@ -73,7 +73,7 @@ Meteor.methods({
 
           devMsg.from = "FM Outgoing Message Alert <no-reply@fmclarity.com>";
           devMsg.subject = "["+to+"]"+subject;
-          devMsg.html = 
+          devMsg.html =
             "***Message sent to "+to+"***<br/><br/>"+
             html+
             "<br/>******<br/>"+
@@ -83,7 +83,7 @@ Meteor.methods({
         else {
           devMsg.from = "FM Test Message <no-reply@fmclarity.com>";
           devMsg.subject = "["+to+"]"+subject;
-          devMsg.html = 
+          devMsg.html =
             "***Test message intercepted for:"+to+"***<br/><br/>"+
             html+
             "<br/>******<br/>"+
@@ -92,9 +92,9 @@ Meteor.methods({
 
         Meteor.defer(function(){
           console.log({"sending email to":to});
-          Email.send(devMsg);          
+          Email.send(devMsg);
         });
-        
+
       }
     }
   }

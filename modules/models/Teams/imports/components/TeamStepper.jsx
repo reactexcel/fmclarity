@@ -28,12 +28,14 @@ const TeamStepper = React.createClass( {
         var viewer, viewersTeam, viewingTeam, group;
 
         viewer = Meteor.user();
-        console.log("======================");
-        console.log( this.state.item ? Teams.findOne( this.state.item._id ) : "");
-        console.log("======================");
         viewersTeam = this.state.team ? Teams.findOne( this.state.team._id ) : Session.getSelectedTeam();
         //getting value of item from state instead of props
-        viewingTeam = this.state.item ? Teams.findOne( this.state.item._id ) : null;
+        viewingTeam = this.state.item ? ( Teams.findOne( this.state.item._id ) ? Teams.findOne( this.state.item._id ) : Teams.findOne( {
+          name: {
+      			$regex: this.state.searchName,
+      			$options: 'i'
+      		}
+      	} ) ) : null;
         //if this team is a member of a group, group may be included as one of the props
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
@@ -100,6 +102,7 @@ const TeamStepper = React.createClass( {
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
         } else {
+          this.setState( { searchName: searchName} );
             input.value = '';
             viewersTeam.inviteSupplier( searchName, function( invitee ){
                 invitee = Teams.collection._transform( invitee );

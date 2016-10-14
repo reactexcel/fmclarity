@@ -230,14 +230,16 @@ function inviteSupplier( team, searchName, ext ) {
 			.then( ( data ) => {
 				supplier = Teams.findOne( data._id )
 				Meteor.call( "Teams.addSupplier", team, {
-					_id: supplier._id
+					_id: supplier._id,
+					name: supplier.name
 				}, ( err, data ) => {
 					ext( data.suppliers );
 				} );
 			} );
 	} else {
 		Meteor.call( "Teams.addSupplier", team, {
-			_id: supplier._id
+			_id: supplier._id,
+			name: supplier.name
 		}, ( err, data ) => {
 			ext( data.suppliers )
 		} );

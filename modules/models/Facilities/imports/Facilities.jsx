@@ -52,16 +52,16 @@ const Facilities = new Model( {
 			}
 		} ],
 		[ Members ],
-
+/*
 		[ Members, {
 			fieldName: "suppliers",
 			authentication: () => (true)
 		} ]
-
+*/
 	]
 } )
 
-Facilities.allow( {
+Facilities.collection.allow( {
 	update: () => {
 		return true;
 	}
@@ -128,8 +128,6 @@ Facilities.actions( {
 	setServiceSupplier: {
 		authentication: true,
 		method: function( facility, serviceIdx, subserviceIdx, supplier ) {
-			console.log( supplier );
-			console.log( facility );
 
 			if ( serviceIdx ) {
 				facility = Facilities._transform( facility );
@@ -244,13 +242,13 @@ Facilities.actions( {
 			}
 			return suppliers;
 		}
-	}
+	},
 
 	addSupplier: {
 		authentication: true,
 		method: function( facility, supplier ) {
 			if ( supplier && supplier._id ) {
-				facility.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
+				Facilities.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
 			}
 		}
 	}
