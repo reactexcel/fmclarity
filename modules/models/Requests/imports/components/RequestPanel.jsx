@@ -71,8 +71,8 @@ const RequestPanelInner = ( { request } ) => {
                         <span><b>Priority</b> <span>{ request.priority }</span><br/></span>
                         :null }
 
-                        <span 
-                            style={{display:"inline-block",fontSize:"16px",marginTop:"20px"}} 
+                        <span
+                            style={{display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                             className={"label label-"+request.status}>
                             { request.status }
                         </span>
@@ -81,8 +81,9 @@ const RequestPanelInner = ( { request } ) => {
                 </div>
 
             </div>
-            
+
             <div style={{textAlign:"right",paddingRight:"20px"}}>
+            {console.log(request)}
                 <WorkflowButtons actions = { RequestActions } item = { request }/>
             </div>
 
