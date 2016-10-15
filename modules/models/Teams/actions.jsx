@@ -66,6 +66,8 @@ const createFacility = new Action( {
 
 		//newItem.setupCompliance( Config.compliance );
 
+		item = Facilities.collection._transform( item );
+		
 		Modal.show( {
 			content: <FacilityStepper item = { item } />
 		} )
