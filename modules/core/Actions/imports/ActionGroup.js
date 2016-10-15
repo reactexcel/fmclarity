@@ -179,7 +179,7 @@ class ActionGroup {
 			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
-			console.log( { rules, relationships } );
+			//console.log( { rules, relationships } );
 
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
@@ -194,7 +194,7 @@ class ActionGroup {
 		return validActions;
 	}
 
-	getNotificationCallback( notificationsRules, action, args ) {
+	handleAlerts( notificationRules, action, args, result ) {
 
 		let user = Meteor.user(),
 			userObj = {
@@ -202,30 +202,31 @@ class ActionGroup {
 				name: user.profile.name
 			};
 
-		return ( result ) => {
-			notificationsRules.alert.map( ( recipient ) => {
-				let recipientObj = {
-						_id: recipient._id,
-						name: recipient.profile.name
-					},
-					read = false;
+		notificationRules.alert.map( ( recipient ) => {
 
-				// if the current user performed the action then pre-mark the notification as read
-				if ( user._id == recipient._id ) {
-					read = true;
-					//wasShown = true;
-				}
+			//console.log( recipient.profile.name );
 
-				Notifications.save.call( {
-					recipient: recipientObj,
-					actor: userObj,
-					action: action,
-					object: args,
-					result: result,
-					read: read
-				} );
+			let recipientObj = {
+					_id: recipient._id,
+					name: recipient.profile.name
+				},
+				read = false;
+
+			// if the current user performed the action then pre-mark the notification as read
+			if ( user._id == recipient._id ) {
+				//read = true;
+				wasShown = true;
+			}
+
+			Notifications.save.call( {
+				recipient: recipientObj,
+				actor: userObj,
+				action: action,
+				object: args,
+				result: result,
+				read: read
 			} );
-		}
+		} );
 	}
 
 	/**
@@ -260,16 +261,25 @@ class ActionGroup {
 
 		// ...that is why we precalculate rules and relationships then pass them here
 		let access = this.checkAccess( actionName, item, rules, relationships ),
-			notificationsRules = this.checkAlerts( actionName, item, rules, relationships ),
-			notificationCallback = this.getNotificationCallback( notificationsRules, action, args );
+			notificationRules = this.checkAlerts( actionName, item, rules, relationships );
 
 		if ( access.allowed ) {
-			let result = action.action( ...args, notificationCallback );
-			if ( this.path ) {
-				history.pushState( {}, '', this.path );
-			}
 
-			//console.log( notifications );
+			let result = action.action( ...args, ( error, response ) => {
+				// if the action has a path attached then modify the path in the url to reflect this
+
+				// 
+
+				if ( this.path ) {
+					history.pushState( {}, '', this.path );
+				}
+				if ( access.alert ) {
+					this.handleAlerts( notificationRules, action, args, result );
+				}
+				//if ( access.email ) {
+					//handleEmails( notificationRules, action, args, result );
+				//}
+			} );
 
 		} else {
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
@@ -329,7 +339,7 @@ class ActionGroup {
 
 		if ( relationships ) {
 			userRoles = relationships.actors[ user._id ];
-			console.log( userRoles );
+			//console.log( userRoles );
 
 			if ( rules ) {
 

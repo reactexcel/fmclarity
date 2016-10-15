@@ -190,7 +190,7 @@ class AutoForm extends React.Component {
 
 	render() {
 
-		console.log( 'rendering form' );
+		//console.log( 'rendering form' );
 
 		return (
 			<div className="autoform row">

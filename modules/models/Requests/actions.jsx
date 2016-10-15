@@ -77,7 +77,7 @@ const cancel = new Action( {
 				item = { request }
 				form = { [ 'rejectComment' ] }
 				onSubmit = {
-						( request ) => {
+					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
 						Modal.hide();
 					}

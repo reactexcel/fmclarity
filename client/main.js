@@ -40,14 +40,21 @@ Actions.addAccessRule( {
 //  it should be accessed through a team action. ie edit team member
 Actions.addAccessRule( {
 	action: [
+		'create team request',
+		'create team document',
+	],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	action: [
 		'edit team',
 		'view team',
 		'edit team member',
 		'view team member',
-		'create team request',
 		'create team member',
 		'create team facility',
-		'create team document',
 		'edit team member',
 		'delete team member',
 	],
@@ -76,6 +83,14 @@ Actions.addAccessRule( {
 	condition: { status: 'Draft' },
 	action: [
 		'create request',
+	],
+	role: [ 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Draft' },
+	action: [
 		'destroy request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],

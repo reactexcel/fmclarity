@@ -339,7 +339,7 @@ const RequestSchema = {
 				return Teams.findOne( item.team._id )
 			},
 			unjoin: ( item ) => {
-				console.log( item );
+				//console.log( item );
 				if ( item.team ) {
 					return _.pick( item.team, [ '_id', 'name' ] )
 				}
@@ -401,7 +401,7 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
-			console.log( item );
+			//console.log( item );
 			return {
 				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
 				view: ContactCard

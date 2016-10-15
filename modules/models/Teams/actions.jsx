@@ -78,7 +78,8 @@ const createRequest = new Action( {
 	label: "Create new request",
 	verb: "created a work order",
 	icon: 'fa fa-plus',
-	action: ( team, notify ) => {
+	// action should return restult and that gets used in the notification
+	action: ( team, callback ) => {
 		let item = { team };
 		newItem = Requests.create( item );
 		Modal.show( {
@@ -88,17 +89,20 @@ const createRequest = new Action( {
 			item = { newItem }
 			onSubmit = {
 				( newRequest ) => {
-					notify( newRequest );
 					Modal.replace( {
 						content: <RequestPanel item = { newRequest }/>
 					} );
+					callback( newRequest );
 				}
 			}
 			/>
 		} )
 	},
+	// this function is a template for formatting / displaying the notification
+	// it should default to a simple statement of the notification
+	// notification: ( item ) => {}???
 	getResult: ( item ) => {
-		if( item._id ) {
+		if( item && item._id ) {
 			let result = Requests.findOne( item._id );
 			if( result ) {
 				return {
@@ -106,6 +110,14 @@ const createRequest = new Action( {
 					href: ""
 				}
 			}
+		}
+	},
+	// this function returns the email template
+	getEmail: ( item, recipient, roles /* with roles??? */ ) => {
+		return {
+			//subject: //blah blah blah
+			//body: // react component
+			// other information.....
 		}
 	}
 } )
