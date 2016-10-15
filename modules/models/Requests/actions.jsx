@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 
 import { Modal } from '/modules/ui/Modal';
 import { Action } from '/modules/core/Actions';
@@ -53,6 +53,7 @@ const destroy = new Action( {
 	action: ( request ) => {
 		//Facilities.destroy( request );
 		request.destroy();
+    Modal.hide();
 	}
 } )
 

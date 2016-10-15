@@ -285,6 +285,9 @@ class Model {
 	update( ...args ) {
 		return this.collection.update( ...args );
 	}
+	remove( ...args ) {
+		this.collection.remove( ...args );
+	}
 }
 
 export default Model;

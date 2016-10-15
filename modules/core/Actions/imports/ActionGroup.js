@@ -179,7 +179,7 @@ class ActionGroup {
 			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
-			console.log( { rules, relationships } );
+		//	console.log( { rules, relationships } );
 
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
@@ -329,7 +329,7 @@ class ActionGroup {
 
 		if ( relationships ) {
 			userRoles = relationships.actors[ user._id ];
-			console.log( userRoles );
+		//	console.log( userRoles );
 
 			if ( rules ) {
 

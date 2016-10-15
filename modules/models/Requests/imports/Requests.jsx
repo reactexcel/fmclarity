@@ -54,10 +54,13 @@ const Requests = new Model( {
 	]
 } )
 
-// *********************** this is an insecure temporary solution for updating status of requests *********************** 
+// *********************** this is an insecure temporary solution for updating status of requests ***********************
 Requests.collection.allow( {
 	update: function() {
-		return true }
+		return true },
+	remove: function() {
+		return true },
+
 } );
 // ******************************************
 
@@ -153,6 +156,12 @@ Requests.methods( {
 					description: doc.description,
 				}
 			} );
+		}
+	},
+	destroy: {
+		authentication: true,
+		helper: function( request ) {
+			Requests.remove( { _id: request._id } );
 		}
 	}
 
