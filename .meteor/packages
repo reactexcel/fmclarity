@@ -16,7 +16,7 @@ oaf:html5-desktop-notifications
 
 ############################
 # Routing
-kadira:flow-router
+kadira:flow-router-ssr
 tomwasd:flow-router-autoscroll
 zimme:active-route
 
@@ -29,6 +29,7 @@ pfafman:filesaver
 harrison:papa-parse
 rochal:slimscroll
 rzymek:fullcalendar
+chrismbeckett:toastr
 
 ############################
 # MiniMongo Extensions

@@ -219,12 +219,12 @@ class ActionGroup {
 			}
 
 			Notifications.save.call( {
-				recipient: recipientObj,
-				actor: userObj,
-				action: action,
+				read,
+				action,
+				result,
+				recipient,
 				object: args,
-				result: result,
-				read: read
+				actor: userObj,
 			} );
 		} );
 	}
@@ -265,7 +265,7 @@ class ActionGroup {
 
 		if ( access.allowed ) {
 
-			let result = action.action( ...args, ( error, response ) => {
+			action.action( ...args, ( response ) => {
 				// if the action has a path attached then modify the path in the url to reflect this
 
 				// 
@@ -274,7 +274,8 @@ class ActionGroup {
 					history.pushState( {}, '', this.path );
 				}
 				if ( access.alert ) {
-					this.handleAlerts( notificationRules, action, args, result );
+					console.log( response );
+					this.handleAlerts( notificationRules, action, args, response );
 				}
 				//if ( access.email ) {
 					//handleEmails( notificationRules, action, args, result );
@@ -282,6 +283,9 @@ class ActionGroup {
 			} );
 
 		} else {
+			if( Meteor.isClient ) {
+				toastr.error(`Access denied for action '${actionName}' `, "Access Denied");
+			}
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
 		}
 

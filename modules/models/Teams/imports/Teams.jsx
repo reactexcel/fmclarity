@@ -345,15 +345,6 @@ Teams.helpers( {
 	},
 
 	getNextWOCode() {
-		if ( !this.counters ) {
-			this.counters = {};
-		}
-		if ( !this.counters.WO ) {
-			this.counters.WO = 0;
-		}
-		this.counters.WO = this.counters.WO + 1;
-		Team.save.call();
-		/*
 		Teams.collection.update( {
 			_id: this._id
 		}, {
@@ -361,8 +352,6 @@ Teams.helpers( {
 				"counters.WO": 1
 			}
 		} );
-		*/
-		//this.save();
 		return this.counters.WO;
 	},
 
