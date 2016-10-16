@@ -48,7 +48,7 @@ const RequestSchema = {
 		description: "The unique code for this work request",
 		type: "number",
 		input: Text,
-		defaultValue: getJobCode,
+		//defaultValue: getJobCode,
 		options: {
 			readonly: true
 		}

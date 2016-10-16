@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
 import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
@@ -9,6 +10,8 @@ import { Requests, CreateRequestForm } from '/modules/models/Requests';
 import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
+
+import { EmailMessageView } from '/modules/core/Email';
 
 const create = new Action( {
 	name: 'create team',
@@ -117,9 +120,12 @@ const createRequest = new Action( {
 	// this function returns the email template
 	getEmail: ( item, recipient, roles /* with roles??? */ ) => {
 		return {
-			//subject: //blah blah blah
-			//body: // react component
-			// other information.....
+        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+			from:"FM Clarity <no-reply@fmclarity.com>",
+	        subject:"FM Clarity notification",
+    	    emailBody:ReactDOMServer.renderToStaticMarkup(
+    	    	React.createElement( EmailMessageView, { user: recipient, item: item } )
+    	    )
 		}
 	}
 } )

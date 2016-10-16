@@ -13,7 +13,11 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		Requests.update( request._id, { $set: { status: 'New' } } );
+		let code = request.team.getNextWOCode();
+		Requests.update( request._id, { $set: { 
+			code,
+			status: 'New' 
+		} } );
 	}
 } )
 

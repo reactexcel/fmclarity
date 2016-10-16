@@ -48,7 +48,7 @@ Meteor.methods({
       if(user&&user.emails) {
 
         var subject, html, address, to, email, devMsg;
-        var element = React.createElement(EmailMessageView,{user:user,item:message});
+        var element = message.body||React.createElement(EmailMessageView,{user:user,item:message});
 
         subject = (message.subject||"FM Clarity notification");
         html = (message.emailBody||ReactDOMServer.renderToStaticMarkup (element));

@@ -44,7 +44,7 @@ Actions.addAccessRule( {
 		'create team document',
 	],
 	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner' ],
-	rule: { alert: true }
+	rule: { alert: true, email: true }
 } )
 
 Actions.addAccessRule( {

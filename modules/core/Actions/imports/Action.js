@@ -23,7 +23,7 @@ class Action {
 	 * @param {string} [icon] - A css class that can be used to display an icon related to this action (used by interface elements).
 	 * @param {string} [description] - A description of this action to be used by interface elements 
 	 */
-	constructor( { name, action, type, path, label, icon, verb, getResult, description } ) {
+	constructor( { name, action, type, path, label, icon, verb, getResult, getEmail, description } ) {
 		this.name = name;
 		this.path = path;
 		this.verb = verb;
@@ -31,6 +31,7 @@ class Action {
 		this.label = label;
 		this.icon = icon;
 		this.getResult = getResult;
+		this.getEmail = getEmail || (() => {});
 		this.description = description;
 		this.action = action;
 

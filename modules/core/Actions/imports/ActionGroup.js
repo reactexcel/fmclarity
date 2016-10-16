@@ -229,6 +229,44 @@ class ActionGroup {
 		} );
 	}
 
+	handleEmails( notificationRules, action, args, result ) {
+		let user = Meteor.user(),
+			userObj = {
+				_id: user._id,
+				name: user.profile.name
+			};
+
+		console.log( notificationRules );
+
+		notificationRules.email.map( ( recipient ) => {
+
+			//console.log( recipient.profile.name );
+
+			let recipientObj = {
+					_id: recipient._id,
+					name: recipient.profile.name
+				},
+				read = false;
+
+			// if the current user performed the action then pre-mark the notification as read
+			if ( user._id != recipient._id ) {
+				// Meteor.call( 'Messages.sendEmail', recipient, action.getEmail( result, recipient ) )
+				//read = true;
+				//wasShown = true;
+			}
+			/*
+			Notifications.save.call( {
+				read,
+				action,
+				result,
+				recipient,
+				object: args,
+				actor: userObj,
+			} );
+			*/
+		} );		
+	}
+
 	/**
 	 * Runs the specified action performing checks to verify access and calculate notification requirements.
 	 * The run function of the global ActionGroup store actions is called by individual actions for their rbac.
@@ -274,12 +312,11 @@ class ActionGroup {
 					history.pushState( {}, '', this.path );
 				}
 				if ( access.alert ) {
-					console.log( response );
 					this.handleAlerts( notificationRules, action, args, response );
 				}
-				//if ( access.email ) {
-					//handleEmails( notificationRules, action, args, result );
-				//}
+				if ( access.email ) {
+					this.handleEmails( notificationRules, action, args, response );
+				}
 			} );
 
 		} else {
