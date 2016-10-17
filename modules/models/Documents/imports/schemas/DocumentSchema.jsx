@@ -3,7 +3,9 @@ import DocTypes from './DocTypes.jsx';
 
 import { Text, TextArea, Select, DateInput } from '/modules/ui/MaterialInputs';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
+import { Requests } from '/modules/models/Requests';
 
+import { ContactCard } from '/modules/mixins/Members';
 
 export default DocumentSchema = {
 
@@ -44,7 +46,7 @@ export default DocumentSchema = {
 		input: Select,
 
 		options: ( item ) => {
-			//console.log( item );
+			console.log( item );
 			let team = Session.getSelectedTeam();
 			return {
 				items: ( team ? team.facilities : null ),
@@ -467,7 +469,38 @@ export default DocumentSchema = {
 		size: 6,
 		label: "Area (m2)"
 	},
+	request: {
+		input: Select,
+		label: "Work order",
+		description: "Document is related to request",
+		type: "object",
+		relation: {
+			join: ( item ) => {
+				if( item.request && item.request._id ) {
+					return Requests.findOne( item.request._id );
+				}
+			},
+			unjoin: ( item ) => {
+				if( item.request && item.request._id ) {
+					return _.pick( item.request, '_id', 'name' );
+				}
+			}
+		},
 
+		options: ( item ) => {
+			if(item.facility){
+				let request = Requests.find( { "facility._id": item.facility._id } ).fetch();
+				return {
+					items: ( request.length ? request : null ),
+					view: ContactCard
+				}
+			} else {
+				return {
+					items: ( null ),
+				}
+			}
+		},
+	},
 	attachments: {
 		type: [ Object ],
 		label: "Attachments",

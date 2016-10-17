@@ -169,7 +169,7 @@ class AutoForm extends React.Component {
 
 				return (
 
-					<div key = { key } className = { `col-sm-${size} autoformInput` } >
+					<div key = { key } className = { `col-sm-${size}` } >
 						<Input
 							fieldName 	= { key }
 							value 		= { item[ key ] }
