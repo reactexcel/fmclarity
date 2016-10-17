@@ -9,10 +9,6 @@ const EmailMessageView = React.createClass( {
 
     getMeteorData() {
 
-        console.log( '--------------------' );
-        console.log( this.props );
-        console.log( '--------------------' );
-
         let { action, actor, object, result, recipient } = this.props.notification,
             facility = null;
 
@@ -21,7 +17,7 @@ const EmailMessageView = React.createClass( {
         }
 
         if ( result && result.facility && result.facility._id ) {
-            facility = Facilities.findOne( result.facility._id );
+            facility = Facilities.collection.findOne( result.facility._id );
         }
 
         let recipientName = recipient.profile.name,
@@ -31,8 +27,6 @@ const EmailMessageView = React.createClass( {
     },
 
     render() {
-
-        console.log( this.data );
 
         let { recipient, recipientName, actor, actorName, action, result, facility } = this.data,
             body = null;

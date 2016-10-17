@@ -179,8 +179,6 @@ class ActionGroup {
 			let action = this.actions[ actionName ],
 				rules = this.accessRules[ actionName ];
 
-			//console.log( { rules, relationships } );
-
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
 			} else {
@@ -195,47 +193,8 @@ class ActionGroup {
 	}
 
 	handleAlerts( notificationRules, action, args, result ) {
-
-		let user = Meteor.user(),
-			userObj = {
-				_id: user._id,
-				name: user.profile.name
-			};
-
-		for( recipientId in notificationRules.alert ) {
-			let recipient = notificationRules.alert[ recipientId ],
-				recipientObj = {
-					_id: recipient._id,
-					name: recipient.profile.name
-				},
-				read = false;
-
-			// if the current user performed the action then pre-mark the notification as read
-			if ( user._id == recipient._id ) {
-				//read = true;
-				wasShown = true;
-			}
-
-			Notifications.save.call( {
-				read,
-				action,
-				result,
-				recipient,
-				object: args,
-				actor: userObj,
-			} )
-			.then( ( notification ) => {
-				console.log( notification );
-				if( notificationRules.email[ recipientId ]) {
-					Meteor.call( 'Messages.sendEmail', recipient, action.getEmail( notification ) )
-				}
-				/* 
-				if user should receive email...
-				send the notification to the action and get the email body...
-				send email to recipient
-				*/
-			} );
-		}
+		let user = Meteor.user();
+		Meteor.call( 'Notifications.sendAll', notificationRules, user, action, args, result );
 	}
 
 	/**
@@ -290,8 +249,8 @@ class ActionGroup {
 			} );
 
 		} else {
-			if( Meteor.isClient ) {
-				toastr.error(`Access denied for action '${actionName}' `, "Access Denied");
+			if ( Meteor.isClient ) {
+				toastr.error( `Access denied for action '${actionName}' `, "Access Denied" );
 			}
 			throw new Meteor.Error( `Access denied for action '${actionName}' ` );
 		}
@@ -415,20 +374,20 @@ class ActionGroup {
 
 		let roleGroups = null,
 			recipients = {
-				alert:{},
-				email:{}
+				alert: {},
+				email: {}
 			};
 
 		if ( rules && relationships ) {
 			roleGroups = Object.keys( relationships.roles );
 			roleGroups.map( ( role ) => {
 				if ( rules[ role ] /* && rules[role].condition( item )*/ ) {
-					
+
 					if ( rules[ role ].rule.alert ) {
-						Object.assign(recipients.alert, relationships.roles[ role ] );
+						Object.assign( recipients.alert, relationships.roles[ role ] );
 					}
 					if ( rules[ role ].rule.email ) {
-						Object.assign(recipients.email, relationships.roles[ role ] );
+						Object.assign( recipients.email, relationships.roles[ role ] );
 					}
 				}
 			} )

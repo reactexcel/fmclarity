@@ -46,7 +46,7 @@ export default DocumentSchema = {
 		input: Select,
 
 		options: ( item ) => {
-			console.log( item );
+			//console.log( item );
 			let team = Session.getSelectedTeam();
 			return {
 				items: ( team ? team.facilities : null ),

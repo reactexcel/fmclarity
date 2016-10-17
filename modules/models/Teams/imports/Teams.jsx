@@ -47,7 +47,7 @@ if ( Meteor.isServer ) {
 				}
 			} )
 			if ( ids.length ) {
-				console.log( ids );
+				//console.log( ids );
 				return Teams.find( { _id: { $in: ids } } );
 			}
 		}
