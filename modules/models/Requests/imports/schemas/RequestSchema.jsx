@@ -177,7 +177,30 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			return {
-				items: item.facility ? item.facility.servicesRequired : null
+				items: item.facility ? item.facility.servicesRequired : null,
+				afterChange: ( item ) => {
+					if ( item == null ) {
+						return;
+					}
+					if ( item.service.data ){
+						let supplier = item.service.data.supplier;
+						let defaultSupplier;
+						if(supplier){
+							if ( supplier._id ){
+								defaultSupplier = Teams.findOne( item.service.data.supplier._id );
+								if ( !defaultSupplier && supplier.name ){
+									defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name });
+								}
+							} else if ( supplier.name ){
+								defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name });
+							}
+							item.supplier = defaultSupplier;
+						} else {
+							item.supplier = null;
+							item.subservice = null;
+						}
+					}
+				}
 			}
 		}
 	},
@@ -191,7 +214,29 @@ const RequestSchema = {
 		optional: true,
 		options: ( item ) => {
 			return {
-				items: item.service ? item.service.children : null
+				items: item.service ? item.service.children : null,
+				afterChange: ( item ) => {
+					if ( item == null ) {
+						return;
+					}
+					if ( item.subservice.data ){
+						let supplier = item.subservice.data.supplier;
+						let defaultSupplier;
+						if(supplier){
+							if ( supplier._id ){
+								defaultSupplier = Teams.findOne( item.subservice.data.supplier._id );
+								if ( !defaultSupplier && supplier.name ){
+									defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name });
+								}
+							} else if ( supplier.name ){
+								defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name });
+							}
+							item.supplier = defaultSupplier;
+						} else {
+							item.supplier = null;
+						}
+					}
+				}
 			}
 		}
 	},
