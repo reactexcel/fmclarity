@@ -118,14 +118,19 @@ const createRequest = new Action( {
 		}
 	},
 	// this function returns the email template
-	getEmail: ( item, recipient, roles /* with roles??? */ ) => {
+	getEmail: ( notification ) => {
+		// we need to see the notification to do this
+		let body = ReactDOMServer.renderToStaticMarkup(
+    	    	React.createElement( EmailMessageView, { notification } )
+    	   );
+
+		let { recipient } = notification;
+		console.log( body );
 		return {
         	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
 			from:"FM Clarity <no-reply@fmclarity.com>",
 	        subject:"FM Clarity notification",
-    	    emailBody:ReactDOMServer.renderToStaticMarkup(
-    	    	React.createElement( EmailMessageView, { user: recipient, item: item } )
-    	    )
+    	    emailBody:body
 		}
 	}
 } )

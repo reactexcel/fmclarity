@@ -147,7 +147,7 @@ Roles = new class {
 		}
 
 		results.actors[ member._id ].push( role );
-		results.roles[ role ].push( member );
+		results.roles[ role ][member._id] = member;
 	}
 }
 

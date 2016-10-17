@@ -202,11 +202,9 @@ class ActionGroup {
 				name: user.profile.name
 			};
 
-		notificationRules.alert.map( ( recipient ) => {
-
-			//console.log( recipient.profile.name );
-
-			let recipientObj = {
+		for( recipientId in notificationRules.alert ) {
+			let recipient = notificationRules.alert[ recipientId ],
+				recipientObj = {
 					_id: recipient._id,
 					name: recipient.profile.name
 				},
@@ -225,46 +223,19 @@ class ActionGroup {
 				recipient,
 				object: args,
 				actor: userObj,
+			} )
+			.then( ( notification ) => {
+				console.log( notification );
+				if( notificationRules.email[ recipientId ]) {
+					Meteor.call( 'Messages.sendEmail', recipient, action.getEmail( notification ) )
+				}
+				/* 
+				if user should receive email...
+				send the notification to the action and get the email body...
+				send email to recipient
+				*/
 			} );
-		} );
-	}
-
-	handleEmails( notificationRules, action, args, result ) {
-		let user = Meteor.user(),
-			userObj = {
-				_id: user._id,
-				name: user.profile.name
-			};
-
-		console.log( notificationRules );
-
-		notificationRules.email.map( ( recipient ) => {
-
-			//console.log( recipient.profile.name );
-
-			let recipientObj = {
-					_id: recipient._id,
-					name: recipient.profile.name
-				},
-				read = false;
-
-			// if the current user performed the action then pre-mark the notification as read
-			if ( user._id != recipient._id ) {
-				// Meteor.call( 'Messages.sendEmail', recipient, action.getEmail( result, recipient ) )
-				//read = true;
-				//wasShown = true;
-			}
-			/*
-			Notifications.save.call( {
-				read,
-				action,
-				result,
-				recipient,
-				object: args,
-				actor: userObj,
-			} );
-			*/
-		} );		
+		}
 	}
 
 	/**
@@ -291,7 +262,7 @@ class ActionGroup {
 		// getting the rules and relationships is an expensive operation so we only want to do it
 		//  once before running an action...
 		let { rules, relationships } = this.getRulesAndRelationships( actionName, item );
-		//console.log( { rules, relationships } );
+		console.log( { rules, relationships } );
 
 		if ( rules == null ) {
 			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
@@ -308,14 +279,13 @@ class ActionGroup {
 
 				// 
 
+				console.log( notificationRules );
+
 				if ( this.path ) {
 					history.pushState( {}, '', this.path );
 				}
 				if ( access.alert ) {
 					this.handleAlerts( notificationRules, action, args, response );
-				}
-				if ( access.email ) {
-					this.handleEmails( notificationRules, action, args, response );
 				}
 			} );
 
@@ -445,19 +415,20 @@ class ActionGroup {
 
 		let roleGroups = null,
 			recipients = {
-				alert: [],
-				email: []
+				alert:{},
+				email:{}
 			};
 
 		if ( rules && relationships ) {
 			roleGroups = Object.keys( relationships.roles );
 			roleGroups.map( ( role ) => {
 				if ( rules[ role ] /* && rules[role].condition( item )*/ ) {
+					
 					if ( rules[ role ].rule.alert ) {
-						recipients.alert = recipients.alert.concat( relationships.roles[ role ] );
+						Object.assign(recipients.alert, relationships.roles[ role ] );
 					}
 					if ( rules[ role ].rule.email ) {
-						recipients.email = recipients.email.concat( relationships.roles[ role ] );
+						Object.assign(recipients.email, relationships.roles[ role ] );
 					}
 				}
 			} )
