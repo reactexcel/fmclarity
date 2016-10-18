@@ -130,10 +130,13 @@ class AutoForm extends React.Component {
 					<div key = { key } className = { `col-sm-${size}` }>
 
 						<AutoForm
+						
+							model 		= {this.props.model}
+							form		= { subschema }
 							item		= { item[ key ] }
 							errors 		= { errors }
+
 							hideSubmit 	= { true }
-							form		= { subschema }
 
 							// since we are calling this recursively we need to update the parent state with the changes from the child
 							onChange 	= { ( newState ) => {
@@ -142,10 +145,9 @@ class AutoForm extends React.Component {
 
 												Object.assign( item[ key ], newItem)
 												this.setState( { item } );
-											}}
-										  item={this.props.item}
-											model={this.props.model}
-											onNext={ this.props.onNext}
+										  } }
+
+							onNext 		= { this.props.onNext}
 
 										  { ...others }
 						/>
