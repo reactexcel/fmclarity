@@ -220,7 +220,7 @@ const TeamStepper = React.createClass( {
                         guide:      <div>Enter the basic account info here including your teams name, address and image.</div>
                     },{
                         tab:        <span id = "documents-tab">Documents</span>,
-                        content:    <AutoForm model = { Teams } item = { viewingTeam } form = { ["documents"] }/>,
+                        content:    <AutoForm model = { Teams } item = { viewingTeam } form = { ["documents"] } hideSubmit = { true } />,
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
                         tab:        <span id = "members-tab">Members</span>,

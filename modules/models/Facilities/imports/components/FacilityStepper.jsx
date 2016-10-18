@@ -91,7 +91,7 @@ export default function FacilityStepper( { item } ) {
 			        	guide: 		<div>Enter tenants to the property by clicking on add member here.</div>
                     },{
                         tab: 		<span id="documents-tab">Documents</span>,
-                        content: 	<AutoForm model = { Facilities } item = { facility } form = { ["documents"] } />,
+                        content: 	<AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true } />,
 			        	guide: 		<div>Formal documentation related to the facility can be added here. This typically includes insurance and/or lease documents.</div>
                     }/*,{
                         tab:        <span id="requests-tab">Plugins</span>,
