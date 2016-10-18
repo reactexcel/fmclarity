@@ -131,7 +131,7 @@ const Select = React.createClass( {
 		return (
 			<div
 				ref = "input"
-				className = {"md-input md-select dropdown" +( this.state.open ? " open" : "" )}
+				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
 				onFocus = { () => { this.setOpen( true ) } }
 				onBlur = { () => { this.setOpen( false ) } }>
