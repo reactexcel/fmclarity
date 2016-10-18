@@ -19,6 +19,7 @@ import { Stepper } from '/modules/ui/Stepper';
  * @memberOf        module:models/Teams
  * @todo            Remove tour, add additional instructions into stepper
  */
+
 const TeamStepper = React.createClass( {
 
     mixins: [ ReactMeteorData ],
@@ -133,7 +134,14 @@ const TeamStepper = React.createClass( {
             item: viewingTeam
         } );
     },
-
+    submitFormCallback: null,
+    submitFormCallbackForWorkOrder: null,
+    onNext( callback ){
+      this.submitFormCallback = callback;
+    },
+    onNextWorkOrder( callback ){
+      this.submitFormCallbackForWorkOrder = callback;
+    },
     render() {
         var viewingTeam = this.data.viewingTeam;
         if ( !viewingTeam ) {
@@ -171,13 +179,43 @@ const TeamStepper = React.createClass( {
                 </div>
                 : null }
 
-                <Stepper tabs={[
+                <Stepper
+                  submitForm = {
+                    ( callback ) => {
+                      if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
+                        this.submitFormCallback( ( errorList ) => {
+                          this.submitFormCallbackForWorkOrder( ( error ) => {
+                            let keys = Object.keys( error );
+                            _.forEach( keys, ( k ) => {
+                              errorList[ k ] = error[ k ];
+                            } );
+                            callback( errorList );
+                          } );
+                        } );
+                      }
+                    }
+                  }
+                  tabs={[
                     {
                         tab:        <span id = "discussion-tab">Basic Details</span>,
                         content:    <div className = "row">
-                                        <div className = "col-sm-7"><AutoForm model = { Teams } item = { viewingTeam } form = { ["name","type","abn","email","phone","phone2"] } /></div>
+                                        <div className = "col-sm-7"><AutoForm
+                                                                      model = { Teams }
+                                                                      item = { viewingTeam }
+                                                                      form = { ["name","type","abn","email","phone","phone2"] }
+                                                                      onNext = { this.onNext }
+                                                                      hideSubmit = { true }
+                                                                      submitFormOnStepperNext = { true }
+                                                                       /></div>
                                         <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>
-                                        <div className = "col-sm-12"><AutoForm model = { Teams } item = { viewingTeam } form = { ["defaultWorkOrderValue","description"] }/></div>
+                                        <div className = "col-sm-12"><AutoForm
+                                                                        model = { Teams }
+                                                                        item = { viewingTeam }
+                                                                        form = { ["defaultWorkOrderValue","description"] }
+                                                                        onNext = { this.onNextWorkOrder }
+                                                                        hideSubmit = { true }
+                                                                        submitFormOnStepperNext = { true }
+                                                                        /> <br /></div>
                                     </div>,
                         guide:      <div>Enter the basic account info here including your teams name, address and image.</div>
                     },{
