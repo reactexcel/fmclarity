@@ -13,9 +13,8 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		let code = request.team.getNextWOCode();
 		Requests.update( request._id, { $set: { 
-			code,
+			code: request.code||request.team.getNextWOCode(),
 			status: 'New' 
 		} } );
 	}
@@ -97,7 +96,13 @@ const issue = new Action( {
 	type: 'request',
 	label: "Issue",
 	action: ( request ) => {
-		console.log( request );
+		//console.log( request );
+		Requests.update( request._id, { $set: { 
+			code: request.code||request.team.getNextWOCode(),
+			status: 'Issued' 
+		} } );
+		request.updateSupplierManagers();
+		/*
 		Modal.show( {
 			content: <AutoForm
 				model = { Requests }
@@ -105,14 +110,15 @@ const issue = new Action( {
 				form = { [ 'issueComment' ] }
 				onSubmit = {
 					( request ) => {
+						Modal.hide();
 						console.log( request );
 						Requests.update( request._id, { $set: { status: 'Issued' } } );
 						request.updateSupplierManagers();
-						Modal.hide();
 					}
 				}
 			/>
 		} )
+		*/
 	}
 } )
 

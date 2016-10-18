@@ -221,7 +221,6 @@ class ActionGroup {
 		// getting the rules and relationships is an expensive operation so we only want to do it
 		//  once before running an action...
 		let { rules, relationships } = this.getRulesAndRelationships( actionName, item );
-		console.log( { rules, relationships } );
 
 		if ( rules == null ) {
 			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
@@ -238,7 +237,7 @@ class ActionGroup {
 
 				// 
 
-				console.log( notificationRules );
+				//console.log( notificationRules );
 
 				if ( this.path ) {
 					history.pushState( {}, '', this.path );

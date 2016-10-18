@@ -83,7 +83,6 @@ const RequestPanelInner = ( { request } ) => {
             </div>
 
             <div style={{textAlign:"right",paddingRight:"20px"}}>
-            {console.log(request)}
                 <WorkflowButtons actions = { RequestActions } item = { request }/>
             </div>
 

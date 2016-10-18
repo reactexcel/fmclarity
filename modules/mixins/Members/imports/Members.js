@@ -125,37 +125,40 @@ function register( collection, opts ) {
 }
 
 function replaceMembers( collection, fieldName ) {
-	return function( item, obj, options = {} ) {
+	return function( group, members, options = {} ) {
 		//remove members with given role
-		var role = options.role;
+		let role = options.role;
+
 		if ( !role ) {
 			return;
 		}
-		var q = {};
-		q[ fieldName ] = {
-			role: role
-		};
-		collection.update( item._id, {
-			$pull: q
+
+		collection.update( group._id, {
+			$pull: {
+				[ fieldName ]: { role: role }
+			}
 		} );
 
-		//add new member
-		if ( !_.isArray( obj ) ) {
-			obj = [ obj ];
+		//members should be array
+		if ( !_.isArray( members ) && !_.isObject( members ) ) {
+			members = [ members ];
 		}
 
-		var newObject = {};
-		obj.map( function( o ) {
-			newObject[ fieldName ] = _.extend( {}, {
-				_id: o._id,
-				role: role,
-				name: o.profile ? o.profile.name : o.name
-					//profile:obj.getProfile?obj.getProfile():obj
+		// note - this will not always be the memberId
+		//  in older implementations it may be an array index
+		//  a future refactor will make members a map instead
+		for ( memberId in members ) {
+			let member = members[ memberId ];
+			collection.update( group._id, {
+				$push: {
+					[ fieldName ]: {
+						_id: member._id,
+						role: role,
+						name: member.profile ? member.profile.name : member.name
+					}
+				}
 			} );
-			collection.update( item._id, {
-				$push: newObject
-			} );
-		} )
+		}
 	}
 }
 
@@ -177,8 +180,8 @@ function addMember( collection, fieldName ) {
 			/** Added update is changed to save**/
 			collection.collection.update( item._id, {
 				$push: newObject
-			});
-		})
+			} );
+		} )
 		return newObject;
 	}
 }

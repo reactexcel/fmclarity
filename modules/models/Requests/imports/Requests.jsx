@@ -55,13 +55,16 @@ const Requests = new Model( {
 } )
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
+
 Requests.collection.allow( {
 	update: function() {
-		return true },
+		return true 
+	},
 	remove: function() {
-		return true },
-
+		return true 
+	},
 } );
+
 // ******************************************
 
 
@@ -99,7 +102,6 @@ Requests.methods( {
 	updateSupplierManagers: {
 		authentication: true,
 		helper: function( request ) {
-			console.log( request );
 			let roles = Roles.getRoles( request ),
 				supplierManagers = roles.roles['supplier manager'];
 

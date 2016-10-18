@@ -7,11 +7,11 @@ Meteor.methods( {
 			notification = Notifications.findOne( insertedId ),
 			action = Actions.actions[ item.action.name ];
 		if ( item.emailSent ) {
-			Meteor.call( 'Messages.sendEmail', item.recipient, action.getEmail( notification ) )
+			//Meteor.call( 'Messages.sendEmail', item.recipient, action.getEmail( notification ) )
 		}
 	},
 
-	'Notifications.sendAll': function( notificationRules, user, action, args, result ) {
+	'Notifications.sendAll': function( notificationRules, actor, action, args, result ) {
 		if ( Meteor.isServer ) {
 			Meteor.defer( () => {
 				for ( recipientId in notificationRules.alert ) {
@@ -20,8 +20,8 @@ Meteor.methods( {
 						wasShown = false,
 						emailSent = notificationRules.email[ recipientId ] != null;
 
-					// if the current user performed the action then pre-mark the notification as read
-					if ( user._id == recipient._id ) {
+					// if the current actor performed the action then pre-mark the notification as read
+					if ( actor._id == recipient._id ) {
 						//read = true;
 						//wasShown = true;
 					}
@@ -34,7 +34,7 @@ Meteor.methods( {
 						result,
 						recipient,
 						object: args,
-						actor: user,
+						actor,
 					} );
 				}
 

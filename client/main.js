@@ -84,7 +84,7 @@ Actions.addAccessRule( {
 	action: [
 		'create request',
 	],
-	role: [ 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	role: [ 'staff' ],
 	rule: { alert: true }
 } )
 
@@ -107,7 +107,7 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: { status: 'New' },
+	condition: ( item ) => { return item.status == 'Draft' || item.status == 'New' },
 	action: [
 		'issue request',
 		'reject request',

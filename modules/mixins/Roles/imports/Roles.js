@@ -143,7 +143,7 @@ Roles = new class {
 			results.actors[ member._id ] = [];
 		}
 		if ( !results.roles[ role ] ) {
-			results.roles[ role ] = [];
+			results.roles[ role ] = {};
 		}
 
 		results.actors[ member._id ].push( role );

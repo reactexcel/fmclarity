@@ -19,7 +19,7 @@ function UserProfileMenu( props ) {
 	 * @param 		{Document} team
 	 */
 	function selectTeam( user, team ) {
-		console.log( user );
+		//console.log( user );
 		user.selectTeam( team );
 	}
 
