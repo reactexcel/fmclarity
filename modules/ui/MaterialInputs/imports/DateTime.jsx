@@ -22,7 +22,14 @@ const DateTime = React.createClass( {
 		}
 	},
 
-
+	componentWillReceiveProps( props ){
+		var valueString = props.value ? moment( props.value ).format( "D-MMM-YY HH:mm" ) : "";
+		var dateValue = props.value ? new Date( props.value ) : null;
+		this.setState({
+			value: valueString,
+			dateValue: dateValue,
+		});
+	},
 	handleDateChange( event, date ) {
 		this.refs.timepicker.openDialog(); //this could be used to override material-ui's stupid text boxes!!
 		this.setState( {
@@ -61,8 +68,8 @@ const DateTime = React.createClass( {
 		return (
 			<div>
 				<Text
-					placeholder = { this.props.placeholder } 
-					value 		= { this.state.value } 
+					placeholder = { this.props.placeholder }
+					value 		= { this.state.value }
 					onSelect 	= { this.handleSelect }
 					onClear 	= { this.handleClear }
 					errors 		= { this.props.errors }
@@ -71,24 +78,24 @@ const DateTime = React.createClass( {
 				{/* The Material-ui date pickers don't match our styling so we hide them */}
 				<div style={{display:"none"}}>
 
-					<DatePicker 
-						id					= { "date-input" } 
+					<DatePicker
+						id					= { "date-input" }
 						ref 				= "datepicker"
 						className 			= { "date-input" }
 						floatingLabelText	= { this.props.placeholder }
 						style 				= { {fontSize:"13px"} }
-						mode 				= "landscape" 
+						mode 				= "landscape"
 						onChange 			= { this.handleDateChange }
 						formatDate 			= { ( date ) => { return moment(date).format("D-MMM-YY HH:mm") } }
 					/>
 
-					<TimePicker 
-						id 					= { "time-input" } 
+					<TimePicker
+						id 					= { "time-input" }
 						ref 				= "timepicker"
 						className 			= { "time-input" }
 						floatingLabelText 	= { this.props.placeholder }
 						style 				= { {fontSize:"13px"} }
-						mode 				= "landscape" 
+						mode 				= "landscape"
 						onChange 			= { this.handleTimeChange }
 						//defaultDate={this.state.dateValue}
 						/*formatDate={function(date){

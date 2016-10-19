@@ -84,13 +84,24 @@ const RequestSchema = {
 		},
 		input: Select,
 		size: 6,
-		options: {
-			items: [
-				"Standard",
-				"Scheduled",
-				"Urgent",
-				"Critical"
-			]
+		options: ( item ) => {
+			return ({
+				items: [
+					"Standard",
+					"Scheduled",
+					"Urgent",
+					"Critical"
+				],
+				afterChange: ( item ) => {
+					let timeframe, dueDate;
+					if ( item.team && item.priority ){
+						timeframe = getTimeframe( item.team._id, item.priority );
+						timeframe *= 1000;
+						dueDate = ( ( ( new Date() ).getTime() ) + timeframe );
+					  item.dueDate = new Date( dueDate );
+					}
+				}
+			})
 		}
 	},
 
@@ -556,10 +567,11 @@ function getMembersDefaultValue( item ) {
 	return members;
 }
 
-function getTimeframe() {
-	let team = this.getTeam();
+function getTimeframe( _id, priority ) {
+	//let team = this.getTeam();
+	let team = Teams.findOne( { _id: _id } );
 	if ( team ) {
-		return team.getTimeframe( this.priority );
+		return team.getTimeframe( priority );
 	}
 }
 
