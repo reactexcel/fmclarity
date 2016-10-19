@@ -51,31 +51,42 @@ const RequestPanelInner = ( { request } ) => {
                         <ContactDetails item = { request.owner }/>
                     </div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
-                        <h2>Work Order No { request.code }</h2>
 
-                        { request.service ?
-                        <b style={{display:"block",marginBottom:"7px"}}>{ request.getServiceString() }<br/></b>
-                        :null }
+                            { request.type == 'Booking' && request.code ?
 
-                        <b>Created</b> <span>{ formatDate( request.createdDate ) }<br/></span>
+                                <h2>Room Booking No {request.code}</h2>
 
-                        { request.issuedDate ?
-                        <span><b>Isssued</b> <span>{ formatDate( request.issuedDate ) }</span><br/></span>
-                        :null }
+                            : request.type == 'Booking' && !request.code ?
 
-                        { request.dueDate
-                        ? <span><b>Due</b> <span>{ formatDate( request.dueDate ) }</span><br/></span>
-                        :null }
+                                <h2>Booking</h2>
 
-                        { request.priority ?
-                        <span><b>Priority</b> <span>{ request.priority }</span><br/></span>
-                        :null }
+                            : !request.code ?
 
-                        <span
-                            style={{display:"inline-block",fontSize:"16px",marginTop:"20px"}}
-                            className={"label label-"+request.status}>
-                            { request.status }
-                        </span>
+                                <h2>Work Order</h2>
+
+                            :
+
+                                <h2>Work Order No {request.code}</h2>
+
+                            }
+
+                            { request.service && request.type!= 'Booking' ? 
+                            <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
+                            : null }
+
+                            <b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>
+
+                            { request.issuedAt ? 
+                            <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
+                            : null }
+
+                            { request.dueDate ? 
+                            <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            : null }
+
+                            { request.priority ? 
+                            <span><b>Priority</b> <span>{request.priority}</span><br/></span>
+                            : null }
 
                     </div>
                 </div>
@@ -93,26 +104,40 @@ const RequestPanelInner = ( { request } ) => {
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
-                { request.location?
+                { request.location ?
                 <tr>
                     <th>Location</th>
-                    <td>{ request.getLocationString() }</td>
+                    <td>{request.getLocationString()}</td>
                 </tr>
-                :null }
+                : null
+                }
 
-                { request.supplier ?
+                { request.supplier && request.type!= 'Booking' ?
                 <tr>
                     <th>Supplier</th>
-                    <td>{ request.supplier.name }</td>
+                    <td>{request.supplier.name}</td>
                 </tr>
-                :null }
+                : null }
 
-                { request.description ?
+                { request.type == 'Ad-hoc' && request.costThreshold ? 
+                <tr>
+                    <th>Value</th>
+                    <td>${request.costThreshold}</td>
+                </tr>
+                : null }
+
+                { request.type == 'Booking' && request.duration ? 
+                <tr>
+                    <th>Duration</th>
+                    <td>{request.duration}</td>
+                </tr>
+                : null }
+
+                {request.description?                 
                 <tr>
                     <th>Description</th>
-                    <td>{ request.description }</td>
-                </tr>
-                :null}
+                    <td>{request.description}</td>
+                </tr>:null}
 
                 </tbody>
             </table>
@@ -129,11 +154,6 @@ const RequestPanelInner = ( { request } ) => {
                     content:    <ContactList group = { request } readOnly = { true }/>
                 }
             ]} />
-
-            <Menu items = { [
-                RequestActions.edit.bind( request )
-            ] } />
-
 
         </div>
     )

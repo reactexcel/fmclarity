@@ -54,14 +54,24 @@ const Requests = new Model( {
 	]
 } )
 
+Requests.save.before( ( request ) => {
+	if ( request.type == "Preventative" ) {
+		status = "PMP";
+		request.priority = "PMP";
+	} else if ( request.type == "Booking" ) {
+		status = "Booking";
+		request.priority = "Booking";
+	}
+} );
+
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
 
 Requests.collection.allow( {
 	update: function() {
-		return true 
+		return true
 	},
 	remove: function() {
-		return true 
+		return true
 	},
 } );
 
@@ -103,7 +113,7 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			let roles = Roles.getRoles( request ),
-				supplierManagers = roles.roles['supplier manager'];
+				supplierManagers = roles.roles[ 'supplier manager' ];
 
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
@@ -121,7 +131,7 @@ Requests.methods( {
 			if ( request.level ) {
 				str += request.level.name;
 			}
-			if ( request.area ) {
+			if ( request.area && request.area.name ) {
 				str += ( ' - ' + request.area.name );
 				if ( request.area.identifier && request.area.identifier.name ) {
 					str += ( ', ' + request.area.identifier.name );

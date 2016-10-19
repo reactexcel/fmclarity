@@ -1,18 +1,25 @@
 export default CreateRequestForm = [
-	'type', 
-	'team', 
-	'status', 
-	'name', 
-	'facility', 
-	'level', 
-	'area', 
-	'identifier', 
-	'service', 
-	'subservice', 
-	'supplier', 
-	'priority', 
-	'dueDate', 
-	'frequency', 
-	'costThreshold', 
+	'team',
+
+	'type',
+	'name',
+
+	'facility',
+	/* location */
+	'level',
+	'area',
+	'identifier',
+
+	'service',
+	'subservice',
+	'supplier',
+
+	'priority',
+	'dueDate',
+
+	'frequency',
+	'duration',
+
+	'costThreshold',
 	'description'
 ];

@@ -32,7 +32,9 @@ class Calendar extends React.Component {
             "Standard": "#0152b5",
             "Urgent": "#f5a623",
             "Critical": "#d0021b",
-            "Closed": "#000000"
+            "Closed": "#000000",
+            "Booking":"#ef6c00",
+            "PMP":"#333333",
         };
 
         var events = this.events.events;

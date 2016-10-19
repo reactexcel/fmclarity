@@ -63,13 +63,14 @@ const RequestSchema = {
 		options: {
 			items: [
 				"Ad-hoc",
-				"Base Building",
-				"Contract",
-				"Defect",
-				"Internal",
+				"Booking",
+				//"Internal",
 				"Preventative",
-				"Template",
-				"Warranty",
+				//"Base Building",
+				//"Contract",
+				//"Defect",
+				//"Template",
+				//"Warranty",
 			]
 		}
 	},
@@ -79,13 +80,13 @@ const RequestSchema = {
 		description: "The urgency of the requested work",
 		type: "string",
 		defaultValue: "Standard",
-		condition: ( item ) => {
-			return item.type != "Preventative"
+		condition: ( request ) => {
+			return request.type != "Preventative" && request.type != 'Booking'
 		},
 		input: Select,
 		size: 6,
 		options: ( item ) => {
-			return ({
+			return ( {
 				items: [
 					"Standard",
 					"Scheduled",
@@ -94,14 +95,14 @@ const RequestSchema = {
 				],
 				afterChange: ( item ) => {
 					let timeframe, dueDate;
-					if ( item.team && item.priority ){
+					if ( item.team && item.priority ) {
 						timeframe = getTimeframe( item.team._id, item.priority );
 						timeframe *= 1000;
 						dueDate = ( ( ( new Date() ).getTime() ) + timeframe );
-					  item.dueDate = new Date( dueDate );
+						item.dueDate = new Date( dueDate );
 					}
 				}
-			})
+			} )
 		}
 	},
 
@@ -111,6 +112,14 @@ const RequestSchema = {
 		condition: "Preventative",
 		subschema: RequestFrequencySchema,
 		optional: true,
+	},
+
+	duration: {
+		label: "Duration",
+		type: "string",
+		input: Text,
+		size: 6,
+		condition: "Booking"
 	},
 
 	status: {
@@ -186,6 +195,9 @@ const RequestSchema = {
 		size: 6,
 		type: "object",
 		input: Select,
+		condition: ( request ) => {
+			return request.type!='Booking'
+		},
 		options: ( item ) => {
 			return {
 				items: item.facility ? item.facility.servicesRequired : null,
@@ -193,17 +205,17 @@ const RequestSchema = {
 					if ( item == null ) {
 						return;
 					}
-					if ( item.service.data ){
+					if ( item.service.data ) {
 						let supplier = item.service.data.supplier;
 						let defaultSupplier;
-						if(supplier){
-							if ( supplier._id ){
+						if ( supplier ) {
+							if ( supplier._id ) {
 								defaultSupplier = Teams.findOne( item.service.data.supplier._id );
-								if ( !defaultSupplier && supplier.name ){
-									defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name });
+								if ( !defaultSupplier && supplier.name ) {
+									defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
 								}
-							} else if ( supplier.name ){
-								defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name });
+							} else if ( supplier.name ) {
+								defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
 							}
 							item.supplier = defaultSupplier;
 						} else {
@@ -222,6 +234,9 @@ const RequestSchema = {
 		size: 6,
 		type: "object",
 		input: Select,
+		condition: ( request ) => {
+			return request.type!='Booking'
+		},
 		optional: true,
 		options: ( item ) => {
 			return {
@@ -230,17 +245,17 @@ const RequestSchema = {
 					if ( item == null ) {
 						return;
 					}
-					if ( item.subservice.data ){
+					if ( item.subservice.data ) {
 						let supplier = item.subservice.data.supplier;
 						let defaultSupplier;
-						if(supplier){
-							if ( supplier._id ){
+						if ( supplier ) {
+							if ( supplier._id ) {
 								defaultSupplier = Teams.findOne( item.subservice.data.supplier._id );
-								if ( !defaultSupplier && supplier.name ){
-									defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name });
+								if ( !defaultSupplier && supplier.name ) {
+									defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
 								}
-							} else if ( supplier.name ){
-								defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name });
+							} else if ( supplier.name ) {
+								defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
 							}
 							item.supplier = defaultSupplier;
 						} else {
@@ -359,7 +374,7 @@ const RequestSchema = {
 
 	dueDate: {
 		type: "date",
-		label: "Due Date",
+		label: "Due/Start Date",
 		description: "Latest date that the work can be completed",
 		input: DateTime,
 		size: 6,
@@ -450,10 +465,12 @@ const RequestSchema = {
 		label: "Supplier",
 		description: "The supplier who has been assigned to this job",
 		type: "object",
-		optional: true,
 		relation: {
 			type: ORM.HasOne,
 			source: Teams,
+		},
+		condition: ( request ) => {
+			return request.type!='Booking'
 		},
 		input: Select,
 		options: ( item ) => {

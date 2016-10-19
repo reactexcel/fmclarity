@@ -31,7 +31,7 @@ let validators = {
 function validate( doc, schema, errors ) {
 
 	//console.log( doc );
-	if( !doc ) {
+	if ( !doc ) {
 		return;
 	}
 
@@ -53,22 +53,33 @@ function validate( doc, schema, errors ) {
 			value = doc[ key ];
 
 		if ( rule != null ) {
-			if ( rule.subschema != null ) {
-				validate( doc[ key ], rule.subschema, errors );
-			} else {
-				let validationFunction = validators[ rule.type ];
-				if ( validationFunction == null ) {
-					validationFunction = checkUnknown;
-					console.log( `No validator defined for (${rule.type}) ${key}` );
-				}
-				if ( checkExistence( rule, value, key, errors ) ) {
-					validationFunction( rule, value, key, errors );
+			if ( !rule.condition || checkCondition( rule.condition, doc ) ) {
+				if ( rule.subschema != null ) {
+					validate( doc[ key ], rule.subschema, errors );
+				} else {
+					let validationFunction = validators[ rule.type ];
+					if ( validationFunction == null ) {
+						validationFunction = checkUnknown;
+						console.log( `No validator defined for (${rule.type}) ${key}` );
+					}
+					if ( checkExistence( rule, value, key, errors ) ) {
+						validationFunction( rule, value, key, errors );
+					}
 				}
 			}
 		}
 	} );
 	return errors;
 }
+
+function checkCondition( condition, item ) {
+	return (
+		( _.isString( condition ) && item.type == condition ) ||
+		( _.isArray( condition ) && _.contains( condition, item.type ) ) ||
+		( _.isFunction( condition ) && condition( item ) )
+	)
+}
+
 
 function checkExistence( rule, value, key, errors ) {
 	if ( !rule.optional && ( value == null || value == undefined ) ) {
@@ -100,7 +111,7 @@ function checkString( rule, value, key, errors ) {
 }
 
 function checkNumber( rule, value, key, errors ) {
-	value = parseInt(value);
+	value = parseInt( value );
 	if ( !_.isNumber( value ) || isNaN( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a number" } );
 	}
