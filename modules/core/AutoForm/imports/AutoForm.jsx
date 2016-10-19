@@ -130,7 +130,7 @@ class AutoForm extends React.Component {
 					<div key = { key } className = { `col-sm-${size}` }>
 
 						<AutoForm
-						
+
 							model 		= {this.props.model}
 							form		= { subschema }
 							item		= { item[ key ] }

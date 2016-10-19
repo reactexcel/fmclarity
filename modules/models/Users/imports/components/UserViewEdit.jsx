@@ -116,7 +116,11 @@ export default UserViewEdit = React.createClass( {
 			team.removeMember( user );
 		}
 	},
-
+  handelSubmit( newMember ){
+    if ( this.props.addPersonnel ){
+      this.props.addPersonnel( newMember );
+    }
+  },
 	render() {
 		var user, profile, team;
 		var viewer = Meteor.user();
@@ -152,11 +156,31 @@ export default UserViewEdit = React.createClass( {
 		    		:null}
 
 				    <div className="col-sm-7">
-			        	<AutoForm item = { user } model = { Users } form = {['profile']} />
+			        	<AutoForm item = { user }
+                  model = { Users }
+                  form = {['profile']}
+                  hideSubmit = {true}
+                  onSubmit = { this.handelSubmit }
+                  ref={"form"}
+                />
 			        </div>
 			   		<div className="col-sm-5">
 				        <ThumbView item = { user.thumb } onChange = { this.setThumb } />
 				    </div>
+			   		    <div className="col-sm-2 col-sm-offset-10">
+                  <button
+                    type="button"
+                    className="btn btn-flat btn-primary"
+                    onClick={ ( ) => {
+                      let done = this.refs.form.submitFormOnStepperNext();
+                        done ( ( ) => {
+                          Modal.hide();
+                        } )
+                    } }
+                  >
+                  Done
+                </button>
+				        </div>
 		        </div>
 			</div>
 		)

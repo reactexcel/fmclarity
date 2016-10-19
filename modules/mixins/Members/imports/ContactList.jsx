@@ -12,7 +12,7 @@ export default ContactList = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		let team = this.props.team,
+		let team = this.state.team,
 			role = this.props.defaultRole,
 			group = this.props.group,
 			members = this.props.members,
@@ -37,7 +37,11 @@ export default ContactList = React.createClass( {
 			role: role,
 		}
 	},
-
+	getInitialState(){
+		return {
+			team: this.props.team,
+		};
+	},
 	// Display a pop up modal for the selected user
 	showModal( selectedUser ) {
 		//switch based on "type" sent into component
@@ -60,7 +64,28 @@ export default ContactList = React.createClass( {
 			} )
 		}
 	},
-
+	setItem( newItem ){
+		let team = this.data.team;
+		team.members.push( {
+			_id : newItem._id,
+			name: newItem.profile.name,
+			role: newItem.role || "staff",
+		});
+		team.members = team.members.sort( function( a ,b ){
+			if( a.name && b.name ){
+				return a.name.localeCompare( b.name );
+			}else {
+				return 0;
+			}
+		});
+		this.setState( {
+			team : team
+		} );
+	},
+	addPersonnel( newMember ){
+		this.data.team.addPersonnel( newMember );
+		this.setItem( newMember )
+	},
 	render() {
 		var members = _.uniq( this.data.members, false, ( i ) => {
 			return i._id;
@@ -98,7 +123,7 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div
 			    	className	= "contact-list-item"
-			        onClick		= { () => { TeamActions.createMember.run( team ) } }
+			        onClick		= { () => { TeamActions.createMember.run( team, null, this.addPersonnel ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 

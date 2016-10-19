@@ -60,7 +60,7 @@ const TeamPanel = React.createClass( {
 		Meteor.subscribe( 'contractors' );
 		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
 		team = this.props.item;
-		//console.log( team );
+
 		if ( team ) {
 			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract( { days: 7 } ).toDate() );
 			services = team.getAvailableServices();
@@ -152,8 +152,8 @@ const TeamPanel = React.createClass( {
 					tab: 		<span id="services-tab"><span style={{color:"black"}}>Services</span></span>,
 					content: 	<ServicesProvidedEditor item = { team } save = { team.setServicesProvided.bind(team) }/>
 				}
-			]}/> 
-			
+			]}/>
+
 			<Menu items = { this.getMenu() } />
 
 		</div>

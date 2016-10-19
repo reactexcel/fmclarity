@@ -70,7 +70,7 @@ const createFacility = new Action( {
 		//newItem.setupCompliance( Config.compliance );
 
 		item = Facilities.collection._transform( item );
-		
+
 		Modal.show( {
 			content: <FacilityStepper item = { item } />
 		} )
@@ -166,9 +166,9 @@ const createMember = new Action( {
 	name: 'create team member',
 	label: "Create member",
 	type: [ 'team', 'user' ],
-	action: ( team, member ) => {
+	action: ( team, member, addPersonnel ) => {
 		Modal.show( {
-			content: <UserViewEdit/>
+			content: <UserViewEdit addPersonnel = { addPersonnel }/>
 		} )
 	}
 } )

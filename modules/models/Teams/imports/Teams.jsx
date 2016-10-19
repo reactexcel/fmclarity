@@ -175,6 +175,20 @@ Teams.methods( {
 			} );
 		}
 	},
+	addPersonnel: {
+		authentication: true,
+		method: ( team, newMember ) => {
+			Teams.update( { _id : team._id }, {
+					$push: {
+						members: {
+							_id : newMember._id,
+							name: newMember.profile.name,
+							role: newMember.role || "staff",
+						}
+					}
+			} )
+		},
+	},
 } );
 
 function getSuppliers() {
