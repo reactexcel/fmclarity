@@ -142,7 +142,7 @@ const TeamPanel = React.createClass( {
 				},{
 					//hide: 		!team.canAddDocument(),
 					tab: 		<span id = "documents-tab"><span style = {{color:"black"}}>Documents</span></span>,
-					content: 	<AutoForm model = { Teams } item = { team } form = { ["documents"] }/>
+					content: 	<AutoForm model = { Teams } item = { team } form = { ["documents"] } hideSubmit = { true } />
 				},{
 					//hide: 		!team.canAddMember(),
 					tab: 		<span id="personnel-tab"><span style={{color:"black"}}>Personnel</span></span>,

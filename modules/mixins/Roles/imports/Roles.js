@@ -77,7 +77,19 @@ Roles = new class {
 		let { owner, team, supplier, facility, facilities, members, assignee } = item;
 
 		if ( owner != null ) {
-			this.addRole( results, owner, 'owner' );
+			// if the owning type is a team then all members are owners
+			if( owner.type == 'team' ) {
+				let ownerTeam = Teams.findOne( owner._id );
+				if ( ownerTeam && ownerTeam.members && ownerTeam.members.length ) {
+					ownerTeam.members.map( ( member ) => {
+						this.addRole( results, member, "owner" );
+					} )
+				}
+			}
+			// otherwise - just the owner
+			else {
+				this.addRole( results, owner, 'owner' );
+			}
 		}
 
 		if ( assignee != null ) {

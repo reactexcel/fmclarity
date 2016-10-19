@@ -53,6 +53,7 @@ function validate( doc, schema, errors ) {
 			value = doc[ key ];
 
 		if ( rule != null ) {
+			// do not validate schema items that do not meet the condition for this document
 			if ( !rule.condition || checkCondition( rule.condition, doc ) ) {
 				if ( rule.subschema != null ) {
 					validate( doc[ key ], rule.subschema, errors );
