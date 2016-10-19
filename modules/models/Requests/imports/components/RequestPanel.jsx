@@ -123,7 +123,7 @@ const RequestPanelInner = ( { request } ) => {
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>{ request.attachmentCount?<span>({ request.attachmentCount })</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['documents'] }/>
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['documents'] } hideSubmit = { true } />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     content:    <ContactList group = { request } readOnly = { true }/>
