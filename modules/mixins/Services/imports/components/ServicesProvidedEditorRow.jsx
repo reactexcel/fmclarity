@@ -41,8 +41,8 @@ function ServicesProvidedEditorRow( props ) {
 
 				{ clickExpand ?
 
-					<span 
-						onClick 	= { clickExpand } 
+					<span
+						onClick 	= { clickExpand }
 						className 	= "services-editor-expand-icon"
 					>
 						<i className="fa fmc-fa-icon-expand"></i>
@@ -53,12 +53,12 @@ function ServicesProvidedEditorRow( props ) {
 				<input
 					defaultValue 	= { service.name || undefined }
 					readOnly 		= { readOnly }
-					onChange 		= { this.updateServiceName }
+					onChange 		= { updateServiceName }
 				/>
 
 				{ !readOnly ?
 
-					<span 
+					<span
 						className 	= "services-editor-delete-icon"
 						onClick 	= { () => { onChange(null) } }
 					>
@@ -69,13 +69,13 @@ function ServicesProvidedEditorRow( props ) {
 
 			</div>
 
-			<div 
-				className 			= "services-editor-col services-editor-col-supplier" 
+			<div
+				className 			= "services-editor-col services-editor-col-supplier"
 				style 				= { { padding:"10px" } }
 			>
-				<Switch 
+				<Switch
 					value 			= { service.active }
-					onChange 		= { this.toggleActive }
+					onChange 		= { toggleActive }
 				>
 
 					<b>Active</b>

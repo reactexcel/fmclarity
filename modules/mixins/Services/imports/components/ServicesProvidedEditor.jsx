@@ -14,10 +14,24 @@ class ServicesProvidedEditor extends React.Component {
 	constructor( props ) {
 		super( props );
 		let { item, field = "services" } = props;
+		let services = [];
+		//Convert services from object to Array.
+		if ( item && field ){
+			services = item[ field ] || [] ;
+			if ( !_.isArray( services ) ){
+				let keys = Object.keys( services );
+				let newServicesArray = [];
+				_.forEach( keys, ( key ) => {
+					newServicesArray [ key ] = services [ key ];
+				})
+				services = newServicesArray;
+			}
+		}
+
 		this.state = {
 			item,
 			field,
-			services: item && field ? item[ field ] : [],
+			services: services,
 			expanded: {}
 		}
 	}
@@ -175,7 +189,7 @@ class ServicesProvidedEditor extends React.Component {
 					)
 				}):null}
 				{!readOnly?
-				    <div onClick={this.addService} className="services-editor-row" style={{fontStyle:"italic"}}>
+				    <div onClick={this.addService.bind(this)} className="services-editor-row" style={{fontStyle:"italic"}}>
 						<span style={{position:"absolute",left:"15px",top:"15px"}}><i className="fa fa-plus"></i></span>
 					    <span style={{position:"absolute",left:"48px",top:"15px"}} className="active-link">Add service</span>
 					</div>
