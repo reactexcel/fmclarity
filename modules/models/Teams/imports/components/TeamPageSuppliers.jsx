@@ -32,24 +32,31 @@ class TeamPageSuppliers extends React.Component {
 
     render() {
         let { team, facility, facilities, suppliers } = this.props;
-        if( !team ) { 
+        if( !team ) {
             return <div/>
         }
         return (
             <div className = "suppliers-page animated fadeIn">
 
-                <FacilityFilter 
-                    items           = { facilities } 
-                    selectedItem    = { facility } 
+                <FacilityFilter
+                    items           = { facilities }
+                    selectedItem    = { facility }
+                    onChange = {
+                      () => {
+                        this.setState( {
+                            supplier: null
+                        } )
+                      }
+                    }
                 />
 
                 <div className = "row" style = { { paddingTop:"50px" } }>
 
                     <div className="col-md-4">
 
-                        <NavList 
+                        <NavList
                             tile            = { ContactCard }
-                            items           = { suppliers } 
+                            items           = { suppliers }
                             selectedItem    = { this.state.supplier }
                             onClick         = { (supplier) => {
                                                 this.setState( {
@@ -59,7 +66,7 @@ class TeamPageSuppliers extends React.Component {
                         />
 
                     </div>
-                    <div className="col-md-8"> 
+                    <div className="col-md-8">
                         <div className="card-body ibox">
 
                             { this.state.supplier ?
