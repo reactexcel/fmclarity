@@ -224,7 +224,7 @@ class AutoForm extends React.Component {
 					</button>
 				</div>
 
-				: this.props.submitFormOnStepperNext ? 
+				: this.props.submitFormOnStepperNext ?
 
 				this.props.onNext( this.submitFormOnStepperNext() )
 

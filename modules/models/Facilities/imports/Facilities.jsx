@@ -115,7 +115,7 @@ Facilities.actions( {
 			return services;
 		}
 	},
-	
+
 	setServicesRequired: {
 		authentication: true,
 		method: function( facility, servicesRequired ) {
@@ -253,7 +253,24 @@ Facilities.actions( {
 				Facilities.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
 			}
 		}
-	}
+	},
+	/**
+	*	Add personnel to facility
+	**/
+	addPersonnel: {
+		authentication: true,
+		method: ( facility, newMember ) => {
+			Facilities.update( { _id : facility._id }, {
+					$push: {
+						members: {
+							_id : newMember._id,
+							name: newMember.profile.name,
+							role: newMember.role || "staff",
+						}
+					}
+			} )
+		}
+	},
 } )
 
 export default Facilities;

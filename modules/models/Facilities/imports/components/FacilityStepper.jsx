@@ -51,7 +51,7 @@ export default function FacilityStepper( { item } ) {
                 : null }
 
                 <Stepper
-                
+
                     submitForm = { ( callback ) => {
                         if( submitFormCallback ){
                             submitFormCallback( callback );

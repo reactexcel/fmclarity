@@ -146,10 +146,10 @@ export default UserViewEdit = React.createClass( {
 
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
 
-                        <button 
-                        	type 	= "submit" 
-                        	style 	= {{width:0,opacity:0}} 
-                        	onClick = { this.handleInvite } 
+                        <button
+                        	type 	= "submit"
+                        	style 	= {{width:0,opacity:0}}
+                        	onClick = { this.handleInvite }
                         >
                         	Invite
                         </button>

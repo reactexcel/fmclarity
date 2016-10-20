@@ -12,9 +12,9 @@ export default ContactList = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		let team = this.state.team,
+		let team = this.props.team,
 			role = this.props.defaultRole,
-			group = this.props.group,
+			group = this.state.group,
 			members = this.props.members,
 			filter = this.props.filter;
 
@@ -39,7 +39,7 @@ export default ContactList = React.createClass( {
 	},
 	getInitialState(){
 		return {
-			team: this.props.team,
+			group: this.props.group,
 		};
 	},
 	// Display a pop up modal for the selected user
@@ -65,13 +65,13 @@ export default ContactList = React.createClass( {
 		}
 	},
 	setItem( newItem ){
-		let team = this.data.team;
-		team.members.push( {
+		let group = this.data.group;
+		group.members.push( {
 			_id : newItem._id,
 			name: newItem.profile.name,
 			role: newItem.role || "staff",
 		});
-		team.members = team.members.sort( function( a ,b ){
+		group.members = group.members.sort( function( a ,b ){
 			if( a.name && b.name ){
 				return a.name.localeCompare( b.name );
 			}else {
@@ -79,11 +79,11 @@ export default ContactList = React.createClass( {
 			}
 		});
 		this.setState( {
-			team : team
+			group : group
 		} );
 	},
 	addPersonnel( newMember ){
-		this.data.team.addPersonnel( newMember );
+		this.data.group.addPersonnel( newMember );
 		this.setItem( newMember )
 	},
 	render() {
