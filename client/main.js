@@ -129,9 +129,21 @@ Actions.addAccessRule( {
 	condition: { status: 'Issued' },
 	action: [
 		'accept request',
+		//'reject request',
+	],
+	//role: [ 'supplier manager', 'assignee' ],
+	role: [ 'supplier manager' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	condition: { status: 'Issued' },
+	action: [
+		'accept request',
 		'reject request',
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	//role: [ 'supplier manager', 'assignee' ],
+	role: [ 'assignee' ],
 	rule: { alert: true }
 } )
 
