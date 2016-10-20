@@ -51,12 +51,18 @@ export default function FacilityStepper( { item } ) {
                 : null }
 
                 <Stepper
-                
+
                     submitForm = { ( callback ) => {
                         if( submitFormCallback ){
                             submitFormCallback( callback );
                         }
                     } }
+
+                    onFinish = { () => {
+                      //Select the new created facility.
+                        Session.selectFacility( facility );
+                      }
+                    }
 
                    tabs={[
                 	{
