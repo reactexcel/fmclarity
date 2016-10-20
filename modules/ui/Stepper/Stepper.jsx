@@ -73,8 +73,14 @@ export default Stepper = React.createClass( {
                                         <div>
                                             {i.content}
                                             <div>
-                                                <button onClick={selectNext} type="button" className="btn btn-primary">
+                                                <button 
+                                                    onClick     = { selectNext } 
+                                                    type        = "button" 
+                                                    className   ="btn btn-primary"
+                                                >
+
                                                     <span>{idx<(tabs.length-1)?"Next":"Finish"}</span>
+                                                    
                                                 </button>
                                             </div>
                                         </div>

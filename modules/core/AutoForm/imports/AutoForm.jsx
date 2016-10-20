@@ -35,8 +35,6 @@ class AutoForm extends React.Component {
 			errors: this.form.errors || {}
 		}
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
-		this.getNewItem = this.getNewItem.bind( this );
-		this.getErrorList = this.getErrorList.bind( this );
 	}
 
 	/**
@@ -60,29 +58,34 @@ class AutoForm extends React.Component {
 		this.setState( newState );
 	}
 
-	getNewItem(){
-		return this.state.item;
-	}
+	/**
+	 * Returns a callback that submits the form
+	 */
+	submitFormOnStepperNext() {
 
-	getErrorList(){
-		return this.state.errors;
-	}
+		let { item, errors } = this.state;
 
-	submitFormOnStepperNext( ){
-		let form = this.form,
-		 	onSubmit = this.props.onSubmit,
-			onNext = this.props.onNext,
-			errors = this.getErrorList,
-			item = this.getNewItem;
-
-		return function( callback ){
-			form.save( item(), ( newItem ) => {
-				if ( onSubmit ) {
-					onSubmit( newItem )
+		return ( callback ) => {
+			this.form.save( item, ( newItem ) => {
+				if ( this.props.onSubmit ) {
+					this.props.onSubmit( newItem )
 				}
-				callback( errors() );
+				callback( errors );
 			} );
 		}
+
+	}
+
+	/**
+	 * Submits the autoform
+	 */
+	submit() {
+		let { item } = this.state;
+		this.form.save( item, ( newItem ) => {
+			if ( this.props.onSubmit ) {
+				this.props.onSubmit( newItem )
+			}
+		} );
 	}
 
 	/**
@@ -164,6 +167,13 @@ class AutoForm extends React.Component {
 					Input = input;
 				}
 
+				// undefined fields don't get sent to the server - which causes problems with isomorphic validation
+				//  to fix this we assign an empty string to all undefined fields before performing validation
+				//  ( refact: there may be a better location for this check )
+				if ( !item[ key ] ) {
+					item[ key ] = '';
+				}
+
 				if ( Input == null ) {
 					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
@@ -173,14 +183,17 @@ class AutoForm extends React.Component {
 
 					<div key = { key } className = { `col-sm-${size}` } >
 						<Input
+
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
-							item={this.props.item}
-							model={this.props.model}
+
+							item 		= { this.props.item }
+							model 		= { this.props.model }
+
 										  { ...options}
 						/>
 					</div>
@@ -199,25 +212,23 @@ class AutoForm extends React.Component {
 
 				{ this.getForm() }
 
-		        { ! this.props.hideSubmit ?
+		        { !this.props.hideSubmit ?
 
 				<div style={ {textAlign:"right", clear:"both"}}>
 					<button
-						type="button"
-						className="btn btn-flat btn-primary"
-						onClick={ ( ) => {
-							let { item } = this.state;
-							this.form.save( item, ( newItem ) => {
-								if ( this.props.onSubmit ) {
-									this.props.onSubmit( newItem )
-								}
-							} );
-						} }>
+						type 		= "button"
+						className 	= "btn btn-flat btn-primary"
+						onClick 	= { ( ) => { this.submit() } }
+					>
 						Submit
 					</button>
 				</div>
 
-				: ( this.props.submitFormOnStepperNext ? this.props.onNext( this.submitFormOnStepperNext() ): null) }
+				: this.props.submitFormOnStepperNext ? 
+
+				this.props.onNext( this.submitFormOnStepperNext() )
+
+				: null }
 
 			</div>
 		)

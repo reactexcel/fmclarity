@@ -56,9 +56,11 @@ export default UserViewEdit = React.createClass( {
 	},
 
 	save() {
-			Users.save.call( this.state.item );
+		Users.save.call( this.state.item );
 	},
 
+	// some of the invite code needs to be moved into an action
+	//  in /modules/models/Users/actions.jsx
 	handleInvite( event ) {
 		event.preventDefault();
 		var team, group, role, input, email, regex, component;
@@ -116,71 +118,99 @@ export default UserViewEdit = React.createClass( {
 			team.removeMember( user );
 		}
 	},
-  handelSubmit( newMember ){
-    if ( this.props.addPersonnel ){
-      this.props.addPersonnel( newMember );
-    }
-  },
+
+	afterSubmit( newMember ) {
+		Modal.hide();
+		if ( this.props.addPersonnel ) {
+			this.props.addPersonnel( newMember );
+		}
+	},
+
 	render() {
-		var user, profile, team;
-		var viewer = Meteor.user();
-		user = this.state.item;
-		team = this.data.team;
-		group = this.data.group;
+		let { user, team, group } 	= this.data,
+			views 					= Meteor.user(),
+			profile 				= null;
+
 		if ( user ) {
 			profile = user.profile;
 		}
+
+		// if the form has been called without a user then assume we want to create one and prompt for email address
 		if ( !user || !profile ) {
 			return (
 				<form style={{padding:"15px"}} className="form-inline">
+
                     <div className="form-group">
+
                         <b>Let's search to see if this user already has an account.</b>
+
                         <h2><input type="email" className="inline-form-control" ref="invitationEmail" placeholder="Email address"/></h2>
-                        <button type="submit" style={{width:0,opacity:0}} onClick={this.handleInvite}>Invite</button>
+
+                        <button 
+                        	type 	= "submit" 
+                        	style 	= {{width:0,opacity:0}} 
+                        	onClick = { this.handleInvite } 
+                        >
+                        	Invite
+                        </button>
+
                     </div>
+
                 </form>
 			)
 		}
+
+		// ...otherwise show the user
 		return (
-			<div className="user-profile-card">
-		    	<div className="row">
-		    		<div className="col-sm-12">
-                        {this.state.shouldShowMessage?<b>User not found, please enter the details to add to your contact.</b>:null}
-		           		<h2><span>{profile.name}</span></h2>
+			<div className = "user-profile-card">
+
+		    	<div className = "row">
+		    		<div className = "col-sm-12">
+
+                        { this.state.shouldShowMessage ?
+                        <b>User not found, please enter the details to add to your contact.</b>
+                        : null }
+
+		           		<h2><span>{ profile.name }</span></h2>
+
 				   	</div>
 
-		    		{team?
-		    			<div className="col-sm-12">
-		    				<UserViewRelationEdit member = { user } team = { team } group = { group }/>
-		    			</div>
-		    		:null}
+		    		{ team ?
+	    			<div className = "col-sm-12">
+	    				<UserViewRelationEdit member = { user } team = { team } group = { group }/>
+	    			</div>
+		    		: null }
 
-				    <div className="col-sm-7">
-			        	<AutoForm item = { user }
-                  model = { Users }
-                  form = {['profile']}
-                  hideSubmit = {true}
-                  onSubmit = { this.handelSubmit }
-                  ref={"form"}
-                />
+				    <div className = "col-sm-7">
+
+			        	<AutoForm item 	= { user }
+                  			model 		= { Users }
+                  			form 		= { ['profile'] }
+                  			hideSubmit 	= { true }
+                  			onSubmit 	= { this.afterSubmit }
+                  			ref 		= { 'form' }
+                		/>
+
 			        </div>
-			   		<div className="col-sm-5">
+
+			   		<div className = "col-sm-5">
 				        <ThumbView item = { user.thumb } onChange = { this.setThumb } />
 				    </div>
-			   		    <div className="col-sm-2 col-sm-offset-10">
-                  <button
-                    type="button"
-                    className="btn btn-flat btn-primary"
-                    onClick={ ( ) => {
-                      let done = this.refs.form.submitFormOnStepperNext();
-                        done ( ( ) => {
-                          Modal.hide();
-                        } )
-                    } }
-                  >
-                  Done
-                </button>
-				        </div>
+
+				</div>
+				<br/>
+				<div className = "row">
+			   		<div className = "col-sm-2">
+
+	                	<button
+	                    	type 		= "button"
+	                    	className 	= "btn btn-primary"
+	                    	onClick 	= { ( ) => { /*non-idiomatic access to sibling*/this.refs.form.submit() } }
+	                  	>
+	                  	Done
+	                	</button>
+
+				    </div>
 		        </div>
 			</div>
 		)

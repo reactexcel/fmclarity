@@ -6,6 +6,7 @@ function validator( schema ) {
 	return function( doc ) {
 		let errors = [];
 		validate( doc, schema, errors );
+		
 		if ( errors.length ) {
 			let error = new ValidationError( errors );
 			if ( Meteor.isClient ) {
@@ -30,7 +31,6 @@ let validators = {
 
 function validate( doc, schema, errors ) {
 
-	//console.log( doc );
 	if ( !doc ) {
 		return;
 	}
@@ -38,26 +38,24 @@ function validate( doc, schema, errors ) {
 	if ( errors == null ) {
 		errors = [];
 	}
-	if ( _.isObject( doc ) && Object.keys( doc ).length == 0 ) {
-		_.forEach( schema, ( v, k ) => {
-			doc[ k ] = "";
-		} );
-	}
-	//console.log('----------------');
-	//console.log(doc);
-	//console.log(Object.keys( doc ).length);
-	//console.log('----------------');
+
 	let keys = Object.keys( doc );
 	keys.map( ( key ) => {
 		let rule = schema[ key ],
 			value = doc[ key ];
 
 		if ( rule != null ) {
+
 			// do not validate schema items that do not meet the condition for this document
 			if ( !rule.condition || checkCondition( rule.condition, doc ) ) {
 				if ( rule.subschema != null ) {
+
+					// if there is a subschema recursively call validate
 					validate( doc[ key ], rule.subschema, errors );
+
 				} else {
+
+					// otherwise look up the validation function and execute it
 					let validationFunction = validators[ rule.type ];
 					if ( validationFunction == null ) {
 						validationFunction = checkUnknown;
@@ -66,10 +64,12 @@ function validate( doc, schema, errors ) {
 					if ( checkExistence( rule, value, key, errors ) ) {
 						validationFunction( rule, value, key, errors );
 					}
+
 				}
 			}
 		}
 	} );
+
 	return errors;
 }
 
@@ -83,7 +83,7 @@ function checkCondition( condition, item ) {
 
 
 function checkExistence( rule, value, key, errors ) {
-	if ( !rule.optional && ( value == null || value == undefined ) ) {
+	if ( !rule.optional && ( value == null || value == undefined || value == '' ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 		return false;
 	}

@@ -62,16 +62,9 @@ class Model {
 			} );
 		}
 
-
-		let validationFunction = ValidationService.validator( this.schema );
 		Meteor.methods( {
-				[ `${this._name}.validate` ]: ( ...args ) => {
-					validationFunction( ...args );
-				}
-			} )
-			// this should be a method
-			//  should run on server also
-			//this.validate = ValidationService.validator( this.schema );
+			[ `${this._name}.validate` ]: ValidationService.validator( this.schema )
+		} )
 
 		this.save = new ValidatedMethod( {
 			name: `${this._name}.upsert`,
@@ -89,6 +82,7 @@ class Model {
 	validate( ...args ) {
 		return new Promise( ( fulfil, reject ) => {
 			Meteor.call( `${this._name}.validate`, ...args, ( error, response ) => {
+				
 				if ( error ) {
 					reject( error );
 				} else {

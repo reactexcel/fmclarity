@@ -40,32 +40,35 @@ export default function FacilityStepper( { item } ) {
 	*/
 	return (
 		<div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
+
 			    <h2 style={{marginTop:"0px"}}>Edit facility</h2>
-                {facility.owner?<div>
+
+                { facility.owner ?
+                <div>
                     <b>Facility owner:</b>
                     <OwnerCard item={facility}/>
                 </div>
-                :
-                null
-                }
+                : null }
+
                 <Stepper
-                  submitForm = { ( callback ) => {
-                    if( submitFormCallback ){
-                      submitFormCallback( callback );
-                    }
-                  }
-                }
+                
+                    submitForm = { ( callback ) => {
+                        if( submitFormCallback ){
+                            submitFormCallback( callback );
+                        }
+                    } }
+
                    tabs={[
                 	{
                     	tab: 		<span id="discussion-tab">Basic Details</span>,
                     	content: 	<div className="row">
 										<div className = "col-sm-7">
                                             <AutoForm
-                                                model   = { Facilities }
-                                                item    = { facility }
-                                                form    = { ["name", "type", "address", "operatingTimes" ] }
-                                                onNext = { onNext }
-                                                hideSubmit = { true }
+                                                model       = { Facilities }
+                                                item        = { facility }
+                                                form        = { ["name", "type", "address", "operatingTimes" ] }
+                                                onNext      = { onNext }
+                                                hideSubmit  = { true }
                                                 submitFormOnStepperNext = { true }
                                               />
                                         </div>

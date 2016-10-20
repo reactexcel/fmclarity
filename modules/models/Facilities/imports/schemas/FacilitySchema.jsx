@@ -39,6 +39,7 @@ const FacilitySchema = {
 	type: {
 		label: "Property type",
 		input: Select,
+		type: "string",
 		options: {
 			items: [
 				"Commercial",
@@ -69,7 +70,7 @@ const FacilitySchema = {
 	operatingTimes: {
 		label: "Operating times",
 		description: "When this site is open",
-		type: "period",
+		type: "string",
 		input: Text
 	},
 
