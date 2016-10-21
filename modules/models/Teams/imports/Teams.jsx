@@ -42,7 +42,7 @@ if ( Meteor.isServer ) {
 		if ( _.isArray( suppliers ) ) {
 			let ids = [];
 			suppliers.map( ( supplier ) => {
-				if( supplier && supplier._id ) {
+				if ( supplier && supplier._id ) {
 					ids.push( supplier._id );
 				}
 			} )
@@ -149,14 +149,13 @@ Teams.methods( {
 		helper: function( team, parent ) {
 			var services = parent ? parent.children : team.services;
 			var availableServices = [];
-			if ( !services ) {
-				return;
+			if ( _.isArray( services ) ) {
+				services.map( function( service ) {
+					if ( service && service.active ) {
+						availableServices.push( service );
+					}
+				} );
 			}
-			services.map( function( service ) {
-				if ( service && service.active ) {
-					availableServices.push( service );
-				}
-			} );
 			return availableServices;
 		}
 	},
@@ -178,14 +177,14 @@ Teams.methods( {
 	addPersonnel: {
 		authentication: true,
 		method: ( team, newMember ) => {
-			Teams.update( { _id : team._id }, {
-					$push: {
-						members: {
-							_id : newMember._id,
-							name: newMember.profile.name,
-							role: newMember.role || "staff",
-						}
+			Teams.update( { _id: team._id }, {
+				$push: {
+					members: {
+						_id: newMember._id,
+						name: newMember.profile.name,
+						role: newMember.role || "staff",
 					}
+				}
 			} )
 		},
 	},
@@ -223,7 +222,7 @@ function getSuppliers() {
 		.fetch();
 }
 
-function inviteSupplier( team, searchName, ext ) {
+function inviteSupplier( team, searchName, callback ) {
 	var supplier;
 	searchName = searchName.trim();
 	supplier = Teams.findOne( {
@@ -250,7 +249,9 @@ function inviteSupplier( team, searchName, ext ) {
 					_id: supplier._id,
 					name: supplier.name
 				}, ( err, data ) => {
-					ext( data.suppliers );
+					if ( _.isFunction( callback ) ) {
+						callback( data.suppliers );
+					}
 				} );
 			} );
 	} else {
@@ -258,7 +259,9 @@ function inviteSupplier( team, searchName, ext ) {
 			_id: supplier._id,
 			name: supplier.name
 		}, ( err, data ) => {
-			ext( data.suppliers )
+			if ( _.isFunction( callback ) ) {
+				callback( data.suppliers );
+			}
 		} );
 	}
 	// return supplier;
@@ -398,18 +401,18 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
-				$or: [ {
-					"team._id": this._id
-				}, {
-					_id: {
-						$in: facilityIds
-					}
-				} ]
+			$or: [ {
+				"team._id": this._id
 			}, {
-				sort: {
-					name: 1
+				_id: {
+					$in: facilityIds
 				}
-			} );
+			} ]
+		}, {
+			sort: {
+				name: 1
+			}
+		} );
 
 		//console.log(facilities);
 		return facilities;
@@ -436,15 +439,15 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		let facilities = Facilities.findAll( {
-				$or: [ {
-					$and: [
-						{ "team._id": this._id },
-						{ "members._id": user._id },
-					]
-				}, {
-					_id: { $in: facilityIds }
-				} ]
-			}, { sort: { name: 1 } } );
+			$or: [ {
+				$and: [
+					{ "team._id": this._id },
+					{ "members._id": user._id },
+				]
+			}, {
+				_id: { $in: facilityIds }
+			} ]
+		}, { sort: { name: 1 } } );
 
 		//console.log(facilities);
 		return facilities;

@@ -11,6 +11,7 @@ import { ContactList } from '/modules/mixins/Members';
 import { ServicesProvidedEditor } from '/modules/mixins/Services';
 
 import { AutoForm } from '/modules/core/AutoForm';
+import { OwnerCard } from '/modules/mixins/Owners';
 import { Stepper } from '/modules/ui/Stepper';
 
 
@@ -144,6 +145,8 @@ const TeamStepper = React.createClass( {
     },
     render() {
         var viewingTeam = this.data.viewingTeam;
+        console.log( viewingTeam );
+
         if ( !viewingTeam ) {
             return (
                 <form style={{padding:"15px"}} className="form-inline">
@@ -172,10 +175,10 @@ const TeamStepper = React.createClass( {
 
                 <h2 style = { { marginTop:"0px" } }>Edit team</h2>
 
-                { ( false && viewingTeam.owner ) ?
+                { viewingTeam.owner ?
                 <div>
                     <b>Team owner:</b>
-                    <DocOwnerCard item = { viewingTeam }/>
+                    <OwnerCard item = { viewingTeam }/>
                 </div>
                 : null }
 
@@ -199,23 +202,27 @@ const TeamStepper = React.createClass( {
                     {
                         tab:        <span id = "discussion-tab">Basic Details</span>,
                         content:    <div className = "row">
-                                        <div className = "col-sm-7"><AutoForm
-                                                                      model = { Teams }
-                                                                      item = { viewingTeam }
-                                                                      form = { ["name","type","abn","email","phone","phone2"] }
-                                                                      onNext = { this.onNext }
-                                                                      hideSubmit = { true }
-                                                                      submitFormOnStepperNext = { true }
-                                                                       /></div>
-                                        <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>
-                                        <div className = "col-sm-12"><AutoForm
-                                                                        model = { Teams }
-                                                                        item = { viewingTeam }
-                                                                        form = { ["defaultWorkOrderValue","description"] }
-                                                                        onNext = { this.onNextWorkOrder }
-                                                                        hideSubmit = { true }
-                                                                        submitFormOnStepperNext = { true }
-                                                                        /> <br /></div>
+                                    <div className = "col-sm-7">
+                                        <AutoForm
+                                            model = { Teams }
+                                            item = { viewingTeam }
+                                            form = { ["name","type","abn","email","phone","phone2"] }
+                                            onNext = { this.onNext }
+                                            hideSubmit = { true }
+                                            submitFormOnStepperNext = { true }
+                                        />
+                                    </div>
+                                    <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>
+                                    <div className = "col-sm-12">
+                                        <AutoForm
+                                            model = { Teams }
+                                            item = { viewingTeam }
+                                            form = { ["defaultWorkOrderValue","description"] }
+                                            onNext = { this.onNextWorkOrder }
+                                            hideSubmit = { true }
+                                            submitFormOnStepperNext = { true }
+                                        /> <br />
+                                    </div>
                                     </div>,
                         guide:      <div>Enter the basic account info here including your teams name, address and image.</div>
                     },{
