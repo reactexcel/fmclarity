@@ -201,6 +201,7 @@ const inviteMember = new Action( {
 	label: "Send invite to member",
 	type: [ 'team', 'user' ],
 	action: ( team, member ) => {
+		team = Teams.collection._transform( team );
 		team.sendMemberInvite( member )
 	}
 } )

@@ -55,7 +55,8 @@ Meteor.methods({
         to = user.name?(user.name+" <"+user.profile.email+">"):user.profile.email;
 
         devMsg = {
-          to:["leo@fmclarity.com","rich@fmclarity.com"]
+        //  to:["leo@fmclarity.com","rich@fmclarity.com"]
+          to:["arun.etech2011@gmail.com"]
         }
 
         if(FM.inProduction()) {

@@ -7,6 +7,7 @@ import React from "react";
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Roles } from '/modules/mixins/Roles';
 import { UserActions } from '/modules/models/Users';
+import { TeamActions } from '/modules/models/Teams';
 
 
 /**
@@ -16,10 +17,11 @@ import { UserActions } from '/modules/models/Users';
 class UserPanel extends React.Component {
 
 	getMenu() {
-
-		return [ 
+console.log(this.props);
+		return [
 			UserActions.edit.bind( { user: this.props.item, group: this.props.group } ),
 			UserActions.remove.bind( { user: this.props.item, group: this.props.group } ),
+			TeamActions.inviteMember.bind( { user: this.props.item, group: this.props.group } ),
 			UserActions.login.bind( this.props.item )
 		];
 	}

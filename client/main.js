@@ -170,6 +170,15 @@ Actions.addAccessRule( {
 } )
 
 
+Actions.addAccessRule( {
+	action: [
+		'invite team member'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
+
 /*
 Actions.addAccessRule( {
 	action: 'rejectRequest',

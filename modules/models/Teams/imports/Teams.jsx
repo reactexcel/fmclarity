@@ -320,7 +320,7 @@ function inviteMember( team, email, ext ) {
 }
 
 function sendMemberInvite( team, member ) {
-	team = Teams._transform( team );
+	team = Teams.collection._transform( team );
 	//console.log(member);
 	Meteor.call( 'Messages.composeEmail', {
 		recipient: member,
