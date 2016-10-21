@@ -36,6 +36,12 @@ export default Stepper = React.createClass( {
 
         if ( this.state.active >= this.props.tabs.length - 1 ) {
             Modal.hide();
+            /**
+            * Open new created facility.
+            **/
+            if ( this.props.onFinish ){
+              this.props.onFinish();
+            }
         }
     },
 
@@ -73,14 +79,14 @@ export default Stepper = React.createClass( {
                                         <div>
                                             {i.content}
                                             <div>
-                                                <button 
-                                                    onClick     = { selectNext } 
-                                                    type        = "button" 
+                                                <button
+                                                    onClick     = { selectNext }
+                                                    type        = "button"
                                                     className   ="btn btn-primary"
                                                 >
 
                                                     <span>{idx<(tabs.length-1)?"Next":"Finish"}</span>
-                                                    
+
                                                 </button>
                                             </div>
                                         </div>

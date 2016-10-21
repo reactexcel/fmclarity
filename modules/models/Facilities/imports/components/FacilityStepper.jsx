@@ -58,6 +58,12 @@ export default function FacilityStepper( { item } ) {
                         }
                     } }
 
+                    onFinish = { () => {
+                      //Select the new created facility.
+                        Session.selectFacility( facility );
+                      }
+                    }
+
                    tabs={[
                 	{
                     	tab: 		<span id="discussion-tab">Basic Details</span>,
