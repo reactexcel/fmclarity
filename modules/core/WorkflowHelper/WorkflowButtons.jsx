@@ -30,11 +30,11 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
                 return (
 
-                <button 
+                <button
                     key = { idx }
                     onClick = { () => { action.run( item ) } }
-                    style = { { width:width } } 
-                    type = "button" 
+                    style = { { width:width } }
+                    type = "button"
                     className = {classes.join(' ')}>
                     { action.label }
                 </button>
