@@ -3,6 +3,10 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { EmailMessageView } from '/modules/core/Email';
+
 import Actions from './Actions.js';
 
 /**
@@ -31,13 +35,33 @@ class Action {
 		this.label = label;
 		this.icon = icon;
 		this.getResult = getResult;
-		this.getEmail = getEmail || (() => {});
 		this.description = description;
 		this.action = action;
+
+		if( getEmail ) {
+			this.getEmail = getEmail;
+		}
 
 		// all actions are registered with the Actions singleton which then becomes the primary conduit for executing actions
 		this.register();
 	}
+
+	getEmail( notification ) {
+		// we need to see the notification to do this
+		let body = ReactDOMServer.renderToStaticMarkup(
+    	    	React.createElement( EmailMessageView, { notification } )
+    	   );
+
+		let { recipient } = notification;
+		console.log( body );
+		return {
+        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+			from:"FM Clarity <no-reply@fmclarity.com>",
+	        subject:"FM Clarity notification",
+    	    emailBody:body
+		}
+	}
+
 
 	/**
 	 * Registers this action with the global ActionStore singleton.

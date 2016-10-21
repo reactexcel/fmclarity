@@ -89,7 +89,7 @@ export default function FacilityStepper( { item } ) {
                     },{
                         tab: 		<span id = "services-tab">Services</span>,
                         content: 	<ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>,
-			        	guide: 		<div>Enter the services required by this facility. If you want you can also match there services to a supplier. If you want to configure this later simply his finish.</div>
+			        	guide: 		<div>Enter the services required by this facility. If you want you can also match the services to a supplier. If you want to configure this later simply hit finish.</div>
                     },{
                         tab: 		<span id="personnel-tab">Personnel</span>,
                         content: 	<ContactList group = { facility } filter = { {role: {$in: ["staff", "manager"] } } } defaultRole="staff" team={facility.team}/>,

@@ -115,6 +115,8 @@ Requests.methods( {
 			let roles = Roles.getRoles( request ),
 				supplierManagers = roles.roles[ 'supplier manager' ];
 
+			console.log( { roles, supplierManagers } );
+
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
 					role: "supplier manager"

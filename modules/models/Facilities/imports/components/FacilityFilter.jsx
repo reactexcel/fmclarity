@@ -24,7 +24,9 @@ function FacilityFilter( props ) {
 			ListTile = { FacilityListTile }
 			startOpen = { false }
 			onChange = { ( facility ) => {
-				props.onChange();
+				if( props.onChange ) {
+					props.onChange();
+				}
 				Session.set( "selectedFacility", facility );
 			} }
 			multiple = { true }

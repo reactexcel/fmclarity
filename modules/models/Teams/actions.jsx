@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 
 import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
@@ -10,8 +9,6 @@ import { Requests, CreateRequestForm } from '/modules/models/Requests';
 import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
-
-import { EmailMessageView } from '/modules/core/Email';
 
 const create = new Action( {
 	name: 'create team',
@@ -116,23 +113,8 @@ const createRequest = new Action( {
 				}
 			}
 		}
-	},
-	// this function returns the email template
-	getEmail: ( notification ) => {
-		// we need to see the notification to do this
-		let body = ReactDOMServer.renderToStaticMarkup(
-    	    	React.createElement( EmailMessageView, { notification } )
-    	   );
-
-		let { recipient } = notification;
-		console.log( body );
-		return {
-        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
-			from:"FM Clarity <no-reply@fmclarity.com>",
-	        subject:"FM Clarity notification",
-    	    emailBody:body
-		}
 	}
+	// this function returns the email template
 } )
 
 const createDocument = new Action( {
