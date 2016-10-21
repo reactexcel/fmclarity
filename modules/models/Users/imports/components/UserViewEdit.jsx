@@ -31,11 +31,11 @@ export default UserViewEdit = React.createClass( {
 			}
 		}
 		return {
-			group: group,
-			relation: relation,
-			role: role,
 			user: this.state.item,
 			team: this.props.team || Session.getSelectedTeam(),
+			group: group || Session.getSelectedTeam(),
+			relation: relation,
+			role: role,
 		}
 	},
 

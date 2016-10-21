@@ -4,8 +4,7 @@
  */
 
 import React from "react";
-import ReactDom from "react-dom";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { Select } from '/modules/ui/MaterialInputs';
 
 // so this should perhaps be included in the docmembers package??
 export default UserViewRelationEdit = React.createClass( {
@@ -15,29 +14,30 @@ export default UserViewRelationEdit = React.createClass( {
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole( member, role );
-		if ( this.props.team ) {
-			this.props.team.setMemberRole( member, role );
-		}
 	},
 
 	render() {
-		var member, group, team, relation, role;
-		member = this.props.member;
-		group = this.props.group;
-		if ( group && group.collectionName != "Requests" ) {
-			relation = group.getMemberRelation( member );
-			if ( relation ) {
-				role = relation.role;
-				return (
-					<AutoInput.MDSelect 
-						items={["portfolio manager","manager","staff","tenant"]} 
-						selectedItem={role}
-						onChange={this.handleRoleChange}
-						placeholder="Role"
-					/>
-				)
-			}
+		let { member, group } = this.props;
+		if ( !group || group.collectionName == "Requests" ) {
+			return <div/>
 		}
-		return <div/>
+
+		let relation = group.getMemberRelation( member );
+
+		console.log( relation );
+
+		if ( relation ) {
+			let role = relation.role;
+
+			return (
+				<Select 
+					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant" ] } 
+					value			= { role }
+					onChange		= { this.handleRoleChange }
+					placeholder 	= "Role"
+				/>
+			)
+
+		}
 	}
 } );

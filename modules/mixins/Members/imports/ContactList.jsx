@@ -37,30 +37,35 @@ export default ContactList = React.createClass( {
 			role: role,
 		}
 	},
+	
 	getInitialState(){
 		return {
 			group: this.props.group,
 		};
 	},
+
 	// Display a pop up modal for the selected user
 	showModal( selectedUser ) {
+
+		let { team, role, group } = this.data;
+
 		//switch based on "type" sent into component
 		//this is a temporary work around as we transition into non-team supplier contacts
 		if ( this.props.type == "team" || ( selectedUser && selectedUser.collectionName == "Team" ) ) {
 			Modal.show( {
 				content: <TeamCard
-	            	item={selectedUser}
-	            	team={this.data.team}
-	            	role={this.data.role}
-	            	group={this.data.group}/>
+	            	item 	= { selectedUser }
+	            	team 	= { team }
+	            	role 	= { role }
+	            	group 	= { group }/>
 			} )
 		} else {
 			Modal.show( {
 				content: <UserPanel
-	            	item={selectedUser}
-	            	team={this.data.team}
-	            	role={this.data.role}
-	            	group={this.data.group}/>
+	            	item 	= { selectedUser }
+	            	team 	= { team }
+	            	role 	= { role }
+	            	group	= { group }/>
 			} )
 		}
 	},

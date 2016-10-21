@@ -21,6 +21,7 @@ DocHead.addMeta( {
 Actions.addAccessRule( {
 	action: [
 		'edit user',
+		'remove user',
 		'login as user'
 	],
 	role: [ '*' ],

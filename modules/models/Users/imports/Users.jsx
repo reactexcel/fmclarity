@@ -249,9 +249,8 @@ Users.actions( {
                         //console.log(period);
                         for ( var i = 0; i < repeats; i++ ) {
                             var copy = Object.assign( {}, r ); //_.omit(r,'_id');
-                            copy.dueDate = date.add( period )
-                                .toDate();
-                            copy = Requests._transform( copy );
+                            copy.dueDate = date.add( period ).toDate();
+                            copy = Requests.collection._transform( copy );
                             requests.push( copy );
                         }
                     }
