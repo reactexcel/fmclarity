@@ -3,7 +3,7 @@ import React from "react";
 export default function Menu( { items, icon = "ellipsis-v" } ) {
 
 	function runAction( item, event ) {
-		if ( item.shouldConfirm ) {
+		if ( item.shouldConfirm || item.verb.shouldConfirm ) {
 			var message = confirm( item.label + ". Are you sure?" );
 			if ( message != true ) {
 				return;
