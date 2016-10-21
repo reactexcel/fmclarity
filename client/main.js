@@ -67,7 +67,8 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [
 		'edit facility',
-		'view facility'
+		'view facility',
+		'destroy facility'
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }

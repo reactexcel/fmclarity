@@ -35,6 +35,10 @@ const destroy = new Action( {
 	name: "destroy facility",
 	type: 'facility',
 	label: "Delete facility",
+	shouldConfirm: true,
+	verb:  {
+		shouldConfirm: true,
+	},
 	action: ( facility ) => {
 		//Facilities.destroy( facility );
 		facility.destroy();

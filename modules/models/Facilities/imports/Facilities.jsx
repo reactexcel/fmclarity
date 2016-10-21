@@ -271,6 +271,12 @@ Facilities.actions( {
 			} )
 		}
 	},
+	destroy: {
+		authentication: true,
+		method: ( facility ) => {
+			Facilities.remove( { _id : facility._id }  );
+		}
+	},
 } )
 
 export default Facilities;

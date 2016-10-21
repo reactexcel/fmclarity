@@ -43,8 +43,8 @@ function FacilityPanel( { item } ) {
 					<div className="title-overlay">
 						<div className="row">
 							<div className="col-md-4">
-								<div 
-									className = "facility-title" 
+								<div
+									className = "facility-title"
 									style = { {borderBottom:facility.contact?"1px solid #fff":"none"} }>
 
 									<div style = { { fontSize:"20px", color:"#fff", cursor: "pointer" } }>
@@ -53,7 +53,7 @@ function FacilityPanel( { item } ) {
 										} }/>
 									</div>
 
-									<h2 style = { { marginTop: "20px" }}> { facility.name } </h2>                        
+									<h2 style = { { marginTop: "20px" }}> { facility.name } </h2>
 
 									{ facility.address ?
 									<b>{facility.getAddress()}</b>
@@ -99,7 +99,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					}
-				]} />                
+				]} />
 			</div>
 
 			<Menu items = { [
