@@ -13,9 +13,9 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		Requests.update( request._id, { $set: { 
+		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
-			status: 'New' 
+			status: 'New'
 		} } );
 	}
 } )
@@ -64,6 +64,10 @@ const deleteFunction = new Action( {
 	name: "delete request",
 	type: 'request',
 	label: "Delete",
+  shouldConfirm: true,
+	verb:  {
+		shouldConfirm: true,
+	},
 	action: ( request ) => {
 		Requests.update( request._id, { $set: { status: 'Deleted' } } );
 		Modal.hide();
@@ -97,9 +101,9 @@ const issue = new Action( {
 	label: "Issue",
 	action: ( request ) => {
 		//console.log( request );
-		Requests.update( request._id, { $set: { 
+		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
-			status: 'Issued' 
+			status: 'Issued'
 		} } );
 		request.updateSupplierManagers();
 		/*

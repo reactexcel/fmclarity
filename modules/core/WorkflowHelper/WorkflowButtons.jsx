@@ -8,6 +8,17 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
     let actionNames = Object.keys( actions );
 
+    function runAction( action, item ) {
+      console.log(action);
+  		if ( action.shouldConfirm || action.verb.shouldConfirm ) {
+  			var message = confirm( action.label + " request. Are you sure?" );
+  			if ( message != true ) {
+  				return;
+  			}
+  		}
+  		action.run( item, event );
+  	}
+
     if ( actions == null || actionNames.length == 0 ) {
         return (
             <div/>
@@ -32,7 +43,7 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
                 <button
                     key = { idx }
-                    onClick = { () => { action.run( item ) } }
+                    onClick = { () => { runAction( action, item ) } }
                     style = { { width:width } }
                     type = "button"
                     className = {classes.join(' ')}>
