@@ -37,10 +37,11 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
     }
 
     if ( facility != null ) {
-        suppliers = Members.getMembers( facility, {
+        suppliers = facility.getSuppliers();
+        /*suppliers = Members.getMembers( facility, {
             collection: Teams,
             fieldName: 'suppliers'
-        } );
+        } );*/
     }
 
     return {
