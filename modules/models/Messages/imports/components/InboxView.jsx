@@ -8,6 +8,9 @@ export default Inbox = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
+
+        Meteor.subscribe( 'Messages' );
+        
         var inbox, messages;
         inbox = this.props.for;
         if ( inbox ) {

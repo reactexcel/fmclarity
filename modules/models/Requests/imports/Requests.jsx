@@ -56,10 +56,10 @@ const Requests = new Model( {
 
 Requests.save.before( ( request ) => {
 	if ( request.type == "Preventative" ) {
-		status = "PMP";
+		request.status = "PMP";
 		request.priority = "PMP";
 	} else if ( request.type == "Booking" ) {
-		status = "Booking";
+		request.status = "Booking";
 		request.priority = "Booking";
 	}
 } );

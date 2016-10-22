@@ -2,7 +2,11 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 import TeamSchema from './schemas/TeamSchema.jsx';
+import TeamInviteEmailTemplate from './components/TeamInviteEmailTemplate.jsx';
 
 import { Model } from '/modules/core/ORM';
 
@@ -12,6 +16,7 @@ import { Members } from '/modules/mixins/Members';
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
+import { LoginService } from '/modules/core/Authentication';
 
 import { Users } from '/modules/models/Users'
 
@@ -322,18 +327,35 @@ function inviteMember( team, email, ext ) {
 
 }
 
-function sendMemberInvite( team, member ) {
-	team = Teams.collection._transform( team );
-	//console.log(member);
-	Meteor.call( 'Messages.composeEmail', {
-		recipient: member,
-		subject: team.getName() + " has invited you to join FM Clarity",
-		template: TeamInviteEmailTemplate,
-		params: {
-			team: team,
-			user: member,
-			token: FMCLogin.generatePasswordResetToken( member )
+function sendMemberInvite( team, recipient ) {
+	console.log(recipient);
+	let body = ReactDOMServer.renderToStaticMarkup( 
+		React.createElement( TeamInviteEmailTemplate, {
+			team 	: team,
+			user 	: recipient,
+			token 	: LoginService.generatePasswordResetToken( recipient )			
+		} )
+	);
+
+	/*
+		getEmail( notification ) {
+		// we need to see the notification to do this
+		let body = ReactDOMServer.renderToStaticMarkup(
+    	    	React.createElement( EmailMessageView, { notification } )
+    	   );
+
+		let { recipient } = notification;
+		console.log( body );
+		return {
+        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+			from:"FM Clarity <no-reply@fmclarity.com>",
+	        subject:"FM Clarity notification",
+    	    emailBody:body
 		}
+	}*/
+	Meteor.call( 'Messages.sendEmail', recipient, {
+		subject		: team.name + " has invited you to join FM Clarity",
+		emailBody 	: body
 	} )
 }
 

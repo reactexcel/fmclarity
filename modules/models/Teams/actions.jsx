@@ -200,9 +200,8 @@ const inviteMember = new Action( {
 	name: 'invite team member',
 	label: "Send invite to member",
 	type: [ 'team', 'user' ],
-	action: ( team, member ) => {
-		team = Teams.collection._transform( team );
-		team.sendMemberInvite( member )
+	action: ( { user, group } ) => {
+		group.sendMemberInvite( user )
 	}
 } )
 

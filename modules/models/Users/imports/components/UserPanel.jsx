@@ -9,7 +9,6 @@ import { Roles } from '/modules/mixins/Roles';
 import { UserActions } from '/modules/models/Users';
 import { TeamActions } from '/modules/models/Teams';
 
-
 /**
  * @class 			UserPanel
  * @membersOf 		module:models/Users
@@ -17,12 +16,14 @@ import { TeamActions } from '/modules/models/Teams';
 class UserPanel extends React.Component {
 
 	getMenu() {
-console.log(this.props);
+		let user = this.props.item,
+			group = this.props.group || Session.getSelectedTeam();
+			
 		return [
-			UserActions.edit.bind( { user: this.props.item, group: this.props.group } ),
-			UserActions.remove.bind( { user: this.props.item, group: this.props.group } ),
-			TeamActions.inviteMember.bind( { user: this.props.item, group: this.props.group } ),
-			UserActions.login.bind( this.props.item )
+			UserActions.edit.bind( { user, group } ),
+			UserActions.remove.bind( { user, group } ),
+			TeamActions.inviteMember.bind( { user, group } ),
+			UserActions.login.bind( user )
 		];
 	}
 
@@ -36,7 +37,6 @@ console.log(this.props);
 		}
 
 		let roles = Roles.getUserRoles( contact );
-		//console.log( roles );
 
 		if ( contact.getProfile ) {
 			profile = contact.getProfile();
@@ -48,11 +48,11 @@ console.log(this.props);
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
-				    <img alt="image" src={contact.getThumbUrl()} />
+				    <img alt = "image" src = { contact.getThumbUrl() } />
 				 </div>
-				 <div className="contact-info">
+				 <div className = "contact-info">
 				 	<div>
-						<h2>{contact.getName()}</h2>
+						<h2>{ contact.getName() }</h2>
 
 						{ this.props.role ?
 							<span>{this.props.role}<br/></span>
