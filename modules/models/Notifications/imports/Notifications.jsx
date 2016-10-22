@@ -42,7 +42,7 @@ Notifications.actions( {
 	getSubject: {
 		authentication: true,
 		helper: ( { actor, action, object } ) => {
-			let actorName = actor.name,
+			let actorName = actor.profile.name,
 				actionName = action.name,
 				targetName = "Unknown";
 

@@ -15,7 +15,7 @@ function NotificationViewSummary( props ) {
     //  they can then be checked using action.type
     let { actor, action, object, result, createdAt } = props.item,
         target = {},
-        actorName = actor.name,
+        actorName = actor.profile.name,
         actionName = action.name,
         actionVerb = Actions.getVerb( action ),
         resultObject = Actions.getResult( action, result ) || {};
@@ -27,7 +27,7 @@ function NotificationViewSummary( props ) {
             <div>
                 <strong>{ actorName }</strong>&nbsp;
                 <span>{ actionVerb }</span>&nbsp;
-                <strong><a href = {resultObject.href}>{ resultObject.text }</a></strong>
+                <strong><a href = {resultObject.href}>{ result.name }</a></strong>
                 <br/>
             </div>
         </div>

@@ -67,8 +67,8 @@ const Teams = new Model( {
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			//authentication: true,
-			authentication: AuthHelpers.managerOrOwner
+			authentication: true
+			//authentication: AuthHelpers.managerOrOwner
 		} ],
 		//mixins for suppliers
 		[ Members, {
