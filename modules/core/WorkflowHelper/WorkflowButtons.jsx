@@ -9,8 +9,7 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
     let actionNames = Object.keys( actions );
 
     function runAction( action, item ) {
-      console.log(action);
-  		if ( action.shouldConfirm || action.verb.shouldConfirm ) {
+  		if ( action.shouldConfirm ) {
   			var message = confirm( action.label + " request. Are you sure?" );
   			if ( message != true ) {
   				return;

@@ -210,6 +210,10 @@ class AutoForm extends React.Component {
 		return (
 			<div className="autoform row">
 
+				{ this.props.title ?
+				<h2>{this.props.title}</h2>
+				: null }
+
 				{ this.getForm() }
 
 		        { !this.props.hideSubmit ?

@@ -86,17 +86,18 @@ const createRequest = new Action( {
 		newItem = Requests.create( item );
 		Modal.show( {
 			content: <AutoForm
-			model = { Requests }
-			form = { CreateRequestForm }
-			item = { newItem }
-			onSubmit = {
-				( newRequest ) => {
-					Modal.replace( {
-						content: <RequestPanel item = { newRequest }/>
-					} );
-					callback( newRequest );
+				title 	= "Please tell us a little bit more about the work that is required."
+				model 	= { Requests }
+				form 	= { CreateRequestForm }
+				item 	= { newItem }
+				onSubmit = {
+					( newRequest ) => {
+						Modal.replace( {
+							content: <RequestPanel item = { newRequest }/>
+						} );
+						callback( newRequest );
+					}
 				}
-			}
 			/>
 		} )
 	},

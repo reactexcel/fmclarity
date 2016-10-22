@@ -100,7 +100,7 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: ( request ) => { return request.status == 'Draft' || request.status == 'New' },
+	condition: ( request ) => { return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) },
 	action: [
 		'edit request'
 	],
@@ -154,7 +154,7 @@ Actions.addAccessRule( {
 	action: [
 		'complete request',
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	role: [ 'supplier manager', 'assignee', 'team manager', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
 
