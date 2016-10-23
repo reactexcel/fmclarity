@@ -359,6 +359,7 @@ const RequestSchema = {
 		type: "number",
 		size: 6,
 		defaultValue: 500,
+		optional: true,
 		input: Text,
 		condition: [ "Ad-hoc", "Contract" ],
 	},
