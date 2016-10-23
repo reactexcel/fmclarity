@@ -30,14 +30,18 @@ function register( collection, options ) {
 		},
 		description: "The creator or owner",
 		relation: {
-			join: ( item ) => {
-				if ( item.owner && item.owner._id ) {
-					return Meteor.users.findOne( item.owner._id );
+			join: ( { owner } ) => {
+				if ( owner && owner._id ) {
+					if( owner.type == 'team' ) {
+						import { Teams } from '/modules/models/Teams';
+						return Teams.findOne( owner._id );
+					}
+					return Meteor.users.findOne( owner._id );
 				}
 			},
 			unjoin: ( item ) => {
 				if(_.isObject(item.owner)){
-					return _.pick( item.owner, '_id', 'name' );
+					return _.pick( item.owner, '_id', 'name', 'type' );
 				}else{
 					return item.owner
 				}

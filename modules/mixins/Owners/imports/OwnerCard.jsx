@@ -29,7 +29,7 @@ const OwnerCard = React.createClass( {
 			}
 		}
 		return {
-			owner: owner,
+			owner: this.props.item.owner,
 			target: target,
 			type: type
 		}

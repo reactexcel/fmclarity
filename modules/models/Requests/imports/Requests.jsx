@@ -56,10 +56,10 @@ const Requests = new Model( {
 
 Requests.save.before( ( request ) => {
 	if ( request.type == "Preventative" ) {
-		status = "PMP";
+		request.status = "PMP";
 		request.priority = "PMP";
 	} else if ( request.type == "Booking" ) {
-		status = "Booking";
+		request.status = "Booking";
 		request.priority = "Booking";
 	}
 } );
@@ -114,6 +114,8 @@ Requests.methods( {
 		helper: function( request ) {
 			let roles = Roles.getRoles( request ),
 				supplierManagers = roles.roles[ 'supplier manager' ];
+
+			console.log( { roles, supplierManagers } );
 
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {

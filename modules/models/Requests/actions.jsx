@@ -13,9 +13,9 @@ const create = new Action( {
 	type: 'request',
 	label: "Create",
 	action: ( request ) => {
-		Requests.update( request._id, { $set: { 
+		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
-			status: 'New' 
+			status: 'New'
 		} } );
 	}
 } )
@@ -38,9 +38,10 @@ const edit = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { CreateRequestForm }
+				title 	= "Edit Request"
+				model 	= { Requests }
+				item 	= { request }
+				form 	= { CreateRequestForm }
 				onSubmit = { () => {
 					Modal.hide();
 				} }
@@ -64,6 +65,10 @@ const deleteFunction = new Action( {
 	name: "delete request",
 	type: 'request',
 	label: "Delete",
+  shouldConfirm: true,
+	verb:  {
+		shouldConfirm: true,
+	},
 	action: ( request ) => {
 		Requests.update( request._id, { $set: { status: 'Deleted' } } );
 		Modal.hide();
@@ -97,9 +102,9 @@ const issue = new Action( {
 	label: "Issue",
 	action: ( request ) => {
 		//console.log( request );
-		Requests.update( request._id, { $set: { 
+		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
-			status: 'Issued' 
+			status: 'Issued'
 		} } );
 		request.updateSupplierManagers();
 		/*
@@ -129,9 +134,10 @@ const accept = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { [ 'acceptComment' ] }
+				title 	= "Please provide eta and, if appropriate, an assignee."
+				model 	= { Requests }
+				item 	= { request }
+				form 	= { [ 'eta', 'assignee', 'acceptComment' ] }
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'In Progress' } } );
@@ -150,9 +156,10 @@ const reject = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { [ 'rejectComment' ] }
+				title 	= "What is your reason for rejecting this request?"
+				model 	= { Requests }
+				item 	= { request }
+				form 	= { [ 'rejectComment' ] }
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Rejected' } } );
@@ -213,12 +220,14 @@ const complete = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { [ 'closeDetails' ] }
+				title 	= "All done? Great! We just need a few details to finalise the job."
+				model 	= { Requests }
+				item 	= { request }
+				form 	= { [ 'closeDetails' ] }
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Complete' } } );
+						//Requests.createFollowUp( request );
 						Modal.hide();
 					}
 				}
@@ -234,9 +243,10 @@ const close = new Action( {
 	action: ( request ) => {
 		Modal.show( {
 			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { [ 'closeComment' ] }
+				title 	= "Please leave a comment about the work for the suppliers record"
+				model 	= { Requests }
+				item 	= { request }
+				form 	= { [ 'closeComment' ] }
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Closed' } } );

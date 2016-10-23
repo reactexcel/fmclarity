@@ -11,6 +11,7 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
+import { TeamActions } from '/modules/models/Teams';
 
 
 export default RequestPanel = React.createClass( {
@@ -88,6 +89,15 @@ const RequestPanelInner = ( { request } ) => {
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
 
+                            <span 
+                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}} 
+                                className   = { "label label-"+request.status}
+                            >
+
+                                {request.status}
+
+                            </span>
+
                     </div>
                 </div>
 
@@ -113,7 +123,7 @@ const RequestPanelInner = ( { request } ) => {
                 }
 
                 { request.supplier && request.type!= 'Booking' ?
-                <tr>
+                <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
                     <th>Supplier</th>
                     <td>{request.supplier.name}</td>
                 </tr>

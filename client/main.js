@@ -67,7 +67,8 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [
 		'edit facility',
-		'view facility'
+		'view facility',
+		'destroy facility'
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
@@ -99,7 +100,7 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: ( request ) => { return request.status == 'Draft' || request.status == 'New' },
+	condition: ( request ) => { return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) },
 	action: [
 		'edit request'
 	],
@@ -153,7 +154,7 @@ Actions.addAccessRule( {
 	action: [
 		'complete request',
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	role: [ 'supplier manager', 'assignee', 'team manager', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
 
@@ -165,6 +166,15 @@ Actions.addAccessRule( {
 		'reverse request'
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	rule: { alert: true }
+} )
+
+
+Actions.addAccessRule( {
+	action: [
+		'invite team member'
+	],
+	role: [ '*' ],
 	rule: { alert: true }
 } )
 

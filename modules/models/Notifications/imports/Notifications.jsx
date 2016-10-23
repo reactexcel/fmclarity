@@ -39,6 +39,7 @@ Notifications.actions( {
 			return ''
 		}
 	},
+	
 	getSubject: {
 		authentication: true,
 		helper: ( { actor, action, object } ) => {

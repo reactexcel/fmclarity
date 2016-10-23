@@ -2,7 +2,11 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+
 import TeamSchema from './schemas/TeamSchema.jsx';
+import TeamInviteEmailTemplate from './components/TeamInviteEmailTemplate.jsx';
 
 import { Model } from '/modules/core/ORM';
 
@@ -12,6 +16,7 @@ import { Members } from '/modules/mixins/Members';
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { DocMessages } from '/modules/models/Messages';
 import { Documents, DocAttachments } from '/modules/models/Documents';
+import { LoginService } from '/modules/core/Authentication';
 
 import { Users } from '/modules/models/Users'
 
@@ -42,7 +47,7 @@ if ( Meteor.isServer ) {
 		if ( _.isArray( suppliers ) ) {
 			let ids = [];
 			suppliers.map( ( supplier ) => {
-				if( supplier && supplier._id ) {
+				if ( supplier && supplier._id ) {
 					ids.push( supplier._id );
 				}
 			} )
@@ -149,14 +154,13 @@ Teams.methods( {
 		helper: function( team, parent ) {
 			var services = parent ? parent.children : team.services;
 			var availableServices = [];
-			if ( !services ) {
-				return;
+			if ( _.isArray( services ) ) {
+				services.map( function( service ) {
+					if ( service && service.active ) {
+						availableServices.push( service );
+					}
+				} );
 			}
-			services.map( function( service ) {
-				if ( service && service.active ) {
-					availableServices.push( service );
-				}
-			} );
 			return availableServices;
 		}
 	},
@@ -178,14 +182,14 @@ Teams.methods( {
 	addPersonnel: {
 		authentication: true,
 		method: ( team, newMember ) => {
-			Teams.update( { _id : team._id }, {
-					$push: {
-						members: {
-							_id : newMember._id,
-							name: newMember.profile.name,
-							role: newMember.role || "staff",
-						}
+			Teams.update( { _id: team._id }, {
+				$push: {
+					members: {
+						_id: newMember._id,
+						name: newMember.profile.name,
+						role: newMember.role || "staff",
 					}
+				}
 			} )
 		},
 	},
@@ -223,7 +227,7 @@ function getSuppliers() {
 		.fetch();
 }
 
-function inviteSupplier( team, searchName, ext ) {
+function inviteSupplier( team, searchName, callback ) {
 	var supplier;
 	searchName = searchName.trim();
 	supplier = Teams.findOne( {
@@ -250,7 +254,9 @@ function inviteSupplier( team, searchName, ext ) {
 					_id: supplier._id,
 					name: supplier.name
 				}, ( err, data ) => {
-					ext( data.suppliers );
+					if ( _.isFunction( callback ) ) {
+						callback( data.suppliers );
+					}
 				} );
 			} );
 	} else {
@@ -258,7 +264,9 @@ function inviteSupplier( team, searchName, ext ) {
 			_id: supplier._id,
 			name: supplier.name
 		}, ( err, data ) => {
-			ext( data.suppliers )
+			if ( _.isFunction( callback ) ) {
+				callback( data.suppliers );
+			}
 		} );
 	}
 	// return supplier;
@@ -319,18 +327,35 @@ function inviteMember( team, email, ext ) {
 
 }
 
-function sendMemberInvite( team, member ) {
-	team = Teams._transform( team );
-	//console.log(member);
-	Meteor.call( 'Messages.composeEmail', {
-		recipient: member,
-		subject: team.getName() + " has invited you to join FM Clarity",
-		template: TeamInviteEmailTemplate,
-		params: {
-			team: team,
-			user: member,
-			token: FMCLogin.generatePasswordResetToken( member )
+function sendMemberInvite( team, recipient ) {
+	console.log(recipient);
+	let body = ReactDOMServer.renderToStaticMarkup( 
+		React.createElement( TeamInviteEmailTemplate, {
+			team 	: team,
+			user 	: recipient,
+			token 	: LoginService.generatePasswordResetToken( recipient )			
+		} )
+	);
+
+	/*
+		getEmail( notification ) {
+		// we need to see the notification to do this
+		let body = ReactDOMServer.renderToStaticMarkup(
+    	    	React.createElement( EmailMessageView, { notification } )
+    	   );
+
+		let { recipient } = notification;
+		console.log( body );
+		return {
+        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+			from:"FM Clarity <no-reply@fmclarity.com>",
+	        subject:"FM Clarity notification",
+    	    emailBody:body
 		}
+	}*/
+	Meteor.call( 'Messages.sendEmail', recipient, {
+		subject		: team.name + " has invited you to join FM Clarity",
+		emailBody 	: body
 	} )
 }
 
@@ -398,18 +423,18 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
-				$or: [ {
-					"team._id": this._id
-				}, {
-					_id: {
-						$in: facilityIds
-					}
-				} ]
+			$or: [ {
+				"team._id": this._id
 			}, {
-				sort: {
-					name: 1
+				_id: {
+					$in: facilityIds
 				}
-			} );
+			} ]
+		}, {
+			sort: {
+				name: 1
+			}
+		} );
 
 		//console.log(facilities);
 		return facilities;
@@ -436,15 +461,15 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		let facilities = Facilities.findAll( {
-				$or: [ {
-					$and: [
-						{ "team._id": this._id },
-						{ "members._id": user._id },
-					]
-				}, {
-					_id: { $in: facilityIds }
-				} ]
-			}, { sort: { name: 1 } } );
+			$or: [ {
+				$and: [
+					{ "team._id": this._id },
+					{ "members._id": user._id },
+				]
+			}, {
+				_id: { $in: facilityIds }
+			} ]
+		}, { sort: { name: 1 } } );
 
 		//console.log(facilities);
 		return facilities;

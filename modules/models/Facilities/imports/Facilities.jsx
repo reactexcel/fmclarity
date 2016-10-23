@@ -235,14 +235,65 @@ Facilities.actions( {
 			// import statement placed here to avoid circular reference between Facilities and Teams
 			import { Teams } from '/modules/models/Teams';
 
-			let ids = null,
+			let ids = [],
+				names = [],
 				suppliers = null;
 
-			if ( _.isArray( facility.suppliers ) ) {
-				ids = _.pluck( facility.suppliers, '_id' );
-				suppliers = Teams.findAll( { '_id': { $in: ids } } );
+			if ( _.isArray( facility.servicesRequired ) ) {
+				_.map( facility.servicesRequired, ( s ) => {
+					let supplier = null;
+						//add children service supplier to list
+						if ( s.children ){
+							_.map( s.children, ( c ) => {
+								if ( c.data && typeof c.data.supplier != 'undefined' ) {
+									if ( c.data.supplier.name) {
+										//check that supplier name is exists in list.
+										_.indexOf( names, c.data.supplier.name ) == -1 ? names.push( c.data.supplier.name ) : null;
+
+										//check if team with name exists
+										let team = Teams.findOne( { "name": c.data.supplier.name } );
+										if( !team ){
+											if ( c.data.supplier._id ) {
+												_.indexOf( ids, c.data.supplier._id ) == -1 ? ids.push( c.data.supplier._id ) : null;
+											}
+										}
+									}else if ( c.data.supplier._id ) {
+										_.indexOf( ids, c.data.supplier._id ) == -1 ? ids.push( c.data.supplier._id ) : null;
+									}
+								}
+							} );
+						}
+					if ( s.data ){
+						supplier = s.data.supplier;
+						//add parent service's supplier to list
+						if ( supplier ) {
+							if ( supplier.name) {
+								_.indexOf( names, supplier.name ) == -1 ? names.push( supplier.name ) : null;
+								let team = Teams.findOne( { "name": supplier.name } );
+								if( !team ){
+									if ( supplier._id ) {
+										_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
+									}
+								}
+							}else if ( supplier._id ) {
+								_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
+							}
+						}
+					}
+				})
+				//ids = _.pluck( facility.suppliers, '_id' );
+				suppliers = Teams.find( {
+						$or: [
+							{ _id: { $in: ids } },
+							{ name: { $in: names } }
+						]
+					}, {
+						sort: { name: 1, _id: 1 }
+					} )
+					.fetch();
 			}
-			return suppliers;
+			//Sort suppliersin ASC order
+			return suppliers
 		}
 	},
 
@@ -269,6 +320,12 @@ Facilities.actions( {
 						}
 					}
 			} )
+		}
+	},
+	destroy: {
+		authentication: true,
+		method: ( facility ) => {
+			Facilities.remove( { _id : facility._id }  );
 		}
 	},
 } )

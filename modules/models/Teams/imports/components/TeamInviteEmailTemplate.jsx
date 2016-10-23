@@ -1,15 +1,27 @@
-// should this perhaps go in FMCLoginTokens package?
+/**
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
+ */
 
 import React from "react";
-import ReactDom from "react-dom";
-import {ReactMeteorData} from 'meteor/react-meteor-data';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 
-TeamInviteEmailTemplate = React.createClass({
+/**
+ * UI Component that renders an invitation sent to a team member
+ * @class           TeamPageProfile
+ * @memberOf        module:models/Teams
+ */
+const TeamInviteEmailTemplate = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
     	var team,user,secret,expiry;
+
+        console.log( this.props );
+
     	if(this.props.team) 
 	    	team = Teams.findOne(this.props.team._id);
 	    if(this.props.user)
@@ -52,3 +64,5 @@ TeamInviteEmailTemplate = React.createClass({
         )
     }
 });
+
+export default TeamInviteEmailTemplate;

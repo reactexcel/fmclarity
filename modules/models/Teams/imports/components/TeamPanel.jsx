@@ -63,7 +63,9 @@ const TeamPanel = React.createClass( {
 
 		if ( team ) {
 			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract( { days: 7 } ).toDate() );
-			services = team.getAvailableServices();
+			if( team.getAvailableServices ) {
+				services = team.getAvailableServices();
+			}
 
 			/*
 			insuranceDocs = Documents.findAll( {'team._id':team._id, type:'Insurance'} );
