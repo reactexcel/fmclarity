@@ -11,6 +11,7 @@ export default DocumentSchema = {
 
 	name: {
 		label: "Document name",
+		optional: true,
 		type: "string",
 		input: Text,
 		size: 6,
@@ -18,6 +19,7 @@ export default DocumentSchema = {
 
 	type: {
 		label: "Document type",
+		optional: true,
 		size: 6,
 		type: "string",
 		input: Select,
@@ -28,6 +30,7 @@ export default DocumentSchema = {
 
 	facility: {
 		label: "Facility",
+		optional: true,
 		description: "The site for this job",
 		type: "object",
 		size: 6,
@@ -57,6 +60,7 @@ export default DocumentSchema = {
 
 	description: {
 		label: "Description",
+		optional: true,
         type: "string",
 		input: TextArea
 	},
@@ -64,6 +68,7 @@ export default DocumentSchema = {
 	documentNumber: {
 		input: Text,
 		label: "Document #",
+		optional: true,
         type: "string",
 		size: 6,
 		condition: function( item ) {
@@ -85,6 +90,7 @@ export default DocumentSchema = {
 	},
 	gst: {
 		input: Text,
+		optional: true,
 		label: "GST",
 		size: 6,
 		condition: function( item ) {
@@ -97,6 +103,7 @@ export default DocumentSchema = {
 	totalValue: {
 		input: Text,
 		label: "Total value",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -111,6 +118,7 @@ export default DocumentSchema = {
 	subjectAddress: {
 		input: Text,
 		label: "Subject Address",
+		optional: true,
 		condition: function( item ) {
 			return [
 				"Bank Guarantee",
@@ -122,6 +130,7 @@ export default DocumentSchema = {
 	currentYear: {
 		input: Text,
 		label: "Current year value",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -135,6 +144,7 @@ export default DocumentSchema = {
 	'currentYear+1': {
 		input: Text,
 		label: "Current year +1 value",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -148,6 +158,7 @@ export default DocumentSchema = {
 	'currentYear+2': {
 		input: Text,
 		label: "Current year +2 value",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -161,6 +172,7 @@ export default DocumentSchema = {
 	serviceType: {
 		input: Text,
 		label: "Service type",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -182,6 +194,7 @@ export default DocumentSchema = {
 	supplier: {
 		input: Text,
 		label: "Supplier",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -204,6 +217,7 @@ export default DocumentSchema = {
 	issuer: {
 		input: Text,
 		label: "Issuer",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -215,6 +229,7 @@ export default DocumentSchema = {
 	insuranceType: {
 		input: Text,
 		label: "Insurance type",
+		optional: true,
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -240,6 +255,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Applicable period start",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -261,6 +277,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Applicable period end",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -273,6 +290,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Date tenant executed",
+		optional: true,
 		size: 6,
 		input: DateInput
 	},
@@ -285,11 +303,13 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Date lessor executed",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
 	tenant: {
 		input: Text,
+		optional: true,
 		condition: function( item ) {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
@@ -297,6 +317,7 @@ export default DocumentSchema = {
 	},
 	landlord: {
 		input: Text,
+		optional: true,
 		condition: function( item ) {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
@@ -308,6 +329,7 @@ export default DocumentSchema = {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
 		size: 6,
+		optional: true,
 		label: "Commencing term rent pa (ex GST)"
 	},
 	commencementDate: {
@@ -324,6 +346,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Commencement",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -345,6 +368,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Expiry",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -375,6 +399,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Issue date",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -387,6 +412,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Date client executed",
+		optional: true,
 		size: 6,
 		input: DateInput
 	},
@@ -399,6 +425,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Date supplier executed",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -411,6 +438,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Annual review",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -420,6 +448,7 @@ export default DocumentSchema = {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
 		size: 6,
+		optional: true,
 		label: "Review method"
 	},
 	reviewAmount: {
@@ -428,10 +457,12 @@ export default DocumentSchema = {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
 		size: 6,
+		optional: true,
 		label: "Review amount"
 	},
 	options: {
 		input: Text,
+		optional: true,
 		condition: function( item ) {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
@@ -446,6 +477,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Option exercise from date",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -458,6 +490,7 @@ export default DocumentSchema = {
 			return new Date();
 		},
 		label: "Option exercise to date",
+		optional: true,
 		size: 6,
 		input: DateInput,
 	},
@@ -467,11 +500,13 @@ export default DocumentSchema = {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
 		size: 6,
+		optional: true,
 		label: "Area (m2)"
 	},
 	request: {
 		input: Select,
 		label: "Work order",
+		optional: true,
 		description: "Document is related to request",
 		type: "object",
 		relation: {
@@ -504,6 +539,7 @@ export default DocumentSchema = {
 	attachments: {
 		type: [ Object ],
 		label: "Attachments",
+		optional: true,
 		input: FileExplorer
 	},
 
