@@ -114,7 +114,7 @@ export default MessageView = React.createClass( {
                     <textarea 
                         ref="input"
                         style={{width:"80%",marginTop:"0px"}}
-                        placeholder="Leave a message..."
+                        placeholder="Leave a message and hit enter..."
                         className={"input "+(used?'used':'')}
                         defaultValue={message.body} 
                         onKeyDown={this.handleKeyPress}
