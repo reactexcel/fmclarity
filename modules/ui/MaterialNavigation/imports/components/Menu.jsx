@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Menu( { items, icon = "ellipsis-v" } ) {
 
-	function runAction( item, event ) {
+	function runAction( item, e ) {
 		if ( item.shouldConfirm || item.verb ) {
 			if( item.verb.shouldConfirm || item.shouldConfirm ){
 				var message = confirm( item.label + ". Are you sure?" );
@@ -11,7 +11,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 				}
 			}
 		}
-		item.run( item, event );
+		item.action( item, e );
 	}
 
 	if ( items == null || items.length == 0 ) {
