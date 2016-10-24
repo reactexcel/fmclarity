@@ -121,6 +121,10 @@ export default UserViewEdit = React.createClass( {
 
 	afterSubmit( newMember ) {
 		Modal.hide();
+		/*callback to update changes (name, email, profile pic, ...) made by user*/
+		if ( this.props.onUpdate ) {
+			this.props.onUpdate( newMember );
+		}
 		if ( this.props.addPersonnel ) {
 			this.props.addPersonnel( newMember );
 		}
