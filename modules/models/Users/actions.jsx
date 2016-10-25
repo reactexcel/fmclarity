@@ -22,11 +22,11 @@ const edit = new Action( {
 	name: 'edit user',
 	label: "Edit user",
 	type: [ 'user' ],
-	action: ( { user, group } ) => {
+	action: ( { user, group, onUpdate } ) => {
 		Modal.show( {
 			// could MemberViewEdit be better for this
 			//  or rather - maybe we need a component in members what render UserViewEdit but adds the group role field
-			content: <UserViewEdit item = { user } group = { group }/>
+			content: <UserViewEdit item = { user } group = { group } onUpdate={ onUpdate }/>
 		} )
 	}
 } )

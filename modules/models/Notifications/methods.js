@@ -12,7 +12,6 @@ Meteor.methods( {
 	},
 
 	'Notifications.sendAll': function( notificationRules, actor, action, args, result ) {
-		console.log( 'sending notifications' );
 		if ( Meteor.isServer ) {
 			Meteor.defer( () => {
 				for ( recipientId in notificationRules.alert ) {

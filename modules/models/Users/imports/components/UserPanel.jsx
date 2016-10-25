@@ -15,22 +15,37 @@ import { TeamActions } from '/modules/models/Teams';
  */
 class UserPanel extends React.Component {
 
+	constructor( props ){
+		super( props );
+		this.state = {
+			item : this.props.item,
+		}
+	}
+
 	getMenu() {
 		let user = this.props.item,
 			group = this.props.group || Session.getSelectedTeam();
-			
+		let component = this;
+		// callback when a user update his/her profile
+		const onUpdate = ( newItem ) => {
+			component.setState ( { item : newItem } );
+		}
 		return [
-			UserActions.edit.bind( { user, group } ),
+			UserActions.edit.bind( { user, group, onUpdate } ),
 			UserActions.remove.bind( { user, group } ),
 			TeamActions.inviteMember.bind( { user, group } ),
 			UserActions.login.bind( user )
 		];
 	}
 
+	componentWillReceiveProps( props ){
+		this.setState( { item: props.item } );
+	}
+
 	render() {
 
 		var contact, profile, availableServices;
-		contact = this.props.item;
+		contact = this.state.item;
 
 		if ( !contact ) {
 			return <div/>
