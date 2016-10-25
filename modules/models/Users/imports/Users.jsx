@@ -303,6 +303,9 @@ Meteor.methods( {
             Accounts.sendEnrollmentEmail( userId );
         }
     },
+    'User.getRole': ( ) => {
+        return Meteor.user().getRole();
+   },
 } )
 
 Users.helpers( {

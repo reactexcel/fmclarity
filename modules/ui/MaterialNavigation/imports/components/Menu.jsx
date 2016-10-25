@@ -11,7 +11,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 				}
 			}
 		}
-		item.action( item, e );
+		item.run( item, e );
 	}
 
 	if ( items == null || items.length == 0 ) {

@@ -129,7 +129,10 @@ const RequestSchema = {
 		type: "string",
 		input: Select,
 		readonly: true,
-		defaultValue: "Draft",
+		defaultValue: () => {
+			let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
+			return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
+		 },
 
 		options: {
 			items: [
