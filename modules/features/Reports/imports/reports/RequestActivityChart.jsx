@@ -80,7 +80,7 @@ const RequestActivityChart = React.createClass( {
 		var component = this;
 		return [ {
 			label: ( "Day" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'hA',
@@ -93,7 +93,7 @@ const RequestActivityChart = React.createClass( {
 			}
 		}, {
 			label: ( "Week" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'ddd',
@@ -106,7 +106,7 @@ const RequestActivityChart = React.createClass( {
 			}
 		}, {
 			label: ( "Month" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'D',
@@ -119,7 +119,7 @@ const RequestActivityChart = React.createClass( {
 			}
 		}, {
 			label: ( "3 Months" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'MMM',
@@ -131,7 +131,7 @@ const RequestActivityChart = React.createClass( {
 			}
 		}, {
 			label: ( "6 Months" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'MMM',
@@ -143,7 +143,7 @@ const RequestActivityChart = React.createClass( {
 			}
 		}, {
 			label: ( "Year" ),
-			action() {
+			run() {
 				component.setState( {
 					viewConfig: {
 						format: 'MMM',
