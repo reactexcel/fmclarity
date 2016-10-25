@@ -236,7 +236,7 @@ const TeamStepper = React.createClass( {
                     },{
                         tab:        <span id = "services-provided-tab">Services provided</span>,
                         content:    <ServicesProvidedEditor item = { viewingTeam } save = { viewingTeam.setServicesProvided.bind(viewingTeam) }/>,
-                        guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
+                        guide:      <div>Click on a service name to modify it, or click in the suppliers column to add a default supplier for that service.</div>
                     }
                 ]}/>
             </div>

@@ -28,6 +28,12 @@ const Users = new Model( {
     ]
 } )
 
+Users.collection.allow( {
+	update: () => {
+		return true;
+	}
+} )
+
 if ( Meteor.isServer ) {
     Meteor.publish( 'Users', () => {
         return Users.find();

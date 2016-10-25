@@ -37,7 +37,7 @@ export default ContactList = React.createClass( {
 			role: role,
 		}
 	},
-	
+
 	getInitialState(){
 		return {
 			group: this.props.group,
@@ -45,9 +45,9 @@ export default ContactList = React.createClass( {
 	},
 
 	// Display a pop up modal for the selected user
-	showModal( selectedUser ) {
+	showModal( selectedUser, idx ) {
 
-		let { team, role, group } = this.data;
+		let { team, role, group, members } = this.data;
 
 		//switch based on "type" sent into component
 		//this is a temporary work around as we transition into non-team supplier contacts
