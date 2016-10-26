@@ -13,9 +13,6 @@ import { Facilities } from '/modules/models/Facilities';
  * @memberOf 		module:features/Reports
  */
 const PageDashboardContainer = createContainer( ( params ) => {
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Requests' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
@@ -26,12 +23,7 @@ const PageDashboardContainer = createContainer( ( params ) => {
 		contextFilter = {};
 
 	if ( team ) {
-		Meteor.subscribe( 'Facilities', { team } );
 		facilities = Facilities.findAll( { 'team._id': team._id } );
-		if( facilities ) {
-			let thumbs = _.pluck( facilities, 'thumb');
-			Meteor.subscribe( 'Thumbs', thumbs );
-		}
 	}
 
 	if ( facility && facility._id ) {

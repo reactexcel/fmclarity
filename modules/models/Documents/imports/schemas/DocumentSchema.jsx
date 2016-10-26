@@ -29,6 +29,7 @@ export default DocumentSchema = {
 	},
 
 	facility: {
+		
 		label: "Facility",
 		optional: true,
 		description: "The site for this job",

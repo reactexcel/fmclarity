@@ -8,8 +8,6 @@ export default InboxWidget = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'Messages' );
-
 		var user, item, team, facility;
 		user = Meteor.user();
 		if ( this.props.item ) {
@@ -19,6 +17,7 @@ export default InboxWidget = React.createClass( {
 			team = user.getSelectedTeam();
 
 			/* Messages subscription needs to be updated & narrowed like this... */
+			/*
 			if ( facility ) {
 				Meteor.subscribe( "Messages", "Facilities", facility._id, moment().subtract( { days: 7 } ).toDate() )
 				item = facility;
@@ -29,6 +28,7 @@ export default InboxWidget = React.createClass( {
 				Meteor.subscribe( "Messages", "users", user._id, moment().subtract( { days: 7 } ).toDate() )
 				item = user;
 			}
+			*/
 		}
 		return {
 			user: user,

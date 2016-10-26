@@ -10,10 +10,6 @@ import { Users } from '/modules/models/Users';
 import UsersPageIndex from '../components/UsersPageIndex.jsx';
 
 export default UsersPageIndexContainer = createContainer( ( params ) => {
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Facilities' );
-	Meteor.subscribe( 'Files' );
 	return {
 		team: Session.getSelectedTeam(),
 		users: Users.findAll()

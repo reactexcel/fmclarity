@@ -16,8 +16,6 @@ const FileView = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'Files' );
-
 		var query, file, name, url, extension, icon, isImage, progress;
 		if ( this.props.item && this.props.item._id ) {
 			file = Files.findOne( this.props.item._id );

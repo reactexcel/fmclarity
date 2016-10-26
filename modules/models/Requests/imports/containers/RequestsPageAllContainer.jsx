@@ -5,10 +5,6 @@ import { Requests } from '/modules/models/Requests';
 import { Facilities } from '/modules/models/Facilities';
 
 export default RequestsPageAllContainer = createContainer( ( params ) => {
-	Meteor.subscribe( 'Requests' );
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Facilities' );
 
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),

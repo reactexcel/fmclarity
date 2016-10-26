@@ -10,8 +10,6 @@ ServiceViewEdit = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'users' );
-
 		var facility, team, suppliers;
 
 		facility = this.state.item ? Facilities.findOne( this.state.item._id ) : null;

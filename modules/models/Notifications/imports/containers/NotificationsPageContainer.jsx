@@ -13,8 +13,6 @@ import NotificationsPage from '../components/NotificationsPage.jsx';
  * @memberOf 		module:models/Notifications
  */
 const NotificationsPageContainer = createContainer( ( { params } ) => {
-	Meteor.subscribe ( 'Notifications' );
-	Meteor.subscribe ( 'Requests' );
 	let items = Notifications.findAll();
 	return {
 		items

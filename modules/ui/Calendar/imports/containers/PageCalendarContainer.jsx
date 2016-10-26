@@ -11,10 +11,6 @@ import { Facilities } from '/modules/models/Facilities';
  * @memberOf        module:ui/Calendar
  */
 const PageCalendarContainer = createContainer( ( { params } ) => {
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Facilities' );
-	Meteor.subscribe( 'Requests' );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
@@ -26,8 +22,6 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	if ( team ) {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
-		let thumbs = _.pluck( facilities, 'thumb');
-		Meteor.subscribe( 'Thumbs', thumbs );
 	}
 
 	if ( facility && facility._id ) {

@@ -11,12 +11,6 @@ export default ProgressOverviewChart = React.createClass( {
 
         getMeteorData() {
 
-            Meteor.subscribe( 'Users' );
-            Meteor.subscribe( 'Teams' );
-            Meteor.subscribe( 'Facilities' );
-            Meteor.subscribe( 'Requests' );
-
-
             var baseQuery = {};
             var queries = {
                 New: {},

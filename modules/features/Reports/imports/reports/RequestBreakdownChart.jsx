@@ -30,6 +30,67 @@ const RequestBreakdownChart = React.createClass( {
 		} )
 	},
 
+	getMeteorData() {
+
+		var startDate = this.state.startDate;
+		var query = {
+			createdAt: {
+				$gte: this.state.startDate.toDate()
+			}
+		}
+
+		var facility = Session.get( 'selectedFacility' );
+		if ( facility ) {
+			query[ "facility._id" ] = facility._id;
+		}
+
+		var team = Session.get( 'selectedTeam' );
+		//var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
+		if ( team ) {
+			query[ "team._id" ] = team._id;
+		}
+
+		var requests = Requests.find( query );
+
+		var buckets = {};
+		var costs = {};
+		var labels = [];
+		var counts = [];
+		var set = [];
+		requests.map( function( i ) {
+			var serviceName;
+			if ( i.service && i.service.name ) {
+				serviceName = i.service.name;
+				if ( serviceName.length > 15 ) {
+					serviceName = serviceName.substring( 0, 13 ) + '...';
+				}
+				if ( !costs[ serviceName ] ) {
+					costs[ serviceName ] = 0;
+				}
+				if ( !buckets[ serviceName ] ) {
+					labels.push( serviceName );
+					buckets[ serviceName ] = [];
+				}
+				buckets[ serviceName ].push( i );
+				var newCost = parseInt( i.costThreshold );
+				if ( _.isNaN( newCost ) ) {
+					newCost = 0;
+				}
+				costs[ serviceName ] += newCost;
+			}
+		} );
+		labels.map( function( serviceName, idx ) {
+			counts[ idx ] = buckets[ serviceName ].length;
+			set[ idx ] = costs[ serviceName ];
+		} );
+
+		return {
+			facility: facility,
+			labels: labels,
+			set: set //costs//counts
+		}
+	},
+
 	getMenu() {
 		return [ {
 			label: ( "Day" ),
@@ -93,73 +154,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		} ];
 	},
-
-	getMeteorData() {
-
-		Meteor.subscribe( 'Users' );
-		Meteor.subscribe( 'Teams' );
-		Meteor.subscribe( 'Facilities' );
-		Meteor.subscribe( 'Requests' );
-
-		var startDate = this.state.startDate;
-		var query = {
-			createdAt: {
-				$gte: this.state.startDate.toDate()
-			}
-		}
-
-		var facility = Session.get( 'selectedFacility' );
-		if ( facility ) {
-			query[ "facility._id" ] = facility._id;
-		}
-
-		var team = Session.get( 'selectedTeam' );
-		//var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-		if ( team ) {
-			query[ "team._id" ] = team._id;
-		}
-
-		var requests = Requests.find( query );
-
-		var buckets = {};
-		var costs = {};
-		var labels = [];
-		var counts = [];
-		var set = [];
-		requests.map( function( i ) {
-			var serviceName;
-			if ( i.service && i.service.name ) {
-				serviceName = i.service.name;
-				if ( serviceName.length > 15 ) {
-					serviceName = serviceName.substring( 0, 13 ) + '...';
-				}
-				if ( !costs[ serviceName ] ) {
-					costs[ serviceName ] = 0;
-				}
-				if ( !buckets[ serviceName ] ) {
-					labels.push( serviceName );
-					buckets[ serviceName ] = [];
-				}
-				buckets[ serviceName ].push( i );
-				var newCost = parseInt( i.costThreshold );
-				if ( _.isNaN( newCost ) ) {
-					newCost = 0;
-				}
-				costs[ serviceName ] += newCost;
-			}
-		} );
-		labels.map( function( serviceName, idx ) {
-			counts[ idx ] = buckets[ serviceName ].length;
-			set[ idx ] = costs[ serviceName ];
-		} );
-
-		return {
-			facility: facility,
-			labels: labels,
-			set: set //costs//counts
-		}
-	},
-
+	
 	getChartConfiguration() {
 		//console.log(this.data);
 		return {

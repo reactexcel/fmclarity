@@ -12,10 +12,6 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Facilities' );
-	Meteor.subscribe( 'Files' ); // for the thumbnails
-
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		facilities = null,

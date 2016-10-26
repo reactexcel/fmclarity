@@ -24,14 +24,6 @@ const AdminPageIndex = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'Users' );
-		Meteor.subscribe( 'Facilities' );
-		Meteor.subscribe( 'Documents' );
-		Meteor.subscribe( 'Files' );
-		Meteor.subscribe( 'Messages' );
-		Meteor.subscribe( 'Requests' );
-		Meteor.subscribe( 'Notifications' );
-
 		let user = Meteor.user(),
 			users = Users.findAll( {}, { sort: { 'profile.lastName': 1 } } ),
 			team = Session.getSelectedTeam(),

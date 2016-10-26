@@ -15,8 +15,6 @@ const FileField = React.createClass({
 
     getMeteorData() {
 
-		Meteor.subscribe('File');
-
     	var query,file,url,extension,icon;
     	query = this.props.value;
     	file = Files.findOne(query);

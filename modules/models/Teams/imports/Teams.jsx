@@ -27,6 +27,70 @@ import { Facilities } from '/modules/models/Facilities';
 
 if ( Meteor.isServer ) {
 
+	import { Requests } from '/modules/models/Requests';
+	import { Messages } from '/modules/models/Messages';
+	import { Files } from '/modules/models/Files';
+
+	Meteor.publish( 'User: Teams, Facilities, Requests, Documents, Messages', function() {
+		let userId = this.userId;
+		let teamsCursor = Teams.find( {
+			$or: [ {
+				"members._id": userId
+			}, {
+				"owner._id": userId
+			} ]
+		} );
+
+		let teams = teamsCursor.fetch(),
+			teamIds = _.pluck( teams, '_id' );
+
+		console.log( teamIds );
+
+		let facilitiesCursor = Facilities.find( {
+			'team._id': { $in: teamIds }
+		} );
+
+		let facilities = facilitiesCursor.fetch(),
+			facilityIds = _.pluck( facilities, '_id' );
+
+		let facilityThumbs = facilities.map( ( facility ) => {
+			if ( facility.thumb ) {
+				return facility.thumb._id;
+			}
+		} );
+
+		console.log( facilityThumbs );
+		let thumbsCursor = Files.find( { '_id': { $in: facilityThumbs } } );
+
+		let requestsCursor = Requests.find( {
+			$or: [
+				{ 'team._id': { $in: teamIds } },
+				{ 'owner.id': userId }
+			]
+		} )
+
+		let requests = facilitiesCursor.fetch(),
+			requestIds = _.pluck( facilities, '_id' );
+
+		let documentsCursor = Documents.find( {
+			$or: [
+				{ 'team._id': { $in: teamIds } },
+				{ 'facility._id': { $in: facilityIds } },
+				{ 'request._id': { $in: requestIds } }
+			]
+		} )
+
+		let messagesCursor = Messages.find( {
+			$or: [
+				{ 'team._id': { $in: teamIds } },
+				{ 'facility._id': { $in: facilityIds } },
+				{ 'request._id': { $in: requestIds } }
+			]
+		} )
+
+		return [ teamsCursor, facilitiesCursor, requestsCursor, documentsCursor, thumbsCursor ];
+	} )
+
 	Meteor.publish( 'Teams', function() {
 		/*
 		let userId = this.userId;
@@ -73,7 +137,7 @@ const Teams = new Model( {
 		[ Members, {
 			fieldName: "members",
 			authentication: true
-			//authentication: AuthHelpers.managerOrOwner
+				//authentication: AuthHelpers.managerOrOwner
 		} ],
 		//mixins for suppliers
 		[ Members, {
@@ -328,12 +392,12 @@ function inviteMember( team, email, ext ) {
 }
 
 function sendMemberInvite( team, recipient ) {
-	console.log(recipient);
-	let body = ReactDOMServer.renderToStaticMarkup( 
+	console.log( recipient );
+	let body = ReactDOMServer.renderToStaticMarkup(
 		React.createElement( TeamInviteEmailTemplate, {
-			team 	: team,
-			user 	: recipient,
-			token 	: LoginService.generatePasswordResetToken( recipient )			
+			team: team,
+			user: recipient,
+			token: LoginService.generatePasswordResetToken( recipient )
 		} )
 	);
 
@@ -354,8 +418,8 @@ function sendMemberInvite( team, recipient ) {
 		}
 	}*/
 	Meteor.call( 'Messages.sendEmail', recipient, {
-		subject		: team.name + " has invited you to join FM Clarity",
-		emailBody 	: body
+		subject: team.name + " has invited you to join FM Clarity",
+		emailBody: body
 	} )
 }
 
