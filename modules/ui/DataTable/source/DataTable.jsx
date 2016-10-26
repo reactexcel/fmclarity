@@ -83,9 +83,9 @@ export default DataTable = React.createClass( {
 			<div className="data-grid">
 
 				<div className = "data-grid-title-row">
-					<Menu items = { [ download(dataset), print(dataset) ] } />
+					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
 				</div>
-
+				<div ref="printable">
 				<table className="table">
 
 					<thead>
@@ -144,7 +144,7 @@ export default DataTable = React.createClass( {
 					</tbody>
 
 				</table>
-
+				</div>
 			</div>
 		)
 	}

@@ -5,7 +5,7 @@ function download( dataset ) {
 	return {
 		label: "Download",
 		authentication: true,
-		action: () => {
+		run: () => {
 			dataset.download();
 		},
 		notification: () => {
@@ -14,12 +14,12 @@ function download( dataset ) {
 	}
 }
 
-function print( dataset ) {
+function print( dataset, element ) {
 	return {
 		label: "Print",
 		authentication: true,
-		action: () => {
-			dataset.print();
+		run: () => {
+			dataset.print(element);
 		},
 		notification: () => {
 			///blah
