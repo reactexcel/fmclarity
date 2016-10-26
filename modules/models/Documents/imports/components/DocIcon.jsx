@@ -7,6 +7,8 @@ import React from "react";
 
 import DocViewEdit from './DocViewEdit.jsx';
 
+import { DocActions } from '/modules/models/Documents';
+
 export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
@@ -28,6 +30,18 @@ export default function DocIcon( props ) {
 		showFileDetailsModal();
 	}
 
+	function runaction( item ){
+		if ( item.verb ) {
+			if ( item.verb.shouldConfirm ) {
+				var message = confirm( item.label + ". Are you sure?" );
+				if ( message != true ) {
+					return;
+				}
+			}
+		}
+		item.run( );
+	}
+
 	let item = props.item;
 	if ( item == null ) {
 		return (
@@ -47,7 +61,20 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
 			<span style={{display:"inline-block",width:"40%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
-			<span style={{display:"inline-block",width:"10%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>
+			<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>
+			<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+				<button
+					type 		= "button"
+					className 	= "btn btn-primary"
+					onClick={
+						( event ) => {
+							event.stopPropagation();
+							runaction( DocActions.destroy.bind( item ) );
+						}
+					}>
+					{ 'Delete' }
+				</button>
+			</span>
 		</div>
 	)
 }

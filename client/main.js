@@ -179,6 +179,15 @@ Actions.addAccessRule( {
 } )
 
 
+Actions.addAccessRule( {
+	action: [
+		'destroy document'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
+
 /*
 Actions.addAccessRule( {
 	action: 'rejectRequest',

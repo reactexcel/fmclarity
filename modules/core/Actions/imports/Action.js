@@ -25,7 +25,7 @@ class Action {
 	 * @param {string} [path] - The url of this action, if provided then running the action changes the url to this.
 	 * @param {string} [label] - Human readable name of the action used by interface elements.
 	 * @param {string} [icon] - A css class that can be used to display an icon related to this action (used by interface elements).
-	 * @param {string} [description] - A description of this action to be used by interface elements 
+	 * @param {string} [description] - A description of this action to be used by interface elements
 	 */
 	constructor( { name, action, type, path, label, icon, verb, getResult, getEmail, description } ) {
 		this.name = name;
@@ -88,6 +88,7 @@ class Action {
 			label: this.label,
 			verb: this.verb,
 			icon: this.icon,
+			shouldConfirm: this.shouldConfirm,
 			run: () => {
 				return this.run( ...args );
 			}

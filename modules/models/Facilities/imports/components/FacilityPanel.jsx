@@ -75,7 +75,7 @@ function FacilityPanel( { item } ) {
 					},{
 						//hide:       !facility.canAddDocument(),
 						tab:        <span id="documents-tab">Documents</span>,
-						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] }/>
+						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit={ true }/>
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
