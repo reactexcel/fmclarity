@@ -1,7 +1,7 @@
 // fields can be an array or a dictionary
 // if array project using items
 // if dictionary then if function execute, else project
-
+import ReactDOM from 'react-dom';
 export default function DataSet( items ) {
 	let data = [],
 		labels = [],
@@ -149,5 +149,28 @@ export default function DataSet( items ) {
 			} );
 			saveAs( blob, "fm-clarity-export.csv" );
 		},
+		print: function(element) {
+			
+			var print_data=element.innerHTML;
+			
+			var datawindow = window.open('', 'fm-clarity-print', 'height=400,width=600');
+	        datawindow.document.write('<html><head><title>fm-clarity-print</title>');
+	        //datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
+	        datawindow.document.write('</head><body >');
+	        datawindow.document.write(print_data);
+	        datawindow.document.write('</body></html>');
+
+	        datawindow.document.close(); // necessary for IE >= 10
+	        datawindow.focus(); // necessary for IE >= 10
+
+	        datawindow.print();
+	        datawindow.close();
+
+	        return true;
+			
+		},
 	}
 }
+
+
+
