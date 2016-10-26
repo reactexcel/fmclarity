@@ -33,7 +33,7 @@ const RequestBreakdownChart = React.createClass( {
 	getMenu() {
 		return [ {
 			label: ( "Day" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().startOf( 'day' );
 				var title = startDate.format( "[on] dddd Do MMMM" )
 				this.setState( {
@@ -43,7 +43,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		}, {
 			label: ( "Week" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().startOf( 'week' );
 				var title = startDate.format( "[for week starting] Do MMMM" )
 				this.setState( {
@@ -53,7 +53,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		}, {
 			label: ( "Month" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().startOf( 'month' );
 				var title = startDate.format( "[for] MMMM YYYY" )
 				this.setState( {
@@ -63,7 +63,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		}, {
 			label: ( "3 Months" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
 				var title = startDate.format( "[since] MMMM YYYY" )
 				this.setState( {
@@ -73,7 +73,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		}, {
 			label: ( "6 Months" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
 				var title = startDate.format( "[since] MMMM YYYY" )
 				this.setState( {
@@ -83,7 +83,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		}, {
 			label: ( "Year" ),
-			action: () => {
+			run: () => {
 				var startDate = moment().startOf( 'year' );
 				var title = startDate.format( "YYYY" )
 				this.setState( {

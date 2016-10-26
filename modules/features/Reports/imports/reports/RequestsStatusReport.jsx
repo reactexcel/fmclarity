@@ -177,6 +177,7 @@ const RequestsStatusReport = React.createClass( {
 							<DateTime
 								placeholder = "Start Date"
 								onChange    = { ( startDate ) => { this.setState( { startDate } ) } }
+								value ={ this.state.startDate }
 							/>
 
 						</div>
@@ -185,6 +186,7 @@ const RequestsStatusReport = React.createClass( {
 							<DateTime
 								placeholder = "End Date"
 								onChange    = { ( endDate ) => { this.setState( { endDate } ) } }
+								value ={ this.state.endDate }
 							/>
 
 						</div>

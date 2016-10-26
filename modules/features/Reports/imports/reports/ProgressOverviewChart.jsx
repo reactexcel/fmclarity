@@ -80,7 +80,7 @@ export default ProgressOverviewChart = React.createClass( {
             var component = this;
             return [ {
                 label: ( "Day" ),
-                action() {
+                run() {
                     var startDate = moment().startOf( 'day' );
                     var endDate = moment().endOf( 'day' );
                     var title = startDate.format( "[for] dddd Do MMMM" )
@@ -93,7 +93,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "Week" ),
-                action() {
+                run() {
                     var startDate = moment().startOf( 'week' );
                     var endDate = moment().endOf( 'week' );
                     var title = startDate.format( "[for week starting] Do MMMM" )
@@ -106,7 +106,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "Month" ),
-                action() {
+                run() {
                     var startDate = moment().startOf( 'month' );
                     var endDate = moment().endOf( 'month' );
                     var title = startDate.format( "[for] MMMM YYYY" )
@@ -119,7 +119,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "3 Months" ),
-                action() {
+                run() {
                     var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
                     var endDate = moment().endOf( 'month' );
                     var title = startDate.format( "[for 3 months since] MMMM YYYY" )
@@ -132,7 +132,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "6 Months" ),
-                action() {
+                run() {
                     var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
                     var endDate = moment().endOf( 'month' );
                     var title = startDate.format( "[for 6 months since] MMMM YYYY" )
@@ -145,7 +145,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "Year" ),
-                action() {
+                run() {
                     var startDate = moment().startOf( 'year' );
                     var endDate = moment().endOf( 'year' );
                     var title = startDate.format( "[for] YYYY" )
