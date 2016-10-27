@@ -11,6 +11,7 @@ Package.onUse( function( api ) {
 
 	api.use( [
 		'underscore',
+		'ecmascript',
 		'dburles:collection-helpers'
 	] );
 

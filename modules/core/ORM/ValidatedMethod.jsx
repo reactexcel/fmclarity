@@ -28,9 +28,7 @@ class ValidatedMethod {
 		this._after = [];
 
 		Meteor.methods( {
-			[ this.name ]: ( ...args ) => {
-				return this._method( ...args )
-			}
+			[ this.name ]: this._method.bind( this )
 		} );
 	}
 
