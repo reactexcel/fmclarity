@@ -54,6 +54,11 @@ const Requests = new Model( {
 	]
 } )
 
+if( Meteor.isServer ) {
+	Requests.collection._ensureIndex( { 'team._id': 1 } );
+	Requests.collection._ensureIndex( { 'owner._id': 1 } );
+}
+
 Requests.save.before( ( request ) => {
 	if ( request.type == "Preventative" ) {
 		request.status = "PMP";

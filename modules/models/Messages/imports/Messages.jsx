@@ -49,6 +49,12 @@ Messages.helpers( {
 	}
 } );
 
+if( Meteor.isServer ) {
+	Messages.collection._ensureIndex( { 'team._id': 1 } );
+	Messages.collection._ensureIndex( { 'facility._id': 1 } );
+	Messages.collection._ensureIndex( { 'request._id': 1 } );
+}
+
 if ( Meteor.isServer ) {
 	Meteor.publish( "Messages", () => {
 		return Messages.find();

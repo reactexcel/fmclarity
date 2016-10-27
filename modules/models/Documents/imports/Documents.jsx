@@ -29,8 +29,14 @@ Documents.collection.allow( {
 	}
 } )
 
+if( Meteor.isServer ) {
+	Documents.collection._ensureIndex( { 'team._id': 1 } );
+	Documents.collection._ensureIndex( { 'facility._id': 1 } );
+	Documents.collection._ensureIndex( { 'request._id': 1 } );
+}
+
 Documents.actions( {
-	destroy:{
+	destroy: {
 		authentication: true,
 		helper: ( doc ) => {
 			let attachments = doc.attachments;
@@ -38,9 +44,9 @@ Documents.actions( {
 			import { Files } from '/modules/models/Files';
 
 			_.forEach( attachments, ( attach ) => {
-					Files.remove( { _id: attach._id } );
+				Files.remove( { _id: attach._id } );
 			} );
-			console.log(doc);
+			console.log( doc );
 			Documents.remove( { _id: doc._id } );
 		}
 	},
