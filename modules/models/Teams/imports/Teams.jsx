@@ -69,8 +69,8 @@ if ( Meteor.isServer ) {
 			]
 		} )
 
-		let requests = facilitiesCursor.fetch(),
-			requestIds = _.pluck( facilities, '_id' );
+		let requests = requestsCursor.fetch(),
+			requestIds = _.pluck( requests, '_id' );
 
 		let documentsCursor = Documents.find( {
 			$or: [
