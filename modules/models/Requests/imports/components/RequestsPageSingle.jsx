@@ -8,12 +8,7 @@ export default RequestsPageSingle = React.createClass( {
 
     getMeteorData() {
         var id = this.props.selected;
-        Meteor.subscribe( 'contractors' );
-        Meteor.subscribe( 'services' );
-        Meteor.subscribe( 'facilities' );
-        Meteor.subscribe( 'teamsAndFacilitiesForUser' );
-        Meteor.subscribe( 'users' );
-        Meteor.subscribe( 'allTeams' );
+        
         var request, facility, dueDate, address;
         request = Requests.findOne( id );
         if ( request ) {

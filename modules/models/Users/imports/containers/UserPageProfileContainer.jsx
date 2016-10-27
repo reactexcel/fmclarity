@@ -14,10 +14,6 @@ import UserPageProfile from '../components/UserPageProfile.jsx';
  * @memberOf 		module:models/Users
  */
 const UserPageProfileContainer = createContainer( ( params ) => {
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Facilities' );
-	Meteor.subscribe( 'Files' );
 	return {
 		user: Meteor.user()
 	}

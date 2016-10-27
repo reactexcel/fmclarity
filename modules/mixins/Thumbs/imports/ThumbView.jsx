@@ -18,8 +18,6 @@ const ThumbView = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'File' );
-
 		var query, file, url, extension, icon;
 		query = this.props.item;
 		file = Files.findOne( query );

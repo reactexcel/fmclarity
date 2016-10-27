@@ -73,7 +73,8 @@ Users.actions( {
     getRole: {
         authentication: true,
         helper: function( user, group ) {
-            group = group || user.getSelectedTeam();
+            //group = group || user.getSelectedTeam();
+            // causing problems because this is evaluated server side
             if ( !group || !group.members || !group.members.length ) {
                 return null;
             }
@@ -303,6 +304,9 @@ Meteor.methods( {
             Accounts.sendEnrollmentEmail( userId );
         }
     },
+    'User.getRole': ( ) => {
+        return Meteor.user().getRole();
+   },
 } )
 
 Users.helpers( {

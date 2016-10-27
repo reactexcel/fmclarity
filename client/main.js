@@ -4,6 +4,13 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 
+Meteor.subscribe( 'User: Teams, Facilities, Requests, Documents, Messages' );
+Meteor.subscribe( 'User: Notifications' );
+
+Meteor.subscribe( 'Users' );
+Meteor.subscribe( 'Files' );
+Meteor.subscribe( 'Suppliers' );
+
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
 	rel: 'icon',
@@ -100,7 +107,8 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: ( request ) => { return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) },
+	condition: ( request ) => {
+		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) },
 	action: [
 		'edit request'
 	],
@@ -109,7 +117,8 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: ( item ) => { return item.status == 'Draft' || item.status == 'New' },
+	condition: ( item ) => {
+		return item.status == 'Draft' || item.status == 'New' },
 	action: [
 		'issue request',
 		'reject request',
@@ -173,6 +182,15 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [
 		'invite team member'
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
+
+Actions.addAccessRule( {
+	action: [
+		'destroy document'
 	],
 	role: [ '*' ],
 	rule: { alert: true }

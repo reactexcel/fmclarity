@@ -14,10 +14,6 @@ import { Notifications } from '/modules/models/Notifications';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Facilities' );
-	Meteor.subscribe( 'Notifications' );
-
 	let user = Meteor.user(),
 		team = null,
 		teams = null,

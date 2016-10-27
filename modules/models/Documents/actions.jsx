@@ -3,6 +3,8 @@ import React from 'react';
 import { Modal } from '/modules/ui/Modal';
 import DocViewEdit from './imports/components/DocViewEdit.jsx';
 
+import { Action } from '/modules/core/Actions';
+
 function create( doc ) {
 	return {
 		name: "create document",
@@ -28,7 +30,21 @@ function edit( doc ) {
 	}
 }
 
+const destroy = new Action( {
+	name: "destroy document",
+	type: 'document',
+	label: "Delete document",
+	shouldConfirm: true,
+	verb:  {
+		shouldConfirm: true,
+	},
+	action: ( doc ) => {
+		doc.destroy();
+	}
+} )
+
 export {
 	create,
-	edit
+	edit,
+	destroy
 }

@@ -57,12 +57,9 @@ const TeamPanel = React.createClass( {
 
 	getMeteorData() {
 		var team, services, insuranceDocs;
-		Meteor.subscribe( 'contractors' );
-		Meteor.subscribe( 'teamsAndFacilitiesForUser' );
 		team = this.props.item;
 
 		if ( team ) {
-			Meteor.subscribe( "messages", "Teams", team._id, moment().subtract( { days: 7 } ).toDate() );
 			if( team.getAvailableServices ) {
 				services = team.getAvailableServices();
 			}

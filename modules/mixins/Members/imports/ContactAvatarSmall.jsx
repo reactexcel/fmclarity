@@ -15,7 +15,6 @@ const ContactAvatarSmall = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		Meteor.subscribe( 'File' );
 
 		let contact = this.props.item,
 			profile = this.props.item,

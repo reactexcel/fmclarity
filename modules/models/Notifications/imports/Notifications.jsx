@@ -2,9 +2,11 @@ import { Model } from '/modules/core/ORM';
 import NotificationSchema from './schemas/NotificationSchema.js';
 
 if ( Meteor.isServer ) {
-	Meteor.publish( 'Notifications', function() {
+
+	Meteor.publish( 'User: Notifications', function() {
 		return Notifications.find( { 'recipient._id': this.userId });
 	} )
+
 }
 
 const Notifications = new Model( {

@@ -13,8 +13,6 @@ import { NavigationDrawer } 	from '/modules/ui/MaterialNavigation';
  * @memberOf 		module:core/Layouts
  */
 const NavigationDrawerContainer = createContainer( ( { params } ) => {
-	Meteor.subscribe( 'Teams' );
-	Meteor.subscribe( 'Facilities' );
 
 	let user = Meteor.user(),
 		team = Session.getSelectedTeam(),

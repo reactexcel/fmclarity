@@ -27,11 +27,6 @@ const RequestActivityChart = React.createClass( {
 
 	getMeteorData() {
 
-		Meteor.subscribe( 'Users' );
-		Meteor.subscribe( 'Teams' );
-		Meteor.subscribe( 'Facilities' );
-		Meteor.subscribe( 'Requests' );
-
 		var openQuery = {}
 		var closedQuery = {
 			status: "Closed",

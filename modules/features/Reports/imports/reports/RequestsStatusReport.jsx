@@ -19,6 +19,49 @@ const RequestsStatusReport = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
+	getInitialState() {
+		return {
+			service: null,
+			startDate: null,
+			endDate: null
+		}
+	},
+
+	getMeteorData() {
+
+		var user, team, facility, requests, data = {};
+		user = Meteor.user();
+		if ( user ) {
+			var q = {};
+			team = user.getSelectedTeam();
+			facility = this.state.facility || user.getSelectedFacility();
+			service = this.state.service;
+			if ( facility ) {
+				q[ "facility._id" ] = facility._id;
+			}
+			if ( service ) {
+				q[ "service.name" ] = service.name;
+			}
+			if ( this.state.startDate || this.state.endDate ) {
+				q.issuedAt = {};
+			}
+			if ( this.state.startDate ) {
+				q.issuedAt.$gte = this.state.startDate;
+			}
+			if ( this.state.endDate ) {
+				q.issuedAt.$lte = this.state.endDate;
+			}
+			if ( team ) {
+				data.requests = user.getRequests( q );
+			}
+		}
+		return {
+			team: team,
+			facility: facility,
+			reportData: data
+		}
+	},
+
 	fields: {
 		Priority: "priority",
 		Status: "status",
@@ -74,55 +117,7 @@ const RequestsStatusReport = React.createClass( {
 			}
 		}
 	},
-
-	getInitialState() {
-		return {
-			service: null,
-			startDate: null,
-			endDate: null
-		}
-	},
-
-	getMeteorData() {
-
-		Meteor.subscribe( 'Users' );
-		Meteor.subscribe( 'Teams' );
-		Meteor.subscribe( 'Facilities' );
-		Meteor.subscribe( 'Requests' );
-
-		var user, team, facility, requests, data = {};
-		user = Meteor.user();
-		if ( user ) {
-			var q = {};
-			team = user.getSelectedTeam();
-			facility = this.state.facility || user.getSelectedFacility();
-			service = this.state.service;
-			if ( facility ) {
-				q[ "facility._id" ] = facility._id;
-			}
-			if ( service ) {
-				q[ "service.name" ] = service.name;
-			}
-			if ( this.state.startDate || this.state.endDate ) {
-				q.issuedAt = {};
-			}
-			if ( this.state.startDate ) {
-				q.issuedAt.$gte = this.state.startDate;
-			}
-			if ( this.state.endDate ) {
-				q.issuedAt.$lte = this.state.endDate;
-			}
-			if ( team ) {
-				data.requests = user.getRequests( q );
-			}
-		}
-		return {
-			team: team,
-			facility: facility,
-			reportData: data
-		}
-	},
-
+	
 	render() {
 		var data = this.data.reportData.requests;
 
