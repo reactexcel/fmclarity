@@ -121,41 +121,22 @@ class FormController {
 		// to avoid validation errors related to fields we aren't handling
 		let validationFields = _.pick( this.item, this.keys );
 
-		this.model.validate( validationFields )
-			.then( () => {
-
-				this.model.save.call( this.item )
-					.then( ( savedItem ) => {
-						Object.assign( this.item, savedItem );
-						this.triggerCallbacks();
-						if ( callback ) {
-							callback( this.item );
-						}
-					} );
-
-			} )
-			.catch( ( error ) => {
-				console.log( error );
-				this.processValidationErrors( error );
-				this.triggerCallbacks();
-			} )
-
-		/*
-		this.model.save.call( this.item )
-		.then( ( response ) => {
-			console.log( response );
-			Object.assign( this.item, response );
-			this.triggerCallbacks();
-			if( callback ) {
-				callback( this.item );
-			}
-		})
-		.catch( ( error ) => {
+		let error = this.model.validate( validationFields );
+		if ( error ) {
 			console.log( error );
 			this.processValidationErrors( error );
-			this.triggerCallbacks();
-		});
-		*/
+			this.triggerCallbacks();			
+		}
+		else {
+			this.model.save.call( this.item )
+				.then( ( savedItem ) => {
+					Object.assign( this.item, savedItem );
+					this.triggerCallbacks();
+					if ( callback ) {
+						callback( this.item );
+					}
+				} );
+		}
 	}
 
 	delete() {
