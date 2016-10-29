@@ -47,6 +47,7 @@ Notifications.actions( {
 		helper: ( { actor, action, object } ) => {
 			let actorName = actor.profile.name,
 				actionName = action.name,
+				actionVerb = action.verb,
 				targetName = "Unknown";
 
 			if ( object ) {
@@ -60,7 +61,7 @@ Notifications.actions( {
 					targetName = target.name;
 				}
 			}
-			return `${actorName} ${actionName} ${targetName}`;
+			return `${actorName} ${actionVerb} ${targetName}`;
 		}
 	}
 } )

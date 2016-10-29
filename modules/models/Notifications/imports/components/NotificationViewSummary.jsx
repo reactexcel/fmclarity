@@ -27,7 +27,7 @@ function NotificationViewSummary( props ) {
             <div>
                 <strong>{ actorName }</strong>&nbsp;
                 <span>{ actionVerb }</span>&nbsp;
-                <strong><a href = {resultObject.href}>{ result.name }</a></strong>
+                <strong><a href = {resultObject.href}>{ resultObject.text }</a></strong>
                 <br/>
             </div>
         </div>

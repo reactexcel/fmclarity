@@ -22,8 +22,8 @@ Meteor.methods( {
 
 					// if the current actor performed the action then pre-mark the notification as read
 					if ( actor._id == recipient._id ) {
-						//read = true;
-						//wasShown = true;
+						read = true;
+						wasShown = true;
 					}
 
 					Meteor.call( 'Notifications.create', {
