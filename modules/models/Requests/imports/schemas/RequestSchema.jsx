@@ -33,6 +33,9 @@ const RequestSchema = {
 		input: Text,
 		options: {
 			readonly: true
+		},
+		defaultValue:()=>{
+			return Random.id();
 		}
 	},
 

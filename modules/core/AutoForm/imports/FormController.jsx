@@ -113,6 +113,8 @@ class FormController {
 	 * @param 			{function} callback
 	 */
 	save( item, callback ) {
+		// actually, we don't want to do this if validation fails
+		// REFACT: think about how this could be optimised
 		if ( item != null ) {
 			Object.assign( this.item, item );
 		}
@@ -128,6 +130,16 @@ class FormController {
 			this.triggerCallbacks();			
 		}
 		else {
+			// if validation passes we will assume update will work
+			//  and trigger callbacks before saving the data
+			if( Meteor.isClient ) {
+				this.triggerCallbacks();
+				if ( callback ) {
+					callback( this.item );
+				}
+			}
+
+			// this could actually perform validation to confirm the results of the client validation
 			this.model.save.call( this.item )
 				.then( ( savedItem ) => {
 					Object.assign( this.item, savedItem );
@@ -136,7 +148,7 @@ class FormController {
 						callback( this.item );
 					}
 				} );
-		}
+		}		
 	}
 
 	delete() {
