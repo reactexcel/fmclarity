@@ -2,6 +2,7 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
+import Currency from './imports/Currency.jsx';
 import DateInput from './imports/DateInput.jsx';
 import DateTime from './imports/DateTime.jsx';
 import FileField from './imports/FileField.jsx';
@@ -12,6 +13,7 @@ import Text from './imports/Text.jsx';
 import TextArea from './imports/TextArea.jsx';
 
 checkModules( {
+	Currency,
 	DateInput,
 	DateTime,
 	FileField,
@@ -26,6 +28,7 @@ checkModules( {
  * @module 			module:ui/MaterialInputs
  */
 export {
+	Currency,
 	DateInput,
 	DateTime,
 	FileField,

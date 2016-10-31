@@ -13,7 +13,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 
 /**
  * @memberOf 		module:models/Requests
@@ -40,7 +40,7 @@ const RequestSchema = {
 	},
 
 	name: {
-		label: "Subject",
+		label: "Requested Work",
 		type: "string",
 		input: Text,
 		description: "A brief, descriptive, title for the work request"
@@ -69,6 +69,7 @@ const RequestSchema = {
 				"Booking",
 				//"Internal",
 				"Preventative",
+				"Tenancy",
 				//"Base Building",
 				//"Contract",
 				//"Defect",
@@ -366,7 +367,7 @@ const RequestSchema = {
 		size: 6,
 		defaultValue: 500,
 		optional: true,
-		input: Text,
+		input: Currency,
 		condition: [ "Ad-hoc", "Contract" ],
 	},
 
@@ -409,7 +410,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 
 	team: {
-		label: "Owning team",
+		label: "Client",
 		description: "The team who created this work request",
 		type: "object",
 		relation: {
