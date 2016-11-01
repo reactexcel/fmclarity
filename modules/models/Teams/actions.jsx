@@ -5,7 +5,7 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, CreateRequestForm } from '/modules/models/Requests';
+import { Requests, CreateRequestForm, SupplierCreateRequestForm } from '/modules/models/Requests';
 import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
@@ -84,14 +84,16 @@ const createRequest = new Action( {
 	action: ( team, callback ) => {
 		let item = { team };
 		newItem = Requests.create( item );
+		//console.log( newItem );
 		Modal.show( {
 			content: <AutoForm
 				title 	= "Please tell us a little bit more about the work that is required."
 				model 	= { Requests }
-				form 	= { CreateRequestForm }
+				form 	= { team.type=='fm'?CreateRequestForm:SupplierCreateRequestForm }
 				item 	= { newItem }
 				onSubmit = {
 					( newRequest ) => {
+						//console.log( newRequest );
 						Modal.replace( {
 							content: <RequestPanel item = { newRequest }/>
 						} );

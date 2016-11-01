@@ -31,6 +31,9 @@ class FormController {
 		}
 
 		this.item = item || {};
+
+		console.log( this.item );
+
 		this.collection = [];
 	}
 
@@ -113,11 +116,16 @@ class FormController {
 	 * @param 			{function} callback
 	 */
 	save( item, callback ) {
+
+		console.log( item );
+
 		// actually, we don't want to do this if validation fails
 		// REFACT: think about how this could be optimised
 		if ( item != null ) {
 			Object.assign( this.item, item );
 		}
+
+		console.log( this.item );
 
 		// remove all extraneous fields from the provided item
 		// to avoid validation errors related to fields we aren't handling

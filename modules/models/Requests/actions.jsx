@@ -77,6 +77,7 @@ const deleteFunction = new Action( {
 const cancel = new Action( {
 	name: "cancel request",
 	type: 'request',
+	verb: "cancelled a work order",
 	label: "Cancel",
 	action: ( request, callback ) => {
 		Modal.show( {
@@ -99,6 +100,7 @@ const cancel = new Action( {
 const issue = new Action( {
 	name: "issue request",
 	type: 'request',
+	verb: "issued a work order",
 	label: "Issue",
 	action: ( request, callback ) => {
 		console.log( request );
@@ -131,6 +133,7 @@ const issue = new Action( {
 const accept = new Action( {
 	name: "accept request",
 	type: 'request',
+	verb: "accepted a work order",
 	label: "Accept",
 	action: ( request, callback ) => {
 		Modal.show( {
@@ -154,6 +157,7 @@ const accept = new Action( {
 const reject = new Action( {
 	name: "reject request",
 	type: 'request',
+	verb: "rejected a work order",
 	label: "Reject",
 	action: ( request, callback ) => {
 		Modal.show( {
@@ -220,6 +224,7 @@ const sendQuote = new Action( {
 const complete = new Action( {
 	name: "complete request",
 	type: 'request',
+	verb: "completed a work order",	
 	label: "Complete",
 	action: ( request, callback ) => {
 		Modal.show( {
@@ -244,6 +249,7 @@ const complete = new Action( {
 const close = new Action( {
 	name: "close request",
 	type: 'request',
+	verb: "closed a work order",
 	label: "close",
 	action: ( request, callback ) => {
 		Modal.show( {

@@ -29,9 +29,9 @@ export default function RequestsTable( { requests, filter } ) {
                     let team = Session.getSelectedTeam();
                     let supplier = request.supplier;
                     //Issue WO if team id and suppliers id of request matches.
-                    if ( request.status == "New" && team._id == supplier._id ) {
+                    /*if ( request.status == "New" && team && supplier && team._id == supplier._id ) {
                         RequestActions.issue.run( request );
-                    }
+                    }*/
                     RequestActions.view.run( request )
 
                 }

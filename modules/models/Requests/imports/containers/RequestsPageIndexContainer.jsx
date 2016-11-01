@@ -15,7 +15,8 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		contextFilter = {};
 
 	if ( team ) {
-		facilities = Facilities.findAll( { 'team._id': team._id } );
+		//facilities = Facilities.findAll( { 'team._id': team._id } );
+		facilities = team.getFacilities();
 	}
 
 	if ( facility && facility._id ) {
@@ -26,6 +27,8 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 
 	if ( user != null ) {
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		//requests = user.getRequests();
+		//console.log( requests );
 	}
 
 	return {

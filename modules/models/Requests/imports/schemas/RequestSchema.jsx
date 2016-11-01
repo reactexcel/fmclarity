@@ -71,7 +71,17 @@ const RequestSchema = {
 		label: "Request type",
 		description: "The work request type (ie Ad-hoc, Preventative)",
 		type: "string",
-//		defaultValue: "Ad-hoc",
+		defaultValue:()=>{
+			let team = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( team ) {
+				teamType = team.type;
+			}
+			if( teamType == 'contractor' ) {
+				return 'Tenancy';
+			}
+			return "Ad-hoc";
+		},
 		input: Select,
 		options: {
 			items: [
@@ -242,14 +252,13 @@ const RequestSchema = {
 				services = [];
 			if ( team ) {
 				teamType = team.type;
-				if( team.getAvailableServices ) {
+				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if( request.type == 'Booking' ) {
+			if ( request.type == 'Booking' ) {
 				return false;
-			}
-			else if (teamType == 'contractor' && !team.services.length<=1 ) {
+			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
 			}
 			return true;
@@ -310,14 +319,13 @@ const RequestSchema = {
 				services = [];
 			if ( team ) {
 				teamType = team.type;
-				if( team.getAvailableServices ) {
+				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if( request.type == 'Booking' ) {
+			if ( request.type == 'Booking' ) {
 				return false;
-			}
-			else if (teamType == 'contractor' && !team.services.length<=1 ) {
+			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
 			}
 			return true;
@@ -442,11 +450,11 @@ const RequestSchema = {
 	costThreshold: {
 		label: "Value",
 		type: "number",
-		size: 12,
+		size: 6,
 		defaultValue: '500',
 		optional: true,
 		input: Currency,
-		condition: [ "Ad-hoc", "Contract" ],
+		condition: [ "Ad-hoc", "Contract", "Tenancy" ],
 	},
 
 	closeDetails: {
@@ -496,7 +504,6 @@ const RequestSchema = {
 				return Teams.findOne( item.team._id )
 			},
 			unjoin: ( item ) => {
-				//console.log( item );
 				if ( item.team ) {
 					return _.pick( item.team, [ '_id', 'name' ] )
 				}
@@ -504,14 +511,27 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
+			let team = Session.getSelectedTeam(),
+				teamType = null;
+			if ( team ) {
+				teamType = team.type;
+			}
 			return {
-				items: role == 'supplier manager' ? item.team.getClients( ) : null,
+				items: teamType == 'contractor' ? team.getClients() : null,
 				view: ContactCard
 			}
 		},
 		defaultValue: ( item ) => {
-			let role = getRole( );
-			return role == 'supplier manager' ? null : Session.getSelectedTeam( );
+			let team = Session.getSelectedTeam(),
+				teamType = null;
+			if ( team ) {
+				teamType = team.type;
+			}
+			console.log( teamType );
+			if( teamType == 'contractor' ) {
+				return null;
+			}
+			return team;
 		}
 	},
 
@@ -571,6 +591,18 @@ const RequestSchema = {
 			console.log( teamType );
 			return request.type != 'Booking' && teamType != 'contractor';
 		},
+		defaultValue: ( item ) => {
+			let team = Session.getSelectedTeam(),
+				teamType = null;
+			if ( team ) {
+				teamType = team.type;
+			}
+			console.log( teamType );
+			if( teamType == 'fm' ) {
+				return null;
+			}
+			return team;
+		},		
 		input: Select,
 		options: ( item ) => {
 			//console.log( item );
@@ -603,7 +635,7 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			return {
-				items: ( item.supplier ? item.supplier.members : null ),
+				items: ( item.supplier ? _.uniq(item.supplier.members,false,(a)=>{return a._id}) : null ),
 				view: ( Meteor.isClient ? ContactCard : null )
 			}
 		},
@@ -716,7 +748,7 @@ function getDefaultDueDate( item ) {
 	return new Date( now.getTime() + timeframe );
 }
 
-function getRole () {
+function getRole() {
 	return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
 }
 
