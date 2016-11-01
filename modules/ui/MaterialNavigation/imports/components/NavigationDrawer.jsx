@@ -26,13 +26,17 @@ class NavigationDrawer extends React.Component {
 	}
 
 	render() {
-		let { userRole, routes } = this.props, { selectedRouteName } = this.state;
+		import { Routes } from '/modules/core/Actions'; // moved here because of circular dependency
+		let { userRole, routes, team } = this.props, 
+			{ selectedRouteName } = this.state;
 
-		if ( routes == null || routes.length <= 1 ) {
+		if ( !team || routes == null || routes.length <= 1 ) {
 			return <div/>
 		}
 
-		let routeNames = Object.keys( routes.actions );
+		let routeNames = Object.keys( routes.actions ),
+			validRoutes = Routes.filter( routeNames, team ),
+			validRouteNames = Object.keys( validRoutes );
 
 		return (
 
@@ -41,13 +45,15 @@ class NavigationDrawer extends React.Component {
 
 			{/*******************************************/
 
-			routeNames.map( ( routeName ) => { 
+			validRouteNames.map( ( routeName ) => { 
 
 				let route = routes.actions[ routeName ];
 
+				/*
 				if( !routes.canAccess( routeName, userRole ) ) {
 					return;
 				}
+				*/
 
 				let pathName    = route.path,
 					icon        = route.icon,

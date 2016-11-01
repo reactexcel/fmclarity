@@ -13,7 +13,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 
 /**
  * @memberOf 		module:models/Requests
@@ -33,11 +33,14 @@ const RequestSchema = {
 		input: Text,
 		options: {
 			readonly: true
+		},
+		defaultValue: () => {
+			return Random.id();
 		}
 	},
 
 	name: {
-		label: "Subject",
+		label: "Requested Work",
 		type: "string",
 		input: Text,
 		description: "A brief, descriptive, title for the work request"
@@ -66,6 +69,7 @@ const RequestSchema = {
 				"Booking",
 				//"Internal",
 				"Preventative",
+				"Tenancy",
 				//"Base Building",
 				//"Contract",
 				//"Defect",
@@ -132,7 +136,7 @@ const RequestSchema = {
 		defaultValue: () => {
 			let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
 			return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
-		 },
+		},
 
 		options: {
 			items: [
@@ -156,6 +160,14 @@ const RequestSchema = {
 		size: 4,
 		type: "object",
 		input: Select,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.level );
+		},
 		options: ( item ) => {
 			return {
 				items: item.facility ? item.facility.areas : null
@@ -169,6 +181,14 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		optional: true,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.area );
+		},
 		options: ( item ) => {
 			return {
 				items: item.level ? item.level.children : null
@@ -183,6 +203,14 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		optional: true,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.identifier );
+		},
 		options: ( item ) => {
 			return {
 				items: item.area ? item.area.children : null
@@ -199,13 +227,32 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		options: ( item ) => {
+			let selectedTeam = Session.getSelectedTeam(),
+				teamType = null,
+				items = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+
+			if ( teamType == 'fm' && item.facility ) {
+				items = item.facility.servicesRequired;
+			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
+				items = team.getAvailableServices();
+			}
+
+
 			return {
-				items: item.facility ? item.facility.servicesRequired : null,
+				items: items,
 				afterChange: ( item ) => {
-					if ( item == null ) {
+					if ( item == null || teamType == 'contractor' ) {
 						return;
 					}
 					if ( item.service.data ) {
@@ -238,7 +285,12 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		optional: true,
 		options: ( item ) => {
@@ -363,7 +415,7 @@ const RequestSchema = {
 		size: 6,
 		defaultValue: 500,
 		optional: true,
-		input: Text,
+		input: Currency,
 		condition: [ "Ad-hoc", "Contract" ],
 	},
 
@@ -406,7 +458,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 
 	team: {
-		label: "Owning team",
+		label: "Client",
 		description: "The team who created this work request",
 		type: "object",
 		relation: {
@@ -427,7 +479,7 @@ const RequestSchema = {
 	},
 
 	facility: {
-		label: "Facility",
+		label: "Site Address",
 		description: "The site for this job",
 		type: "object",
 		relation: {
@@ -474,7 +526,13 @@ const RequestSchema = {
 			source: Teams,
 		},
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			console.log( teamType );
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		input: Select,
 		options: ( item ) => {

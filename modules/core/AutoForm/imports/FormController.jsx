@@ -113,6 +113,8 @@ class FormController {
 	 * @param 			{function} callback
 	 */
 	save( item, callback ) {
+		// actually, we don't want to do this if validation fails
+		// REFACT: think about how this could be optimised
 		if ( item != null ) {
 			Object.assign( this.item, item );
 		}
@@ -121,41 +123,32 @@ class FormController {
 		// to avoid validation errors related to fields we aren't handling
 		let validationFields = _.pick( this.item, this.keys );
 
-		this.model.validate( validationFields )
-			.then( () => {
-
-				this.model.save.call( this.item )
-					.then( ( savedItem ) => {
-						Object.assign( this.item, savedItem );
-						this.triggerCallbacks();
-						if ( callback ) {
-							callback( this.item );
-						}
-					} );
-
-			} )
-			.catch( ( error ) => {
-				console.log( error );
-				this.processValidationErrors( error );
-				this.triggerCallbacks();
-			} )
-
-		/*
-		this.model.save.call( this.item )
-		.then( ( response ) => {
-			console.log( response );
-			Object.assign( this.item, response );
-			this.triggerCallbacks();
-			if( callback ) {
-				callback( this.item );
-			}
-		})
-		.catch( ( error ) => {
+		let error = this.model.validate( validationFields );
+		if ( error ) {
 			console.log( error );
 			this.processValidationErrors( error );
-			this.triggerCallbacks();
-		});
-		*/
+			this.triggerCallbacks();			
+		}
+		else {
+			// if validation passes we will assume update will work
+			//  and trigger callbacks before saving the data
+			if( Meteor.isClient ) {
+				this.triggerCallbacks();
+				if ( callback ) {
+					callback( this.item );
+				}
+			}
+
+			// this could actually perform validation to confirm the results of the client validation
+			this.model.save.call( this.item )
+				.then( ( savedItem ) => {
+					Object.assign( this.item, savedItem );
+					this.triggerCallbacks();
+					if ( callback ) {
+						callback( this.item );
+					}
+				} );
+		}		
 	}
 
 	delete() {

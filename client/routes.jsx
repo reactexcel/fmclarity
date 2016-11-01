@@ -19,24 +19,31 @@ AccessGroups.loggedIn.add( {
 
 Routes.addAccessRule( {
 	action: [
+		'dashboard',
 		'logout',
 		'requests',
 		'portfolio',
 	],
 	role: [ '*' ],
-	rule: { alert: true }
 } )
 
 Routes.addAccessRule( {
 	action: [
-		'dashboard',
+		'clients',
+	],
+	role: [ 'manager' ],
+	condition: { type:'contractor' }
+} )
+
+Routes.addAccessRule( {
+	action: [
 		'suppliers',
 		'calendar',
 		'account',
 		'abc'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager' ],
-	rule: { alert: true }
+	condition: { type:'fm' }
 } )
 
 Routes.addAccessRule( {
@@ -49,7 +56,6 @@ Routes.addAccessRule( {
 		'all-requests'
 	],
 	role: [ 'fmc support' ],
-	rule: { alert: true }
 } )
 
 NavigationDrawerRoutes = Routes.clone( [
