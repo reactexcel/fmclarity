@@ -62,9 +62,13 @@ class Model {
 			} );
 		}
 
+		/*
 		Meteor.methods( {
 			[ `${this._name}.validate` ]: ValidationService.validator( this.schema )
 		} )
+		*/
+
+		this.validate = ValidationService.validator( this.schema );
 
 		this.save = new ValidatedMethod( {
 			name: `${this._name}.upsert`,
@@ -79,6 +83,7 @@ class Model {
 		}
 	}
 
+	/*
 	validate( ...args ) {
 		return new Promise( ( fulfil, reject ) => {
 			Meteor.call( `${this._name}.validate`, ...args, ( error, response ) => {
@@ -92,6 +97,7 @@ class Model {
 			} );
 		} )
 	}
+	*/
 
 	/**
 	 * Call the register function of any included mixins so that they can add their features to this model

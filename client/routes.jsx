@@ -24,7 +24,15 @@ Routes.addAccessRule( {
 		'portfolio',
 	],
 	role: [ '*' ],
-	rule: { alert: true }
+} )
+
+Routes.addAccessRule( {
+	action: [
+		'dashboard',
+		'clients',
+	],
+	role: [ 'fmc support', 'portfolio manager', 'manager' ],
+	condition: { type:'contractor' }
 } )
 
 Routes.addAccessRule( {
@@ -36,7 +44,7 @@ Routes.addAccessRule( {
 		'abc'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager' ],
-	rule: { alert: true }
+	condition: { type:'fm' }
 } )
 
 Routes.addAccessRule( {
@@ -49,7 +57,6 @@ Routes.addAccessRule( {
 		'all-requests'
 	],
 	role: [ 'fmc support' ],
-	rule: { alert: true }
 } )
 
 NavigationDrawerRoutes = Routes.clone( [

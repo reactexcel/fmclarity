@@ -2,3 +2,4 @@ mup.json
 node_modules/
 .meteor/dev_bundle/
 .docs/
+mup.js

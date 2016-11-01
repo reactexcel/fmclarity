@@ -36,6 +36,7 @@ export default DocumentSchema = {
 		type: "object",
 		size: 6,
 		relation: {
+			/*
 			join: ( item ) => {
 				if( item.facility && item.facility._id ) {
 					return Facilities.findOne( item.facility._id );
@@ -46,6 +47,7 @@ export default DocumentSchema = {
 					return _.pick( item.facility, '_id', 'name' );
 				}
 			}
+			*/
 		},
 		input: Select,
 
@@ -511,6 +513,7 @@ export default DocumentSchema = {
 		description: "Document is related to request",
 		type: "object",
 		relation: {
+			/*
 			join: ( item ) => {
 				if( item.request && item.request._id ) {
 					return Requests.findOne( item.request._id );
@@ -521,6 +524,7 @@ export default DocumentSchema = {
 					return _.pick( item.request, '_id', 'name' );
 				}
 			}
+			*/
 		},
 
 		options: ( item ) => {

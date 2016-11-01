@@ -52,12 +52,12 @@ const Facilities = new Model( {
 			}
 		} ],
 		[ Members ],
-/*
-		[ Members, {
-			fieldName: "suppliers",
-			authentication: () => (true)
-		} ]
-*/
+		/*
+				[ Members, {
+					fieldName: "suppliers",
+					authentication: () => (true)
+				} ]
+		*/
 	]
 } )
 
@@ -66,6 +66,10 @@ Facilities.collection.allow( {
 		return true;
 	}
 } )
+
+if( Meteor.isServer ) {
+	Facilities.collection._ensureIndex( { 'team._id': 1 } );
+}
 
 //console.log( Facilities );
 
@@ -241,47 +245,47 @@ Facilities.actions( {
 
 			if ( _.isArray( facility.servicesRequired ) ) {
 				_.map( facility.servicesRequired, ( s ) => {
-					let supplier = null;
+						let supplier = null;
 						//add children service supplier to list
-						if ( s.children ){
+						if ( s.children ) {
 							_.map( s.children, ( c ) => {
 								if ( c.data && typeof c.data.supplier != 'undefined' ) {
-									if ( c.data.supplier.name) {
+									if ( c.data.supplier.name ) {
 										//check that supplier name is exists in list.
 										_.indexOf( names, c.data.supplier.name ) == -1 ? names.push( c.data.supplier.name ) : null;
 
 										//check if team with name exists
 										let team = Teams.findOne( { "name": c.data.supplier.name } );
-										if( !team ){
+										if ( !team ) {
 											if ( c.data.supplier._id ) {
 												_.indexOf( ids, c.data.supplier._id ) == -1 ? ids.push( c.data.supplier._id ) : null;
 											}
 										}
-									}else if ( c.data.supplier._id ) {
+									} else if ( c.data.supplier._id ) {
 										_.indexOf( ids, c.data.supplier._id ) == -1 ? ids.push( c.data.supplier._id ) : null;
 									}
 								}
 							} );
 						}
-					if ( s.data ){
-						supplier = s.data.supplier;
-						//add parent service's supplier to list
-						if ( supplier ) {
-							if ( supplier.name) {
-								_.indexOf( names, supplier.name ) == -1 ? names.push( supplier.name ) : null;
-								let team = Teams.findOne( { "name": supplier.name } );
-								if( !team ){
-									if ( supplier._id ) {
-										_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
+						if ( s.data ) {
+							supplier = s.data.supplier;
+							//add parent service's supplier to list
+							if ( supplier ) {
+								if ( supplier.name ) {
+									_.indexOf( names, supplier.name ) == -1 ? names.push( supplier.name ) : null;
+									let team = Teams.findOne( { "name": supplier.name } );
+									if ( !team ) {
+										if ( supplier._id ) {
+											_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
+										}
 									}
+								} else if ( supplier._id ) {
+									_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
 								}
-							}else if ( supplier._id ) {
-								_.indexOf( ids, supplier._id ) == -1 ? ids.push( supplier._id ) : null;
 							}
 						}
-					}
-				})
-				//ids = _.pluck( facility.suppliers, '_id' );
+					} )
+					//ids = _.pluck( facility.suppliers, '_id' );
 				suppliers = Teams.find( {
 						$or: [
 							{ _id: { $in: ids } },
@@ -306,26 +310,26 @@ Facilities.actions( {
 		}
 	},
 	/**
-	*	Add personnel to facility
-	**/
+	 *	Add personnel to facility
+	 **/
 	addPersonnel: {
 		authentication: true,
 		method: ( facility, newMember ) => {
-			Facilities.update( { _id : facility._id }, {
-					$push: {
-						members: {
-							_id : newMember._id,
-							name: newMember.profile.name,
-							role: newMember.role || "staff",
-						}
+			Facilities.update( { _id: facility._id }, {
+				$push: {
+					members: {
+						_id: newMember._id,
+						name: newMember.profile.name,
+						role: newMember.role || "staff",
 					}
+				}
 			} )
 		}
 	},
 	destroy: {
 		authentication: true,
 		method: ( facility ) => {
-			Facilities.remove( { _id : facility._id }  );
+			Facilities.remove( { _id: facility._id } );
 		}
 	},
 } )

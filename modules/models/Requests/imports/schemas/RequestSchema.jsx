@@ -13,7 +13,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 
 import AddressSchema from './AddressSchema.jsx'
 
@@ -79,6 +79,7 @@ const RequestSchema = {
 				"Booking",
 				//"Internal",
 				"Preventative",
+				"Tenancy",
 				//"Base Building",
 				//"Contract",
 				//"Defect",
@@ -376,7 +377,7 @@ const RequestSchema = {
 		size: 12,
 		defaultValue: '$500',
 		optional: true,
-		input: Text,
+		input: Currency,
 		condition: [ "Ad-hoc", "Contract" ],
 		options: ( ) => {
 			return {
@@ -456,7 +457,7 @@ const RequestSchema = {
 	},
 
 	facility: {
-		label: "Facility",
+		label: "Site Address",
 		description: "The site for this job",
 		type: "object",
 		relation: {

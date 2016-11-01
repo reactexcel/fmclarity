@@ -410,7 +410,8 @@ Users.helpers( {
         //console.log( team );
         if ( team ) {
             Session.set( 'selectedTeam', {
-                _id: team._id
+                _id: team._id,
+                type: team.type
             } );
         }
         Session.set( 'selectedFacility', 0 );

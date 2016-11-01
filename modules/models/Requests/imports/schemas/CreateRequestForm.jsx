@@ -1,17 +1,15 @@
 export default CreateRequestForm = [
 	'team',
 
-	'address',
+	'facility',
 
+	/* location */
 	'level',
 	'area',
 	'identifier',
 
 	'type',
 	'name',
-
-	//	'facility',
-	/* location */
 
 	'service',
 	'subservice',
