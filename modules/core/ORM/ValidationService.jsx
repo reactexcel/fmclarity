@@ -1,3 +1,4 @@
+import {isValidABN, isValidACN, isValidABNorACN} from "abnacn-validator";
 export default ValidationService = {
 	validator
 };
@@ -26,6 +27,7 @@ let validators = {
 	function: checkFunction,
 	object: checkObject,
 	array: checkArray,
+	abn: checkABN,
 	unknown: checkUnknown
 }
 
@@ -136,6 +138,11 @@ function checkArray( rule, value, key, errors ) {
 	}
 	if ( !_.isArray( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an array" } );
+	}
+}
+function checkABN( rule, value, key, errors ) {
+	if ( !isValidABN(value) ) {
+		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
 	}
 }
 

@@ -71,7 +71,7 @@ export default TeamSchema = {
     abn: {
         label: "ABN",
         description: "Australian Business Number",
-        type: "string",
+        type: "abn",
         input: Text,
     },
 
