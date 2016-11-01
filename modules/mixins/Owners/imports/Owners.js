@@ -22,33 +22,35 @@ function register( collection, options ) {
 		}
 	} )
 
-	collection.schema.owner = {
-		label: "Owner",
-		input: Text, //OwnerCard
-		options: {
-			readOnly: true
-		},
-		description: "The creator or owner",
-		relation: {
-			join: ( { owner } ) => {
-				if ( owner && owner._id ) {
-					if( owner.type == 'team' ) {
-						import { Teams } from '/modules/models/Teams';
-						return Teams.findOne( owner._id );
+	if ( !collection.schema.owner ) {
+		collection.schema.owner = {
+			label: "Owner",
+			input: Text, //OwnerCard
+			options: {
+				readOnly: true
+			},
+			description: "The creator or owner",
+			relation: {
+				join: ( { owner } ) => {
+					if ( owner && owner._id ) {
+						if( owner.type == 'team' ) {
+							import { Teams } from '/modules/models/Teams';
+							return Teams.findOne( owner._id );
+						}
+						return Meteor.users.findOne( owner._id );
 					}
-					return Meteor.users.findOne( owner._id );
+				},
+				unjoin: ( item ) => {
+					if(_.isObject(item.owner)){
+						return _.pick( item.owner, '_id', 'name', 'type' );
+					}else{
+						return item.owner
+					}
 				}
 			},
-			unjoin: ( item ) => {
-				if(_.isObject(item.owner)){
-					return _.pick( item.owner, '_id', 'name', 'type' );
-				}else{
-					return item.owner
-				}
-			}
-		},
-	}
+		}
 
+	}
 	if ( collection.helpers == null ) {
 		return;
 	}

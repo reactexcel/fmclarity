@@ -375,19 +375,10 @@ const RequestSchema = {
 		label: "Value",
 		type: "number",
 		size: 12,
-		defaultValue: '$500',
+		defaultValue: '500',
 		optional: true,
 		input: Currency,
 		condition: [ "Ad-hoc", "Contract" ],
-		options: ( ) => {
-			return {
-				afterChange: ( item ) => {
-					if ( _.indexOf( item.costThreshold, '$' ) !== 0 ){
-						item.costThreshold = '$' + item.costThreshold;
-					}
-				}
-			}
-		}
 	},
 
 	closeDetails: {
@@ -444,13 +435,13 @@ const RequestSchema = {
 			}
 		},
 		input: Select,
-		options: ( ) => {
-				return {
-
-				}
+		options: ( item ) => {
+			return {
+				items: role == 'supplier manager' ? item.team.getClients( ) : null,
+				view: ContactCard
+			}
 		},
 		defaultValue: ( item ) => {
-			console.log( item );
 			let role = getRole( );
 			return role == 'supplier manager' ? null : Session.getSelectedTeam( );
 		}
