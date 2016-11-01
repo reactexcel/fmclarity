@@ -227,12 +227,22 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			let selectedTeam = Session.get( 'selectedTeam' );
-			teamType = null;
-			if ( selectedTeam ) {
-				teamType = selectedTeam.type;
+			let team = Session.getSelectedTeam(),
+				teamType = null,
+				services = [];
+			if ( team ) {
+				teamType = team.type;
+				if( team.getAvailableServices ) {
+					services = team.getAvailableServices()
+				}
 			}
-			return request.type != 'Booking' && teamType != 'contractor';
+			if( request.type == 'Booking' ) {
+				return false;
+			}
+			else if (teamType == 'contractor' && !team.services.length<=1 ) {
+				return false;
+			}
+			return true;
 		},
 		options: ( item ) => {
 			let selectedTeam = Session.getSelectedTeam(),
@@ -285,12 +295,22 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			let selectedTeam = Session.get( 'selectedTeam' );
-			teamType = null;
-			if ( selectedTeam ) {
-				teamType = selectedTeam.type;
+			let team = Session.getSelectedTeam(),
+				teamType = null,
+				services = [];
+			if ( team ) {
+				teamType = team.type;
+				if( team.getAvailableServices ) {
+					services = team.getAvailableServices()
+				}
 			}
-			return request.type != 'Booking' && teamType != 'contractor';
+			if( request.type == 'Booking' ) {
+				return false;
+			}
+			else if (teamType == 'contractor' && !team.services.length<=1 ) {
+				return false;
+			}
+			return true;
 		},
 		optional: true,
 		options: ( item ) => {
