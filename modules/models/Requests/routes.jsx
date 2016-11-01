@@ -24,7 +24,7 @@ AccessGroups.loggedIn.add( {
 AccessGroups.loggedIn.add( {
 	name: 'requests',
 	path: '/requests',
-	label: "Requests",
+	label: "Jobs",
 	icon: 'fa fa-wrench',
 	action() {
 		mount( LayoutMain, {

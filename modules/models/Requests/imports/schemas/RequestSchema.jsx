@@ -431,7 +431,7 @@ const RequestSchema = {
 	},
 
 	facility: {
-		label: "Facility",
+		label: "Site Address",
 		description: "The site for this job",
 		type: "object",
 		relation: {

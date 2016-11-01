@@ -23,7 +23,7 @@ AccessGroups.loggedIn.add( {
 AccessGroups.loggedIn.add( {
 	name: 'portfolio',
 	path: '/portfolio',
-	label: "Porffolio",
+	label: "Portfolio",
 	icon: 'fa fa-building',
 	action() {
 		mount( LayoutMain, {
