@@ -257,6 +257,12 @@ Teams.methods( {
 			} )
 		},
 	},
+	getClients: {
+		authentication: true,
+		helper: ( team  ) => {
+			return Teams.findAll( {type :'fm'} );
+		},
+	}
 } );
 
 function getSuppliers() {
