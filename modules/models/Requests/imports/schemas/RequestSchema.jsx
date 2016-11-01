@@ -34,7 +34,7 @@ const RequestSchema = {
 		options: {
 			readonly: true
 		},
-		defaultValue:()=>{
+		defaultValue: () => {
 			return Random.id();
 		}
 	},
@@ -136,7 +136,7 @@ const RequestSchema = {
 		defaultValue: () => {
 			let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
 			return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
-		 },
+		},
 
 		options: {
 			items: [
@@ -160,6 +160,14 @@ const RequestSchema = {
 		size: 4,
 		type: "object",
 		input: Select,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.level );
+		},
 		options: ( item ) => {
 			return {
 				items: item.facility ? item.facility.areas : null
@@ -173,6 +181,14 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		optional: true,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.area );
+		},
 		options: ( item ) => {
 			return {
 				items: item.level ? item.level.children : null
@@ -187,6 +203,14 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		optional: true,
+		condition: ( item ) => {
+			let selectedTeam = Session.get( 'selectedTeam' ),
+				teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return teamType == 'fm' || !_.isEmpty( item.identifier );
+		},
 		options: ( item ) => {
 			return {
 				items: item.area ? item.area.children : null
@@ -203,13 +227,32 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		options: ( item ) => {
+			let selectedTeam = Session.getSelectedTeam(),
+				teamType = null,
+				items = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+
+			if ( teamType == 'fm' && item.facility ) {
+				items = item.facility.servicesRequired;
+			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
+				items = team.getAvailableServices();
+			}
+
+
 			return {
-				items: item.facility ? item.facility.servicesRequired : null,
+				items: items,
 				afterChange: ( item ) => {
-					if ( item == null ) {
+					if ( item == null || teamType == 'contractor' ) {
 						return;
 					}
 					if ( item.service.data ) {
@@ -242,7 +285,12 @@ const RequestSchema = {
 		type: "object",
 		input: Select,
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		optional: true,
 		options: ( item ) => {
@@ -478,7 +526,13 @@ const RequestSchema = {
 			source: Teams,
 		},
 		condition: ( request ) => {
-			return request.type!='Booking'
+			let selectedTeam = Session.get( 'selectedTeam' );
+			teamType = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+			console.log( teamType );
+			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		input: Select,
 		options: ( item ) => {

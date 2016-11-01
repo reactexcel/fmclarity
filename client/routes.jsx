@@ -19,6 +19,7 @@ AccessGroups.loggedIn.add( {
 
 Routes.addAccessRule( {
 	action: [
+		'dashboard',
 		'logout',
 		'requests',
 		'portfolio',
@@ -28,16 +29,14 @@ Routes.addAccessRule( {
 
 Routes.addAccessRule( {
 	action: [
-		'dashboard',
 		'clients',
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager' ],
+	role: [ 'manager' ],
 	condition: { type:'contractor' }
 } )
 
 Routes.addAccessRule( {
 	action: [
-		'dashboard',
 		'suppliers',
 		'calendar',
 		'account',

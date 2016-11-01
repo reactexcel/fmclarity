@@ -20,7 +20,12 @@ if ( Meteor.isServer ) {
 		if ( q.team && q.team._id ) {
 			return Facilities.find( { 'team._id': q.team._id } );
 		}
-		return Facilities.find();
+		let facilitiesCursor = Facilities.find(),
+			facilities = facilitiesCursor.fetch(),
+			facilityIds = _.pluck( facilities, '_id' );
+
+		console.log( facilityIds );
+		return facilitiesCursor;
 	} )
 }
 
@@ -67,7 +72,7 @@ Facilities.collection.allow( {
 	}
 } )
 
-if( Meteor.isServer ) {
+if ( Meteor.isServer ) {
 	Facilities.collection._ensureIndex( { 'team._id': 1 } );
 }
 
