@@ -11,6 +11,8 @@ import Select from './imports/Select.jsx';
 import Switch from './imports/Switch.jsx';
 import Text from './imports/Text.jsx';
 import TextArea from './imports/TextArea.jsx';
+import ABN from './imports/ABN.jsx';
+import Phone from './imports/Phone.jsx';
 
 checkModules( {
 	Currency,
@@ -21,7 +23,9 @@ checkModules( {
 	Select,
 	Switch,
 	Text,
-	TextArea
+	TextArea,
+	ABN,
+	Phone
 } );
 
 /**
@@ -36,5 +40,7 @@ export {
 	Select,
 	Switch,
 	Text,
-	TextArea
+	TextArea,
+	ABN,
+	Phone
 }

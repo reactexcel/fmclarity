@@ -1,6 +1,6 @@
 import { AddressSchema } from '/modules/models/Facilities';
 import { DocExplorer } from '/modules/models/Documents';
-import { Text, TextArea, Select } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, ABN, Phone } from '/modules/ui/MaterialInputs';
 import { Facilities } from '/modules/models/Facilities';
 import { ServiceDefaults } from '/modules/mixins/Services';
 
@@ -56,23 +56,23 @@ export default TeamSchema = {
         label: "Primary phone",
         description: "Primary phone contact number",
         icon: "phone",
-        input: Text,
-        type: "string",
+        input: Phone,
+        type: "phone",
     },
 
     phone2: {
         label: "Seconday phone",
-        type: "string",
+        type: "phone",
         description: "Secondary phone contact number",
         icon: "phone",
-        input: Text,
+        input: Phone,
     },
 
     abn: {
         label: "ABN",
         description: "Australian Business Number",
         type: "abn",
-        input: Text,
+        input: ABN,
     },
 
     address: {

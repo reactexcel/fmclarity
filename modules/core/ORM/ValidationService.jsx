@@ -28,6 +28,7 @@ let validators = {
 	object: checkObject,
 	array: checkArray,
 	abn: checkABN,
+	phone:checkPhoneNumber,
 	unknown: checkUnknown
 }
 
@@ -144,6 +145,23 @@ function checkABN( rule, value, key, errors ) {
 	if ( !isValidABN(value) ) {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
 	}
+}
+
+function checkPhoneNumber( rule, value, key, errors ){
+    var phonenoformat = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;  
+	  var re1='(\\()';	// Any Single Character 1
+      var re2='(\\d+)';	// Integer Number 1
+      var re3='(\\))';	// Any Single Character 2
+      var re4='(\\s+)';	// White Space 1
+      var re5='(\\d+)';	// Integer Number 2
+      var re6='(\\s+)';	// White Space 2
+      var re7='(\\d+)';	// Integer Number 3
+
+      var p = new RegExp(re1+re2+re3+re4+re5+re6+re7,["i"]);
+  if(!value.match(p)) {  
+errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
+        }  
+      
 }
 
 function checkFunction( rule, value, key, errors ) {}
