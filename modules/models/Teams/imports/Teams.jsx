@@ -31,6 +31,67 @@ if ( Meteor.isServer ) {
 	import { Messages } from '/modules/models/Messages';
 	import { Files } from '/modules/models/Files';
 
+
+	Meteor.publish( 'User: Teams, Facilities, Requests', function() {
+		//probably should be ... Meteor.publish('teamsAndFacilitiesForUser', function (user) {
+		//console.log('updating subscription');
+		var teams, facilities, requests, suppliers;
+
+		//teams I am a member in
+		teams = Teams.find( {
+			$or: [
+				{ "owner._id": this.userId },
+				{ "members._id": this.userId }
+			]
+		} );
+		var teamIds = [];
+		var teamNames = [];
+		//var supplierIds = [];
+		teams.forEach( function( t ) {
+			teamIds.push( t._id );
+			teamNames.push( t.name );
+		} );
+		requests = Requests.find( {
+			$or: [ {
+				$or: [
+					{ "team._id": { $in: teamIds } },
+					{ "team.name": { $in: teamNames } }
+				]
+			}, {
+				$and: [
+					{ $or: [ { "supplier._id": { $in: teamIds } }, { "supplier.name": { $in: teamNames } } ] },
+					{ status: { $nin: [ "Draft", "New" ] } }
+				]
+			}, 
+			{
+				$or: [
+					{ "owner._id": this.userId },
+					{ "members._id": this.userId }
+				]				
+			}
+			]
+		}, { sort: { createdAt: -1 } } );
+
+		var facilityIds = [];
+		var fetchedRequests = requests.fetch();
+		fetchedRequests.map( function( i ) {
+			if ( i.facility && i.facility._id ) {
+				facilityIds.push( i.facility._id );
+			}
+		} )
+
+		//find all of the facilities that are in those teams
+		facilities = Facilities.find( {
+			$or: [
+				{ "team._id": { $in: teamIds } },
+				{ "_id": { $in: facilityIds } }
+			]
+		} );
+
+		return [ teams, facilities, requests ];
+	} );
+
+
 	Meteor.publish( 'User: Teams, Facilities, Requests, Documents, Messages', function() {
 		let userId = this.userId;
 		let teamsCursor = Teams.find( {
@@ -136,8 +197,7 @@ const Teams = new Model( {
 		[ DocAttachments, { authentication: AuthHelpers.managerOrOwner } ],
 		[ Members, {
 			fieldName: "members",
-			authentication: true
-				//authentication: AuthHelpers.managerOrOwner
+			authentication: AuthHelpers.managerOrOwner
 		} ],
 		//mixins for suppliers
 		[ Members, {
@@ -257,6 +317,12 @@ Teams.methods( {
 			} )
 		},
 	},
+	getClients: {
+		authentication: true,
+		helper: ( team ) => {
+			return Teams.findAll( { type: 'fm' } );
+		},
+	}
 } );
 
 function getSuppliers() {
@@ -580,7 +646,7 @@ Teams.helpers( {
 							'owner._id': user._id
 						}, {
 							status: {
-								$nin: [ Requests.STATUS_DRAFT ]
+								$nin: [ "Draft" ]
 							}
 						} ]
 					} ]
@@ -589,13 +655,15 @@ Teams.helpers( {
 				{
 					$and: [ {
 						$or: [ {
+							"members._id": this.userId 
+						}, {
 							"supplier._id": this._id
 						}, {
 							"supplier.name": this.name
 						} ]
 					}, {
 						status: {
-							$nin: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW ]
+							$nin: [ "Draft", "New" ]
 						}
 					} ]
 				}
@@ -612,6 +680,8 @@ Teams.helpers( {
 		} else {
 			q = requestsQuery;
 		}
+
+		console.log(q);
 
 		return Requests.find( q )
 			.fetch();
@@ -649,7 +719,7 @@ Teams.helpers( {
 							'assignee._id': user._id
 						}, {
 							status: {
-								$nin: [ Requests.STATUS_DRAFT, Requests.STATUS_NEW ]
+								$nin: [ "Draft", "New" ]
 							}
 						} ]
 					} ]

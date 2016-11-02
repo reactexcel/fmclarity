@@ -106,6 +106,13 @@ class AutoForm extends React.Component {
 				placeholder = label,
 				Input = null;
 
+			// Create default value for this field
+			//  I feel like this should be done when initialising the form
+			//  also
+			if ( item[ key ] == null ) {
+				item[ key ] = this.form.getDefaultValue( key, item );
+			}
+			
 			// Check visibility condition specified in schema
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
@@ -116,13 +123,6 @@ class AutoForm extends React.Component {
 			// Unpack options for this field (if the field is a function)
 			if ( _.isFunction( options ) ) {
 				options = options( item );
-			}
-
-			// Create default value for this field
-			//  I feel like this should be done when initialising the form
-			//  also
-			if ( item[ key ] == null ) {
-				item[ key ] = this.form.getDefaultValue( key, item );
 			}
 
 			// If this field in the schema has it's own subschema then recursively run autoform

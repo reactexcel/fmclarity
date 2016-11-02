@@ -8,6 +8,7 @@ import RequestPanel from './imports/components/RequestPanel.jsx';
 import RequestsTable from './imports/components/RequestsTable.jsx';
 
 import CreateRequestForm from './imports/schemas/CreateRequestForm.jsx';
+import SupplierCreateRequestForm from './imports/schemas/SupplierCreateRequestForm.jsx';
 
 import RequestSearch from './imports/schemas/RequestSearchController';
 import RequestActions from './actions.jsx';
@@ -19,6 +20,7 @@ export {
 	Requests,
 	RequestsTable,
 	CreateRequestForm,
+	SupplierCreateRequestForm,
 	RequestPanel,
 
 	RequestActions,	

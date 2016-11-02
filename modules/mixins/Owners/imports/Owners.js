@@ -2,7 +2,7 @@ export default Owners = { register }
 
 // Have had to remove this because of dysfunctional implementation of es6 circular dependencies
 //import { Users } from '/modules/models/Users';
-import { Text } from '/modules/ui/MaterialInputs';
+import { Text, Select } from '/modules/ui/MaterialInputs';
 
 function register( collection, options ) {
 
@@ -22,17 +22,23 @@ function register( collection, options ) {
 		}
 	} )
 
-	collection.schema.owner = {
+	collection.schema.owner = Object.assign( {
 		label: "Owner",
-		input: Text, //OwnerCard
-		options: {
-			readOnly: true
-		},
+		type: "object",
+		input: Select,
 		description: "The creator or owner",
+		defaultValue:()=>{
+			let team = Session.getSelectedTeam();
+			return {
+				_id:team._id,
+				name:team.name,
+				type:team.type
+			}
+		},
 		relation: {
 			join: ( { owner } ) => {
 				if ( owner && owner._id ) {
-					if( owner.type == 'team' ) {
+					if ( owner.type == 'team' ) {
 						import { Teams } from '/modules/models/Teams';
 						return Teams.findOne( owner._id );
 					}
@@ -40,14 +46,14 @@ function register( collection, options ) {
 				}
 			},
 			unjoin: ( item ) => {
-				if(_.isObject(item.owner)){
+				if ( _.isObject( item.owner ) ) {
 					return _.pick( item.owner, '_id', 'name', 'type' );
-				}else{
+				} else {
 					return item.owner
 				}
 			}
 		},
-	}
+	}, collection.schema.owner );
 
 	if ( collection.helpers == null ) {
 		return;
