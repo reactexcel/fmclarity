@@ -4,14 +4,14 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 
-//Meteor.subscribe( 'User: Teams, Facilities, Requests, Documents, Messages' );
+Meteor.subscribe( 'User: Teams, Facilities, Requests' );
 Meteor.subscribe( 'User: Notifications' );
 
 Meteor.subscribe( 'Users' );
 Meteor.subscribe( 'Files' );
 Meteor.subscribe( 'Teams' );
-Meteor.subscribe( 'Facilities' );
-Meteor.subscribe( 'Requests' );
+Meteor.subscribe( 'Messages' );
+Meteor.subscribe( 'Documents' );
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {

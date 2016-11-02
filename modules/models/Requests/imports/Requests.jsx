@@ -118,15 +118,20 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			let roles = Roles.getRoles( request ),
-				supplierManagers = roles.roles[ 'supplier manager' ];
-
-			console.log( { roles, supplierManagers } );
+				supplierManagers = roles.roles[ 'supplier manager' ],
+				teamManagers = roles.roles[ 'team manager' ];
 
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
 					role: "supplier manager"
 				} );
 			}
+
+			if ( teamManagers ) {
+				request.dangerouslyReplaceMembers( teamManagers, {
+					role: "team manager"
+				} );
+			}			
 		}
 	},
 

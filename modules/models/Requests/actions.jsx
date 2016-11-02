@@ -65,21 +65,21 @@ const deleteFunction = new Action( {
 	name: "delete request",
 	type: 'request',
 	label: "Delete",
-  shouldConfirm: true,
-	verb:  {
-		shouldConfirm: true,
-	},
-	action: ( request ) => {
+  	shouldConfirm: true,
+	verb: 'deleted request',
+	action: ( request, callback ) => {
 		Requests.update( request._id, { $set: { status: 'Deleted' } } );
 		Modal.hide();
+		callback( request );
 	}
 } )
 
 const cancel = new Action( {
 	name: "cancel request",
 	type: 'request',
+	verb: "cancelled a work order",
 	label: "Cancel",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				model = { Requests }
@@ -89,6 +89,7 @@ const cancel = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
 						Modal.hide();
+						callback( request );
 					}
 				}
 			/>
@@ -99,14 +100,16 @@ const cancel = new Action( {
 const issue = new Action( {
 	name: "issue request",
 	type: 'request',
+	verb: "issued a work order",
 	label: "Issue",
-	action: ( request ) => {
-		//console.log( request );
+	action: ( request, callback ) => {
+		console.log( request );
 		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
 			status: 'Issued'
 		} } );
 		request.updateSupplierManagers();
+		callback( request );
 		/*
 		Modal.show( {
 			content: <AutoForm
@@ -130,8 +133,9 @@ const issue = new Action( {
 const accept = new Action( {
 	name: "accept request",
 	type: 'request',
+	verb: "accepted a work order",
 	label: "Accept",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				title 	= "Please provide eta and, if appropriate, an assignee."
@@ -142,6 +146,7 @@ const accept = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'In Progress' } } );
 						Modal.hide();
+						callback( request );
 					}
 				}
 			/>
@@ -152,8 +157,9 @@ const accept = new Action( {
 const reject = new Action( {
 	name: "reject request",
 	type: 'request',
+	verb: "rejected a work order",
 	label: "Reject",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				title 	= "What is your reason for rejecting this request?"
@@ -164,6 +170,7 @@ const reject = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Rejected' } } );
 						Modal.hide();
+						callback( request );
 					}
 				}
 			/>
@@ -175,7 +182,7 @@ const getQuote = new Action( {
 	name: "get request quote",
 	type: 'request',
 	label: "Get quote",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				model = { Requests }
@@ -184,7 +191,8 @@ const getQuote = new Action( {
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'In Progress' } } );
-						Modal.hide()
+						Modal.hide();
+						callback( request );
 					}
 				}
 			/>
@@ -216,8 +224,9 @@ const sendQuote = new Action( {
 const complete = new Action( {
 	name: "complete request",
 	type: 'request',
+	verb: "completed a work order",	
 	label: "Complete",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				title 	= "All done? Great! We just need a few details to finalise the job."
@@ -229,6 +238,7 @@ const complete = new Action( {
 						Requests.update( request._id, { $set: { status: 'Complete' } } );
 						//Requests.createFollowUp( request );
 						Modal.hide();
+						callback( request );
 					}
 				}
 			/>
@@ -239,8 +249,9 @@ const complete = new Action( {
 const close = new Action( {
 	name: "close request",
 	type: 'request',
+	verb: "closed a work order",
 	label: "close",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
 				title 	= "Please leave a comment about the work for the suppliers record"
@@ -251,6 +262,7 @@ const close = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Closed' } } );
 						Modal.hide();
+						callback( request );
 					}
 				}
 			/>

@@ -11,7 +11,11 @@ export default function TopNavigationBar( props ) {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {
             if ( props.onNotificationsViewed ) {
-                props.onNotificationsViewed();
+              Meteor.defer(
+                function ( ) {
+                  props.onNotificationsViewed();
+                }
+              )
             }
         } )
         notify.requestPermission();

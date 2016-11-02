@@ -29,9 +29,9 @@ const Users = new Model( {
 } )
 
 Users.collection.allow( {
-	update: () => {
-		return true;
-	}
+    update: () => {
+        return true;
+    }
 } )
 
 if ( Meteor.isServer ) {
@@ -73,8 +73,10 @@ Users.actions( {
     getRole: {
         authentication: true,
         helper: function( user, group ) {
-            //group = group || user.getSelectedTeam();
-            // causing problems because this is evaluated server side
+            if ( Meteor.isClient && !group ) {
+                // causes problems when evaluated server side
+                group = user.getSelectedTeam();
+            }
             if ( !group || !group.members || !group.members.length ) {
                 return null;
             }
@@ -124,6 +126,7 @@ Users.actions( {
         } ) {
             var team = user.getSelectedTeam();
             var role = user.getRole();
+            //console.log( role );
 
             //console.log( role );
 
@@ -162,6 +165,10 @@ Users.actions( {
             };
             var createdByMe = {
                 "owner._id": user._id
+            };
+
+            var imAMember = {
+                "members._id": user._id
             };
 
             var createdByMyTeam = {
@@ -304,9 +311,9 @@ Meteor.methods( {
             Accounts.sendEnrollmentEmail( userId );
         }
     },
-    'User.getRole': ( ) => {
+    'User.getRole': () => {
         return Meteor.user().getRole();
-   },
+    },
 } )
 
 Users.helpers( {

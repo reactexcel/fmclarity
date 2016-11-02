@@ -35,6 +35,25 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             collection: Teams,
             fieldName: 'suppliers'
         } );*/
+    } else {
+      suppliers = [];
+      _.forEach( facilities, ( f ) => {
+        suppliers = suppliers.concat( f.getSuppliers() );
+      } );
+      let ids = _.map( suppliers, ( s ) => {
+        return _.pick( s, "_id" )._id;
+      })
+      ids = _.uniq( ids );
+      suppliers = Teams.find( {
+          _id: {
+            $in: ids
+          }
+        }, {
+          sort: {
+            name: 1
+          }
+        } )
+        .fetch();
     }
 
     return {

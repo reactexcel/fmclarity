@@ -15,7 +15,7 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
   				return;
   			}
   		}
-  		action.run( item, event );
+  		action.run( item );
   	}
 
     if ( actions == null || actionNames.length == 0 ) {
