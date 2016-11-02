@@ -527,7 +527,7 @@ const RequestSchema = {
 			if ( team ) {
 				teamType = team.type;
 			}
-			console.log( teamType );
+		//	console.log( teamType );
 			if( teamType == 'contractor' ) {
 				return null;
 			}
@@ -588,7 +588,7 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-			console.log( teamType );
+		//	console.log( teamType );
 			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		defaultValue: ( item ) => {
@@ -597,12 +597,12 @@ const RequestSchema = {
 			if ( team ) {
 				teamType = team.type;
 			}
-			console.log( teamType );
+			//console.log( teamType );
 			if( teamType == 'fm' ) {
 				return null;
 			}
 			return team;
-		},		
+		},
 		input: Select,
 		options: ( item ) => {
 			//console.log( item );
