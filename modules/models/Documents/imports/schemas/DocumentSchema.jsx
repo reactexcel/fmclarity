@@ -1,7 +1,7 @@
 import { FileExplorer } from '/modules/models/Files';
 import DocTypes from './DocTypes.jsx';
 
-import { Text, TextArea, Select, DateInput } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, DateInput, Currency } from '/modules/ui/MaterialInputs';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Requests } from '/modules/models/Requests';
 
@@ -29,12 +29,12 @@ export default DocumentSchema = {
 	},
 
 	facility: {
-		
+
 		label: "Facility",
 		optional: true,
 		description: "The site for this job",
 		type: "object",
-		size: 6,
+		size: 12,
 		relation: {
 			/*
 			join: ( item ) => {
@@ -61,10 +61,47 @@ export default DocumentSchema = {
 		},
 	},
 
+	request: {
+		input: Select,
+		label: "Work order",
+		optional: true,
+		description: "Document is related to request",
+		type: "object",
+		relation: {
+			/*
+			join: ( item ) => {
+				if( item.request && item.request._id ) {
+					return Requests.findOne( item.request._id );
+				}
+			},
+			unjoin: ( item ) => {
+				if( item.request && item.request._id ) {
+					return _.pick( item.request, '_id', 'name' );
+				}
+			}
+			*/
+		},
+
+		options: ( item ) => {
+			if ( item.facility ) {
+				let request = Requests.find( { "facility._id": item.facility._id } ).fetch();
+				return {
+					items: ( request.length ? request : null ),
+					view: ContactCard
+				}
+			} else {
+				return {
+					items: ( null ),
+				}
+			}
+		},
+	},
+
+
 	description: {
 		label: "Description",
 		optional: true,
-        type: "string",
+		type: "string",
 		input: TextArea
 	},
 
@@ -72,7 +109,7 @@ export default DocumentSchema = {
 		input: Text,
 		label: "Document #",
 		optional: true,
-        type: "string",
+		type: "string",
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -92,7 +129,7 @@ export default DocumentSchema = {
 		},
 	},
 	gst: {
-		input: Text,
+		input: Currency,
 		optional: true,
 		label: "GST",
 		size: 6,
@@ -104,7 +141,7 @@ export default DocumentSchema = {
 		},
 	},
 	totalValue: {
-		input: Text,
+		input: Currency,
 		label: "Total value",
 		optional: true,
 		size: 6,
@@ -327,7 +364,7 @@ export default DocumentSchema = {
 		size: 6
 	},
 	commencingRent: {
-		input: Text,
+		input: Currency,
 		condition: function( item ) {
 			return [ 'Lease' ].indexOf( item.type ) > -1;
 		},
@@ -461,15 +498,15 @@ export default DocumentSchema = {
 		},
 		size: 6,
 		optional: true,
-		label: "Review amount"
-	},
-	options: {
-		input: Text,
-		optional: true,
-		condition: function( item ) {
-			return [ 'Lease' ].indexOf( item.type ) > -1;
+		label: "Review amount",
+		options: {
+			input: Text,
+			optional: true,
+			condition: function( item ) {
+				return [ 'Lease' ].indexOf( item.type ) > -1;
+			},
+			size: 6
 		},
-		size: 6
 	},
 	optionExerciseFromDate: {
 		type: "date",
@@ -505,41 +542,6 @@ export default DocumentSchema = {
 		size: 6,
 		optional: true,
 		label: "Area (m2)"
-	},
-	request: {
-		input: Select,
-		label: "Work order",
-		optional: true,
-		description: "Document is related to request",
-		type: "object",
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.request && item.request._id ) {
-					return Requests.findOne( item.request._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.request && item.request._id ) {
-					return _.pick( item.request, '_id', 'name' );
-				}
-			}
-			*/
-		},
-
-		options: ( item ) => {
-			if(item.facility){
-				let request = Requests.find( { "facility._id": item.facility._id } ).fetch();
-				return {
-					items: ( request.length ? request : null ),
-					view: ContactCard
-				}
-			} else {
-				return {
-					items: ( null ),
-				}
-			}
-		},
 	},
 	attachments: {
 		type: [ Object ],
