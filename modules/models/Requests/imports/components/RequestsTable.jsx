@@ -3,6 +3,8 @@ import React from "react";
 import { DataTable } from '/modules/ui/DataTable';
 import { RequestActions } from '/modules/models/Requests';
 
+import { ContactCard } from '/modules/mixins/Members';
+
 export default function RequestsTable( { requests, filter } ) {
 
     this.fields = {
@@ -13,15 +15,20 @@ export default function RequestsTable( { requests, filter } ) {
         Issue: "name",
         Issued: "issuedAt",
         Due: "dueDate",
-        Supplier: "supplier.name"
+        //Supplier: "supplier.name"
+        Supplier: ( item ) => {
+    			return {
+    				val: <ContactCard item={item} />
+    			}
+    		}
     }
 
     if ( filter ) {
         requests = Meteor.user().getRequests( filter );
     }
 
-    return ( 
-        <DataTable 
+    return (
+        <DataTable
             items = { requests }
             fields = { this.fields }
             onClick = {

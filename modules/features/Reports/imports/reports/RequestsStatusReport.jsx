@@ -11,6 +11,8 @@ import { DataTable } from '/modules/ui/DataTable';
 import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
 
+import { ContactCard } from '/modules/mixins/Members';
+
 /**
  * @class 			RequestStatusReport
  * @memberOf 		module:features/Reports
@@ -70,7 +72,12 @@ const RequestsStatusReport = React.createClass( {
 		Issue: "name",
 		Issued: "issuedAt",
 		Due: "dueDate",
-		Supplier: "supplier.name",
+		//Supplier: "supplier.name",
+		Supplier: ( item ) => {
+			return {
+				val: <ContactCard item={item} />
+			}
+		},
 		Service: ( item ) => {
 			if ( item.service ) {
 				return { val: item.service.name + ( item.subservice ? ( " - " + item.subservice.name ) : "" ) };
@@ -117,7 +124,7 @@ const RequestsStatusReport = React.createClass( {
 			}
 		}
 	},
-	
+
 	render() {
 		var data = this.data.reportData.requests;
 

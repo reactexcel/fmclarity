@@ -95,8 +95,8 @@ export default DataTable = React.createClass( {
 							{ cols.map( (col) => {
 
 								return (
-									<th 
-										onClick = { () => { this.handleSortBy( col ) } } 
+									<th
+										onClick = { () => { this.handleSortBy( col ) } }
 										className = "data-grid-header-cell" key={('head'+col)}
 									>
 
@@ -117,8 +117,8 @@ export default DataTable = React.createClass( {
 					<tbody>
 						{ rows.map( (row,rowIdx) => {
 							return (
-							<tr 
-								className 	= "data-grid-row" 
+							<tr
+								className 	= "data-grid-row"
 								key 		= { rowIdx }
 								onClick 	= { () => { this.props.onClick( row._item ) } }
 							>
@@ -126,12 +126,11 @@ export default DataTable = React.createClass( {
 								{ cols.map( (col,colIdx) => {
 
 									return (
-										<td 
-											className 	= "data-grid-cell" 
+										<td
+											className 	= "data-grid-cell"
 											key 		= {('val('+rowIdx+','+colIdx+')-'+row[col].val)}
 											style 		= {row[col].style?row[col].style:{}}
 										>
-
 											{row[col].val}
 
 										</td>
