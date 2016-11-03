@@ -136,7 +136,7 @@ const RequestSchema = {
 		condition: "Preventative",
 		subschema: RequestFrequencySchema,
 		optional: true,
-		type: "object"
+		type: "object",
 	},
 
 	duration: {
