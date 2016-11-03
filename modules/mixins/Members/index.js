@@ -8,6 +8,7 @@ import ContactList from './imports/ContactList.jsx';
 import ContactDetails from './imports/ContactDetails.jsx';
 import ContactAvatarSmall from './imports/ContactAvatarSmall.jsx';
 import UserFilter from './imports/UserFilter.jsx';
+import MemberActions from './actions.jsx'
 
 checkModules( {
 	Members,
@@ -16,6 +17,7 @@ checkModules( {
 	ContactDetails,
 	ContactAvatarSmall,
 	UserFilter,
+	MemberActions,
 } );
 
 /**
@@ -28,4 +30,5 @@ export {
 	ContactDetails,
 	ContactAvatarSmall,
 	UserFilter,
+	MemberActions,
 }
