@@ -8,7 +8,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
-import DocumentSchema from '../schemas/DocumentSchema.jsx';
+import DocForm from '../schemas/DocForm.jsx';
 import { Facilities } from '/modules/models/Facilities';
 /**
  * @class 			DocViewEdit
@@ -100,7 +100,7 @@ const DocViewEdit = React.createClass( {
 			<div style={{padding:"15px"}}>
 				<AutoForm
 					model 	= { Documents }
-					form 	= { DocumentSchema }
+					form 	= { DocForm }
 					item 	= { this.data.doc }
 					onSubmit = { this.handleChange  }
 				/>

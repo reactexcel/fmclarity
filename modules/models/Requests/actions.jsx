@@ -222,7 +222,7 @@ const sendQuote = new Action( {
 } )
 
 const complete = new Action( {
-	name: "complete request",
+	name: 'complete request',
 	type: 'request',
 	verb: "completed a work order",	
 	label: "Complete",

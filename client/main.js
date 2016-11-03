@@ -110,7 +110,8 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) },
+		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) 
+	},
 	action: [
 		'edit request'
 	],
@@ -132,6 +133,7 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: { status: 'Issued' },
 	action: [
+		'edit request',
 		'delete request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
@@ -142,26 +144,16 @@ Actions.addAccessRule( {
 	condition: { status: 'Issued' },
 	action: [
 		'accept request',
-		//'reject request',
-	],
-	//role: [ 'supplier manager', 'assignee' ],
-	role: [ 'supplier manager' ],
-	rule: { alert: true }
-} )
-
-Actions.addAccessRule( {
-	condition: { status: 'Issued' },
-	action: [
-		'accept request',
 		'reject request',
 	],
-	//role: [ 'supplier manager', 'assignee' ],
-	role: [ 'assignee' ],
+	role: [ 'supplier manager', 'assignee' ],
 	rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
-	condition: { status: 'In Progress' },
+	condition: ( request ) => {
+		return _.contains( [ 'In Progress', 'Issued' ], request.status ) 
+	},
 	action: [
 		'complete request',
 	],
