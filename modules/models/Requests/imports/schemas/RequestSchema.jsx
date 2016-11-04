@@ -71,13 +71,13 @@ const RequestSchema = {
 		label: "Request type",
 		description: "The work request type (ie Ad-hoc, Preventative)",
 		type: "string",
-		defaultValue:()=>{
+		defaultValue: () => {
 			let team = Session.get( 'selectedTeam' ),
 				teamType = null;
 			if ( team ) {
 				teamType = team.type;
 			}
-			if( teamType == 'contractor' ) {
+			if ( teamType == 'contractor' ) {
 				return 'Tenancy';
 			}
 			return "Ad-hoc";
@@ -529,8 +529,8 @@ const RequestSchema = {
 			if ( team ) {
 				teamType = team.type;
 			}
-		//	console.log( teamType );
-			if( teamType == 'contractor' ) {
+			//	console.log( teamType );
+			if ( teamType == 'contractor' ) {
 				return null;
 			}
 			return team;
@@ -590,7 +590,7 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-		//	console.log( teamType );
+			//	console.log( teamType );
 			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		defaultValue: ( item ) => {
@@ -600,7 +600,7 @@ const RequestSchema = {
 				teamType = team.type;
 			}
 			//console.log( teamType );
-			if( teamType == 'fm' ) {
+			if ( teamType == 'fm' ) {
 				return null;
 			}
 			return team;
@@ -637,7 +637,8 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			return {
-				items: ( item.supplier ? _.uniq(item.supplier.members,false,(a)=>{return a._id}) : null ),
+				items: ( item.supplier ? _.uniq( item.supplier.members, false, ( a ) => {
+					return a._id } ) : null ),
 				view: ( Meteor.isClient ? ContactCard : null )
 			}
 		},
@@ -662,6 +663,11 @@ const RequestSchema = {
 		input: DocExplorer
 	},
 
+	attachments: {
+		label: "Attachments",
+		type: "array",
+		input: FileExplorer
+	},
 
 	//////////////////////////////////////////////////
 	//}

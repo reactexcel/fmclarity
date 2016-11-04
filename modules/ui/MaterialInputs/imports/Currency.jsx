@@ -50,7 +50,9 @@ const Currency = React.createClass( {
 
 		return (
 			<div className = "md-input">
+			
 			<span style = { { float: 'left', padding: '4px' } } >$</span>
+
       		<input
       			className		= { classes.join(' ') }
       			style 			= { { width: '90%' } }
