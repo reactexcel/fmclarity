@@ -106,7 +106,8 @@ const issue = new Action( {
 		console.log( request );
 		Requests.update( request._id, { $set: {
 			code: request.code||request.team.getNextWOCode(),
-			status: 'Issued'
+			status: 'Issued',
+			issuedAt: new Date()
 		} } );
 		request.updateSupplierManagers();
 		callback( request );

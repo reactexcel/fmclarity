@@ -482,6 +482,7 @@ const RequestSchema = {
 		description: "Date and time that the job was issued",
 		input: DateTime,
 		size: 6,
+		defaultValue: ""
 	},
 
 	eta: {
