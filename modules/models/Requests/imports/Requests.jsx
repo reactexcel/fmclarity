@@ -14,6 +14,8 @@ import { DocMessages } from '/modules/models/Messages';
 
 import { Documents } from '/modules/models/Documents';
 
+import { Teams } from '/modules/models/Teams';
+
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
 		return Requests.find();
@@ -131,7 +133,7 @@ Requests.methods( {
 				request.dangerouslyReplaceMembers( teamManagers, {
 					role: "team manager"
 				} );
-			}			
+			}
 		}
 	},
 
@@ -186,6 +188,16 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			Requests.remove( { _id: request._id } );
+		}
+	},
+	getSupplier: {
+		authentication: true,
+		helper: function( request ) {
+			let supplier = request.supplier;
+			if( supplier ) {
+				let item = Teams.findOne( { name: supplier.name } );
+				return item != null ? Teams.findOne( { name: supplier.name } ) : Teams.collection._transform( {} );
+			}
 		}
 	}
 
