@@ -64,7 +64,7 @@ export default function DataSet( items ) {
 		} else if ( _.isDate( val ) ) {
 			return {
 				originalVal: val,
-				val: moment( val ).format( /*"DD/MM/YY HH:mm"*/ "D-MMM-YY" )
+				val: moment( val ).fromNow()
 			}
 		}
 	}
@@ -150,9 +150,9 @@ export default function DataSet( items ) {
 			saveAs( blob, "fm-clarity-export.csv" );
 		},
 		print: function(element) {
-			
+
 			var print_data=element.innerHTML;
-			
+
 			var datawindow = window.open('', 'fm-clarity-print', 'height=400,width=600');
 	        datawindow.document.write('<html><head><title>fm-clarity-print</title>');
 	        //datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
@@ -167,10 +167,7 @@ export default function DataSet( items ) {
 	        datawindow.close();
 
 	        return true;
-			
+
 		},
 	}
 }
-
-
-
