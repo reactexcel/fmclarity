@@ -11,6 +11,8 @@ import { DataTable } from '/modules/ui/DataTable';
 import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
 
+import { ContactCard } from '/modules/mixins/Members';
+
 /**
  * @class 			RequestStatusReport
  * @memberOf 		module:features/Reports
@@ -23,7 +25,8 @@ const RequestsStatusReport = React.createClass( {
 		return {
 			service: null,
 			startDate: null,
-			endDate: null
+			endDate: null,
+			showFacilityName: true,
 		}
 	},
 
@@ -58,19 +61,64 @@ const RequestsStatusReport = React.createClass( {
 		return {
 			team: team,
 			facility: facility,
-			reportData: data
+			reportData: data,
+			showFacilityName: this.state.showFacilityName,
 		}
 	},
 
 	fields: {
-		Priority: "priority",
-		Status: "status",
+		//Priority: "priority",
+		Priority: ( item ) => {
+			let color = "#4d4d4d";
+			if ( item.priority == "Critical") {
+				color = "#ff1a1a";
+			} else if ( item.priority == "Urgent" ) {
+				color = "#ff471a";
+			} else if ( item.priority == "Scheduled" ) {
+				color = "#3399ff";
+			} else if ( item.priority == "Standard" ) {
+				color = "#00ccff";
+			} else if ( item.priority == "Closed" ) {
+				color = "#33cc33";
+			}
+			return {
+				val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
+			}
+		},
+		//Status: "status",
+		Status:  ( item ) => {
+			let color = "#4d4d4d";
+			if ( item.status == "Closed") {
+				color = "#ff1a1a";
+			} else if ( item.status == "New" ) {
+				color = "#33cc33";
+			} else if ( item.status == "Issued" ) {
+				color = "#00ccff";
+			}
+			return {
+				val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-circle "}></i>{item.status}</span>,
+				style: {
+					//color: color
+				}
+			}
+		},
 		Facility: "facility.name",
 		"PO#": "code",
 		Issue: "name",
 		Issued: "issuedAt",
 		Due: "dueDate",
-		Supplier: "supplier.name",
+		//Supplier: "supplier.name",
+		Supplier: ( item ) => {
+			let supplier = item.getSupplier();
+			if( supplier != null ){
+				return {
+					val: <ContactCard item={supplier} />
+				}
+			}
+			return {
+				val: <span/>
+			}
+		},
 		Service: ( item ) => {
 			if ( item.service ) {
 				return { val: item.service.name + ( item.subservice ? ( " - " + item.subservice.name ) : "" ) };
@@ -117,7 +165,7 @@ const RequestsStatusReport = React.createClass( {
 			}
 		}
 	},
-	
+
 	render() {
 		var data = this.data.reportData.requests;
 
@@ -125,8 +173,9 @@ const RequestsStatusReport = React.createClass( {
 			return <div/>
 		}
 
-		let { team } = this.data, { facility, service } = this.state;
-
+		let { team, showFacilityName } = this.data, { facility, service } = this.state;
+		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
+		
 		return (
 			<div>
 				<div style = { {padding:"15px"} } className = "report-details">
@@ -151,7 +200,10 @@ const RequestsStatusReport = React.createClass( {
 								value       = { facility }
 								items       = { team ? team.facilities : null }
 								onChange    = { ( facility ) => {
-									this.setState( { facility } ) } }
+									this.setState( {
+										facility: facility,
+										showFacilityName: false
+									} ) } }
 							/>
 
 						</div>
@@ -189,7 +241,7 @@ const RequestsStatusReport = React.createClass( {
 					</div>
 
 				</div>
-				<DataTable items={data} fields={this.fields}/>
+				<DataTable items={data} fields={fields}/>
 			</div>
 		)
 	}
