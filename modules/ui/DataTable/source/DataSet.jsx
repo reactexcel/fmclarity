@@ -64,7 +64,7 @@ export default function DataSet( items ) {
 		} else if ( _.isDate( val ) ) {
 			return {
 				originalVal: val,
-				val: moment( val ).format( /*"DD/MM/YY HH:mm"*/ "D-MMM-YY" )
+				val: moment( val ).fromNow()
 			}
 		}
 	}

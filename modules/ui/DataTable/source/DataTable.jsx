@@ -19,13 +19,14 @@ export default DataTable = React.createClass( {
 		}
 	},
 
-	update( { items } ) {
+	update( { items, fields } ) {
 		let rows = null,
 			cols = null,
 			dataset = this.state.dataset;
 
 		if ( items && items.length ) {
-			fields = this.props.fields;
+			//fields = this.props.fields;
+			console.log(fields);
 			dataset.reset( items, fields );
 
 			if ( this.state.sortCol ) {
