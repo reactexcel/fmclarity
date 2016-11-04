@@ -26,7 +26,6 @@ export default DataTable = React.createClass( {
 
 		if ( items && items.length ) {
 			//fields = this.props.fields;
-			console.log(fields);
 			dataset.reset( items, fields );
 
 			if ( this.state.sortCol ) {
