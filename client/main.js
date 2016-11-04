@@ -200,4 +200,15 @@ Actions.addAccessRule( {
 } );
 */
 
+Actions.addAccessRule( {
+	action: [
+		'edit member',
+		'view member',
+		'create member',
+	],
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
+	rule: { alert: true }
+} )
+
+
 Meteor.subscribe( 'Suppliers' );

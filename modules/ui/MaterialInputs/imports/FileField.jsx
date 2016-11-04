@@ -5,77 +5,98 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Files } from '/modules/models/Files';
+import { Text } from '/modules/ui/MaterialInputs';
 
 /**
  * @class 			FileField
  * @memberOf 		module:ui/MaterialInputs
  */
-const FileField = React.createClass({
-	mixins: [ReactMeteorData],
+const FileField = React.createClass( {
+	mixins: [ ReactMeteorData ],
 
-    getMeteorData() {
+	getMeteorData() {
 
-    	var query,file,url,extension,icon;
-    	query = this.props.value;
-    	file = Files.findOne(query);
-    	if(file) {
-    		url = file.url();
-    		extension = file.extension();
-    		if(extension) {
-    			icon = "icons/"+extension+"-icon-128x128.png";
-    		}
-	    }
-    	return {
-    		file:file,
-    		url:file?file.url():"img/default-placeholder.png",
-    		extension:extension,
-    		icon:icon
-    	}
-    },
+		var query, file, url, extension, icon;
+		query = this.props.value;
+		file = Files.findOne( query );
+		if ( file ) {
+			url = file.url();
+			extension = file.extension();
+			if ( extension ) {
+				icon = "icons/" + extension + "-icon-128x128.png";
+			}
+		}
+		return {
+			file: file,
+			url: file ? file.url() : "img/default-placeholder.png",
+			extension: extension,
+			icon: icon
+		}
+	},
 
-	handleChange(event) {
-		var component = this;
-	    FS.Utility.eachFile(event, function(file) {
-	    	Files.insert(file, function (err, newFile) {
-	    		component.props.onChange({
-			    	_id:newFile._id
-	    		});
-	    	});
-	    });
+	handleChange( event ) {
+		FS.Utility.eachFile( event, ( file ) => {
+			Files.insert( file, ( err, newFile ) => {
+				this.props.onChange( {
+					_id: newFile._id
+				} );
+			} );
+		} );
+	},
+
+	handleSelect() {
+		$(this.refs.input).click();
 	},
 
 	showImageInModal() {
-        Modal.show({
-            content:<img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
-        })
-    },
+		Modal.show( {
+			content: <img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={this.data.url} />
+		} )
+	},
 
 	onClick() {
-		if(this.data.file) {
+		if ( this.data.file ) {
 			this.showImageInModal()
-		}
-		else {
-			$(this.refs.input).click();			
+		} else {
+			$( this.refs.input ).click();
 		}
 	},
 
 	render() {
-		var file = this.data.file;
-		if(file) {
-			return (
-				<div>
-					<span style={{display:"inline-block",lineHeight:"50px",width:"150px",color:"#999"}}>{this.props.placeholder}</span><span>{file.name()}</span>
-				</div>
-			)
+		let file = this.data.file,
+			fileName = "";
+		if ( file ) {
+			fileName = file.name();
 		}
-		else {
-			return(
-				<div>
-					<span style={{display:"inline-block",lineHeight:"50px",width:"150px",color:"#999"}}>{this.props.placeholder}</span><input style={{display:"inline-block"}} ref="input" type="file" onChange={this.handleChange}/>
-				</div>
-			)
-		}
-	}
-});
 
-export default FileField
+		return (
+		<div>
+
+			<div style 		= { { width: '95%', float: 'right' } }>
+				<Text
+					placeholder = { this.props.placeholder }
+					value 		= { fileName }
+					onSelect 	= { this.handleSelect }
+					onClear 	= { this.handleClear }
+					errors 		= { this.props.errors }
+				/>
+			</div>
+
+			<i 
+				style 		= { { float: 'left', position: 'relative', top: '35px' } } 
+				className 	= "fa fa-paperclip">
+			</i>
+
+			<input 
+				ref 		= "input" 
+				type 		= "file" 
+				style 		= { { display:"none" } } 
+				onChange 	= { this.handleChange }
+			/>
+
+		</div>
+		)
+	}
+} );
+
+export default FileField;

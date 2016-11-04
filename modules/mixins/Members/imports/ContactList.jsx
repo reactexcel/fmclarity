@@ -7,6 +7,8 @@ import ContactCard from './ContactCard.jsx';
 import { UserPanel } from '/modules/models/Users';
 import { TeamActions } from '/modules/models/Teams';
 
+import { MemberActions } from '/modules/mixins/Members';
+
 export default ContactList = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
@@ -119,7 +121,6 @@ export default ContactList = React.createClass( {
 					            	team = { team }
 					            	group = { group }
 					            />
-
 					        </div>
 
 			            </div>
@@ -128,7 +129,7 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div
 			    	className	= "contact-list-item"
-			        onClick		= { () => { TeamActions.createMember.run( team, null, this.addPersonnel ) } }
+			        onClick		= { () => { MemberActions.createMember.run( group, null, this.addPersonnel ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 
