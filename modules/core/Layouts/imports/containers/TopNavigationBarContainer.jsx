@@ -38,11 +38,11 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
 		// get notifications
 		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
-		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
-		if ( unshownNotifications.length ) {
-			chime.play();
-			showNotifications( unshownNotifications );
-		}
+//		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
+	//	if ( unshownNotifications.length ) {
+		//	chime.play();
+	//		showNotifications( unshownNotifications );
+//		}
 	}
 
 	function showNotifications( notifications ) {
@@ -67,7 +67,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		team,
 		teams,
 		notifications,
-		onNotificationsViewed
+		onNotificationsViewed,
+		showNotifications,
 	}
 
 }, TopNavigationBar );

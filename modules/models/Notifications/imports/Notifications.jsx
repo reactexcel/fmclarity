@@ -32,6 +32,18 @@ Notifications.actions( {
 			Notifications.update( notification._id, { $set: { wasShown: true } } );
 		}
 	},
+	//Mark all the notification as shown
+	setAllShown: {
+		authentication: true,
+		method: function( notifications ) {
+			let show = false;
+			_.map( notifications, ( n ) => {
+				Notifications.update( n._id, { $set: { wasShown: true } } );
+				show = true;
+			});
+			return show;
+		}
+	},
 
 	// notifications.authenticatedHelpers
 
@@ -41,7 +53,7 @@ Notifications.actions( {
 			return ''
 		}
 	},
-	
+
 	getSubject: {
 		authentication: true,
 		helper: ( { actor, action, object } ) => {
