@@ -164,7 +164,7 @@ Requests.methods( {
 			if ( request.service ) {
 				str += request.service.name;
 			}
-			if ( request.subservice ) {
+			if ( request.subservice && request.subservice.name) {
 				str += ( ' - ' + request.subservice.name );
 			}
 			return str;
