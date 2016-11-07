@@ -37,18 +37,18 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		}
 
 		// get notifications
-		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );
-		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
-		if ( unshownNotifications.length ) {
-			chime.play();
-			showNotifications( unshownNotifications );
-		}
+		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
+//		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
+	//	if ( unshownNotifications.length ) {
+		//	chime.play();
+	//		showNotifications( unshownNotifications );
+//		}
 	}
 
 	function showNotifications( notifications ) {
 		notifications.map( ( notification ) => {
-			notify.createNotification( notification.subject, {
-				body: notification.body,
+			notify.createNotification( notification.getSubject(), {
+				body: notification.getBody(),
 				icon: "icon-64x64.ico"
 			} );
 			Meteor.call( 'Notifications.setShown', notification );
@@ -67,7 +67,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		team,
 		teams,
 		notifications,
-		onNotificationsViewed
+		onNotificationsViewed,
+		showNotifications,
 	}
 
 }, TopNavigationBar );
