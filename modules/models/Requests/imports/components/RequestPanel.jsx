@@ -67,7 +67,7 @@ const RequestPanelInner = ( { request } ) => {
 
                             :
 
-                                <h2>Work Order No {request.code}</h2>
+                                <h2>Job # {request.code}</h2>
 
                             }
 
@@ -75,7 +75,7 @@ const RequestPanelInner = ( { request } ) => {
                             <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
                             : null }
 
-                            <b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>
+                            {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
                             { request.issuedAt ? 
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>

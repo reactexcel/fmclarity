@@ -3,7 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import { Text } from '/modules/ui/MaterialInputs';
+import { Text, Phone } from '/modules/ui/MaterialInputs';
 
 /**
  * @memberOf 		module:models/Users
@@ -35,13 +35,13 @@ const UserProfileSchema = {
 	},
 	phone: {
 		label: "Phone number",
-		input: Text,
-		type: "string",
+		input: Phone,
+		type: "phone",
 	},
 	phone2: {
 		label: "Phone number 2",
-		input: Text,
-		type: "string",
+		input: Phone,
+		type: "phone",
 	},
 	tenancy: {
 		label: "Tenancy",

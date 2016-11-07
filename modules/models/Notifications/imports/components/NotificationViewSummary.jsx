@@ -47,7 +47,7 @@ function NotificationViewSummary( props ) {
     return (
         <div>
             <ContactAvatarSmall item = { actor }/>
-            <small>{ moment( createdAt ).fromNow() }</small>
+            <small>{ moment( result.createdAt ).fromNow() }</small>
             <div>
                 <strong>{ actorName }</strong>&nbsp;
                 <span>{ actionVerb }</span>&nbsp;
