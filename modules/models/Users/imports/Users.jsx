@@ -24,7 +24,8 @@ const Users = new Model( {
     collection: Meteor.users,
     mixins: [
         Owners,
-        DocMessages, [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        DocMessages,
+        [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 

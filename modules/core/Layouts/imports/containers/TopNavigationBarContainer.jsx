@@ -37,7 +37,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		}
 
 		// get notifications
-		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
+		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );
 		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
 		if ( unshownNotifications.length ) {
 			chime.play();
@@ -47,8 +47,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
 	function showNotifications( notifications ) {
 		notifications.map( ( notification ) => {
-			notify.createNotification( notification.getSubject(), {
-				body: notification.getBody(),
+			notify.createNotification( notification.subject, {
+				body: notification.body,
 				icon: "icon-64x64.ico"
 			} );
 			Meteor.call( 'Notifications.setShown', notification );

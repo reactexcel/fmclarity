@@ -111,36 +111,36 @@ class FormController {
 		Object.assign( this.errors, errorsGroupedByField );
 	}
 
+	validate( item ) {
+		// actually, we don't want to do this if validation fails
+		// REFACT: think about how this could be optimised
+		if ( item != null ) {
+			Object.assign( this.item, item );
+		}
+		// remove all extraneous fields from the provided item
+		// to avoid validation errors related to fields we aren't handling
+		let validationFields = _.pick( this.item, this.keys );
+		console.log( validationFields );
+		let error = this.model.validate( validationFields );
+		if ( error ) {
+			//console.log( error );
+			this.processValidationErrors( error );
+			this.triggerCallbacks();
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * @param 			{Document} item
 	 * @param 			{function} callback
 	 */
 	save( item, callback ) {
 
-		console.log( item );
-
-		// actually, we don't want to do this if validation fails
-		// REFACT: think about how this could be optimised
-		if ( item != null ) {
-			Object.assign( this.item, item );
-		}
-
-		console.log( this.item );
-
-		// remove all extraneous fields from the provided item
-		// to avoid validation errors related to fields we aren't handling
-		let validationFields = _.pick( this.item, this.keys );
-
-		let error = this.model.validate( validationFields );
-		if ( error ) {
-			console.log( error );
-			this.processValidationErrors( error );
-			this.triggerCallbacks();			
-		}
-		else {
+		if ( this.validate( item ) ) {
 			// if validation passes we will assume update will work
 			//  and trigger callbacks before saving the data
-			if( Meteor.isClient ) {
+			if ( Meteor.isClient ) {
 				this.triggerCallbacks();
 				if ( callback ) {
 					callback( this.item );
@@ -151,12 +151,15 @@ class FormController {
 			this.model.save.call( this.item )
 				.then( ( savedItem ) => {
 					Object.assign( this.item, savedItem );
+					/* should only happen if different from before */
+					/*
 					this.triggerCallbacks();
 					if ( callback ) {
 						callback( this.item );
 					}
+					*/
 				} );
-		}		
+		}
 	}
 
 	delete() {
@@ -168,9 +171,11 @@ class FormController {
 		this.triggerCallbacks();
 	}
 
+	/*
 	validate() {
 		return this.model.validate( this.item, this.keys );
 	}
+	*/
 }
 
 

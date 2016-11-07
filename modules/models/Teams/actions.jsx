@@ -97,7 +97,21 @@ const createRequest = new Action( {
 						Modal.replace( {
 							content: <RequestPanel item = { newRequest }/>
 						} );
-						callback( newRequest );
+						/*Messages.distribute(
+							newRequest,
+							other deets
+
+						)*/
+						newRequest = Requests.collection._transform( newRequest );
+						newRequest.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "created",
+								subject: "A new work order has been created"+(newRequest.owner?` by ${newRequest.owner.getName()}`:''),
+								body: newRequest.name
+							}
+						} );						
+						//callback( newRequest );
 					}
 				}
 			/>

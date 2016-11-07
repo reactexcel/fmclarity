@@ -101,15 +101,13 @@ function flattenRecipients( cc ) {
 }
 
 
-function distributeMessage( {
-    recipientRoles,
-    message,
-    suppressOriginalPost
-} ) {
+function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) {
+
     if ( !message ) {
         console.log( 'No message to send...' );
         return;
     }
+
     var user = Meteor.user();
     var obj = this;
     message.target = obj.getInboxId();
@@ -142,9 +140,9 @@ function distributeMessage( {
     recipients.map( function( r ) {
         if ( r ) {
             //console.log(r);
-            console.log( {
+            /*console.log( {
                 "sending notification to": r.email
-            } );
+            } );*/
             sendMessage( message, r );
         } else {
             console.log( "I tried to send a message to a nonexistent entitiy" );
@@ -201,6 +199,11 @@ function recipientIsCreator( message, recipient ) {
 function sendMessage( message, recipient ) {
     var msgCopy, emailBody;
 
+    if ( !recipient.getInboxId ) {
+        console.log( { 'Attempted to send message to entity with no inbox function': recipient } );
+        return;
+    }
+
     //if emailBody is a callback then create the personalised body using the callback
     if ( Meteor.isServer && message.emailBody && _.isFunction( message.emailBody ) ) {
         emailBody = message.emailBody( recipient, message );
@@ -221,7 +224,8 @@ function sendMessage( message, recipient ) {
     }
 
     //create the message
-    Meteor.call( "Messages.create", msgCopy, function() {
+    Meteor.call( "Messages.create", msgCopy, ( error, response ) => {
+        //console.log( { error, response } );
         //then email if we are supposed to
         if ( !msgCopy.read ) {
             Meteor.call( "Messages.sendEmail", recipient, msgCopy );

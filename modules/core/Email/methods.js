@@ -35,6 +35,9 @@ Meteor.methods({
   //no reason why this can't be Messages.sendEmail hey??
   'Messages.sendEmail':function(user,message) {
     if(Meteor.isServer) {
+
+      console.log( EmailMessageView );
+
       //check([to, from, subject, text], [String])
 
       /*

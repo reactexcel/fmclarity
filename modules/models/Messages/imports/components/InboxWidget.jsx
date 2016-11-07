@@ -43,10 +43,10 @@ export default InboxWidget = React.createClass( {
 		        <div className="ibox-title">
 		        	<h2>Recent Updates</h2>
 		        </div>
-		        <div className="ibox-content" style={{padding:"0px"}}>
-		        	{this.data.item?
-					<Inbox for={this.data.item} readOnly={true} truncate={true}/>
-		        	:null}
+		        <div className = "ibox-content" style = {{padding:"0px"}}>
+		        	{ this.data.item ?
+					<Inbox for = { this.data.item } readOnly = { true } truncate = { true }/>
+		        	: null }
 				</div>
 			</div>
 		)

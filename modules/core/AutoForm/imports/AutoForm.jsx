@@ -66,6 +66,20 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 
 		return ( callback ) => {
+			if ( this.props.beforeSubmit ) {
+				this.props.beforeSubmit( item );
+			}
+			/*
+			if ( this.props.onSubmit ) {
+				console.log( item );
+				console.log( this.form.validate( item ) );
+				if ( this.form.validate( item ) ) {
+					this.props.onSubmit( item );
+				}
+			} else {
+				this.form.save( item );
+			}
+			*/
 			this.form.save( item, ( newItem ) => {
 				if ( this.props.onSubmit ) {
 					this.props.onSubmit( newItem )
@@ -81,6 +95,20 @@ class AutoForm extends React.Component {
 	 */
 	submit() {
 		let { item } = this.state;
+		if ( this.props.beforeSubmit ) {
+			this.props.beforeSubmit( item );
+		}
+		/*
+		if ( this.props.onSubmit ) {
+			console.log( item );
+			console.log( this.form.validate( item ) );
+			if ( this.form.validate( item ) ) {
+				this.props.onSubmit( item );
+			}
+		} else {
+			this.form.save( item );
+		}
+		*/
 		this.form.save( item, ( newItem ) => {
 			if ( this.props.onSubmit ) {
 				this.props.onSubmit( newItem )
@@ -112,7 +140,7 @@ class AutoForm extends React.Component {
 			if ( item[ key ] == null ) {
 				item[ key ] = this.form.getDefaultValue( key, item );
 			}
-			
+
 			// Check visibility condition specified in schema
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {

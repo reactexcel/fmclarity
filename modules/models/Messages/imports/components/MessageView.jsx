@@ -43,6 +43,15 @@ export default MessageView = React.createClass( {
         var owner = Meteor.user();
         var inbox = this.data.inbox;
         var inboxId = inbox.getInboxId();
+        inbox.sendMessage({
+            message:{
+                type:"comment",
+                verb:"commented on",
+                subject:owner.getName()+" commented on \""+inbox.getName()+"\"",
+                body:input.value
+            }
+        });
+        /*
         Messages.save.call( {
             inboxId,
             type: "comment",
@@ -50,6 +59,7 @@ export default MessageView = React.createClass( {
             subject: owner.getName() + " commented on \"" + inbox.getName() + "\"",
             body: input.value
         } );
+        */
         input.value = null;
     },
 

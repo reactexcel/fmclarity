@@ -22,7 +22,7 @@ zimme:active-route
 
 ############################
 # JS Plugins
-mikkelking:meteor-hopscotch
+#mikkelking:meteor-hopscotch
 abpetkov:switchery
 momentjs:moment
 pfafman:filesaver
@@ -36,7 +36,7 @@ chrismbeckett:toastr
 #aldeed:collection2
 #matb33:collection-hooks
 dburles:collection-helpers
-monbro:mongodb-mapreduce-aggregation
+#monbro:mongodb-mapreduce-aggregation
 
 ############################
 # Filesystem

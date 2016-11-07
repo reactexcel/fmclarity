@@ -33,6 +33,8 @@ export default function TopNavigationBar( props ) {
 
     let { notifications, user, team, teams } = props;
 
+    //console.log( notifications );
+
     return (
         <div className="top-navigation-bar">
             <div className="sidebar-back-screen" onClick = {toggleLeftSideBar }></div>
@@ -59,7 +61,7 @@ export default function TopNavigationBar( props ) {
                                 : null }
                             </div>
                         </span>
-                        <NotificationList items={notifications}/>
+                        <NotificationList items = { notifications }/>
                     </div>
                 </div>
             </nav>

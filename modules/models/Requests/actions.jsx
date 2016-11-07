@@ -104,8 +104,9 @@ const issue = new Action( {
 	label: "Issue",
 	action: ( request, callback ) => {
 		console.log( request );
+		let code = request.code||request.team.getNextWOCode();
 		Requests.update( request._id, { $set: {
-			code: request.code||request.team.getNextWOCode(),
+			code: code,
 			status: 'Issued',
 			issuedAt: new Date()
 		} } );
@@ -230,15 +231,20 @@ const complete = new Action( {
 	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
-				title 	= "All done? Great! We just need a few details to finalise the job."
-				model 	= { Requests }
-				item 	= { request }
-				form 	= { [ 'closeDetails' ] }
-				onSubmit = {
+				title 			= "All done? Great! We just need a few details to finalise the job."
+				model 			= { Requests }
+				item 			= { request }
+				form 			= { [ 'closeDetails' ] }
+				beforeSubmit	= {
 					( request ) => {
-						Requests.update( request._id, { $set: { status: 'Complete' } } );
-						//Requests.createFollowUp( request );
+						Object.assign( request, { status: 'Complete' } )
+					}
+				}
+				onSubmit 		= {
+					( request ) => {
 						Modal.hide();
+						//Requests.collection.update( request._id, { $set: { status: 'Complete' } } );
+						//Requests.createFollowUp( request );
 						callback( request );
 					}
 				}
