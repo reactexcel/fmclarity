@@ -15,8 +15,6 @@ import NotificationViewSummary from './NotificationViewSummary.jsx';
  */
 function NotificationList( { items } ) {
 
-    console.log( items );
-
     return (
         <ul className="dropdown-menu dropdown-messages" style = { { maxHeight: "500px", overflowY : "auto" } }>
             { items && items.length ?

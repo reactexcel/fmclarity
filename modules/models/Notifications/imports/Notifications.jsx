@@ -38,7 +38,7 @@ Notifications.actions( {
 		method: function( notifications ) {
 			let show = false;
 			_.map( notifications, ( n ) => {
-				Notifications.update( n._id, { $set: { wasShown: true } } );
+				Messages.update( n._id, { $set: { wasShown: true } } );
 				show = true;
 			});
 			return show;

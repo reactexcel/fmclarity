@@ -5,7 +5,6 @@ import { Actions } from '/modules/core/Actions';
 //console.log( { Actions, Routes } );
 
 Meteor.subscribe( 'User: Teams, Facilities, Requests' );
-Meteor.subscribe( 'User: Notifications' );
 
 Meteor.subscribe( 'Users' );
 Meteor.subscribe( 'Files' );
