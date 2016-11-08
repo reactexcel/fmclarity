@@ -59,6 +59,12 @@ const UserSchema = {
 		subschema: UserProfileSchema,
 		options: () => {
 		}
+	},
+	_profile: {
+		type: "object",
+		subschema: _.omit(UserProfileSchema, "tenancy" ),
+		options: () => {
+		}
 	}
 }
 

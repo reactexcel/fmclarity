@@ -133,10 +133,12 @@ export default UserViewEdit = React.createClass( {
 	render() {
 		let { user, team, group } 	= this.data,
 			views 					= Meteor.user(),
-			profile 				= null;
+			profile 				= null,
+			role            = null;
 
 		if ( user ) {
 			profile = user.profile;
+			role = user.getRole();
 		}
 
 		// if the form has been called without a user then assume we want to create one and prompt for email address
@@ -189,7 +191,7 @@ export default UserViewEdit = React.createClass( {
 
 			        	<AutoForm item 	= { user }
                   			model 		= { Users }
-                  			form 		= { ['profile'] }
+                  			form 		= { [ role === "tenant" ?'profile':'_profile' ] }
                   			hideSubmit 	= { true }
                   			onSubmit 	= { this.afterSubmit }
                   			ref 		= { 'form' }
