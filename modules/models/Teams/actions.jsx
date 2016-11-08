@@ -110,7 +110,7 @@ const createRequest = new Action( {
 								subject: "A new work order has been created"+(newRequest.owner?` by ${newRequest.owner.getName()}`:''),
 								body: newRequest.name
 							}
-						} );						
+						} );
 						//callback( newRequest );
 					}
 				}

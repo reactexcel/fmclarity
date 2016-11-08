@@ -6,6 +6,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+
 /**
  * @class 			PlainCard
  * @memberOf 		module:ui/MaterialInputs
@@ -75,7 +76,8 @@ const Select = React.createClass( {
 			description,
 			items,
 			view = PlainCard, //should perhaps be called Tile in the original schema context
-			clearOption
+			clearOption,
+			addNew = false, //should be false initialy
 		} = this.props;
 
 		let ListTile = view,
@@ -175,7 +177,27 @@ const Select = React.createClass( {
 			    	</li> )
 		        	/********************************************/
 			        })}
+							{ addNew && addNew.show? <li className = "dropdown-menu-item">
+								<div
+									className	= "contact-list-item"
+									onClick		= { () => {
+										if ( addNew.onAddNewItem ) {
+											addNew.onAddNewItem( this.handleChange );
+										}
+									} }
+									style 		= { { paddingLeft:"24px" } }
+								>
 
+										<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
+											<i className="fa fa-plus"></i>
+										</span>
+
+										<span className="active-link" style={{fontStyle:"italic"}}>
+										 	{addNew.label} 
+										</span>
+
+									</div>
+								</li> : null}
 	            </ul>
 
 			</div>

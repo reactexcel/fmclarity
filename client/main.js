@@ -109,7 +109,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) 
+		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
 		'edit request'
@@ -151,7 +151,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'In Progress', 'Issued' ], request.status ) 
+		return _.contains( [ 'In Progress', 'Issued' ], request.status )
 	},
 	action: [
 		'complete request',
