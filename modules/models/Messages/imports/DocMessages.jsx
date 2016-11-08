@@ -139,10 +139,9 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
     //console.log(recipients);
     recipients.map( function( r ) {
         if ( r ) {
-            //console.log(r);
-            /*console.log( {
-                "sending notification to": r.email
-            } );*/
+            console.log( {
+                "sending notification to": r.profile?r.profile.name:r.name
+            } );
             sendMessage( message, r );
         } else {
             console.log( "I tried to send a message to a nonexistent entitiy" );

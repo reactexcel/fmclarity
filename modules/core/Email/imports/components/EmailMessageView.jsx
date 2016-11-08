@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
-import { Users } from '/modules/models/Users';
+import { Messages } from '/modules/models/Messages';
 
 const EmailMessageView = React.createClass({
 
@@ -11,7 +11,7 @@ const EmailMessageView = React.createClass({
         var query, message, user, owner, target, facility;
         query = this.props.item;
 
-        user = Users.findOne(this.props.user._id);
+        user = Meteor.users.findOne(this.props.user._id);
         message = Messages.findOne(query);
         if(message) {
             owner = message.getOwner();
