@@ -191,7 +191,7 @@ export default UserViewEdit = React.createClass( {
 
 			        	<AutoForm item 	= { user }
                   			model 		= { Users }
-                  			form 		= { [ role === "tenant" ?'profile':'_profile' ] }
+                  			form 		= { [ 'profile' ] }
                   			hideSubmit 	= { true }
                   			onSubmit 	= { this.afterSubmit }
                   			ref 		= { 'form' }
