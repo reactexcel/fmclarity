@@ -38,7 +38,7 @@ AccessGroups.loggedIn.add( {
 	path: '/requests/:_id',
 	action( params ) {
 		mount( LayoutMain, {
-			content: <RequestsPageSingle selected={params._id} />
+			content: <RequestsPageIndexContainer selectedRequestId = { params._id } />
 		} );
 	}
 } );

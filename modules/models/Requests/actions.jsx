@@ -23,11 +23,15 @@ const create = new Action( {
 const view = new Action( {
 	name: "view request",
 	type: 'request',
+	path: ( request ) => {
+		return `/requests/${request._id}`;
+	},
 	label: "View",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <RequestPanel item = { request } />
 		} )
+		callback( request );
 	}
 } )
 

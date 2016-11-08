@@ -234,13 +234,15 @@ class ActionGroup {
 
 			action.action( ...args, ( response ) => {
 				// if the action has a path attached then modify the path in the url to reflect this
-
-				// 
-
-				//console.log( notificationRules );
-
-				if ( this.path ) {
-					history.pushState( {}, '', this.path );
+				if ( action.path ) {
+					let path = '';
+					if( _.isFunction( action.path ) ) {
+						path = action.path( item );
+					}
+					else {
+						path = action.path;
+					}
+					history.pushState( {}, '', path );
 				}
 				if ( access.alert ) {
 					this.handleAlerts( notificationRules, action, args, response );
