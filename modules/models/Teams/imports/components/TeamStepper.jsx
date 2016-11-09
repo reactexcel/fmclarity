@@ -145,7 +145,7 @@ const TeamStepper = React.createClass( {
     },
     render() {
         var viewingTeam = this.data.viewingTeam;
-        console.log( viewingTeam );
+        //console.log( viewingTeam );
 
         if ( !viewingTeam ) {
             return (
