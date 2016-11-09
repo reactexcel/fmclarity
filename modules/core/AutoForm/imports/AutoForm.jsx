@@ -69,23 +69,21 @@ class AutoForm extends React.Component {
 			if ( this.props.beforeSubmit ) {
 				this.props.beforeSubmit( item );
 			}
-			/*
 			if ( this.props.onSubmit ) {
-				console.log( item );
-				console.log( this.form.validate( item ) );
 				if ( this.form.validate( item ) ) {
 					this.props.onSubmit( item );
 				}
-			} else {
-				this.form.save( item );
-			}
-			*/
-			this.form.save( item, ( newItem ) => {
-				if ( this.props.onSubmit ) {
-					this.props.onSubmit( newItem )
+				if ( this.props.afterSubmit ) {
+					this.props.afterSubmit( newItem )
 				}
-				callback( errors );
-			} );
+			} else {
+				this.form.save( item, ( newItem ) => {
+					if ( this.props.afterSubmit ) {
+						this.props.afterSubmit( newItem )
+					}
+					callback( errors );
+				} );
+			}
 		}
 
 	}
@@ -94,26 +92,25 @@ class AutoForm extends React.Component {
 	 * Submits the autoform
 	 */
 	submit() {
-		let { item } = this.state;
+		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
-		/*
 		if ( this.props.onSubmit ) {
-			console.log( item );
-			console.log( this.form.validate( item ) );
 			if ( this.form.validate( item ) ) {
 				this.props.onSubmit( item );
 			}
-		} else {
-			this.form.save( item );
-		}
-		*/
-		this.form.save( item, ( newItem ) => {
-			if ( this.props.onSubmit ) {
-				this.props.onSubmit( newItem )
+			if ( this.props.afterSubmit ) {
+				this.props.afterSubmit( newItem )
 			}
-		} );
+		} else {
+			this.form.save( item, ( newItem ) => {
+				if ( this.props.afterSubmit ) {
+					this.props.afterSubmit( newItem )
+				}
+				callback( errors );
+			} );
+		}
 	}
 
 	/**

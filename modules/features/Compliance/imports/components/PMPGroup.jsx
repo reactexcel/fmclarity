@@ -2,6 +2,7 @@ import React from "react";
 
 import { AutoForm } from '/modules/core/AutoForm';
 import PMPListTile from './PMPListTile.jsx';
+import { RequestActions } from '/modules/models/Requests';
 
 const PMPGroup = React.createClass({
 
@@ -25,7 +26,7 @@ const PMPGroup = React.createClass({
             <div>
                 {requests&&requests.length?requests.map((r,idx)=>{
                     return (
-                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={()=>{FABActions.viewRequest(r)}}>
+                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}} onClick={ () => { RequestActions.view.run(r) } }>
                             <PMPListTile item={r}/>
                         </div>
                     )

@@ -32,7 +32,7 @@ class FormController {
 
 		this.item = item || {};
 
-		console.log( this.item );
+		//console.log( this.item );
 
 		this.collection = [];
 	}

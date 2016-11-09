@@ -71,7 +71,7 @@ class Model {
 		this.validate = ValidationService.validator( this.schema );
 
 		this.save = new ValidatedMethod( {
-			name: `${this._name}.upsert`,
+			name: `${this._name}.save`,
 			//validate: ValidationService.validator( this.schema ),
 			run: ( ...args ) => {
 				return this._save( ...args )

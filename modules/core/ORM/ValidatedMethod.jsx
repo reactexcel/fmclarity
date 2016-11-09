@@ -62,15 +62,9 @@ class ValidatedMethod {
 	 * @param 		{mixed} ...args - Arguments to be passed on to final method
 	 */
 	call( ...args ) {
-		return new Promise( ( fulfil, reject ) => {
-			Meteor.call( this.name, ...args, ( error, response ) => {
-				if ( error ) {
-					reject( error );
-				} else {
-					fulfil( response );
-				}
-			} )
-		} )
+		//return new Promise( ( fulfil, reject ) => {
+			Meteor.apply( this.name, args );
+		//} )
 	}
 
 	/**

@@ -8,6 +8,7 @@ import PageLogin from './imports/components/PageLogin.jsx';
 import PageRegister from './imports/components/PageRegister.jsx';
 import PageLostPassword from './imports/components/PageLostPassword.jsx';
 import PageChangePassword from './imports/components/PageChangePassword.jsx';
+import LoginService from './imports/LoginService.js';
 
 AccessGroups.exposed.add( {
 	name: 'login',
@@ -63,7 +64,9 @@ AccessGroups.exposed.add( {
 	action( params ) {
 		var redirect = Base64.decode( decodeURIComponent( params.redirect ) );
 		redirect = String.fromCharCode.apply( null, redirect );
-		FMCLogin.loginWithToken( params.token, function( err ) {
+		console.log( redirect );
+		LoginService.loginWithToken( params.token, function( err ) {
+			console.log( 'Did it!' );
 			if ( err ) {
 				console.log( err );
 				FlowRouter.go( '/403' );

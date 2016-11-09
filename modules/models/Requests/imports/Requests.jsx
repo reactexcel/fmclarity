@@ -13,8 +13,10 @@ import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
 import { Documents } from '/modules/models/Documents';
+import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { SupplierRequestEmailView } from '/modules/core/Email';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
@@ -56,7 +58,7 @@ const Requests = new Model( {
 	]
 } )
 
-if( Meteor.isServer ) {
+if ( Meteor.isServer ) {
 	Requests.collection._ensureIndex( { 'team._id': 1 } );
 	Requests.collection._ensureIndex( { 'owner._id': 1 } );
 }
@@ -155,6 +157,34 @@ Requests.methods( {
 		}
 	},
 
+	create: {
+		authentication: true,
+		method: function( request ) {
+			let newRequestId = Meteor.call( 'Requests.save', request ),
+				newRequest = null;
+
+			if ( newRequestId ) {
+				newRequest = Requests.findOne( newRequestId );
+			}
+
+			if ( newRequest ) {
+				newRequest.distributeMessage( {
+					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+					message: {
+						verb: "created",
+						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
+						body: newRequest.name
+					}
+				} );
+			}
+		}
+	},
+
+	issue: {
+		authentication: true,
+		method: actionIssue
+	},
+
 	/* services toString()*/
 
 	getServiceString: {
@@ -164,12 +194,13 @@ Requests.methods( {
 			if ( request.service ) {
 				str += request.service.name;
 			}
-			if ( request.subservice && request.subservice.name) {
+			if ( request.subservice && request.subservice.name ) {
 				str += ( ' - ' + request.subservice.name );
 			}
 			return str;
 		}
 	},
+
 	getDocs: {
 		authentication: true,
 		helper: function( request ) {
@@ -184,19 +215,44 @@ Requests.methods( {
 			} );
 		}
 	},
+
 	destroy: {
 		authentication: true,
 		helper: function( request ) {
 			Requests.remove( { _id: request._id } );
 		}
 	},
+
 	getSupplier: {
 		authentication: true,
 		helper: function( request ) {
 			let supplier = request.supplier;
-			if( supplier ) {
+			if ( supplier ) {
 				let item = Teams.findOne( { name: supplier.name } );
 				return item != null ? Teams.findOne( { name: supplier.name } ) : Teams.collection._transform( {} );
+			}
+		}
+	},
+
+	getTeam: {
+		authentication: true,
+		helper: function( request ) {
+			let team = request.team;
+			if ( team ) {
+				let item = Teams.findOne( { _id: team._id } );
+				return item != null ? item : Teams.collection._transform( {} );
+			}
+		}
+	},
+
+	getFacility: {
+		authentication: true,
+		helper: function( request ) {
+			import { Facilities } from '/modules/models/Facilities';
+			let query = request.facility;
+			if ( query ) {
+				let facility = Facilities.findOne( { _id: query._id } );
+				return facility != null ? facility : Facilities.collection._transform( {} );
 			}
 		}
 	}
@@ -234,5 +290,50 @@ Requests.helpers( {
 		return 0;
 	},
 } );
+
+
+function actionCreate( request ) {
+
+}
+
+function actionIssue( request ) {
+
+	Meteor.call( 'Requests.save', request, {
+		status: "Issued",
+		issuedAt: new Date()
+	} );
+
+	request = Requests.findOne( request._id );
+
+	if ( request ) {
+		request.updateSupplierManagers();
+		request = Requests.findOne( request._id );
+		request.distributeMessage( {
+			recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
+			message: {
+				verb: "issued",
+				subject: "Work order #" + request.code + " has been issued",
+			}
+		} );
+
+		var team = request.getTeam();
+		request.distributeMessage( {
+			recipientRoles: [ "supplier manager" ],
+			suppressOriginalPost: true,
+			message: {
+				verb: "issued",
+				subject: "New work request from " + " " + team.getName(),
+				emailBody: function( recipient ) {
+					var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+					var token = LoginService.generateLoginToken( recipient, expiry );
+					return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+				}
+			}
+		} );
+
+		return request;
+	}
+}
+
 
 export default Requests;

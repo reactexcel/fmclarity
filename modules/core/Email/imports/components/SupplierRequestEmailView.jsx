@@ -1,15 +1,15 @@
 import React from "react";
-import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-SupplierRequestEmailView = React.createClass({
+const SupplierRequestEmailView = React.createClass({
 
     mixins: [ReactMeteorData],
 
-    getMeteorData() {
+    getMeteorData() { 
+        import { Requests } from '/modules/models/Requests';        
         var recipient, request, secret, expiry;
         request = Requests.findOne(this.props.item);
-        recipient = Users.findOne(this.props.recipient);
+        recipient = Meteor.users.findOne(this.props.recipient);
         if(this.props.token) {
             secret = this.props.token.token;
             expiry = this.props.token.expiry;
@@ -77,3 +77,5 @@ SupplierRequestEmailView = React.createClass({
         )
     }
 });
+
+export default SupplierRequestEmailView;

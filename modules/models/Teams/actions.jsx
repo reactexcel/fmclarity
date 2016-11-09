@@ -5,7 +5,7 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, CreateRequestForm, SupplierCreateRequestForm } from '/modules/models/Requests';
+import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm } from '/modules/models/Requests';
 import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
@@ -93,24 +93,10 @@ const createRequest = new Action( {
 				item 	= { newItem }
 				onSubmit = {
 					( newRequest ) => {
-						//console.log( newRequest );
 						Modal.replace( {
 							content: <RequestPanel item = { newRequest }/>
 						} );
-						/*Messages.distribute(
-							newRequest,
-							other deets
-
-						)*/
-						newRequest = Requests.collection._transform( newRequest );
-						newRequest.distributeMessage( {
-							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-							message: {
-								verb: "created",
-								subject: "A new work order has been created"+(newRequest.owner?` by ${newRequest.owner.getName()}`:''),
-								body: newRequest.name
-							}
-						} );						
+						Meteor.call('Requests.create', newRequest );
 						//callback( newRequest );
 					}
 				}

@@ -46,7 +46,7 @@ const edit = new Action( {
 				model 	= { Requests }
 				item 	= { request }
 				form 	= { CreateRequestForm }
-				onSubmit = { () => {
+				afterSubmit = { () => {
 					Modal.hide();
 				} }
 			/>
@@ -107,6 +107,11 @@ const issue = new Action( {
 	verb: "issued a work order",
 	label: "Issue",
 	action: ( request, callback ) => {
+		Meteor.call( 'Requests.issue', request, ( error, response ) => {
+			console.log( response );
+		} );
+		/*
+		let team = Requests.getNextWOode( request );
 		console.log( request );
 		let code = request.code||request.team.getNextWOCode();
 		Requests.update( request._id, { $set: {
@@ -115,6 +120,7 @@ const issue = new Action( {
 			issuedAt: new Date()
 		} } );
 		request.updateSupplierManagers();
+		*/
 		callback( request );
 		/*
 		Modal.show( {

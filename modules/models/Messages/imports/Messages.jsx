@@ -54,10 +54,10 @@ Messages.methods( {
 		authentication: true,
 		method: RBAC.lib.create.bind( Messages )
 	},
-	save: {
+	/*save: {
 		authentication: true,
 		method: RBAC.lib.save.bind( Messages )
-	},
+	},*/
 	destroy: {
 		authentication: true,
 		method: RBAC.lib.destroy.bind( Messages )
