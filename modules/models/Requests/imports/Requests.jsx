@@ -40,17 +40,10 @@ const Requests = new Model( {
 				getWatchers() {
 					let user = Meteor.user(),
 						owner = this.getOwner(),
-						team = this.team,
-						supplier = this.supplier,
+						team = this.getTeam(),
+						supplier = this.getSupplier(),
 						assignee = this.assignee;
-
-					if ( this.status = Requests.STATUS_DRAFT ) {
-						return [ user, owner ];
-					} else if ( this.status = Requests.STATUS_NEW ) {
-						return [ user, owner, team ];
-					} else {
-						return [ user, owner, team, supplier, assignee ];
-					}
+					return [ user, owner, team, supplier, assignee ];
 				}
 			}
 		} ],
@@ -183,6 +176,11 @@ Requests.methods( {
 	issue: {
 		authentication: true,
 		method: actionIssue
+	},
+
+	complete: {
+		authentication: true,
+		method: actionComplete
 	},
 
 	/* services toString()*/
@@ -333,6 +331,83 @@ function actionIssue( request ) {
 
 		return request;
 	}
+}
+
+function actionComplete( request ) {
+
+	Meteor.call( 'Requests.save', request, {
+		status: 'Complete',
+		closeDetails: request.closeDetails
+	} );
+	request = Requests.findOne( request._id );
+
+	console.log( request );
+
+	if ( request.closeDetails.furtherWorkRequired ) {
+
+		console.log( 'further work required' );
+
+		var closer = Meteor.user();
+
+		var newRequest = {
+			facility: request.facility,
+			supplier: request.supplier,
+			team: request.team,
+
+			level: request.level,
+			area: request.area,
+			status: "New",
+			service: request.service,
+			subservice: request.subservice,
+			name: "FOLLOW UP - " + request.name,
+			description: request.closeDetails.furtherWorkDescription,
+			priority: request.closeDetails.furtherPriority || 'Scheduled',
+			costThreshold: request.closeDetails.furtherQuoteValue
+		};
+
+		if ( request.closeDetails.furtherQuote ) {
+			newRequest.attachments = [ request.closeDetails.furtherQuote ];
+		}
+
+		var response = Meteor.call( 'Requests.create', newRequest );
+		console.log( response );
+		var newRequest = Requests.collection._transform( response );
+		//ok cool - but why send notification and not distribute message?
+		//is it because distribute message automatically goes to all recipients
+		//I think this needs to be replaced with distribute message
+		request.distributeMessage( {
+			message: {
+				verb: "completed",
+				subject: "Work order #" + request.code + " has been completed and a follow up has been requested"
+			}
+		} );
+
+		newRequest.distributeMessage( {
+			message: {
+				verb: "requested a follow up to " + request.getName(),
+				subject: closer.getName() + " requested a follow up to " + request.getName(),
+				body: newRequest.description
+			}
+		} );
+	} else {
+
+		request.distributeMessage( {
+			message: {
+				verb: "completed",
+				subject: "Work order #" + request.code + " has been completed"
+			}
+		} );
+
+	}
+
+	if ( request.closeDetails.attachments ) {
+		request.closeDetails.attachments.map( function( a ) {
+			request.attachments.push( a );
+			request.save();
+		} );
+	}
+
+	return request;
 }
 
 

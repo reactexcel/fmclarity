@@ -14,6 +14,14 @@ import { Notifications } from '/modules/models/Notifications';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
+	Meteor.subscribe( 'User: Teams, Facilities, Requests' );
+	Meteor.subscribe( 'Users' );
+	Meteor.subscribe( 'Files' );
+	Meteor.subscribe( 'Suppliers' );
+	Meteor.subscribe( 'Messages' );
+	Meteor.subscribe( 'Documents' );
+
+
 	let user = Meteor.user(),
 		team = null,
 		teams = null,

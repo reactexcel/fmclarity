@@ -4,14 +4,6 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 
-Meteor.subscribe( 'User: Teams, Facilities, Requests' );
-
-Meteor.subscribe( 'Users' );
-Meteor.subscribe( 'Files' );
-Meteor.subscribe( 'Teams' );
-Meteor.subscribe( 'Messages' );
-Meteor.subscribe( 'Documents' );
-
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
 	rel: 'icon',
@@ -208,6 +200,3 @@ Actions.addAccessRule( {
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
-
-
-Meteor.subscribe( 'Suppliers' );

@@ -1,7 +1,6 @@
 {
 	"public": {
 		"METEOR_ENV": "development",
-		"KADIRA_PROFILE_LOCALLY": 1
 	},
 	"kadira": {
 		"appId": "3KJQ72eGNdwp8f4jx",

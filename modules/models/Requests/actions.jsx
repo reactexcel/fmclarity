@@ -245,16 +245,10 @@ const complete = new Action( {
 				model 			= { Requests }
 				item 			= { request }
 				form 			= { [ 'closeDetails' ] }
-				beforeSubmit	= {
-					( request ) => {
-						Object.assign( request, { status: 'Complete' } )
-					}
-				}
 				onSubmit 		= {
 					( request ) => {
 						Modal.hide();
-						//Requests.collection.update( request._id, { $set: { status: 'Complete' } } );
-						//Requests.createFollowUp( request );
+						Meteor.call( 'Requests.complete', request );
 						callback( request );
 					}
 				}

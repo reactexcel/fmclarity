@@ -108,7 +108,6 @@ class AutoForm extends React.Component {
 				if ( this.props.afterSubmit ) {
 					this.props.afterSubmit( newItem )
 				}
-				callback( errors );
 			} );
 		}
 	}
