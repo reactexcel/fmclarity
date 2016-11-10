@@ -55,7 +55,7 @@ const RequestSchema = {
 		description: "The unique code for this work request",
 		type: "number",
 		input: Text,
-		//defaultValue: getJobCode,
+		defaultValue: getJobCode,
 		options: {
 			readonly: true
 		}
@@ -409,6 +409,13 @@ const RequestSchema = {
 		input: TextArea
 	},
 
+	reopenComment: {
+		label: "Comment",
+		description: "Reason for reopening",
+		type: "string",
+		input: TextArea
+	},
+
 	//////////////////////////////////////////////////
 	// Quote related
 	//////////////////////////////////////////////////
@@ -558,8 +565,10 @@ const RequestSchema = {
 
 		options: ( item ) => {
 			//console.log( item );
+			let team = Teams.findOne( item.team._id ),
+				facilities = team.getFacilities();
 			return {
-				items: ( item.team ? item.team.facilities : null ),
+				items: facilities,
 				view: FacilityListTile,
 
 				afterChange: ( item ) => {
@@ -676,10 +685,11 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
+			let supplier = Teams.findOne( item.supplier._id ),
+				members = Teams.getMembers( supplier );
 			return {
-				items: ( item.supplier ? _.uniq( item.supplier.members, false, ( a ) => {
-					return a._id } ) : null ),
-				view: ( Meteor.isClient ? ContactCard : null )
+				items: members,
+				view: ContactCard
 			}
 		},
 	},

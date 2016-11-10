@@ -169,7 +169,7 @@ Requests.methods( {
 					message: {
 						verb: "created",
 						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
-						body: newRequest.name
+						body: newRequest.description
 					}
 				} );
 			}
@@ -256,7 +256,13 @@ Requests.methods( {
 				return facility != null ? facility : Facilities.collection._transform( {} );
 			}
 		}
-	}
+	},
+
+	setAssignee: {
+		authentication: true,
+		method: setAssignee
+	},
+
 
 } )
 
@@ -295,6 +301,24 @@ Requests.helpers( {
 
 function actionCreate( request ) {
 
+}
+
+function setAssignee( request, assignee ) {
+
+	Requests.update( request._id, {
+		$set: {
+			assignee: {
+				_id: assignee._id,
+				name: assignee.profile.name
+			}
+		}
+	} );
+	Requests.update( request._id, { 
+		$pull: { members: { role: "assignee" } 
+	} } );
+
+	request = Requests.collection._transform( request );
+	request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
 function actionIssue( request ) {
