@@ -12,7 +12,7 @@ export default function DocExplorer( props ) {
 	function handleChange( index, newValue ) {
 		Modal.hide();
 		if( props.onChange ) {
-			props.onChange( documents );
+			props.onChange( newValue );
 		}
 	}
 	//get Document list
@@ -27,18 +27,26 @@ export default function DocExplorer( props ) {
 		return item.getDocs();
 	}
 
-	var documents = getDocsList() //.concat( props.value || [] ) || [];
-
+	var oldDocumentsList = props.value || [],//getDocsList();//.concat( props.value || [] ) || [];
+	  newDocumentsList = getDocsList(),
+		listLength = oldDocumentsList.length + newDocumentsList.length;
 	return (
 		<div>
 			<DocIconHeader />
-			{ documents.map( ( doc, idx ) => {
-			return (
-				<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
-			)
-			})}
+			{//Listing of old Documents
+				oldDocumentsList.map( ( doc, idx ) => (
+						<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
+					)
+				)
+			}
+			{//Listing of new documents
+				newDocumentsList.map( ( doc, idx ) => (
+						<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
+					)
+				)
+			}
 
-			<DocIcon onChange={ (doc) => { handleChange( documents.length, doc ) } } model = { props.model }  selectedItem = { props.item }/>
+			<DocIcon onChange={ (doc) => { handleChange( listLength, doc ) } } model = { props.model }  selectedItem = { props.item }/>
 
 		</div>
 	)

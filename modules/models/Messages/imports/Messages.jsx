@@ -49,7 +49,22 @@ Messages.helpers( {
 	}
 } );
 
-if( Meteor.isServer ) {
+Messages.methods( {
+	create: {
+		authentication: true,
+		method: RBAC.lib.create.bind( Messages )
+	},
+	/*save: {
+		authentication: true,
+		method: RBAC.lib.save.bind( Messages )
+	},*/
+	destroy: {
+		authentication: true,
+		method: RBAC.lib.destroy.bind( Messages )
+	}
+} )
+
+if ( Meteor.isServer ) {
 	Messages.collection._ensureIndex( { 'team._id': 1 } );
 	Messages.collection._ensureIndex( { 'facility._id': 1 } );
 	Messages.collection._ensureIndex( { 'request._id': 1 } );

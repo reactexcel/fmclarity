@@ -13,8 +13,10 @@ import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
 import { Documents } from '/modules/models/Documents';
+import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { SupplierRequestEmailView } from '/modules/core/Email';
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
@@ -38,17 +40,10 @@ const Requests = new Model( {
 				getWatchers() {
 					let user = Meteor.user(),
 						owner = this.getOwner(),
-						team = this.team,
-						supplier = this.supplier,
+						team = this.getTeam(),
+						supplier = this.getSupplier(),
 						assignee = this.assignee;
-
-					if ( this.status = Requests.STATUS_DRAFT ) {
-						return [ user, owner ];
-					} else if ( this.status = Requests.STATUS_NEW ) {
-						return [ user, owner, team ];
-					} else {
-						return [ user, owner, team, supplier, assignee ];
-					}
+					return [ user, owner, team, supplier, assignee ];
 				}
 			}
 		} ],
@@ -56,7 +51,7 @@ const Requests = new Model( {
 	]
 } )
 
-if( Meteor.isServer ) {
+if ( Meteor.isServer ) {
 	Requests.collection._ensureIndex( { 'team._id': 1 } );
 	Requests.collection._ensureIndex( { 'owner._id': 1 } );
 }
@@ -155,6 +150,39 @@ Requests.methods( {
 		}
 	},
 
+	create: {
+		authentication: true,
+		method: function( request ) {
+			let newRequestId = Meteor.call( 'Requests.save', request ),
+				newRequest = null;
+
+			if ( newRequestId ) {
+				newRequest = Requests.findOne( newRequestId );
+			}
+
+			if ( newRequest ) {
+				newRequest.distributeMessage( {
+					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+					message: {
+						verb: "created",
+						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
+						body: newRequest.name
+					}
+				} );
+			}
+		}
+	},
+
+	issue: {
+		authentication: true,
+		method: actionIssue
+	},
+
+	complete: {
+		authentication: true,
+		method: actionComplete
+	},
+
 	/* services toString()*/
 
 	getServiceString: {
@@ -164,12 +192,13 @@ Requests.methods( {
 			if ( request.service ) {
 				str += request.service.name;
 			}
-			if ( request.subservice && request.subservice.name) {
+			if ( request.subservice && request.subservice.name ) {
 				str += ( ' - ' + request.subservice.name );
 			}
 			return str;
 		}
 	},
+
 	getDocs: {
 		authentication: true,
 		helper: function( request ) {
@@ -184,19 +213,44 @@ Requests.methods( {
 			} );
 		}
 	},
+
 	destroy: {
 		authentication: true,
 		helper: function( request ) {
 			Requests.remove( { _id: request._id } );
 		}
 	},
+
 	getSupplier: {
 		authentication: true,
 		helper: function( request ) {
 			let supplier = request.supplier;
-			if( supplier ) {
+			if ( supplier ) {
 				let item = Teams.findOne( { name: supplier.name } );
 				return item != null ? Teams.findOne( { name: supplier.name } ) : Teams.collection._transform( {} );
+			}
+		}
+	},
+
+	getTeam: {
+		authentication: true,
+		helper: function( request ) {
+			let team = request.team;
+			if ( team ) {
+				let item = Teams.findOne( { _id: team._id } );
+				return item != null ? item : Teams.collection._transform( {} );
+			}
+		}
+	},
+
+	getFacility: {
+		authentication: true,
+		helper: function( request ) {
+			import { Facilities } from '/modules/models/Facilities';
+			let query = request.facility;
+			if ( query ) {
+				let facility = Facilities.findOne( { _id: query._id } );
+				return facility != null ? facility : Facilities.collection._transform( {} );
 			}
 		}
 	}
@@ -234,5 +288,127 @@ Requests.helpers( {
 		return 0;
 	},
 } );
+
+
+function actionCreate( request ) {
+
+}
+
+function actionIssue( request ) {
+
+	Meteor.call( 'Requests.save', request, {
+		status: "Issued",
+		issuedAt: new Date()
+	} );
+
+	request = Requests.findOne( request._id );
+
+	if ( request ) {
+		request.updateSupplierManagers();
+		request = Requests.findOne( request._id );
+		request.distributeMessage( {
+			recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
+			message: {
+				verb: "issued",
+				subject: "Work order #" + request.code + " has been issued",
+			}
+		} );
+
+		var team = request.getTeam();
+		request.distributeMessage( {
+			recipientRoles: [ "supplier manager" ],
+			suppressOriginalPost: true,
+			message: {
+				verb: "issued",
+				subject: "New work request from " + " " + team.getName(),
+				emailBody: function( recipient ) {
+					var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+					var token = LoginService.generateLoginToken( recipient, expiry );
+					return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+				}
+			}
+		} );
+
+		return request;
+	}
+}
+
+function actionComplete( request ) {
+
+	Meteor.call( 'Requests.save', request, {
+		status: 'Complete',
+		closeDetails: request.closeDetails
+	} );
+	request = Requests.findOne( request._id );
+
+	console.log( request );
+
+	if ( request.closeDetails.furtherWorkRequired ) {
+
+		console.log( 'further work required' );
+
+		var closer = Meteor.user();
+
+		var newRequest = {
+			facility: request.facility,
+			supplier: request.supplier,
+			team: request.team,
+
+			level: request.level,
+			area: request.area,
+			status: "New",
+			service: request.service,
+			subservice: request.subservice,
+			name: "FOLLOW UP - " + request.name,
+			description: request.closeDetails.furtherWorkDescription,
+			priority: request.closeDetails.furtherPriority || 'Scheduled',
+			costThreshold: request.closeDetails.furtherQuoteValue
+		};
+
+		if ( request.closeDetails.furtherQuote ) {
+			newRequest.attachments = [ request.closeDetails.furtherQuote ];
+		}
+
+		var response = Meteor.call( 'Requests.create', newRequest );
+		console.log( response );
+		var newRequest = Requests.collection._transform( response );
+		//ok cool - but why send notification and not distribute message?
+		//is it because distribute message automatically goes to all recipients
+		//I think this needs to be replaced with distribute message
+		request.distributeMessage( {
+			message: {
+				verb: "completed",
+				subject: "Work order #" + request.code + " has been completed and a follow up has been requested"
+			}
+		} );
+
+		newRequest.distributeMessage( {
+			message: {
+				verb: "requested a follow up to " + request.getName(),
+				subject: closer.getName() + " requested a follow up to " + request.getName(),
+				body: newRequest.description
+			}
+		} );
+	} else {
+
+		request.distributeMessage( {
+			message: {
+				verb: "completed",
+				subject: "Work order #" + request.code + " has been completed"
+			}
+		} );
+
+	}
+
+	if ( request.closeDetails.attachments ) {
+		request.closeDetails.attachments.map( function( a ) {
+			request.attachments.push( a );
+			request.save();
+		} );
+	}
+
+	return request;
+}
+
 
 export default Requests;

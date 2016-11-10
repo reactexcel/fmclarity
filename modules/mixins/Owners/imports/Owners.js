@@ -28,12 +28,15 @@ function register( collection, options ) {
 		input: Select,
 		description: "The creator or owner",
 		defaultValue:()=>{
+			/* solution, selected team should be saved in the database */
+			/*
 			let team = Session.getSelectedTeam();
 			return {
 				_id:team._id,
 				name:team.name,
-				type:team.type
+				type:'team'
 			}
+			*/
 		},
 		relation: {
 			join: ( { owner } ) => {

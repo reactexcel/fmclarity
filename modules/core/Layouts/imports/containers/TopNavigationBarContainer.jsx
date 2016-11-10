@@ -14,6 +14,14 @@ import { Notifications } from '/modules/models/Notifications';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
+	Meteor.subscribe( 'User: Teams, Facilities, Requests' );
+	Meteor.subscribe( 'Users' );
+	Meteor.subscribe( 'Files' );
+	Meteor.subscribe( 'Suppliers' );
+	Meteor.subscribe( 'Messages' );
+	Meteor.subscribe( 'Documents' );
+
+
 	let user = Meteor.user(),
 		team = null,
 		teams = null,
@@ -37,12 +45,12 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		}
 
 		// get notifications
-		notifications = Notifications.findAll( { 'recipient._id': user._id, read: false } );
-		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
-		if ( unshownNotifications.length ) {
-			chime.play();
-			showNotifications( unshownNotifications );
-		}
+		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );
+//		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
+	//	if ( unshownNotifications.length ) {
+		//	chime.play();
+	//		showNotifications( unshownNotifications );
+//		}
 	}
 
 	function showNotifications( notifications ) {
@@ -67,7 +75,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		team,
 		teams,
 		notifications,
-		onNotificationsViewed
+		onNotificationsViewed,
+		showNotifications,
 	}
 
 }, TopNavigationBar );

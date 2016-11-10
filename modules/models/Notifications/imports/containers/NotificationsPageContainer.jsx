@@ -13,7 +13,7 @@ import NotificationsPage from '../components/NotificationsPage.jsx';
  * @memberOf 		module:models/Notifications
  */
 const NotificationsPageContainer = createContainer( ( { params } ) => {
-	let items = Notifications.findAll();
+	let items = Messages.findAll();
 	return {
 		items
 	}

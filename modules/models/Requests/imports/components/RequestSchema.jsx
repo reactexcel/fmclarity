@@ -475,8 +475,9 @@ const RequestSchema = {
 
 		options: ( item ) => {
 			//console.log( item );
+			//let team = Session.getSelectedTeam();
 			return {
-				items: ( item.team ? item.team.facilities : null ),
+				items: ( item.team ? item.team.getFacilities() : null ),
 				view: FacilityListTile,
 
 				afterChange: ( item ) => {

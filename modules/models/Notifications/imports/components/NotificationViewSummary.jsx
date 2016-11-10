@@ -10,6 +10,30 @@ import { Actions } from '/modules/core/Actions';
  * @class           NotificationViewSummary
  * @memberOf        module:models/Notifications
  */
+
+function NotificationViewSummary( { item } ) {
+
+    let message = item || {},
+        owner = message.owner || Meteor.user(),
+        createdAt = message.createdAt;
+
+    return (
+        <div>
+            <ContactAvatarSmall item = { owner }/>
+            <small>{ moment(message.createdAt).fromNow() }</small>
+            <div>
+                <strong>{ owner.getName() }</strong> {
+                message.verb ?
+                    <span>{ message.verb } <b><a href = { message.getTargetUrl() }>{ message.getTargetName() }</a></b></span>
+                :
+                    <span>{ message.subject }</span>
+                }<br/>
+            </div>
+        </div>
+    )
+}
+
+/*
 function NotificationViewSummary( props ) {
     // action arguments are going to have to be sent as an object
     //  they can then be checked using action.type
@@ -33,5 +57,6 @@ function NotificationViewSummary( props ) {
         </div>
     )
 }
+*/
 
 export default NotificationViewSummary;

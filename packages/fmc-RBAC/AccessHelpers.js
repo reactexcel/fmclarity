@@ -9,7 +9,7 @@ RBAC.lib = {
 
 function create( item ) {
 	var newItem = this.create( item );
-	var newItemId = this.insert( newItem );
+	var newItemId = this.collection.insert( newItem );
 	return this.findOne( newItemId );
 }
 

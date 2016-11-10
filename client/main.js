@@ -4,15 +4,6 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 
-Meteor.subscribe( 'User: Teams, Facilities, Requests' );
-Meteor.subscribe( 'User: Notifications' );
-
-Meteor.subscribe( 'Users' );
-Meteor.subscribe( 'Files' );
-Meteor.subscribe( 'Teams' );
-Meteor.subscribe( 'Messages' );
-Meteor.subscribe( 'Documents' );
-
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
 	rel: 'icon',
@@ -110,7 +101,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status ) 
+		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
 		'edit request'
@@ -152,7 +143,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'In Progress', 'Issued' ], request.status ) 
+		return _.contains( [ 'In Progress', 'Issued' ], request.status )
 	},
 	action: [
 		'complete request',
@@ -209,6 +200,3 @@ Actions.addAccessRule( {
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
-
-
-Meteor.subscribe( 'Suppliers' );

@@ -17,6 +17,7 @@ import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currenc
 
 import AddressSchema from './AddressSchema.jsx'
 
+import React from "react";
 
 /**
  * @memberOf 		module:models/Requests
@@ -571,7 +572,26 @@ const RequestSchema = {
 					item.service = null;
 					item.subservice = null;
 					item.supplier = null;
-				}
+				},
+				addNew:{//Add new facility to current selectedTeam.
+					show:true,
+					label: "Create New",
+					onAddNewItem: ( callback ) => {
+						import { Facilities, FacilityStepper } from '/modules/models/Facilities';
+						let team = Session.getSelectedTeam(),
+						    facility = Facilities.collection._transform( { team } );
+						Modal.show( {
+							content: <FacilityStepper
+													item = { facility }
+													onSaveFacility = {
+														( facility ) => {
+															callback( facility );
+														}
+													}
+												/>
+						} )
+					}
+				},
 			}
 		},
 	},
@@ -608,9 +628,29 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			//console.log( item );
+			let facility = item.facility,
+				supplier = null;
 			return {
 				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
-				view: ContactCard
+				view: ContactCard,
+				addNew:{//Add new supplier to request and selected facility.
+					show:true,
+					label: "Create New",
+					onAddNewItem: ( callback ) => {
+						import { TeamStepper } from '/modules/models/Teams';
+						Modal.show( {
+							content: <TeamStepper item = {supplier} facility={facility} onChange = {
+								( supplier ) => {
+									facility.addSupplier( supplier );
+									callback( supplier );
+								}
+							}/>
+						} )
+					}
+				},
+				afterChange: ( ) => {
+
+				}
 			}
 		},
 	},

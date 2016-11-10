@@ -14,7 +14,7 @@ import { ServicesRequiredEditor } from '/modules/mixins/Services';
 
 var submitFormCallback = null;
 
-export default function FacilityStepper( { item } ) {
+export default function FacilityStepper( { item, onSaveFacility } ) {
 
     let facility = item;
 
@@ -60,7 +60,11 @@ export default function FacilityStepper( { item } ) {
 
                     onFinish = { () => {
                       //Select the new created facility.
-                        Session.selectFacility( facility );
+                        if ( onSaveFacility ){
+                          onSaveFacility( facility );
+                        } else {
+                          Session.selectFacility( facility );
+                        }
                       }
                     }
 

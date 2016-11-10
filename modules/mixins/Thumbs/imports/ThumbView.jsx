@@ -16,11 +16,17 @@ const ThumbView = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
+	getInitialState () {
+		return {
+			query: this.props.item
+		}
+	},
+
 	getMeteorData() {
 
 		var query, file, url, extension, icon;
 		query = this.props.item;
-		file = Files.findOne( query );
+		file = Files.findOne( query ) || Files.findOne( this.state.query );
 		if ( file ) {
 			url = file.url();
 			extension = file.extension();
@@ -45,6 +51,11 @@ const ThumbView = React.createClass( {
 			Files.insert( newFile, function( err, newFile ) {
 				component.props.onChange( {
 					_id: newFile._id
+				} );
+				component.setState( {
+					query : {
+						_id: newFile._id,
+					}
 				} );
 			} );
 		} );

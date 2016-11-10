@@ -60,10 +60,41 @@ export default function TopNavigationBar( props ) {
                             </div>
                         </span>
                         <NotificationList items={notifications}/>
+                        <DesktopNotificationPopUp {...props} />
                     </div>
                 </div>
             </nav>
         </div>
 
     )
+}
+
+class DesktopNotificationPopUp extends React.Component {
+
+  constructor( props ) {
+    super( props );
+    this.showPopUp = false;
+  }
+
+  componentWillReceiveProps( props ){
+    let user = props.user,
+      notifications = null;
+    if( user ){
+      notifications = Notifications.findAll( { 'recipient._id': user._id, wasShown: false } );
+      if ( !this.showPopUp ){
+        let component = this;
+        if ( notifications.length ) {
+          component.showPopUp = Meteor.apply( 'Notifications.setAllShown', [ notifications ], { returnStubValue: true } );
+        }
+      } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
+        this.props.showNotifications( notifications );
+      }
+    }
+  }
+
+  render () {
+    return (
+      <div />
+    )
+  }
 }

@@ -291,15 +291,17 @@ Facilities.actions( {
 						}
 					} )
 					//ids = _.pluck( facility.suppliers, '_id' );
-				suppliers = Teams.find( {
-						$or: [
-							{ _id: { $in: ids } },
-							{ name: { $in: names } }
-						]
-					}, {
-						sort: { name: 1, _id: 1 }
-					} )
-					.fetch();
+				if ( ids ) {
+					suppliers = Teams.find( {
+							$or: [
+								{ _id: { $in: ids } },
+								{ name: { $in: names } }
+							]
+						}, {
+							sort: { name: 1, _id: 1 }
+						} )
+						.fetch();
+				}
 			}
 			//Sort suppliersin ASC order
 			return suppliers

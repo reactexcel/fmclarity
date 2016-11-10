@@ -66,12 +66,24 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 
 		return ( callback ) => {
-			this.form.save( item, ( newItem ) => {
-				if ( this.props.onSubmit ) {
-					this.props.onSubmit( newItem )
+			if ( this.props.beforeSubmit ) {
+				this.props.beforeSubmit( item );
+			}
+			if ( this.props.onSubmit ) {
+				if ( this.form.validate( item ) ) {
+					this.props.onSubmit( item );
 				}
-				callback( errors );
-			} );
+				if ( this.props.afterSubmit ) {
+					this.props.afterSubmit( newItem )
+				}
+			} else {
+				this.form.save( item, ( newItem ) => {
+					if ( this.props.afterSubmit ) {
+						this.props.afterSubmit( newItem )
+					}
+					callback( errors );
+				} );
+			}
 		}
 
 	}
@@ -80,12 +92,24 @@ class AutoForm extends React.Component {
 	 * Submits the autoform
 	 */
 	submit() {
-		let { item } = this.state;
-		this.form.save( item, ( newItem ) => {
-			if ( this.props.onSubmit ) {
-				this.props.onSubmit( newItem )
+		let { item, errors } = this.state;
+		if ( this.props.beforeSubmit ) {
+			this.props.beforeSubmit( item );
+		}
+		if ( this.props.onSubmit ) {
+			if ( this.form.validate( item ) ) {
+				this.props.onSubmit( item );
 			}
-		} );
+			if ( this.props.afterSubmit ) {
+				this.props.afterSubmit( newItem )
+			}
+		} else {
+			this.form.save( item, ( newItem ) => {
+				if ( this.props.afterSubmit ) {
+					this.props.afterSubmit( newItem )
+				}
+			} );
+		}
 	}
 
 	/**
@@ -112,7 +136,7 @@ class AutoForm extends React.Component {
 			if ( item[ key ] == null ) {
 				item[ key ] = this.form.getDefaultValue( key, item );
 			}
-			
+
 			// Check visibility condition specified in schema
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {

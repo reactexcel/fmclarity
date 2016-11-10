@@ -21,7 +21,7 @@ Notifications.actions( {
 		method: function( { user } ) {
 			//console.log( user );
 			if ( user ) {
-				Notifications.update( { 'recipient._id': user._id }, { $set: { read: true } }, { multi: true } );
+				Messages.update( { 'inboxId.query._id': user._id }, { $set: { read: true } }, { multi: true } );
 			}
 		}
 	},
@@ -29,7 +29,19 @@ Notifications.actions( {
 		authentication: true,
 		method: function( notification ) {
 			//console.log( notification );
-			Notifications.update( notification._id, { $set: { wasShown: true } } );
+			Messages.update( notification._id, { $set: { wasShown: true } } );
+		}
+	},
+	//Mark all the notification as shown
+	setAllShown: {
+		authentication: true,
+		method: function( notifications ) {
+			let show = false;
+			_.map( notifications, ( n ) => {
+				Messages.update( n._id, { $set: { wasShown: true } } );
+				show = true;
+			});
+			return show;
 		}
 	},
 
@@ -41,7 +53,7 @@ Notifications.actions( {
 			return ''
 		}
 	},
-	
+
 	getSubject: {
 		authentication: true,
 		helper: ( { actor, action, object } ) => {

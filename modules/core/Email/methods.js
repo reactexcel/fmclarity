@@ -35,6 +35,9 @@ Meteor.methods({
   //no reason why this can't be Messages.sendEmail hey??
   'Messages.sendEmail':function(user,message) {
     if(Meteor.isServer) {
+
+      console.log( EmailMessageView );
+
       //check([to, from, subject, text], [String])
 
       /*
@@ -48,7 +51,9 @@ Meteor.methods({
       if(user&&user.emails) {
 
         var subject, html, address, to, email, devMsg;
-        var element = message.body||React.createElement(EmailMessageView,{user:user,item:message});
+        var element = React.createElement(EmailMessageView,{user:user,item:message});
+
+        //console.log( element );
 
         subject = (message.subject||"FM Clarity notification");
         html = (message.emailBody||ReactDOMServer.renderToStaticMarkup (element));

@@ -36,11 +36,18 @@ const FileField = React.createClass( {
 
 	handleChange( event ) {
 		FS.Utility.eachFile( event, ( file ) => {
-			Files.insert( file, ( err, newFile ) => {
+			//Removed callback to decrease the time taken to update text field.
+			let newFile = Files.insert( file );
+			if ( newFile ) {
 				this.props.onChange( {
 					_id: newFile._id
 				} );
-			} );
+			}
+		/*	Files.insert( file, ( err, newFile ) => {
+				this.props.onChange( {
+					_id: newFile._id
+				} );
+			} );*/
 		} );
 	},
 
@@ -82,15 +89,15 @@ const FileField = React.createClass( {
 				/>
 			</div>
 
-			<i 
-				style 		= { { float: 'left', position: 'relative', top: '35px' } } 
+			<i
+				style 		= { { float: 'left', position: 'relative', top: '35px' } }
 				className 	= "fa fa-paperclip">
 			</i>
 
-			<input 
-				ref 		= "input" 
-				type 		= "file" 
-				style 		= { { display:"none" } } 
+			<input
+				ref 		= "input"
+				type 		= "file"
+				style 		= { { display:"none" } }
 				onChange 	= { this.handleChange }
 			/>
 

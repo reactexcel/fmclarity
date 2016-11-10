@@ -47,6 +47,12 @@ const UserProfileSchema = {
 		label: "Tenancy",
 		input: Text,
 		type: "string",
+		condition: ( item ) => {
+			import { Users } from '/modules/models/Users';
+			let user = Users.collection._transform({});
+			user._id =  item._id;
+			return user.getRole() === "tenant"
+		}
 	}
 }
 
@@ -58,7 +64,7 @@ const UserSchema = {
 		type: "object",
 		subschema: UserProfileSchema,
 		options: () => {
-		}
+		},
 	}
 }
 

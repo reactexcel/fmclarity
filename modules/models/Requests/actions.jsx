@@ -23,11 +23,15 @@ const create = new Action( {
 const view = new Action( {
 	name: "view request",
 	type: 'request',
+	path: ( request ) => {
+		return `/requests/${request._id}`;
+	},
 	label: "View",
-	action: ( request ) => {
+	action: ( request, callback ) => {
 		Modal.show( {
 			content: <RequestPanel item = { request } />
 		} )
+		callback( request );
 	}
 } )
 
@@ -42,7 +46,7 @@ const edit = new Action( {
 				model 	= { Requests }
 				item 	= { request }
 				form 	= { CreateRequestForm }
-				onSubmit = { () => {
+				afterSubmit = { () => {
 					Modal.hide();
 				} }
 			/>
@@ -103,13 +107,20 @@ const issue = new Action( {
 	verb: "issued a work order",
 	label: "Issue",
 	action: ( request, callback ) => {
+		Meteor.call( 'Requests.issue', request, ( error, response ) => {
+			console.log( response );
+		} );
+		/*
+		let team = Requests.getNextWOode( request );
 		console.log( request );
+		let code = request.code||request.team.getNextWOCode();
 		Requests.update( request._id, { $set: {
-			code: request.code||request.team.getNextWOCode(),
+			code: code,
 			status: 'Issued',
 			issuedAt: new Date()
 		} } );
 		request.updateSupplierManagers();
+		*/
 		callback( request );
 		/*
 		Modal.show( {
@@ -225,20 +236,19 @@ const sendQuote = new Action( {
 const complete = new Action( {
 	name: 'complete request',
 	type: 'request',
-	verb: "completed a work order",	
+	verb: "completed a work order",
 	label: "Complete",
 	action: ( request, callback ) => {
 		Modal.show( {
 			content: <AutoForm
-				title 	= "All done? Great! We just need a few details to finalise the job."
-				model 	= { Requests }
-				item 	= { request }
-				form 	= { [ 'closeDetails' ] }
-				onSubmit = {
+				title 			= "All done? Great! We just need a few details to finalise the job."
+				model 			= { Requests }
+				item 			= { request }
+				form 			= { [ 'closeDetails' ] }
+				onSubmit 		= {
 					( request ) => {
-						Requests.update( request._id, { $set: { status: 'Complete' } } );
-						//Requests.createFollowUp( request );
 						Modal.hide();
+						Meteor.call( 'Requests.complete', request );
 						callback( request );
 					}
 				}

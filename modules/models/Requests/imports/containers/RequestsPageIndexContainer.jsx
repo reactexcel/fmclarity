@@ -4,7 +4,7 @@ import RequestsPageIndex from '../components/RequestsPageIndex.jsx';
 import { Facilities } from '/modules/models/Facilities';
 import { Requests } from '/modules/models/Requests';
 
-export default RequestsPageIndexContainer = createContainer( ( params ) => {
+export default RequestsPageIndexContainer = createContainer( ( { selectedRequestId } ) => {
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
@@ -12,7 +12,12 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		requests = null,
 		facilities = null,
 		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
-		contextFilter = {};
+		contextFilter = {},
+		selectedRequest = null;
+
+	if ( selectedRequestId ) {
+		selectedRequest = Requests.findOne( selectedRequestId );
+	}
 
 	if ( team ) {
 		//facilities = Facilities.findAll( { 'team._id': team._id } );
@@ -31,10 +36,12 @@ export default RequestsPageIndexContainer = createContainer( ( params ) => {
 		//console.log( requests );
 	}
 
+
 	return {
 		team,
 		facilities,
 		facility,
-		requests
+		requests,
+		selectedRequest
 	}
 }, RequestsPageIndex );

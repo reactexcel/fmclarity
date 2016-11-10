@@ -2,7 +2,7 @@
  * @author          Leo Keith <leo@fmclarity.com>
  * @copyright       2016 FM Clarity Pty Ltd.
  */
- 
+
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 

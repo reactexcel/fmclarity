@@ -13,12 +13,12 @@ import NotificationViewSummary from './NotificationViewSummary.jsx';
  * @param           {object} props
  * @param           {array} props.items - The notifications items to render (individually passed to NotificationViewSummary)
  */
-function NotificationList( props ) {
+function NotificationList( { items } ) {
 
     return (
         <ul className="dropdown-menu dropdown-messages" style = { { maxHeight: "500px", overflowY : "auto" } }>
-            { props.items && props.items.length ?
-                props.items.map( ( n ) => {
+            { items && items.length ?
+                items.map( ( n ) => {
                     return (
                         <li key = { n._id } className = "notification-list-item">
                             <div className = "dropdown-messages-box">
