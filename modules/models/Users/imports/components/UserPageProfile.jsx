@@ -17,7 +17,7 @@ function UserPageProfile( props ) {
 	        	<div className="col-lg-2"></div>
 	            <div className="col-lg-8">
 	            	<div className = "ibox">
-						<UserPanel item = { props.user }/>
+						<UserPanel item = { props.user } group = { props.group } />
 					</div>
 				</div>
 			</div>

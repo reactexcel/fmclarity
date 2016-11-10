@@ -123,7 +123,7 @@ FacilityAreasEditorInner = React.createClass( {
         var facility = this.state.facility;
         var selection = this.state.selection;
         var areas = selection[ 0 ].children;
-        var editable = facility.canSetAreas();
+        var editable = !facility || facility.canSetAreas();
         var selectedArea = selection[ 1 ] || {};
         var selectedSubArea = selection[ 2 ] || {};
         return (

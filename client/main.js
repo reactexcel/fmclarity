@@ -22,7 +22,8 @@ Actions.addAccessRule( {
 	action: [
 		'edit user',
 		'remove user',
-		'login as user'
+		'login as user',
+		'logout'
 	],
 	role: [ '*' ],
 	rule: { alert: true }
@@ -30,6 +31,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	action: [
+		'create team',
 		'migrate schema'
 	],
 	role: [ 'fmc support' ],
@@ -200,3 +202,10 @@ Actions.addAccessRule( {
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
+
+UserMenuActions = Actions.clone( [
+	'edit team',
+	'create team',
+	'migrate schema',
+	'logout'
+] );

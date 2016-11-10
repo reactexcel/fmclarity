@@ -169,6 +169,7 @@ class ActionGroup {
 	 * @return {array} An array of actions that are valid for this user with the provided args.
 	 */
 	filter( actionNames, ...args ) {
+
 		let validActions = {},
 			item = args[ 0 ],
 			relationships = Roles.getRoles( item );

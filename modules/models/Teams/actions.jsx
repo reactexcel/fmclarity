@@ -13,11 +13,10 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 const create = new Action( {
 	name: 'create team',
 	label: "Create team",
-	icon: 'fa fa-group',
-	action: ( template ) => {
-		let team = Teams.create( template );
+	icon: 'fa fa-plus',
+	action: () => {
 		Modal.show( {
-			content: <TeamStepper item = { team } />
+			content: <TeamStepper item = { Teams.create() } />
 		} )
 	}
 } )

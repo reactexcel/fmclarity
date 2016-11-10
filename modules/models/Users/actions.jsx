@@ -52,11 +52,22 @@ const login = new Action( {
 	}
 } )
 
+const logout = new Action( {
+	name: 'logout',
+	label: 'Logout',
+	icon: 'fa fa-sign-out',
+	type: [ 'user' ],
+	action: () => {
+		LoginService.logout();
+	}
+} )
+
 
 export {
 	edit,
 	remove,
-	login
+	login,
+	logout
 /*	create,
 	edit,
 	view,

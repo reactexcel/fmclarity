@@ -7,7 +7,8 @@ import { Users } from '/modules/models/Users';
 
 const migrate = new Action( {
     name: 'migrate schema',
-    icon: 'fa fa-group',
+    label: "Migrate Schema to v0.17",
+    icon: 'fa fa-exclamation',
     action: ( ) => {
       
 			let facilities, teams, documents;
