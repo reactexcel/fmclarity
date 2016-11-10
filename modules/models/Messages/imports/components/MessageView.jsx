@@ -5,6 +5,9 @@ import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 import { Messages } from '/modules/models/Messages';
 
+import moment from 'moment';
+
+
 export default MessageView = React.createClass( {
 
     mixins: [ ReactMeteorData ],

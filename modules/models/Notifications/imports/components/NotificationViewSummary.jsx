@@ -6,6 +6,9 @@ import React from "react";
 import { ContactAvatarSmall } from '/modules/mixins/Members';
 import { Actions } from '/modules/core/Actions';
 
+import moment from 'moment';
+
+
 /**
  * @class           NotificationViewSummary
  * @memberOf        module:models/Notifications

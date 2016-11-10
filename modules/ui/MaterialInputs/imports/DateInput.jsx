@@ -8,6 +8,9 @@ import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import Text from './Text.jsx';
 
+import moment from 'moment';
+
+
 /**
  * @class 			DateInput
  * @memberOf 		module:ui/MaterialInputs

@@ -2,6 +2,9 @@
 // if array project using items
 // if dictionary then if function execute, else project
 import ReactDOM from 'react-dom';
+
+import moment from 'moment';
+
 export default function DataSet( items ) {
 	let data = [],
 		labels = [],

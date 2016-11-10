@@ -6,6 +6,9 @@ import { WorkflowHelper } from '/modules/core/WorkflowHelper';
 
 import Requests from '../Requests.jsx';
 
+import moment from 'moment';
+
+
 Requests.workflow = new WorkflowHelper( Requests );
 
 function actionGetQuote( request, user ) {

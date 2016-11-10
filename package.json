@@ -11,7 +11,7 @@
     "jquery": "^2.x",
     "material-ui": "^0.15.2",
     "meteor-node-stubs": "^0.2.3",
-    "moment": "*",
+    "moment": "^2.15.2",
     "react": "^15.0.x",
     "react-addons-create-fragment": "^15.0.x",
     "react-addons-css-transition-group": "^15.0.x",

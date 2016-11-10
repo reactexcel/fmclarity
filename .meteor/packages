@@ -24,7 +24,7 @@ zimme:active-route
 # JS Plugins
 #mikkelking:meteor-hopscotch
 abpetkov:switchery
-momentjs:moment
+#momentjs:moment
 pfafman:filesaver
 harrison:papa-parse
 rochal:slimscroll

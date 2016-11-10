@@ -2,6 +2,8 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Users } from '/modules/models/Users';
 
+import moment from 'moment';
+
 export default PasswordResetEmailTemplate = React.createClass( {
 
     mixins: [ ReactMeteorData ],
