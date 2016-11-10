@@ -48,6 +48,7 @@ export default MessageView = React.createClass( {
                 type:"comment",
                 verb:"commented on",
                 subject:owner.getName()+" commented on \""+inbox.getName()+"\"",
+                createdAt: new Date(),
                 body:input.value
             }
         });
@@ -95,7 +96,7 @@ export default MessageView = React.createClass( {
                 <ContactAvatarSmall item={owner}/>
                 <div className={"media-body message-type-"+message.type} style={{whiteSpace:"pre-wrap"}}>
                     <div>
-                        <small className="message-timestamp pull-right text-muted" style={{marginLeft:"10px"}}>{moment(message.createdAt).fromNow()}</small>
+                        <small className="message-timestamp pull-right text-muted" style={{marginLeft:"10px"}}>{message.createdAt ? moment(message.createdAt).fromNow() : null}</small>
                         {message.type=="comment"&&this.data.messageIsInContext?null:
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {

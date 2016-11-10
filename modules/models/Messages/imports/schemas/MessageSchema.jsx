@@ -30,5 +30,8 @@ export default MessageSchema = {
 	commments: {
 		type: "array",
 		defaultValue: []
+	},
+	createdAt: {
+		type: "date"
 	}
 }
