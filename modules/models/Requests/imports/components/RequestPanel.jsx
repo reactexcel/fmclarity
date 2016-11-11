@@ -44,6 +44,7 @@ const RequestPanelInner = ( { request } ) => {
     if ( !request ) {
         return <div/>
     }
+    let teamType = Session.get('selectedTeam').type;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -70,7 +71,7 @@ const RequestPanelInner = ( { request } ) => {
 
                             :
 
-                                <h2>Job # {request.code}</h2>
+                                <h2>{ teamType=='fm'?"Work Order":"Job" } # {request.code}</h2>
 
                             }
 
