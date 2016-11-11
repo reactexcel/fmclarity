@@ -1,27 +1,32 @@
 import React from "react";
 
 export default class IpsoTabso extends React.Component {
-    constructor() {
-        super();
+    constructor( props ) {
+        super( props );
         this.state = {
-            active: 0
+            active: 0,
+            tabs: props.tabs,
         }
     }
 
     selectTab( idx ) {
-        if ( this.props.tabs[ idx ].onClick ) {
-            idx = this.props.tabs[ idx ].onClick();
+        if ( this.state.tabs[ idx ].onClick ) {
+            idx = this.state.tabs[ idx ].onClick();
         }
         this.setState( {
             active: idx
         } );
     }
-
+    componentWillReceiveProps( props ){
+      this.setState( {
+        tabs: props.tabs
+      } );
+    }
     render() {
         let active = this.state.active,
             content = null;
 
-        let tabs = _.filter( this.props.tabs, function( t ) {
+        let tabs = _.filter( this.state.tabs, function( t ) {
             return !t.hide;
         } )
 
@@ -31,7 +36,7 @@ export default class IpsoTabso extends React.Component {
 
         return (
             <div className="tab-panel">
-                {/* container for the tabs */}            
+                {/* container for the tabs */}
                 <div className="panel-heading">
                     <div className="row" style={{margin:0}}>
                         <div className="col-md-12">
@@ -39,10 +44,10 @@ export default class IpsoTabso extends React.Component {
 
                                 {/**************************************************/
                                 tabs.map( (i,idx) => { return i.hide?null:(
-                                    <div 
+                                    <div
                                         key = { idx }
                                         className = { ( idx==active ? "ipso-tab active" : "ipso-tab" ) }
-                                        onClick = { () => { this.selectTab(idx) } } 
+                                        onClick = { () => { this.selectTab(idx) } }
                                     >
                                         <div className="tab">
                                             {i.tab}
