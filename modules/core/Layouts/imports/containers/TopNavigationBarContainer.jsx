@@ -6,7 +6,7 @@ import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
 import { TeamActions } from '/modules/models/Teams';
-import { Notifications } from '/modules/models/Notifications';
+//import { Notifications } from '/modules/models/Notifications';
 
 /**
  * @class 			TopNavigationBarContainer

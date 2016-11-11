@@ -124,7 +124,7 @@ const issue = new Action( {
 	verb: "issued a work order",
 	label: "Issue",
 	action: ( request, callback ) => {
-		Meteor.call( 'Requests.issue', request );
+		Meteor.call( 'Issues.issue', request );
 		callback( request );
 	}
 } )
@@ -254,7 +254,7 @@ const complete = new Action( {
 				onSubmit 		= {
 					( request ) => {
 						Modal.hide();
-						Meteor.call( 'Requests.complete', request );
+						Meteor.call( 'Issues.complete', request );
 						callback( request );
 					}
 				}

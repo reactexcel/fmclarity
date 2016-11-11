@@ -56,7 +56,9 @@ const Facilities = new Model( {
 				}
 			}
 		} ],
-		[ Members ],
+		[ Members, {
+		    authentication:AuthHelpers.managerOfRelatedTeam,
+		} ],
 		/*
 				[ Members, {
 					fieldName: "suppliers",
@@ -98,7 +100,7 @@ Facilities.actions( {
 		}
 	},
 	setAreas: {
-		authentication: true,
+    authentication:AuthHelpers.managerOfRelatedTeam,
 		method: function( facility, areas ) {
 			Facilities.update( facility._id, {
 				$set: {
@@ -126,7 +128,7 @@ Facilities.actions( {
 	},
 
 	setServicesRequired: {
-		authentication: true,
+	    authentication:AuthHelpers.managerOfRelatedTeam,
 		method: function( facility, servicesRequired ) {
 			Facilities.update( facility._id, {
 				$set: {
