@@ -46,6 +46,12 @@ export default ContactList = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( props ){
+		this.setState( {
+			group: props.group,
+		} )
+	},
+
 	// Display a pop up modal for the selected user
 	showModal( selectedUser, idx ) {
 
