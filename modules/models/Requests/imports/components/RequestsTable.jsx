@@ -44,7 +44,7 @@ export default function RequestsTable( { requests, filter } ) {
         Due: ( item ) => {
             let dueDate = moment( item.dueDate );
             return {
-                originalVal: item.dueDate.toTime(),
+                originalVal: item.dueDate,
                 val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueDate.fromNow() }</span>
             }
         },
