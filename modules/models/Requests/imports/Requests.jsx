@@ -368,8 +368,6 @@ function actionComplete( request ) {
 	} );
 	request = Requests.findOne( request._id );
 
-	console.log( request );
-
 	if ( request.closeDetails.furtherWorkRequired ) {
 
 		console.log( 'further work required' );
@@ -397,7 +395,6 @@ function actionComplete( request ) {
 		}
 
 		var response = Meteor.call( 'Issues.create', newRequest );
-		console.log( response );
 		var newRequest = Requests.collection._transform( response );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients

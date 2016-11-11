@@ -436,7 +436,6 @@ const RequestSchema = {
 				return Teams.findOne( item.team._id )
 			},
 			unjoin: ( item ) => {
-				//console.log( item );
 				if ( item.team ) {
 					return _.pick( item.team, [ '_id', 'name' ] )
 				}
@@ -449,7 +448,6 @@ const RequestSchema = {
 				}
 		},
 		defaultValue: ( item ) => {
-			console.log( item );
 			let role = getRole( );
 			return role == 'supplier manager' ? null : Session.getSelectedTeam( );
 		}
@@ -474,7 +472,6 @@ const RequestSchema = {
 		input: Select,
 
 		options: ( item ) => {
-			//console.log( item );
 			//let team = Session.getSelectedTeam();
 			return {
 				items: ( item.team ? item.team.getFacilities() : null ),

@@ -101,7 +101,6 @@ function checkDate( rule, value, key, errors ) {
 
 function checkBoolean( rule, value, key, errors ) {
 	if ( !_.isBoolean( value ) && value != "") {
-		console.log( value );
 		errors.push( { name: key, type: "Invalid type: expected a boolean" } );
 	}
 }

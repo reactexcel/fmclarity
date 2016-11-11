@@ -46,7 +46,6 @@ Documents.actions( {
 			_.forEach( attachments, ( attach ) => {
 				Files.remove( { _id: attach._id } );
 			} );
-			console.log( doc );
 			Documents.remove( { _id: doc._id } );
 		}
 	},

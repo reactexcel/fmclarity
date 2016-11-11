@@ -53,7 +53,6 @@ class Action {
     	   );
 
 		let { recipient } = notification;
-		console.log( body );
 		return {
         	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
 			from:"FM Clarity <no-reply@fmclarity.com>",

@@ -83,10 +83,7 @@ class ActionGroup {
 	 *
 	 */
 	getVerb( { name } ) {
-		//console.log( this.actions );
-		//console.log( name );
 		let action = this.actions[ name ];
-		//console.log( action );
 		if ( action ) {
 			return action.verb;
 		}
@@ -226,8 +223,6 @@ class ActionGroup {
 		if ( rules == null ) {
 			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
 		}
-
-		console.log( { rules, relationships} );
 
 		// ...that is why we precalculate rules and relationships then pass them here
 		let access = this.checkAccess( actionName, item, rules, relationships ),
