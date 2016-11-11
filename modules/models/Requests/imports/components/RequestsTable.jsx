@@ -3,12 +3,14 @@ import React from "react";
 import { DataTable } from '/modules/ui/DataTable';
 import { RequestActions } from '/modules/models/Requests';
 
-import { ContactCard } from '/modules/mixins/Members';
+import { ContactAvatarSmall } from '/modules/mixins/Members';
+
+import moment from 'moment';
 
 export default function RequestsTable( { requests, filter } ) {
 
     this.fields = {
-      /*  Priority: "priority",
+        /*  Priority: "priority",
         Status: "status",
         Facility: "facility.name",
         "PO#": "code",
@@ -17,69 +19,57 @@ export default function RequestsTable( { requests, filter } ) {
         Due: "dueDate",
         //Supplier: "supplier.name"
         Supplier: ( item ) => {
-    			return {
-    				val: <ContactCard item={item} />
-    			}
-    		}*/
+                return {
+                    val: <ContactCard item={item} />
+                }
+            }*/
         Priority: ( item ) => {
-    			let color = "#4d4d4d";
-    			if ( item.priority == "Critical") {
-    				color = "#ff1a1a";
-    			} else if ( item.priority == "Urgent" ) {
-    				color = "#ff471a";
-    			} else if ( item.priority == "Scheduled" ) {
-    				color = "#3399ff";
-    			} else if ( item.priority == "Standard" ) {
-    				color = "#00ccff";
-    			} else if ( item.priority == "Closed" ) {
-    				color = "#33cc33";
-    			}
-    			return {
-    				val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
-    			}
-    		},
-    		Status:  ( item ) => {
-    			let color = "#4d4d4d";
-    			if ( item.status == "Closed" ) {
-    				color = "#ff1a1a";
-          } else if ( item.status == "New" ) {
-    				color = "#33cc33";
-          } else if ( item.status == "Issued" ) {
-    				color = "#00ccff";
-    			}
-    			return {
-    				val: <span><i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-circle "}></i>{item.status}</span>,
-    				style: {
-    					//color: color
-    				}
-    			}
-    		},
-        Facility: "facility.name",
-    		"PO#": "code",
-    		Issue: "name",
-    		Issued: "issuedAt",
-    		Due: "dueDate",
-    		Supplier: ( item ) => {
-          let supplier = item.getSupplier();
-          if( supplier != null ){
             return {
-              val: <ContactCard item={supplier} />
+                originalVal: item.priority,                
+                val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >
+                    <i className = {`fa fa-circle priority-${item.priority}`}></i>
+                </span>)
             }
-          }
-          return {
-            val: <span/>
-          }
-    		},
+        },
+        Status: ( item ) => {
+            return {
+                originalVal: item.status,
+                val: <span className = {`label label-${item.status}`}>{item.status}</span>
+            }
+        },
+        Facility: "facility.name",
+        "PO#": "code",
+        Issue: "name",
+        Issued: "issuedAt",
+        Due: ( item ) => {
+            let dueDate = moment( item.dueDate );
+            return {
+                originalVal: item.dueDate.toTime(),
+                val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueDate.fromNow() }</span>
+            }
+        },
+        Supplier: ( item ) => {
+            let supplier = item.getSupplier();
+            if ( supplier != null ) {
+                return {
+                    originalVal: supplier.name,
+                    val: <ContactAvatarSmall item = { supplier } />
+                }
+            }
+            return {
+                val: <span/>
+            }
+        },
     }
 
     if ( filter ) {
         requests = Meteor.user().getRequests( filter );
     }
 
-    return (
-        <DataTable
-            items = { requests }
-            fields = { this.fields }
+    return ( 
+        <DataTable 
+            items   = { requests }
+            fields  = { this.fields }
             onClick = {
                 ( request ) => {
                     let team = Session.getSelectedTeam();

@@ -227,6 +227,8 @@ class ActionGroup {
 			console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );
 		}
 
+		console.log( { rules, relationships} );
+
 		// ...that is why we precalculate rules and relationships then pass them here
 		let access = this.checkAccess( actionName, item, rules, relationships ),
 			notificationRules = this.checkAlerts( actionName, item, rules, relationships );

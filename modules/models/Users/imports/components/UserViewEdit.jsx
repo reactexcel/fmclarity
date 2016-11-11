@@ -16,12 +16,15 @@ export default UserViewEdit = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var group, role, member, relation;
-		role = this.props.newMemberRole;
-		member = this.props.member;
+		let role = this.props.newMemberRole,
+			member = this.props.member,
+			group = null,
+			relation = null;
+
 		if ( this.props.group ) {
-			var collectionName = this.props.group.collectionName;
-			var collection = ORM.collections[ collectionName ];
+			let collectionName = this.props.group.collectionName,
+				collection = ORM.collections[ collectionName ];
+
 			group = collection.findOne( this.props.group._id );
 			if ( group ) {
 				relation = group.getMemberRelation( member );
@@ -193,7 +196,7 @@ export default UserViewEdit = React.createClass( {
                   			model 		= { Users }
                   			form 		= { [ 'profile' ] }
                   			hideSubmit 	= { true }
-                  			onSubmit 	= { this.afterSubmit }
+                  			afterSubmit	= { this.afterSubmit }
                   			ref 		= { 'form' }
                 		/>
 

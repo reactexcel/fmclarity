@@ -21,7 +21,7 @@ export default function DataSet( items ) {
 
 		items.map( function( item, idx ) {
 			let newItem = {
-				_item:item
+				_item: item
 			};
 			for ( var label in fields ) {
 				var record = fields[ label ];
@@ -152,24 +152,24 @@ export default function DataSet( items ) {
 			} );
 			saveAs( blob, "fm-clarity-export.csv" );
 		},
-		print: function(element) {
+		print: function( element ) {
 
-			var print_data=element.innerHTML;
+			var print_data = element.innerHTML;
 
-			var datawindow = window.open('', 'fm-clarity-print', 'height=400,width=600');
-	        datawindow.document.write('<html><head><title>fm-clarity-print</title>');
-	        //datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
-	        datawindow.document.write('</head><body >');
-	        datawindow.document.write(print_data);
-	        datawindow.document.write('</body></html>');
+			var datawindow = window.open( '', 'fm-clarity-print', 'height=400,width=600' );
+			datawindow.document.write( '<html><head><title>fm-clarity-print</title>' );
+			//datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
+			datawindow.document.write( '</head><body >' );
+			datawindow.document.write( print_data );
+			datawindow.document.write( '</body></html>' );
 
-	        datawindow.document.close(); // necessary for IE >= 10
-	        datawindow.focus(); // necessary for IE >= 10
+			datawindow.document.close(); // necessary for IE >= 10
+			datawindow.focus(); // necessary for IE >= 10
 
-	        datawindow.print();
-	        datawindow.close();
+			datawindow.print();
+			datawindow.close();
 
-	        return true;
+			return true;
 
 		},
 	}
