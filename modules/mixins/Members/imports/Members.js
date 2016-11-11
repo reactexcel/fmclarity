@@ -179,10 +179,16 @@ function addMember( collection, fieldName ) {
 				name: o.profile ? o.profile.name : o.name
 					//profile:obj.getProfile?obj.getProfile():obj
 			} );
-			/** Added update is changed to save**/
-			collection.collection.update( item._id, {
-				$push: newObject
-			} );
+			//check existence of member in list.
+			let isExists = _.find( item[ fieldName ], ( m ) => {
+			  		return m._id === newObject[ fieldName ]._id
+					});
+			if ( !isExists ) {
+				/** Added update is changed to save**/
+				collection.collection.update( item._id, {
+					$push: newObject
+				} );
+			}
 		} )
 		return newObject;
 	}
