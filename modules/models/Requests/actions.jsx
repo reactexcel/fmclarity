@@ -347,6 +347,18 @@ const reverse = new Action( {
 	}
 } )
 
+const reverse = new Action( {
+	name: "clone request",
+	type: 'request',
+	label: "Clone",
+	action: ( request ) => {
+    let newRequest = _.omit( request , "_id" );
+    newRequest.type = 'PMP';
+    Meteor.call( 'Issues.save', newRequest );
+    Meteor.call( 'Issues.issue', newRequest );
+	}
+} )
+
 export {
 	view,
 	edit,
