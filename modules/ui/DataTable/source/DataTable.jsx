@@ -80,6 +80,8 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 
+		//console.log( rows );
+
 		return (
 			<div className="data-grid">
 

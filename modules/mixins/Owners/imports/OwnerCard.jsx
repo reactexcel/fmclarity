@@ -6,6 +6,8 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { ContactCard } from '/modules/mixins/Members';
+import { UserPanel } from '/modules/models/Users';
+import { TeamPanel } from '/modules/models/Teams';
 import { Teams } from '/modules/models/Teams';
 
 /**
@@ -39,14 +41,16 @@ const OwnerCard = React.createClass( {
 		var type = this.data.type;
 		if ( type == "team" ) {
 			Modal.show( {
-				content: <TeamCard 
-					item = { this.data.owner } />
+				content: <TeamPanel 
+					item = { this.data.owner } 
+				/>
 			} )
 		} else {
 			Modal.show( {
-				content: <UserCard 
+				content: <UserPanel 
 					item =  {this.data.owner } 
-					team = { this.data.target }/>
+					team = { this.data.target }
+				/>
 			} )
 		}
 	},

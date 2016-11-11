@@ -613,7 +613,7 @@ function actionComplete( request ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
-		var response = Meteor.call( 'Requests.create', newRequest );
+		var response = Meteor.call( 'Issues.create', newRequest );
 		//console.log( response );
 		var newRequest = Requests._transform( response );
 		//ok cool - but why send notification and not distribute message?
@@ -675,7 +675,7 @@ function actionReverse( request ) {
 		costThreshold: request.costThreshold * -1,
 		name: "Reversal - " + request.name
 	} );
-	var response = Meteor.call( 'Requests.create', newRequest );
+	var response = Meteor.call( 'Issues.create', newRequest );
 	//distribute message on new request
 	request = Requests.findOne( request._id );
 	request.distributeMessage( {

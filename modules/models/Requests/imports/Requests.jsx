@@ -32,7 +32,7 @@ if ( Meteor.isServer ) {
  */
 const Requests = new Model( {
 	schema: RequestSchema,
-	collection: "Requests",
+	collection: "Issues",
 	mixins: [
 		[ Owners ],
 		[ DocMessages, {
@@ -156,7 +156,7 @@ Requests.methods( {
 	create: {
 		authentication: true,
 		method: function( request ) {
-			let newRequestId = Meteor.call( 'Requests.save', request ),
+			let newRequestId = Meteor.call( 'Issues.save', request ),
 				newRequest = null;
 
 			if ( newRequestId ) {
@@ -323,7 +323,7 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
-	Meteor.call( 'Requests.save', request, {
+	Meteor.call( 'Issues.save', request, {
 		status: "Issued",
 		issuedAt: new Date()
 	} );
@@ -362,13 +362,11 @@ function actionIssue( request ) {
 
 function actionComplete( request ) {
 
-	Meteor.call( 'Requests.save', request, {
+	Meteor.call( 'Issues.save', request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
 	} );
 	request = Requests.findOne( request._id );
-
-	console.log( request );
 
 	if ( request.closeDetails.furtherWorkRequired ) {
 
@@ -396,8 +394,7 @@ function actionComplete( request ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
-		var response = Meteor.call( 'Requests.create', newRequest );
-		console.log( response );
+		var response = Meteor.call( 'Issues.create', newRequest );
 		var newRequest = Requests.collection._transform( response );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients

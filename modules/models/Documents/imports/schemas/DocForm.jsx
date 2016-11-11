@@ -3,7 +3,6 @@ const DocForm = [
 	'name',
 	'type',
 	'facility',
-	'request',
 	'description',
 	'documentNumber',
 	'gst',

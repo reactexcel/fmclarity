@@ -95,7 +95,17 @@ const createRequest = new Action( {
 						Modal.replace( {
 							content: <RequestPanel item = { newRequest }/>
 						} );
-						Meteor.call('Requests.create', newRequest );
+						let team = Teams.findOne( newRequest.team._id ),
+							role = Meteor.user().getRole( team );
+
+						console.log( role );
+
+						if( _.contains( [ 'manager', 'portfolio manager', 'supplier manager' ], role) ) {
+							Meteor.call('Issues.issue', newRequest );
+						}
+						else {
+							Meteor.call('Issues.create', newRequest );
+						}
 						//callback( newRequest );
 					}
 				}

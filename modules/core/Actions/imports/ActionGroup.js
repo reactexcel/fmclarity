@@ -4,7 +4,7 @@
  */
 
 import { Roles } from '/modules/mixins/Roles';
-import { Notifications } from '/modules/models/Notifications';
+//import { Notifications } from '/modules/models/Notifications';
 
 /**
  * An ActionGroup holds a collection of actions.
@@ -83,10 +83,7 @@ class ActionGroup {
 	 *
 	 */
 	getVerb( { name } ) {
-		//console.log( this.actions );
-		//console.log( name );
 		let action = this.actions[ name ];
-		//console.log( action );
 		if ( action ) {
 			return action.verb;
 		}

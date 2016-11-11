@@ -19,7 +19,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 		facilities = [];
 
 	if( facility ) {
-		console.log( Roles.getRoles( facility ) );
+		//console.log( Roles.getRoles( facility ) );
 	}
 
 	if ( team ) {
