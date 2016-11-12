@@ -26,7 +26,6 @@ function FacilityPanel( { item } ) {
 	let facility = item,
 		teamType = Session.get('selectedTeam').type;
 
-
 	console.log( teamType );
 	return (
 		<div>

@@ -19,8 +19,15 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Teams' );
 	
-	Meteor.subscribe( 'Files' );
-	Meteor.subscribe( 'Messages' );
+	//Meteor.subscribe( 'Files' );
+	
+	////////////////////////////////////////
+	//Meteor.subscribe( 'Request: Files' );
+	//Meteor.subscribe( 'Document: Files' );
+	////////////////////////////////////////
+
+	Meteor.subscribe( 'User: Messages' );
+
 	Meteor.subscribe( 'Documents' );
 
 	let user = Meteor.user(),
@@ -44,6 +51,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 			this.showingModal = true;
 			TeamActions.edit.run( team );
 		}
+
+		//subscribe to team specific guff here
 
 		// get notifications
 		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );

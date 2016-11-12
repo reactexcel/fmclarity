@@ -67,8 +67,8 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 			</span>
 			<ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
 				<li>
-					<a style = { { padding:"7px 8px", height:"48px" } } href = { FlowRouter.path('profile') }>
-						<ContactCard item={user}/>
+					<a style = { { padding:"7px 8px", height:"48px" } } onClick = { () => { Actions.run( 'edit user', { user } ) } }>
+						<ContactCard item = { user }/>
 					</a>
 				</li>
 				{ teams && teams.length ? <li className="divider"></li>:null}

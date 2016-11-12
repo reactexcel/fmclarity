@@ -20,6 +20,7 @@ DocHead.addMeta( {
 
 Actions.addAccessRule( {
 	action: [
+		'view user',
 		'edit user',
 		'remove user',
 		'login as user',

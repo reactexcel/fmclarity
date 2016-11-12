@@ -24,6 +24,10 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	if ( team ) {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
+		if ( facilities ) {
+			let facilityThumbs = _.pluck( facilities, 'thumb' );
+			Meteor.subscribe( 'Thumbs', facilityThumbs );
+		}
 	}
 
 	if ( facility && facility._id ) {

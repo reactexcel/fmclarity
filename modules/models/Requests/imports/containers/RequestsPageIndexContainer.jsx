@@ -24,6 +24,10 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	if ( team ) {
 		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		facilities = team.getFacilities();
+		if ( facilities ) {
+			let facilityThumbs = _.pluck( facilities, 'thumb' );
+			Meteor.subscribe( 'Thumbs', facilityThumbs );
+		}
 	}
 
 	if ( facility && facility._id ) {

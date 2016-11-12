@@ -74,4 +74,15 @@ if ( Meteor.isServer ) {
 	Meteor.publish( "Messages", () => {
 		return Messages.find();
 	} );
+
+	Meteor.publish( "User: Messages", () => {
+		return Messages.find( { 'inboxId._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } );
+	} );
+
+	Meteor.publish( "Inbox: Messages", function( ids ) {
+		if ( !_.isArray( ids ) ) {
+			ids = [ ids ];
+		}
+		return Messages.find( { 'inboxId._id': { $in: ids } }, { sort: { createdAt: -1 }, limit: 100 } );
+	} );
 }

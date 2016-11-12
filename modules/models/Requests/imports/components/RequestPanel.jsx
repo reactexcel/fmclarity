@@ -15,8 +15,6 @@ import { TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
-
-
 export default RequestPanel = React.createClass( {
 
     mixins: [ ReactMeteorData ],
@@ -25,6 +23,9 @@ export default RequestPanel = React.createClass( {
         let request = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
+            if( request ) {
+                Meteor.subscribe( 'Inbox: Messages', request._id );
+            }
         }
         return { request }
     },
