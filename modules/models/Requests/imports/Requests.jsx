@@ -156,7 +156,10 @@ Requests.methods( {
 	create: {
 		authentication: true,
 		method: function( request ) {
-			let newRequestId = Meteor.call( 'Issues.save', request ),
+			let newRequestId = Meteor.call( 'Issues.save', request, {
+				status: "New",
+				issuedAt: new Date()
+			} ),
 				newRequest = null;
 
 			if ( newRequestId ) {

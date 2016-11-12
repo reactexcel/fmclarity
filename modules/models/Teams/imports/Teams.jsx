@@ -32,63 +32,77 @@ if ( Meteor.isServer ) {
 	import { Files } from '/modules/models/Files';
 
 
-	Meteor.publish( 'User: Teams, Facilities, Requests', function() {
-		//probably should be ... Meteor.publish('teamsAndFacilitiesForUser', function (user) {
-		//console.log('updating subscription');
-		var teams, facilities, requests, suppliers;
+	Meteor.publish( 'User: Teams', function() {
 
 		//teams I am a member in
-		teams = Teams.find( {
+		let teamsCursor = Teams.find( {
 			$or: [
 				{ "owner._id": this.userId },
 				{ "members._id": this.userId }
 			]
 		} );
-		var teamIds = [];
-		var teamNames = [];
-		//var supplierIds = [];
-		teams.forEach( function( t ) {
-			teamIds.push( t._id );
-			teamNames.push( t.name );
+
+		let teamIds = [];
+
+		teamsCursor.forEach( ( team ) => {
+			teamIds.push( team._id );
 		} );
-		requests = Requests.find( {
-			$or: [ {
-				$or: [
+
+	} );
+
+	Meteor.publish( 'User: Facilities, Requests', function() {
+
+		//teams I am a member in
+		let teamsCursor = Teams.find( {
+			$or: [
+				{ "owner._id": this.userId },
+				{ "members._id": this.userId }
+			]
+		} );
+
+		let teamIds = [];
+
+		teamsCursor.forEach( ( team ) => {
+			teamIds.push( team._id );
+		} );
+
+		let requestsCursor = Requests.find( {
+			$and: [
+				//might be better to do inclusive search here (ie status in ...)
+				{ status: { $nin: [ "Closed", "Deleted", "Cancelled" ] } },
+				{ $or: [
 					{ "team._id": { $in: teamIds } },
-					{ "team.name": { $in: teamNames } }
-				]
-			}, {
-				$and: [
-					{ $or: [ { "supplier._id": { $in: teamIds } }, { "supplier.name": { $in: teamNames } } ] },
-					{ status: { $nin: [ "Draft", "New" ] } }
-				]
-			}, 
-			{
-				$or: [
-					{ "owner._id": this.userId },
-					{ "members._id": this.userId }
-				]				
-			}
+					{ $and: [
+						{ "supplier._id": { $in: teamIds } },
+						{ status: { $nin: [ "Draft", "New" ] } }
+					] }
+					/*this seems redundant because if you own a request then it will be in one of your teams 
+					{ $or: [
+						{ "owner._id": this.userId },
+						{ "members._id": this.userId }
+					] }*/
+				] }
 			]
 		}, { sort: { createdAt: -1 } } );
 
-		var facilityIds = [];
-		var fetchedRequests = requests.fetch();
-		fetchedRequests.map( function( i ) {
-			if ( i.facility && i.facility._id ) {
-				facilityIds.push( i.facility._id );
+		let facilityIds = [];
+
+		/* this seems a bit expensive given that it will be producing small results */
+		requestsCursor.forEach( ( request ) => {
+			if ( request.facility && request.facility._id ) {
+				facilityIds.push( request.facility._id );
 			}
 		} )
 
 		//find all of the facilities that are in those teams
-		facilities = Facilities.find( {
+		let facilitiesCursor = Facilities.find( {
 			$or: [
 				{ "team._id": { $in: teamIds } },
 				{ "_id": { $in: facilityIds } }
 			]
 		} );
 
-		return [ teams, facilities, requests ];
+		return [ facilitiesCursor, requestsCursor ];
 	} );
 
 

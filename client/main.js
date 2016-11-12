@@ -114,12 +114,13 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( item ) => {
-		return item.status == 'Draft' || item.status == 'New' },
+		return item.status == 'Draft' || item.status == 'New' 
+	},
 	action: [
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
 } )
 

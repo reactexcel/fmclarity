@@ -14,6 +14,8 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const PageDashboardContainer = createContainer( ( params ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),

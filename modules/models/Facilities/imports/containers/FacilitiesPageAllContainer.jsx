@@ -9,6 +9,8 @@ import { Facilities } from '/modules/models/Facilities';
 
 export default FacilityPageIndexContainer = createContainer( ( params ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
 		facilities = Facilities.findAll();

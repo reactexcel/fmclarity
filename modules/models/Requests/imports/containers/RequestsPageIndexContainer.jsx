@@ -6,6 +6,8 @@ import { Requests } from '/modules/models/Requests';
 
 export default RequestsPageIndexContainer = createContainer( ( { selectedRequestId } ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),

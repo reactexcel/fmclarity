@@ -100,7 +100,7 @@ const createRequest = new Action( {
 
 						console.log( role );
 
-						if( _.contains( [ 'manager', 'portfolio manager', 'supplier manager' ], role) ) {
+						if( _.contains( [ 'manager', 'portfolio manager', 'fmc support' ], role) ) {
 							Meteor.call('Issues.issue', newRequest );
 						}
 						else {

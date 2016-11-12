@@ -14,7 +14,8 @@ import { TeamActions } from '/modules/models/Teams';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
-	Meteor.subscribe( 'User: Teams, Facilities, Requests' );
+	Meteor.subscribe( 'User: Teams' );
+
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Teams' );
 	
