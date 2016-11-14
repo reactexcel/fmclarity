@@ -3,7 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import { Text, Phone, DateInput, Select } from '/modules/ui/MaterialInputs';
+import { Text, Phone, DateInput, Select, FileField } from '/modules/ui/MaterialInputs';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
@@ -141,7 +141,19 @@ const UserProfileSchema = {
 			}
 		}
 	},
-
+	update:{
+		label: 'Update',
+		input:Select,
+		options: {
+			items: ['Complete', 'Incomplete'] ,
+		},
+		size:6,
+	},
+	file:{
+		label: 'File',
+		input: FileField,
+		size:6,
+	},
 	contact_1:{
 		label: 'Contact details',
 		type: 'object',
@@ -225,7 +237,7 @@ const UserProfileSchema = {
 
 	agentContact:{
 		label:'Agent contact details',
-		type: 'object',
+		type: "object",
 		subschema:{
 			number:{
 				label: 'Agent number',
