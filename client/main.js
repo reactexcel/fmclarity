@@ -3,6 +3,14 @@ import { DocHead } from 'meteor/kadira:dochead';
 import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
+function loadScript() {
+         var script= document.createElement('script');
+         script.type= 'text/javascript';
+         script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
+         script.async = true;
+         document.body.appendChild(script);
+    }
+    loadScript();
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {

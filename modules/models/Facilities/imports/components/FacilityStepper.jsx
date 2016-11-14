@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 
 import { OwnerCard } from '/modules/mixins/Owners';
 import { Stepper } from '/modules/ui/Stepper';
@@ -11,6 +12,7 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { AreasEditor } from '/modules/mixins/Areas';
 import { ContactList } from '/modules/mixins/Members';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
+import { GeoLocation } from '/modules/ui/AddressPicker';
 
 var submitFormCallback = null;
 
@@ -28,7 +30,69 @@ export default function FacilityStepper( { item, onSaveFacility } ) {
   function onNext( callback, errors ){
     submitFormCallback = callback;
   }
+  function onSuggestSelect(suggest) {
+    var componentForm = {
+                          street_number: 'short_name',
+                          route: 'long_name',
+                          locality: 'long_name',
+                          administrative_area_level_1: 'short_name',
+                          country: 'long_name',
+                          postal_code: 'short_name',
+                          establishment: 'short_name',
+                          premise: 'short_name'
+                        };
+    var place=suggest.gmaps;
+    console.log(place);
+    var val ="";
+    let street_number, city, state, country, pcode, street_name ="";
+     // Get each component of the address from the place details
+  // and fill the corresponding field on the form.
+  var loctype=place.address_components[0].types[0];
+  var locname = place.address_components[0][componentForm[loctype]];
+  for (var i = 0; i < place.address_components.length; i++) {
+    var addressType = place.address_components[i].types[0];
+    console.log(addressType);
+    if (componentForm[addressType]) {
+       val = place.address_components[i][componentForm[addressType]];
+         }
+         if (facility) {
 
+        switch(addressType) {
+    
+    case "street_number":
+        street_number=val;
+        break;
+    case "route":
+        street_name=val;
+        break;
+    case "locality":
+        city=val;
+        break;
+    case "administrative_area_level_1":
+        state=val;
+        break;
+    case "country":
+        country=val;
+        break;
+    case "postal_code":
+        pcode=val;
+        break;
+    default:
+        
+    }
+      };
+  }
+  facility.address.streetNumber = street_number;
+  facility.address.city = city;
+  facility.address.state = state;
+  facility.address.country = country;
+  facility.address.postcode = pcode;
+  facility.address.streetName = street_name;
+  facility.name = locname;
+  
+  
+  ReactDOM.render(<AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] } onNext = { onNext } hideSubmit = { true } submitFormOnStepperNext = { true }/>, document.getElementById('address_area'));
+  }
 	/*
 	if ( !facility && facility.canCreate() ) {
 		//show facility creation information
@@ -73,6 +137,11 @@ export default function FacilityStepper( { item, onSaveFacility } ) {
                     	tab: 		<span id="discussion-tab">Basic Details</span>,
                     	content: 	<div className="row">
 										<div className = "col-sm-7">
+                                        
+                                        <GeoLocation
+                                            onSuggestSelect = {onSuggestSelect}
+                                        />
+                                        <div id="address_area">
                                             <AutoForm
                                                 model       = { Facilities }
                                                 item        = { facility }
@@ -81,6 +150,7 @@ export default function FacilityStepper( { item, onSaveFacility } ) {
                                                 hideSubmit  = { true }
                                                 submitFormOnStepperNext = { true }
                                               />
+                                        </div>
                                         </div>
 					        			<div className = "col-sm-5">
                                             <ThumbView item = { facility.thumb } onChange = { setThumb } />

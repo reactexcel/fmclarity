@@ -36,6 +36,9 @@ export default function RequestsTable( { requests, filter } ) {
     			}
     			return {
     				val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
+                    style: {
+                        width: "10px"
+                    }
     			}
     		},
     		Status:  ( item ) => {
