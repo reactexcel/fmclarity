@@ -51,7 +51,7 @@ const UserProfileSchema = {
 			import { Users } from '/modules/models/Users';
 			let user = Users.collection._transform({});
 			user._id =  item._id;
-			return user.getRole() === "tenant"
+			return user.getRole() === "tenant" || user.getRole() === "resident" 
 		}
 	}
 }
