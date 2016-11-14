@@ -80,6 +80,16 @@ const UserProfileSchema = {
 			return role === "tenant" || role === "resident"
 		},
 	},
+	status:{
+		label: 'Status',
+		input:Select,
+		options: {
+			items: ['Tenant', 'Owner'] ,
+		},
+		condition: ( item ) => {
+			return role === "resident"
+		}
+	},
 	facility: {
 		label: "Site Address",
 		type: "object",
