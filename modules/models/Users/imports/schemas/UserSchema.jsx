@@ -148,11 +148,17 @@ const UserProfileSchema = {
 			items: ['Complete', 'Incomplete'] ,
 		},
 		size:6,
+		condition: ( item ) => {
+			return role === "resident"
+		}
 	},
 	file:{
 		label: 'File',
 		input: FileField,
 		size:6,
+		condition: ( item ) => {
+			return role === "resident"
+		}
 	},
 	contact_1:{
 		label: 'Contact details',
