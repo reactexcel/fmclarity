@@ -19,7 +19,6 @@ AccessGroups.loggedIn.add( {
 
 Routes.addAccessRule( {
 	action: [
-		'dashboard',
 		'logout',
 		'requests',
 		'portfolio',
@@ -37,6 +36,7 @@ Routes.addAccessRule( {
 
 Routes.addAccessRule( {
 	action: [
+		'dashboard',
 		'suppliers',
 		'calendar',
 		'account',

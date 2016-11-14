@@ -15,8 +15,10 @@ const create = new Action( {
 	label: "Create team",
 	icon: 'fa fa-plus',
 	action: () => {
+		let team = Teams.create();
+		console.log( team );
 		Modal.show( {
-			content: <TeamStepper item = { Teams.create() } />
+			content: <TeamStepper item = { team } />
 		} )
 	}
 } )

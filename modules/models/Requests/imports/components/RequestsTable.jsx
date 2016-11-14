@@ -23,7 +23,7 @@ export default function RequestsTable( { requests, filter } ) {
                     val: <ContactCard item={item} />
                 }
             }*/
-        Priority: ( item ) => {
+        Prty: ( item ) => {
             return {
                 originalVal: item.priority,                
                 val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >

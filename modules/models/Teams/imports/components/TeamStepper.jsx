@@ -27,17 +27,31 @@ const TeamStepper = React.createClass( {
 
     getMeteorData() {
 
-        var viewer, viewersTeam, viewingTeam, group;
+        let viewer = Meteor.user(),
+            viewersTeam = null,
+            viewingTeam = null,
+            group = null;
 
-        viewer = Meteor.user();
-        viewersTeam = this.state.team ? Teams.findOne( this.state.team._id ) : Session.getSelectedTeam();
+        if( this.state.team ) {
+            viewersTeam = Teams.findOne( this.state.team._id );
+        }
+        else {
+            viewersTeam = Session.getSelectedTeam();
+        }
+
         //getting value of item from state instead of props
-        viewingTeam = this.state.item ? ( Teams.findOne( this.state.item._id ) ? Teams.findOne( this.state.item._id ) : Teams.findOne( {
-          name: {
-      			$regex: this.state.searchName,
-      			$options: 'i'
-      		}
-      	} ) ) : null;
+        if( this.state.item ) {
+            viewingTeam = Teams.findOne( this.state.item._id );
+            if( !viewingTeam && this.state.searchName ) {
+                viewingTeam = Teams.findOne( {
+                    name: {
+                        $regex: this.state.searchName,
+                        $options: 'i'
+                    }
+                } )
+            }
+        }
+
         //if this team is a member of a group, group may be included as one of the props
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
