@@ -2,36 +2,64 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
-import React from "react";
+import React, { Component } from 'react';
 
 import { FacilityFilter } from '/modules/models/Facilities';
 import { RequestActions, RequestsTable } from '/modules/models/Requests';
 
+import { RequestFilter } from '/modules/models/Requests';
 /**
  * @class 			RequestsPageIndex
  * @memberOf 		module:models/Requests
  */
-function RequestsPageIndex( props ) {
-	let { team, facility, facilities, requests, selectedRequest } = props;
 
-	if( !team ) {
-		return <div/>
-	}
+export default class RequestsPageIndex extends Component {
 
-	if( selectedRequest ) {
-		RequestActions.view.run( selectedRequest );		
-	}
+constructor(props){
+	super(props);
 
-	return (
-		<div>
-			<FacilityFilter items = { facilities } selectedItem = { facility } />
-			<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
-				<div className = "ibox">
-					<RequestsTable requests = { requests }/>
-				</div>
-			</div>
-		</div>
-	)
+	this.state = {
+		requests: props.requests
+	};
+
 }
 
-export default RequestsPageIndex;
+	componentWillReceiveProps( props ){
+		this.props = props;
+		this.setState( {
+			requests: props.requests
+		} )
+	}
+
+  render() {
+		let { team, facility, facilities, requests, selectedRequest } = this.props;
+
+		if( !team ) {
+			return <div/>
+		}
+
+		if( selectedRequest ) {
+			RequestActions.view.run( selectedRequest );
+		}
+
+		return (
+			<div>
+				<FacilityFilter items = { facilities } selectedItem = { facility } />
+				<div className="col-xs-offset-3 col-xs-3">
+					<RequestFilter
+						items = { [ "All", "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] }
+						onChange={ ( item ) => {
+							requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
+							this.setState( { requests } )
+						} }
+					 />
+				</div>
+				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
+					<div className = "ibox">
+						<RequestsTable requests = { this.state.requests }/>
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
