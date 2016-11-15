@@ -106,7 +106,8 @@ Actions.addAccessRule( {
 		return _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
-		'edit request'
+		'edit request',
+		'clone request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
 	rule: { alert: true }
@@ -158,7 +159,7 @@ Actions.addAccessRule( {
 	action: [
 		'close request',
 		'reopen request',
-		'reverse request'
+		'reverse request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
