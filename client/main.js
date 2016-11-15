@@ -218,3 +218,8 @@ UserMenuActions = Actions.clone( [
 	'migrate schema',
 	'logout'
 ] );
+
+FacilityMenuActions = Actions.clone( [
+	'edit facility',
+	'destroy facility'
+] );

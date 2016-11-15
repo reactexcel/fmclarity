@@ -8,6 +8,7 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 import { Tabs } from '/modules/ui/Tabs';
 import { Inbox } from '/modules/models/Messages';
 import { PMPList } from '/modules/features/Compliance';
+import { Actions } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 import { AreasEditor } from '/modules/mixins/Areas';
 import { RequestsTable } from '/modules/models/Requests';
@@ -24,9 +25,18 @@ import FacilityStepper from './FacilityStepper.jsx';
 function FacilityPanel( { item } ) {
 
 	let facility = item,
-		teamType = Session.get('selectedTeam').type;
+		teamType = Session.get('selectedTeam').type,
+		menuItems = [];
 
-	console.log( teamType );
+	let actionNames = Object.keys( FacilityMenuActions.actions ),
+		validActions = Actions.filter( actionNames, facility );
+
+
+	for( actionName in validActions ) {
+		let action = validActions[ actionName ];
+		menuItems.push( action.bind( facility ) );
+	}
+
 	return (
 		<div>
 			<div className="facility-card">
@@ -65,7 +75,7 @@ function FacilityPanel( { item } ) {
 				</div>
 
 				{/* tabs - this it the part that can be data driven using autoform */}
-				<Tabs tabs={[
+				<Tabs tabs = { [
 					{
 						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
@@ -99,14 +109,10 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					}
-				]} />
+				] } />
 			</div>
 
-			<Menu items = { [
-				FacilityActions.view.bind( facility ),
-				FacilityActions.edit.bind( facility ),
-				FacilityActions.destroy.bind( facility )
-			] } />
+			<Menu items = { menuItems } />
 
 		</div>
 	)
