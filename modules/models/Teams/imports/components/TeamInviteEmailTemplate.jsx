@@ -8,6 +8,9 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 
+import moment from 'moment';
+
+
 /**
  * UI Component that renders an invitation sent to a team member
  * @class           TeamPageProfile

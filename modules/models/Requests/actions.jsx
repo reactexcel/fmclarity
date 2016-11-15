@@ -8,24 +8,14 @@ import { Requests, CreateRequestForm } from '/modules/models/Requests';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
-const create = new Action( {
-	name: "create request",
-	type: 'request',
-	label: "Create",
-	action: ( request ) => {
-		Requests.update( request._id, { $set: {
-			code: request.code||request.team.getNextWOCode(),
-			status: 'New'
-		} } );
-	}
-} )
-
 const view = new Action( {
 	name: "view request",
 	type: 'request',
+	/*
 	path: ( request ) => {
 		return `/requests/${request._id}`;
 	},
+	*/
 	label: "View",
 	action: ( request, callback ) => {
 		Modal.show( {
@@ -46,8 +36,17 @@ const edit = new Action( {
 				model 	= { Requests }
 				item 	= { request }
 				form 	= { CreateRequestForm }
-				afterSubmit = { () => {
+				onSubmit = { ( request ) => {
+					Requests.save.call( request );
 					Modal.hide();
+					request = Requests.collection._transform( request );
+					request.distributeMessage( {
+						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+						message: {
+							verb: "edited",
+							subject: `Work order ${request.code} has been edited`,
+						}
+					} );
 				} }
 			/>
 		} )
@@ -74,6 +73,15 @@ const deleteFunction = new Action( {
 	action: ( request, callback ) => {
 		Requests.update( request._id, { $set: { status: 'Deleted' } } );
 		Modal.hide();
+		request = Requests.collection._transform( request );
+		request.distributeMessage( {
+			recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+			message: {
+				verb: "deleted",
+				subject: `Work order ${request.code} has been deleted`,
+				body: request.name
+			}
+		} );
 		callback( request );
 	}
 } )
@@ -93,6 +101,15 @@ const cancel = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Cancelled' } } );
 						Modal.hide();
+						request = Requests.collection._transform( request );
+						request.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "cancelled",
+								subject: `Work order ${request.code} has been cancelled`,
+								body: request.rejectComment
+							}
+						} );
 						callback( request );
 					}
 				}
@@ -107,38 +124,8 @@ const issue = new Action( {
 	verb: "issued a work order",
 	label: "Issue",
 	action: ( request, callback ) => {
-		Meteor.call( 'Requests.issue', request, ( error, response ) => {
-			console.log( response );
-		} );
-		/*
-		let team = Requests.getNextWOode( request );
-		console.log( request );
-		let code = request.code||request.team.getNextWOCode();
-		Requests.update( request._id, { $set: {
-			code: code,
-			status: 'Issued',
-			issuedAt: new Date()
-		} } );
-		request.updateSupplierManagers();
-		*/
+		Meteor.call( 'Issues.issue', request );
 		callback( request );
-		/*
-		Modal.show( {
-			content: <AutoForm
-				model = { Requests }
-				item = { request }
-				form = { [ 'issueComment' ] }
-				onSubmit = {
-					( request ) => {
-						Modal.hide();
-						console.log( request );
-						Requests.update( request._id, { $set: { status: 'Issued' } } );
-						request.updateSupplierManagers();
-					}
-				}
-			/>
-		} )
-		*/
 	}
 } )
 
@@ -158,6 +145,16 @@ const accept = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'In Progress' } } );
 						Modal.hide();
+						request = Requests.collection._transform( request );
+						request.setAssignee( request.assignee );
+						request.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "accepted",
+								subject: `Work order ${request.code} has been accepted`,
+								body: request.acceptComment
+							}
+						} );
 						callback( request );
 					}
 				}
@@ -182,6 +179,15 @@ const reject = new Action( {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Rejected' } } );
 						Modal.hide();
+						request = Requests.collection._transform( request );
+						request.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "rejected",
+								subject: `Work order ${request.code} has been rejected`,
+								body: request.rejectComment
+							}
+						} );
 						callback( request );
 					}
 				}
@@ -248,7 +254,7 @@ const complete = new Action( {
 				onSubmit 		= {
 					( request ) => {
 						Modal.hide();
-						Meteor.call( 'Requests.complete', request );
+						Meteor.call( 'Issues.complete', request );
 						callback( request );
 					}
 				}
@@ -272,6 +278,15 @@ const close = new Action( {
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'Closed' } } );
+						request = Requests.collection._transform( request );
+						request.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "closed",
+								subject: `Work order ${request.code} has been closed`,
+								body: request.closeComment
+							}
+						} );
 						Modal.hide();
 						callback( request );
 					}
@@ -290,11 +305,20 @@ const reopen = new Action( {
 			content: <AutoForm
 				model = { Requests }
 				item = { request }
-				form = { CreateRequestForm }
+				form = { ['reopenComment'] }
 				onSubmit = {
 					( request ) => {
 						Requests.update( request._id, { $set: { status: 'New' } } )
 						Modal.hide();
+						request = Requests.collection._transform( request );
+						request.distributeMessage( {
+							recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+							message: {
+								verb: "reopened",
+								subject: `Work order ${request.code} has been reopened`,
+								body: request.reopenComment
+							}
+						} );
 					}
 				}
 			/>
@@ -323,8 +347,19 @@ const reverse = new Action( {
 	}
 } )
 
+const clone = new Action( {
+	name: "clone request",
+	type: 'request',
+	label: "Issue",
+	action: ( request ) => {
+	    let newRequest = _.omit( request , "_id" );
+	    newRequest.type = 'PMP';
+	    Meteor.call( 'Issues.save', newRequest );
+	    Meteor.call( 'Issues.issue', newRequest );
+	}
+} )
+
 export {
-	create,
 	view,
 	edit,
 	destroy,
@@ -337,5 +372,6 @@ export {
 	complete,
 	close,
 	reopen,
-	reverse
+	reverse,
+	clone
 }

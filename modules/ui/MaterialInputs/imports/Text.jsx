@@ -9,8 +9,8 @@ import React from "react";
  * @memberOf 		module:ui/MaterialInputs
  */
 const Text = React.createClass( {
-	handleChange( event ) {
-		let newValue = event.target.value;
+	handleChange() {
+		let newValue = this.refs.input.value;
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
 		}
@@ -30,6 +30,14 @@ const Text = React.createClass( {
 		if ( this.props.onSelect ) {
 			this.props.onSelect( event.target.value );
 		}
+	},
+
+	componentDidMount() {
+		this.handleChange = _.debounce( this.handleChange, 1000 );
+	},
+
+	componentWillReceiveProps( newProps ) {
+		this.refs.input.value = newProps.value;
 	},
 
 	render() {
@@ -55,7 +63,7 @@ const Text = React.createClass( {
       			className		= { classes.join(' ') }
       			ref 			= "input"
       			type 			= "text"
-      			value 			= { value }
+      			defaultValue	= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       		/>

@@ -15,6 +15,9 @@ import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { DocMessages } from '/modules/models/Messages';
 
+import moment from 'moment';
+
+
 /**
  * Users model - unlink the other models in FMC this is not a new collection but an extension of the Meteor.users collection.
  * @memberOf        module:models/Users

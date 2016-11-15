@@ -13,6 +13,7 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
 
+import moment from 'moment';
 
 export default RequestPanel = React.createClass( {
 
@@ -22,6 +23,9 @@ export default RequestPanel = React.createClass( {
         let request = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
+            if( request ) {
+                Meteor.subscribe( 'Inbox: Messages', request._id );
+            }
         }
         return { request }
     },
@@ -41,6 +45,7 @@ const RequestPanelInner = ( { request } ) => {
     if ( !request ) {
         return <div/>
     }
+    let teamType = Session.get('selectedTeam').type;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -67,7 +72,7 @@ const RequestPanelInner = ( { request } ) => {
 
                             :
 
-                                <h2>Job # {request.code}</h2>
+                                <h2>{ teamType=='fm'?"Work Order":"Job" } # {request.code}</h2>
 
                             }
 

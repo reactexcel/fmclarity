@@ -14,6 +14,8 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const PageDashboardContainer = createContainer( ( params ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
@@ -24,6 +26,10 @@ const PageDashboardContainer = createContainer( ( params ) => {
 
 	if ( team ) {
 		facilities = Facilities.findAll( { 'team._id': team._id } );
+		if ( facilities ) {
+			let facilityThumbs = _.pluck( facilities, 'thumb' );
+			Meteor.subscribe( 'Thumbs', facilityThumbs );
+		}
 	}
 
 	if ( facility && facility._id ) {

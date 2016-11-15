@@ -23,12 +23,14 @@ export default CloseDetailsSchema = {
 
     serviceReport: {
         label: "Service report",
-        input: FileField
+        input: FileField,
+        optional: true
     },
 
     invoice: {
         label: "Invoice",
-        input: FileField
+        input: FileField,
+        optional: true
     },
 
     furtherWorkRequired: {

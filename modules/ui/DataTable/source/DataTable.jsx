@@ -80,12 +80,13 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 
+		//console.log( rows );
+
 		return (
 			<div className="data-grid">
-
-				<div className = "data-grid-title-row">
+				{/*<div className = "data-grid-title-row">
 					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>
+				</div>*/}
 				<div ref="printable">
 				<table className="table">
 

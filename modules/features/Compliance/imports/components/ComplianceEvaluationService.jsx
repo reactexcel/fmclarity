@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 ComplianceEvaluationService = new function() {
 
   var defaultResult = {

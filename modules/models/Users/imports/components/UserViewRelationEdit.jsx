@@ -31,7 +31,7 @@ export default UserViewRelationEdit = React.createClass( {
 
 			return (
 				<Select 
-					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant" ] } 
+					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant", "resident" ] } 
 					value			= { role }
 					onChange		= { this.handleRoleChange }
 					placeholder 	= "Role"

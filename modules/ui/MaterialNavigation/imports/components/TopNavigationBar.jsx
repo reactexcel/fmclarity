@@ -7,15 +7,15 @@ import UserProfileMenu from './UserProfileMenu.jsx';
 
 export default function TopNavigationBar( props ) {
 
-    setTimeout(() => {
+    setTimeout( () => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {
             if ( props.onNotificationsViewed ) {
-              Meteor.defer(
-                function ( ) {
-                  props.onNotificationsViewed();
-                }
-              )
+                Meteor.defer(
+                    function() {
+                        props.onNotificationsViewed();
+                    }
+                )
             }
         } )
         notify.requestPermission();
@@ -24,7 +24,7 @@ export default function TopNavigationBar( props ) {
             autoClose: 5000
         } );
 
-    },1000);
+    }, 1000 );
 
     function toggleLeftSideBar() {
         //should we change some global property?
@@ -71,30 +71,30 @@ export default function TopNavigationBar( props ) {
 
 class DesktopNotificationPopUp extends React.Component {
 
-  constructor( props ) {
-    super( props );
-    this.showPopUp = false;
-  }
-
-  componentWillReceiveProps( props ){
-    let user = props.user,
-      notifications = null;
-    if( user ){
-      notifications = Notifications.findAll( { 'recipient._id': user._id, wasShown: false } );
-      if ( !this.showPopUp ){
-        let component = this;
-        if ( notifications.length ) {
-          component.showPopUp = Meteor.apply( 'Notifications.setAllShown', [ notifications ], { returnStubValue: true } );
-        }
-      } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
-        this.props.showNotifications( notifications );
-      }
+    constructor( props ) {
+        super( props );
+        this.showPopUp = false;
     }
-  }
 
-  render () {
-    return (
-      <div />
-    )
-  }
+    componentWillReceiveProps( props ) {
+        let user = props.user,
+            notifications = null;
+        if ( user ) {
+            notifications = Notifications.findAll( { 'recipient._id': user._id, wasShown: false } );
+            if ( !this.showPopUp ) {
+                let component = this;
+                if ( notifications.length ) {
+                    component.showPopUp = Meteor.apply( 'Notifications.setAllShown', [ notifications ], { returnStubValue: true } );
+                }
+            } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
+                this.props.showNotifications( notifications );
+            }
+        }
+    }
+
+    render() {
+        return (
+            <div />
+        )
+    }
 }

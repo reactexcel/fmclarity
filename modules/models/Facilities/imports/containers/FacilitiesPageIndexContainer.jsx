@@ -14,12 +14,14 @@ import { Roles } from '/modules/mixins/Roles';
  */
 const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
 		facilities = [];
 
-	if( facility ) {
-		console.log( Roles.getRoles( facility ) );
+	if ( facility ) {
+		//console.log( Roles.getRoles( facility ) );
 	}
 
 	if ( team ) {
@@ -28,8 +30,15 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 		facilities = team.getFacilities();
 		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
-			let thumbs = _.pluck( facilities, 'thumb' );
-			Meteor.subscribe( 'Thumbs', thumbs );
+			let facilityThumbs = [],
+				facilityIds = [];
+
+			facilities.map( ( facility ) => {
+				facilityIds.push( facility._id );
+				facilityThumbs.push( facility.thumb );
+			} )
+			Meteor.subscribe( 'Inbox: Messages', facilityIds );
+			Meteor.subscribe( 'Thumbs', facilityThumbs );
 		}
 	}
 

@@ -4,6 +4,8 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Requests } from '/modules/models/Requests';
 import { Menu } from '/modules/ui/MaterialNavigation';
 
+import moment from 'moment';
+
 
 export default ProgressOverviewChart = React.createClass( {
 

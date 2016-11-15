@@ -13,6 +13,8 @@ import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
 import { ContactCard } from '/modules/mixins/Members';
 
+import moment from 'moment';
+
 /**
  * @class 			RequestStatusReport
  * @memberOf 		module:features/Reports

@@ -28,9 +28,11 @@ DocHead.addMeta( {
 
 Actions.addAccessRule( {
 	action: [
+		'view user',
 		'edit user',
 		'remove user',
-		'login as user'
+		'login as user',
+		'logout'
 	],
 	role: [ '*' ],
 	rule: { alert: true }
@@ -38,6 +40,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	action: [
+		'create team',
 		'migrate schema'
 	],
 	role: [ 'fmc support' ],
@@ -85,7 +88,7 @@ Actions.addAccessRule( {
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier manager', 'facility manager' ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager' ],
 	rule: { alert: true }
 } )
 
@@ -109,7 +112,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		return _.contains( [ 'Draft', 'New', 'PMP', 'Booking' ], request.status )
+		return _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
 		'edit request'
@@ -120,19 +123,19 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( item ) => {
-		return item.status == 'Draft' || item.status == 'New' },
+		return item.status == 'Draft' || item.status == 'New' 
+	},
 	action: [
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
 	condition: { status: 'Issued' },
 	action: [
-		'edit request',
 		'delete request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
@@ -208,3 +211,10 @@ Actions.addAccessRule( {
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
+
+UserMenuActions = Actions.clone( [
+	'edit team',
+	'create team',
+	'migrate schema',
+	'logout'
+] );

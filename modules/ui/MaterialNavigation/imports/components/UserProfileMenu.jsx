@@ -12,36 +12,15 @@ import { Actions, Routes } from '/modules/core/Actions';
  * @class           UserProfileMenu
  * @memberOf        module:models/User
  */
-function UserProfileMenu( props ) {
+function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 
-	/**
-	 * @param 		{Document} user
-	 * @param 		{Document} team
-	 */
 	function selectTeam( user, team ) {
 		//console.log( user );
 		user.selectTeam( team );
 	}
 
-	function createTeam() {
-		Meteor.call( 'Teams.create', {}, function( err, response ) {
-			//console.log(response);
-			var team = Teams.findOne( response );
-			//console.log(team);
-			Modal.show( {
-				content: <TeamViewEdit item={team}/>
-			} )
-		} )
-	}
-
-	function resetTestData() {
-		Meteor.call( "resetTestData" );
-	}
-
-	let { user, team, teams } = props;
-
 	if ( !team ) {
-		return ( < div style = {
+		return ( <div style = {
 				{
 					background: "rgba(0,0,0,0.5)",
 					position: "fixed",
@@ -53,7 +32,7 @@ function UserProfileMenu( props ) {
 					textAlign: "center"
 				}
 			} >
-			< div style = {
+			<div style = {
 				{
 					position: "absolute",
 					width: "100px",
@@ -64,24 +43,32 @@ function UserProfileMenu( props ) {
 				}
 			} >
 			<RefreshIndicator
-					size={100}
-					left={0}
-					top={0}
-					status="loading"/> < /div> < /div>
+					size = { 100 }
+					left = { 0 }
+					top = { 0 }
+					status = "loading"
+			/> 
+			</div>
+			</div>
 		)
 	}
+
+	let actionNames = Object.keys( UserMenuActions.actions ),
+		validActions = Actions.filter( actionNames, team ),
+		validActionNames = Object.keys( validActions );
+
 	let userEmail = user && user.emails ? user.emails[ 0 ].address : '',
 		userThumb = user ? user.thumbUrl : '';
 
 	return (
 		<div id="settings-icon" className="dropdown right-dropdown">
 			<span className="dropdown-toggle count-info" data-toggle="dropdown">
-				{props.children}
+				{ children }
 			</span>
 			<ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
 				<li>
-					<a style = { { padding:"7px 8px", height:"48px" } } href = { FlowRouter.path('profile') }>
-						<ContactCard item={user}/>
+					<a style = { { padding:"7px 8px", height:"48px" } } onClick = { () => { Actions.run( 'edit user', { user } ) } }>
+						<ContactCard item = { user }/>
 					</a>
 				</li>
 				{ teams && teams.length ? <li className="divider"></li>:null}
@@ -101,45 +88,26 @@ function UserProfileMenu( props ) {
 				} ) : null }
 				<li className="divider"></li>
 
-				{ team /*&& Teams.save.allowed( selectedTeam )*/?
+				{/*******************************************/
 
-				<li>
-					<a onClick = { () => { Actions.run("edit team", team) } }>
-						<i className="fa fa-cog"></i>&nbsp;&nbsp;
-						<span className="nav-label">Team Settings</span>
-					</a>
-				</li>
-				: null }
+				validActionNames.map( ( actionName ) => { 
 
-				{Meteor.isDevelopment?
-				<li>
-					<a onClick = { () => { Routes.run("admin") } }>
-						<i className="fa fa-cog"></i>&nbsp;&nbsp;
-						<span className="nav-label">Admin Tools</span>
-					</a>
-				</li>
-				:null}
+					let action 		= UserMenuActions.actions[ actionName ],
+						icon        = action.icon,
+						label       = action.label;
 
-				{Meteor.isDevelopment?
-				<li>
-					<a onClick={this.createTeam}>
-						<i className="fa fa-plus"></i>&nbsp;&nbsp;
-						<span className="nav-label">Create team</span>
-					</a>
-				</li>
-				:null}
+					return (
+						<li key = { actionName }>
+							<a onClick = { () => { action.run( team ) } } >
+								<i className = { icon }></i>&nbsp;&nbsp;
+								<span>{ label }</span>
+							</a>
+						</li>
+					)
 
-				<li>
-					<a onClick = { () => { Routes.run("logout") } }>
-						<i className="fa fa-sign-out"></i> Log out
-					</a>
-				</li>
-				<li>
-					<a onClick = { () => { Actions.run('migrate schema'); } }>
-						<i className="fa fa-cog"></i>&nbsp;&nbsp;
-						<span className="nav-label"> Migrate documnets schema </span>
-					</a>
-				</li>
+				})/*******************************************/}
+
+
 				<li>
 					<a style={{padding:0,textAlign:"right",fontSize:"8px",paddingRight:"15px"}} target="_blank" href="https://bitbucket.org/mrleokeith/fm-clarity/src/develop/CHANGELOG.md">v{FM.version}</a>
 				</li>

@@ -13,9 +13,10 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 const create = new Action( {
 	name: 'create team',
 	label: "Create team",
-	icon: 'fa fa-group',
-	action: ( template ) => {
-		let team = Teams.create( template );
+	icon: 'fa fa-plus',
+	action: () => {
+		let team = Teams.create();
+		console.log( team );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )
@@ -96,7 +97,17 @@ const createRequest = new Action( {
 						Modal.replace( {
 							content: <RequestPanel item = { newRequest }/>
 						} );
-						Meteor.call('Requests.create', newRequest );
+						let team = Teams.findOne( newRequest.team._id ),
+							role = Meteor.user().getRole( team );
+
+						console.log( role );
+
+						if( _.contains( [ 'manager', 'portfolio manager', 'fmc support' ], role) ) {
+							Meteor.call('Issues.issue', newRequest );
+						}
+						else {
+							Meteor.call('Issues.create', newRequest );
+						}
 						//callback( newRequest );
 					}
 				}
@@ -126,10 +137,14 @@ const createDocument = new Action( {
 	label: "Create new document",
 	icon: 'fa fa-file',
 	action: ( team ) => {
-		let doc = {
-			team: _.pick( team, '_id', 'name' )
-		};
-		let newDocument = Documents.create( doc );
+		let type = "team",
+			_id = team._id,
+			name = team.name;
+
+		let newDocument = Documents.create( {
+			team: { _id, name },
+			owner: { type, _id, name }
+		} );
 
 		Modal.show( {
 			content: <DocViewEdit item = { newDocument }/>

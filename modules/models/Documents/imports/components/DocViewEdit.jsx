@@ -56,6 +56,7 @@ const DocViewEdit = React.createClass( {
 
 	handleChange( item ) {
 		let selectedFacility = Session.getSelectedFacility();
+		Modal.hide();
 		if ( !item._id ) {
 			Documents.save.call( item, {}, this.handleChangeCallback );
 			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
@@ -99,10 +100,10 @@ const DocViewEdit = React.createClass( {
 		return (
 			<div style={{padding:"15px"}}>
 				<AutoForm
-					model 	= { Documents }
-					form 	= { DocForm }
-					item 	= { this.data.doc }
-					onSubmit = { this.handleChange  }
+					model 		= { Documents }
+					form 		= { DocForm }
+					item 		= { this.data.doc }
+					onSubmit 	= { this.handleChange  }
 				/>
 			</div>
 		)

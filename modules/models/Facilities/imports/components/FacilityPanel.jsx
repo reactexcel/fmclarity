@@ -5,21 +5,17 @@
 import React from 'react';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { ContactDetails, ContactList } from '/modules/mixins/Members';
-import { AutoForm } from '/modules/core/AutoForm';
+import { Tabs } from '/modules/ui/Tabs';
 import { Inbox } from '/modules/models/Messages';
-
-import FacilityStepper from './FacilityStepper.jsx';
-
+import { PMPList } from '/modules/features/Compliance';
+import { AutoForm } from '/modules/core/AutoForm';
+import { AreasEditor } from '/modules/mixins/Areas';
+import { RequestsTable } from '/modules/models/Requests';
+import { ServicesRequiredEditor } from '/modules/mixins/Services';
+import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Facilities, FacilityActions } from '/modules/models/Facilities';
 
-import { PMPList } from '/modules/features/Compliance';
-import { RequestsTable } from '/modules/models/Requests';
-
-import { AreasEditor } from '/modules/mixins/Areas';
-import { ServicesRequiredEditor } from '/modules/mixins/Services';
-
-import { Tabs } from '/modules/ui/Tabs';
+import FacilityStepper from './FacilityStepper.jsx';
 
 /**
  * @class 			FacilityPanel
@@ -27,8 +23,10 @@ import { Tabs } from '/modules/ui/Tabs';
  */
 function FacilityPanel( { item } ) {
 
-	let facility = item;
-	//console.log( Facilities );
+	let facility = item,
+		teamType = Session.get('selectedTeam').type;
+
+	console.log( teamType );
 	return (
 		<div>
 			<div className="facility-card">
@@ -69,33 +67,35 @@ function FacilityPanel( { item } ) {
 				{/* tabs - this it the part that can be data driven using autoform */}
 				<Tabs tabs={[
 					{
-						//hide:       !facility.canGetMessages(),
+						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
 						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
-						//hide:       !facility.canAddDocument(),
+						hide:     	!facility.canAddDocument()||teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,
-						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit={ true }/>
+						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
-						//hide:       !facility.canAddMember(),
+						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
 						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.team }/>
 					},{
-						//hide:       !facility.canSetAreas(),
+						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
 						content:    <AreasEditor item = { facility }/>
 					},{
-						//hide:       !facility.canSetServicesRequired(),
+						hide:       !facility.canSetServicesRequired(),
 						tab:        <span id="services-tab">Services</span>,
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
+						hide:     	!facility.canAddPMP()||teamType!='fm',
 						tab:        <span id="pmp-tab">PMP</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
+						hide:     	teamType!='fm',
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					}

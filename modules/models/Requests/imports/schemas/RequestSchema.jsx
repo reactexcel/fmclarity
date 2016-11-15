@@ -55,7 +55,7 @@ const RequestSchema = {
 		description: "The unique code for this work request",
 		type: "number",
 		input: Text,
-		//defaultValue: getJobCode,
+		defaultValue: getJobCode,
 		options: {
 			readonly: true
 		}
@@ -409,6 +409,13 @@ const RequestSchema = {
 		input: TextArea
 	},
 
+	reopenComment: {
+		label: "Comment",
+		description: "Reason for reopening",
+		type: "string",
+		input: TextArea
+	},
+
 	//////////////////////////////////////////////////
 	// Quote related
 	//////////////////////////////////////////////////
@@ -530,7 +537,6 @@ const RequestSchema = {
 			if ( team ) {
 				teamType = team.type;
 			}
-			//	console.log( teamType );
 			if ( teamType == 'contractor' ) {
 				return null;
 			}
@@ -557,9 +563,10 @@ const RequestSchema = {
 		input: Select,
 
 		options: ( item ) => {
-			//console.log( item );
+			let team = Teams.findOne( item.team._id ),
+				facilities = team.getFacilities();
 			return {
-				items: ( item.team ? item.team.facilities : null ),
+				items: facilities,
 				view: FacilityListTile,
 
 				afterChange: ( item ) => {
@@ -610,7 +617,6 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-			//	console.log( teamType );
 			return request.type != 'Booking' && teamType != 'contractor';
 		},
 		defaultValue: ( item ) => {
@@ -619,7 +625,6 @@ const RequestSchema = {
 			if ( team ) {
 				teamType = team.type;
 			}
-			//console.log( teamType );
 			if ( teamType == 'fm' ) {
 				return null;
 			}
@@ -627,7 +632,6 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
-			//console.log( item );
 			let facility = item.facility,
 				supplier = null;
 			return {
@@ -676,10 +680,11 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: ( item ) => {
+			let supplier = Teams.findOne( item.supplier._id ),
+				members = Teams.getMembers( supplier );
 			return {
-				items: ( item.supplier ? _.uniq( item.supplier.members, false, ( a ) => {
-					return a._id } ) : null ),
-				view: ( Meteor.isClient ? ContactCard : null )
+				items: members,
+				view: ContactCard
 			}
 		},
 	},
@@ -719,7 +724,6 @@ const RequestSchema = {
  *
  */
 function getMembersDefaultValue( item ) {
-	//console.log( item );
 
 	if ( item.team == null ) {
 		return;

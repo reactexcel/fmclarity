@@ -1,6 +1,9 @@
 import React from "react";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
+import moment from 'moment';
+
+
 const SupplierRequestEmailView = React.createClass({
 
     mixins: [ReactMeteorData],

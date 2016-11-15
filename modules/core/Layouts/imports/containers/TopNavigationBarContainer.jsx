@@ -6,7 +6,7 @@ import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
 import { TeamActions } from '/modules/models/Teams';
-import { Notifications } from '/modules/models/Notifications';
+//import { Notifications } from '/modules/models/Notifications';
 
 /**
  * @class 			TopNavigationBarContainer
@@ -14,13 +14,21 @@ import { Notifications } from '/modules/models/Notifications';
  */
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
-	Meteor.subscribe( 'User: Teams, Facilities, Requests' );
-	Meteor.subscribe( 'Users' );
-	Meteor.subscribe( 'Files' );
-	Meteor.subscribe( 'Suppliers' );
-	Meteor.subscribe( 'Messages' );
-	Meteor.subscribe( 'Documents' );
+	Meteor.subscribe( 'User: Teams' );
 
+	Meteor.subscribe( 'Users' );
+	Meteor.subscribe( 'Teams' );
+	
+	Meteor.subscribe( 'Files' );
+	
+	////////////////////////////////////////
+	//Meteor.subscribe( 'Request: Files' );
+	//Meteor.subscribe( 'Document: Files' );
+	////////////////////////////////////////
+
+	Meteor.subscribe( 'User: Messages' );
+
+	Meteor.subscribe( 'Documents' );
 
 	let user = Meteor.user(),
 		team = null,
@@ -43,6 +51,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 			this.showingModal = true;
 			TeamActions.edit.run( team );
 		}
+
+		//subscribe to team specific guff here
 
 		// get notifications
 		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );

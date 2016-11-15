@@ -6,12 +6,14 @@ import { Requests } from '/modules/models/Requests';
 
 export default RequestsPageIndexContainer = createContainer( ( { selectedRequestId } ) => {
 
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
 		requests = null,
 		facilities = null,
-		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
+		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
 		contextFilter = {},
 		selectedRequest = null;
 
@@ -22,6 +24,10 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	if ( team ) {
 		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		facilities = team.getFacilities();
+		if ( facilities ) {
+			let facilityThumbs = _.pluck( facilities, 'thumb' );
+			Meteor.subscribe( 'Thumbs', facilityThumbs );
+		}
 	}
 
 	if ( facility && facility._id ) {
@@ -31,7 +37,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	}
 
 	if ( user != null ) {
-		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }/*, { expandPMP: true } */);
 		//requests = user.getRequests();
 		//console.log( requests );
 	}

@@ -19,6 +19,9 @@ import { AutoForm } from '/modules/core/AutoForm';
 import TeamActions from '../../actions.jsx';
 
 
+import moment from 'moment';
+
+
 function addTeamMenuItem( menu, item, team ) {
 	if ( team ) {
 		if ( /*team.hasSupplier( item ) && team.canRemoveSupplier && team.canRemoveSupplier() && team._id != item._id*/ true ) {

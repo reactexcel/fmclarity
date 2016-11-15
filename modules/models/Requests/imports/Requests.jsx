@@ -18,6 +18,9 @@ import { LoginService } from '/modules/core/Authentication';
 import { Teams } from '/modules/models/Teams';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 
+import moment from 'moment';
+
+
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
 		return Requests.find();
@@ -29,7 +32,7 @@ if ( Meteor.isServer ) {
  */
 const Requests = new Model( {
 	schema: RequestSchema,
-	collection: "Requests",
+	collection: "Issues",
 	mixins: [
 		[ Owners ],
 		[ DocMessages, {
@@ -153,7 +156,10 @@ Requests.methods( {
 	create: {
 		authentication: true,
 		method: function( request ) {
-			let newRequestId = Meteor.call( 'Requests.save', request ),
+			let newRequestId = Meteor.call( 'Issues.save', request, {
+				status: "New",
+				issuedAt: new Date()
+			} ),
 				newRequest = null;
 
 			if ( newRequestId ) {
@@ -166,7 +172,7 @@ Requests.methods( {
 					message: {
 						verb: "created",
 						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
-						body: newRequest.name
+						body: newRequest.description
 					}
 				} );
 			}
@@ -253,7 +259,13 @@ Requests.methods( {
 				return facility != null ? facility : Facilities.collection._transform( {} );
 			}
 		}
-	}
+	},
+
+	setAssignee: {
+		authentication: true,
+		method: setAssignee
+	},
+
 
 } )
 
@@ -294,9 +306,27 @@ function actionCreate( request ) {
 
 }
 
+function setAssignee( request, assignee ) {
+
+	Requests.update( request._id, {
+		$set: {
+			assignee: {
+				_id: assignee._id,
+				name: assignee.profile.name
+			}
+		}
+	} );
+	Requests.update( request._id, { 
+		$pull: { members: { role: "assignee" } 
+	} } );
+
+	request = Requests.collection._transform( request );
+	request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
+}
+
 function actionIssue( request ) {
 
-	Meteor.call( 'Requests.save', request, {
+	Meteor.call( 'Issues.save', request, {
 		status: "Issued",
 		issuedAt: new Date()
 	} );
@@ -335,13 +365,11 @@ function actionIssue( request ) {
 
 function actionComplete( request ) {
 
-	Meteor.call( 'Requests.save', request, {
+	Meteor.call( 'Issues.save', request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
 	} );
 	request = Requests.findOne( request._id );
-
-	console.log( request );
 
 	if ( request.closeDetails.furtherWorkRequired ) {
 
@@ -369,8 +397,7 @@ function actionComplete( request ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
-		var response = Meteor.call( 'Requests.create', newRequest );
-		console.log( response );
+		var response = Meteor.call( 'Issues.create', newRequest );
 		var newRequest = Requests.collection._transform( response );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients

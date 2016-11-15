@@ -24,7 +24,7 @@ zimme:active-route
 # JS Plugins
 #mikkelking:meteor-hopscotch
 abpetkov:switchery
-momentjs:moment
+#momentjs:moment
 pfafman:filesaver
 harrison:papa-parse
 rochal:slimscroll
@@ -47,19 +47,19 @@ cfs:gridfs
 ############################
 # Kadira/Mantra
 kadira:dochead
-#meteorhacks:kadira
+meteorhacks:kadira
 #kadira:debug
 #meteorhacks:kadira-profiler
 
 ############################
 # Meteor Core
-accounts-password@1.3.1
+accounts-password@1.3.2
 static-html
 check@1.2.4
 ecmascript@0.5.9
 ejson@1.0.13
 email@1.1.18
-less@2.7.6
+less@2.7.7
 logging@1.1.16
 meteor-base@1.0.4
 mobile-experience@1.0.4

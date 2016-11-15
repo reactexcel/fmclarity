@@ -5,7 +5,6 @@ import WorkflowActions from './WorkflowActions.jsx';
 export default function WorkflowButtons( { actions, item, width = "100px" } ) {
 
     actions = Actions.filter( WorkflowActions, item );
-
     let actionNames = Object.keys( actions );
 
     function runAction( action, item ) {

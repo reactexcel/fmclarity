@@ -8,12 +8,10 @@ if ( Meteor.isServer ) {
 	} )
 
 }
-
 const Notifications = new Model( {
 	schema: NotificationSchema,
 	collection: "Notifications"
 } )
-
 // notifications.authenticatedMethods
 Notifications.actions( {
 	markAsRead: {
