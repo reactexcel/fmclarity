@@ -11,7 +11,6 @@ export default DocumentSchema = {
 
 	name: {
 		label: "Document name",
-		optional: true,
 		type: "string",
 		input: Text,
 		size: 6,
@@ -19,7 +18,6 @@ export default DocumentSchema = {
 
 	type: {
 		label: "Document type",
-		optional: true,
 		size: 6,
 		type: "string",
 		input: Select,
@@ -27,6 +25,39 @@ export default DocumentSchema = {
 			items: DocTypes
 		}
 	},
+
+
+	description: {
+		label: "Description",
+		optional: true,
+		type: "string",
+		input: TextArea
+	},
+
+	documentNumber: {
+		input: Text,
+		label: "Document #",
+		optional: true,
+		type: "string",
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Contract",
+				"Emergency Management",
+				"House Rules",
+				"Insurance",
+				"Invoice",
+				"MSDS",
+				"Plan",
+				"Procedure",
+				"Quote",
+				"Register",
+				"Registration",
+				"Service Report",
+			].indexOf( item.type ) > -1;
+		},
+	},
+
 
 	facility: {
 
@@ -97,37 +128,6 @@ export default DocumentSchema = {
 		},
 	},
 
-
-	description: {
-		label: "Description",
-		optional: true,
-		type: "string",
-		input: TextArea
-	},
-
-	documentNumber: {
-		input: Text,
-		label: "Document #",
-		optional: true,
-		type: "string",
-		size: 6,
-		condition: function( item ) {
-			return [
-				"Contract",
-				"Emergency Management",
-				"House Rules",
-				"Insurance",
-				"Invoice",
-				"MSDS",
-				"Plan",
-				"Procedure",
-				"Quote",
-				"Register",
-				"Registration",
-				"Service Report",
-			].indexOf( item.type ) > -1;
-		},
-	},
 	gst: {
 		input: Currency,
 		optional: true,
@@ -143,6 +143,7 @@ export default DocumentSchema = {
 	totalValue: {
 		input: Currency,
 		label: "Total value",
+		type: "number",
 		optional: true,
 		size: 6,
 		condition: function( item ) {
@@ -157,6 +158,7 @@ export default DocumentSchema = {
 	},
 	subjectAddress: {
 		input: Text,
+		type: "string",
 		label: "Subject Address",
 		optional: true,
 		condition: function( item ) {
@@ -234,6 +236,7 @@ export default DocumentSchema = {
 	supplier: {
 		input: Text,
 		label: "Supplier",
+		type: "object",
 		optional: true,
 		size: 6,
 		condition: function( item ) {
@@ -544,7 +547,7 @@ export default DocumentSchema = {
 		label: "Area (m2)"
 	},
 	attachments: {
-		type: [ Object ],
+		//type: "array",
 		label: "Attachments",
 		optional: true,
 		input: FileExplorer

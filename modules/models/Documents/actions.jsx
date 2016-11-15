@@ -9,8 +9,8 @@ function create( doc ) {
 	return {
 		name: "create document",
 		label: "Create document",
-		action: ( document ) => {
-			let newDocument = Documents.create( document );
+		action: ( doc ) => {
+			let newDocument = Documents.create( doc );
 			Modal.show( {
 				content: <DocViewEdit item = { newDocument }/>
 			} )

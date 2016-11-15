@@ -137,10 +137,14 @@ const createDocument = new Action( {
 	label: "Create new document",
 	icon: 'fa fa-file',
 	action: ( team ) => {
-		let doc = {
-			team: _.pick( team, '_id', 'name' )
-		};
-		let newDocument = Documents.create( doc );
+		let type = "team",
+			_id = team._id,
+			name = team.name;
+
+		let newDocument = Documents.create( {
+			team: { _id, name },
+			owner: { type, _id, name }
+		} );
 
 		Modal.show( {
 			content: <DocViewEdit item = { newDocument }/>

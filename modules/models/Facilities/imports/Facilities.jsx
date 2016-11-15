@@ -40,6 +40,7 @@ const Facilities = new Model( {
 		[ Thumbs, { defaultThumbUrl: 0 } ],
 		//[ DocAttachments ],
 		[ DocMessages, {
+		    authentication:AuthHelpers.managerOfRelatedTeam,
 			helpers: {
 				getInboxName() {
 					return this.getName() + " announcements"
@@ -341,6 +342,19 @@ Facilities.actions( {
 			Facilities.remove( { _id: facility._id } );
 		}
 	},
+
+	addPMP: {
+		authentication: AuthHelpers.managerOfRelatedTeam,
+	},
+
+	addTenant: {
+		authentication: AuthHelpers.managerOfRelatedTeam,
+	},
+
+	addDocument: {
+		authentication: AuthHelpers.managerOfRelatedTeam,
+	},
+
 } )
 
 export default Facilities;

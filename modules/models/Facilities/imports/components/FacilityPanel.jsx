@@ -67,20 +67,19 @@ function FacilityPanel( { item } ) {
 				{/* tabs - this it the part that can be data driven using autoform */}
 				<Tabs tabs={[
 					{
-						//hide:       !facility.canGetMessages(),
+						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
 						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
-						hide:     	teamType!='fm',
-						//hide:       !facility.canAddDocument(),
+						hide:     	!facility.canAddDocument()||teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,
-						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit={ true }/>
+						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
 						//hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
-						hide:       teamType!='fm',
+						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
 						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.team }/>
 					},{
@@ -92,7 +91,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="services-tab">Services</span>,
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
-						hide:     	teamType!='fm',
+						hide:     	!facility.canAddPMP()||teamType!='fm',
 						tab:        <span id="pmp-tab">PMP</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{

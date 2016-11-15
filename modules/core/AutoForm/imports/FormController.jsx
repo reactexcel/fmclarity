@@ -120,6 +120,7 @@ class FormController {
 		let validationFields = _.pick( this.item, this.keys );
 		let error = this.model.validate( validationFields );
 		if ( error ) {
+			console.log( error );
 			this.processValidationErrors( error );
 			this.triggerCallbacks();
 			return false;

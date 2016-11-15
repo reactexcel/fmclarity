@@ -191,8 +191,8 @@ class ActionGroup {
 	}
 
 	handleAlerts( notificationRules, action, args, result ) {
-		let user = Meteor.user();
-		Meteor.call( 'Notifications.sendAll', notificationRules, user, action, args, result );
+		//let user = Meteor.user();
+		//Meteor.call( 'Notifications.sendAll', notificationRules, user, action, args, result );
 	}
 
 	/**
