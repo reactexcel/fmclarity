@@ -76,26 +76,26 @@ const RequestPanelInner = ( { request } ) => {
 
                             }
 
-                            { request.service && request.type!= 'Booking' ? 
+                            { request.service && request.type!= 'Booking' ?
                             <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
                             : null }
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-                            { request.issuedAt ? 
+                            { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.dueDate ? 
+                            { request.dueDate ?
                             <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
                             : null }
 
-                            { request.priority ? 
+                            { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
 
-                            <span 
-                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}} 
+                            <span
+                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                                 className   = { "label label-"+request.status}
                             >
 
@@ -134,21 +134,21 @@ const RequestPanelInner = ( { request } ) => {
                 </tr>
                 : null }
 
-                { request.type == 'Ad-hoc' && request.costThreshold ? 
+                { request.type == 'Ad-hoc' && request.costThreshold ?
                 <tr>
                     <th>Value</th>
                     <td>${request.costThreshold}</td>
                 </tr>
                 : null }
 
-                { request.type == 'Booking' && request.duration ? 
+                { request.type == 'Booking' && request.duration ?
                 <tr>
                     <th>Duration</th>
                     <td>{request.duration}</td>
                 </tr>
                 : null }
 
-                {request.description?                 
+                {request.description?
                 <tr>
                     <th>Description</th>
                     <td>{request.description}</td>

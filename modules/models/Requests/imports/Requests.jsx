@@ -316,8 +316,8 @@ function setAssignee( request, assignee ) {
 			}
 		}
 	} );
-	Requests.update( request._id, { 
-		$pull: { members: { role: "assignee" } 
+	Requests.update( request._id, {
+		$pull: { members: { role: "assignee" }
 	} } );
 
 	request = Requests.collection._transform( request );

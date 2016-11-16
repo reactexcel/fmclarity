@@ -8,6 +8,8 @@ import { Requests, CreateRequestForm } from '/modules/models/Requests';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
+import { Teams } from '/modules/models/Teams';
+
 const view = new Action( {
 	name: "view request",
 	type: 'request',
@@ -350,12 +352,23 @@ const reverse = new Action( {
 const clone = new Action( {
 	name: "clone request",
 	type: 'request',
-	label: "Issue",
+	label: "Clone",
 	action: ( request ) => {
-	    let newRequest = _.omit( request , "_id" );
-	    newRequest.type = 'PMP';
-	    Meteor.call( 'Issues.save', newRequest );
-	    Meteor.call( 'Issues.issue', newRequest );
+    console.log(request);
+    let newRequest = _.omit( request , "_id", "code" ),
+      team = null, nextCode = 0;
+
+    if ( request && request.team ) {
+    	team = Teams.findOne( {
+    		_id: request.team._id
+    	} );
+    	nextCode = team.getNextWOCode();
+    }
+    //Update type and WO of new request
+    newRequest.type = 'PMP';
+    newRequest.code = nextCode;
+    
+    Meteor.call( 'Issues.issue', newRequest );
 	}
 } )
 
@@ -373,5 +386,5 @@ export {
 	close,
 	reopen,
 	reverse,
-	clone
+  clone
 }

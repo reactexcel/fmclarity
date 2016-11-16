@@ -3,14 +3,6 @@ import { DocHead } from 'meteor/kadira:dochead';
 import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
-function loadScript() {
-         var script= document.createElement('script');
-         script.type= 'text/javascript';
-         script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
-         script.async = true;
-         document.body.appendChild(script);
-    }
-    loadScript();
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
@@ -28,7 +20,6 @@ DocHead.addMeta( {
 
 Actions.addAccessRule( {
 	action: [
-		'view user',
 		'edit user',
 		'remove user',
 		'login as user',
@@ -115,7 +106,8 @@ Actions.addAccessRule( {
 		return _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
-		'edit request'
+		'edit request',
+		'clone request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
 	rule: { alert: true }
@@ -123,13 +115,12 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( item ) => {
-		return item.status == 'Draft' || item.status == 'New' 
-	},
+		return item.status == 'Draft' || item.status == 'New' },
 	action: [
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
 } )
 
@@ -168,7 +159,7 @@ Actions.addAccessRule( {
 	action: [
 		'close request',
 		'reopen request',
-		'reverse request'
+		'reverse request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
@@ -217,9 +208,4 @@ UserMenuActions = Actions.clone( [
 	'create team',
 	'migrate schema',
 	'logout'
-] );
-
-FacilityMenuActions = Actions.clone( [
-	'edit facility',
-	'destroy facility'
 ] );
