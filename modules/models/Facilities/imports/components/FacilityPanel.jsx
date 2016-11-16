@@ -27,8 +27,7 @@ function FacilityPanel( { item } ) {
 	let facility = item,
 		teamType = Session.get('selectedTeam').type,
 		menuItems = [];
-
-	let actionNames = Object.keys( FacilityMenuActions.actions ),
+	let actionNames = Object.keys( FacilityActions ),
 		validActions = Actions.filter( actionNames, facility );
 
 
