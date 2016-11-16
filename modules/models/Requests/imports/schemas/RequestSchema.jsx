@@ -607,6 +607,7 @@ const RequestSchema = {
 		label: "Supplier",
 		description: "The supplier who has been assigned to this job",
 		type: "object",
+		optional: true,
 		relation: {
 			type: ORM.HasOne,
 			source: Teams,
