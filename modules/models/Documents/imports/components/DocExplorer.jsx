@@ -11,7 +11,7 @@ export default function DocExplorer( props ) {
 
 	function handleChange( index, newValue ) {
 		Modal.hide();
-		if( props.onChange ) {
+		if ( props.onChange ) {
 			props.onChange( newValue );
 		}
 	}
@@ -19,16 +19,16 @@ export default function DocExplorer( props ) {
 	function getDocsList() {
 		let item, keys;
 		keys = Object.keys( props.item );
-		if( keys.length == 1 ){
-			item = props.item [ keys [0] ];
-		}else{
+		if ( keys.length == 1 ) {
+			item = props.item[ keys[ 0 ] ];
+		} else {
 			item = props.item;
 		}
 		return item.getDocs();
 	}
 
-	var oldDocumentsList = props.value || [],//getDocsList();//.concat( props.value || [] ) || [];
-	  newDocumentsList = getDocsList(),
+	var oldDocumentsList = props.value || [], //getDocsList();//.concat( props.value || [] ) || [];
+		newDocumentsList = getDocsList(),
 		listLength = oldDocumentsList.length + newDocumentsList.length;
 	return (
 		<div>

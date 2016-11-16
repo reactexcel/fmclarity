@@ -3,6 +3,15 @@ import { DocHead } from 'meteor/kadira:dochead';
 import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
+function loadScript() {
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
+	script.async = true;
+	document.body.appendChild(script);
+}
+loadScript();
+
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
@@ -107,6 +116,15 @@ Actions.addAccessRule( {
 	},
 	action: [
 		'edit request',
+	],
+	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	rule: { alert: true }
+} )
+
+
+Actions.addAccessRule( {
+	condition: { status: 'PMP' },
+	action: [
 		'clone request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
@@ -208,4 +226,16 @@ UserMenuActions = Actions.clone( [
 	'create team',
 	'migrate schema',
 	'logout'
+] );
+
+UserMenuActions = Actions.clone( [
+	'edit team',
+	'create team',
+	'migrate schema',
+	'logout'
+] );
+
+FacilityMenuActions = Actions.clone( [
+    'edit facility',
+    'destroy facility'
 ] );

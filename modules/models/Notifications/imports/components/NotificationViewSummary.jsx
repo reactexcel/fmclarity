@@ -17,7 +17,7 @@ import moment from 'moment';
 function NotificationViewSummary( { item } ) {
 
     let message = item || {},
-        owner = message.owner || Meteor.user(),
+        owner = message.getOwner() || Meteor.user(),
         createdAt = message.createdAt;
 
     return (

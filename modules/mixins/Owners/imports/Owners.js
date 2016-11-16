@@ -27,18 +27,19 @@ function register( collection, options ) {
 		type: "object",
 		input: Select,
 		description: "The creator or owner",
-		defaultValue:()=>{
+		defaultValue: () => {
 			/* solution, selected team should be saved in the database */
-			/*
-			let team = Session.getSelectedTeam();
-			return {
-				_id:team._id,
-				name:team.name,
-				type:'team'
+			if ( Meteor.isClient ) {
+				let team = Session.getSelectedTeam();
+				return {
+					_id: team._id,
+					name: team.name,
+					type: 'team'
+				}
 			}
-			*/
 		},
 		relation: {
+			/*
 			join: ( { owner } ) => {
 				if ( owner && owner._id ) {
 					if ( owner.type == 'team' ) {
@@ -55,6 +56,7 @@ function register( collection, options ) {
 					return item.owner
 				}
 			}
+			*/
 		},
 	}, collection.schema.owner );
 
@@ -67,6 +69,10 @@ function register( collection, options ) {
 		},
 		getOwner: function() {
 			if ( this.owner ) {
+				if ( this.owner.type == 'team' ) {
+					import { Teams } from '/modules/models/Teams';
+					return Teams.findOne( this.owner._id );
+				}
 				return Meteor.users.findOne( this.owner._id );
 			}
 		},

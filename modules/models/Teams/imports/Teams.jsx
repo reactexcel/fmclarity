@@ -60,10 +60,12 @@ if ( Meteor.isServer ) {
 			]
 		} );
 
-		let teamIds = [];
+		let teamIds = [],
+			teamNames = [];
 
 		teamsCursor.forEach( ( team ) => {
 			teamIds.push( team._id );
+			teamNames.push( team.name );
 		} );
 
 		let requestsCursor = Requests.find( {
@@ -73,7 +75,10 @@ if ( Meteor.isServer ) {
 				{ $or: [
 					{ "team._id": { $in: teamIds } },
 					{ $and: [
-						{ "supplier._id": { $in: teamIds } },
+						{ $or: [
+							{ "supplier._id": { $in: teamIds } },
+							{ "supplier.name": { $in: teamNames } },
+						] },
 						{ status: { $nin: [ "Draft", "New" ] } }
 					] }
 					/*this seems redundant because if you own a request then it will be in one of your teams 

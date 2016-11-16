@@ -15,14 +15,14 @@ import { RequestFilter } from '/modules/models/Requests';
 
 export default class RequestsPageIndex extends Component {
 
-constructor(props){
-	super(props);
+	constructor(props){
+		super(props);
 
-	this.state = {
-		requests: props.requests
-	};
+		this.state = {
+			requests: props.requests
+		};
 
-}
+	}
 
 	componentWillReceiveProps( props ){
 		this.props = props;
@@ -31,7 +31,7 @@ constructor(props){
 		} )
 	}
 
-  render() {
+	render() {
 		let { team, facility, facilities, requests, selectedRequest } = this.props;
 
 		if( !team ) {
@@ -44,15 +44,21 @@ constructor(props){
 
 		return (
 			<div>
-				<FacilityFilter items = { facilities } selectedItem = { facility } />
-				<div className="col-xs-offset-3 col-xs-3">
-					<RequestFilter
-						items = { [ "All", "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] }
-						onChange={ ( item ) => {
-							requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
-							this.setState( { requests } )
-						} }
-					 />
+				<div className = "row">
+					<div className="col-xs-3">
+						<FacilityFilter items = { facilities } selectedItem = { facility } />
+					</div>
+					{/*
+					<div className="col-xs-offset-3 col-xs-3">
+						<RequestFilter
+							items = { [ "All", "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] }
+							onChange = { ( item ) => {
+								requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
+								this.setState( { requests } )
+							} }
+						 />
+					</div>
+					*/}
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">

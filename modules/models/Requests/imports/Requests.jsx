@@ -25,6 +25,10 @@ if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
 		return Requests.find();
 	} );
+
+	Meteor.publish( 'Requests: Closed', () => {
+		return Requests.find( { status:'Closed' } );
+	} );
 }
 
 /**
@@ -156,8 +160,17 @@ Requests.methods( {
 	create: {
 		authentication: true,
 		method: function( request ) {
+			let status = 'New';
+
+			if( request.type == 'Preventative' ) {
+				status = 'PMP';
+			}
+			else if ( request.type == 'Booking' ) {
+				status = 'Booking';
+			}
+
 			let newRequestId = Meteor.call( 'Issues.save', request, {
-				status: "New",
+				status: status,
 				issuedAt: new Date()
 			} ),
 				newRequest = null;

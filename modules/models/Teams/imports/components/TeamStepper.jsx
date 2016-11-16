@@ -123,9 +123,9 @@ const TeamStepper = React.createClass( {
             viewersTeam.inviteSupplier( searchName, function( invitee ){
                 invitee = Teams.collection._transform( invitee );
 
-                if ( group && group.addSupplier ) {
+                /*if ( group && group.addSupplier ) {
                     group.addSupplier( invitee );
-                }
+                }*/
                component.setItem( invitee );
                 if ( component.props.onChange ) {
                     component.props.onChange( invitee );

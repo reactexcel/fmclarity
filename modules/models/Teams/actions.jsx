@@ -100,9 +100,7 @@ const createRequest = new Action( {
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
 
-						console.log( role );
-
-						if( _.contains( [ 'manager', 'portfolio manager', 'fmc support' ], role) ) {
+						if( newRequest.type != 'Preventative' && _.contains( [ 'manager', 'portfolio manager', 'fmc support' ], role) ) {
 							Meteor.call('Issues.issue', newRequest );
 						}
 						else {
