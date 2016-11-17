@@ -84,19 +84,23 @@ const RequestSchema = {
 			return "Ad-hoc";
 		},
 		input: Select,
-		options: {
-			items: [
-				"Ad-hoc",
-				"Booking",
-				//"Internal",
-				"Preventative",
-				"Tenancy",
-				//"Base Building",
-				//"Contract",
-				//"Defect",
-				//"Template",
-				//"Warranty",
-			]
+		options: () => {
+			let role = Meteor.user().getRole();
+			return{
+				items: role !== "staff" ? [
+					"Ad-hoc",
+					"Booking",
+					//"Internal",
+					"Preventative",
+					"Tenancy",
+					//"Base Building",
+					//"Contract",
+					//"Defect",
+					//"Template",
+					//"Warranty",
+				] : [ "Ad-hoc", "Booking", "Tenancy", ]
+			}
+
 		}
 	},
 
@@ -463,7 +467,9 @@ const RequestSchema = {
 		defaultValue: '500',
 		optional: true,
 		input: Currency,
-		condition: [ "Ad-hoc", "Contract", "Tenancy" ],
+		condition: ( request ) => {
+			return _.indexOf( [ "Ad-hoc", "Contract", "Tenancy" ], request.type ) > -1 ? ( Meteor.user().getRole() != "staff" ) : false;
+		}
 	},
 
 	closeDetails: {
@@ -618,7 +624,7 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-			return request.type != 'Booking' && teamType != 'contractor';
+			return (request.type != 'Booking' && teamType != 'contractor') ? ( Meteor.user().getRole() != "staff" ) : false;
 		},
 		defaultValue: ( item ) => {
 			let team = Session.getSelectedTeam(),
