@@ -2,47 +2,69 @@ import React from 'react';
 
 import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
-import { UserPanel, UserViewEdit } from '/modules/models/Users';
 
-
-const createMember = new Action( {
+const create = new Action( {
 	name: 'create member',
 	label: "Create member",
 	type: [ 'team', 'user' ],
 	action: ( group, member, addPersonnel ) => {
+		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
 			content: <UserViewEdit addPersonnel = { addPersonnel }/>
 		} )
 	}
 } )
 
-const editMember = new Action( {
-	name: 'edit team member',
+const edit = new Action( {
+	name: 'edit member',
 	label: "Edit member",
 	type: [ 'team', 'user' ],
-	action: ( group, member ) => {
+	action: ( group, member, onUpdate ) => {
+		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
-			content: <UserViewEdit item = { member } />
+			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate } />
 		} )
 	}
 } )
 
-const viewMember = new Action( {
-	name: 'view team member',
+const invite = new Action( {
+	name: 'invite member',
+	label: "Invite member",
+	type: [ 'team', 'user' ],
+	action: ( group, member, onUpdate ) => {
+		import { UserPanel, UserViewEdit } from '/modules/models/Users';
+		Modal.show( {
+			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate } />
+		} )
+	}
+} )
+
+const view = new Action( {
+	name: 'view member',
 	label: "View member",
 	type: [ 'team', 'user' ],
 	action: ( group, member ) => {
+		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
-			content: <UserPanel item = { member } />
+			content: <UserPanel item = { member } group = { group }/>
 		} )
 	}
 } )
 
+const remove = new Action( {
+	name: 'remove member',
+	label: "Remove member",
+	action: ( group, user ) => {
+		if( group && user ) {
+			group.removeMember( user );
+		}
+	}
+} )
 
 export {
-
-	createMember,
-	viewMember,
-	editMember,
-
+	create,
+	edit,
+	invite,
+	view,
+	remove
 }

@@ -180,11 +180,15 @@ Requests.methods( {
 			}
 
 			if ( newRequest ) {
+				let owner = null;
+				if( newRequest.owner ) {
+					owner = newRequest.getOwner();
+				}
 				newRequest.distributeMessage( {
 					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
 					message: {
 						verb: "created",
-						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
+						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
 						body: newRequest.description
 					}
 				} );
@@ -243,10 +247,16 @@ Requests.methods( {
 	getSupplier: {
 		authentication: true,
 		helper: function( request ) {
-			let supplier = request.supplier;
-			if ( supplier ) {
-				let item = Teams.findOne( { name: supplier.name } );
-				return item != null ? Teams.findOne( { name: supplier.name } ) : Teams.collection._transform( {} );
+			let supplierQuery = request.supplier;
+			if ( supplierQuery ) {
+				let supplier = Teams.findOne( { $or:[
+					{ _id: supplierQuery._id },
+					{ name: supplierQuery.name } 
+				] } );
+				if( supplier == null ) {
+					supplier = Teams.collection._transform( {} );
+				}
+				return supplier;
 			}
 		}
 	},

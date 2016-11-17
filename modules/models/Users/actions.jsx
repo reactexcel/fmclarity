@@ -26,18 +26,8 @@ const edit = new Action( {
 		Modal.show( {
 			// could MemberViewEdit be better for this
 			//  or rather - maybe we need a component in members what render UserViewEdit but adds the group role field
-			content: <UserViewEdit item = { user } group = { group } onUpdate={ onUpdate }/>
+			content: <UserViewEdit item = { user } group = { group } onUpdate = { onUpdate }/>
 		} )
-	}
-} )
-
-const remove = new Action( {
-	name: 'remove user',
-	label: "Remove user",
-	action: ( { user, group } ) => {
-		if( group && user ) {
-			group.removeMember( user );
-		}
 	}
 } )
 
@@ -45,7 +35,7 @@ const login = new Action( {
 	name: 'login as user',
 	label: 'Login as user',
 	type: [ 'user' ],
-	action: ( user ) => {
+	action: ( group, user ) => {
 		LoginService.loginUser( user, () => {
 			location.reload();
 		} )

@@ -106,6 +106,12 @@ const createRequest = new Action( {
 						else {
 							Meteor.call('Issues.create', newRequest );
 						}
+						if( newRequest.assignee && newRequest.assignee._id ) {
+							Meteor.call('Issues.save', newRequest, {
+								status: 'In Progress'
+							} )
+						}
+
 						//callback( newRequest );
 					}
 				}

@@ -30,7 +30,6 @@ DocHead.addMeta( {
 Actions.addAccessRule( {
 	action: [
 		'edit user',
-		'remove user',
 		'login as user',
 		'logout'
 	],
@@ -138,7 +137,7 @@ Actions.addAccessRule( {
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
 	rule: { alert: true }
 } )
 
@@ -157,7 +156,7 @@ Actions.addAccessRule( {
 		'accept request',
 		'reject request',
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee' ],
 	rule: { alert: true }
 } )
 
@@ -216,6 +215,7 @@ Actions.addAccessRule( {
 		'edit member',
 		'view member',
 		'create member',
+		'remove member'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
@@ -226,6 +226,13 @@ UserMenuActions = Actions.clone( [
 	'create team',
 	'migrate schema',
 	'logout'
+] );
+
+UserPanelActions = Actions.clone( [
+	'edit member',
+	'remove member',
+	'invite member',
+	'login as user',
 ] );
 
 UserMenuActions = Actions.clone( [

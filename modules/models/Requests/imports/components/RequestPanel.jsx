@@ -20,23 +20,25 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        let request = null;
+        let request = null,
+            owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
+                owner = request.getOwner();
             }
         }
-        return { request }
+        return { request, owner }
     },
 
     render() {
-        return <RequestPanelInner request = { this.data.request } />
+        return <RequestPanelInner { ...this.data }/>
     }
 } );
 
 
-const RequestPanelInner = ( { request } ) => {
+const RequestPanelInner = ( { request, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -54,7 +56,7 @@ const RequestPanelInner = ( { request } ) => {
                     <div className="col-md-6">
                         <h2>{ request.team.name }</h2>
                         <FacilityDetails item = { request.facility }/>
-                        <ContactDetails item = { request.owner }/>
+                        <ContactDetails item = { owner }/>
                     </div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 

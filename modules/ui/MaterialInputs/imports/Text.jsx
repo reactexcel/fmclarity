@@ -33,7 +33,7 @@ const Text = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.handleChange = _.debounce( this.handleChange, 100 );
+		this.handleChange = _.debounce( this.handleChange, 200 );
 	},
 
 	componentWillReceiveProps( newProps ) {

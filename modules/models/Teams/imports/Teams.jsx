@@ -80,12 +80,11 @@ if ( Meteor.isServer ) {
 							{ "supplier.name": { $in: teamNames } },
 						] },
 						{ status: { $nin: [ "Draft", "New" ] } }
-					] }
-					/*this seems redundant because if you own a request then it will be in one of your teams 
+					] },
 					{ $or: [
 						{ "owner._id": this.userId },
 						{ "members._id": this.userId }
-					] }*/
+					] }
 				] }
 			]
 		}, { sort: { createdAt: -1 } } );
@@ -589,7 +588,7 @@ Teams.helpers( {
 		return facilities;
 	},
 
-	getStaffFacilities() {
+	getStaffFacilities( filterQuery ) {
 		//return all facilities user is a member of
 		//and all the facilities in the requests user can see
 		var user = Meteor.user();
@@ -607,9 +606,8 @@ Teams.helpers( {
 			} )
 		}
 
-		//console.log(facilityIds);
-
-		let facilities = Facilities.findAll( {
+		let q = null,
+			facilitiesQuery = {
 			$or: [ {
 				$and: [
 					{ "team._id": this._id },
@@ -617,8 +615,23 @@ Teams.helpers( {
 				]
 			}, {
 				_id: { $in: facilityIds }
-			} ]
-		}, { sort: { name: 1 } } );
+			} ]			
+		}
+
+		if ( filterQuery ) {
+			q = {
+				$and: [
+					facilitiesQuery,
+					filterQuery
+				]
+			};
+		} else {
+			q = facilitiesQuery;
+		}
+
+		//console.log(facilityIds);
+
+		let facilities = Facilities.findAll( q, { sort: { name: 1 } } );
 
 		//console.log(facilities);
 		return facilities;
@@ -756,6 +769,8 @@ Teams.helpers( {
 		} else {
 			q = requestsQuery;
 		}
+
+		console.log( q );
 
 		return Requests.find( q )
 			.fetch();
