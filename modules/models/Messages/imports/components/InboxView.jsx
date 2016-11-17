@@ -8,7 +8,7 @@ export default Inbox = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        
+
         var inbox, messages;
         inbox = this.props.for;
         if ( inbox ) {
@@ -68,7 +68,7 @@ export default Inbox = React.createClass( {
                     <MessageView inbox={inbox}/>
                 </div>
                 }
-            
+
             </div>
         )
     }

@@ -18,6 +18,7 @@ var defaultHelpers = {
     getNotifications: getNotifications,
     getMessageCount: getMessageCount,
     //getRecipients:getRecipients,
+    markAsUnread:markAsUnread
 }
 
 function register( collection, opts ) {
@@ -278,4 +279,26 @@ function getNotifications( opts ) {
 
 function markAllNotificationsAsRead() {
     Meteor.call( 'Messages.markAllNotificationsAsRead', this.getInboxId() );
+}
+
+function markAsUnread() {
+  let recipients = getRecipients( this.getWatchers(), [] ),
+    user = Meteor.user(),
+    request = this;
+  import { Requests } from '/modules/models/Requests';
+  recipients =  _.uniq( recipients, false, function( i ) {
+      return i._id;
+    } );
+  recipients.map( ( r ) => {
+    if( r._id != user._id ){
+      Requests.update( { _id: request._id }, {
+          $addToSet : {
+            unreadRecipents: r._id
+          },
+          $set:{
+            lastUpdate: new Date()
+          }
+      } );
+    }
+  } );
 }

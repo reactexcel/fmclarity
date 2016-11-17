@@ -24,6 +24,7 @@
  			content: <RequestPanel item = { request } />
  		} )
  		callback( request );
+    request.markRecipentAsRead();
  	}
  } )
 
@@ -131,6 +132,7 @@
  	action: ( request, callback ) => {
  		Meteor.call( 'Issues.issue', request );
  		callback( request );
+    request.markAsUnread();
  	}
  } )
 
@@ -264,6 +266,7 @@
  					Modal.hide();
  					Meteor.call( 'Issues.complete', request );
  					callback( request );
+          request.markAsUnread();
  				}
  			}
  			/>
@@ -382,7 +385,7 @@
 
 		Modal.replace( {
 			content: <RequestPanel item = { newRequest }/>
-		} ); 		
+		} );
 
  		Meteor.call( 'Issues.issue', newRequest );
  	}

@@ -274,6 +274,20 @@ Requests.methods( {
 		}
 	},
 
+	markRecipentAsRead: {
+		authentication: true,
+		helper: function( request ) {
+			let user = Meteor.user();
+			if( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ){
+				Requests.update( { _id: request._id }, {
+						$pull:{
+							unreadRecipents: user._id
+						}
+				})
+			}
+		}
+	},
+
 	setAssignee: {
 		authentication: true,
 		method: setAssignee
