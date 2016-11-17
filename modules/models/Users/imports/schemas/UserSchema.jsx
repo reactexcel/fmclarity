@@ -12,7 +12,8 @@ import { Users } from '/modules/models/Users';
  * @memberOf 		module:models/Users
  */
 
-var role = null;
+var role = null,
+	userId = null;
 
 const ManagerContactSchema = {
 		name: {
@@ -74,8 +75,9 @@ const UserProfileSchema = {
 		input: Text,
 		type: "string",
 		condition: ( item ) => {
-			let user = Users.collection._transform({});
-			user._id =  item._id;
+			let user = Users.collection._transform({}),
+				group = user.getSelectedFacility() || user.getSelectedTeam();
+			user._id =  item._id || userId;
 			role = user.getRole();
 			return role === "tenant" || role === "resident"
 		},
@@ -291,7 +293,9 @@ const UserSchema = {
 	profile: {
 		type: "object",
 		subschema: UserProfileSchema,
-		options: () => {
+		options: ( item ) => {
+			//get Id of selected user from list or new user
+			userId = item._id;
 		},
 	}
 }

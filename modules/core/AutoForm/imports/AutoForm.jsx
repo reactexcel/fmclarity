@@ -101,7 +101,7 @@ class AutoForm extends React.Component {
 				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
-				this.props.afterSubmit( newItem )
+				this.props.afterSubmit( item )
 			}
 		} else {
 			this.form.save( item, ( newItem ) => {
