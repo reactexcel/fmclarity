@@ -106,6 +106,8 @@ const createRequest = new Action( {
 						else {
 							Meteor.call('Issues.create', newRequest );
 						}
+						let request = Requests.collection._transform( newRequest );
+						request.markAsUnread();
 						//callback( newRequest );
 					}
 				}
