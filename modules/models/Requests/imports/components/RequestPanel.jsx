@@ -156,9 +156,9 @@ const RequestPanelInner = ( { request, owner } ) => {
                     <td>{request.description}</td>
                 </tr>:null}
 
-                {request.asignee && teamType!='fm'?
+                {request.assignee && teamType!='fm'?
                 <tr>
-                    <th>Asignee</th>
+                    <th>Assignee</th>
                     <td>{request.assignee.name}</td>
                 </tr>:null}
 
