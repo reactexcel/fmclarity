@@ -156,6 +156,12 @@ const RequestPanelInner = ( { request, owner } ) => {
                     <td>{request.description}</td>
                 </tr>:null}
 
+                {request.asignee && teamType!='fm'?
+                <tr>
+                    <th>Asignee</th>
+                    <td>{request.assignee.name}</td>
+                </tr>:null}
+
                 </tbody>
             </table>
 
