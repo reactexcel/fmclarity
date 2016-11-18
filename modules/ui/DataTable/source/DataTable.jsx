@@ -23,10 +23,33 @@ export default DataTable = React.createClass( {
 		let rows = null,
 			cols = null,
 			dataset = this.state.dataset;
-
+			let user = Meteor.user();
 		if ( items && items.length ) {
 			//fields = this.props.fields;
 		//	console.log(fields);
+
+			items = items.sort( (i, j) => {
+				if( i.lastUpdate && j.lastUpdate ){
+					 let a = i.lastUpdate.valueOf(),
+					 	 b = j.lastUpdate.valueOf(),
+						 c = _.indexOf(i.unreadRecipents, user._id ),
+						 d = _.indexOf(j.unreadRecipents, user._id ),
+						 x = a < b ? -1 : ( a > b ? 1 : 0);
+
+						 if( c > -1 && d > -1 ) {
+							 return x;
+						 }
+						 if( c > -1  ){
+							 return 1
+						 }
+						 if( d > -1  ){
+							 return -1
+						 }
+						 return 0;
+				}
+
+			} ).reverse() ;
+
 			dataset.reset( items, fields );
 
 			if ( this.state.sortCol ) {
@@ -76,6 +99,9 @@ export default DataTable = React.createClass( {
 		let { dataset, sortCol, sortDir, cols, rows } = this.state;
 		let { fields, children } = this.props;
 
+		let user = Meteor.user(),
+			facility = Session.getSelectedFacility() || {};
+
 		if ( !cols || !rows ) {
 			return <div/>
 		}
@@ -118,6 +144,14 @@ export default DataTable = React.createClass( {
 
 					<tbody>
 						{ rows.map( (row,rowIdx) => {
+							let unread = false;
+							if( row._item.unreadRecipents ){
+								if( _.indexOf( row._item.unreadRecipents, user._id ) > -1){
+									unread = true;
+								}else if( _.indexOf( row._item.unreadRecipents, facility._id ) > -1){
+									unread = true;
+								}
+							}
 							return (
 							<tr
 								className 	= "data-grid-row"
@@ -133,7 +167,7 @@ export default DataTable = React.createClass( {
 											key 		= {('val('+rowIdx+','+colIdx+')-'+row[col].val)}
 											style 		= {row[col].style?row[col].style:{}}
 										>
-											{row[col].val}
+											{ unread? <strong style={{fontWeight: "900"}}> {row[col].val} </strong> : row[col].val }
 
 										</td>
 									)

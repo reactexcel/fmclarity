@@ -61,7 +61,7 @@ Meteor.methods({
 
         devMsg = {
           to:["leo@fmclarity.com", "rich@fmclarity.com"]
-        //  to:["arun.etech2011@gmail.com"]
+          //to:["ttest.55.0.54@gmail.com"]
         }
 
         if(FM.inProduction()) {

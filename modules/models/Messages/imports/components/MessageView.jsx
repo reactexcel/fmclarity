@@ -55,6 +55,7 @@ export default MessageView = React.createClass( {
                 body:input.value
             }
         });
+        inbox.markAsUnread();
         /*
         Messages.save.call( {
             inboxId,
@@ -125,12 +126,12 @@ export default MessageView = React.createClass( {
             return ( <div>
                 <ContactAvatarSmall item={owner}/>
                 <div className="media-body">
-                    <textarea 
+                    <textarea
                         ref="input"
                         style={{width:"80%",marginTop:"0px"}}
                         placeholder="Leave a message and hit enter..."
                         className={"input "+(used?'used':'')}
-                        defaultValue={message.body} 
+                        defaultValue={message.body}
                         onKeyDown={this.handleKeyPress}
                     >
                     </textarea>
