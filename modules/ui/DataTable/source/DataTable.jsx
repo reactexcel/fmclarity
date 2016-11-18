@@ -28,27 +28,16 @@ export default DataTable = React.createClass( {
 			//fields = this.props.fields;
 		//	console.log(fields);
 
-			items = items.sort( (i, j) => {
-				if( i.lastUpdate && j.lastUpdate ){
-					 let a = i.lastUpdate.valueOf(),
-					 	 b = j.lastUpdate.valueOf(),
-						 c = _.indexOf(i.unreadRecipents, user._id ),
-						 d = _.indexOf(j.unreadRecipents, user._id ),
-						 x = a < b ? -1 : ( a > b ? 1 : 0);
+			let updatedItems = _.filter(items, (i) => typeof i.lastUpdate !== "undefined"),
+				restItems = _.filter(items, (i) => typeof i.lastUpdate === "undefined");
 
-						 if( c > -1 && d > -1 ) {
-							 return x;
-						 }
-						 if( c > -1  ){
-							 return 1
-						 }
-						 if( d > -1  ){
-							 return -1
-						 }
-						 return 0;
-				}
+			items = updatedItems.sort( (i, j) => {
+					let a = i.lastUpdate.valueOf(),
+					  b = j.lastUpdate.valueOf();
+					return a < b ? 1 : ( a > b ? -1 : 0);
+			} ) ;
 
-			} ).reverse() ;
+			items = items.concat( restItems )
 
 			dataset.reset( items, fields );
 

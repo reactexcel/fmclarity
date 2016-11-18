@@ -281,10 +281,15 @@ function markAllNotificationsAsRead() {
     Meteor.call( 'Messages.markAllNotificationsAsRead', this.getInboxId() );
 }
 
-function markAsUnread() {
-  let recipients = getRecipients( this.getWatchers(), [] ),
+function markAsUnread( recipientRoles ) {
+  let recipients = null,
     user = Meteor.user(),
     request = this;
+    if ( recipientRoles ) {
+      recipients = getRecipientListFromRoles( this, recipientRoles );
+    } else {
+      recipients = getRecipients( this.getWatchers(), [] );
+    }
   import { Requests } from '/modules/models/Requests';
   recipients =  _.uniq( recipients, false, function( i ) {
       return i._id;
