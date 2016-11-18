@@ -135,7 +135,7 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div
 			    	className	= "contact-list-item"
-			        onClick		= { () => { MemberActions.createMember.run( group, null, this.addPersonnel ) } }
+			        onClick		= { () => { MemberActions.create.run( group, null, this.addPersonnel ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 
