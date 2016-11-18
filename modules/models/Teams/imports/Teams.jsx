@@ -615,7 +615,7 @@ Teams.helpers( {
 				]
 			}, {
 				_id: { $in: facilityIds }
-			} ]			
+			} ]
 		}
 
 		if ( filterQuery ) {
@@ -687,7 +687,7 @@ Teams.helpers( {
 				{
 					$and: [ {
 						$or: [ {
-							"members._id": this.userId 
+							"members._id": this.userId
 						}, {
 							"supplier._id": this._id
 						}, {

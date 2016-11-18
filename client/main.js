@@ -215,7 +215,8 @@ Actions.addAccessRule( {
 		'edit member',
 		'view member',
 		'create member',
-		'remove member'
+		'remove member',
+		'invite member'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }

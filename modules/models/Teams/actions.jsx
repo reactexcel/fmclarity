@@ -111,7 +111,7 @@ const createRequest = new Action( {
                                 status: 'In Progress'
                             } )
                         }
-						
+
 						let request = Requests.collection._transform( newRequest );
 						request.markAsUnread();
 						//callback( newRequest );
