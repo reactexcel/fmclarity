@@ -79,11 +79,15 @@ export default ContactList = React.createClass( {
 	},
 	setItem( newItem ){
 		let group = this.data.group;
+
+		group.members = group.members || [];
+
 		group.members.push( {
 			_id : newItem._id,
 			name: newItem.profile.name,
 			role: newItem.role || "staff",
 		});
+
 		group.members = group.members.sort( function( a ,b ){
 			if( a.name && b.name ){
 				return a.name.localeCompare( b.name );
@@ -91,6 +95,7 @@ export default ContactList = React.createClass( {
 				return 0;
 			}
 		});
+		
 		this.setState( {
 			group : group
 		} );
