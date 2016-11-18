@@ -163,6 +163,7 @@
  							body: request.acceptComment
  						}
  					} );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
  					callback( request );
  				}
  			}
@@ -197,6 +198,7 @@
  							body: request.rejectComment
  						}
  					} );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
  					callback( request );
  				}
  			}
@@ -299,6 +301,7 @@
  							body: request.closeComment
  						}
  					} );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
  					Modal.hide();
  					callback( request );
  				}
@@ -332,6 +335,7 @@
  							body: request.reopenComment
  						}
  					} );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
  				}
  			}
  			/>
