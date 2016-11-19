@@ -24,6 +24,7 @@ export default RequestPanel = React.createClass( {
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
+            
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -170,7 +171,7 @@ const RequestPanelInner = ( { request, owner } ) => {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
-                    tab:        <span id="documents-tab"><span>Files</span>{ request.attachmentCount?<span>({ request.attachmentCount })</span>:null}</span>,
+                    tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
