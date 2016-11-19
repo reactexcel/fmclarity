@@ -33,6 +33,11 @@ const invite = new Action( {
 	type: [ 'team', 'user' ],
 	action: ( group, member, onUpdate ) => {
 		import { UserPanel, UserViewEdit } from '/modules/models/Users';
+		import { Teams } from '/modules/models/Teams';
+		if ( Teams.findOne( { _id: group._id} ) ) {
+			group.sendMemberInvite( member );
+			window.alert("Invitation has been sent to \""+ member.getName() + "\"");
+		}
 		Modal.show( {
 			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate } />
 		} )
