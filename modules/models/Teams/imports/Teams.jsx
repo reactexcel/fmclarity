@@ -403,7 +403,7 @@ function inviteSupplier( team, searchName, callback ) {
 					name: supplier.name
 				}, ( err, data ) => {
 					if ( _.isFunction( callback ) ) {
-						callback( data.suppliers );
+						callback( supplier );
 					}
 				} );
 			} );
@@ -413,7 +413,7 @@ function inviteSupplier( team, searchName, callback ) {
 			name: supplier.name
 		}, ( err, data ) => {
 			if ( _.isFunction( callback ) ) {
-				callback( data.suppliers );
+				callback( supplier );
 			}
 		} );
 	}
