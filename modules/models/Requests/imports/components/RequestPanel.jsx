@@ -172,7 +172,7 @@ const RequestPanelInner = ( { request, owner } ) => {
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  hideSubmit = { true } afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     content:    <ContactList group = { request } readOnly = { true }/>
