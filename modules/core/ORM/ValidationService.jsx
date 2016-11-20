@@ -94,7 +94,10 @@ function checkExistence( rule, value, key, errors ) {
 }
 
 function checkDate( rule, value, key, errors ) {
-	if ( !_.isDate( value ) ) {
+	if ( !rule.optional && value == '' ) {
+		errors.push( { name: key, type: "This is a required field" } );
+	}
+	if ( !_.isDate( value ) && value != '' ) {
 		errors.push( { name: key, type: "Invalid type: expected a date" } );
 	}
 }
@@ -125,7 +128,7 @@ function checkObject( rule, value, key, errors ) {
 	if ( !rule.optional && _.isEmpty( value ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
-	if ( !_.isObject( value ) ) {
+	if ( !_.isObject( value ) && !_.isEmpty( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected an object" } );
 	}
 	if ( rule.schema != null ) {
@@ -143,7 +146,10 @@ function checkArray( rule, value, key, errors ) {
 }
 
 function checkABN( rule, value, key, errors ) {
-	if ( !isValidABN( value ) ) {
+	if ( !rule.optional && value == '' ) {
+		errors.push( { name: key, type: "This is a required field" } );
+	}
+	if ( !isValidABN( value ) && value != '') {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
 	}
 }
@@ -159,7 +165,10 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	var re7 = '(\\d+)'; // Integer Number 3
 
 	var p = new RegExp( re1 + re2 + re3 + re4 + re5 + re6 + re7, [ "i" ] );
-	if ( !value.match( p ) ) {
+	if ( !rule.optional && value == '' ) {
+		errors.push( { name: key, type: "This is a required field" } );
+	}
+	if ( !value.match( p ) && value != '') {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
 	}
 
