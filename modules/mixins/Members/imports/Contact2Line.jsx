@@ -4,13 +4,30 @@ export default function Contact2Line( props ) {
 	let contact = props.item,
 		profile = {},
 		role = props.role,
-		tenancy = "";
+		hasTenancy = false,
+		tenancy = [],
+		facility_name = "",
+		level = "",
+		apartment = "";
 
 	if ( contact ) {
 		profile = contact.getProfile ? contact.getProfile() : contact;
-		if ( profile ) {
+		/*if ( profile ) {
 			tenancy = profile.tenancy;
+		}*/
+		if (profile.facility) {
+			tenancy.push(profile.facility.name);
+			hasTenancy = true;
 		}
+		if (profile.level) {
+			tenancy.push(profile.level.name);
+			hasTenancy = true;
+		}
+		if (profile.apartment) {
+			tenancy.push(profile.apartment.name);
+			hasTenancy = true;
+		}
+		var formatted_tenancy = tenancy.join();
 	}
 
 	return (
@@ -18,8 +35,8 @@ export default function Contact2Line( props ) {
 			<span className="contact-card-line-1">{profile.name}</span>
 
 			{
-			tenancy?
-			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>
+			hasTenancy?
+			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{formatted_tenancy}</span>
 			:null
 			}
 
