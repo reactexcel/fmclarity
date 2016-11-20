@@ -73,7 +73,7 @@ const UserProfileSchema = {
 		optional: true,
 		type: "phone",
 	},
-	/*tenancy: {
+	tenancy: {
 		label: "Tenancy",
 		input: Text,
 		optional: true,
@@ -83,9 +83,9 @@ const UserProfileSchema = {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 			user._id =  item._id || userId;
 			role = user.getRole();
-			return role === "tenant" || role === "resident"
+			return role === "tenant"
 		},
-	},*/
+	},
 	status:{
 		label: 'Status',
 		input:Select,
