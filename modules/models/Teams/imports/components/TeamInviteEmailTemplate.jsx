@@ -49,8 +49,8 @@ const TeamInviteEmailTemplate = React.createClass({
     	var url = Meteor.absoluteUrl('enroll-account/'+ secret);
         var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName();
         var userRole = user.getRole();
-        var tag = ((userRole == 'tenant') ? 'tenant' : 'member');
-        console.log('tag ='+tag+ 'and facility ='+team.getName());
+        var role = ((userRole == 'tenant') ? 'tenant' : 'member');
+
         return(
             <div>
                 <p>Hi {userName},</p>
@@ -58,7 +58,7 @@ const TeamInviteEmailTemplate = React.createClass({
                 <p>
 
 	                {team.getName()} has set up FM Clarity web-based software to make it easy to manage facility processes.<br/>
-					As a {tag} of {team.getName()}, an account has been created for you to give you access to the system.<br/><br/>
+					As a {role} of {team.getName()}, an account has been created for you to give you access to the system.<br/><br/>
 					Quick info: what do I need to do to get setup?<br/><br/>
 					1. Click the link at the bottom of this email<br/>
 					2. Change your password<br/>
