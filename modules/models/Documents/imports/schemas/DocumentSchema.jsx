@@ -234,7 +234,7 @@ export default DocumentSchema = {
 		},
 	},
 	supplier: {
-		input: Text,
+		input: Select,
 		label: "Supplier",
 		type: "object",
 		optional: true,

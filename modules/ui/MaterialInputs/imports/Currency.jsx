@@ -9,8 +9,8 @@ import React from "react";
  * @memberOf 		module:ui/MaterialInputs
  */
 const Currency = React.createClass( {
-	handleChange( event ) {
-		let newValue = event.target.value;
+	handleChange() {
+		let newValue = this.refs.input.value;
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
 		}
@@ -31,6 +31,15 @@ const Currency = React.createClass( {
 			this.props.onSelect( event.target.value );
 		}
 	},
+
+	componentDidMount() {
+		this.handleChange = _.debounce( this.handleChange, 200 );
+	},
+
+	componentWillReceiveProps( newProps ) {
+		this.refs.input.value = newProps.value;
+	},
+
 
 	render() {
 		let { value, errors } = this.props,
@@ -58,7 +67,7 @@ const Currency = React.createClass( {
       			style 			= { { width: '90%' } }
       			ref 			= "input"
       			type 			= "text"
-      			value 			= { value }
+      			defaultValue	= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       		/>

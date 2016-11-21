@@ -48,6 +48,8 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		facilities,
 		facility,
 		requests,
-		selectedRequest
+		selectedRequest,
+		contextFilter,
+		user,
 	}
 }, RequestsPageIndex );

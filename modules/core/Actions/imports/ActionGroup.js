@@ -212,6 +212,8 @@ class ActionGroup {
 		let item = args[ 0 ],
 			action = this.actions[ actionName ];
 
+		//console.log( item );
+
 		if ( action == null ) {
 			console.log( `Tried to run action ${actionName} but it doesn't exist` );
 		}
@@ -225,6 +227,8 @@ class ActionGroup {
 		}
 
 		// ...that is why we precalculate rules and relationships then pass them here
+		//console.log( { rules, relationships } );
+
 		let access = this.checkAccess( actionName, item, rules, relationships ),
 			notificationRules = this.checkAlerts( actionName, item, rules, relationships );
 

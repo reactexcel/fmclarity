@@ -29,8 +29,8 @@ const Phone = React.createClass( {
 	handleKeyDown(e){
 		// Allow: backspace, delete, tab, escape, enter and .
         if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-             // Allow: Ctrl+A, Command+A
-            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: Ctrl+A, Command+A, Ctrl+V
+            (e.keyCode === 65 || e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) || 
              // Allow: home, end, left, right, down, up
             (e.keyCode >= 35 && e.keyCode <= 40)) {
                  // let it happen, don't do anything

@@ -62,6 +62,7 @@ export default CloseDetailsSchema = {
     furtherQuote: {
         label: "Quote",
         input: FileField,
+        optional: true,
         condition( item ) {
             return item.furtherWorkRequired == true;
         },
@@ -70,6 +71,7 @@ export default CloseDetailsSchema = {
     furtherQuoteValue: {
         label: "Value of quote",
         input: Text,
+        optional: true,
         condition( item ) {
             return item.furtherWorkRequired == true;
         },

@@ -20,23 +20,26 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        let request = null;
+        let request = null,
+            owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
+            
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
+                owner = request.getOwner();
             }
         }
-        return { request }
+        return { request, owner }
     },
 
     render() {
-        return <RequestPanelInner request = { this.data.request } />
+        return <RequestPanelInner { ...this.data }/>
     }
 } );
 
 
-const RequestPanelInner = ( { request } ) => {
+const RequestPanelInner = ( { request, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -54,7 +57,7 @@ const RequestPanelInner = ( { request } ) => {
                     <div className="col-md-6">
                         <h2>{ request.team.name }</h2>
                         <FacilityDetails item = { request.facility }/>
-                        <ContactDetails item = { request.owner }/>
+                        <ContactDetails item = { owner }/>
                     </div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 
@@ -76,26 +79,26 @@ const RequestPanelInner = ( { request } ) => {
 
                             }
 
-                            { request.service && request.type!= 'Booking' ? 
+                            { request.service && request.type!= 'Booking' ?
                             <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
                             : null }
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-                            { request.issuedAt ? 
+                            { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.dueDate ? 
+                            { request.dueDate ?
                             <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
                             : null }
 
-                            { request.priority ? 
+                            { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
 
-                            <span 
-                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}} 
+                            <span
+                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                                 className   = { "label label-"+request.status}
                             >
 
@@ -129,29 +132,35 @@ const RequestPanelInner = ( { request } ) => {
 
                 { request.supplier && request.type!= 'Booking' ?
                 <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th>
+                  <th>{teamType == "fm" ? "Supplier" : "Client" }</th>
                     <td>{request.supplier.name}</td>
                 </tr>
                 : null }
 
-                { request.type == 'Ad-hoc' && request.costThreshold ? 
+                { request.type == 'Ad-hoc' && request.costThreshold ?
                 <tr>
                     <th>Value</th>
                     <td>${request.costThreshold}</td>
                 </tr>
                 : null }
 
-                { request.type == 'Booking' && request.duration ? 
+                { request.type == 'Booking' && request.duration ?
                 <tr>
                     <th>Duration</th>
                     <td>{request.duration}</td>
                 </tr>
                 : null }
 
-                {request.description?                 
+                {request.description?
                 <tr>
                     <th>Description</th>
                     <td>{request.description}</td>
+                </tr>:null}
+
+                {request.assignee && teamType!='fm'?
+                <tr>
+                    <th>Assignee</th>
+                    <td>{request.assignee.name}</td>
                 </tr>:null}
 
                 </tbody>
@@ -162,8 +171,8 @@ const RequestPanelInner = ( { request } ) => {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
-                    tab:        <span id="documents-tab"><span>Files</span>{ request.attachmentCount?<span>({ request.attachmentCount })</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] } hideSubmit = { true } />
+                    tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     content:    <ContactList group = { request } readOnly = { true }/>

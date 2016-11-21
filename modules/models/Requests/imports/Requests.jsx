@@ -25,6 +25,10 @@ if ( Meteor.isServer ) {
 	Meteor.publish( 'Requests', () => {
 		return Requests.find();
 	} );
+
+	Meteor.publish( 'Requests: Closed', () => {
+		return Requests.find( { status:'Closed' } );
+	} );
 }
 
 /**
@@ -156,8 +160,17 @@ Requests.methods( {
 	create: {
 		authentication: true,
 		method: function( request ) {
+			let status = 'New';
+
+			if( request.type == 'Preventative' ) {
+				status = 'PMP';
+			}
+			else if ( request.type == 'Booking' ) {
+				status = 'Booking';
+			}
+
 			let newRequestId = Meteor.call( 'Issues.save', request, {
-				status: "New",
+				status: status,
 				issuedAt: new Date()
 			} ),
 				newRequest = null;
@@ -167,11 +180,15 @@ Requests.methods( {
 			}
 
 			if ( newRequest ) {
+				let owner = null;
+				if( newRequest.owner ) {
+					owner = newRequest.getOwner();
+				}
 				newRequest.distributeMessage( {
 					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
 					message: {
 						verb: "created",
-						subject: "A new work order has been created" + ( newRequest.owner ? ` by ${newRequest.owner.getName()}` : '' ),
+						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
 						body: newRequest.description
 					}
 				} );
@@ -230,10 +247,16 @@ Requests.methods( {
 	getSupplier: {
 		authentication: true,
 		helper: function( request ) {
-			let supplier = request.supplier;
-			if ( supplier ) {
-				let item = Teams.findOne( { name: supplier.name } );
-				return item != null ? Teams.findOne( { name: supplier.name } ) : Teams.collection._transform( {} );
+			let supplierQuery = request.supplier;
+			if ( supplierQuery ) {
+				let supplier = Teams.findOne( { $or:[
+					{ _id: supplierQuery._id },
+					{ name: supplierQuery.name } 
+				] } );
+				if( supplier == null ) {
+					supplier = Teams.collection._transform( {} );
+				}
+				return supplier;
 			}
 		}
 	},
@@ -257,6 +280,20 @@ Requests.methods( {
 			if ( query ) {
 				let facility = Facilities.findOne( { _id: query._id } );
 				return facility != null ? facility : Facilities.collection._transform( {} );
+			}
+		}
+	},
+
+	markRecipentAsRead: {
+		authentication: true,
+		helper: function( request ) {
+			let user = Meteor.user();
+			if( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ){
+				Requests.update( { _id: request._id }, {
+						$pull:{
+							unreadRecipents: user._id
+						}
+				})
 			}
 		}
 	},
@@ -316,8 +353,8 @@ function setAssignee( request, assignee ) {
 			}
 		}
 	} );
-	Requests.update( request._id, { 
-		$pull: { members: { role: "assignee" } 
+	Requests.update( request._id, {
+		$pull: { members: { role: "assignee" }
 	} } );
 
 	request = Requests.collection._transform( request );

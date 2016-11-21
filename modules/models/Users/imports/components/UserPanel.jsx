@@ -6,7 +6,9 @@
 import React from "react";
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Roles } from '/modules/mixins/Roles';
+import { Actions } from '/modules/core/Actions';
 import { UserActions } from '/modules/models/Users';
+import { MemberActions } from '/modules/mixins/Members';
 import { TeamActions } from '/modules/models/Teams';
 
 /**
@@ -23,19 +25,33 @@ class UserPanel extends React.Component {
 	}
 
 	getMenu() {
-		let user = this.props.item,
-			group = this.props.group || Session.getSelectedTeam();
-		let component = this;
-		// callback when a user update his/her profile
+
 		const onUpdate = ( newItem ) => {
-			component.setState ( { item : newItem } );
+			this.setState ( { item : newItem } );
 		}
+		
+		let user = this.props.item,
+			group = this.props.group || Session.getSelectedTeam(),
+			menuItems = [];
+		let actionNames = Object.keys( UserPanelActions.actions ),
+			validActions = Actions.filter( actionNames, group );
+
+		for( actionName in validActions ) {
+			let action = validActions[ actionName ];
+			menuItems.push( action.bind( group, user, onUpdate ) );
+		}
+
+		return menuItems;
+
+		/*
 		return [
-			UserActions.edit.bind( { user, group, onUpdate } ),
-			UserActions.remove.bind( { user, group } ),
-			TeamActions.inviteMember.bind( { user, group } ),
+			MemberActions.edit.bind( group, user, onUpdate ),
+			MemberActions.remove.bind( group, user ),
+			MemberActions.invite.bind( group, user ),
+			//TeamActions.inviteMember.bind( { user, group } ),
 			UserActions.login.bind( user )
 		];
+		*/
 	}
 
 	componentWillReceiveProps( props ){

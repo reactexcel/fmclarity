@@ -4,13 +4,14 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 function loadScript() {
-         var script= document.createElement('script');
-         script.type= 'text/javascript';
-         script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
-         script.async = true;
-         document.body.appendChild(script);
-    }
-    loadScript();
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
+	script.async = true;
+	document.body.appendChild(script);
+}
+loadScript();
+
 
 DocHead.setTitle( 'FM Clarity' );
 DocHead.addLink( {
@@ -28,9 +29,7 @@ DocHead.addMeta( {
 
 Actions.addAccessRule( {
 	action: [
-		'view user',
 		'edit user',
-		'remove user',
 		'login as user',
 		'logout'
 	],
@@ -115,7 +114,17 @@ Actions.addAccessRule( {
 		return _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status )
 	},
 	action: [
-		'edit request'
+		'edit request',
+	],
+	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	rule: { alert: true }
+} )
+
+
+Actions.addAccessRule( {
+	condition: { status: 'PMP' },
+	action: [
+		'clone request',
 	],
 	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
 	rule: { alert: true }
@@ -123,8 +132,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( item ) => {
-		return item.status == 'Draft' || item.status == 'New' 
-	},
+		return item.status == 'Draft' || item.status == 'New' },
 	action: [
 		'issue request',
 		'reject request',
@@ -148,7 +156,7 @@ Actions.addAccessRule( {
 		'accept request',
 		'reject request',
 	],
-	role: [ 'supplier manager', 'assignee' ],
+	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee' ],
 	rule: { alert: true }
 } )
 
@@ -168,7 +176,7 @@ Actions.addAccessRule( {
 	action: [
 		'close request',
 		'reopen request',
-		'reverse request'
+		'reverse request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
@@ -207,6 +215,8 @@ Actions.addAccessRule( {
 		'edit member',
 		'view member',
 		'create member',
+		'remove member',
+		'invite member'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
@@ -217,4 +227,23 @@ UserMenuActions = Actions.clone( [
 	'create team',
 	'migrate schema',
 	'logout'
+] );
+
+UserPanelActions = Actions.clone( [
+	'edit member',
+	'remove member',
+	'invite member',
+	'login as user',
+] );
+
+UserMenuActions = Actions.clone( [
+	'edit team',
+	'create team',
+	'migrate schema',
+	'logout'
+] );
+
+FacilityMenuActions = Actions.clone( [
+    'edit facility',
+    'destroy facility'
 ] );

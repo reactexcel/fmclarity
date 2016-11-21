@@ -42,25 +42,39 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             collection: Teams,
             fieldName: 'suppliers'
         } );*/
-    } else {
-        suppliers = [];
-        _.forEach( facilities, ( f ) => {
-            suppliers = suppliers.concat( f.getSuppliers() );
-        } );
-        let ids = _.map( suppliers, ( s ) => {
-            return _.pick( s, "_id" )._id;
-        } )
-        ids = _.uniq( ids );
-        suppliers = Teams.find( {
-                _id: {
-                    $in: ids
+    } else if( facilities && facilities.length ) {
+        let supplierIds = [],
+            supplierNames = [];
+
+        facilities.map( ( facility ) => {
+            let services = facility.servicesRequired;
+            services.map( ( service ) => {
+                if( service.data && service.data.supplier ) {
+                    supplierIds.push( service.data.supplier._id );
+                    supplierNames.push( service.data.supplier.name );
                 }
-            }, {
-                sort: {
-                    name: 1
+                if( service.children ) {
+                    service.children.map( ( subservice ) => {
+                        if( subservice.data && subservice.data.supplier ) {
+                            supplierIds.push( subservice.data.supplier._id );
+                            supplierNames.push( subservice.data.supplier.name );
+                        }
+                    } )
                 }
             } )
-            .fetch();
+        } );
+
+        suppliers = Teams.find( 
+            { $or : [
+                { _id: { $in: supplierIds } },
+                { name: { $in: supplierNames } },
+            ] },
+            { sort: { name: 1 } }
+        ).fetch();
+
+        suppliers = _.uniq( suppliers, ( i ) => {
+            return i._id;
+        } );        
     }
 
     return {

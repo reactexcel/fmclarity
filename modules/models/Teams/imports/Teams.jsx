@@ -60,10 +60,12 @@ if ( Meteor.isServer ) {
 			]
 		} );
 
-		let teamIds = [];
+		let teamIds = [],
+			teamNames = [];
 
 		teamsCursor.forEach( ( team ) => {
 			teamIds.push( team._id );
+			teamNames.push( team.name );
 		} );
 
 		let requestsCursor = Requests.find( {
@@ -73,14 +75,16 @@ if ( Meteor.isServer ) {
 				{ $or: [
 					{ "team._id": { $in: teamIds } },
 					{ $and: [
-						{ "supplier._id": { $in: teamIds } },
+						{ $or: [
+							{ "supplier._id": { $in: teamIds } },
+							{ "supplier.name": { $in: teamNames } },
+						] },
 						{ status: { $nin: [ "Draft", "New" ] } }
-					] }
-					/*this seems redundant because if you own a request then it will be in one of your teams 
+					] },
 					{ $or: [
 						{ "owner._id": this.userId },
 						{ "members._id": this.userId }
-					] }*/
+					] }
 				] }
 			]
 		}, { sort: { createdAt: -1 } } );
@@ -399,7 +403,7 @@ function inviteSupplier( team, searchName, callback ) {
 					name: supplier.name
 				}, ( err, data ) => {
 					if ( _.isFunction( callback ) ) {
-						callback( data.suppliers );
+						callback( supplier );
 					}
 				} );
 			} );
@@ -409,7 +413,7 @@ function inviteSupplier( team, searchName, callback ) {
 			name: supplier.name
 		}, ( err, data ) => {
 			if ( _.isFunction( callback ) ) {
-				callback( data.suppliers );
+				callback( supplier );
 			}
 		} );
 	}
@@ -584,7 +588,7 @@ Teams.helpers( {
 		return facilities;
 	},
 
-	getStaffFacilities() {
+	getStaffFacilities( filterQuery ) {
 		//return all facilities user is a member of
 		//and all the facilities in the requests user can see
 		var user = Meteor.user();
@@ -602,9 +606,8 @@ Teams.helpers( {
 			} )
 		}
 
-		//console.log(facilityIds);
-
-		let facilities = Facilities.findAll( {
+		let q = null,
+			facilitiesQuery = {
 			$or: [ {
 				$and: [
 					{ "team._id": this._id },
@@ -613,7 +616,22 @@ Teams.helpers( {
 			}, {
 				_id: { $in: facilityIds }
 			} ]
-		}, { sort: { name: 1 } } );
+		}
+
+		if ( filterQuery ) {
+			q = {
+				$and: [
+					facilitiesQuery,
+					filterQuery
+				]
+			};
+		} else {
+			q = facilitiesQuery;
+		}
+
+		//console.log(facilityIds);
+
+		let facilities = Facilities.findAll( q, { sort: { name: 1 } } );
 
 		//console.log(facilities);
 		return facilities;
@@ -669,7 +687,7 @@ Teams.helpers( {
 				{
 					$and: [ {
 						$or: [ {
-							"members._id": this.userId 
+							"members._id": this.userId
 						}, {
 							"supplier._id": this._id
 						}, {
@@ -751,6 +769,8 @@ Teams.helpers( {
 		} else {
 			q = requestsQuery;
 		}
+
+		console.log( q );
 
 		return Requests.find( q )
 			.fetch();

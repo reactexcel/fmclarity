@@ -13,6 +13,7 @@ import SupplierCreateRequestForm from './imports/schemas/SupplierCreateRequestFo
 import RequestSearch from './imports/schemas/RequestSearchController';
 import RequestActions from './actions.jsx';
 
+import RequestFilter from './imports/components/RequestFilter.jsx';
 /**
  * @module  		models/Requests
  */
@@ -23,6 +24,8 @@ export {
 	SupplierCreateRequestForm,
 	RequestPanel,
 
-	RequestActions,	
-	RequestSearch
+	RequestActions,
+	RequestSearch,
+
+	RequestFilter,
 }

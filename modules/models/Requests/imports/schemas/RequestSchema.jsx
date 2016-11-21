@@ -8,6 +8,7 @@ import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
+import { Requests } from '/modules/models/Requests';
 import { DocExplorer } from '/modules/models/Documents';
 import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
@@ -84,19 +85,23 @@ const RequestSchema = {
 			return "Ad-hoc";
 		},
 		input: Select,
-		options: {
-			items: [
-				"Ad-hoc",
-				"Booking",
-				//"Internal",
-				"Preventative",
-				"Tenancy",
-				//"Base Building",
-				//"Contract",
-				//"Defect",
-				//"Template",
-				//"Warranty",
-			]
+		options: () => {
+			let role = Meteor.user().getRole();
+			return{
+				items: role !== "staff" ? [
+					"Ad-hoc",
+					"Booking",
+					//"Internal",
+					"Preventative",
+					"Tenancy",
+					//"Base Building",
+					//"Contract",
+					//"Defect",
+					//"Template",
+					//"Warranty",
+				] : [ "Ad-hoc", "Booking", "Tenancy", ]
+			}
+
 		}
 	},
 
@@ -155,10 +160,10 @@ const RequestSchema = {
 		type: "string",
 		input: Select,
 		readonly: true,
-		defaultValue: () => {
+		defaultValue: "Draft",/*() => {
 			let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
 			return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
-		},
+		},*/
 
 		options: {
 			items: [
@@ -463,7 +468,9 @@ const RequestSchema = {
 		defaultValue: '500',
 		optional: true,
 		input: Currency,
-		condition: [ "Ad-hoc", "Contract", "Tenancy" ],
+		condition: ( request ) => {
+			return _.indexOf( [ "Ad-hoc", "Contract", "Tenancy" ], request.type ) > -1 ? ( Meteor.user().getRole() != "staff" ) : false;
+		}
 	},
 
 	closeDetails: {
@@ -498,6 +505,12 @@ const RequestSchema = {
 		description: "Time the supplier is expected to attend the site",
 		size: 6,
 		input: DateTime,
+		condition: ( request ) => {
+			let team = Session.getSelectedTeam();
+			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+				return true;
+			}
+		},		
 	},
 
 	//////////////////////////////////////////////////
@@ -562,23 +575,28 @@ const RequestSchema = {
 		},
 		input: Select,
 
-		options: ( item ) => {
-			let team = Teams.findOne( item.team._id ),
-				facilities = team.getFacilities();
+		options: ( request ) => {
+
+			let team = Teams.findOne( request.team._id ),
+				facilities = team.getFacilities( { 'team._id': request.team._id } );
+			/*
+			import { Facilities } from '/modules/models/Facilities';
+			let facilities = Facilities.findAll( { 'team._id': request.team._id } );
+			*/
 			return {
 				items: facilities,
 				view: FacilityListTile,
 
-				afterChange: ( item ) => {
-					if ( item == null ) {
+				afterChange: ( request ) => {
+					if ( request == null ) {
 						return;
 					}
-					item.level = null;
-					item.area = null;
-					item.identifier = null;
-					item.service = null;
-					item.subservice = null;
-					item.supplier = null;
+					request.level = null;
+					request.area = null;
+					request.identifier = null;
+					request.service = null;
+					request.subservice = null;
+					request.supplier = null;
 				},
 				addNew:{//Add new facility to current selectedTeam.
 					show:true,
@@ -588,14 +606,15 @@ const RequestSchema = {
 						let team = Session.getSelectedTeam(),
 						    facility = Facilities.collection._transform( { team } );
 						Modal.show( {
-							content: <FacilityStepper
-													item = { facility }
-													onSaveFacility = {
-														( facility ) => {
-															callback( facility );
-														}
-													}
-												/>
+							content: 
+								<FacilityStepper
+									item = { facility }
+									onSaveFacility = {
+										( facility ) => {
+											callback( facility );
+										}
+									}
+								/>
 						} )
 					}
 				},
@@ -607,6 +626,7 @@ const RequestSchema = {
 		label: "Supplier",
 		description: "The supplier who has been assigned to this job",
 		type: "object",
+		optional: true,
 		relation: {
 			type: ORM.HasOne,
 			source: Teams,
@@ -617,7 +637,7 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-			return request.type != 'Booking' && teamType != 'contractor';
+			return (request.type != 'Booking' && teamType != 'contractor') ? ( Meteor.user().getRole() != "staff" ) : false;
 		},
 		defaultValue: ( item ) => {
 			let team = Session.getSelectedTeam(),
@@ -678,9 +698,16 @@ const RequestSchema = {
 				}
 			}
 		},
+		condition: ( request ) => {
+			let team = Session.getSelectedTeam();
+			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+				return true;
+			}
+		},
 		input: Select,
-		options: ( item ) => {
-			let supplier = Teams.findOne( item.supplier._id ),
+		options: ( request ) => {
+			request = Requests.collection._transform( request );
+			let supplier = request.getSupplier(),
 				members = Teams.getMembers( supplier );
 			return {
 				items: members,
@@ -750,7 +777,7 @@ function getMembersDefaultValue( item ) {
 	} );
 
 	if ( item.facility ) {
-		let facility = Facilities.findOne( item.facility._id ),
+		let facility = rFacilities.findOne( item.facility._id ),
 			facilityMembers = facility.getMembers( {
 				role: "manager"
 			} );

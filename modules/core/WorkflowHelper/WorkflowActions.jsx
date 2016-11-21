@@ -9,7 +9,8 @@ const WorkflowActions = [
 	'complete request',
 	'close request',
 	'reopen request',
-	'reverse request'
+	'reverse request',
+	'clone request'
 ];
 
 export default WorkflowActions;
