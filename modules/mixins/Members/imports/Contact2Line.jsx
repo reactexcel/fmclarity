@@ -4,14 +4,34 @@ export default function Contact2Line( props ) {
 	let contact = props.item,
 		profile = {},
 		role = props.role,
-		tenancy = "";
+		tenancy = "",
+		tenancyVariables = [],
+		facility_name = "",
+		level = "",
+		apartment = "";
 
 	if ( contact ) {
 		profile = contact.getProfile ? contact.getProfile() : contact;
 		if ( profile ) {
 			tenancy = profile.tenancy;
 		}
+		if (profile.facility) {
+			tenancyVariables.push(profile.facility.name);
+		}
+		if (profile.level) {
+			tenancyVariables.push(profile.level.name);
+		}
+		if (profile.apartment) {
+			tenancyVariables.push(profile.apartment.name);
+		}
+		var resident_tenancy = tenancyVariables.join();
+
+		if ( role == "resident" ) {
+		tenancy = resident_tenancy
+		}
 	}
+	
+	
 
 	return (
 		<span className="contact-card-2line-text">
