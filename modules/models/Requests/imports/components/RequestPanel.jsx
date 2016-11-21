@@ -132,7 +132,7 @@ const RequestPanelInner = ( { request, owner } ) => {
 
                 { request.supplier && request.type!= 'Booking' ?
                 <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th>
+                  <th>{teamType == "fm" ? "Supplier" : "Client" }</th>
                     <td>{request.supplier.name}</td>
                 </tr>
                 : null }
