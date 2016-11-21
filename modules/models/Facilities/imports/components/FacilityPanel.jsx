@@ -84,7 +84,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="documents-tab">Documents</span>,
 						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
-						//hide:       !facility.canAddMember(),
+						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
