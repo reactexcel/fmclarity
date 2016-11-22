@@ -22,6 +22,7 @@ export default TeamSchema = {
         type: "string",
         label: "Company Name",
         input: Text,
+        required: true,
     },
 
     type: {
@@ -29,6 +30,7 @@ export default TeamSchema = {
         label: "Account type",
         description: "Is this an account for facility managers or suppliers?",
         input: Select,
+        required: true,
         condition: ( item ) => {
             return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
         },
@@ -48,6 +50,7 @@ export default TeamSchema = {
         type: "string",
         description: "The primary email contact for this team",
         input: Text,
+        required: true,
         label: "Email",
         //regEx:        ORM.RegEx.Email,
     },

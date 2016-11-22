@@ -87,7 +87,7 @@ Actions.addAccessRule( {
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager' ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', 'assignee' ],
 	rule: { alert: true }
 } )
 
@@ -156,7 +156,7 @@ Actions.addAccessRule( {
 		'accept request',
 		'reject request',
 	],
-	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee' ],
+	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
 	rule: { alert: true }
 } )
 

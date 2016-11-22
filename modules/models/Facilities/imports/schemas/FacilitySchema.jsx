@@ -26,13 +26,15 @@ const FacilitySchema = {
 		description: "A short identifier for the building (ie 12 Smith St)",
 		type: "string",
 		input: Text,
-		autoFocus: true
+		required: true,
+		autoFocus: true,
 	},
 
 	address: {
 		label: "Address",
 		description: "The location of the site",
 		type: "object",
+		required: true,
 		subschema: AddressSchema,
 	},
 
@@ -40,6 +42,7 @@ const FacilitySchema = {
 		label: "Property type",
 		input: Select,
 		type: "string",
+		required: true,
 		options: {
 			items: [
 				"Commercial",

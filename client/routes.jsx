@@ -20,15 +20,24 @@ AccessGroups.loggedIn.add( {
 Routes.addAccessRule( {
 	action: [
 		'logout',
-		'requests',
-		'portfolio',
 	],
 	role: [ '*' ],
 } )
 
 Routes.addAccessRule( {
 	action: [
+		'requests',
+		'portfolio',
+	],
+	role: [ '*' ],
+	condition: { type:'fm' }
+} )
+
+Routes.addAccessRule( {
+	action: [
+		'sites',
 		'clients',
+		'jobs'
 	],
 	role: [ 'manager' ],
 	condition: { type:'contractor' }
@@ -60,9 +69,11 @@ Routes.addAccessRule( {
 
 NavigationDrawerRoutes = Routes.clone( [
 	'dashboard',
+	'sites',
 	'portfolio',
 	'suppliers',
 	'requests',
+	'jobs',
 	'calendar',
 	'admin',
 	'all-facilities',
