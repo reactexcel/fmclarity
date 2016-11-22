@@ -32,6 +32,18 @@ AccessGroups.loggedIn.add( {
 	}
 } );
 
+AccessGroups.loggedIn.add( {
+	name: 'sites',
+	path: '/sites',
+	label: "Sites",
+	icon: 'fa fa-building',
+	action() {
+		mount( LayoutMain, {
+			content: <FacilitiesPageIndexContainer />
+		} );
+	}
+} );
+
 /*
 
 let loggedIn = new RouteGroup({

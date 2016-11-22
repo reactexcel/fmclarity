@@ -86,7 +86,7 @@ function checkCondition( condition, item ) {
 
 
 function checkExistence( rule, value, key, errors ) {
-	if ( !rule.optional && ( value == null || value == undefined || value == '' ) ) {
+	if ( rule.required && ( value == null || value == undefined || value == '' ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 		return false;
 	}
@@ -94,7 +94,7 @@ function checkExistence( rule, value, key, errors ) {
 }
 
 function checkDate( rule, value, key, errors ) {
-	if ( !rule.optional && value == '' ) {
+	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isDate( value ) && value != '' ) {
@@ -109,7 +109,7 @@ function checkBoolean( rule, value, key, errors ) {
 }
 
 function checkString( rule, value, key, errors ) {
-	if ( !rule.optional && value == '' ) {
+	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isString( value ) ) {
@@ -125,7 +125,7 @@ function checkNumber( rule, value, key, errors ) {
 }
 
 function checkObject( rule, value, key, errors ) {
-	if ( !rule.optional && _.isEmpty( value ) ) {
+	if ( rule.required && _.isEmpty( value ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isObject( value ) && !_.isEmpty( value ) ) {
@@ -137,7 +137,7 @@ function checkObject( rule, value, key, errors ) {
 }
 
 function checkArray( rule, value, key, errors ) {
-	if ( !rule.optional && _.isEmpty( value ) ) {
+	if ( rule.required && _.isEmpty( value ) ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !_.isArray( value ) ) {
@@ -146,7 +146,7 @@ function checkArray( rule, value, key, errors ) {
 }
 
 function checkABN( rule, value, key, errors ) {
-	if ( !rule.optional && value == '' ) {
+	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !isValidABN( value ) && value != '') {
@@ -165,7 +165,7 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	var re7 = '(\\d+)'; // Integer Number 3
 
 	var p = new RegExp( re1 + re2 + re3 + re4 + re5 + re6 + re7, [ "i" ] );
-	if ( !rule.optional && value == '' ) {
+	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !value.match( p ) && value != '') {

@@ -22,9 +22,21 @@ AccessGroups.loggedIn.add( {
 } );
 
 AccessGroups.loggedIn.add( {
+	name: 'jobs',
+	path: '/jobs',
+	label: "Jobs",
+	icon: 'fa fa-wrench',
+	action() {
+		mount( LayoutMain, {
+			content: <RequestsPageIndexContainer />
+		} );
+	}
+} );
+
+AccessGroups.loggedIn.add( {
 	name: 'requests',
 	path: '/requests',
-	label: "Jobs",
+	label: "Requests",
 	icon: 'fa fa-wrench',
 	action() {
 		mount( LayoutMain, {

@@ -26,13 +26,15 @@ const ManagerContactSchema = {
 			label: "Property manger\'s contact number",
 			input: Phone,
 			type: "phone",
-			optional: true,
+			
 			size: 6,
+			required: true
 		},
 		email: {
 			label: 'Property manger\'s email address',
 			type: 'string',
 			input: Text,
+			required: true
 		},
 	}
 
@@ -42,19 +44,19 @@ const UserProfileSchema = {
 		type: "string",
 		input: Text,
 		size: 6,
-		options: () => {
-		}
+		required: true
 	},
 	lastName: {
 		label: "Last name",
 		type: "string",
 		input: Text,
-		size: 6
+		size: 6,
 	},
 	name: {
 		label: "Display name",
 		input: Text,
 		type: "string",
+		required: true
 	},
 	email: {
 		label: "Email address",
@@ -64,19 +66,19 @@ const UserProfileSchema = {
 	phone: {
 		label: "Phone number",
 		input: Phone,
-		optional: true,
+		
 		type: "phone",
 	},
 	phone2: {
 		label: "Phone number 2",
 		input: Phone,
-		optional: true,
+		
 		type: "phone",
 	},
 	tenancy: {
 		label: "Tenancy",
 		input: Text,
-		optional: true,
+		
 		type: "string",
 		condition: ( item ) => {
 			let user = Users.collection._transform({}),
@@ -90,7 +92,6 @@ const UserProfileSchema = {
 		label: 'Status',
 		input:Select,
 		type:"string",
-		optional: true,
 		options: {
 			items: ['Tenant', 'Owner'] ,
 		},
@@ -100,7 +101,6 @@ const UserProfileSchema = {
 	},
 	facility: {
 		label: "Site Address",
-		optional: true,
 		type: "object",
 		relation: {
 			join: ( item ) => {
@@ -138,7 +138,6 @@ const UserProfileSchema = {
 		label: "Level",
 		input: Select,
 		type: "object",
-		optional: true,
 		size: 6,
 		condition: ( item ) => {
 			return role === "resident"
@@ -151,7 +150,6 @@ const UserProfileSchema = {
 	},
 	apartment: {
 		label: "Apartment",
-		optional: true,
 		type:"object",
 		input: Select,
 		size: 6,
@@ -241,7 +239,6 @@ const UserProfileSchema = {
 		label: "Property manager",
 		input: Text,
 		type: 'string',
-		optional: true,
 		condition: ( item ) => {
 			return role === "resident"
 		}
@@ -250,7 +247,6 @@ const UserProfileSchema = {
 	propertyMangerContact: {
 		label: "Property manager contact",
 		type: 'object',
-		optional: true,
 		subschema: ManagerContactSchema,
 		condition: ( item ) => {
 			return role === "resident"
@@ -260,7 +256,6 @@ const UserProfileSchema = {
 	realEstateAgency:{
 		label: 'Real estate agency',
 		type: 'string',
-		optional: true,
 		input: Text,
 		condition: ( item ) => {
 			return role === "resident"
@@ -269,7 +264,6 @@ const UserProfileSchema = {
 
 	agentContact:{
 		label:'Agent contact details',
-		optional: true,
 		type: "object",
 		subschema:{
 			number:{
@@ -293,7 +287,7 @@ const UserProfileSchema = {
 	leaseExpiry: {
 		label: "Lease expiry",
 		input: DateInput,
-		optional: true,
+		
 		type: "date",
 		defaultValue: () => ( new Date() ),
 		condition: ( item ) => {
