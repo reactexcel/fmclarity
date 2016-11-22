@@ -37,7 +37,7 @@ const Phone = React.createClass( {
                  return;
         }
         // Ensure that it is a number and stop the keypress
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105) && e.keyCode !== 32) {
             e.preventDefault();
         }
 			var input = this.refs.input;
@@ -50,22 +50,83 @@ const Phone = React.createClass( {
 	        } else if(value.length == 9) {
 	            input.value=value.substr(0, 8);
 	        }
-	    } else {
-	        if(value.length == 2) {
-	            input.value="("+value + ") ";
-	        } else if(value.length == 9) {
-	            input.value=value + " ";
-	        }
-	        else if(value.length == 14) {
-	        	e.preventDefault();
-	        }
-	        
-	    }
+	    } 
 	},
+	handleKeyUp(e){
+		var input_length = e.target.value.length;
+		var toll_free_numbers = ['1300', '1800'];
+	    var landline_numbers = ['02','03','07','08'];
+	    var mobile_phone_number = '04';
+	    var isTollfree = false;
+	    var ismobile = false;
+	    var isLandline = false;
 
+	    // check for toll free number entries
+		if(input_length >= 4 && ($.inArray(e.target.value.substr(0, 4), toll_free_numbers) !== -1)){
+
+			isTollfree = true;
+			if (input_length==4) {
+				e.target.value = e.target.value + " ";
+			}
+			else if(input_length==8){
+				e.target.value = e.target.value + " ";
+			}
+			else if(input_length >= 12){
+				e.target.value = e.target.value.substr(0, 12);
+			}
+		}
+
+		//check for landline numbers
+		if (input_length >=2 && (($.inArray(e.target.value.substr(0, 2), landline_numbers) !== -1) || 
+			($.inArray(e.target.value.substr(1, 2), landline_numbers) !== -1))) {
+			isLandline=true;
+			if (input_length==2) {
+				e.target.value = "("+e.target.value + ") ";
+			}
+			else if(input_length==9){
+				e.target.value = e.target.value + " ";
+			}
+			else if(input_length >= 14){
+				e.target.value = e.target.value.substr(0, 14);
+			}
+		}
+
+		// check for mobile number entry
+		if (input_length >= 4 && e.target.value.substr(0, 2)=='04') {
+			ismobile = true;
+			if (input_length==4) {
+				e.target.value = e.target.value + " ";
+			}
+			else if(input_length==8){
+				e.target.value = e.target.value + " ";
+			}
+			else if(input_length >= 12){
+				e.target.value = e.target.value.substr(0, 12);
+			}
+		}
+		
+	},
 	handleSelect( event ) {
 		if ( this.props.onSelect ) {
 			this.props.onSelect( event.target.value );
+		}
+	},
+
+	handleOnBlur( e ) {
+		if(e.target.value.length == 6 && e.target.value.substr(0, 2)=='13'){
+			e.target.value=e.target.value.substr(0,2)+" "+e.target.value.substr(2,2)+" "+e.target.value.substr(4,2);
+		}
+		var acceptted_values=['18', '13', '02', '03', '04','07', '08'];
+		if (($.inArray(e.target.value.substr(0, 2), acceptted_values) === -1)) {
+			e.target.value="";
+		}
+		var tolls=['18','13'];
+		if (($.inArray(e.target.value.substr(0, 2), tolls) !== -1) && (e.target.value.substr(2, 2) != '00' || e.target.value.length != 12) ) {
+			e.target.value="";
+		}
+		var landlines=['02', '03','07', '08'];
+		if (($.inArray(e.target.value.substr(0, 2), landlines) !== -1) && e.target.value.length != 14 ) {
+			e.target.value="";
 		}
 	},
 
@@ -96,6 +157,8 @@ const Phone = React.createClass( {
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       			onKeyDown		= { this.handleKeyDown }
+      			onKeyUp			= { this.handleKeyUp }
+      			onBlur			= { this.handleOnBlur }
       		/>
 
 	        {
