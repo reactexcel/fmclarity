@@ -38,9 +38,6 @@ const invite = new Action( {
 			group.sendMemberInvite( member );
 			window.alert("Invitation has been sent to \""+ member.getName() + "\"");
 		}
-		Modal.show( {
-			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate } />
-		} )
 	}
 } )
 

@@ -47,6 +47,7 @@ const RequestSchema = {
 	name: {
 		label: "Requested Work",
 		type: "string",
+		required: true,
 		input: Text,
 		description: "A brief, descriptive, title for the work request"
 	},
@@ -73,6 +74,7 @@ const RequestSchema = {
 		label: "Request type",
 		description: "The work request type (ie Ad-hoc, Preventative)",
 		type: "string",
+		required: true,
 		defaultValue: () => {
 			let team = Session.get( 'selectedTeam' ),
 				teamType = null;
@@ -110,6 +112,7 @@ const RequestSchema = {
 		description: "The urgency of the requested work",
 		type: "string",
 		defaultValue: "Standard",
+		required: true,
 		condition: ( request ) => {
 			return request.type != "Preventative" && request.type != 'Booking'
 		},
@@ -141,7 +144,7 @@ const RequestSchema = {
 		description: "The frequency with which this job should occur",*/
 		condition: "Preventative",
 		subschema: RequestFrequencySchema,
-		optional: true,
+		required: true,
 		type: "object",
 	},
 
@@ -150,6 +153,7 @@ const RequestSchema = {
 		type: "string",
 		input: Text,
 		size: 6,
+		required: true,
 		condition: "Booking"
 	},
 
@@ -187,6 +191,7 @@ const RequestSchema = {
 		size: 4,
 		type: "object",
 		input: Select,
+		required: true,
 		condition: ( item ) => {
 			let selectedTeam = Session.get( 'selectedTeam' ),
 				teamType = null;
@@ -207,7 +212,6 @@ const RequestSchema = {
 		size: 4,
 		type: "object",
 		input: Select,
-		optional: true,
 		condition: ( item ) => {
 			let selectedTeam = Session.get( 'selectedTeam' ),
 				teamType = null;
@@ -229,7 +233,6 @@ const RequestSchema = {
 		size: 4,
 		type: "object",
 		input: Select,
-		optional: true,
 		condition: ( item ) => {
 			let selectedTeam = Session.get( 'selectedTeam' ),
 				teamType = null;
@@ -253,6 +256,7 @@ const RequestSchema = {
 		size: 6,
 		type: "object",
 		input: Select,
+		required: true,
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam(),
 				teamType = null,
@@ -337,7 +341,6 @@ const RequestSchema = {
 			}
 			return true;
 		},
-		optional: true,
 		options: ( item ) => {
 			return {
 				items: item.service ? item.service.children : null,
@@ -376,7 +379,6 @@ const RequestSchema = {
 		description: "A detailed description of the work to be completed",
 		type: "string",
 		input: TextArea,
-		optional: true
 	},
 
 	issueComment: {
@@ -384,6 +386,7 @@ const RequestSchema = {
 		description: "Comment about the issuing of this work request",
 		type: "string",
 		input: TextArea,
+		required: true,
 	},
 
 	acceptComment: {
@@ -391,6 +394,7 @@ const RequestSchema = {
 		description: "Comment about the acceptance of this work request",
 		type: "string",
 		input: TextArea,
+		required: true,
 	},
 
 	rejectComment: {
@@ -398,27 +402,31 @@ const RequestSchema = {
 		description: "The reason why this job was rejected",
 		type: "string",
 		input: TextArea,
+		required: true,
 	},
 
 	closeComment: {
 		label: "Close comment",
 		description: "Closing comments about this job",
 		type: "string",
-		input: TextArea
+		input: TextArea,
+		required: true,
 	},
 
 	reverseComment: {
 		label: "Comment",
 		description: "Reason for reversal",
 		type: "string",
-		input: TextArea
+		input: TextArea,
+		required: true,
 	},
 
 	reopenComment: {
 		label: "Comment",
 		description: "Reason for reopening",
 		type: "string",
-		input: TextArea
+		input: TextArea,
+		required: true,
 	},
 
 	//////////////////////////////////////////////////
@@ -466,7 +474,6 @@ const RequestSchema = {
 		type: "number",
 		size: 6,
 		defaultValue: '500',
-		optional: true,
 		input: Currency,
 		condition: ( request ) => {
 			return _.indexOf( [ "Ad-hoc", "Contract", "Tenancy" ], request.type ) > -1 ? ( Meteor.user().getRole() != "staff" ) : false;
@@ -488,6 +495,7 @@ const RequestSchema = {
 		description: "Latest date that the work can be completed",
 		input: DateTime,
 		size: 6,
+		required: true,
 		defaultValue: getDefaultDueDate
 	},
 
@@ -497,6 +505,7 @@ const RequestSchema = {
 		description: "Date and time that the job was issued",
 		input: DateTime,
 		size: 6,
+		required: true,
 		defaultValue: ""
 	},
 
@@ -504,6 +513,7 @@ const RequestSchema = {
 		label: "ETA",
 		description: "Time the supplier is expected to attend the site",
 		size: 6,
+		required: true,
 		input: DateTime,
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam();
@@ -561,6 +571,7 @@ const RequestSchema = {
 		label: "Site Address",
 		description: "The site for this job",
 		type: "object",
+		required: true,
 		relation: {
 			join: ( item ) => {
 				if ( item.facility && item.facility._id ) {
@@ -626,7 +637,6 @@ const RequestSchema = {
 		label: "Supplier",
 		description: "The supplier who has been assigned to this job",
 		type: "object",
-		optional: true,
 		relation: {
 			type: ORM.HasOne,
 			source: Teams,

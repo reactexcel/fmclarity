@@ -36,7 +36,7 @@ Meteor.methods({
   'Messages.sendEmail':function(user,message) {
     if(Meteor.isServer) {
 
-      console.log( EmailMessageView );
+      //console.log( EmailMessageView );
 
       //check([to, from, subject, text], [String])
 
@@ -60,8 +60,8 @@ Meteor.methods({
         to = user.name?(user.name+" <"+user.profile.email+">"):user.profile.email;
 
         devMsg = {
-          //to:["leo@fmclarity.com", "rich@fmclarity.com"]
-          to:["ttest.55.0.54@gmail.com"]
+          to:["leo@fmclarity.com", "rich@fmclarity.com"]
+          //to:["ttest.55.0.54@gmail.com"]
         }
 
         if(FM.inProduction()) {
