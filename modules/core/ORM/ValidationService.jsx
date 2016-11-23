@@ -169,7 +169,7 @@ function checkPhoneNumber( rule, value, key, errors ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if ( !value.match( p ) && value != '') {
-		errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
+		// errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
 	}
 
 }
