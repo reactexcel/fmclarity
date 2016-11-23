@@ -8,33 +8,18 @@ import { Text, Phone, DateInput, Select, FileField } from '/modules/ui/MaterialI
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
+
+import { UserViewEdit } from '/modules/models/Users';
+import { ContactCard } from '/modules/mixins/Members';
+import React from "react";
+
 /**
  * @memberOf 		module:models/Users
  */
 
 var role = null,
-	userId = null;
-
-const ManagerContactSchema = {
-		/*name: {
-			label: "Property manger's name",
-			type: "string",
-			input: Text,
-			size: 6,
-		},*/
-		phone: {
-			label: "Property manger\'s contact number",
-			input: Phone,
-			type: "phone",
-			optional: true,
-			size: 6,
-		},
-		email: {
-			label: 'Property manger\'s email address',
-			type: 'string',
-			input: Text,
-		},
-	}
+	userId = null,
+	currentState = null;
 
 const UserProfileSchema = {
 	firstName: {
@@ -127,6 +112,10 @@ const UserProfileSchema = {
 					}
 					item.level = null;
 					item.apartment = null;
+					item.propertyManger = null;
+					item.propertyMangerPhone = null;
+					item.propertyMangerEmail = null;
+					currentState = item;
 				},
 			}
 		},
@@ -140,12 +129,15 @@ const UserProfileSchema = {
 		type: "object",
 		optional: true,
 		size: 6,
-		condition: ( item ) => {
+		condition: ( item ) => {import { ContactCard } from '/modules/mixins/Members';
 			return role === "resident"
 		},
 		options: ( item ) => {
 			return {
-				items: item.facility ? item.facility.areas : null
+				items: item.facility ? item.facility.areas : null,
+				afterChange: ( item ) => {
+					item.apartment = item.propertyManger = item.propertyMangerPhone = item.propertyMangerEmail = null;
+				}
 			}
 		}
 	},
@@ -160,7 +152,19 @@ const UserProfileSchema = {
 		},
 		options: ( item ) => {
 			return {
-				items: item.level ? item.level.children : null
+				items: item.level ? item.level.children : null,
+				afterChange: ( item ) => {
+					if ( item.apartment.propertyManger ) {
+						let _id =  item.apartment.propertyManger._id,
+							pm = Users.findOne( _id );
+						item.propertyManger = pm.profile.firstName + " " + pm.profile.lastName;
+						item.propertyMangerPhone = pm.profile.phone;
+						item.propertyMangerEmail = pm.profile.email;
+					} else {
+						item.propertyManger = item.propertyMangerPhone = item.propertyMangerEmail = null;
+					}
+					currentState = item;
+				}
 			}
 		}
 	},
@@ -228,33 +232,142 @@ const UserProfileSchema = {
 			},
 			email: {
 				label: 'Contact email address 2',
-				type: 'string',
-				input: Text,
+					type: 'string',
+					input: Text,
+				},
+			},
+			condition: ( item ) => {
+				return role === "resident"
+			},
+		},*/
+
+		propertyManger: {
+			label: "Property manager",
+			input: Text,
+			type: 'object',
+			optional: true,
+			condition: ( item ) => {
+				return role === "resident"
 			},
 		},
+
+
+
+/*
+propertyManger: {
+	label: "Property manager",
+	input: Select,
+	type: 'object',
+	optional: true,
+	condition: ( item ) => {
+		if ( item.apartment.propertyManger ) {
+			let _id = item.apartment.propertyManger._id || "";
+			item.apartment.propertyManger = Users.findOne( _id );
+		}
+		return role === "resident"
+	},
+	options: ( item ) => {
+		return {
+			view: ContactCard,
+			addNew:{//Add new facility to current selectedTeam.
+				show: !item.propertyManger && item.facility && item.apartment,
+				label: "Add Property Manger",
+				onAddNewItem: ( callback ) => {
+					Modal.show( {
+						content: <UserViewEdit team={Session.getSelectedTeam()} group={item.facility} addPersonnel={
+							( pm ) => {
+								callback( pm );
+								item.propertyMangerPhone = pm.profile.phone;
+								item.propertyMangerEmail = pm.profile.email;
+								item.apartment.propertyManger = pm;
+								let areas = item.facility.areas,
+									level = item.level,
+									apartment = item.apartment;
+								for ( i in level.children || [] ) {
+									if ( level.children[i].name === apartment.name ) {
+										level.children[i].propertyManger = pm;
+										break;
+									}
+								}
+								for ( i in areas ) {
+									if ( areas[i].name === level.name ) {
+										areas[i] = level;
+										break;
+									}
+								}
+								item.facility.setAreas( areas );
+							}
+						}/>
+					} )
+				}
+			},
+		}
+	},
+},
+*/
+	propertyMangerPhone: {
+		label: "Property manger\'s contact number",
+		input: Phone,
+		type: "phone",
+		optional: true,
 		condition: ( item ) => {
 			return role === "resident"
 		},
-	},*/
-
-	propertyManger: {
-		label: "Property manager",
-		input: Text,
-		type: 'string',
-		optional: true,
-		condition: ( item ) => {
-			return role === "resident"
-		}
+		options: (  ) => ( {
+			afterChange: ( item ) => {
+				updatePropertyManager( item );
+			}
+		} )
 	},
+	propertyMangerEmail: {
+		label: 'Property manger\'s email address',
+		type: 'string',
+		input: ( props ) => (
+			<div className="row">
+				<div className="col-sm-8">
+					<Text {...props} />
+				</div>
+				<div className="col-sm-4">
+					<a href="#" style={ { fontSize:"10px" } }
+						onClick={ ( e ) => {
 
-	propertyMangerContact: {
-		label: "Property manager contact",
-		type: 'object',
+							let facility = currentState.profile ? currentState.profile.facility : currentState.facility,
+								email = currentState.profile ? currentState.profile.propertyMangerEmail : propertyMangerEmail ,
+								regex = /.+@.+\..+/i;
+							if ( !facility ){
+								return;
+							}
+
+							facility = Facilities.findOne( facility._id );
+
+							if ( !regex.test( email ) ) {
+								alert( 'Please enter a valid email address' );
+							} else {
+								facility.invitePropertyManager( email, {
+									role: "property manger"
+								}, function ( response ){
+									Session.getSelectedTeam().sendMemberInvite( response.user );
+									window.alert ( "Invitation has been sent to \"" + email + " \"" );
+								} );
+
+							}
+
+						} }>
+						<i className="fa fa-envelope" aria-hidden="true"> </i>
+						 Invite Property Manager
+					</a>
+				</div>
+			</div>
+		),
 		optional: true,
-		subschema: ManagerContactSchema,
 		condition: ( item ) => {
 			return role === "resident"
-		}
+		},
+		options: (  ) => ( {
+			afterChange: ( item ) => {
+				updatePropertyManager( item );
+			}
+		} )
 	},
 
 	realEstateAgency:{
@@ -312,8 +425,34 @@ const UserSchema = {
 		options: ( item ) => {
 			//get Id of selected user from list or new user
 			userId = item._id;
+			currentState = item;
 		},
 	}
+}
+
+function updatePropertyManager( item ) {
+
+	let areas = item.facility.areas,
+		level = item.level,
+		apartment = item.apartment;
+		currentState = item;
+	for ( i in level.children || [] ) {
+		if ( level.children[i].name === apartment.name ) {
+			level.children[i].propertyManger = {
+				name: item.propertyManger || "",
+				email: item.propertyMangerEmail || "",
+			};
+			break;
+		}
+	}
+	for ( i in areas ) {
+		if ( areas[i].name === level.name ) {
+			areas[i] = level;
+			break;
+		}
+	}
+	item.facility.setAreas( areas );
+
 }
 
 export default UserSchema;

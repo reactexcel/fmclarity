@@ -25,7 +25,7 @@ const TeamInviteEmailTemplate = React.createClass({
 
         console.log( this.props );
 
-    	if(this.props.team) 
+    	if(this.props.team)
 	    	team = Teams.findOne(this.props.team._id);
 	    if(this.props.user)
 	    	user = Users.findOne(this.props.user._id);

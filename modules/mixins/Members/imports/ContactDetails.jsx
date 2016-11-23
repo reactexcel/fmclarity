@@ -4,7 +4,7 @@ export default function ContactDetails( props ) {
     var contact, contactName;
     var contact = props.item;
     if ( contact != null ) {
-        contactName = contact.getName ? contact.name : contact.name;
+        contactName = contact.getName ? contact.getName() : contact.name;
         contact = contact.getProfile ? contact.getProfile() : contact;
     }
     if ( !contact ) {

@@ -87,8 +87,11 @@ const Select = React.createClass( {
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
-			disabled = true;
-			readOnly = true;
+			if ( !addNew ) {
+				disabled = true;
+				readOnly = true;
+			}
+			items = [];
 		}
 
 		if ( errors != null && errors.length > 0 ) {
@@ -193,7 +196,7 @@ const Select = React.createClass( {
 										</span>
 
 										<span className="active-link" style={{fontStyle:"italic"}}>
-										 	{addNew.label} 
+										 	{addNew.label}
 										</span>
 
 									</div>
