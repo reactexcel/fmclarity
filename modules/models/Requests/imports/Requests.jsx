@@ -222,6 +222,29 @@ Requests.methods( {
 		}
 	},
 
+	getDueDate: {
+		authentication: true,
+		helper: ( request ) => {
+            if ( request.frequency ) {
+                let dueDate = moment( request.dueDate ),
+                	repeats = parseInt( request.frequency.repeats ),
+                	period = {};
+
+                console.log( request.dueDate );
+
+                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                console.log(period);
+                for ( var i = 0; i < repeats; i++ ) {
+
+                	if( dueDate.isAfter() ) {
+                		return dueDate.format('L');
+                	}
+                	dueDate = dueDate.add( period );
+                }
+            }
+		}
+	},
+
 	getDocs: {
 		authentication: true,
 		helper: function( request ) {

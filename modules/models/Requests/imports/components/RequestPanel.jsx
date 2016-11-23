@@ -182,6 +182,7 @@ const RequestPanelInner = ( { request, owner } ) => {
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
+                    hide:       (teamType == 'contractor'),
                     content:    <ContactList group = { request } readOnly = { true }/>
                 }
             ]} />

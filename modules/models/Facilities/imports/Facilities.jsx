@@ -11,7 +11,7 @@ import { Model } from '/modules/core/ORM';
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
-import { DocMessages } from '/modules/models/Messages';
+import { Messages, DocMessages } from '/modules/models/Messages';
 //import { DocAttachments } from '/modules/models/Documents';
 import { Documents } from '/modules/models/Documents';
 
@@ -134,6 +134,21 @@ Facilities.actions( {
 				}
 			} )
 			return services;
+		}
+	},
+	getMessages: {
+		authentication: true,
+		helper: ( facility ) => {
+			let requests = Meteor.user().getRequests( { 'facility._id': facility._id } ),
+				messages = null;
+
+			if( requests ) {
+				let requestIds = _.pluck( requests, '_id' );
+				if( requestIds ) {
+					messages = Messages.findAll( { 'inboxId.query._id': { $in:requestIds } } );
+				}
+			}
+			return messages;
 		}
 	},
 

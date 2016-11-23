@@ -27,7 +27,6 @@ export default MessageView = React.createClass( {
             if ( inbox != null && message.getTargetId() == inbox._id ) {
                 messageIsInContext = true;
             }
-
         }
         return {
             messageIsInContext: messageIsInContext,
@@ -76,10 +75,13 @@ export default MessageView = React.createClass( {
     },
 
     render() {
-        var message = this.data.message || {};
-        var owner = this.data.owner || Meteor.user();
-        var createdAt = message.createdAt;
-        var used = false; {
+        let message = this.data.message || {},
+            owner = this.data.owner || Meteor.user(),
+            createdAt = message.createdAt,
+            used = false,
+            hideContext = message.type=='comment'&&this.data.messageIsInContext;
+
+         {
             /*if(message.type=="comment") {
                         return (<div>
                             <ContactAvatarSmall item={owner}/>
@@ -101,7 +103,9 @@ export default MessageView = React.createClass( {
                 <div className={"media-body message-type-"+message.type} style={{whiteSpace:"pre-wrap"}}>
                     <div>
                         <small className="message-timestamp pull-right text-muted" style={{marginLeft:"10px"}}>{message.createdAt ? moment(message.createdAt).fromNow() : null}</small>
-                        {message.type=="comment"&&this.data.messageIsInContext?null:
+
+                        { !hideContext?
+
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                             message.verb?
@@ -110,7 +114,8 @@ export default MessageView = React.createClass( {
                                 <span>{message.subject}</span>
                             }
                         </div>
-                        }
+
+                        : null }
 
                         <div className="message-body">
                             {message.body}
