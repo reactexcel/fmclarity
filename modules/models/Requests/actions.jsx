@@ -370,21 +370,11 @@
  	type: 'request',
  	label: "Issue",
  	action: ( request ) => {
- 		let team = null,
- 			nextCode = 0;
-
- 		if ( request && request.team ) {
- 			team = Teams.findOne( {
- 				_id: request.team._id
- 			} );
- 			nextCode = team.getNextWOCode();
- 		}
 
  		let newRequest = Object.assign( {}, request, {
  			_id: Random.id(),
  			status: 'Issued',
- 			type: 'Preventative',
- 			code: nextCode,
+ 			type: 'Preventative'
  		});
 
 		Modal.replace( {

@@ -84,6 +84,15 @@ if ( Meteor.isServer ) {
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
 Facilities.actions( {
+	getTeam: {
+		authentication: true,
+		helper: ( facility ) => {
+			import { Teams } from '/modules/models/Teams';
+			if( facility.team && facility.team._id ) {
+				return Teams.findOne( facility.team._id );
+			}
+		}
+	},
 	getAreas: {
 		authentication: true,
 		helper: function( facility, parent ) {

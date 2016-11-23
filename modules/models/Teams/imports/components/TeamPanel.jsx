@@ -59,8 +59,13 @@ const TeamPanel = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var team, services, insuranceDocs;
-		team = this.props.item;
+		let team = null,
+			services = null,
+			insuranceDocs = null;
+
+		if ( this.props.item && this.props.item._id ) {
+			team = Teams.findOne( this.props.item._id );			
+		}
 
 		if ( team ) {
 			if( team.getAvailableServices ) {
@@ -78,7 +83,8 @@ const TeamPanel = React.createClass( {
 
 		}
 		return {
-			services: services,
+			team: team,
+			availableServices: services,
 			insuranceDocs: insuranceDocs
 		}
 	},
@@ -88,16 +94,14 @@ const TeamPanel = React.createClass( {
 	},
 
 	render() {
-		let team = this.props.item;
+		let { team, availableServices, insuranceDocs } = this.data;
 		if ( !team ) {
 			return <div/>
 		}
 
-		let insuranceDocs = this.data.insuranceDocs,
-			availableServices = this.data.services,
-			contactName = team.contact ? team.contact.name : null;
+		let contactName = team.contact ? team.contact.name : null,
+			insuranceExpiry;
 
-		let insuranceExpiry;
 		if ( insuranceDocs && insuranceDocs.length ) {
 			let primaryDoc = insuranceDocs[ 0 ];
 			if ( primaryDoc.expiryDate != null ) {
@@ -147,11 +151,11 @@ const TeamPanel = React.createClass( {
 					content: 	<AutoForm model = { Teams } item = { team } form = { ["documents"] } hideSubmit = { true } />
 				},{
 					//hide: 		!team.canAddMember(),
-					tab: 		<span id="personnel-tab"><span style={{color:"black"}}>Personnel</span></span>,
+					tab: 		<span id="personnel-tab"><span style = {{color:"black"}}>Personnel</span></span>,
 					content: 	<ContactList group = { team } team = { team }/>
 				},{
 					//hide: 		!team.canSetServicesProvided(),
-					tab: 		<span id="services-tab"><span style={{color:"black"}}>Services</span></span>,
+					tab: 		<span id="services-tab"><span style = {{color:"black"}}>Services</span></span>,
 					content: 	<ServicesProvidedEditor item = { team } save = { team.setServicesProvided.bind(team) }/>
 				}
 			]}/>

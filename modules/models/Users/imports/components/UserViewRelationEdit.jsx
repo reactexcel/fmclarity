@@ -24,8 +24,6 @@ export default UserViewRelationEdit = React.createClass( {
 
 		let relation = group.getMemberRelation( member );
 
-		console.log( relation );
-
 		if ( relation ) {
 			let role = relation.role;
 

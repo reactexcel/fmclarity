@@ -18,6 +18,7 @@ export default UserViewEdit = React.createClass( {
 	getMeteorData() {
 		let role = this.props.newMemberRole,
 			member = this.props.member,
+			team = this.props.team,
 			group = null,
 			relation = null;
 
@@ -66,14 +67,13 @@ export default UserViewEdit = React.createClass( {
 	//  in /modules/models/Users/actions.jsx
 	handleInvite( event ) {
 		event.preventDefault();
-		var team, group, role, input, email, regex, component;
-		component = this;
-		team = this.data.team;
-		group = this.data.group;
-		role = this.props.role;
-		input = this.refs.invitationEmail;
-		email = input.value;
-		regex = /.+@.+\..+/i
+
+		let { team, group } = this.data,
+			role = this.props.role;
+			input = this.refs.invitationEmail;
+			email = input.value;
+			regex = /.+@.+\..+/i;
+
 		if ( !regex.test( email ) ) {
 			alert( 'Please enter a valid email address' );
 		} else {
@@ -86,19 +86,19 @@ export default UserViewEdit = React.createClass( {
 					_id: creatorsTeam._id,
 					name: creatorsTeam.name
 				}
-			}, function( response ) {
+			}, ( response ) => {
 				var user = Users.findOne( response.user._id );
 				if ( !response.found ) {
-					component.setState( {
+					this.setState( {
 						shouldShowMessage: true
 					} );
 				}
-				component.setItem( user );
-				if ( group && group.canAddMember() ) {
+				if ( group && group._id != team._id ) {
 					group.addMember( user, {
 						role: role
 					} );
 				}
+				this.setItem( user );
 			} );
 		}
 	},
@@ -125,6 +125,9 @@ export default UserViewEdit = React.createClass( {
 	afterSubmit( newMember ) {
 		Modal.hide();
 		/*callback to update changes (name, email, profile pic, ...) made by user*/
+		if( this.data.group ) {
+			newMember.role = newMember.getRole( this.data.group );
+		}
 		if ( this.props.onUpdate ) {
 			this.props.onUpdate( newMember );
 		}

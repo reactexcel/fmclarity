@@ -363,9 +363,18 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
+	let code = null;
+ 	if ( request && request.team ) {
+ 		team = Teams.findOne( {
+ 			_id: request.team._id
+ 		} );
+ 		code = team.getNextWOCode();
+ 	}
+
 	Meteor.call( 'Issues.save', request, {
 		status: "Issued",
-		issuedAt: new Date()
+		issuedAt: new Date(),
+		code: code
 	} );
 
 	request = Requests.findOne( request._id );

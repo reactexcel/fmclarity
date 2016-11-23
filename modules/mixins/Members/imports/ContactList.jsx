@@ -16,7 +16,7 @@ export default ContactList = React.createClass( {
 	getMeteorData() {
 		let team = this.props.team,
 			role = this.props.defaultRole,
-			group = this.state.group,
+			group = this.props.group,
 			members = this.props.members,
 			filter = this.props.filter;
 
@@ -24,6 +24,8 @@ export default ContactList = React.createClass( {
 		// 1.passed in from members prop
 		// 2.loaded from group
 		// 3.initiated as blank array
+
+
 		if ( members == null ) {
 			if ( group != null ) {
 				members = group.getMembers( filter );
@@ -38,18 +40,6 @@ export default ContactList = React.createClass( {
 			team: team,
 			role: role,
 		}
-	},
-
-	getInitialState(){
-		return {
-			group: this.props.group,
-		};
-	},
-
-	componentWillReceiveProps( props ){
-		this.setState( {
-			group: props.group,
-		} )
 	},
 
 	// Display a pop up modal for the selected user
@@ -77,39 +67,11 @@ export default ContactList = React.createClass( {
 			} )
 		}
 	},
-	setItem( newItem ){
-		let group = this.data.group;
-
-		group.members = group.members || [];
-
-		group.members.push( {
-			_id : newItem._id,
-			name: newItem.profile.name,
-			role: newItem.role || "staff",
-		});
-
-		group.members = group.members.sort( function( a ,b ){
-			if( a.name && b.name ){
-				return a.name.localeCompare( b.name );
-			}else {
-				return 0;
-			}
-		});
-		
-		this.setState( {
-			group : group
-		} );
-	},
-	addPersonnel( newMember ){
-		this.data.group.addPersonnel( newMember );
-		this.setItem( newMember )
-	},
 	render() {
 		var members = _.uniq( this.data.members, false, ( i ) => {
 			return i._id;
 		} );
-		var team = this.data.team;
-		var group = this.data.group;
+		let { team, group } = this.data;
 		var canCreate = !this.props.readOnly;// && ( team && team.canAddMember() || group && group.canAddMember() );
 		return (
 			<div className="contact-list">
@@ -140,15 +102,15 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div
 			    	className	= "contact-list-item"
-			        onClick		= { () => { MemberActions.create.run( group, null, this.addPersonnel ) } }
+			        onClick		= { () => { MemberActions.create.run( group, null, null, team ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 
 					<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
-						<i className="fa fa-plus"></i>
+						<i className = "fa fa-plus"></i>
 					</span>
 
-			        <span className="active-link" style={{fontStyle:"italic"}}>
+			        <span className = "active-link" style = {{ fontStyle:"italic" }} >
 			        	Add another
 			        </span>
 
