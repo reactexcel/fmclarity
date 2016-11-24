@@ -54,7 +54,7 @@ Actions.addAccessRule( {
 		'create team request',
 		'create team document',
 	],
-	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner' ],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
 	rule: { alert: true, email: true }
 } )
 
@@ -69,7 +69,7 @@ Actions.addAccessRule( {
 		'edit team member',
 		'delete team member',
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner' ],
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
 	rule: { alert: true }
 } )
 
@@ -80,14 +80,14 @@ Actions.addAccessRule( {
 		'view facility',
 		'destroy facility'
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', "property manager" ],
 	rule: { alert: true }
 } )
 
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', 'assignee' ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager" ],
 	rule: { alert: true }
 } )
 
@@ -137,7 +137,7 @@ Actions.addAccessRule( {
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', "property manager" ],
 	rule: { alert: true }
 } )
 
@@ -156,7 +156,7 @@ Actions.addAccessRule( {
 		'accept request',
 		'reject request',
 	],
-	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee', "property manager" ],
 	rule: { alert: true }
 } )
 
@@ -218,7 +218,7 @@ Actions.addAccessRule( {
 		'remove member',
 		'invite member'
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager' ],
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager', "property manager" ],
 	rule: { alert: true }
 } )
 
