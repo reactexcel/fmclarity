@@ -205,7 +205,6 @@ Facilities.actions( {
 				str =
 					( a.streetNumber ? a.streetNumber : '' ) +
 					( a.streetName ? ( ' ' + a.streetName ) : '' ) +
-					( a.streetType ? ( ' ' + a.streetType ) : '' ) +
 					( a.city ? ( ', ' + a.city ) : '' );
 			}
 			str = str.trim();
