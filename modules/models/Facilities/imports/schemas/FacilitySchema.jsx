@@ -74,6 +74,7 @@ const FacilitySchema = {
 		label: "Operating times",
 		description: "When this site is open",
 		type: "string",
+		optional: true,
 		input: Text
 	},
 
