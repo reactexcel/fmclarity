@@ -8,12 +8,14 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Teams } from '/modules/models/Teams';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import { ContactList } from '/modules/mixins/Members';
+import { ContactCard } from '/modules/mixins/Members';
 import { ServicesProvidedEditor } from '/modules/mixins/Services';
 
 import { AutoForm } from '/modules/core/AutoForm';
 import { OwnerCard } from '/modules/mixins/Owners';
 import { Stepper } from '/modules/ui/Stepper';
 
+import { Select } from '/modules/ui/MaterialInputs';
 
 /**
  * @class           TeamStepper
@@ -98,6 +100,7 @@ const TeamStepper = React.createClass( {
     getInitialState() {
         return {
             shouldShowMessage: false,
+            foundTeams: false,
             item: this.props.item
         }
     },
@@ -108,19 +111,20 @@ const TeamStepper = React.createClass( {
   		} );
   	},
 
-    handleInvite( event ) {
-        event.preventDefault();
+    handleInvite( team = {} ) {
+        
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
-        var searchName = input.value;
+        var searchName = team.name ? team.name : input.value;
         var component = this;
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
         } else {
           this.setState( { searchName: searchName} );
             input.value = '';
-            viewersTeam.inviteSupplier( searchName, function( invitee ){
+            var team_id = team._id || null;
+            viewersTeam.inviteSupplier( searchName, team_id, function( invitee ){
                 invitee = Teams.collection._transform( invitee );
 
                 /*if ( group && group.addSupplier ) {
@@ -157,17 +161,45 @@ const TeamStepper = React.createClass( {
     onNextWorkOrder( callback ){
       this.submitFormCallbackForWorkOrder = callback;
     },
+    handleChange(team){
+      
+      this.handleInvite(team);
+      
+    },
+
+    checkName(event){
+        event.preventDefault();
+      var searchName = this.refs.invitation.value;
+      teams = Teams.findAll( {name: {
+        $regex: searchName,
+        $options: 'i'
+    }}, { sort: { name: 1 } } );
+      if (teams.length>0) {
+        this.setState( { foundTeams: true} );
+
+      }
+      else{
+        this.setState( { foundTeams: false} );
+        this.setState( { searchName: searchName} );
+        console.log('current state='+this.state.searchName);
+        this.handleInvite();
+
+      }
+    },
+
     render() {
         var viewingTeam = this.data.viewingTeam;
-        //console.log( viewingTeam );
+        var teamsFound = this.state.foundTeams;
+        
 
         if ( !viewingTeam ) {
             return (
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
+                        {teamsFound ? <Select items={teams} view={ContactCard} onChange={this.handleChange} placeholder="Select Supplier from dropdown"/> : null }
                         <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
-                        <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.handleInvite }>Invite</button>
+                        <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
                     </div>
                 </form>
             )

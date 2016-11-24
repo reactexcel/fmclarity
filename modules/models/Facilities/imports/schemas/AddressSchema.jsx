@@ -14,7 +14,7 @@ export default AddressSchema = {
 		label: "Street name",
 		size: 6
 	},
-	streetType: {
+/*	streetType: {
 		label: "Type",
 		size: 3,
 		type: "string",
@@ -36,7 +36,7 @@ export default AddressSchema = {
 				"Terrace"
 			]
 		}
-	},
+	},*/
 	city: {
 		input: Text,
 		label: "City",

@@ -375,15 +375,14 @@ function getSuppliers() {
 		.fetch();
 }
 
-function inviteSupplier( team, searchName, callback ) {
+function inviteSupplier( team, searchName, id=null, callback ) {
 	var supplier;
 	searchName = searchName.trim();
-	supplier = Teams.findOne( {
-		name: {
-			$regex: searchName,
-			$options: 'i'
-		}
+	if (id) {
+		supplier = Teams.findOne( {
+		_id: id
 	} );
+	}
 	if ( !supplier ) {
 		//	supplier = Meteor.call( "Teams.create", {
 		supplier = Teams.create( {
@@ -413,6 +412,7 @@ function inviteSupplier( team, searchName, callback ) {
 			name: supplier.name
 		}, ( err, data ) => {
 			if ( _.isFunction( callback ) ) {
+				console.log('id='+id+' and returned supplier=:'+supplier);
 				callback( supplier );
 			}
 		} );
