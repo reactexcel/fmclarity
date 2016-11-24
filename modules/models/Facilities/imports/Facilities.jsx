@@ -11,9 +11,15 @@ import { Model } from '/modules/core/ORM';
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
 import { Members } from '/modules/mixins/Members';
-import { DocMessages } from '/modules/models/Messages';
+import { Messages, DocMessages } from '/modules/models/Messages';
 //import { DocAttachments } from '/modules/models/Documents';
 import { Documents } from '/modules/models/Documents';
+import { Users } from '/modules/models/Users';
+import { TeamInviteEmailTemplate } from '/modules/models/Teams';
+import { LoginService } from '/modules/core/Authentication'
+import ReactDOMServer from 'react-dom/server';
+import React from "react";
+
 
 if ( Meteor.isServer ) {
 	Meteor.publish( 'Facilities', function( q = {} ) {
@@ -84,6 +90,15 @@ if ( Meteor.isServer ) {
 //suggestion:
 //rename method to writeFunction and helper to readFunction?
 Facilities.actions( {
+	getTeam: {
+		authentication: true,
+		helper: ( facility ) => {
+			import { Teams } from '/modules/models/Teams';
+			if( facility.team && facility.team._id ) {
+				return Teams.findOne( facility.team._id );
+			}
+		}
+	},
 	getAreas: {
 		authentication: true,
 		helper: function( facility, parent ) {
@@ -125,6 +140,21 @@ Facilities.actions( {
 				}
 			} )
 			return services;
+		}
+	},
+	getMessages: {
+		authentication: true,
+		helper: ( facility ) => {
+			let requests = Meteor.user().getRequests( { 'facility._id': facility._id } ),
+				messages = null;
+
+			if( requests ) {
+				let requestIds = _.pluck( requests, '_id' );
+				if( requestIds ) {
+					messages = Messages.findAll( { 'inboxId.query._id': { $in:requestIds } } );
+				}
+			}
+			return messages;
 		}
 	},
 
@@ -324,22 +354,37 @@ Facilities.actions( {
 	addPersonnel: {
 		authentication: true,
 		method: ( facility, newMember ) => {
+			let user = Users.collection._transform({}),
+				group = user.getSelectedFacility();
+			user._id =  newMember._id;
+			role = user.getRole( facility );
 			Facilities.update( { _id: facility._id }, {
 				$push: {
 					members: {
 						_id: newMember._id,
 						name: newMember.profile.name,
-						role: newMember.role || "staff",
+						role: newMember.role || role || "staff",
 					}
 				}
 			} )
 		}
 	},
+
+	sendMemberInvite: {
+		authentication: true,
+		method: sendMemberInvite
+	},
+
 	destroy: {
 		authentication: true,
 		method: ( facility ) => {
 			Facilities.remove( { _id: facility._id } );
 		}
+	},
+
+	invitePropertyManager: {
+		authentication: true,
+		method: invitePropertyManager,
 	},
 
 	addPMP: {
@@ -355,5 +400,76 @@ Facilities.actions( {
 	},
 
 } )
+
+
+function invitePropertyManager( team, email, ext ) {
+	var user, id;
+	var found = false;
+	ext = ext || {};
+	//user = Accounts.findUserByEmail(email);
+	user = Users.findOne( {
+		emails: {
+			$elemMatch: {
+				address: email
+			}
+		}
+	} );
+	if ( user ) {
+		found = true;
+		Meteor.call( "Facilities.addMember", team, {
+			_id: user._id
+		}, {
+			role: ext.role
+		} );
+		return {
+			user: user,
+			found: found
+		}
+	} else {
+		var name = DocMessages.isValidEmail( email );
+		if ( name ) {
+			if ( Meteor.isServer ) {
+				//Accounts.sendEnrollmentEmail(id);
+				var params = {
+					name: name,
+					email: email
+				};
+				if ( ext.owner ) {
+					params.owner = ext.owner;
+				}
+				/** Added Users.createUser user is added **/
+				user = Meteor.call( "Users.createUser", params, '1234' )
+				Meteor.call( "Facilities.addMember", team, {
+					_id: user._id
+				}, {
+					role: ext.role
+				} );
+
+				return {
+					user: user,
+					found: true
+				}
+			}
+		} else {
+			return RBAC.error( 'email-blocked', 'Blocked:', 'Sorry, that email address has been blocked.' );
+		}
+	}
+
+}
+
+function sendMemberInvite( team, recipient ) {
+	console.log( recipient );
+	let body = ReactDOMServer.renderToStaticMarkup(
+		React.createElement( TeamInviteEmailTemplate, {
+			team: team,
+			user: recipient,
+			token: LoginService.generatePasswordResetToken( recipient )
+		} )
+	);
+	Meteor.call( 'Messages.sendEmail', recipient, {
+		subject: team.name + " has invited you to join FM Clarity",
+		emailBody: body
+	} )
+}
 
 export default Facilities;

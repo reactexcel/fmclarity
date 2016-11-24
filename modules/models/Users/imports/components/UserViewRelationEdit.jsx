@@ -24,14 +24,12 @@ export default UserViewRelationEdit = React.createClass( {
 
 		let relation = group.getMemberRelation( member );
 
-		console.log( relation );
-
 		if ( relation ) {
 			let role = relation.role;
 
 			return (
 				<Select
-					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant", "resident" ] }
+					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant", "resident", "property manager" ] }
 					value			= { role }
 					onChange		= { this.handleRoleChange }
 					placeholder 	= "Role"

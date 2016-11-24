@@ -48,7 +48,30 @@ const RequestPanelInner = ( { request, owner } ) => {
     if ( !request ) {
         return <div/>
     }
-    let teamType = Session.get('selectedTeam').type;
+    let teamType = Session.get('selectedTeam').type,
+        title = "";
+
+    if( request.type == 'Preventative' ) {
+        title = 'PPM';
+    }
+    else {
+        if( request.type == 'Booking' ) {
+            title = 'Room Booking';
+        }
+        else if( teamType == 'fm' ) {
+            title = "Work Order";
+        }
+        else {
+            title = "Job";
+        }
+        if( request.code ) {
+            title += ` # ${request.code}`
+        }
+        else {
+            title = "New "+title;
+        }
+    }
+
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -61,23 +84,7 @@ const RequestPanelInner = ( { request, owner } ) => {
                     </div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 
-                            { request.type == 'Booking' && request.code ?
-
-                                <h2>Room Booking No {request.code}</h2>
-
-                            : request.type == 'Booking' && !request.code ?
-
-                                <h2>Booking</h2>
-
-                            : !request.code ?
-
-                                <h2>Work Order</h2>
-
-                            :
-
-                                <h2>{ teamType=='fm'?"Work Order":"Job" } # {request.code}</h2>
-
-                            }
+                            <h2>{title}</h2>
 
                             { request.service && request.type!= 'Booking' ?
                             <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
@@ -175,6 +182,7 @@ const RequestPanelInner = ( { request, owner } ) => {
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
+                    hide:       (teamType == 'contractor'),
                     content:    <ContactList group = { request } readOnly = { true }/>
                 }
             ]} />

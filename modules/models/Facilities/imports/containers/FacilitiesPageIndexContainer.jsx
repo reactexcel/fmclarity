@@ -21,7 +21,12 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 		facilities = [];
 
 	if ( facility ) {
-		//console.log( Roles.getRoles( facility ) );
+		let requests = Meteor.user().getRequests( { 'facility._id': facility._id } );
+
+		if( requests ) {
+			let requestIds = _.pluck( requests, '_id' );
+			Meteor.subscribe( 'Inbox: Messages', requestIds );
+		}
 	}
 
 	if ( team ) {

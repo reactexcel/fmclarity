@@ -7,10 +7,10 @@ const create = new Action( {
 	name: 'create member',
 	label: "Create member",
 	type: [ 'team', 'user' ],
-	action: ( group, member, addPersonnel ) => {
+	action: ( group, member, addPersonnel, team ) => {
 		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
-			content: <UserViewEdit addPersonnel = { addPersonnel }/>
+			content: <UserViewEdit group = { group } team = { team } addPersonnel = { addPersonnel }/>
 		} )
 	}
 } )
@@ -22,7 +22,7 @@ const edit = new Action( {
 	action: ( group, member, onUpdate ) => {
 		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
-			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate } />
+			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate }/>
 		} )
 	}
 } )

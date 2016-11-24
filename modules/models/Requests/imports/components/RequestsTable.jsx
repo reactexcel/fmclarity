@@ -38,7 +38,12 @@ export default function RequestsTable( { requests, filter } ) {
             }
         },
         Facility: "facility.name",
-        "PO#": "code",
+        "PO#": ( item ) => {
+            return {
+                val:item.code? item.code : "",
+                originalVal: item.code
+            }
+        },
         Issue: "name",
         Issued: "issuedAt",
         Due: ( item ) => {

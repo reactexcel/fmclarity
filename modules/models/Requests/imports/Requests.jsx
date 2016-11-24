@@ -222,6 +222,29 @@ Requests.methods( {
 		}
 	},
 
+	getDueDate: {
+		authentication: true,
+		helper: ( request ) => {
+            if ( request.frequency ) {
+                let dueDate = moment( request.dueDate ),
+                	repeats = parseInt( request.frequency.repeats ),
+                	period = {};
+
+                console.log( request.dueDate );
+
+                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                console.log(period);
+                for ( var i = 0; i < repeats; i++ ) {
+
+                	if( dueDate.isAfter() ) {
+                		return dueDate.format('L');
+                	}
+                	dueDate = dueDate.add( period );
+                }
+            }
+		}
+	},
+
 	getDocs: {
 		authentication: true,
 		helper: function( request ) {
@@ -363,9 +386,18 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
+	let code = null;
+ 	if ( request && request.team ) {
+ 		team = Teams.findOne( {
+ 			_id: request.team._id
+ 		} );
+ 		code = team.getNextWOCode();
+ 	}
+
 	Meteor.call( 'Issues.save', request, {
 		status: "Issued",
-		issuedAt: new Date()
+		issuedAt: new Date(),
+		code: code
 	} );
 
 	request = Requests.findOne( request._id );

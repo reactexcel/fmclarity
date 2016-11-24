@@ -7,23 +7,29 @@ const PMPListTile = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        var request = this.props.item,
-            supplier = null;
+        let request = this.props.item,
+            supplier = null,
+            dueDate = null;
+
         if ( request ) {
             supplier = request.supplier;
+            dueDate = request.getDueDate();
         }
-        return { request, supplier };
+        return { request, supplier, dueDate };
     },
 
     render() {
-        var { request, supplier } = this.data;
+        var { request, supplier, dueDate } = this.data;
 
         return <div className = { "issue-summary" }>
-            <div className = "issue-summary-col" style = { {width:"40%"} }>
+            <div className = "issue-summary-col" style = { {width:"30%"} }>
                 { request.name }
             </div>
-            <div className = "issue-summary-col" style = {{width:"15%"}}>
+            <div className = "issue-summary-col" style = {{width:"12%"}}>
                 {`${request.frequency.number||''} ${request.frequency.unit||''}`}
+            </div>
+            <div className = "issue-summary-col" style = {{width:"12%"}}>
+                {dueDate?dueDate:''}
             </div>
             <div className = "issue-summary-col" style = { {float:"right",width:"35%",padding:"0px"} }>
                 <ContactCard item = { this.data.supplier }/> 

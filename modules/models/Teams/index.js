@@ -7,13 +7,15 @@ import TeamActions from './actions.jsx';
 import TeamFilter from './imports/components/TeamFilter.jsx';
 import TeamStepper from './imports/components/TeamStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
+import TeamInviteEmailTemplate from './imports/components/TeamInviteEmailTemplate.jsx';
 
 checkModules( {
 	Teams,
 	TeamActions,
 	TeamFilter,
 	TeamStepper,
-	TeamPanel
+	TeamPanel,
+	TeamInviteEmailTemplate
 } );
 
 /**
@@ -24,5 +26,6 @@ export {
 	TeamActions,
 	TeamFilter,
 	TeamStepper,
-	TeamPanel
+	TeamPanel,
+	TeamInviteEmailTemplate
 }
