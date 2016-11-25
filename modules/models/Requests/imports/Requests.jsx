@@ -222,7 +222,7 @@ Requests.methods( {
 		}
 	},
 
-	getDueDate: {
+	getNextDate: {
 		authentication: true,
 		helper: ( request ) => {
             if ( request.frequency ) {
@@ -230,18 +230,74 @@ Requests.methods( {
                 	repeats = parseInt( request.frequency.repeats ),
                 	period = {};
 
-                console.log( request.dueDate );
-
                 period[ request.frequency.unit ] = parseInt( request.frequency.number );
-                console.log(period);
                 for ( var i = 0; i < repeats; i++ ) {
 
                 	if( dueDate.isAfter() ) {
-                		return dueDate.format('L');
+                		return dueDate.toDate();
                 	}
                 	dueDate = dueDate.add( period );
                 }
             }
+		}
+	},
+
+	getPreviousDate: {
+		authentication: true,
+		helper: ( request ) => {
+            if ( request.frequency ) {
+                let dueDate = moment( request.dueDate ),
+                	nextDate = dueDate; 
+                	repeats = parseInt( request.frequency.repeats ),
+                	period = {};
+
+                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                for ( var i = 0; i < repeats; i++ ) {
+
+                	nextDate = dueDate.add( period );
+
+                	if( nextDate.isAfter() ) {
+                		if( !dueDate.isAfter() ) {
+	                		return dueDate.toDate();
+	                	}
+                	}
+                	dueDate = nextDate;
+                }
+            }
+		}
+	},
+
+	getNextRequest: {
+		authentication: true,
+		helper: ( request ) => {
+			let nextDate = request.getNextDate(),
+				nextRequest = null;
+
+			if( nextDate ) {
+				nextRequest = Requests.findOne({
+					name: request.name,
+					status: { $ne: 'PMP' },
+					dueDate: nextDate
+				} );
+			}
+			return nextRequest;
+		}
+	},
+
+	getPreviousRequest: {
+		authentication: true,
+		helper: ( request ) => {
+			let previousDate = request.getPreviousDate();
+				previousRequest = null;
+
+			if( previousDate ) {
+				previousRequest = Requests.findOne({
+					name: request.name,
+					status: { $ne: 'PMP' },
+					dueDate: previousDate
+				} );
+			}
+			return previousRequest;
 		}
 	},
 
