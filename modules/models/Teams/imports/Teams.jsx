@@ -412,7 +412,6 @@ function inviteSupplier( team, searchName, id=null, callback ) {
 			name: supplier.name
 		}, ( err, data ) => {
 			if ( _.isFunction( callback ) ) {
-				console.log('id='+id+' and returned supplier=:'+supplier);
 				callback( supplier );
 			}
 		} );

@@ -78,7 +78,7 @@ function FacilityPanel( { item } ) {
 					{
 						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
-						content:    <Inbox for = { facility } readOnly = { true } truncate = { true }/>
+						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
 						hide:     	!facility.canAddDocument()||teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,
@@ -86,11 +86,11 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.getTeam() }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
-						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.getTeam() }/>
+						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.team }/>
 					},{
 						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
@@ -101,7 +101,7 @@ function FacilityPanel( { item } ) {
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
 						hide:     	!facility.canAddPMP()||teamType!='fm',
-						tab:        <span id="pmp-tab">PPM</span>,
+						tab:        <span id="pmp-tab">PMP</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
 						hide:     	teamType!='fm',
