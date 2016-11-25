@@ -25,6 +25,7 @@ const FloatingActionButtonContainer = createContainer( ( { params } ) => {
 		actions = [
 			TeamActions.createRequest.bind( team ),
 			TeamActions.createFacility.bind( team ),
+			TeamActions.create.bind( team ),
 			TeamActions.createDocument.bind( team )
 		];
 

@@ -13,7 +13,7 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 const create = new Action( {
 	name: 'create team',
 	label: "Create team",
-	icon: 'fa fa-plus',
+	icon: 'fa fa-group',
 	action: () => {
 		let team = Teams.create();
 		console.log( team );
