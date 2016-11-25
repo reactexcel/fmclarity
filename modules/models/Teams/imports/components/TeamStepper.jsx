@@ -101,15 +101,16 @@ const TeamStepper = React.createClass( {
         return {
             shouldShowMessage: false,
             foundTeams: false,
+            facility: this.props.facility,
             item: this.props.item
         }
     },
     //Update the state of ui
     setItem( newItem ) {
-  		this.setState( {
-  			item: newItem
-  		} );
-  	},
+        this.setState( {
+            item: newItem
+        } );
+    },
 
     handleInvite( team = {} ) {
         
@@ -121,8 +122,10 @@ const TeamStepper = React.createClass( {
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
         } else {
-          this.setState( { searchName: searchName} );
-            input.value = '';
+          component.setState( { searchName: searchName} );
+          
+          this.setState({searchName: searchName}, () => {
+        input.value = '';
             var team_id = team._id || null;
             viewersTeam.inviteSupplier( searchName, team_id, function( invitee ){
                 invitee = Teams.collection._transform( invitee );
@@ -132,8 +135,12 @@ const TeamStepper = React.createClass( {
                 }*/
                component.setItem( invitee );
                 if ( component.props.onChange ) {
-                    component.props.onChange( invitee );
+                    setTimeout(function(){
+                        component.props.onChange( invitee );
+                    }, 250);
+                    
                 }
+                
                 if ( !invitee.email ) {
                     component.setState( {
                         shouldShowMessage: true
@@ -142,6 +149,8 @@ const TeamStepper = React.createClass( {
                     Modal.hide();
                 }
             }, null );
+            });
+            
         }
     },
 
@@ -161,7 +170,7 @@ const TeamStepper = React.createClass( {
     onNextWorkOrder( callback ){
       this.submitFormCallbackForWorkOrder = callback;
     },
-    handleChange(team){
+    handleTeamChange(team){
       
       this.handleInvite(team);
       
@@ -169,19 +178,17 @@ const TeamStepper = React.createClass( {
 
     checkName(event){
         event.preventDefault();
-      var searchName = this.refs.invitation.value;
-      teams = Teams.findAll( {name: {
-        $regex: searchName,
+      var inputName = this.refs.invitation.value;
+      searchTeams = Teams.findAll( {name: {
+        $regex: inputName,
         $options: 'i'
     }}, { sort: { name: 1 } } );
-      if (teams.length>0) {
+      if (searchTeams.length>0) {
         this.setState( { foundTeams: true} );
 
       }
       else{
         this.setState( { foundTeams: false} );
-        this.setState( { searchName: searchName} );
-        console.log('current state='+this.state.searchName);
         this.handleInvite();
 
       }
@@ -197,7 +204,7 @@ const TeamStepper = React.createClass( {
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
-                        {teamsFound ? <Select items={teams} view={ContactCard} onChange={this.handleChange} placeholder="Select Supplier from dropdown"/> : null }
+                        {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder="Select Supplier from dropdown"/> : null }
                         <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
                         <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
                     </div>
