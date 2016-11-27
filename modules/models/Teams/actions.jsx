@@ -100,13 +100,13 @@ const createRequest = new Action( {
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
 
-						if( newRequest.type != 'Preventative' && _.contains( [ 'manager', 'portfolio manager', 'fmc support' ], role) ) {
+						if( newRequest.type != 'Preventative' && _.contains( ['portfolio manager', 'fmc support' ], role) ) {
 							Meteor.call('Issues.issue', newRequest );
 						}
 						else {
 							Meteor.call('Issues.create', newRequest );
 						}
-                        if( newRequest.assignee && newRequest.assignee._id ) {
+                        if( newRequest.assignee && newRequest.assignee._id && _.contains( [ 'portfolio manager', 'fmc support' ], role) ) {
                             Meteor.call('Issues.save', newRequest, {
                                 status: 'In Progress'
                             } )
