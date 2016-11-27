@@ -51,7 +51,7 @@ Routes.addAccessRule( {
 		'account',
 		'abc'
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager' ],
+	role: [ 'fmc support', 'portfolio manager', 'manager', "caretaker" ],
 	condition: { type:'fm' }
 } )
 

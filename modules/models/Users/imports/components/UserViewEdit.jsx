@@ -10,6 +10,7 @@ import { ThumbView } from '/modules/mixins/Thumbs';
 import UserViewRelationEdit from './UserViewRelationEdit.jsx';
 
 import { Users } from '/modules/models/Users';
+import { Teams } from '/modules/models/Teams';
 
 export default UserViewEdit = React.createClass( {
 
@@ -36,7 +37,7 @@ export default UserViewEdit = React.createClass( {
 		}
 		return {
 			user: this.state.item,
-			team: this.props.team || Session.getSelectedTeam(),
+			team: this.props.team ? Teams.findOne( this.props.team._id ) : Session.getSelectedTeam(),
 			group: group || Session.getSelectedTeam(),
 			relation: relation,
 			role: role,
