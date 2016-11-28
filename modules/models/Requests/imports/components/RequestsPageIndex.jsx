@@ -8,6 +8,10 @@ import { FacilityFilter } from '/modules/models/Facilities';
 import { RequestActions, RequestsTable } from '/modules/models/Requests';
 
 import { RequestFilter } from '/modules/models/Requests';
+
+import { Switch } from '/modules/ui/MaterialInputs';
+import moment from 'moment';
+
 /**
  * @class 			RequestsPageIndex
  * @memberOf 		module:models/Requests
@@ -19,7 +23,8 @@ export default class RequestsPageIndex extends Component {
 		super(props);
 
 		this.state = {
-			requests: props.requests
+			requests: props.requests,
+			active: false,
 		};
 
 	}
@@ -33,7 +38,7 @@ export default class RequestsPageIndex extends Component {
 
 	render() {
 		let { team, facility, facilities, requests, selectedRequest } = this.props;
-
+		let user = Meteor.user();
 		if( !team ) {
 			return <div/>
 		}
@@ -59,6 +64,23 @@ export default class RequestsPageIndex extends Component {
 						 />
 					</div>
 					*/}
+					{ user.getRole && user.getRole() == 'fmc support' ?
+						<div className="col-xs-offset-9 col-xs-3" >
+							<Switch
+								value={ this.state.active}
+								onChange={ ( active ) => {
+									if( active ) {
+										let now  = new Date(),
+											requests = _.filter( this.state.requests, (r) => moment( r.dueDate ).isBefore( now ) );
+										this.setState( { active: active, requests: requests } );
+									} else {
+											this.setState( { active: active, requests: this.props.requests } );
+									}
+								}}>
+								Show Overdue Work Order only
+							</Switch>
+						</div> : null
+					}
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">

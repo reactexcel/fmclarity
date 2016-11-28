@@ -51,7 +51,7 @@ const Switch = React.createClass( {
 		var label = this.props.placeholder;
 		return (
 			<div className="md-switch">
-				<input 
+				<input
 					ref="input"
 					type="checkbox"
 					defaultChecked={value}
