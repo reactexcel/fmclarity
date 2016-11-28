@@ -131,6 +131,17 @@ const Phone = React.createClass( {
 		if (($.inArray(e.target.value.substr(1, 2), landlines) !== -1) && e.target.value.length != 14 ) {
 			e.target.value="";
 		}
+		// handle for copy/pasted data
+		if (e.target.value.substr(0, 2)=='04' && e.target.value.length== 10){
+			e.target.value=e.target.value.substr(0,4)+" "+e.target.value.substr(4,3)+" "+e.target.value.substr(7,3);
+		}
+		if (($.inArray(e.target.value.substr(0, 2), landlines) === -1) && e.target.value.length== 10){
+			e.target.value="("+e.target.value.substr(0,2)+") "+e.target.value.substr(2,4)+" "+e.target.value.substr(6,4);
+		}
+		/*if (($.inArray(e.target.value.substr(0, 4), acceptted_first_four_values) === -1) && e.target.value.length== 10){
+			e.target.value=e.target.value.substr(0,4)+" "+e.target.value.substr(4,3)+" "+e.target.value.substr(7,4);
+		}*/
+
 	},
 
 	render() {
