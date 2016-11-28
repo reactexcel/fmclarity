@@ -55,7 +55,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 					name: supplier.name
 				}
 				//should be this.props.facility.addSupplier(supplier,{service:foo,subservice:bar})
-			this.props.facility.addSupplier( supplier );
+			//this.props.facility.addSupplier( supplier );
 		} else {
 			service.data.supplier = null;
 		}

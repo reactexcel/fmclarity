@@ -160,7 +160,7 @@ const ServicesRequiredEditor = React.createClass( {
 							<div className="services-editor-child-block">
 								{expanded?
 									<div>
-										{service.children?service.children.map(function(subservice,subIdx){
+										{service.children?service.children.map( (subservice,subIdx) => {
 											var size=service.children.length;
 											var key = size+'-'+subIdx;
 											return (
