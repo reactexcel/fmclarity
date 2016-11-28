@@ -27,6 +27,7 @@ const UserProfileSchema = {
 		type: "string",
 		input: Text,
 		size: 6,
+		required: true,
 		options: () => {
 		}
 	},
@@ -39,11 +40,13 @@ const UserProfileSchema = {
 	name: {
 		label: "Display name",
 		input: Text,
+		required: true,
 		type: "string",
 	},
 	email: {
 		label: "Email address",
 		input: Text,
+		required: true,
 		type: "string",
 	},
 	phone: {

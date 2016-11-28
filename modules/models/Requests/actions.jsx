@@ -371,10 +371,13 @@
  	label: "Issue",
  	action: ( request ) => {
 
+        let dueDate = request.getNextDate();
+
  		let newRequest = Object.assign( {}, request, {
  			_id: Random.id(),
+            dueDate: dueDate,
  			status: 'Issued',
- 			type: 'Preventative'
+ 			type: 'Ad Hoc'
  		});
 
 		Modal.replace( {

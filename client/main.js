@@ -87,7 +87,7 @@ Actions.addAccessRule( {
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager" ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager", "caretaker", 'assignee' ],
 	rule: { alert: true }
 } )
 
@@ -96,7 +96,7 @@ Actions.addAccessRule( {
 	action: [
 		'create request',
 	],
-	role: [ 'staff' ],
+	role: [ 'staff', "caretaker" ],
 	rule: { alert: true }
 } )
 
@@ -122,7 +122,18 @@ Actions.addAccessRule( {
 
 
 Actions.addAccessRule( {
-	condition: { status: 'PMP' },
+	condition: ( request ) => {
+		if( request.status == 'PMP' ) {
+        	let nextRequest = request.getNextRequest();
+
+        	//console.log( nextRequest );
+
+        	if( nextRequest != null ) {
+	            return true;
+    	    }
+        	return false;
+        }
+    },
 	action: [
 		'clone request',
 	],
