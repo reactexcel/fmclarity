@@ -126,7 +126,7 @@ const TeamStepper = React.createClass( {
           
           this.setState({searchName: searchName}, () => {
         input.value = '';
-            var team_id = team._id || null;
+            var team_id = Random.id();
             viewersTeam.inviteSupplier( searchName, team_id, function( invitee ){
                 invitee = Teams.collection._transform( invitee );
 

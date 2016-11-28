@@ -47,7 +47,7 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             supplierNames = [];
 
         facilities.map( ( facility ) => {
-            let services = facility.servicesRequired;
+            let services = facility.servicesRequired || [];
             services.map( ( service ) => {
                 if( service.data && service.data.supplier ) {
                     supplierIds.push( service.data.supplier._id );
@@ -64,15 +64,17 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             } )
         } );
 
+        supplierIds = _.uniq( supplierIds );
+
         suppliers = Teams.find( 
             { $or : [
                 { _id: { $in: supplierIds } },
-                { name: { $in: supplierNames } },
+                //{ name: { $in: supplierNames } },
             ] },
             { sort: { name: 1 } }
         ).fetch();
 
-        suppliers = _.uniq( suppliers, ( i ) => {
+        suppliers = _.uniq( suppliers, false, ( i ) => {
             return i._id;
         } );        
     }
