@@ -87,7 +87,7 @@ Actions.addAccessRule( {
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager", "caretaker" ],
+	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager", "caretaker", 'assignee' ],
 	rule: { alert: true }
 } )
 
