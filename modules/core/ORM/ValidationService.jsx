@@ -171,6 +171,23 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	if ( !value.match( p ) && value != '') {
 		// errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
 	}
+	var valueString = value.match(/\d/g);
+	valueString = valueString.join("");
+	var landlines=['02', '03','07', '08'];
+	var acceptted_first_four_values=['1800', '1300'];
+	var acceptted_first_two_values=['04', '13'];
+		if (($.inArray(valueString.substr(0, 2), landlines) === -1) && ($.inArray(valueString.substr(0, 4), acceptted_first_four_values) === -1) && ($.inArray(valueString.substr(0, 2), acceptted_first_two_values) === -1) ) {
+			errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number." } );
+		}
+		if ((($.inArray(valueString.substr(0, 2), landlines) !== -1) && valueString.length != 10) || 
+			(($.inArray(valueString.substr(0, 4), acceptted_first_four_values) !== -1) && valueString.length != 10) || 
+			(valueString.substr(0, 2) == '04' && valueString.length != 10) || 
+			(valueString.length == 6 && valueString.substr(0, 2) != '13') || 
+			(valueString.substr(0, 4) == '1300' && valueString.length > 6 && valueString.length != 10) || 
+			((valueString.length != 6 && valueString.length !=10) && valueString.substr(0, 2) == '13')
+		 ) {
+			errors.push( { name: key, type: "Invalid type: please check the length of the number." } );
+		}
 
 }
 
