@@ -47,9 +47,10 @@ const Phone = React.createClass( {
 	    if(e.keyCode === 8) {
 	        if(value.length == 2) {
 	            input.value=value.substr(0, 1);
-	        } else if(value.length == 9) {
+	        } 
+	        /*else if(value.length == 9) {
 	            input.value=value.substr(0, 8);
-	        }
+	        }*/
 	    } 
 	},
 	handleKeyUp(e){
@@ -65,10 +66,10 @@ const Phone = React.createClass( {
 		if(input_length >= 4 && ($.inArray(e.target.value.substr(0, 4), toll_free_numbers) !== -1)){
 
 			isTollfree = true;
-			if (input_length==4) {
+			if (input_length==4 && e.keyCode !== 8) {
 				e.target.value = e.target.value + " ";
 			}
-			else if(input_length==8){
+			else if(input_length==8 && e.keyCode !== 8){
 				e.target.value = e.target.value + " ";
 			}
 			else if(input_length >= 12){
@@ -80,13 +81,14 @@ const Phone = React.createClass( {
 		if (input_length >=2 && (($.inArray(e.target.value.substr(0, 2), landline_numbers) !== -1) || 
 			($.inArray(e.target.value.substr(1, 2), landline_numbers) !== -1))) {
 			isLandline=true;
-			if (input_length==2) {
+			if (input_length==2 && e.keyCode !== 8) {
 				e.target.value = "("+e.target.value + ") ";
 			}
-			else if(input_length==9){
+			else if(input_length==9 && e.keyCode !== 8){
 				e.target.value = e.target.value + " ";
 			}
 			else if(input_length >= 14){
+				e.preventDefault();
 				e.target.value = e.target.value.substr(0, 14);
 			}
 		}
@@ -94,13 +96,14 @@ const Phone = React.createClass( {
 		// check for mobile number entry
 		if (input_length >= 4 && e.target.value.substr(0, 2)=='04') {
 			ismobile = true;
-			if (input_length==4) {
+			if (input_length==4 && e.keyCode !== 8) {
 				e.target.value = e.target.value + " ";
 			}
-			else if(input_length==8){
+			else if(input_length==8 && e.keyCode !== 8){
 				e.target.value = e.target.value + " ";
 			}
 			else if(input_length >= 12){
+				e.preventDefault();
 				e.target.value = e.target.value.substr(0, 12);
 			}
 		}
@@ -113,19 +116,19 @@ const Phone = React.createClass( {
 	},
 
 	handleOnBlur( e ) {
+		var isValid=true;
 		if(e.target.value.length == 6 && e.target.value.substr(0, 2)=='13'){
 			e.target.value=e.target.value.substr(0,2)+" "+e.target.value.substr(2,2)+" "+e.target.value.substr(4,2);
 		}
-		var acceptted_values=['18', '13', '02', '03', '04','07', '08'];
-		if (($.inArray(e.target.value.substr(0, 2), acceptted_values) === -1)) {
-			e.target.value="";
-		}
-		var tolls=['18','13'];
-		if (($.inArray(e.target.value.substr(0, 2), tolls) !== -1) && (e.target.value.substr(2, 2) != '00' || e.target.value.length != 12) ) {
-			e.target.value="";
-		}
+		var acceptted_first_four_values=['1800', '1300'];
+		var acceptted_first_two_values=['04', '13'];
+		
 		var landlines=['02', '03','07', '08'];
-		if (($.inArray(e.target.value.substr(0, 2), landlines) !== -1) && e.target.value.length != 14 ) {
+		if (($.inArray(e.target.value.substr(1, 2), landlines) === -1) && ($.inArray(e.target.value.substr(0, 4), acceptted_first_four_values) === -1) && ($.inArray(e.target.value.substr(0, 2), acceptted_first_two_values) === -1) ) {
+			e.target.value="";
+		}
+		
+		if (($.inArray(e.target.value.substr(1, 2), landlines) !== -1) && e.target.value.length != 14 ) {
 			e.target.value="";
 		}
 	},
