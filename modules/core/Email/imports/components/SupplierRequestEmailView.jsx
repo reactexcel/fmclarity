@@ -8,8 +8,8 @@ const SupplierRequestEmailView = React.createClass({
 
     mixins: [ReactMeteorData],
 
-    getMeteorData() { 
-        import { Requests } from '/modules/models/Requests';        
+    getMeteorData() {
+        import { Requests } from '/modules/models/Requests';
         var recipient, request, secret, expiry;
         request = Requests.findOne(this.props.item);
         recipient = Meteor.users.findOne(this.props.recipient);
@@ -54,7 +54,7 @@ const SupplierRequestEmailView = React.createClass({
         }
 
         if(secret) {
-            url = Meteor.absoluteUrl('u/'+ secret + '/' + request.getEncodedPath());
+            url = Meteor.absoluteUrl('u/'+ secret + '/' + request.getEncodedPath(), {rootUrl: "https://app.fmclarity.com"} );
         }
         else {
             url = request.getUrl();
@@ -68,7 +68,7 @@ const SupplierRequestEmailView = React.createClass({
                 <p>Hi{recipientName},</p>
                 <p>{team.getName()} has just issued you a work order <a href={url}>#{request.code} - {request.getName()} at {facility.getName()}</a>.</p>
                 <p>The priority is listed as {request.priority} and it is due to be completed by {dueDate}.</p>
-                <p>To access full details of the work order, please click the above link (no login required).&nbsp; 
+                <p>To access full details of the work order, please click the above link (no login required).&nbsp;
                 {expiry?<span>This link will expire {expiry}</span>:null}.
                 </p>
                 <p>Any comments, images or files can be uploaded to the work order via the above link.</p>
