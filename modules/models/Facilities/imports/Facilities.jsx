@@ -193,7 +193,7 @@ Facilities.actions( {
 				} : null;
 
 				Facilities.update( facility._id, update );
-				facility.addSupplier( supplier );
+				//facility.addSupplier( supplier );
 			}
 		}
 	},
@@ -286,7 +286,7 @@ Facilities.actions( {
 						//add children service supplier to list
 						if ( s.children ) {
 							_.map( s.children, ( c ) => {
-								if ( c.data && typeof c.data.supplier != 'undefined' ) {
+								if ( c.data && c.data.supplier ) {
 									if ( c.data.supplier.name ) {
 										//check that supplier name is exists in list.
 										_.indexOf( names, c.data.supplier.name ) == -1 ? names.push( c.data.supplier.name ) : null;

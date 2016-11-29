@@ -18,6 +18,7 @@ export default TeamSchema = {
     //////////////////////////////////////////////
     // Basic info
     //////////////////////////////////////////////
+
     name: {
         type: "string",
         label: "Company Name",

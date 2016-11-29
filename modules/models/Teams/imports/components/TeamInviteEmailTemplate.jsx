@@ -23,7 +23,7 @@ const TeamInviteEmailTemplate = React.createClass({
     getMeteorData() {
     	var team,user,secret,expiry;
 
-        console.log( this.props );
+        //console.log( this.props );
 
     	if(this.props.team)
 	    	team = Teams.findOne(this.props.team._id);

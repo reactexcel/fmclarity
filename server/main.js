@@ -17,6 +17,8 @@ FM.inProduction = function() {
 	return process.env.METEOR_ENV === "production";
 };
 
+console.log( process.env );
+
 //var timeInMillis = 1000 * 10; // 10 secs
 //FlowRouter.setPageCacheTimeout(timeInMillis);
 //FlowRouter.setDeferScriptLoading(true);

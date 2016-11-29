@@ -71,7 +71,7 @@ const UserProfileSchema = {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 			user._id =  item._id || userId;
 			role = user.getRole();
-			return role === "tenant"
+			return role === "tenant";
 		},
 	},
 	status:{
@@ -83,7 +83,11 @@ const UserProfileSchema = {
 			items: ['Tenant', 'Owner'] ,
 		},
 		condition: ( item ) => {
-			return role === "resident"
+			let user = Users.collection._transform({}),
+				group = user.getSelectedFacility() || user.getSelectedTeam();
+			user._id =  item._id || userId;
+			role = user.getRole();
+			return role === "resident";
 		}
 	},
 	facility: {

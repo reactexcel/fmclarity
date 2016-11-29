@@ -291,6 +291,13 @@ Teams.methods( {
 		}
 	},
 
+	destroy: {
+		authentication: true,
+		method: function( team ) {
+			Teams.remove( team._id );
+		}
+	},
+
 	getAvailableServices: {
 		authentication: true,
 		helper: function( team, parent ) {
@@ -375,17 +382,13 @@ function getSuppliers() {
 		.fetch();
 }
 
-function inviteSupplier( team, searchName, id=null, callback ) {
+function inviteSupplier( team, searchName, id, callback ) {
 	var supplier;
 	searchName = searchName.trim();
-	if (id) {
-		supplier = Teams.findOne( {
-		_id: id
-	} );
-	}
 	if ( !supplier ) {
 		//	supplier = Meteor.call( "Teams.create", {
 		supplier = Teams.create( {
+			_id: id,
 			type: "contractor",
 			name: searchName,
 			owner: {
