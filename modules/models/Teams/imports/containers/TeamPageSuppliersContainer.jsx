@@ -69,7 +69,7 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
         suppliers = Teams.find( 
             { $or : [
                 { _id: { $in: supplierIds } },
-                //{ name: { $in: supplierNames } },
+                { name: { $in: supplierNames } },
             ] },
             { sort: { name: 1 } }
         ).fetch();

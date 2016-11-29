@@ -68,7 +68,7 @@ const PageLogin = React.createClass( {
 				</form>
 				<div>
 					<a href={FlowRouter.path('lost-password')}><small>Forgot password?</small></a><br/>
-					<small>No account? <a href={FlowRouter.path('register')}>Sign Up</a></small>
+					{/*<small>No account? <a href={FlowRouter.path('register')}>Sign Up</a></small>*/}
 				</div>
 				{ this.state.errorMessage &&
 					<div className="alert alert-danger alert-dismissable">

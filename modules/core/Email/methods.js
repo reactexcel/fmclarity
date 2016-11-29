@@ -64,7 +64,7 @@ Meteor.methods({
           to:["ttest.55.0.54@gmail.com"]
         }
 
-        if(FM.inProduction()) {
+        if( FM.inProduction() ) {
 
           email = {
               to:to,

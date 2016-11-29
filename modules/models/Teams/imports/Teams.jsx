@@ -291,6 +291,13 @@ Teams.methods( {
 		}
 	},
 
+	destroy: {
+		authentication: true,
+		method: function( team ) {
+			Teams.remove( team._id );
+		}
+	},
+
 	getAvailableServices: {
 		authentication: true,
 		helper: function( team, parent ) {

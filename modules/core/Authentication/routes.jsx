@@ -32,6 +32,7 @@ AccessGroups.exposed.add( {
 	}
 } );
 
+/*
 AccessGroups.exposed.add( {
 	name: 'register',
 	path: '/register',
@@ -39,6 +40,7 @@ AccessGroups.exposed.add( {
 		mount( LayoutBlank, { content: <PageRegister/> } );
 	}
 } );
+*/
 
 AccessGroups.exposed.add( {
 	name: 'lost-password',

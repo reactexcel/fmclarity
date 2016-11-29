@@ -165,26 +165,32 @@ function replaceMembers( collection, fieldName ) {
 }
 
 function addMember( collection, fieldName ) {
-	return function( item, obj, options ) {
+	return function( item, members, options ) {
 		options = options || {};
-		if ( !_.isArray( obj ) ) {
-			obj = [ obj ];
+		if ( !_.isArray( members ) ) {
+			members = [ members ];
 		}
-		var newObject = {};
 		var role = options.role ? options.role : "staff";
-		obj.map( function( o ) {
-			newObject[ fieldName ] = _.extend( {}, {
-				_id: o._id,
-				role: role,
-				name: o.profile ? o.profile.name : o.name
-					//profile:obj.getProfile?obj.getProfile():obj
-			} );
+
+		if( !_.isArray( item[fieldName] ) ) {
+			collection.collection.update( item._id, {
+				$set: { [ fieldName ] : [] }
+			} )
+		}
+
+		members.map( function( member ) {
 			/** Added update is changed to save**/
 			collection.collection.update( item._id, {
-				$push: newObject
+				$push: {
+					[ fieldName ] : {
+						_id: member._id,
+						role: role,
+						name: member.profile ? member.profile.name : member.name
+						//profile:obj.getProfile?obj.getProfile():obj
+					}
+				}
 			} );
 		} )
-		return newObject;
 	}
 }
 

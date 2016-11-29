@@ -90,7 +90,7 @@ const TeamPanel = React.createClass( {
 	},
 
 	getMenu() {
-		return [ TeamActions.edit.bind( this.props.item ) ];
+		return [ TeamActions.edit.bind( this.props.item ) /*TeamActions.destroy.bind( this.props.item )*/ ];
 	},
 
 	render() {

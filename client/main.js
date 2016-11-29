@@ -31,7 +31,8 @@ Actions.addAccessRule( {
 	action: [
 		'edit user',
 		'login as user',
-		'logout'
+		'logout',
+		'delete team'
 	],
 	role: [ '*' ],
 	rule: { alert: true }
