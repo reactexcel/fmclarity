@@ -123,16 +123,17 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		if( request.status == 'PMP' ) {
-        	let nextRequest = request.getNextRequest();
-
-        	//console.log( nextRequest );
-
-        	if( nextRequest != null ) {
-	            return true;
-    	    }
-        	return false;
-        }
+			if( request.status == 'PMP' ) {
+        let nextRequest = request.getNextRequest();
+        //console.log( nextRequest );
+        if( nextRequest != null ) {
+	          return true;
+    	  }
+        return false;
+      }
+			if ( request.type == 'Preventative'  ) {
+				return true;
+			}
     },
 	action: [
 		'clone request',

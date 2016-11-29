@@ -520,7 +520,7 @@ const RequestSchema = {
 			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
 				return true;
 			}
-		},		
+		},
 	},
 
 	//////////////////////////////////////////////////
@@ -617,7 +617,7 @@ const RequestSchema = {
 						let team = Session.getSelectedTeam(),
 						    facility = Facilities.collection._transform( { team } );
 						Modal.show( {
-							content: 
+							content:
 								<FacilityStepper
 									item = { facility }
 									onSaveFacility = {
