@@ -383,7 +383,12 @@ function getSuppliers() {
 }
 
 function inviteSupplier( team, searchName, id, callback ) {
-	var supplier;
+	let supplier = null;
+
+	if (id) {
+        supplier = Teams.findOne( id );
+	}
+
 	searchName = searchName.trim();
 	if ( !supplier ) {
 		//	supplier = Meteor.call( "Teams.create", {

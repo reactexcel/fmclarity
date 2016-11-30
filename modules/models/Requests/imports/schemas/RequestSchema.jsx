@@ -609,8 +609,9 @@ const RequestSchema = {
 					request.subservice = null;
 					request.supplier = null;
 				},
-				addNew:{//Add new facility to current selectedTeam.
-					show:true,
+				addNew:{
+					//Add new facility to current selectedTeam.
+					show: true,
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { Facilities, FacilityStepper } from '/modules/models/Facilities';
