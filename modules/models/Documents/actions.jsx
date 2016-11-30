@@ -4,6 +4,7 @@ import { Modal } from '/modules/ui/Modal';
 import DocViewEdit from './imports/components/DocViewEdit.jsx';
 
 import { Action } from '/modules/core/Actions';
+import { Documents } from '/modules/models/Documents';
 
 function create( doc ) {
 	return {
@@ -39,6 +40,9 @@ const destroy = new Action( {
 		shouldConfirm: true,
 	},
 	action: ( doc ) => {
+		if( !doc.destroy ){
+			doc = Documents.findOne( doc._id );
+		}
 		doc.destroy();
 	}
 } )

@@ -55,17 +55,28 @@ const DocViewEdit = React.createClass( {
 	},
 
 	handleChange( item ) {
-		let selectedFacility = Session.getSelectedFacility();
+		let self = this,
+			selectedFacility = Session.getSelectedFacility();
 		Modal.hide();
 		if ( !item._id ) {
-			Documents.save.call( item, {}, this.handleChangeCallback );
-			item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
+			Documents.save.call( item )
+			.then( ( item ) => {
+				console.log( item );
+				if ( self.props.team ) {
+					item.team = {
+						_id : this.props.team._id,
+						name: this.props.team.name
+					};
+					Documents.save.call( item );
+					this.handleChangeCallback( null, item );
+				}
+			});
+		//	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
-
 			let modelName = this.props.model._name;
 			let _id, name;
 			if(modelName == 'Teams'){
-				let team = Session.getSelectedTeam();
+				let team = this.props.team || Session.getSelectedTeam();
 				_id = team._id;
 				name = team.name;
 				item.team = {
