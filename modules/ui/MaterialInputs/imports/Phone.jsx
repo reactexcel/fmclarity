@@ -116,21 +116,18 @@ const Phone = React.createClass( {
 	},
 
 	handleOnBlur( e ) {
+
 		var isValid=true;
+		
 		if(e.target.value.length == 6 && e.target.value.substr(0, 2)=='13'){
 			e.target.value=e.target.value.substr(0,2)+" "+e.target.value.substr(2,2)+" "+e.target.value.substr(4,2);
 		}
 		var acceptted_first_four_values=['1800', '1300'];
+
 		var acceptted_first_two_values=['04', '13'];
 		
 		var landlines=['02', '03','07', '08'];
-		if (($.inArray(e.target.value.substr(1, 2), landlines) === -1) && ($.inArray(e.target.value.substr(0, 4), acceptted_first_four_values) === -1) && ($.inArray(e.target.value.substr(0, 2), acceptted_first_two_values) === -1) ) {
-			e.target.value="";
-		}
 		
-		if (($.inArray(e.target.value.substr(1, 2), landlines) !== -1) && e.target.value.length != 14 ) {
-			e.target.value="";
-		}
 		// handle for copy/pasted data
 		if (e.target.value.substr(0, 2)=='04' && e.target.value.length== 10){
 			e.target.value=e.target.value.substr(0,4)+" "+e.target.value.substr(4,3)+" "+e.target.value.substr(7,3);
@@ -138,9 +135,7 @@ const Phone = React.createClass( {
 		if (($.inArray(e.target.value.substr(0, 2), landlines) === -1) && e.target.value.length== 10){
 			e.target.value="("+e.target.value.substr(0,2)+") "+e.target.value.substr(2,4)+" "+e.target.value.substr(6,4);
 		}
-		/*if (($.inArray(e.target.value.substr(0, 4), acceptted_first_four_values) === -1) && e.target.value.length== 10){
-			e.target.value=e.target.value.substr(0,4)+" "+e.target.value.substr(4,3)+" "+e.target.value.substr(7,4);
-		}*/
+		
 
 	},
 

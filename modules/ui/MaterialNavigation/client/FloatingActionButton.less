@@ -27,7 +27,7 @@
 	padding: 0;
 
 	cursor: pointer;
-	transition: font .2s,bottom .2s,right .2s,height .2s,width .2s,opacity .2s;
+	transition: .75s ease-in-out 3s;
 
 	opacity: 0;
 	color: #fff;
@@ -58,7 +58,7 @@
 	opacity: 1;
 }
 
-.fab-panel:hover .fab:not(:first-child)
+.fab-1:hover ~ .fab
 {
 	font-size: 20px;
 
@@ -68,6 +68,7 @@
 	height: 40px;
 
 	opacity: .7;
+	transition: height .25s ease-in-out 0s; 
 }
 
 .fab-panel:hover .fab:not(:first-child):hover
