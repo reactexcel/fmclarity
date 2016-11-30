@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 Meteor.startup( function() {
-	
+
 	let smtpUsername = "AKIAIPJKWHGNFC75EL3Q",
 		smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
 
@@ -17,9 +17,8 @@ FM.inProduction = function() {
 	return process.env.METEOR_ENV === "production";
 };
 
-console.log( process.env );
+//console.log( process.env );
 
 //var timeInMillis = 1000 * 10; // 10 secs
 //FlowRouter.setPageCacheTimeout(timeInMillis);
 //FlowRouter.setDeferScriptLoading(true);
-
