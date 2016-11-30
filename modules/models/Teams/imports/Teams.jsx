@@ -345,7 +345,19 @@ Teams.methods( {
 	getClients: {
 		authentication: true,
 		helper: ( team ) => {
-			return team.type=='contractor' ? Teams.findAll( { $or:[{type: 'fm', 'suppliers._id':team._id}, {'owner.id':Meteor.userId()}]  } ) : Teams.findAll( { type: 'fm' } );
+			var user = Meteor.user();
+			var requests, teamIds = [];
+			requests = user.getRequests();
+			if ( requests && requests.length ) {
+				requests.map( function( i ) {
+					if ( i.team ) {
+						teamIds.push( i.team._id );
+					}
+				} )
+			}
+			return team.type=='contractor' ? Teams.findAll( { $or:[{type: 'fm', _id: {
+					$in: teamIds
+				}}, {type: 'fm','owner.id':Meteor.userId()}]  } ) : Teams.findAll( { type: 'fm' } );
 		},
 	}
 } );
