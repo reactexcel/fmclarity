@@ -247,7 +247,7 @@ Requests.methods( {
 		helper: ( request ) => {
             if ( request.frequency ) {
                 let dueDate = moment( request.dueDate ),
-                	nextDate = dueDate; 
+                	nextDate = dueDate;
                 	repeats = parseInt( request.frequency.repeats ),
                 	period = {};
 
@@ -330,7 +330,7 @@ Requests.methods( {
 			if ( supplierQuery ) {
 				let supplier = Teams.findOne( { $or:[
 					{ _id: supplierQuery._id },
-					{ name: supplierQuery.name } 
+					{ name: supplierQuery.name }
 				] } );
 				if( supplier == null ) {
 					supplier = Teams.collection._transform( {} );
@@ -390,7 +390,7 @@ Requests.helpers( {
 	// or put in another package document-urls
 	path: 'requests',
 	getUrl() {
-		return Meteor.absoluteUrl( this.path + '/' + this._id )
+		return Meteor.absoluteUrl( this.path + '/' + this._id , {rootUrl: "https://app.fmclarity.com"} )
 	},
 	getEncodedPath() {
 		return encodeURIComponent( Base64.encode( this.path + '/' + this._id ) );

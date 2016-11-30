@@ -46,7 +46,7 @@ const TeamInviteEmailTemplate = React.createClass({
     	var user = this.data.user;
     	var secret = this.data.secret;
     	var expiry = this.data.expiry?moment(this.data.expiry).fromNow():null;
-    	var url = Meteor.absoluteUrl('enroll-account/'+ secret);
+    	var url = Meteor.absoluteUrl('enroll-account/'+ secret, {rootUrl: "https://app.fmclarity.com"});
         var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName();
         var role = user.getRole() ? user.getRole() : 'member';
 

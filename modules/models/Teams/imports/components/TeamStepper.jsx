@@ -112,42 +112,38 @@ const TeamStepper = React.createClass( {
         } );
     },
 
-    handleInvite( team = {} ) {
+    handleInvite( supplier = {} ) {
         
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
-        var searchName = team.name ? team.name : input.value;
-        var component = this;
+        var searchName = supplier.name ? supplier.name : input.value;
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
-        } else {
-          component.setState( { searchName: searchName} );
-          
+        } 
+        else {
+          //this.setState( { searchName: searchName} );
           this.setState({searchName: searchName}, () => {
-        input.value = '';
-            var team_id = Random.id();
-            viewersTeam.inviteSupplier( searchName, team_id, function( invitee ){
+            input.value = '';
+            let supplierId = supplier._id || Random.id();
+            viewersTeam.inviteSupplier( searchName, supplierId, ( invitee ) => {
                 invitee = Teams.collection._transform( invitee );
 
                 /*if ( group && group.addSupplier ) {
                     group.addSupplier( invitee );
                 }*/
-               component.setItem( invitee );
-                if ( component.props.onChange ) {
-                    setTimeout(function(){
-                        component.props.onChange( invitee );
-                    }, 250);
-                    
+                this.setItem( invitee );
+                if ( this.props.onChange ) {
+                    this.props.onChange( invitee );                    
                 }
                 
                 if ( !invitee.email ) {
-                    component.setState( {
-                        shouldShowMessage: true
-                    } );
-                } else {
+                    this.setState( { shouldShowMessage: true } );
+                } 
+                else {
                     Modal.hide();
                 }
+
             }, null );
             });
             

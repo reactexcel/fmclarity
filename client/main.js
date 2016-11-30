@@ -125,11 +125,11 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: ( request ) => {
 		if( request.status == 'PMP' ) {
-        	let nextRequest = request.getNextRequest();
+        	let nextRequestDate = request.getNextDate();
 
-        	//console.log( nextRequest );
+        	console.log( nextRequestDate );
 
-        	if( nextRequest != null ) {
+        	if( nextRequestDate != null ) {
 	            return true;
     	    }
         	return false;

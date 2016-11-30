@@ -5,7 +5,7 @@ import { Modal } from '/modules/ui/Modal';
 
 import { Facilities } from '/modules/models/Facilities';
 
-import FacilityStepper from './imports/components/FacilityStepper.jsx';
+import FacilityStepperContainer from './imports/containers/FacilityStepperContainer.jsx';
 import FacilityPanel from './imports/components/FacilityPanel.jsx';
 
 const edit = new Action( {
@@ -13,8 +13,9 @@ const edit = new Action( {
 	type: 'facility',
 	label: "Edit facility",
 	action: ( facility ) => {
+		console.log( facility );
 		Modal.show( {
-			content: <FacilityStepper item = { facility } />
+			content: <FacilityStepperContainer params = { { item: facility } } />
 		} )
 	}
 } )
