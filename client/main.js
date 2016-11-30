@@ -31,8 +31,7 @@ Actions.addAccessRule( {
 	action: [
 		'edit user',
 		'login as user',
-		'logout',
-		'delete team'
+		'logout'
 	],
 	role: [ '*' ],
 	rule: { alert: true }
@@ -124,16 +123,17 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		if( request.status == 'PMP' ) {
-        	let nextRequestDate = request.getNextDate();
-
-        	console.log( nextRequestDate );
-
-        	if( nextRequestDate != null ) {
-	            return true;
-    	    }
-        	return false;
-        }
+			if( request.status == 'PMP' ) {
+        let nextRequest = request.getNextRequest();
+        //console.log( nextRequest );
+        if( nextRequest != null ) {
+	          return true;
+    	  }
+        return false;
+      }
+			if ( request.type == 'Preventative'  ) {
+				return true;
+			}
     },
 	action: [
 		'clone request',
