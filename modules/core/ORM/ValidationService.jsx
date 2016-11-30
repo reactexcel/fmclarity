@@ -171,7 +171,8 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	if ( !value.match( p ) && value != '') {
 		// errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number. Format: (xx) xxxx xxxx" } );
 	}
-	var valueString = value.match(/\d/g);
+	if (value != '') {
+		var valueString = value.match(/\d/g);
 	valueString = valueString.join("");
 	var landlines=['02', '03','07', '08'];
 	var acceptted_first_four_values=['1800', '1300'];
@@ -188,6 +189,8 @@ function checkPhoneNumber( rule, value, key, errors ) {
 		 ) {
 			errors.push( { name: key, type: "Invalid type: please check the length of the number." } );
 		}
+	}
+	
 
 }
 
