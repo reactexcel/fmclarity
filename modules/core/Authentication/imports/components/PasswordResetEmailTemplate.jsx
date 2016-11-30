@@ -27,7 +27,7 @@ export default PasswordResetEmailTemplate = React.createClass( {
         var user = this.data.user;
         var secret = this.data.secret;
         var expiry = this.data.expiry ? moment( this.data.expiry ).fromNow() : null;
-        var url = Meteor.absoluteUrl( 'reset-password/' + secret );
+        var url = Meteor.absoluteUrl( 'reset-password/' + secret , {rootUrl: "https://app.fmclarity.com"});
         var userName = ( user.profile && user.profile.firstName ) ? user.profile.firstName : user.getName();
         return (
             <div>
