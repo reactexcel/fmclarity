@@ -86,7 +86,7 @@ export default DocumentSchema = {
 			//console.log( item );
 			let team = Session.getSelectedTeam();
 			return {
-				items: ( team ? team.facilities : null ),
+				items: ( team && team.getFacilities ? team.getFacilities() : null ),
 				view: FacilityListTile
 			}
 		},
