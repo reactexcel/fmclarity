@@ -179,7 +179,18 @@ const RequestPanelInner = ( { request, owner } ) => {
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { request.markAsUnread(); } }  />
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { 
+                      
+                request.distributeMessage( {
+                    recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+                    message: {
+                        verb: "uploaded a file to",
+                        subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
+                        body: request.description
+                    }
+                } );
+                        request.markAsUnread(); 
+                    } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     hide:       (teamType == 'contractor'),
