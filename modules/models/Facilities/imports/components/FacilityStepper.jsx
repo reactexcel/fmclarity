@@ -16,9 +16,7 @@ import { GeoLocation } from '/modules/ui/AddressPicker';
 
 var submitFormCallback = null;
 
-export default function FacilityStepper( { item, onSaveFacility } ) {
-
-    let facility = item;
+export default function FacilityStepper( { facility, onSaveFacility } ) {
 
     function setThumb( thumb ) {
         if ( facility ) {

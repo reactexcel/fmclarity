@@ -516,6 +516,9 @@ const RequestSchema = {
 		required: true,
 		input: DateTime,
 		condition: ( request ) => {
+			if( request.type == 'Preventative' ) {
+				return false;
+			}
 			let team = Session.getSelectedTeam();
 			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
 				return true;
@@ -611,22 +614,21 @@ const RequestSchema = {
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
-					show: true,
+					show: Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
-						import { Facilities, FacilityStepper } from '/modules/models/Facilities';
+						import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
 						let team = Session.getSelectedTeam(),
 						    facility = Facilities.collection._transform( { team } );
 						Modal.show( {
 							content: 
-								<FacilityStepper
-									item = { facility }
-									onSaveFacility = {
+								<FacilityStepperContainer params = { {
+									item: facility,
+									onSaveFacility:
 										( facility ) => {
 											callback( facility );
 										}
-									}
-								/>
+								} } />
 						} )
 					}
 				},
@@ -668,8 +670,9 @@ const RequestSchema = {
 			return {
 				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
 				view: ContactCard,
-				addNew:{//Add new supplier to request and selected facility.
-					show:true,
+				addNew: {
+					//Add new supplier to request and selected facility.
+					show: Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { TeamStepper } from '/modules/models/Teams';
@@ -710,6 +713,9 @@ const RequestSchema = {
 			}
 		},
 		condition: ( request ) => {
+			if( request.type == 'Preventative' ) {
+				return false;
+			}
 			let team = Session.getSelectedTeam();
 			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
 				return true;

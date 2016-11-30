@@ -6,7 +6,7 @@ import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm } from '/modules/models/Requests';
-import { Facilities, FacilityStepper } from '/modules/models/Facilities';
+import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 
@@ -70,7 +70,7 @@ const createFacility = new Action( {
 		item = Facilities.collection._transform( item );
 
 		Modal.show( {
-			content: <FacilityStepper item = { item } />
+			content: <FacilityStepperContainer params = { { item } } />
 		} )
 	}
 } )
