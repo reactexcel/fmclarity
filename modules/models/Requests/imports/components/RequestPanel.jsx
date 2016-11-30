@@ -137,13 +137,15 @@ const RequestPanelInner = ( { request, owner } ) => {
                 : null
                 }
 
-                { request.supplier && request.type!= 'Booking' ?
-                <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                  <th>{teamType == "fm" ? "Supplier" : "Client" }</th>
-                    <td>{request.supplier.name}</td>
-                </tr>
-                : null }
-
+				{/* Show Supplier Name only when in client view (when teamType is "fm") */}
+				{ request.supplier && request.type!= 'Booking' && teamType == "fm" ?
+				<tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
+					<th>Supplier</th> 
+					<td>{request.supplier.name}</td>
+				</tr>
+				: null }
+			
+				
                 { request.type == 'Ad-hoc' && request.costThreshold ?
                 <tr>
                     <th>Value</th>
