@@ -259,3 +259,10 @@ FacilityMenuActions = Actions.clone( [
     'edit facility',
     'destroy facility'
 ] );
+
+FloatingActionButtonActions = Actions.clone( [
+		'create team request',
+		'create team facility',
+		'create team',
+		'create team document'
+] );
