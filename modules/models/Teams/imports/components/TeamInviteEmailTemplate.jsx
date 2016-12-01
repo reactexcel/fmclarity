@@ -48,8 +48,7 @@ const TeamInviteEmailTemplate = React.createClass({
     	var expiry = this.data.expiry?moment(this.data.expiry).fromNow():null;
     	var url = Meteor.absoluteUrl('enroll-account/'+ secret);
         var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName();
-        var userRole = user.getRole();
-        var role = ((userRole == 'tenant') ? 'tenant' : 'member');
+        var role = user.getRole() ? user.getRole() : 'member';
 
         return(
             <div>
