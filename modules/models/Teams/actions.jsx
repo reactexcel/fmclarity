@@ -9,6 +9,7 @@ import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm } 
 import { Facilities, FacilityStepper } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
+import moment from 'moment';
 
 const create = new Action( {
 	name: 'create team',
@@ -249,6 +250,22 @@ const loginMember = new Action( {
 } )
 
 
+const sendReminder = new Action( {
+ 	name: 'send supplier reminders',
+ 	type: [ 'team', 'user'],
+ 	label: 'Send reminder to suppliers',
+ 	icon: 'fa fa-paper-plane-o',
+ 	action: ( team ) => {
+		let facilities = team.getFacilities(),
+			statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+			user = Meteor.user(),
+			now = new Date(),
+			requests = Requests.find( statusFilter ).fetch();
+			requests = _.filter( requests, (r) => moment( r.dueDate ).isBefore( now ) );
+			Meteor.call("Issues.sendReminder", requests );
+ 		}
+	} )
+
 export {
 	create,
 	edit,
@@ -268,6 +285,6 @@ export {
 
 	resetMemberTours,
 	loginMember,
-
+	sendReminder,
 
 }

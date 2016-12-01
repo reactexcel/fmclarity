@@ -69,6 +69,7 @@ Actions.addAccessRule( {
 		'create team facility',
 		'edit team member',
 		'delete team member',
+		'send supplier reminders',
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
 	rule: { alert: true }
@@ -252,6 +253,7 @@ UserMenuActions = Actions.clone( [
 	'edit team',
 	'create team',
 	'migrate schema',
+	'send supplier reminders',
 	'logout'
 ] );
 

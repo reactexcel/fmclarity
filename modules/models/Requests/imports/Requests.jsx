@@ -17,6 +17,7 @@ import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
 import { SupplierRequestEmailView } from '/modules/core/Email';
+import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
 
@@ -247,7 +248,7 @@ Requests.methods( {
 		helper: ( request ) => {
             if ( request.frequency ) {
                 let dueDate = moment( request.dueDate ),
-                	nextDate = dueDate; 
+                	nextDate = dueDate;
                 	repeats = parseInt( request.frequency.repeats ),
                 	period = {};
 
@@ -330,7 +331,7 @@ Requests.methods( {
 			if ( supplierQuery ) {
 				let supplier = Teams.findOne( { $or:[
 					{ _id: supplierQuery._id },
-					{ name: supplierQuery.name } 
+					{ name: supplierQuery.name }
 				] } );
 				if( supplier == null ) {
 					supplier = Teams.collection._transform( {} );
@@ -382,6 +383,10 @@ Requests.methods( {
 		method: setAssignee
 	},
 
+	sendReminder: {
+		authentication: true,
+		method: actionSendReminder
+	}
 
 } )
 
@@ -562,5 +567,31 @@ function actionComplete( request ) {
 	return request;
 }
 
+ function actionSendReminder ( requests ) {
+	  requests.map( ( request ) => {
+			request = Requests.findOne( request._id );
+			team = request.getTeam();
+			 request.distributeMessage( {
+				 recipientRoles: [ "supplier manager" ],
+				 message: {
+					 subject: "Overdue Work order #"+ request.code+" reminder",
+					 emailBody: function( recipient ) {
+						 console.log(recipient);
+						 var expiry = moment( request.dueDate ).add( { days: 1 } ).toDate();
+						 var token = LoginService.generateLoginToken( recipient, expiry );
+						 return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+					 }
+				 },
+				 suppressOriginalPost: true,
+			 } );
+			 if( !request.sendFirstReminder ){
+				 Requests.update( { _id: request._id}, {
+					 $set:{
+						 firstReminderSent: true,
+					 }
+				 })
+			 }
+		})
+ }
 
 export default Requests;
