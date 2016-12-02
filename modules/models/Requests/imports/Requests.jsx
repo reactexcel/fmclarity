@@ -159,7 +159,7 @@ Requests.methods( {
 
 	create: {
 		authentication: true,
-		method: function( request ) {
+		method: function( request, followUP ) {
 			let status = 'New';
 
 			if( request.type == 'Preventative' ) {
@@ -184,15 +184,32 @@ Requests.methods( {
 				if( newRequest.owner ) {
 					owner = newRequest.getOwner();
 				}
-				newRequest.distributeMessage( {
-					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-					message: {
-						verb: "created",
-						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-						body: newRequest.description
-					}
-				} );
+				if( followUP.create ){
+					let newRequestName = newRequest.name;
+					newRequest.code = followUP.previousWOCode;
+					newRequest.name = followUP.previousWOName;
+					newRequest.distributeMessage( {
+						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+						message: {
+							verb: "closed WO#",
+							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+							body: newRequest.description
+						}
+					} );
+					newRequest.code = undefined;
+					newRequest.name = newRequestName;
+				} else {
+					newRequest.distributeMessage( {
+						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+						message: {
+							verb: "created",
+							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+							body: newRequest.description
+						}
+					} );
+				}
 			}
+			return newRequest;
 		}
 	},
 
@@ -522,21 +539,38 @@ function actionComplete( request ) {
 			newRequest.attachments = [ request.closeDetails.furtherQuote ];
 		}
 
-		var response = Meteor.call( 'Issues.create', newRequest );
-		var newRequest = Requests.collection._transform( response );
+		var team = Teams.findOne(request.team._id );
+		if( team ){
+			newRequest.code = team.getNextWOCode();
+		}
+
+		var response = Meteor.call( 'Issues.create', newRequest, { create: true, previousWOCode:request.code, previousWOName: request.name} );
+		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
 		//I think this needs to be replaced with distribute message
+
+		//previous request WO# change to show the WO# of new request
+		var oldCode = request.code,
+			oldName = request.name;
+		request.code = newRequest.code;
+		request.name = newRequest.name;
 		request.distributeMessage( {
 			message: {
-				verb: "completed",
-				subject: "Work order #" + request.code + " has been completed and a follow up has been requested"
+				verb: "raised Follow Up",
+				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested"
 			}
 		} );
 
+		//Wo# restore to previous.
+		if ( oldCode && oldName ){
+			request.code = oldCode;
+			request.name = oldName;
+		}
+
 		newRequest.distributeMessage( {
 			message: {
-				verb: "requested a follow up to " + request.getName(),
+				verb: "raised Follow Up",
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
 				body: newRequest.description
 			}
@@ -550,6 +584,11 @@ function actionComplete( request ) {
 			}
 		} );
 
+	}
+
+	let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
+	if ( _.indexOf( roles, closer.getRole() ) > -1 ){
+		Meteor.call( 'Issues.create', newRequest );
 	}
 
 	if ( request.closeDetails.attachments ) {
