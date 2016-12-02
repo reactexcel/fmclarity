@@ -184,7 +184,7 @@ Requests.methods( {
 				if( newRequest.owner ) {
 					owner = newRequest.getOwner();
 				}
-				if( followUP.create ){
+				if( followUP ){
 					let newRequestName = newRequest.name;
 					newRequest.code = followUP.previousWOCode;
 					newRequest.name = followUP.previousWOName;
@@ -544,7 +544,7 @@ function actionComplete( request ) {
 			newRequest.code = team.getNextWOCode();
 		}
 
-		var response = Meteor.call( 'Issues.create', newRequest, { create: true, previousWOCode:request.code, previousWOName: request.name} );
+		var response = Meteor.call( 'Issues.create', newRequest, { previousWOCode:request.code, previousWOName: request.name} );
 		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
