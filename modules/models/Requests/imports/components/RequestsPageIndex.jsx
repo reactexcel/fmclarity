@@ -53,17 +53,15 @@ export default class RequestsPageIndex extends Component {
 					<div className="col-xs-3">
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
-					{/*
 					<div className="col-xs-offset-3 col-xs-3">
 						<RequestFilter
-							items = { [ "All", "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] }
+							items = { [ "All", "New", "Issued", "In Progress", "Complete", "Closed" ] }
 							onChange = { ( item ) => {
 								requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
 								this.setState( { requests } )
 							} }
 						 />
 					</div>
-					*/}
 					{ user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >
 							<Switch

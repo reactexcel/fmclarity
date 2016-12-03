@@ -412,7 +412,7 @@ Requests.helpers( {
 	// or put in another package document-urls
 	path: 'requests',
 	getUrl() {
-		return Meteor.absoluteUrl( this.path + '/' + this._id , {rootUrl: "https://app.fmclarity.com"} )
+		return Meteor.absoluteUrl( this.path + '/' + this._id )
 	},
 	getEncodedPath() {
 		return encodeURIComponent( Base64.encode( this.path + '/' + this._id ) );
@@ -531,6 +531,8 @@ function actionComplete( request ) {
 
 			level: request.level,
 			area: request.area,
+			members: request.members,
+			attachments: request.attachments || [],
 			status: "New",
 			service: request.service,
 			subservice: request.subservice,
@@ -541,7 +543,7 @@ function actionComplete( request ) {
 		};
 
 		if ( request.closeDetails.furtherQuote ) {
-			newRequest.attachments = [ request.closeDetails.furtherQuote ];
+			newRequest.attachments.push( request.closeDetails.furtherQuote );
 		}
 
 		var team = Teams.findOne(request.team._id );
@@ -549,7 +551,9 @@ function actionComplete( request ) {
 			newRequest.code = team.getNextWOCode();
 		}
 
+		//console.log( request._id );
 		var response = Meteor.call( 'Issues.create', newRequest, { previousWOCode:request.code, previousWOName: request.name} );
+		//console.log( response._id );
 		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
@@ -562,8 +566,9 @@ function actionComplete( request ) {
 		request.name = newRequest.name;
 		request.distributeMessage( {
 			message: {
-				verb: "raised Follow Up",
-				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested"
+				verb: "raised follow up",
+				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested",
+				target: newRequest.getInboxId()
 			}
 		} );
 
