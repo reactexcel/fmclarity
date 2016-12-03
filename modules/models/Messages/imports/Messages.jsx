@@ -36,7 +36,7 @@ Messages.helpers( {
 		//return FlowRouter.path(target.path,target.query);
 		if ( target.path ) {
 			//return '/'+target.path+'/'+target.query._id;
-			return Meteor.absoluteUrl( target.path + '/' + target.query._id );
+			return Meteor.absoluteUrl( target.path + '/' + target.query._id, {rootUrl: "https://app.fmclarity.com"} );
 		}
 	},
 	getAbsoluteTargetUrl() {
