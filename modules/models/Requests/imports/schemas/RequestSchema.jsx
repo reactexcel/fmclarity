@@ -728,7 +728,20 @@ const RequestSchema = {
 				members = Teams.getMembers( supplier );
 			return {
 				items: members,
-				view: ContactCard
+				view: ContactCard,
+				addNew:{
+					//Add new facility to current selectedTeam.
+					show: Meteor.user().getRole() != 'staff',
+					label: "Add New",
+					onAddNewItem: ( callback ) => {
+						import { Users, UserViewEdit } from '/modules/models/Users';
+						let team = Session.getSelectedTeam();
+						Modal.show( {
+							content:
+								<UserViewEdit group={ team } team={ team } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
+						} )
+					}
+				},
 			}
 		},
 	},
