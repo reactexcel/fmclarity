@@ -370,12 +370,12 @@
  	type: 'request',
  	label: "Issue",
  	action: ( request ) => {
-
+        request = Requests.collection._transform( request );
         let dueDate = request.getNextDate();
 
  		let newRequest = Object.assign( {}, request, {
  			_id: Random.id(),
-            dueDate: dueDate,
+      dueDate: dueDate,
  			status: 'Issued',
  			type: 'Ad Hoc'
  		});

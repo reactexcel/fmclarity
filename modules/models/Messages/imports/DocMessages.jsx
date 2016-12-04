@@ -111,7 +111,7 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
 
     var user = Meteor.user();
     var obj = this;
-    message.target = obj.getInboxId();
+    message.target = message.target||obj.getInboxId();
     message.owner = {
             _id: user._id,
             name: user.getName()

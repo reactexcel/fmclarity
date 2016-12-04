@@ -64,7 +64,7 @@ const TeamPanel = React.createClass( {
 			insuranceDocs = null;
 
 		if ( this.props.item && this.props.item._id ) {
-			team = Teams.findOne( this.props.item._id );			
+			team = Teams.findOne( this.props.item._id );
 		}
 
 		if ( team ) {

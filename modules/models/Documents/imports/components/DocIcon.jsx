@@ -13,7 +13,12 @@ export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
 		Modal.show( {
-			content: <DocViewEdit item = { props.item } onChange = { (data) => { props.onChange(data); }} model={props.model} selectedItem={props.selectedItem}/>
+			content: <DocViewEdit
+				item = { props.item }
+				onChange = { (data) => { props.onChange(data); }}
+				model={props.model}
+				selectedItem={props.selectedItem}
+				team = {props.team}/>
 		} )
 	}
 
@@ -70,6 +75,7 @@ export default function DocIcon( props ) {
 						( event ) => {
 							event.stopPropagation();
 							runaction( DocActions.destroy.bind( item ) );
+							props.onChange();
 						}
 					}>
 					{ 'Delete' }

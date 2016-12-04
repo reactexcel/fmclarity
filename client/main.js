@@ -31,8 +31,7 @@ Actions.addAccessRule( {
 	action: [
 		'edit user',
 		'login as user',
-		'logout',
-		'delete team'
+		'logout'
 	],
 	role: [ '*' ],
 	rule: { alert: true }
@@ -69,6 +68,7 @@ Actions.addAccessRule( {
 		'create team facility',
 		'edit team member',
 		'delete team member',
+		'send supplier reminders',
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
 	rule: { alert: true }
@@ -124,16 +124,13 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		if( request.status == 'PMP' ) {
-        	let nextRequestDate = request.getNextDate();
-
-        	console.log( nextRequestDate );
-
-        	if( nextRequestDate != null ) {
-	            return true;
-    	    }
-        	return false;
-        }
+			if ( request.type == 'Preventative'  ) {
+        		let nextRequestDate = request.getNextDate();
+        		if( nextRequestDate != null ) {
+	          		return true;
+    	  		}
+        		return false;
+      		}
     },
 	action: [
 		'clone request',
@@ -252,10 +249,18 @@ UserMenuActions = Actions.clone( [
 	'edit team',
 	'create team',
 	'migrate schema',
+	'send supplier reminders',
 	'logout'
 ] );
 
 FacilityMenuActions = Actions.clone( [
     'edit facility',
     'destroy facility'
+] );
+
+FloatingActionButtonActions = Actions.clone( [
+		'create team request',
+		'create team facility',
+		'create team',
+		'create team document'
 ] );

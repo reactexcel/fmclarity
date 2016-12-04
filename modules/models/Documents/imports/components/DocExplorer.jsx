@@ -7,16 +7,9 @@ import React from "react";
 import DocIconHeader from './DocIconHeader.jsx';
 import DocIcon from './DocIcon.jsx';
 
-export default function DocExplorer( props ) {
-
-	function handleChange( index, newValue ) {
-		Modal.hide();
-		if ( props.onChange ) {
-			props.onChange( newValue );
-		}
-	}
-	//get Document list
-	function getDocsList() {
+export default class DocExplorer extends React.Component {
+  constructor(props) {
+    super(props);
 		let item, keys;
 		keys = Object.keys( props.item );
 		if ( keys.length == 1 ) {
@@ -24,30 +17,62 @@ export default function DocExplorer( props ) {
 		} else {
 			item = props.item;
 		}
-		return item.getDocs();
+		this.state = {
+			item: item,
+			value: props.value,
+		}
+
+  }
+
+	componentWillReceiveProps( props ){
+		this.setState( {
+			item: props.item,
+			value: props.value,
+		} );
 	}
 
-	var oldDocumentsList = props.value || [], //getDocsList();//.concat( props.value || [] ) || [];
-		newDocumentsList = getDocsList(),
-		listLength = oldDocumentsList.length + newDocumentsList.length;
-	return (
-		<div>
-			<DocIconHeader />
-			{//Listing of old Documents
-				oldDocumentsList.map( ( doc, idx ) => (
-						<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
-					)
-				)
-			}
-			{//Listing of new documents
-				newDocumentsList.map( ( doc, idx ) => (
-						<DocIcon key = { idx } item = { doc } onChange = { (doc) => { handleChange( idx, doc ) } } model = { props.model } selectedItem = { props.item }/>
-					)
-				)
-			}
+	handleChange( index, newValue ) {
+		Modal.hide();
+		if ( this.props.onChange ) {
+			this.props.onChange( newValue );
+		}
+		if ( !newValue ){
+			//Update the component when a document get deleted.s
+			this.setState({
+				item: this.props.item,
+				value: this.props.value,
+			});
+		}
+	}
 
-			<DocIcon onChange={ (doc) => { handleChange( listLength, doc ) } } model = { props.model }  selectedItem = { props.item }/>
+	//get Document list
+	getDocsList() {
+		return this.state.item.getDocs();
+	}
 
-		</div>
-	)
+  render() {
+		var oldDocumentsList = _.isArray(this.state.value) ? this.state.value : [], //getDocsList();//.concat( props.value || [] ) || [];
+			newDocumentsList = this.getDocsList(),
+			listLength = oldDocumentsList.length + newDocumentsList.length;
+    return (
+			<div>
+				<DocIconHeader />
+				{//Listing of old Documents
+					oldDocumentsList.map( ( doc, idx ) => (
+							<DocIcon key = { idx } item = { doc } onChange = { (doc) => { this.handleChange( idx, doc ) } } model = { this.props.model } selectedItem = { this.state.item }/>
+						)
+					)
+				}
+				{//Listing of new documents
+					newDocumentsList.map( ( doc, idx ) => (
+							<DocIcon key = { idx } item = { doc } onChange = { (doc) => { this.handleChange( idx, doc ) } } model = { this.props.model } selectedItem = { this.state.item }/>
+						)
+					)
+				}
+
+				<DocIcon onChange={ (doc) => { this.handleChange( listLength, doc ) } } model = { this.props.model }  selectedItem = { this.state.item } team = { this.state.item}/>
+
+			</div>
+		);
+  }
 }

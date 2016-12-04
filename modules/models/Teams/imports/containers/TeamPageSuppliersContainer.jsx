@@ -64,9 +64,7 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             } )
         } );
 
-        supplierIds = _.uniq( supplierIds );
-
-        suppliers = Teams.find( 
+        suppliers = Teams.find(
             { $or : [
                 { _id: { $in: supplierIds } },
                 { name: { $in: supplierNames } },
@@ -74,9 +72,9 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
             { sort: { name: 1 } }
         ).fetch();
 
-        suppliers = _.uniq( suppliers, false, ( i ) => {
+        suppliers = _.uniq( suppliers, ( i ) => {
             return i._id;
-        } );        
+        } );
     }
 
     return {

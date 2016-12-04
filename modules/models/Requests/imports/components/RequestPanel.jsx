@@ -21,6 +21,8 @@ export default RequestPanel = React.createClass( {
 
     getMeteorData() {
         let request = null,
+            nextRequest = null,
+            previousRequest = null,
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
@@ -28,9 +30,13 @@ export default RequestPanel = React.createClass( {
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+                if( request.type == 'Preventative' ) {
+                    nextRequest = request.getNextRequest();
+                    previousRequest = request.getPreviousRequest();
+                }
             }
         }
-        return { request, owner }
+        return { request, nextRequest, previousRequest, owner }
     },
 
     render() {
@@ -39,7 +45,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, owner } ) => {
+const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -49,10 +55,20 @@ const RequestPanelInner = ( { request, owner } ) => {
         return <div/>
     }
     let teamType = Session.get('selectedTeam').type,
-        title = "";
+        title = "",
+        nextDateString = null,
+        previousDateString = null;
 
     if( request.type == 'Preventative' ) {
         title = 'PPM';
+
+        if( nextRequest ) {
+            nextDateString = moment( nextRequest.dueDate ).format('ddd Do MMM');
+        }
+        if( previousRequest ) {
+            previousDateString = moment( previousRequest.dueDate ).format('ddd Do MMM');
+        }
+
     }
     else {
         if( request.type == 'Booking' ) {
@@ -141,6 +157,26 @@ const RequestPanelInner = ( { request, owner } ) => {
                 <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
                   <th>{teamType == "fm" ? "Supplier" : "Client" }</th>
                     <td>{request.supplier.name}</td>
+                </tr>
+                : null }
+
+                { nextDateString? 
+                <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
+                    <th>Next Due</th>
+                    <td>                        
+                        <span>{ nextDateString } </span>
+                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status }</span>
+                    </td>
+                </tr>
+                : null }
+
+                { previousDateString? 
+                <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
+                    <th>Previous</th>
+                    <td>                        
+                        <span>{ previousDateString } </span>
+                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                    </td>
                 </tr>
                 : null }
 

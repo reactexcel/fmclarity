@@ -523,7 +523,7 @@ const RequestSchema = {
 			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
 				return true;
 			}
-		},		
+		},
 	},
 
 	//////////////////////////////////////////////////
@@ -621,7 +621,7 @@ const RequestSchema = {
 						let team = Session.getSelectedTeam(),
 						    facility = Facilities.collection._transform( { team } );
 						Modal.show( {
-							content: 
+							content:
 								<FacilityStepperContainer params = { {
 									item: facility,
 									onSaveFacility:
@@ -728,7 +728,20 @@ const RequestSchema = {
 				members = Teams.getMembers( supplier );
 			return {
 				items: members,
-				view: ContactCard
+				view: ContactCard,
+				addNew:{
+					//Add new facility to current selectedTeam.
+					show: Meteor.user().getRole() != 'staff',
+					label: "Add New",
+					onAddNewItem: ( callback ) => {
+						import { Users, UserViewEdit } from '/modules/models/Users';
+						let team = Session.getSelectedTeam();
+						Modal.show( {
+							content:
+								<UserViewEdit group={ team } team={ team } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
+						} )
+					}
+				},
 			}
 		},
 	},
@@ -755,6 +768,7 @@ const RequestSchema = {
 	attachments: {
 		label: "Attachments",
 		type: "array",
+		defaultValue: [],
 		input: FileExplorer
 	},
 

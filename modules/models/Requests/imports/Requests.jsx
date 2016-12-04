@@ -17,6 +17,7 @@ import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
 import { SupplierRequestEmailView } from '/modules/core/Email';
+import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
 
@@ -159,7 +160,7 @@ Requests.methods( {
 
 	create: {
 		authentication: true,
-		method: function( request ) {
+		method: function( request, followUP ) {
 			let status = 'New';
 
 			if( request.type == 'Preventative' ) {
@@ -184,15 +185,32 @@ Requests.methods( {
 				if( newRequest.owner ) {
 					owner = newRequest.getOwner();
 				}
-				newRequest.distributeMessage( {
-					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-					message: {
-						verb: "created",
-						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-						body: newRequest.description
-					}
-				} );
+				if( followUP ){
+					let newRequestName = newRequest.name;
+					newRequest.code = followUP.previousWOCode;
+					newRequest.name = followUP.previousWOName;
+					newRequest.distributeMessage( {
+						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+						message: {
+							verb: "closed WO#",
+							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+							body: newRequest.description
+						}
+					} );
+					newRequest.code = undefined;
+					newRequest.name = newRequestName;
+				} else {
+					newRequest.distributeMessage( {
+						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+						message: {
+							verb: "created",
+							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+							body: newRequest.description
+						}
+					} );
+				}
 			}
+			return newRequest;
 		}
 	},
 
@@ -382,6 +400,10 @@ Requests.methods( {
 		method: setAssignee
 	},
 
+	sendReminder: {
+		authentication: true,
+		method: actionSendReminder
+	}
 
 } )
 
@@ -390,7 +412,7 @@ Requests.helpers( {
 	// or put in another package document-urls
 	path: 'requests',
 	getUrl() {
-		return Meteor.absoluteUrl( this.path + '/' + this._id , {rootUrl: "https://app.fmclarity.com"} )
+		return Meteor.absoluteUrl( this.path + '/' + this._id )
 	},
 	getEncodedPath() {
 		return encodeURIComponent( Base64.encode( this.path + '/' + this._id ) );
@@ -509,6 +531,8 @@ function actionComplete( request ) {
 
 			level: request.level,
 			area: request.area,
+			members: request.members,
+			attachments: request.attachments || [],
 			status: "New",
 			service: request.service,
 			subservice: request.subservice,
@@ -519,24 +543,44 @@ function actionComplete( request ) {
 		};
 
 		if ( request.closeDetails.furtherQuote ) {
-			newRequest.attachments = [ request.closeDetails.furtherQuote ];
+			newRequest.attachments.push( request.closeDetails.furtherQuote );
 		}
 
-		var response = Meteor.call( 'Issues.create', newRequest );
-		var newRequest = Requests.collection._transform( response );
+		var team = Teams.findOne(request.team._id );
+		if( team ){
+			newRequest.code = team.getNextWOCode();
+		}
+
+		//console.log( request._id );
+		var response = Meteor.call( 'Issues.create', newRequest, { previousWOCode:request.code, previousWOName: request.name} );
+		//console.log( response._id );
+		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
 		//I think this needs to be replaced with distribute message
+
+		//previous request WO# change to show the WO# of new request
+		var oldCode = request.code,
+			oldName = request.name;
+		request.code = newRequest.code;
+		request.name = newRequest.name;
 		request.distributeMessage( {
 			message: {
-				verb: "completed",
-				subject: "Work order #" + request.code + " has been completed and a follow up has been requested"
+				verb: "raised follow up",
+				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested",
+				target: newRequest.getInboxId()
 			}
 		} );
 
+		//Wo# restore to previous.
+		if ( oldCode && oldName ){
+			request.code = oldCode;
+			request.name = oldName;
+		}
+
 		newRequest.distributeMessage( {
 			message: {
-				verb: "requested a follow up to " + request.getName(),
+				verb: "raised Follow Up",
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
 				body: newRequest.description
 			}
@@ -552,6 +596,11 @@ function actionComplete( request ) {
 
 	}
 
+	let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
+	if ( _.indexOf( roles, closer.getRole() ) > -1 ){
+		Meteor.call( 'Issues.create', newRequest );
+	}
+
 	if ( request.closeDetails.attachments ) {
 		request.closeDetails.attachments.map( function( a ) {
 			request.attachments.push( a );
@@ -562,5 +611,31 @@ function actionComplete( request ) {
 	return request;
 }
 
+ function actionSendReminder ( requests ) {
+	  requests.map( ( request ) => {
+			request = Requests.findOne( request._id );
+			team = request.getTeam();
+			 request.distributeMessage( {
+				 recipientRoles: [ "supplier manager" ],
+				 message: {
+					 subject: "Overdue Work order #"+ request.code+" reminder",
+					 emailBody: function( recipient ) {
+						 console.log(recipient);
+						 var expiry = moment( request.dueDate ).add( { days: 1 } ).toDate();
+						 var token = LoginService.generateLoginToken( recipient, expiry );
+						 return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+					 }
+				 },
+				 suppressOriginalPost: true,
+			 } );
+			 if( !request.sendFirstReminder ){
+				 Requests.update( { _id: request._id}, {
+					 $set:{
+						 firstReminderSent: true,
+					 }
+				 })
+			 }
+		})
+ }
 
 export default Requests;

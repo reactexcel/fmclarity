@@ -14,6 +14,7 @@ import { FacilityActions } from '/modules/models/Facilities';
 import { DocActions } from '/modules/models/Documents';
 
 import { FloatingActionButton } from '/modules/ui/MaterialNavigation';
+import { Actions } from '/modules/core/Actions';
 
 /**
  * @class 			FloatingActionButtonContainer
@@ -21,18 +22,20 @@ import { FloatingActionButton } from '/modules/ui/MaterialNavigation';
  * @requires 		module:core/Actions.ActionGroup
  */
 const FloatingActionButtonContainer = createContainer( ( { params } ) => {
-	let team = Session.getSelectedTeam(),
-		actions = [
-			TeamActions.createRequest.bind( team ),
-			TeamActions.createFacility.bind( team ),
-			TeamActions.create.bind( team ),
-			TeamActions.createDocument.bind( team )
-		];
+	let team = Session.getSelectedTeam();
 
-	return {
-		actions
+	if ( Meteor.user() && team ){
+		let actionNames = Object.keys( FloatingActionButtonActions.actions ),
+			validActions = Actions.filter( actionNames, team ),
+			validActionNames = Object.keys( validActions );
+		return {
+			actions: validActionNames,
+			team: team,
+		}
 	}
-
+	return {
+		actions:[]
+	}
 }, FloatingActionButton );
 
 export default FloatingActionButtonContainer;

@@ -69,6 +69,12 @@ const FileField = React.createClass( {
 		}
 	},
 
+	handleClear(){
+		//By setting the value empty of the schema field will remove the file.
+			this.props.onChange( ""
+	 );
+	},
+
 	render() {
 		let file = this.data.file,
 			fileName = "";

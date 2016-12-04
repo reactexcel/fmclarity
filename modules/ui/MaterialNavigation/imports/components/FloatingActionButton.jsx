@@ -10,19 +10,20 @@ export default class FloatingActionButton extends React.Component {
 	}
 
 	render() {
-		let { actions } = this.props;
+		let { actions, team } = this.props;
 
 		return (
 			<div className="fab-panel">
-			 { actions.map( ( action, idx ) => {
+			 { actions.map( ( actionName, idx ) => {
+				 let action = FloatingActionButtonActions.actions[ actionName ]
 			 	return (
-					<button 
+					<button
 						key = { idx }
 						rel = "tooltip"
-						data-toggle = "tooltip" 
-						data-placement = "left" 
+						data-toggle = "tooltip"
+						data-placement = "left"
 						title = { action.label }
-						onClick = {() => { action.run()}} 
+						onClick = {() => { action.run( team )}}
 						className = {`fab fab-${idx+1}`}>
 							<i className = { action.icon }></i>
 					</button>

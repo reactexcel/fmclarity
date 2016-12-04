@@ -71,7 +71,7 @@ if ( Meteor.isServer ) {
 		let requestsCursor = Requests.find( {
 			$and: [
 				//might be better to do inclusive search here (ie status in ...)
-				{ status: { $nin: [ "Closed", "Deleted", "Cancelled" ] } },
+				{ status: { $nin: [ "Deleted", "Cancelled" ] } },
 				{ $or: [
 					{ "team._id": { $in: teamIds } },
 					{ $and: [
@@ -495,7 +495,6 @@ function inviteMember( team, email, ext ) {
 }
 
 function sendMemberInvite( team, recipient ) {
-	console.log( recipient );
 	let body = ReactDOMServer.renderToStaticMarkup(
 		React.createElement( TeamInviteEmailTemplate, {
 			team: team,

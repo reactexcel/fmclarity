@@ -149,12 +149,12 @@ Users.actions( {
             //fragments to use in query
             var isNotDraft = {
                 status: {
-                    $in: [ "New", "Issued", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Closed" ]
+                    $in: [ "New", "Issued", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Complete", "Closed" ]
                 }
             };
             var isIssued = {
                 status: {
-                    $in: [ "Issued", "In Progress", "Progress", "Quoting", "Quoted", "Closed" ]
+                    $in: [ "Issued", "In Progress", "Progress", "Quoting", "Quoted", "Complete", "Closed" ]
                 }
             };
             var isOpen = {

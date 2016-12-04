@@ -25,5 +25,7 @@ export default CreateRequestForm = [
 	'duration',
 
 	'costThreshold',
-	'description'
+	'description',
+
+	'attachments'
 ];

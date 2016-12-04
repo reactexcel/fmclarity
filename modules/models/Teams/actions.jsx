@@ -5,10 +5,11 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm } from '/modules/models/Requests';
+import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm, RequestActions } from '/modules/models/Requests';
 import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
+import moment from 'moment';
 
 const create = new Action( {
 	name: 'create team',
@@ -70,7 +71,7 @@ const createFacility = new Action( {
 		item = Facilities.collection._transform( item );
 
 		Modal.show( {
-			content: <FacilityStepperContainer params = { { item } } />
+            content: <FacilityStepperContainer params = { { item } } />
 		} )
 	}
 } )
@@ -102,15 +103,18 @@ const createRequest = new Action( {
 
 						if( newRequest.type != 'Preventative' && _.contains( ['portfolio manager', 'fmc support' ], role) ) {
 							Meteor.call('Issues.issue', newRequest );
-						}
-						else {
+						} else if ( newRequest.type == 'Preventative' ) {
+							Meteor.call('Issues.create', newRequest );
+							RequestActions.clone.run( newRequest );
+						} else {
 							Meteor.call('Issues.create', newRequest );
 						}
-                        if( newRequest.assignee && newRequest.assignee._id && _.contains( [ 'portfolio manager', 'fmc support' ], role) ) {
-                            Meteor.call('Issues.save', newRequest, {
-                                status: 'In Progress'
-                            } )
-                        }
+
+            if( newRequest.assignee && newRequest.assignee._id && _.contains( [ 'portfolio manager', 'fmc support' ], role) ) {
+              Meteor.call('Issues.save', newRequest, {
+                	status: 'In Progress'
+                } )
+            }
 
 						let request = Requests.collection._transform( newRequest );
 						request.markAsUnread();
@@ -249,6 +253,22 @@ const loginMember = new Action( {
 } )
 
 
+const sendReminder = new Action( {
+ 	name: 'send supplier reminders',
+ 	type: [ 'team', 'user'],
+ 	label: 'Send reminder to suppliers',
+ 	icon: 'fa fa-paper-plane-o',
+ 	action: ( team ) => {
+		let facilities = team.getFacilities(),
+			statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+			user = Meteor.user(),
+			now = new Date(),
+			requests = Requests.find( statusFilter ).fetch();
+			requests = _.filter( requests, (r) => moment( r.dueDate ).isBefore( now ) );
+			Meteor.call("Issues.sendReminder", requests );
+ 		}
+	} )
+
 export {
 	create,
 	edit,
@@ -268,6 +288,6 @@ export {
 
 	resetMemberTours,
 	loginMember,
-
+	sendReminder,
 
 }
