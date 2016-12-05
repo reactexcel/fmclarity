@@ -153,9 +153,11 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 : null
                 }
 
-                { request.supplier && request.type!= 'Booking' ?
+
+                {/* Show Supplier Name only when in client view (when teamType is "fm") */}
+                { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
                 <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                  <th>{teamType == "fm" ? "Supplier" : "Client" }</th>
+                    <th>Supplier</th> 
                     <td>{request.supplier.name}</td>
                 </tr>
                 : null }
