@@ -611,6 +611,7 @@ const RequestSchema = {
 					request.service = null;
 					request.subservice = null;
 					request.supplier = null;
+					request.members = getMembersDefaultValue( request );
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
@@ -742,6 +743,32 @@ const RequestSchema = {
 						} )
 					}
 				},
+				afterChange: ( item ) => {
+					let found = false;
+					if( item.assignee ) {
+						import { Users } from '/modules/models/Users';
+						let assignee = Users.findOne( item.assignee._id );
+						for( i in item.members ){
+							let member = item.members[i];
+							if ( member.role == "assignee" ){
+								item.members[i] = {
+									_id: assignee._id,
+									name: assignee.profile.name,
+									role: "assignee"
+								};
+								found = true;
+								break;
+							}
+						}
+						if (!found){
+							item.members.push( {
+								_id: assignee._id,
+								name: assignee.profile.name,
+								role: "assignee"
+							} );
+						}
+					}
+				}
 			}
 		},
 	},
@@ -808,7 +835,7 @@ function getMembersDefaultValue( item ) {
 	} );
 
 	if ( item.facility ) {
-		let facility = rFacilities.findOne( item.facility._id ),
+		let facility = Facilities.findOne( item.facility._id ),
 			facilityMembers = facility.getMembers( {
 				role: "manager"
 			} );
