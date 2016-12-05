@@ -160,10 +160,13 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: { status: 'Issued' },
+	condition: ( request ) => { 
+		console.log( request.assignee );
+		return _.contains( [ 'In Progress', 'Issued' ], request.status ) && !request.assignee
+	},
 	action: [
 		'accept request',
-		'reject request',
+		//'reject request',
 	],
 	role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee', "property manager" ],
 	rule: { alert: true }
@@ -176,21 +179,19 @@ Actions.addAccessRule( {
 	action: [
 		'complete request',
 	],
-	role: [ 'supplier manager', 'assignee', 'team manager', 'team portfolio manager' ],
+	role: [ 'supplier manager', 'assignee', 'team manager', 'team portfolio manager', 'team fmc support' ],
 	rule: { alert: true }
 } )
-
 Actions.addAccessRule( {
 	condition: { status: 'Complete' },
 	action: [
-		'close request',
-		'reopen request',
-		'reverse request',
+		//'close request',
+		//'reopen request',
+		//'reverse request',
 	],
 	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
 	rule: { alert: true }
 } )
-
 
 Actions.addAccessRule( {
 	action: [

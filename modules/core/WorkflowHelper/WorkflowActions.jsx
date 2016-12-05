@@ -3,13 +3,13 @@ const WorkflowActions = [
 	'edit request',
 	'issue request',
 	'accept request',
-	'reject request',
+	//'reject request',
 	'delete request',
 	'destroy request',
 	'complete request',
-	'close request',
-	'reopen request',
-	'reverse request',
+	//'close request',
+	//'reopen request',
+	//'reverse request',
 	'clone request'
 ];
 

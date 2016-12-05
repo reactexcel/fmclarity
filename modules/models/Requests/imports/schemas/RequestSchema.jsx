@@ -114,7 +114,14 @@ const RequestSchema = {
 		defaultValue: "Standard",
 		required: true,
 		condition: ( request ) => {
-			return request.type != "Preventative" && request.type != 'Booking'
+			if ( request.type == "Preventative" || request.type == 'Booking' ) {
+				return false;
+			}
+			let role = Meteor.user().getRole();
+			if( role == 'staff' ) {
+				return false;
+			}
+			return true;
 		},
 		input: Select,
 		size: 6,
@@ -260,14 +267,16 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam(),
 				teamType = null,
+				role = null,
 				services = [];
 			if ( team ) {
 				teamType = team.type;
+				role = Meteor.user().getRole( team );
 				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if ( request.type == 'Booking' ) {
+			if ( role == 'staff' || request.type == 'Booking' ) {
 				return false;
 			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
@@ -327,14 +336,17 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam(),
 				teamType = null,
+				role = null,
 				services = [];
 			if ( team ) {
 				teamType = team.type;
+				role = Meteor.user().getRole( team );
+
 				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if ( request.type == 'Booking' ) {
+			if ( role == 'staff' || request.type == 'Booking' ) {
 				return false;
 			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
@@ -496,7 +508,14 @@ const RequestSchema = {
 		input: DateTime,
 		size: 6,
 		required: true,
-		defaultValue: getDefaultDueDate
+		defaultValue: getDefaultDueDate,
+		condition: ( request ) => {
+			let role = Meteor.user().getRole();
+			if( role == 'staff' ) {
+				return false;
+			}
+			return true;
+		}
 	},
 
 	issuedAt: {
@@ -514,16 +533,7 @@ const RequestSchema = {
 		description: "Time the supplier is expected to attend the site",
 		size: 6,
 		required: true,
-		input: DateTime,
-		condition: ( request ) => {
-			if( request.type == 'Preventative' ) {
-				return false;
-			}
-			let team = Session.getSelectedTeam();
-			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
-				return true;
-			}
-		},
+		input: DateTime
 	},
 
 	//////////////////////////////////////////////////
@@ -744,6 +754,7 @@ const RequestSchema = {
 					}
 				},
 				afterChange: ( item ) => {
+					console.log( item.assignee );
 					let found = false;
 					if( item.assignee ) {
 						import { Users } from '/modules/models/Users';

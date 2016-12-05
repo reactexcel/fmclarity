@@ -110,12 +110,6 @@ const createRequest = new Action( {
 							Meteor.call('Issues.create', newRequest );
 						}
 
-            if( newRequest.assignee && newRequest.assignee._id && _.contains( [ 'portfolio manager', 'fmc support' ], role) ) {
-              Meteor.call('Issues.save', newRequest, {
-                	status: 'In Progress'
-                } )
-            }
-
 						let request = Requests.collection._transform( newRequest );
 						request.markAsUnread();
 						//callback( newRequest );

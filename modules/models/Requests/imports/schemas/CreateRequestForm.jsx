@@ -15,7 +15,6 @@ export default CreateRequestForm = [
 	'subservice',
 	'supplier',
 
-	'eta',
 	'assignee',
 
 	'priority',

@@ -196,17 +196,17 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 </tr>
                 : null }
 
-                {request.description?
+                {request.description ?
                 <tr>
                     <th>Description</th>
                     <td>{request.description}</td>
                 </tr>:null}
 
-                {request.assignee && teamType!='fm'?
+                { request.assignee ?
                 <tr>
                     <th>Assignee</th>
-                    <td>{request.assignee.name}</td>
-                </tr>:null}
+                    <td>{request.assignee.getName()}</td>
+                </tr> : null }
 
                 </tbody>
             </table>
@@ -231,7 +231,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                     } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
-                    hide:       (teamType == 'contractor'),
+                    //hide:       (teamType == 'contractor'),
                     content:    <ContactList group = { request } readOnly = { true }/>
                 }
             ]} />
