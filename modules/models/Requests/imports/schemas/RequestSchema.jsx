@@ -774,6 +774,31 @@ const RequestSchema = {
 
 	//////////////////////////////////////////////////
 	//}
+
+	requireServiceReport: {
+		label: "Require Service Report",
+		type: "boolean",
+		defaultValue: false,
+		input: Switch,
+		condition:() => {
+			let role = Meteor.user().getRole();
+			return _.indexOf(["manager", "portfolio manager", "team portfolio manager", "team manager"], role) > -1 ;
+		}
+	},
+
+	requireInvoice: {
+		label: "Require Invoice",
+		type: "boolean",
+		defaultValue: false,
+		input: Switch,
+		condition:() => {
+			let role = Meteor.user().getRole();
+			return _.indexOf(["manager", "portfolio manager", "team portfolio manager", "team manager"], role) > -1 ;
+		}
+	},
+
+
+
 }
 
 /*

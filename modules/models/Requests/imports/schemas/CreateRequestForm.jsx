@@ -25,6 +25,10 @@ export default CreateRequestForm = [
 	'duration',
 
 	'costThreshold',
+
+	'requireServiceReport',
+	'requireInvoice',
+
 	'description',
 
 	'attachments'
