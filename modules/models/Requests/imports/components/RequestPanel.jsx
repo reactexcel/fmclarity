@@ -23,10 +23,12 @@ export default RequestPanel = React.createClass( {
         let request = null,
             nextRequest = null,
             previousRequest = null,
-            owner = null;
+            owner = null,
+            nextDate = null,
+            previousDate = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-            
+
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -159,36 +161,36 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 {/* Show Supplier Name only when in client view (when teamType is "fm") */}
                 { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
                 <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th> 
+                    <th>Supplier</th>
                     <td>{request.supplier.name}</td>
                 </tr>
                 : null }
 
-                { nextDateString? 
+                { nextDateString?
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
                     <td>
                         <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                             <span>next due <b>{ nextDateString }</b> </span>
-                            { nextRequest ? 
+                            { nextRequest ?
                                 <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
                             : null }
-                        </span> 
+                        </span>
                     </td>
                 </tr>
                 : null }
 
-                { previousDateString? 
+                { previousDateString?
                 <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
                     <td>
-                        { previousDateString ? 
+                        { previousDateString ?
                             <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                                 <span>previous <b>{ previousDateString }</b> </span>
-                                { previousRequest ? 
+                                { previousRequest ?
                                     <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
                                 : null }
-                            </span> 
+                            </span>
                         : null }
 
                     </td>
@@ -230,8 +232,8 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { 
-                      
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
+
                 request.distributeMessage( {
                     recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
                     message: {
@@ -240,7 +242,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                         body: request.description
                     }
                 } );
-                        request.markAsUnread(); 
+                        request.markAsUnread();
                     } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,

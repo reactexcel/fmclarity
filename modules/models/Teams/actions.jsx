@@ -104,10 +104,10 @@ const createRequest = new Action( {
 						if ( newRequest.type == 'Preventative' ) {
 							Meteor.call('Issues.create', newRequest );
 							RequestActions.clone.run( newRequest );
-						} 
-						else if( _.contains( ['portfolio manager', 'fmc support' ], role && newRequest.supplier != null ) ) {
+						}
+						else if( _.contains( ['portfolio manager', 'fmc support' ], role ) && newRequest.supplier != null  ) {
 							Meteor.call('Issues.issue', newRequest );
-						} 
+						}
 						else {
 							Meteor.call('Issues.create', newRequest );
 						}
