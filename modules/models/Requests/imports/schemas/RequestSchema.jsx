@@ -57,7 +57,7 @@ const RequestSchema = {
 		description: "The unique code for this work request",
 		type: "number",
 		input: Text,
-		//defaultValue: getJobCode,
+		defaultValue: getJobCode,
 		options: {
 			readonly: true
 		}
@@ -115,10 +115,6 @@ const RequestSchema = {
 		required: true,
 		condition: ( request ) => {
 			if ( request.type == "Preventative" || request.type == 'Booking' ) {
-				return false;
-			}
-			let role = Meteor.user().getRole();
-			if( role == 'staff' ) {
 				return false;
 			}
 			return true;
@@ -267,16 +263,14 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam(),
 				teamType = null,
-				role = null,
 				services = [];
 			if ( team ) {
 				teamType = team.type;
-				role = Meteor.user().getRole( team );
 				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if ( role == 'staff' || request.type == 'Booking' ) {
+			if ( request.type == 'Booking' ) {
 				return false;
 			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
@@ -336,17 +330,15 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = Session.getSelectedTeam(),
 				teamType = null,
-				role = null,
 				services = [];
 			if ( team ) {
 				teamType = team.type;
-				role = Meteor.user().getRole( team );
 
 				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
 			}
-			if ( role == 'staff' || request.type == 'Booking' ) {
+			if ( request.type == 'Booking' ) {
 				return false;
 			} else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
 				return false;
@@ -488,7 +480,14 @@ const RequestSchema = {
 		defaultValue: '500',
 		input: Currency,
 		condition: ( request ) => {
-			return _.indexOf( [ "Ad-hoc", "Contract", "Tenancy" ], request.type ) > -1 ? ( Meteor.user().getRole() != "staff" ) : false;
+			if( _.contains( [ "Ad-hoc", "Contract", "Tenancy" ], request.type )  ) {
+				return false;
+			}
+			let role = Meteor.user().getRole();
+			if( role == 'staff' ) {
+				return false;
+			}
+			return true;
 		}
 	},
 

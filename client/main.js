@@ -40,7 +40,8 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [
 		'create team',
-		'migrate schema'
+		'migrate schema',
+		'send supplier reminders',
 	],
 	role: [ 'fmc support' ],
 	alert: true
@@ -68,10 +69,8 @@ Actions.addAccessRule( {
 		'create team facility',
 		'edit team member',
 		'delete team member',
-		'send supplier reminders',
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
-	rule: { alert: true }
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager' ],
 } )
 
 // Facility rules
@@ -228,6 +227,9 @@ Actions.addAccessRule( {
 		'remove member',
 		'invite member'
 	],
+	condition: ( item ) => {
+		return item.canAddMember();
+	},
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'team manager', 'team fmc support', 'team portfolio manager', "property manager" ],
 	rule: { alert: true }
 } )

@@ -101,12 +101,14 @@ const createRequest = new Action( {
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
 
-						if( newRequest.type != 'Preventative' && _.contains( ['portfolio manager', 'fmc support' ], role) ) {
-							Meteor.call('Issues.issue', newRequest );
-						} else if ( newRequest.type == 'Preventative' ) {
+						if ( newRequest.type == 'Preventative' ) {
 							Meteor.call('Issues.create', newRequest );
 							RequestActions.clone.run( newRequest );
-						} else {
+						} 
+						else if( _.contains( ['portfolio manager', 'fmc support' ], role && newRequest.supplier != null ) ) {
+							Meteor.call('Issues.issue', newRequest );
+						} 
+						else {
 							Meteor.call('Issues.create', newRequest );
 						}
 

@@ -31,12 +31,14 @@ export default RequestPanel = React.createClass( {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 if( request.type == 'Preventative' ) {
-                    nextRequest = request.getNextRequest();
-                    previousRequest = request.getPreviousRequest();
+                    nextDate = request.getNextDate();
+                    previousDate = request.getPreviousDate();
+                    nextRequest = request.findCloneAt( nextDate );
+                    previousRequest = request.findCloneAt( previousDate );
                 }
             }
         }
-        return { request, nextRequest, previousRequest, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, owner }
     },
 
     render() {
@@ -62,11 +64,11 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
     if( request.type == 'Preventative' ) {
         title = 'PPM';
 
-        if( nextRequest ) {
-            nextDateString = moment( nextRequest.dueDate ).format('ddd Do MMM');
+        if( nextDate ) {
+            nextDateString = moment( nextDate ).format('ddd Do MMM');
         }
-        if( previousRequest ) {
-            previousDateString = moment( previousRequest.dueDate ).format('ddd Do MMM');
+        if( previousDate ) {
+            previousDateString = moment( previousDate ).format('ddd Do MMM');
         }
 
     }
@@ -165,9 +167,13 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 { nextDateString? 
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
-                    <td>                        
-                        <span>{ nextDateString } </span>
-                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status }</span>
+                    <td>
+                        <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
+                            <span>next due <b>{ nextDateString }</b> </span>
+                            { nextRequest ? 
+                                <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                            : null }
+                        </span> 
                     </td>
                 </tr>
                 : null }
@@ -175,9 +181,16 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 { previousDateString? 
                 <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
-                    <td>                        
-                        <span>{ previousDateString } </span>
-                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                    <td>
+                        { previousDateString ? 
+                            <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
+                                <span>previous <b>{ previousDateString }</b> </span>
+                                { previousRequest ? 
+                                    <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                : null }
+                            </span> 
+                        : null }
+
                     </td>
                 </tr>
                 : null }
