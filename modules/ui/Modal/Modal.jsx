@@ -133,8 +133,10 @@ export default Modal = React.createClass( {
             queue.map(function(q,idx){
               return <div className={"modal-dialog"+(q.size?(" modal-dialog-"+q.size):"")} key={idx}>
                 <div className="modal-body">
-
-                <span style={{float:"right",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#999",width:"20px"}} data-dismiss="modal">&times;</span>
+                <div className="modal-header">
+                <span data-dismiss = "modal" style={{float:"left",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#fff",width:"40px"}}> &nbsp;&nbsp;<i className="fa fa-arrow-left" ></i></span>
+                </div>
+                
                   {q.content}
                   
                 </div>
