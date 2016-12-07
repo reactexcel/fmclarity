@@ -149,7 +149,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
-                { request.location ?
+                { request.getLocationString() ?
                 <tr>
                     <th>Location</th>
                     <td>{request.getLocationString()}</td>
