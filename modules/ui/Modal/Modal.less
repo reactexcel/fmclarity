@@ -20,6 +20,13 @@
         display: inline-block;
         margin-top: 60px;
         text-align: left;
+
+        @media (max-width: 768px) {
+            width:100%;
+            margin-top:0px;
+        }   
+
+
     }
     &.fade .modal-dialog {
         transition: transform .3s ease-out;
@@ -60,12 +67,17 @@
 }
 
 .modal-body {
+
     position: relative;
-    min-width: 475px;
+    /*min-width: 475px;*/
     max-width: 800px;
     border: 1px rgba(0, 0, 0, .2);
     background: #fff;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+
+    @media (max-width: 768px) {
+        width:100%;
+    }
 }
 
 .tools-icon {
@@ -77,9 +89,4 @@
     right: 4px;
     padding: 10px;
     color: #ccc;
-}
-@media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
-    .modal-body {
-        width:100%;
-    }
 }
