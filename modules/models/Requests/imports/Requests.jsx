@@ -659,7 +659,7 @@ function actionComplete( request ) {
 					 subject: "Overdue Work order #"+ request.code+" reminder",
 					 emailBody: function( recipient ) {
 						 console.log(recipient);
-						 var expiry = moment( request.dueDate ).add( { days: 1 } ).toDate();
+						 var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
 						 var token = LoginService.generateLoginToken( recipient, expiry );
 						 return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
 					 }

@@ -159,7 +159,7 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-	condition: ( request ) => { 
+	condition: ( request ) => {
 		console.log( request.assignee );
 		return _.contains( [ 'In Progress', 'Issued' ], request.status ) && !request.assignee
 	},
