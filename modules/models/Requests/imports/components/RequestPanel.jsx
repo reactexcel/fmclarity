@@ -23,6 +23,8 @@ export default RequestPanel = React.createClass( {
         let request = null,
             nextRequest = null,
             previousRequest = null,
+            nextDate = null,
+            previousDate = null,
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );

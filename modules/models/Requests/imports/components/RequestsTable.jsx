@@ -61,17 +61,21 @@ export default function RequestsTable( { requests, filter } ) {
 			
 			if ( team.type == 'fm' ) {
 				let supplier = item.getSupplier();
-				return {
-					originalVal: supplier.name,
-					val: <ContactAvatarSmall item = { supplier } />
-				} ;
+                if( supplier ) {
+    				return {
+    					originalVal: supplier.name,
+    					val: <ContactAvatarSmall item = { supplier } />
+    				} ;
+                }
 			}
 			else{
 				let client = item.getOwner();
-				return {
-					originalVal: client.name,
-					val: <ContactAvatarSmall item = { client } />
-				} ;
+                if ( client ) {
+    				return {
+    					originalVal: client.name,
+    					val: <ContactAvatarSmall item = { client } />
+    				} ;
+                }
 			}
 		},
     }
