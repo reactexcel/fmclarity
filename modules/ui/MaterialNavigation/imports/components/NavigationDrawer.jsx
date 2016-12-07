@@ -24,6 +24,33 @@ class NavigationDrawer extends React.Component {
 		} )
 		route.run();
 	}
+	toggleMobile(  ) {
+		var winWidth = $(window).width();
+		var docWidth = $(document).width();
+		if (winWidth <= 600 || docWidth <= 600) {
+			$( 'body' ).toggleClass( 'nav-drawer-closed' );
+		}
+		var TO = false;
+	    var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+	    $(window).bind(resizeEvent, function() {
+	        TO && clearTimeout(TO);
+	        TO = setTimeout(function(){
+	        	var height = window.innerHeight || $(window).height();
+		        var width = window.innerWidth || $(window).width();
+		        if ( width <=600 ) {
+		        	$( 'body' ).addClass( 'nav-drawer-closed' );
+		        }
+		        else{
+		        	$( 'body' ).removeClass( 'nav-drawer-closed' );
+		        }
+	        }, 200);
+	    });
+		
+	}
+	
+	componentDidMount() {
+		this.toggleMobile();
+	}
 
 	render() {
 		import { Routes } from '/modules/core/Actions'; // moved here because of circular dependency
