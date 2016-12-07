@@ -65,7 +65,7 @@ export default TeamSchema = {
     },
 
     phone2: {
-        label: "Seconday phone",
+        label: "Secondary phone",
         type: "phone",
         description: "Secondary phone contact number",
         icon: "phone",

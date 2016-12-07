@@ -20,6 +20,15 @@ function NotificationViewSummary( { item } ) {
         owner = message.getOwner() || Meteor.user(),
         createdAt = message.createdAt;
 
+
+    function performLinkAction( message ) {
+        if( message.target.path == 'requests' ) {
+            let target = message.getTarget();
+            console.log( target );
+            Actions.run('view request', target );
+        }
+    }
+
     return (
         <div>
             <ContactAvatarSmall item = { owner }/>
@@ -27,7 +36,7 @@ function NotificationViewSummary( { item } ) {
             <div>
                 <strong>{ owner.getName() }</strong> {
                 message.verb ?
-                    <span>{ message.verb } <b><a href = { message.getTargetUrl() }>{ message.getTargetName() }</a></b></span>
+                    <span>{ message.verb } <b><a onClick = { () => { performLinkAction( message ) } } >{ message.getTargetName() }</a></b></span>
                 :
                     <span>{ message.subject }</span>
                 }<br/>

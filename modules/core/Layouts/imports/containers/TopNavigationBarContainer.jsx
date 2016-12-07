@@ -35,6 +35,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		teams = null,
 		role = null,
 		notifications = null,
+		unreadCount = 0,
 		chime = new Audio( '/audio/alert3.wav' );
 
 	if ( user ) {
@@ -55,7 +56,9 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		//subscribe to team specific guff here
 
 		// get notifications
-		notifications = Messages.findAll( { 'inboxId.query._id': user._id, read: false } );
+		notifications = Messages.findAll( { 'inboxId.query._id': user._id }, { sort: { createdAt:-1 }, limit: 20 } );
+		unreadCount = Messages.find( { 'inboxId.query._id': user._id, read: false } ).count();
+
 //		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
 	//	if ( unshownNotifications.length ) {
 		//	chime.play();
@@ -85,6 +88,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		team,
 		teams,
 		notifications,
+		unreadCount,
 		onNotificationsViewed,
 		showNotifications,
 	}

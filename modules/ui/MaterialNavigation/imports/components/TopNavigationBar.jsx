@@ -31,7 +31,7 @@ export default function TopNavigationBar( props ) {
         $( 'body' ).toggleClass( 'nav-drawer-closed' );
     }
 
-    let { notifications, user, team, teams } = props;
+    let { notifications, unreadCount, user, team, teams } = props;
 
     return (
         <div className="top-navigation-bar">
@@ -54,8 +54,8 @@ export default function TopNavigationBar( props ) {
                         <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
                             <i className="fa fa-bell"></i>
                             <div style={{float:"right",width:"15px"}}>
-                                { notifications && notifications.length ?
-                                    <span className="label label-notification">{ notifications.length }</span>
+                                { unreadCount ?
+                                    <span className="label label-notification">{ unreadCount }</span>
                                 : null }
                             </div>
                         </span>

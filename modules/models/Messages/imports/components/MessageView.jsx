@@ -4,6 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 import { Messages } from '/modules/models/Messages';
+import { Actions } from '/modules/core/Actions';
 
 import moment from 'moment';
 
@@ -74,6 +75,13 @@ export default MessageView = React.createClass( {
         }
     },
 
+    performLinkAction( message ) {
+        if( message.target.path == 'requests' ) {
+            let target = message.getTarget();
+            Actions.run('view request', target );
+        }
+    },
+
     render() {
         let message = this.data.message || {},
             owner = this.data.owner || Meteor.user(),
@@ -109,7 +117,7 @@ export default MessageView = React.createClass( {
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                             message.verb?
-                                <span>{message.verb} <b><a href={message.getTargetUrl()}>{message.getTargetName()}</a></b></span>
+                                <span>{message.verb} <b><a onClick = { () => { this.performLinkAction( message ) }}>{message.getTargetName()}</a></b></span>
                             :
                                 <span>{message.subject}</span>
                             }
