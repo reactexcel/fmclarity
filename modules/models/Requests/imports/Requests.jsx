@@ -145,13 +145,13 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			var str = '';
-			if ( request.level ) {
+			if ( request.level.name ) {
 				str += request.level.name;
 			}
-			if ( request.area && request.area.name ) {
-				str += ( ' - ' + request.area.name );
-				if ( request.area.identifier && request.area.identifier.name ) {
-					str += ( ', ' + request.area.identifier.name );
+			if ( request.area.name ) {
+				str += ( ', ' + request.area.name );
+				if ( request.identifier.name ) {
+					str += ( ', ' + request.identifier.name );
 				}
 			}
 			return str;
