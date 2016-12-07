@@ -10,7 +10,7 @@ import { Facilities } from '/modules/models/Facilities';
 export default FacilityStepperContainer = createContainer( ( { params } ) => {
 
 	let { item, onSaveFacility } = params,
-		facility = null;
+		facility = item;
 
 	console.log( item );
 	if( item && item._id ) {
@@ -19,7 +19,7 @@ export default FacilityStepperContainer = createContainer( ( { params } ) => {
 	console.log( facility );
 
 	return {
-		facility, 
+		facility,
 		onSaveFacility
 	}
 

@@ -32,7 +32,7 @@ export default class DocExplorer extends React.Component {
 	}
 
 	handleChange( index, newValue ) {
-		Modal.hide();
+		//Modal.hide();
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
 		}
