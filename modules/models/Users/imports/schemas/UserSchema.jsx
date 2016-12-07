@@ -43,6 +43,11 @@ const UserProfileSchema = {
 		required: true,
 		type: "string",
 	},
+	position:{
+		label: "Position",
+		input: Text,
+		type: "string",
+	},
 	email: {
 		label: "Email address",
 		input: Text,
