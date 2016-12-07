@@ -57,7 +57,7 @@ const RequestSchema = {
 		description: "The unique code for this work request",
 		type: "number",
 		input: Text,
-		//defaultValue: getJobCode,
+		defaultValue: getJobCode,
 		options: {
 			readonly: true
 		}
@@ -114,7 +114,10 @@ const RequestSchema = {
 		defaultValue: "Standard",
 		required: true,
 		condition: ( request ) => {
-			return request.type != "Preventative" && request.type != 'Booking'
+			if ( request.type == "Preventative" || request.type == 'Booking' ) {
+				return false;
+			}
+			return true;
 		},
 		input: Select,
 		size: 6,
@@ -330,6 +333,7 @@ const RequestSchema = {
 				services = [];
 			if ( team ) {
 				teamType = team.type;
+
 				if ( team.getAvailableServices ) {
 					services = team.getAvailableServices()
 				}
@@ -476,7 +480,14 @@ const RequestSchema = {
 		defaultValue: '500',
 		input: Currency,
 		condition: ( request ) => {
-			return _.indexOf( [ "Ad-hoc", "Contract", "Tenancy" ], request.type ) > -1 ? ( Meteor.user().getRole() != "staff" ) : false;
+			if( _.contains( [ "Ad-hoc", "Contract", "Tenancy" ], request.type )  ) {
+				return false;
+			}
+			let role = Meteor.user().getRole();
+			if( role == 'staff' ) {
+				return false;
+			}
+			return true;
 		}
 	},
 
@@ -496,7 +507,14 @@ const RequestSchema = {
 		input: DateTime,
 		size: 6,
 		required: true,
-		defaultValue: getDefaultDueDate
+		defaultValue: getDefaultDueDate,
+		condition: ( request ) => {
+			let role = Meteor.user().getRole();
+			if( role == 'staff' ) {
+				return false;
+			}
+			return true;
+		}
 	},
 
 	issuedAt: {
@@ -514,16 +532,7 @@ const RequestSchema = {
 		description: "Time the supplier is expected to attend the site",
 		size: 6,
 		required: true,
-		input: DateTime,
-		condition: ( request ) => {
-			if( request.type == 'Preventative' ) {
-				return false;
-			}
-			let team = Session.getSelectedTeam();
-			if( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
-				return true;
-			}
-		},
+		input: DateTime
 	},
 
 	//////////////////////////////////////////////////
@@ -611,6 +620,7 @@ const RequestSchema = {
 					request.service = null;
 					request.subservice = null;
 					request.supplier = null;
+					request.members = getMembersDefaultValue( request );
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
@@ -742,6 +752,33 @@ const RequestSchema = {
 						} )
 					}
 				},
+				afterChange: ( item ) => {
+					console.log( item.assignee );
+					let found = false;
+					if( item.assignee ) {
+						import { Users } from '/modules/models/Users';
+						let assignee = Users.findOne( item.assignee._id );
+						for( i in item.members ){
+							let member = item.members[i];
+							if ( member.role == "assignee" ){
+								item.members[i] = {
+									_id: assignee._id,
+									name: assignee.profile.name,
+									role: "assignee"
+								};
+								found = true;
+								break;
+							}
+						}
+						if (!found){
+							item.members.push( {
+								_id: assignee._id,
+								name: assignee.profile.name,
+								role: "assignee"
+							} );
+						}
+					}
+				}
 			}
 		},
 	},
@@ -774,6 +811,31 @@ const RequestSchema = {
 
 	//////////////////////////////////////////////////
 	//}
+
+	requireServiceReport: {
+		label: "Require Service Report",
+		type: "boolean",
+		defaultValue: false,
+		input: Switch,
+		condition:() => {
+			let role = Meteor.user().getRole();
+			return _.indexOf(["manager", "portfolio manager", "team portfolio manager", "team manager"], role) > -1 ;
+		}
+	},
+
+	requireInvoice: {
+		label: "Require Invoice",
+		type: "boolean",
+		defaultValue: false,
+		input: Switch,
+		condition:() => {
+			let role = Meteor.user().getRole();
+			return _.indexOf(["manager", "portfolio manager", "team portfolio manager", "team manager"], role) > -1 ;
+		}
+	},
+
+
+
 }
 
 /*
@@ -808,7 +870,7 @@ function getMembersDefaultValue( item ) {
 	} );
 
 	if ( item.facility ) {
-		let facility = rFacilities.findOne( item.facility._id ),
+		let facility = Facilities.findOne( item.facility._id ),
 			facilityMembers = facility.getMembers( {
 				role: "manager"
 			} );
