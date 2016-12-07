@@ -9,6 +9,9 @@ import moment from 'moment';
 
 export default function RequestsTable( { requests, filter } ) {
 
+	let team = Meteor.user().getTeam();
+	//when in client (fm) view, show supplier, else if in supplier view show client on table column name.
+	let ClientOrSupplier = team.type == 'fm' ? 'Supplier' : 'Client'; 
     this.fields = {
         /*  Priority: "priority",
         Status: "status",
@@ -23,7 +26,7 @@ export default function RequestsTable( { requests, filter } ) {
                     val: <ContactCard item={item} />
                 }
             }*/
-        Prty: ( item ) => {
+        "Prty": ( item ) => {
             return {
                 originalVal: item.priority,                
                 val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >
@@ -31,40 +34,46 @@ export default function RequestsTable( { requests, filter } ) {
                 </span>)
             }
         },
-        Status: ( item ) => {
+        "Status": ( item ) => {
             return {
                 originalVal: item.status,
                 val: <span className = {`label label-${item.status}`}>{item.status}</span>
             }
         },
-        Facility: "facility.name",
+        "Facility": "facility.name",
         "PO#": ( item ) => {
             return {
                 val:item.code? item.code : "",
                 originalVal: item.code
             }
         },
-        Issue: "name",
-        Issued: "issuedAt",
-        Due: ( item ) => {
+        "Issue": "name",
+        "Issued": "issuedAt",
+        "Due": ( item ) => {
             let dueDate = moment( item.dueDate );
             return {
                 originalVal: item.dueDate,
                 val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueDate.fromNow() }</span>
             }
         },
-        Supplier: ( item ) => {
-            let supplier = item.getSupplier();
-            if ( supplier != null ) {
-                return {
-                    originalVal: supplier.name,
-                    val: <ContactAvatarSmall item = { supplier } />
-                }
-            }
-            return {
-                val: <span/>
-            }
-        },
+		//use square brackets for dynamic JSON keys (as variables)
+		[ ClientOrSupplier ] : ( item ) => {
+			
+			if ( team.type == 'fm' ) {
+				let supplier = item.getSupplier();
+				return {
+					originalVal: supplier.name,
+					val: <ContactAvatarSmall item = { supplier } />
+				} ;
+			}
+			else{
+				let client = item.getOwner();
+				return {
+					originalVal: client.name,
+					val: <ContactAvatarSmall item = { client } />
+				} ;
+			}
+		},
     }
 
     if ( filter ) {

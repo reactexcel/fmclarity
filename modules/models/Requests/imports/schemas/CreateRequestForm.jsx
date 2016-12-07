@@ -15,7 +15,6 @@ export default CreateRequestForm = [
 	'subservice',
 	'supplier',
 
-	'eta',
 	'assignee',
 
 	'priority',
@@ -25,6 +24,10 @@ export default CreateRequestForm = [
 	'duration',
 
 	'costThreshold',
+
+	'requireServiceReport',
+	'requireInvoice',
+
 	'description',
 
 	'attachments'

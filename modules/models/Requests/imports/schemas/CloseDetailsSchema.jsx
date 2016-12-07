@@ -11,7 +11,11 @@ export default CloseDetailsSchema = {
     completionDate: {
         label: "Completion date and time",
         input: DateTime,
-        size: 6
+        size: 6,
+        required: true,
+        defaultValue: () => {
+            return new Date();
+        }
     },
 
     /*
@@ -24,18 +28,15 @@ export default CloseDetailsSchema = {
     serviceReport: {
         label: "Service report",
         input: FileField,
-        optional: true
     },
 
     invoice: {
         label: "Invoice",
         input: FileField,
-        optional: true
     },
 
     furtherWorkRequired: {
         label: "Further work required",
-        optional: true,
         type: "boolean",
         input: Switch
     },
@@ -43,6 +44,7 @@ export default CloseDetailsSchema = {
     furtherWorkDescription: {
         label: "Details of further work",
         input: TextArea,
+        required: true,
         condition( item ) {
             return item.furtherWorkRequired == true;
         },

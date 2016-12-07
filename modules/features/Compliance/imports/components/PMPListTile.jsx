@@ -17,23 +17,25 @@ const PMPListTile = React.createClass( {
 
         if ( request ) {
             supplier = request.supplier;
-            nextRequest = request.getNextRequest();
-            previousRequest = request.getPreviousRequest();
+            nextDate = request.getNextDate();
+            previousDate = request.getPreviousDate();
+            nextRequest = request.findCloneAt( nextDate );
+            previousRequest = request.findCloneAt( previousDate );
         }
-        return { request, supplier, previousRequest, nextRequest };
+        return { request, supplier, nextDate, previousDate, nextRequest, previousRequest };
     },
 
     render() {
 
-        let { request, supplier, nextRequest, previousRequest } = this.data,
+        let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data,
             nextDateString = null,
             previousDateString = null;
 
-        if( nextRequest ) {
-            nextDateString = moment( nextRequest.dueDate ).format('ddd Do MMM');
+        if( nextDate ) {
+            nextDateString = moment( nextDate ).format('ddd Do MMM');
         }
-        if( previousRequest ) {
-            previousDateString = moment( previousRequest.dueDate ).format('ddd Do MMM');
+        if( previousDate ) {
+            previousDateString = moment( previousDate ).format('ddd Do MMM');
         }
 
 
@@ -49,17 +51,21 @@ const PMPListTile = React.createClass( {
             </div>
             <div className = "issue-summary-col" style = {{width:"15%"}}>
                 { nextDateString ? 
-                    <span onClick = { () => { RequestActions.view.run( nextRequest ) } } >
+                    <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                         <span>next due <b>{ nextDateString }</b> </span>
-                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status }</span>
+                        { nextRequest ? 
+                            <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                        : null }
                     </span> 
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"15%"}}>
                 { previousDateString ? 
-                    <span onClick = { () => { RequestActions.view.run( previousRequest ) } } >
+                    <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                         <span>previous <b>{ previousDateString }</b> </span>
-                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                        { previousRequest ? 
+                            <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                        : null }
                     </span> 
                 : null }
             </div>

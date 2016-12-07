@@ -140,7 +140,7 @@
  	name: "accept request",
  	type: 'request',
  	verb: "accepted a work order",
- 	label: "Accept",
+ 	label: "Assign",
  	action: ( request, callback ) => {
  		Modal.show( {
  			content: <AutoForm
@@ -151,7 +151,7 @@
  				[ 'eta', 'assignee', 'acceptComment' ] }
  			onSubmit = {
  				( request ) => {
- 					Requests.update( request._id, { $set: { status: 'In Progress' } } );
+ 					//Requests.update( request._id, { $set: { status: 'In Progress' } } );
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
@@ -219,7 +219,7 @@
  			form = { CreateRequestForm }
  			onSubmit = {
  				( request ) => {
- 					Requests.update( request._id, { $set: { status: 'In Progress' } } );
+ 					//Requests.update( request._id, { $set: { status: 'In Progress' } } );
  					Modal.hide();
  					callback( request );
  				}
@@ -241,7 +241,7 @@
  			form = { CreateRequestForm }
  			onSubmit = {
  				( request ) => {
- 					Requests.update( request._id, { $set: { status: 'In Progress' } } );
+ 					//Requests.update( request._id, { $set: { status: 'In Progress' } } );
  					Modal.hide();
  				}
  			}
@@ -395,12 +395,12 @@
  	cancel, //delete
  	issue, //approve
  	accept,
- 	reject,
+ 	//reject,
  	getQuote,
  	sendQuote,
  	complete,
- 	close,
- 	reopen,
- 	reverse,
+ 	//close,
+ 	//reopen,
+ 	//reverse,
  	clone
  }
