@@ -8,15 +8,13 @@ const UserProfileForm = [
   'facility',
   'level',
   'apartment',
+  'identifier',
 
   'status',
 
   'realEstateAgency',
 
   'propertyManger',
-  'propertyMangerEmail',
-
-  'agentContact',
 
   'moveInDate',
   'leaseExpiry',

@@ -257,7 +257,41 @@ const UserSchema = {
 			label: "Property manager",
 			optional: true,
 			type: "object",
-			input: Select,
+			input: ( props ) => (
+				<div className="row">
+					<div className="col-sm-10">
+						<Select {...props} />
+					</div>
+					<div className="col-sm-2" style={{marginTop:"25px"}}>
+						<a href="javascript:void(0);" style={ { fontSize:"14px"} }
+							onClick={ ( e ) => {
+								let facility = currentState.facility,
+									propertyManger = currentState.propertyManger,
+									email = propertyManger ? propertyManger.profile.email : "" ,
+									regex = /.+@.+\..+/i;
+								if ( !facility ){
+									return;
+								}
+								facility = Facilities.findOne( facility._id );
+
+								if ( !regex.test( email ) ) {
+									alert( 'Please enter a valid email address' );
+								} else {
+									facility.invitePropertyManager( email, {
+										role: "property manger"
+									}, function ( response ){
+										let team = Teams.findOne(currentState.realEstateAgency._id);
+										team.sendMemberInvite( response.user );
+										window.alert ( "Invitation has been sent to \"" + email + " \"" );
+									} );
+								}
+							} }>
+							<i className="fa fa-paper-plane-o" aria-hidden="true"> </i>
+							 {" "}Invite
+						</a>
+					</div>
+				</div>
+			),
 			options: ( item ) => {
 				let members = item.realEstateAgency ? item.realEstateAgency.members : [];
 				members = _.uniq( members, false, ( i ) => {
@@ -270,8 +304,7 @@ const UserSchema = {
 					items: members,
 					view: ContactCard,
 					afterChange: ( item ) => {
-						item.propertyMangerEmail = item.propertyManger.profile.email;
-						currentState = item;
+
 					},
 					addNew:{
 						show: Meteor.user().getRole() != 'staff',
@@ -294,72 +327,79 @@ const UserSchema = {
 		},
 
 
-		propertyMangerEmail: {
-			label: 'Property manger\'s email address',
-			type: 'string',
-			input: ( props ) => (
-				<div className="row">
-					<div className="col-sm-8">
-						<Text {...props} />
-					</div>
-					<div className="col-sm-4" style={{marginTop:"25px"}}>
-						<a href="javascript:void(0);" style={ { fontSize:"14px", marginLeft:"35px" } }
-							onClick={ ( e ) => {
-								let facility = currentState.facility,
-									email = currentState.propertyMangerEmail ,
-									regex = /.+@.+\..+/i;
-								if ( !facility ){
-									return;
-								}
-								facility = Facilities.findOne( facility._id );
-
-								if ( !regex.test( email ) ) {
-									alert( 'Please enter a valid email address' );
-								} else {
-									facility.invitePropertyManager( email, {
-										role: "property manger"
-									}, function ( response ){
-										let team = Teams.findOne(currentState.realEstateAgency._id);
-										team.sendMemberInvite( response.user );
-										window.alert ( "Invitation has been sent to \"" + email + " \"" );
-									} );
-								}
-							} }>
-							<i className="fa fa-paper-plane-o" aria-hidden="true"> </i>
-							 {" "}Invite PM
-						</a>
-					</div>
-				</div>
-			),
-			optional: true,
-			condition: ( item ) => {
-				return role === "resident"
-			},
-			options: (  ) => ( {
-				afterChange: ( item ) => {
-					//updatePropertyManager( item );
-				}
-			} )
-		},
+		// propertyMangerEmail: {
+		// 	label: 'Property manger\'s email address',
+		// 	type: 'string',
+		// 	input: ( props ) => (
+		// 		<div className="row">
+		// 			<div className="col-sm-8">
+		// 				<Text {...props} />
+		// 			</div>
+		// 			<div className="col-sm-4" style={{marginTop:"25px"}}>
+		// 				<a href="javascript:void(0);" style={ { fontSize:"14px", marginLeft:"35px" } }
+		// 					onClick={ ( e ) => {
+		// 						let facility = currentState.facility,
+		// 							email = currentState.propertyMangerEmail ,
+		// 							regex = /.+@.+\..+/i;
+		// 						if ( !facility ){
+		// 							return;
+		// 						}
+		// 						facility = Facilities.findOne( facility._id );
+		//
+		// 						if ( !regex.test( email ) ) {
+		// 							alert( 'Please enter a valid email address' );
+		// 						} else {
+		// 							facility.invitePropertyManager( email, {
+		// 								role: "property manger"
+		// 							}, function ( response ){
+		// 								let team = Teams.findOne(currentState.realEstateAgency._id);
+		// 								team.sendMemberInvite( response.user );
+		// 								window.alert ( "Invitation has been sent to \"" + email + " \"" );
+		// 							} );
+		// 						}
+		// 					} }>
+		// 					<i className="fa fa-paper-plane-o" aria-hidden="true"> </i>
+		// 					 {" "}Invite PM
+		// 				</a>
+		// 			</div>
+		// 		</div>
+		// 	),
+		// 	optional: true,
+		// 	condition: ( item ) => {
+		// 		return role === "resident"
+		// 	},
+		// 	options: (  ) => ( {
+		// 		afterChange: ( item ) => {
+		// 			//updatePropertyManager( item );
+		// 		}
+		// 	} )
+		// }	,
 
 
 		facility: {
 			label: "Site Address",
 			optional: true,
 			type: "object",
-			relation: {
-				join: ( item ) => {
-					if ( item.facility && item.facility._id ) {
-						return Facilities.findOne( item.facility._id );
-					}
-				},
-				unjoin: ( item ) => {
-					if ( item.facility && item.facility._id ) {
-						return _.pick( item.facility, '_id', 'name' );
-					}
-				}
-			},
-			input: Select,
+			// relation: {
+			// 	join: ( item ) => {
+			// 		if ( item.facility && item.facility._id ) {
+			// 			return Facilities.findOne( item.facility._id );
+			// 		}
+			// 	},
+			// 	unjoin: ( item ) => {
+			// 		if ( item.facility && item.facility._id ) {
+			// 			return _.pick( item.facility, '_id', 'name' );
+			// 		}
+			// 	}
+			// },
+			input: ( props ) => (
+				<div className="row">
+					<div className="col-sm-12">
+						<Select {...props} />
+						<h4 style={{marginBottom: "0px"}}>Apartment address </h4>
+					</div>
+				</div>
+			),
 			options: ( item ) => {
 				let team = Session.getSelectedTeam(),
 					facilities = team.getFacilities();
@@ -385,11 +425,11 @@ const UserSchema = {
 
 
 		level: {
-			label: "Level",
+			label: "Address 1",
 			input: Select,
 			type: "object",
 			optional: true,
-			size: 6,
+			size: 4,
 			condition: ( item ) => {import { ContactCard } from '/modules/mixins/Members';
 				return role === "resident"
 			},
@@ -405,11 +445,11 @@ const UserSchema = {
 
 
 		apartment: {
-			label: "Apartment",
+			label: "Address 2",
 			optional: true,
 			type:"object",
 			input: Select,
-			size: 6,
+			size: 4,
 			condition: ( item ) => {
 				return role === "resident"
 			},
@@ -424,24 +464,39 @@ const UserSchema = {
 			}
 		},
 
+		identifier: {
+			label: "Address 3",
+			size: 4,
+			type: "object",
+			input: Select,
+			condition: ( item ) => {
+				console.log({item});
+				return role === "resident" && item.apartment ? ( item.apartment.children ? true : false ) : false;
+			},
+			options: ( item ) => {
+				return {
+					items: item.apartment ? item.apartment.children : null
+				}
+			}
+		},
 
 		realEstateAgency:{
 			label: 'Real estate agency',
 			type: 'object',
 			optional: true,
 			input: Select,
-			relation: {
-				join: ( item ) => {
-					if ( item.realEstateAgency && item.realEstateAgency._id ) {
-						return Teams.findOne( item.realEstateAgency._id );
-					}
-				},
-				unjoin: ( item ) => {
-					if ( item.realEstateAgency && item.realEstateAgency._id ) {
-						return _.pick( item.realEstateAgency, '_id', 'name' );
-					}
-				}
-			},
+			// relation: {
+			// 	join: ( item ) => {
+			// 		if ( item.realEstateAgency && item.realEstateAgency._id ) {
+			// 			return Teams.findOne( item.realEstateAgency._id );
+			// 		}
+			// 	},
+			// 	unjoin: ( item ) => {
+			// 		if ( item.realEstateAgency && item.realEstateAgency._id ) {
+			// 			return _.pick( item.realEstateAgency, '_id', 'name' );
+			// 		}
+			// 	}
+			// },
 			input: Select,
 			options: ( item ) => {
 				let teams = Teams.findAll({ type: 'real estate'});
