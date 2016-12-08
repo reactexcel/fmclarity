@@ -112,7 +112,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 							{ request.type == 'Ad-hoc' && 
 							  request.costThreshold && 
 							  Meteor.user().getRole() != 'staff' ?
-                            <b style = { { display:"block",marginBottom:"7px" } } >${request.costThreshold}<br/></b>
+                            <h2>${request.costThreshold}</h2>
                             : null }
 							
                             { request.issuedAt ?
