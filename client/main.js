@@ -122,15 +122,17 @@ Actions.addAccessRule( {
 
 
 Actions.addAccessRule( {
+	/*
 	condition: ( request ) => {
-			if ( request.type == 'Preventative'  ) {
-        		let nextRequestDate = request.getNextDate();
-        		if( nextRequestDate != null ) {
-	          		return true;
-    	  		}
-        		return false;
-      		}
+		if ( request.type == 'Preventative'  ) {
+        	let nextRequestDate = request.getNextDate();
+        	if( nextRequestDate != null ) {
+	         	return true;
+    	  	}
+        	return false;
+      	}
     },
+    */
 	action: [
 		'clone request',
 	],
@@ -160,7 +162,6 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	condition: ( request ) => {
-		console.log( request.assignee );
 		return _.contains( [ 'In Progress', 'Issued' ], request.status ) && !request.assignee
 	},
 	action: [

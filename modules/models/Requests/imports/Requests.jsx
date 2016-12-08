@@ -145,13 +145,13 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			var str = '';
-			if ( request.level.name ) {
+			if ( request.level && request.level.name ) {
 				str += request.level.name;
-			}
-			if ( request.area.name ) {
-				str += ( ', ' + request.area.name );
-				if ( request.identifier.name ) {
-					str += ( ', ' + request.identifier.name );
+				if ( request.area && request.area.name ) {
+					str += ( ', ' + request.area.name );
+					if ( request.identifier && request.identifier.name ) {
+						str += ( ', ' + request.identifier.name );
+					}
 				}
 			}
 			return str;
@@ -274,21 +274,16 @@ Requests.methods( {
 		helper: ( request ) => {
             if ( request.frequency ) {
                 let dueDate = moment( request.dueDate ),
-                	nextDate = dueDate;
                 	repeats = parseInt( request.frequency.repeats ),
                 	period = {};
 
                 period[ request.frequency.unit ] = parseInt( request.frequency.number );
                 for ( var i = 0; i < repeats; i++ ) {
 
-                	nextDate = dueDate.add( period );
-
-                	if( nextDate.isAfter() ) {
-                		if( !dueDate.isAfter() ) {
-	                		return dueDate.toDate();
-	                	}
+                	if( dueDate.isBefore() ) {
+                		return dueDate.toDate();
                 	}
-                	dueDate = nextDate;
+                	dueDate = dueDate.subtract( period );
                 }
             }
 		}
