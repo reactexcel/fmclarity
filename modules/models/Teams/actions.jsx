@@ -105,7 +105,7 @@ const createRequest = new Action( {
 							Meteor.call('Issues.create', newRequest );
 							//RequestActions.clone.run( newRequest );
 						}
-						else if( _.contains( ['portfolio manager', 'fmc support' ], role ) && newRequest.supplier != null  ) {
+						else if( _.contains( ['portfolio manager', 'fmc support' ], role ) && newRequest.supplier && newRequest.supplier._id  ) {
 							Meteor.call('Issues.issue', newRequest );
 						}
 						else {
