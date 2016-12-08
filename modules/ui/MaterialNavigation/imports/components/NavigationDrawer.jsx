@@ -24,11 +24,18 @@ class NavigationDrawer extends React.Component {
 		} )
 		route.run();
 	}
-	toggleMobile(  ) {
+	toggleDeviceView(  ) {
 		var winWidth = $(window).width();
 		var docWidth = $(document).width();
 		if (winWidth <= 600 || docWidth <= 600) {
-			$( 'body' ).toggleClass( 'nav-drawer-closed' );
+			if (!$( 'body' ).hasClass( 'nav-drawer-closed' )) {
+				$( 'body' ).addClass( 'nav-drawer-closed' );
+				Session.set('currentDeviceView', 'mobile');
+			}
+			
+		}
+		else{
+			Session.set('currentDeviceView', 'desktop');
 		}
 		var TO = false;
 	    var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
@@ -39,9 +46,11 @@ class NavigationDrawer extends React.Component {
 		        var width = window.innerWidth || $(window).width();
 		        if ( width <=600 ) {
 		        	$( 'body' ).addClass( 'nav-drawer-closed' );
+		        	Session.set('currentDeviceView', 'mobile');
 		        }
 		        else{
 		        	$( 'body' ).removeClass( 'nav-drawer-closed' );
+		        	Session.set('currentDeviceView', 'desktop');
 		        }
 	        }, 200);
 	    });
@@ -49,7 +58,7 @@ class NavigationDrawer extends React.Component {
 	}
 	
 	componentDidMount() {
-		this.toggleMobile();
+		this.toggleDeviceView();
 	}
 
 	render() {
@@ -94,7 +103,10 @@ class NavigationDrawer extends React.Component {
 
 				return (
 				<li key = { routeName } className = { classes.join(' ') }>
-					<a onClick = { () => { this.selectRoute( route ) } } >
+					<a onClick = { () => { 
+						this.selectRoute( route )
+						this.toggleDeviceView() 
+					} } >
 						<i className = { icon }></i>
 						<span>{ label }</span>
 					</a>
