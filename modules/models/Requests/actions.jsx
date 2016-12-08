@@ -377,7 +377,7 @@
  			_id: Random.id(),
       dueDate: dueDate,
  			status: 'Issued',
- 			type: 'Ad Hoc'
+ 			type: 'Ad-Hoc'
  		});
 
 		Modal.replace( {
