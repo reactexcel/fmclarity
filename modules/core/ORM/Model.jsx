@@ -87,7 +87,7 @@ class Model {
 	validate( ...args ) {
 		return new Promise( ( fulfil, reject ) => {
 			Meteor.call( `${this._name}.validate`, ...args, ( error, response ) => {
-				
+
 				if ( error ) {
 					reject( error );
 				} else {
@@ -141,7 +141,7 @@ class Model {
 					return field.schema.create();
 				}
 				return {};
-			} else if ( _.isArray( field.type ) ) {
+			} else if (  field.type == "array" ) {
 				return [];
 			} else if ( field.type == "object" ) {
 				return {};

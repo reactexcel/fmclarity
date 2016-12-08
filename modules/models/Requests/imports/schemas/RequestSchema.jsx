@@ -723,7 +723,7 @@ const RequestSchema = {
 			}
 		},
 		condition: ( request ) => {
-			let role = Meteor.user().getRole();	
+			let role = Meteor.user().getRole();
 			if( request.type == 'Preventative' || role == "caretaker" ) {
 				return false;
 			}
@@ -806,7 +806,6 @@ const RequestSchema = {
 	attachments: {
 		label: "Attachments",
 		type: "array",
-		defaultValue: [],
 		input: FileExplorer
 	},
 
