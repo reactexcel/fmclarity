@@ -55,7 +55,7 @@ export default class RequestsPageIndex extends Component {
 					</div>
 					<div className="col-xs-offset-3 col-xs-3">
 						<RequestFilter
-							items = { [ "All", "New", "Issued", "In Progress", "Complete", "Closed" ] }
+							items = { [ "Open", "New", "Issued", "In Progress", "Complete", "Closed" ] }
 							onChange = { ( item ) => {
 								requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
 								this.setState( { requests } )

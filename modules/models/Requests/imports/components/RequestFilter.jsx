@@ -30,7 +30,7 @@ export default class RequestFilter extends Component {
                         { ( item ) => {
                             this.setState( { item: item } );
                             if(this.props.onChange){
-                            this.props.onChange( {"status": { [item === "All" ? '$nin' : '$in']: item === "All" ? [] : [ item ] } } );
+                            this.props.onChange( {"status": { '$in': item === "Open" ? ['New','Issued'] : [ item ] } } );
                         } } }
                 />
             </div>

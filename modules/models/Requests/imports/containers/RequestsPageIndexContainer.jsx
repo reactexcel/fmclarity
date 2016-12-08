@@ -13,7 +13,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		user = Meteor.user(),
 		requests = null,
 		facilities = null,
-		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
+		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } },
 		contextFilter = {},
 		selectedRequest = null;
 

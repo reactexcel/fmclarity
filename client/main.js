@@ -130,8 +130,9 @@ Actions.addAccessRule( {
 	         	return true;
     	  	}
     	  	*/
-        	return false;
+        	return true;
       	}
+      	return false;
     },
 	action: [
 		'clone request',
