@@ -98,7 +98,7 @@ const RequestSchema = {
 					"Tenancy",
 					//"Base Building",
 					//"Contract",
-					//"Defect",
+					"Defect",
 					//"Template",
 					//"Warranty",
 				] : [ "Ad-hoc", "Booking", "Tenancy", ]

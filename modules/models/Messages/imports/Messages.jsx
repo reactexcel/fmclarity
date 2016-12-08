@@ -76,7 +76,27 @@ if ( Meteor.isServer ) {
 	} );
 
 	Meteor.publish( "User: Messages", () => {
-		return Messages.find( { 'inboxId._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } );
+		
+		import { Requests } from '/modules/models/Requests';
+
+		let messagesCursor = Messages.find( { 'inboxId._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } ),
+			requestsCursor = null,
+			ids = [];
+
+		messagesCursor.forEach( ( message ) => {
+			if( message && message.target ) {
+				let target = message.target;
+				if( target.path = 'requests' && target.query != null ) {
+					ids.push( target.query._id );
+				}
+			}
+		} )
+
+		if( ids.length ) {
+			requestsCursor = Requests.find( { _id:{ $in: ids } } );
+		}
+
+		return [ messagesCursor, requestsCursor ];
 	} );
 
 	Meteor.publish( "Inbox: Messages", function( ids ) {

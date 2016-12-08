@@ -40,26 +40,16 @@ const PMPListTile = React.createClass( {
 
 
         return <div className = { "issue-summary" }>
-            <div className = "issue-summary-col" style = { {float:"right",width:"35%",padding:"0px"} }>
+            <div className = "issue-summary-col" style = { {float:"right",width:"25%",padding:"0px"} }>
                 <ContactCard item = { supplier }/> 
             </div>          
             <div className = "issue-summary-col" style = { {width:"20%"} } onClick = { () => { RequestActions.view.run( request ) } }>
                 { request.name }
             </div>
-            <div className = "issue-summary-col" style = {{width:"15%"}}>
+            <div className = "issue-summary-col" style = {{width:"10%"}}>
                 due every {`${request.frequency.number||''} ${request.frequency.unit||''}`}
             </div>
-            <div className = "issue-summary-col" style = {{width:"15%"}}>
-                { nextDateString ? 
-                    <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
-                        <span>next due <b>{ nextDateString }</b> </span>
-                        { nextRequest ? 
-                            <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
-                        : null }
-                    </span> 
-                : null }
-            </div>
-            <div className = "issue-summary-col" style = {{width:"15%"}}>
+            <div className = "issue-summary-col" style = {{width:"20%"}}>
                 { previousDateString ? 
                     <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                         <span>previous <b>{ previousDateString }</b> </span>
@@ -69,6 +59,16 @@ const PMPListTile = React.createClass( {
                     </span> 
                 : null }
             </div>
+            <div className = "issue-summary-col" style = {{width:"20%"}}>
+                { nextDateString ? 
+                    <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
+                        <span>next due <b>{ nextDateString }</b> </span>
+                        { nextRequest ? 
+                            <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                        : null }
+                    </span> 
+                : null }
+            </div>            
         </div>
     }
 

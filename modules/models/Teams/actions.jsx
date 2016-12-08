@@ -68,7 +68,7 @@ const createFacility = new Action( {
 
 		//newItem.setupCompliance( Config.compliance );
 
-		item = Facilities.collection._transform( item );
+		item = Facilities.collection._transform( newItem );
 
 		Modal.show( {
             content: <FacilityStepperContainer params = { { item } } />
@@ -103,11 +103,11 @@ const createRequest = new Action( {
 
 						if ( newRequest.type == 'Preventative' ) {
 							Meteor.call('Issues.create', newRequest );
-							RequestActions.clone.run( newRequest );
-						} 
-						else if( _.contains( ['portfolio manager', 'fmc support' ], role && newRequest.supplier != null ) ) {
+							//RequestActions.clone.run( newRequest );
+						}
+						else if( _.contains( ['portfolio manager', 'fmc support' ], role ) && newRequest.supplier && newRequest.supplier._id  ) {
 							Meteor.call('Issues.issue', newRequest );
-						} 
+						}
 						else {
 							Meteor.call('Issues.create', newRequest );
 						}

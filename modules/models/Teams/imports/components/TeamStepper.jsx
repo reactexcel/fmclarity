@@ -113,14 +113,14 @@ const TeamStepper = React.createClass( {
     },
 
     handleInvite( supplier = {} ) {
-        
+
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
         var searchName = supplier.name ? supplier.name : input.value;
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
-        } 
+        }
         else {
           //this.setState( { searchName: searchName} );
           this.setState({searchName: searchName}, () => {
@@ -134,19 +134,19 @@ const TeamStepper = React.createClass( {
                 }*/
                 this.setItem( invitee );
                 if ( this.props.onChange ) {
-                    this.props.onChange( invitee );                    
+                    this.props.onChange( invitee );
                 }
-                
+
                 if ( !invitee.email ) {
                     this.setState( { shouldShowMessage: true } );
-                } 
+                }
                 else {
                     Modal.hide();
                 }
 
             }, null );
             });
-            
+
         }
     },
 
@@ -167,9 +167,9 @@ const TeamStepper = React.createClass( {
       this.submitFormCallbackForWorkOrder = callback;
     },
     handleTeamChange(team){
-      
+
       this.handleInvite(team);
-      
+
     },
 
     checkName(event){
@@ -193,7 +193,7 @@ const TeamStepper = React.createClass( {
     render() {
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
-        
+
 
         if ( !viewingTeam ) {
             return (
@@ -245,6 +245,10 @@ const TeamStepper = React.createClass( {
                           } );
                         } );
                       }
+                    }
+                  }
+                  onFinish = { () => {
+                      this.props.onFinish( viewingTeam )
                     }
                   }
                   tabs={[
