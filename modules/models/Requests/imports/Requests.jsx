@@ -265,7 +265,7 @@ Requests.methods( {
                 for ( var i = 0; i < repeats; i++ ) {
 
                 	if( dueDate.isAfter() ) {
-                		dueDate.subtract( period ).toDate();
+                		return dueDate.subtract( period ).toDate();
                 	}
                 	dueDate = dueDate.add( period );
                 }

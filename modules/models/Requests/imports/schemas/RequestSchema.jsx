@@ -724,7 +724,7 @@ const RequestSchema = {
 		},
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
-			if( request.type == 'Preventative' || role == "caretaker" ) {
+			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" ) {
 				return false;
 			}
 			let team = Session.getSelectedTeam();

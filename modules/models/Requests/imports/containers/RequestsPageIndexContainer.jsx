@@ -39,7 +39,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	if ( user != null ) {
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }/*, { expandPMP: true } */);
 		//requests = user.getRequests();
-		//console.log( requests );
+		console.log( requests );
 	}
 
 

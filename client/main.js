@@ -124,13 +124,12 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: ( request ) => {
 		if ( request.type == 'Preventative'  ) {
-			/*
-        	let nextRequestDate = request.getNextDate();
-        	if( nextRequestDate != null ) {
+			import { Requests } from '/modules/models/Requests';
+			request = Requests.collection._transform( request );
+        	let nextRequest = request.getNextRequest();
+        	if( nextRequest == null ) {
 	         	return true;
     	  	}
-    	  	*/
-        	return true;
       	}
       	return false;
     },
