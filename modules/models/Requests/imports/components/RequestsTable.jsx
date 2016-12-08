@@ -84,6 +84,9 @@ export default function RequestsTable( { requests, filter } ) {
         //let statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
         requests = Meteor.user().getRequests( filter );
     }
+    if (Session.getSelectedFacility()) {
+            delete this.fields['Facility'];
+        }
 
     return ( 
         <DataTable 
