@@ -36,7 +36,11 @@ export default TeamSchema = {
             return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
         },
         options: {
-            items: [ "fm", "contractor" ]
+            items: [ 
+                { name:'Facility Management', val:"fm" },
+                { name:'Supplier', val:"contractor" },
+                { name:'Real Estate Agent', val:"real estate" }
+            ]
         },
     },
 
@@ -65,7 +69,7 @@ export default TeamSchema = {
     },
 
     phone2: {
-        label: "Seconday phone",
+        label: "Secondary phone",
         type: "phone",
         description: "Secondary phone contact number",
         icon: "phone",

@@ -39,10 +39,11 @@ class Calendar extends React.Component {
 
         var events = this.events.events;
         events.length = 0;
+
         requests.map( ( request ) => {
             if ( request.dueDate ) {
                 events.push( {
-                    title: `#${request.code} ${request.name}`,
+                    title: request.code?`#${request.code} ${request.name}`:request.name,
                     color: colors[ request.priority ],
                     start: request.dueDate,
                     allDay: true,

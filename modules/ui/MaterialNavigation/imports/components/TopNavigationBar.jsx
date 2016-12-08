@@ -31,11 +31,11 @@ export default function TopNavigationBar( props ) {
         $( 'body' ).toggleClass( 'nav-drawer-closed' );
     }
 
-    let { notifications, user, team, teams } = props;
+    let { notifications, unreadCount, user, team, teams } = props;
 
     return (
         <div className="top-navigation-bar">
-            <div className="sidebar-back-screen" onClick = {toggleLeftSideBar }></div>
+            <div className="sidebar-back-screen" onClick = { toggleLeftSideBar }></div>
             <nav className="nav-bar">
                 <div className="icon-region-1">
                     <span id="nav-menu-icon" className="topnav-icon" onClick = { toggleLeftSideBar }><i className="fa fa-bars"></i></span>
@@ -54,18 +54,17 @@ export default function TopNavigationBar( props ) {
                         <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
                             <i className="fa fa-bell"></i>
                             <div style={{float:"right",width:"15px"}}>
-                                { notifications && notifications.length ?
-                                    <span className="label label-notification">{notifications.length}</span>
+                                { unreadCount ?
+                                    <span className="label label-notification">{ unreadCount }</span>
                                 : null }
                             </div>
                         </span>
-                        <NotificationList items={notifications}/>
-                        <DesktopNotificationPopUp {...props} />
+                        <NotificationList items = { notifications }/>
+                        <DesktopNotificationPopUp { ...props } />
                     </div>
                 </div>
             </nav>
         </div>
-
     )
 }
 

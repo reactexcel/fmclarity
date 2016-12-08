@@ -11,18 +11,21 @@ export default function Contact2Line( props ) {
 		apartment = "";
 
 	if ( contact ) {
-		profile = contact.getProfile ? contact.getProfile() : contact;
+		profile = contact.getProfile ? contact.getProfile() : ( contact.profile ? contact.profile : contact );
 		if ( profile ) {
 			tenancy = profile.tenancy;
 		}
-		if (profile.facility) {
-			tenancyVariables.push(profile.facility.name);
+		if (profile.facility || contact.facility ) {
+			tenancyVariables.push( ( profile.facility ? profile.facility.name : contact.facility.name ) );
 		}
-		if (profile.level) {
-			tenancyVariables.push(profile.level.name);
+		if (profile.level || contact.level) {
+			tenancyVariables.push( profile.level ? profile.level.name : contact.level.name);
 		}
-		if (profile.apartment) {
-			tenancyVariables.push(profile.apartment.name);
+		if (profile.apartment || contact.apartment) {
+			tenancyVariables.push(profile.apartment ? profile.apartment.name : contact.apartment.name);
+		}
+		if (profile.identifier || contact.identifier) {
+			tenancyVariables.push(profile.identifier ? profile.identifier.name : contact.identifier.name);
 		}
 		var resident_tenancy = tenancyVariables.join();
 
@@ -30,8 +33,8 @@ export default function Contact2Line( props ) {
 		tenancy = resident_tenancy
 		}
 	}
-	
-	
+
+
 
 	return (
 		<span className="contact-card-2line-text">

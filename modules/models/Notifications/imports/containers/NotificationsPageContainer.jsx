@@ -13,9 +13,15 @@ import NotificationsPage from '../components/NotificationsPage.jsx';
  * @memberOf 		module:models/Notifications
  */
 const NotificationsPageContainer = createContainer( ( { params } ) => {
-	let items = Messages.findAll();
+	let user = Meteor.user(),
+		notifications = [];
+
+	if( user ) {
+		notifications = Messages.findAll( { 'inboxId.query._id': user._id }, { sort: { createdAt:-1 } } );
+	}
+
 	return {
-		items
+		items: notifications
 	}
 }, NotificationsPage );
 

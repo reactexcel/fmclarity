@@ -38,7 +38,7 @@ export default Inbox = React.createClass( {
             readOnly = this.props.readOnly,
             truncated = this.state.truncate,
             numberTruncated = messages.length - this.state.stepper,
-            currentStepper=this.state.stepper,
+            currentStepper = this.state.stepper,
             loadNumber = numberTruncated > 5 ? 5 : messages.length % 5;
 
         return (

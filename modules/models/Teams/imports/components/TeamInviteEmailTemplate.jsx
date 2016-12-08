@@ -60,8 +60,7 @@ const TeamInviteEmailTemplate = React.createClass({
 					As a {role} of {team.getName()}, an account has been created for you to give you access to the system.<br/><br/>
 					Quick info: what do I need to do to get setup?<br/><br/>
 					1. Click the link at the bottom of this email<br/>
-					2. Change your password<br/>
-					3. Follow the walkthrough<br/><br/>
+					2. Change your password<br/><br/>
 					<a href={url}>{url}</a>
 
 				</p>

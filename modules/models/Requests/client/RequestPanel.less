@@ -12,128 +12,13 @@
 
 @cover-image-min-height:150px;
 
-
-@media only screen 
-  and (min-device-width: 1200px) 
-  and (max-device-width: 1600px)  { 
-    .request-panel {
-        min-width: 800px;
-    }
-}
-
-
-/* ----------- iPhone 4 and 4S ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 320px) 
-  and (max-device-height: 480px)
-  and (-webkit-min-device-pixel-ratio: 2)
-  and (orientation: portrait) {
-    .request-panel {
-        min-width: 100%;
-    }
-}
-
-
-/* ----------- iPhone 5 and 5S ----------- */
-
-/* Portrait and Landscape */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 320px) 
-  and (max-device-height: 568px)
-  and (orientation: portrait) {
-    .request-panel {
-        max-width: 320px;
-    }
-}
-
-
-/* ----------- iPhone 6 ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 375px) 
-  and (max-device-height: 667px) 
-  and (orientation: portrait) { 
-    .request-panel {
-        max-width: 375px;
-    }
-}
-
-
-
-/* ----------- iPhone 6+ ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 414px) 
-  and (max-device-height: 736px) 
-  and (-webkit-min-device-pixel-ratio: 3)
-  and (orientation: portrait) { 
-    .request-panel {
-        max-width: 414px;
-    }
-}
-
-
-
-
-/* ----------- iPad ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 768px) 
-  and (max-device-height: 1024px) 
-  and (orientation: portrait) 
-  and (-webkit-min-device-pixel-ratio: 1) {
-    .request-panel {
-        min-width: 100%;
-    }
-}
-
-
-
-
-
-/* ----------- Asus Nexus 7 ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 601px) 
-  and (max-device-height: 906px) 
-  and (orientation: portrait) {
-    .request-panel {
-        min-width: 800px;
-    }
-}
-
-
-
-/* ----------- Galaxy S3 ----------- */
-
-/* Portrait */
-@media only screen 
-  and (min-device-width: 360px) 
-  and (max-device-height: 640px) 
-  and (orientation: portrait) {
-    .request-panel {
-        max-width: 360px;
-    }
-}
-
-
-
-
-
-
-
-
 .request-panel
 {
-    /*min-width: 100%;*/
+    width:100%;
+    
+    @media (min-width: 768px) {
+        min-width: 768px;
+    }
 
     background-color: #00b89e;
     .contact-title
@@ -150,7 +35,7 @@
         border-top: 4px solid #bbb;
         tr
         {
-            line-height: 48px;
+            height: 48px;
 
             margin: 0;
             padding: 0;

@@ -9,7 +9,7 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import UserViewRelationEdit from './UserViewRelationEdit.jsx';
 
-import { Users } from '/modules/models/Users';
+import { Users, UserProfileForm } from '/modules/models/Users';
 import { Teams } from '/modules/models/Teams';
 
 export default UserViewEdit = React.createClass( {
@@ -198,7 +198,7 @@ export default UserViewEdit = React.createClass( {
 
 			        	<AutoForm item 	= { user }
                   			model 		= { Users }
-                  			form 		= { [ 'profile' ] }
+                  			form 		= { UserProfileForm }
                   			hideSubmit 	= { true }
                   			afterSubmit	= { this.afterSubmit }
                   			ref 		= { 'form' }

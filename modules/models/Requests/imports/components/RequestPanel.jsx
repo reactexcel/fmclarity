@@ -20,6 +20,7 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
+	
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -106,12 +107,14 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
 
                             <h2>{title}</h2>
 
-                            { request.service && request.type!= 'Booking' ?
-                            <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
-                            : null }
-
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
-
+							
+							{ request.type == 'Ad-hoc' && 
+							  request.costThreshold && 
+							  Meteor.user().getRole() != 'staff' ?
+                            <b style = { { display:"block",marginBottom:"7px" } } >${request.costThreshold}<br/></b>
+                            : null }
+							
                             { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
@@ -149,14 +152,15 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
-                { request.location ?
+                { request.getLocationString() ?
                 <tr>
                     <th>Location</th>
                     <td>{request.getLocationString()}</td>
                 </tr>
                 : null
                 }
-
+				
+				
 
                 {/* Show Supplier Name only when in client view (when teamType is "fm") */}
                 { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
@@ -166,6 +170,15 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 </tr>
                 : null }
 
+				{ request.service && request.type != 'Booking' ?
+				<tr>
+					<th>Service</th>
+					<td>{request.getServiceString()}</td>
+				</tr>
+                : null
+                }				
+				
+				
                 { nextDateString? 
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
@@ -194,13 +207,6 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                         : null }
 
                     </td>
-                </tr>
-                : null }
-
-                { request.type == 'Ad-hoc' && request.costThreshold ?
-                <tr>
-                    <th>Value</th>
-                    <td>${request.costThreshold}</td>
                 </tr>
                 : null }
 

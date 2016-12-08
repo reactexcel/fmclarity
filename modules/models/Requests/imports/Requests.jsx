@@ -145,13 +145,13 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			var str = '';
-			if ( request.level ) {
+			if ( request.level && request.level.name ) {
 				str += request.level.name;
-			}
-			if ( request.area && request.area.name ) {
-				str += ( ' - ' + request.area.name );
-				if ( request.area.identifier && request.area.identifier.name ) {
-					str += ( ', ' + request.area.identifier.name );
+				if ( request.area && request.area.name ) {
+					str += ( ', ' + request.area.name );
+					if ( request.identifier && request.identifier.name ) {
+						str += ( ', ' + request.identifier.name );
+					}
 				}
 			}
 			return str;
@@ -160,7 +160,7 @@ Requests.methods( {
 
 	create: {
 		authentication: true,
-		method: function( request, followUP ) {
+		method: function( request ) {
 			let status = 'New';
 
 			if( request.type == 'Preventative' ) {
@@ -170,9 +170,18 @@ Requests.methods( {
 				status = 'Booking';
 			}
 
+			let code = null;
+		 	if ( request && request.team ) {
+		 		team = Teams.findOne( {
+		 			_id: request.team._id
+		 		} );
+		 		code = team.getNextWOCode();
+		 	}
+
 			let newRequestId = Meteor.call( 'Issues.save', request, {
 				status: status,
-				issuedAt: new Date()
+				issuedAt: new Date(),
+				code: code
 			} ),
 				newRequest = null;
 
@@ -185,30 +194,14 @@ Requests.methods( {
 				if( newRequest.owner ) {
 					owner = newRequest.getOwner();
 				}
-				if( followUP ){
-					let newRequestName = newRequest.name;
-					newRequest.code = followUP.previousWOCode;
-					newRequest.name = followUP.previousWOName;
-					newRequest.distributeMessage( {
-						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-						message: {
-							verb: "closed WO#",
-							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-							body: newRequest.description
-						}
-					} );
-					newRequest.code = undefined;
-					newRequest.name = newRequestName;
-				} else {
-					newRequest.distributeMessage( {
-						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-						message: {
-							verb: "created",
-							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-							body: newRequest.description
-						}
-					} );
-				}
+				newRequest.distributeMessage( {
+					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+					message: {
+						verb: "created",
+						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+						body: newRequest.description
+					}
+				} );
 			}
 			return newRequest;
 		}
@@ -265,49 +258,44 @@ Requests.methods( {
 		helper: ( request ) => {
             if ( request.frequency ) {
                 let dueDate = moment( request.dueDate ),
-                	nextDate = dueDate;
                 	repeats = parseInt( request.frequency.repeats ),
                 	period = {};
 
                 period[ request.frequency.unit ] = parseInt( request.frequency.number );
                 for ( var i = 0; i < repeats; i++ ) {
 
-                	nextDate = dueDate.add( period );
-
-                	if( nextDate.isAfter() ) {
-                		if( !dueDate.isAfter() ) {
-	                		return dueDate.toDate();
-	                	}
+                	if( dueDate.isBefore() ) {
+                		return dueDate.toDate();
                 	}
-                	dueDate = nextDate;
+                	dueDate = dueDate.subtract( period );
                 }
             }
 		}
 	},
 
-	findCloneAt: {
-		authentication: true,
-		helper: ( request, dueDate ) => {
-			return Requests.findOne( {
-				name: request.name,
-				status: { $ne: 'PMP' },
-				dueDate: dueDate
-			} );
-		}
-	},
-
-	getTimeliness: {
-		authentication: true,
-		helper: ( request ) => {
-			if( request.closeDetails && request.closeDetails.completionDate ) {
-				var oneDay = 1000*60*60*24;
-				var date1Ms = request.dueDate.getTime();
-				var date2Ms = request.closeDetails.completionDate.getTime();
-				var differenceMs = date1Ms - date2Ms;
-				return Math.round(differenceMs/oneDay); 
+		findCloneAt: {
+			authentication: true,
+			helper: ( request, dueDate ) => {
+				return Requests.findOne( {
+					name: request.name,
+					status: { $ne: 'PMP' },
+					dueDate: dueDate
+				} );
 			}
-		}
-	},
+		},
+
+		getTimeliness: {
+			authentication: true,
+			helper: ( request ) => {
+				if( request.closeDetails && request.closeDetails.completionDate ) {
+					var oneDay = 1000*60*60*24;
+					var date1Ms = request.dueDate.getTime();
+					var date2Ms = request.closeDetails.completionDate.getTime();
+					var differenceMs = date1Ms - date2Ms;
+					return Math.round(differenceMs/oneDay);
+				}
+			}
+		},
 
 	getNextRequest: {
 		authentication: true,
@@ -488,10 +476,24 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
-	Meteor.call( 'Issues.save', request, {
-		status: "Issued",
-		issuedAt: new Date()
-	} );
+	let code = null;
+ 	if ( request && request.team && !request.code) {
+ 		team = Teams.findOne( {
+ 			_id: request.team._id
+ 		} );
+ 		code = team.getNextWOCode();
+		Meteor.call( 'Issues.save', request, {
+			status: "Issued",
+			issuedAt: new Date(),
+			code: code
+		} );
+ 	} else {
+		Meteor.call( 'Issues.save', request, {
+			status: "Issued",
+			issuedAt: new Date(),
+		} );
+ 	}
+
 
 	request = Requests.findOne( request._id );
 
@@ -527,9 +529,25 @@ function actionIssue( request ) {
 
 function actionComplete( request ) {
 
+	if ( request.closeDetails ) {
+		if( request.closeDetails.attachments ) {
+			request.closeDetails.attachments.map( function( a ) {
+				request.attachments.push( a );
+			} );
+		}
+		if( request.closeDetails.furtherQuote ) {
+			request.attachments.push( request.closeDetails.furtherQuote );
+		}
+		if( request.closeDetails.invoice ) {
+			request.attachments.push( request.closeDetails.invoice );
+		}
+		if( request.closeDetails.serviceReport ) {
+			request.attachments.push( request.closeDetails.serviceReport );
+		}
+	}
+
 	Meteor.call( 'Issues.save', request, {
-		status: 'Complete',
-		closeDetails: request.closeDetails
+		status: 'Complete'
 	} );
 	request = Requests.findOne( request._id );
 
@@ -537,7 +555,8 @@ function actionComplete( request ) {
 
 		console.log( 'further work required' );
 
-		var closer = Meteor.user();
+		var closer = Meteor.user(),
+			closerRole = closer.getRole();
 
 		var newRequest = {
 			facility: request.facility,
@@ -567,7 +586,7 @@ function actionComplete( request ) {
 		}
 
 		//console.log( request._id );
-		var response = Meteor.call( 'Issues.create', newRequest, { previousWOCode:request.code, previousWOName: request.name} );
+		var response = Meteor.call( 'Issues.create', newRequest );
 		//console.log( response._id );
 		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
@@ -575,31 +594,29 @@ function actionComplete( request ) {
 		//I think this needs to be replaced with distribute message
 
 		//previous request WO# change to show the WO# of new request
-		var oldCode = request.code,
-			oldName = request.name;
-		request.code = newRequest.code;
-		request.name = newRequest.name;
 		request.distributeMessage( {
 			message: {
 				verb: "raised follow up",
-				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested",
+				subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
 				target: newRequest.getInboxId()
 			}
 		} );
 
-		//Wo# restore to previous.
-		if ( oldCode && oldName ){
-			request.code = oldCode;
-			request.name = oldName;
-		}
-
 		newRequest.distributeMessage( {
 			message: {
-				verb: "raised Follow Up",
+				verb: "raised follow up to",
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
-				body: newRequest.description
+				body: newRequest.description,
+				target: request.getInboxId()
 			}
 		} );
+
+		let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
+		if ( _.indexOf( roles, closerRole ) > -1 ){
+			Meteor.call( 'Issues.issue', newRequest );
+		}
+
+
 	} else {
 
 		request.distributeMessage( {
@@ -609,18 +626,6 @@ function actionComplete( request ) {
 			}
 		} );
 
-	}
-
-	let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
-	if ( _.indexOf( roles, closer.getRole() ) > -1 ){
-		Meteor.call( 'Issues.create', newRequest );
-	}
-
-	if ( request.closeDetails.attachments ) {
-		request.closeDetails.attachments.map( function( a ) {
-			request.attachments.push( a );
-			request.save();
-		} );
 	}
 
 	return request;
@@ -636,7 +641,7 @@ function actionComplete( request ) {
 					 subject: "Overdue Work order #"+ request.code+" reminder",
 					 emailBody: function( recipient ) {
 						 console.log(recipient);
-						 var expiry = moment( request.dueDate ).add( { days: 1 } ).toDate();
+						 var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
 						 var token = LoginService.generateLoginToken( recipient, expiry );
 						 return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
 					 }
