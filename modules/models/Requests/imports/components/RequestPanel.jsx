@@ -49,7 +49,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -106,10 +106,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             <h2>{title}</h2>
 
-                            { request.service && request.type!= 'Booking' ?
-                            <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
-                            : null }
-
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
                             { request.issuedAt ?
@@ -156,7 +152,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-
+				
+				
 
                 {/* Show Supplier Name only when in client view (when teamType is "fm") */}
                 { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
@@ -166,6 +163,15 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
+				{ request.service && request.type != 'Booking' ?
+				<tr>
+					<th>Service</th>
+					<td>{request.getServiceString()}</td>
+				</tr>
+                : null
+                }				
+				
+				
                 { nextDateString? 
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
