@@ -69,8 +69,8 @@ export default UserViewEdit = React.createClass( {
 	handleInvite( event ) {
 		event.preventDefault();
 
-		let { team, group } = this.data,
-			role = this.props.role;
+		let { team, group, role } = this.data,
+		//	role = this.props.role;
 			input = this.refs.invitationEmail;
 			email = input.value;
 			regex = /.+@.+\..+/i;
