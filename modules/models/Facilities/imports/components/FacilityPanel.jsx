@@ -26,6 +26,7 @@ function FacilityPanel( { item } ) {
 
 	let facility = item,
 		teamType = Session.get('selectedTeam').type,
+		role = Meteor.user().getRole(),
 		menuItems = [];
 	let actionNames = Object.keys( FacilityMenuActions.actions ),
 		validActions = Actions.filter( actionNames, facility );
@@ -80,11 +81,11 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="discussion-tab">Updates</span>,
 						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
-						hide:     	!facility.canAddDocument()||teamType!='fm',
+						hide:     	!facility.canAddDocument() || teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,
 						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
-						hide:       !facility.canAddMember(),
+						hide:       !facility.canAddMember() || role == "caretaker",
 						tab:        <span id="personnel-tab">Personnel</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
@@ -92,7 +93,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="tenants-tab">Tenants</span>,
 						content:    <ContactList group = { facility } filter = { {role: "tenant" } } defaultRole = "tenant" team = { facility.team }/>
 					},{
-						hide:       !facility.canSetAreas(),
+						hide:       !facility.canSetAreas() || role == "caretaker",
 						tab:        <span id="areas-tab">Areas</span>,
 						content:    <AreasEditor item = { facility }/>
 					},{
@@ -100,7 +101,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="services-tab">Services</span>,
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
-						hide:     	!facility.canAddPMP()||teamType!='fm',
+						hide:     	!facility.canAddPMP()||teamType!='fm'|| role == "caretaker",
 						tab:        <span id="pmp-tab">PMP</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
