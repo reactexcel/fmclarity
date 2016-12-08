@@ -20,6 +20,7 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
+	
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -107,7 +108,13 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                             <h2>{title}</h2>
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
-
+							
+							{ request.type == 'Ad-hoc' && 
+							  request.costThreshold && 
+							  Meteor.user().getRole() != 'staff' ?
+                            <h2>${request.costThreshold}</h2>
+                            : null }
+							
                             { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
@@ -200,13 +207,6 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                         : null }
 
                     </td>
-                </tr>
-                : null }
-
-                { request.type == 'Ad-hoc' && request.costThreshold ?
-                <tr>
-                    <th>Value</th>
-                    <td>${request.costThreshold}</td>
                 </tr>
                 : null }
 
