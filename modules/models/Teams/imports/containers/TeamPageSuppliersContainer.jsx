@@ -26,7 +26,7 @@ const TeamPageSuppliersContainer = createContainer( ( params ) => {
         suppliers = null;
 
     if ( team != null ) {
-        facilities = Facilities.findAll( { 'team._id': team._id } );
+        facilities = team.getFacilities();//Facilities.findAll( { 'team._id': team._id } );
     } else if ( user != null ) {
         facilities = user.facilities;
     }

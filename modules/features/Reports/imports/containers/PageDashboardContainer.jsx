@@ -25,7 +25,7 @@ const PageDashboardContainer = createContainer( ( params ) => {
 		contextFilter = {};
 
 	if ( team ) {
-		facilities = Facilities.findAll( { 'team._id': team._id } );
+		facilities = team.getFacilities();//Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
 			let facilityThumbs = _.pluck( facilities, 'thumb' );
 			Meteor.subscribe( 'Thumbs', facilityThumbs );
