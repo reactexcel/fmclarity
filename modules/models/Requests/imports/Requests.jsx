@@ -264,38 +264,38 @@ Requests.methods( {
                 period[ request.frequency.unit ] = parseInt( request.frequency.number );
                 for ( var i = 0; i < repeats; i++ ) {
 
-                	if( dueDate.isBefore() ) {
-                		return dueDate.toDate();
+                	if( dueDate.isAfter() ) {
+                		dueDate.subtract( period ).toDate();
                 	}
-                	dueDate = dueDate.subtract( period );
+                	dueDate = dueDate.add( period );
                 }
             }
 		}
 	},
 
-		findCloneAt: {
-			authentication: true,
-			helper: ( request, dueDate ) => {
-				return Requests.findOne( {
-					name: request.name,
-					status: { $ne: 'PMP' },
-					dueDate: dueDate
-				} );
-			}
-		},
+	findCloneAt: {
+		authentication: true,
+		helper: ( request, dueDate ) => {
+			return Requests.findOne( {
+				name: request.name,
+				status: { $ne: 'PMP' },
+				dueDate: dueDate
+			} );
+		}
+	},
 
-		getTimeliness: {
-			authentication: true,
-			helper: ( request ) => {
-				if( request.closeDetails && request.closeDetails.completionDate ) {
-					var oneDay = 1000*60*60*24;
-					var date1Ms = request.dueDate.getTime();
-					var date2Ms = request.closeDetails.completionDate.getTime();
-					var differenceMs = date1Ms - date2Ms;
-					return Math.round(differenceMs/oneDay);
-				}
+	getTimeliness: {
+		authentication: true,
+		helper: ( request ) => {
+			if( request.closeDetails && request.closeDetails.completionDate ) {
+				var oneDay = 1000*60*60*24;
+				var date1Ms = request.dueDate.getTime();
+				var date2Ms = request.closeDetails.completionDate.getTime();
+				var differenceMs = date1Ms - date2Ms;
+				return Math.round(differenceMs/oneDay);
 			}
-		},
+		}
+	},
 
 	getNextRequest: {
 		authentication: true,
@@ -575,10 +575,6 @@ function actionComplete( request ) {
 			priority: request.closeDetails.furtherPriority || 'Scheduled',
 			costThreshold: request.closeDetails.furtherQuoteValue
 		};
-
-		if ( request.closeDetails.furtherQuote ) {
-			newRequest.attachments.push( request.closeDetails.furtherQuote );
-		}
 
 		var team = Teams.findOne(request.team._id );
 		if( team ){

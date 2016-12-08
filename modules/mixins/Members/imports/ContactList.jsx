@@ -63,6 +63,7 @@ export default ContactList = React.createClass( {
 	            	item 	= { selectedUser }
 	            	team 	= { team }
 	            	role 	= { role }
+	            	hideMenu= { this.props.hideMenu }
 	            	group	= { group }/>
 			} )
 		}

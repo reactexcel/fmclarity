@@ -253,7 +253,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     //hide:       (teamType == 'contractor'),
-                    content:    <ContactList group = { request } readOnly = { true }/>
+                    content:    <ContactList 
+                                    hideMenu    = { Meteor.user().getRole() == 'staff' }
+                                    group       = { request } 
+                                    readOnly    = { true }
+                                />
                 }
             ]} />
 
