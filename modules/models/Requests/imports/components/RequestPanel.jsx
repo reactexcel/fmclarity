@@ -59,6 +59,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         return <div/>
     }
     let teamType = Session.get('selectedTeam').type,
+        userRole = Meteor.user().getRole(),
         title = "",
         nextDateString = null,
         previousDateString = null;
@@ -197,7 +198,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { request.type == 'Ad-hoc' && request.costThreshold ?
+                { request.type == 'Ad-hoc' && request.costThreshold && userRole != 'staff' ?
                 <tr>
                     <th>Value</th>
                     <td>${request.costThreshold}</td>
