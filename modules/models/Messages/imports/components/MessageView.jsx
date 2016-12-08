@@ -76,10 +76,9 @@ export default MessageView = React.createClass( {
     },
 
     performLinkAction( message ) {
-        if( message.target.path == 'requests' ) {
-            let target = message.getTarget();
-            Actions.run('view request', target );
-        }
+        let target = message.getTarget();
+        console.log( target );
+        Actions.run('view request', target );
     },
 
     render() {

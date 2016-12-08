@@ -20,6 +20,7 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
+	
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -49,7 +50,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -59,7 +60,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         return <div/>
     }
     let teamType = Session.get('selectedTeam').type,
-        userRole = Meteor.user().getRole(),
         title = "",
         nextDateString = null,
         previousDateString = null;
@@ -107,12 +107,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             <h2>{title}</h2>
 
-                            { request.service && request.type!= 'Booking' ?
-                            <b style = { { display:"block",marginBottom:"7px" } } >{request.getServiceString()}<br/></b>
-                            : null }
-
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
-
+							
+							{ request.type == 'Ad-hoc' && 
+							  request.costThreshold && 
+							  Meteor.user().getRole() != 'staff' ?
+                            <b style = { { display:"block",marginBottom:"7px" } } >${request.costThreshold}<br/></b>
+                            : null }
+							
                             { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
@@ -157,7 +159,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-
+				
+				
 
                 {/* Show Supplier Name only when in client view (when teamType is "fm") */}
                 { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
@@ -167,6 +170,15 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
+				{ request.service && request.type != 'Booking' ?
+				<tr>
+					<th>Service</th>
+					<td>{request.getServiceString()}</td>
+				</tr>
+                : null
+                }				
+				
+				
                 { nextDateString? 
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
@@ -195,13 +207,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         : null }
 
                     </td>
-                </tr>
-                : null }
-
-                { request.type == 'Ad-hoc' && request.costThreshold && userRole != 'staff' ?
-                <tr>
-                    <th>Value</th>
-                    <td>${request.costThreshold}</td>
                 </tr>
                 : null }
 

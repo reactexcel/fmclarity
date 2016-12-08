@@ -160,7 +160,7 @@ Requests.methods( {
 
 	create: {
 		authentication: true,
-		method: function( request, followUP ) {
+		method: function( request ) {
 			let status = 'New';
 
 			if( request.type == 'Preventative' ) {
@@ -194,30 +194,14 @@ Requests.methods( {
 				if( newRequest.owner ) {
 					owner = newRequest.getOwner();
 				}
-				if( followUP ){
-					let newRequestName = newRequest.name;
-					newRequest.code = followUP.previousWOCode;
-					newRequest.name = followUP.previousWOName;
-					newRequest.distributeMessage( {
-						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-						message: {
-							verb: "closed WO#",
-							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-							body: newRequest.description
-						}
-					} );
-					newRequest.code = undefined;
-					newRequest.name = newRequestName;
-				} else {
-					newRequest.distributeMessage( {
-						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-						message: {
-							verb: "created",
-							subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-							body: newRequest.description
-						}
-					} );
-				}
+				newRequest.distributeMessage( {
+					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+					message: {
+						verb: "created",
+						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+						body: newRequest.description
+					}
+				} );
 			}
 			return newRequest;
 		}
@@ -545,9 +529,25 @@ function actionIssue( request ) {
 
 function actionComplete( request ) {
 
+	if ( request.closeDetails ) {
+		if( request.closeDetails.attachments ) {
+			request.closeDetails.attachments.map( function( a ) {
+				request.attachments.push( a );
+			} );
+		}
+		if( request.closeDetails.furtherQuote ) {
+			request.attachments.push( request.closeDetails.furtherQuote );
+		}
+		if( request.closeDetails.invoice ) {
+			request.attachments.push( request.closeDetails.invoice );
+		}
+		if( request.closeDetails.serviceReport ) {
+			request.attachments.push( request.closeDetails.serviceReport );
+		}
+	}
+
 	Meteor.call( 'Issues.save', request, {
-		status: 'Complete',
-		closeDetails: request.closeDetails
+		status: 'Complete'
 	} );
 	request = Requests.findOne( request._id );
 
@@ -555,7 +555,8 @@ function actionComplete( request ) {
 
 		console.log( 'further work required' );
 
-		var closer = Meteor.user();
+		var closer = Meteor.user(),
+			closerRole = closer.getRole();
 
 		var newRequest = {
 			facility: request.facility,
@@ -585,7 +586,7 @@ function actionComplete( request ) {
 		}
 
 		//console.log( request._id );
-		var response = Meteor.call( 'Issues.create', newRequest, { previousWOCode:request.code, previousWOName: request.name} );
+		var response = Meteor.call( 'Issues.create', newRequest );
 		//console.log( response._id );
 		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
@@ -593,31 +594,29 @@ function actionComplete( request ) {
 		//I think this needs to be replaced with distribute message
 
 		//previous request WO# change to show the WO# of new request
-		var oldCode = request.code,
-			oldName = request.name;
-		request.code = newRequest.code;
-		request.name = newRequest.name;
 		request.distributeMessage( {
 			message: {
 				verb: "raised follow up",
-				subject: "Work order #" + oldCode + " has been completed and a follow up has been requested",
+				subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
 				target: newRequest.getInboxId()
 			}
 		} );
 
-		//Wo# restore to previous.
-		if ( oldCode && oldName ){
-			request.code = oldCode;
-			request.name = oldName;
-		}
-
 		newRequest.distributeMessage( {
 			message: {
-				verb: "raised Follow Up",
+				verb: "raised follow up to",
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
-				body: newRequest.description
+				body: newRequest.description,
+				target: request.getInboxId()
 			}
 		} );
+
+		let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
+		if ( _.indexOf( roles, closerRole ) > -1 ){
+			Meteor.call( 'Issues.issue', newRequest );
+		}
+
+
 	} else {
 
 		request.distributeMessage( {
@@ -627,18 +626,6 @@ function actionComplete( request ) {
 			}
 		} );
 
-	}
-
-	let roles = [ "portfolio manager", "facility manager", "team portfolio manager"]
-	if ( _.indexOf( roles, closer.getRole() ) > -1 ){
-		Meteor.call( 'Issues.create', newRequest );
-	}
-
-	if ( request.closeDetails.attachments ) {
-		request.closeDetails.attachments.map( function( a ) {
-			request.attachments.push( a );
-			request.save();
-		} );
 	}
 
 	return request;

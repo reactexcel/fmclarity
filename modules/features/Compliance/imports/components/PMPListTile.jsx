@@ -50,16 +50,6 @@ const PMPListTile = React.createClass( {
                 due every {`${request.frequency.number||''} ${request.frequency.unit||''}`}
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { nextDateString ? 
-                    <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
-                        <span>next due <b>{ nextDateString }</b> </span>
-                        { nextRequest ? 
-                            <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
-                        : null }
-                    </span> 
-                : null }
-            </div>
-            <div className = "issue-summary-col" style = {{width:"20%"}}>
                 { previousDateString ? 
                     <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                         <span>previous <b>{ previousDateString }</b> </span>
@@ -69,6 +59,16 @@ const PMPListTile = React.createClass( {
                     </span> 
                 : null }
             </div>
+            <div className = "issue-summary-col" style = {{width:"20%"}}>
+                { nextDateString ? 
+                    <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
+                        <span>next due <b>{ nextDateString }</b> </span>
+                        { nextRequest ? 
+                            <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                        : null }
+                    </span> 
+                : null }
+            </div>            
         </div>
     }
 

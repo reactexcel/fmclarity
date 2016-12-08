@@ -36,7 +36,11 @@ export default TeamSchema = {
             return Meteor.user().emails[ 0 ].address = "mrleokeith@gmail.com"
         },
         options: {
-            items: [ "fm", "contractor", "real estate" ]
+            items: [ 
+                { name:'Facility Management', val:"fm" },
+                { name:'Supplier', val:"contractor" },
+                { name:'Real Estate Agent', val:"real estate" }
+            ]
         },
     },
 

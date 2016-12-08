@@ -40,7 +40,12 @@ const Select = React.createClass( {
 
 	handleChange( newItem ) {
 		if ( this.props.onChange ) {
-			this.props.onChange( newItem );
+			let val = newItem;
+			if( newItem && newItem.val) {
+				val = newItem.val;
+			}
+			console.log( val );
+			this.props.onChange( val );
 		}
 		this.refs.input.blur();
 	},
