@@ -54,7 +54,7 @@
               let oldValue = key == 'costThreshold'? "$"+oldRequest[key] : oldRequest[key],
                 newValue = key == 'costThreshold'? "$"+request[key] : request[key];
                 key = key == 'costThreshold' ? 'value' : key;
-              notificationBody += `-> ${key.toUpperCase()}: has been changed from "${oldValue}" to "${newValue}".\n`;
+              notificationBody += `-> ${key.toUpperCase()}: changed from "${oldValue}" to "${newValue}".\n`;
             }
           }
  					request.distributeMessage( {
