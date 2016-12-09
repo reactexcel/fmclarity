@@ -87,6 +87,9 @@ export default function RequestsTable( { requests, filter } ) {
             filter 
         ] });
     }
+    if (Session.getSelectedFacility()) {
+            delete this.fields['Facility'];
+        }
 
     return ( 
         <DataTable 
