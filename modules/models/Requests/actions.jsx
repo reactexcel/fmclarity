@@ -33,6 +33,7 @@
  	type: 'request',
  	label: "Edit",
  	action: ( request ) => {
+    let oldRequest = Object.assign({}, request);
  		Modal.show( {
  			content: <AutoForm
  			title = "Edit Request"
@@ -43,14 +44,28 @@
  				( request ) => {
  					Requests.save.call( request );
  					Modal.hide();
- 					request = Requests.collection._transform( request );
+ 				  request = Requests.collection._transform( request );
+          let notificationBody = "",
+            keys = [ 'costThreshold', 'priority', 'description', 'type' ] ;
+          for ( let i in keys ) {
+            let key = keys[ i ];
+
+            if ( request[key] != oldRequest[key] ) {
+              let oldValue = key == 'costThreshold'? "$"+oldRequest[key] : oldRequest[key],
+                newValue = key == 'costThreshold'? "$"+request[key] : request[key];
+                key = key == 'costThreshold' ? 'value' : key;
+              notificationBody += `-> ${key.toUpperCase()}: has been changed from "${oldValue}" to "${newValue}".\n`;
+            }
+          }
  					request.distributeMessage( {
  						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
  						message: {
  							verb: "edited",
  							subject: `Work order ${request.code} has been edited`,
+              body: notificationBody
  						}
  					} );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] )
  				}
  			}
  			/>
@@ -400,7 +415,7 @@
  	sendQuote,
  	complete,
  	//close,
- 	//reopen,
+ 	reopen,
  	//reverse,
  	clone
  }

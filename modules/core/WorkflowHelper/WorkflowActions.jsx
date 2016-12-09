@@ -8,7 +8,7 @@ const WorkflowActions = [
 	'destroy request',
 	'complete request',
 	//'close request',
-	//'reopen request',
+	'reopen request',
 	//'reverse request',
 	'clone request'
 ];
