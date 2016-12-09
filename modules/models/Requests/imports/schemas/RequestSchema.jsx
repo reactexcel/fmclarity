@@ -45,7 +45,7 @@ const RequestSchema = {
 	},
 
 	name: {
-		label: "Requested Work",
+		label: "Work Summary",
 		type: "string",
 		required: true,
 		input: Text,
@@ -95,7 +95,7 @@ const RequestSchema = {
 					"Booking",
 					//"Internal",
 					"Preventative",
-					"Tenancy",
+					//"Tenancy",
 					//"Base Building",
 					//"Contract",
 					"Defect",
@@ -190,7 +190,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 
 	level: {
-		label: "Area",
+		label: "Location - Area",
 		size: 4,
 		type: "object",
 		input: Select,

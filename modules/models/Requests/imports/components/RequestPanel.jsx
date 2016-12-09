@@ -33,6 +33,7 @@ export default RequestPanel = React.createClass( {
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+				supplier = request.getSupplier();
                 if( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
@@ -99,10 +100,24 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <div className="wo-detail">
                 <div className="row">
                     <div className="col-md-6">
-                        <h2>{ request.team.name }</h2>
-                        <FacilityDetails item = { request.facility }/>
-                        <ContactDetails item = { owner }/>
-                    </div>
+						
+						{/* Show supplier name when user is client (fm),
+							otherwise show client name for supplier user */}
+						<h2>
+							{ 	teamType=="fm" 
+								? 
+								"Supplier: "+ request.supplier.name
+								: 
+								"Client: "+ request.team.name
+							}
+						</h2>
+                        
+						{/* Show supplier contact details when user is client (fm),
+							otherwise show client details for supplier user */}
+						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+
+						<FacilityDetails item = { request.facility }/>
+					</div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 
                             <h2>{title}</h2>
@@ -148,7 +163,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <table>
                 <tbody>
                 <tr>
-                    <th>Subject</th>
+                    <th>Work Summary</th>
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
@@ -159,16 +174,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-				
-				
-
-                {/* Show Supplier Name only when in client view (when teamType is "fm") */}
-                { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
-                <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th> 
-                    <td>{request.supplier.name}</td>
-                </tr>
-                : null }
 
 				{ request.service && request.type != 'Booking' ?
 				<tr>
@@ -234,7 +239,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <Tabs tabs={[
                 {
-                    tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
+                    tab:        <span id="discussion-tab"><span>Further Details</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
