@@ -102,7 +102,7 @@ function FacilityPanel( { item } ) {
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
 						hide:     	!facility.canAddPMP()||teamType!='fm'|| role == "caretaker",
-						tab:        <span id="pmp-tab">PMP</span>,
+						tab:        <span id="pmp-tab">PPM</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
 						hide:     	teamType!='fm',

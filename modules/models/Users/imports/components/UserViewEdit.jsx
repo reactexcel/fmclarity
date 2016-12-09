@@ -153,7 +153,7 @@ export default UserViewEdit = React.createClass( {
 			return (
 				<form style={{padding:"15px"}} className="form-inline">
 
-                    <div className="form-group">
+                    <div className="form-group" style = { { 'min-width': '768px' } }>
 
                         <b>Let's search to see if this user already has an account.</b>
 
