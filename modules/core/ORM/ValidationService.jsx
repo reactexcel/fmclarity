@@ -178,7 +178,7 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	var acceptted_first_four_values=['1800', '1300'];
 	var acceptted_first_two_values=['04', '13'];
 		if (($.inArray(valueString.substr(0, 2), landlines) === -1) && ($.inArray(valueString.substr(0, 4), acceptted_first_four_values) === -1) && ($.inArray(valueString.substr(0, 2), acceptted_first_two_values) === -1) ) {
-			errors.push( { name: key, type: "Invalid type: expected an Australian Phone Number." } );
+			errors.push( { name: key, type: "Format should match:{(0[2|3|7|8]) xxxx xxxx, 04yy yxx xxx, 1300 xxx xxx, 13 xx xx, 1800 xxx xxx}" } );
 		}
 		if ((($.inArray(valueString.substr(0, 2), landlines) !== -1) && valueString.length != 10) || 
 			(($.inArray(valueString.substr(0, 4), acceptted_first_four_values) !== -1) && valueString.length != 10) || 
