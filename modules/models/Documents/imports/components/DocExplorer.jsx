@@ -27,7 +27,7 @@ export default class DocExplorer extends React.Component {
 	componentWillReceiveProps( props ){
 		this.setState( {
 			item: props.item,
-			value: props.value,
+			//value: props.value,
 		} );
 	}
 
@@ -40,7 +40,7 @@ export default class DocExplorer extends React.Component {
 			//Update the component when a document get deleted.s
 			this.setState({
 				item: this.props.item,
-				value: this.props.value,
+				//value: this.props.value,
 			});
 		}
 	}

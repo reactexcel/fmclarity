@@ -1,4 +1,4 @@
-// I wonder what the benefits of caching these results would be?
+  // I wonder what the benefits of caching these results would be?
 // Should simply be called RBAC.helpers, or RBAC.lib
 
 AuthHelpers = {
@@ -19,7 +19,7 @@ AuthHelpers = {
         return user.role == "dev";
     },
     manager: function( role ) {
-        return role == "manager" || role == "fmc support" || role == "portfolio manager";
+        return role == "manager" || role == "fmc support" || role == "portfolio manager" || role == "caretaker";
     },
     adminManager: function( role, user, team ) {
         return ( role == "fmc support" || role == "portfolio manager" ) || ( team && ( team.type == "contractor" && role == "manager" ) );

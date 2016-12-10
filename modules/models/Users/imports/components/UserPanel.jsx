@@ -60,8 +60,10 @@ class UserPanel extends React.Component {
 
 	render() {
 
-		var contact, profile, availableServices;
-		contact = this.state.item;
+		let profile = null,
+			availableServices = null,
+			contact = this.state.item,
+			hideMenu = this.props.hideMenu;
 
 		if ( !contact ) {
 			return <div/>
@@ -114,7 +116,9 @@ class UserPanel extends React.Component {
 
 					</div>
 			    </div>
-            	<Menu items = { this.getMenu() } />
+			    { !hideMenu ?
+            		<Menu items = { this.getMenu() } />
+            	: null }
 			</div>
 		)
 	}

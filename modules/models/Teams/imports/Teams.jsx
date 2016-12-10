@@ -456,7 +456,7 @@ function inviteMember( team, email, ext ) {
 		Meteor.call( "Teams.addMember", team, {
 			_id: user._id
 		}, {
-			role: ext.role
+			role: ext.role || user.getRole()
 		} );
 		return {
 			user: user,

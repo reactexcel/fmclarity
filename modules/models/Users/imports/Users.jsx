@@ -125,9 +125,8 @@ Users.actions( {
     getRequests: {
         authentication: true,
         //subscription:???
-        helper: function( user, filter, options = {
-            expandPMP: false
-        } ) {
+        helper: function( user, filter, options = { expandPMP: false } ) {
+
             var team = user.getSelectedTeam();
             var role = user.getRole();
             //console.log( role );
@@ -190,9 +189,7 @@ Users.actions( {
                 }, isIssued ]
             };
             var assignedToMe = {
-                $and: [ {
-                    "assignee._id": user._id
-                }, isIssued ]
+                $and: [ { "assignee._id": user._id }, isIssued ]
             };
             var inMyFacilities = {
                 $and: [ {
@@ -227,7 +224,7 @@ Users.actions( {
                 }
             } else {
                 query.push( {
-                    $or: [ createdByMe, assignedToMe ]
+                    $or: [ imAMember, createdByMe, assignedToMe ]
                 } );
             }
             //if filter passed to function then add that to the query

@@ -71,16 +71,16 @@ if ( Meteor.isServer ) {
 }
 
 if ( Meteor.isServer ) {
-	Meteor.publish( "Messages", () => {
+	Meteor.publish( "Messages", function() {
 		return Messages.find();
 	} );
 
-	Meteor.publish( "User: Messages", () => {
+	Meteor.publish( "User: Messages", function() {
 		
 		import { Requests } from '/modules/models/Requests';
 
-		let messagesCursor = Messages.find( { 'inboxId._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } ),
-			requestsCursor = null,
+		let messagesCursor = Messages.find( { 'inboxId.query._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } ),
+			requestsCursor = [],
 			ids = [];
 
 		messagesCursor.forEach( ( message ) => {

@@ -69,8 +69,8 @@ export default UserViewEdit = React.createClass( {
 	handleInvite( event ) {
 		event.preventDefault();
 
-		let { team, group } = this.data,
-			role = this.props.role;
+		let { team, group, role } = this.data,
+		//	role = this.props.role;
 			input = this.refs.invitationEmail;
 			email = input.value;
 			regex = /.+@.+\..+/i;
@@ -153,7 +153,7 @@ export default UserViewEdit = React.createClass( {
 			return (
 				<form style={{padding:"15px"}} className="form-inline">
 
-                    <div className="form-group">
+                    <div className="form-group" style = { { 'min-width': '768px' } }>
 
                         <b>Let's search to see if this user already has an account.</b>
 

@@ -45,7 +45,7 @@ const RequestSchema = {
 	},
 
 	name: {
-		label: "Requested Work",
+		label: "Work Summary",
 		type: "string",
 		required: true,
 		input: Text,
@@ -95,7 +95,7 @@ const RequestSchema = {
 					"Booking",
 					//"Internal",
 					"Preventative",
-					"Tenancy",
+					//"Tenancy",
 					//"Base Building",
 					//"Contract",
 					"Defect",
@@ -190,7 +190,7 @@ const RequestSchema = {
 	//////////////////////////////////////////////////
 
 	level: {
-		label: "Area",
+		label: "Location - Area",
 		size: 4,
 		type: "object",
 		input: Select,
@@ -596,6 +596,14 @@ const RequestSchema = {
 				}
 			}
 		},
+		defaultValue: ( request ) =>{
+			let team = Teams.collection._transform( request.team ),
+				facilities = team.getFacilities( { 'team._id': request.team._id } );
+				if ( facilities.length == 1 ) {
+					return facilities[0];
+				}
+		},
+
 		input: Select,
 
 		options: ( request ) => {
@@ -644,6 +652,14 @@ const RequestSchema = {
 				},
 			}
 		},
+		condition: ( request ) => {
+			let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
+				facilities = team.getFacilities( { 'team._id': team._id } );
+				if ( facilities.length == 1 ) {
+					return false;
+				}
+			return true;
+		}
 	},
 
 	supplier: {
@@ -723,7 +739,8 @@ const RequestSchema = {
 			}
 		},
 		condition: ( request ) => {
-			if( request.type == 'Preventative' ) {
+			let role = Meteor.user().getRole();
+			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" ) {
 				return false;
 			}
 			let team = Session.getSelectedTeam();
@@ -805,7 +822,6 @@ const RequestSchema = {
 	attachments: {
 		label: "Attachments",
 		type: "array",
-		defaultValue: [],
 		input: FileExplorer
 	},
 

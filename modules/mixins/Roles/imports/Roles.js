@@ -29,22 +29,32 @@ Roles = new class {
 		let roles = [];
 		let teams = user.getTeams();
 		teams.map( ( team ) => {
+			let role = "", teamName = "";
 			if ( team && team._id ) {
 				team = Teams.findOne( team._id );
 				if ( team.members && team.members.length ) {
 					team.members.map( ( member ) => {
 						if ( member._id == user._id ) {
-							roles.push( { name: `${member.role}`, context: team.name } );
+							if (role != member.role || teamName != team.name ) {
+								roles.push( { name: `${member.role}`, context: team.name } );
+								role = member.role;
+								teamName = team.name;
+							}
 						}
 					} )
 				}
 				let facilities = Facilities.findAll( { 'team._id': team._id } );
 				if ( facilities && facilities.length ) {
 					facilities.map( ( facility ) => {
+						let role = "", facilityName = "";
 						if ( facility.members && facility.members.length ) {
 							facility.members.map( ( member ) => {
 								if ( member._id == user._id ) {
-									roles.push( { name: `facility ${member.role}`, context: facility.name } );
+									if (role != member.role || facilityName != facility.name ) {
+										roles.push( { name: `facility ${member.role}`, context: facility.name } );
+										role = member.role;
+										facilityName = facility.name;
+									}
 								}
 							} )
 						}

@@ -3,7 +3,7 @@ import { DateTime, Select, Switch, FileField, TextArea, Text } from '/modules/ui
 export default CloseDetailsSchema = {
 
     attendanceDate: {
-        label: "Attendence date and time",
+        label: "Attendance date and time",
         input: DateTime,
         size: 6
     },

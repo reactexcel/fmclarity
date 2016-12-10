@@ -33,6 +33,7 @@ export default RequestPanel = React.createClass( {
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+				supplier = request.getSupplier();
                 if( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
@@ -50,7 +51,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -99,10 +100,24 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
             <div className="wo-detail">
                 <div className="row">
                     <div className="col-md-6">
-                        <h2>{ request.team.name }</h2>
-                        <FacilityDetails item = { request.facility }/>
-                        <ContactDetails item = { owner }/>
-                    </div>
+						
+						{/* Show supplier name when user is client (fm),
+							otherwise show client name for supplier user */}
+						<h2>
+							{ 	teamType=="fm" 
+								? 
+								"Supplier: "+ request.supplier.name
+								: 
+								"Client: "+ request.team.name
+							}
+						</h2>
+                        
+						{/* Show supplier contact details when user is client (fm),
+							otherwise show client details for supplier user */}
+						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+
+						<FacilityDetails item = { request.facility }/>
+					</div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 
                             <h2>{title}</h2>
@@ -112,7 +127,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
 							{ request.type == 'Ad-hoc' && 
 							  request.costThreshold && 
 							  Meteor.user().getRole() != 'staff' ?
-                            <b style = { { display:"block",marginBottom:"7px" } } >${request.costThreshold}<br/></b>
+                            <h2>${request.costThreshold}</h2>
                             : null }
 							
                             { request.issuedAt ?
@@ -148,7 +163,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
             <table>
                 <tbody>
                 <tr>
-                    <th>Subject</th>
+                    <th>Work Summary</th>
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
@@ -159,16 +174,6 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 </tr>
                 : null
                 }
-				
-				
-
-                {/* Show Supplier Name only when in client view (when teamType is "fm") */}
-                { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
-                <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th> 
-                    <td>{request.supplier.name}</td>
-                </tr>
-                : null }
 
 				{ request.service && request.type != 'Booking' ?
 				<tr>
@@ -234,7 +239,7 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
 
             <Tabs tabs={[
                 {
-                    tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
+                    tab:        <span id="discussion-tab"><span>Further Details</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
@@ -253,7 +258,11 @@ const RequestPanelInner = ( { request, nextRequest, previousRequest, owner } ) =
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     //hide:       (teamType == 'contractor'),
-                    content:    <ContactList group = { request } readOnly = { true }/>
+                    content:    <ContactList 
+                                    hideMenu    = { Meteor.user().getRole() == 'staff' }
+                                    group       = { request } 
+                                    readOnly    = { true }
+                                />
                 }
             ]} />
 

@@ -63,6 +63,7 @@ export default ContactList = React.createClass( {
 	            	item 	= { selectedUser }
 	            	team 	= { team }
 	            	role 	= { role }
+	            	hideMenu= { this.props.hideMenu }
 	            	group	= { group }/>
 			} )
 		}
@@ -71,7 +72,7 @@ export default ContactList = React.createClass( {
 		var members = _.uniq( this.data.members, false, ( i ) => {
 			return i._id;
 		} );
-		let { team, group } = this.data;
+		let { team, group, role } = this.data;
 		var canCreate = !this.props.readOnly;// && ( team && team.canAddMember() || group && group.canAddMember() );
 		return (
 			<div className="contact-list">
@@ -102,7 +103,7 @@ export default ContactList = React.createClass( {
 			    {canCreate?
 			    <div
 			    	className	= "contact-list-item"
-			        onClick		= { () => { MemberActions.create.run( group, null, null, team ) } }
+			        onClick		= { () => { MemberActions.create.run( group, null, null, team, role ) } }
 			        style 		= { { paddingLeft:"24px" } }
 			    >
 

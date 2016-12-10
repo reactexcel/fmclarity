@@ -263,6 +263,20 @@ const TeamStepper = React.createClass( {
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             submitFormOnStepperNext = { true }
+                                            afterSubmit = { ( item ) => {
+                                                team = Teams.collection._transform(item);
+                                                if ( team.email && team.inviteMember && !team.members) {
+                                                  team.inviteMember( team.email, {
+                                                    role: "manager",
+                                                    owner: {
+                                                      type: 'team',
+                                                      _id: team._id,
+                                                      name: team.name
+                                                    }
+                                                  } );
+                                                }
+                                              }
+                                            }
                                         />
                                     </div>
                                     <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>

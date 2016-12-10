@@ -124,14 +124,14 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	condition: ( request ) => {
 		if ( request.type == 'Preventative'  ) {
-			/*
-        	let nextRequestDate = request.getNextDate();
-        	if( nextRequestDate != null ) {
+			import { Requests } from '/modules/models/Requests';
+			request = Requests.collection._transform( request );
+        	let nextRequest = request.getNextRequest();
+        	if( nextRequest == null ) {
 	         	return true;
     	  	}
-    	  	*/
-        	return false;
       	}
+      	return false;
     },
 	action: [
 		'clone request',
@@ -187,10 +187,11 @@ Actions.addAccessRule( {
 	condition: { status: 'Complete' },
 	action: [
 		//'close request',
-		//'reopen request',
+		'reopen request',
 		//'reverse request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	//role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	role: [ 'facility manager' ],
 	rule: { alert: true }
 } )
 
