@@ -20,7 +20,7 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
+	
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -29,10 +29,11 @@ export default RequestPanel = React.createClass( {
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-
+            
             if( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+				supplier = request.getSupplier();
                 if( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
@@ -99,22 +100,36 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <div className="wo-detail">
                 <div className="row">
                     <div className="col-md-6">
-                        <h2>{ request.team.name }</h2>
-                        <FacilityDetails item = { request.facility }/>
-                        <ContactDetails item = { owner }/>
-                    </div>
+						
+						{/* Show supplier name when user is client (fm),
+							otherwise show client name for supplier user */}
+						<h2>
+							{ 	teamType=="fm" 
+								? 
+								"Supplier: "+ request.supplier.name
+								: 
+								"Client: "+ request.team.name
+							}
+						</h2>
+                        
+						{/* Show supplier contact details when user is client (fm),
+							otherwise show client details for supplier user */}
+						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+
+						<FacilityDetails item = { request.facility }/>
+					</div>
                     <div className="col-md-6" style={{textAlign: 'right'}}>
 
                             <h2>{title}</h2>
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
-
-							{ request.type == 'Ad-hoc' &&
-							  request.costThreshold &&
+							
+							{ request.type == 'Ad-hoc' && 
+							  request.costThreshold && 
 							  Meteor.user().getRole() != 'staff' ?
                             <h2>${request.costThreshold}</h2>
                             : null }
-
+							
                             { request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
@@ -148,7 +163,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <table>
                 <tbody>
                 <tr>
-                    <th>Subject</th>
+                    <th>Work Summary</th>
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
@@ -160,50 +175,40 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-
-
-                {/* Show Supplier Name only when in client view (when teamType is "fm") */}
-                { request.supplier && request.type!= 'Booking' && teamType == "fm" ?
-                <tr onClick = { () => { TeamActions.view.run( request.supplier ) } }>
-                    <th>Supplier</th>
-                    <td>{request.supplier.name}</td>
-                </tr>
-                : null }
-
 				{ request.service && request.type != 'Booking' ?
 				<tr>
 					<th>Service</th>
 					<td>{request.getServiceString()}</td>
 				</tr>
                 : null
-                }
-
-
-                { nextDateString?
+                }				
+				
+				
+                { nextDateString? 
                 <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
                     <td>
                         <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                             <span>next due <b>{ nextDateString }</b> </span>
-                            { nextRequest ?
+                            { nextRequest ? 
                                 <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
                             : null }
-                        </span>
+                        </span> 
                     </td>
                 </tr>
                 : null }
 
-                { previousDateString?
+                { previousDateString? 
                 <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
                     <td>
-                        { previousDateString ?
+                        { previousDateString ? 
                             <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                                 <span>previous <b>{ previousDateString }</b> </span>
-                                { previousRequest ?
+                                { previousRequest ? 
                                     <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
                                 : null }
-                            </span>
+                            </span> 
                         : null }
 
                     </td>
@@ -234,12 +239,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <Tabs tabs={[
                 {
-                    tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
+                    tab:        <span id="discussion-tab"><span>Further Details</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
-                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
-
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => { 
+                      
                 request.distributeMessage( {
                     recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
                     message: {
@@ -248,14 +253,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         body: request.description
                     }
                 } );
-                        request.markAsUnread();
+                        request.markAsUnread(); 
                     } }  />
                 },{
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     //hide:       (teamType == 'contractor'),
-                    content:    <ContactList
+                    content:    <ContactList 
                                     hideMenu    = { Meteor.user().getRole() == 'staff' }
-                                    group       = { request }
+                                    group       = { request } 
                                     readOnly    = { true }
                                 />
                 }
