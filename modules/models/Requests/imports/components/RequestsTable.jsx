@@ -95,6 +95,8 @@ export default function RequestsTable( { requests, filter } ) {
         <DataTable 
             items   = { requests }
             fields  = { this.fields }
+            sortByColumn = "Issued"
+            sortDirection = "up"
             onClick = {
                 ( request ) => {
                     let team = Session.getSelectedTeam();

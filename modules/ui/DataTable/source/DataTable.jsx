@@ -14,8 +14,8 @@ export default DataTable = React.createClass( {
 			dataset: dataset,
 			rows: dataset.getRows(),
 			cols: dataset.getCols(),
-			sortCol: null,
-			sortDir: "none",
+			sortCol: this.props.sortByColumn ? this.props.sortByColumn : null,
+			sortDir: this.props.sortDirection ? this.props.sortDirection : "none",
 		}
 	},
 
