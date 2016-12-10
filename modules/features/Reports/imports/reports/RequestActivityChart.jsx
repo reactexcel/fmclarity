@@ -242,8 +242,8 @@ const RequestActivityChart = React.createClass( {
 
 	updateChart() {
 		//for(var i=0;i<this.data.labels.length;i++) {
-		this.chart.data.datasets[ 0 ].data = this.data.openSeries;
-		this.chart.data.datasets[ 1 ].data = this.data.closedSeries;
+		this.chart.data.datasets[ 0 ].data = this.data.closedSeries;
+		this.chart.data.datasets[ 1 ].data = this.data.openSeries;
 		//}
 		this.chart.data.labels = this.data.labels;
 		this.chart.update();
