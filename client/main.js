@@ -187,10 +187,11 @@ Actions.addAccessRule( {
 	condition: { status: 'Complete' },
 	action: [
 		//'close request',
-		//'reopen request',
+		'reopen request',
 		//'reverse request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	//role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+	role: [ 'facility manager' ],
 	rule: { alert: true }
 } )
 
