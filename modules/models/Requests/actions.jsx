@@ -339,7 +339,7 @@
  				[ 'reopenComment' ] }
  			onSubmit = {
  				( request ) => {
- 					Requests.update( request._id, { $set: { status: 'New' } } )
+ 					Requests.update( request._id, { $set: { status: 'Issued' } } )
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {

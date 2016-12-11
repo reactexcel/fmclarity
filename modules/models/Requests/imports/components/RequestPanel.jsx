@@ -104,7 +104,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 						{/* Show supplier name when user is client (fm),
 							otherwise show client name for supplier user */}
 						<h2>
-							{ 	teamType=="fm" 
+							{ 	teamType=="fm" && request.supplier && request.supplier.name
 								? 
 								"Supplier: "+ request.supplier.name
 								: 
