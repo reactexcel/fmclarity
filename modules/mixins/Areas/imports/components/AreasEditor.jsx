@@ -135,38 +135,11 @@ FacilityAreasEditorInner = React.createClass( {
                         areas.map(function(a,idx){
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
-                                    <input
-                                        id={"area-"+idx}
-                                        onClick={component.selectItem.bind(component,1,a)}
+                                    <input 
+                                        onClick={component.selectItem.bind(component,1,a)} 
                                         value={a.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,0,idx)}
-                                        onKeyDown={ ( event ) => {
-                                          event.preventDefault();
-                                              if ( event.keyCode == 13 ) {
-                                                let len = areas.length - 1 ;
-                                                if ( idx == len ) {
-                                                  (component.addItem.bind(component,0)());
-                                                } else {
-                                                  (component.selectItem.bind(component,1,areas[idx+1])());
-                                                  $("input#area-"+(idx+1)).click();
-                                                  $("input#area-"+(idx+1)).focus();
-                                                }
-                                              }
-                                              if ( event.keyCode == 9 ) {
-                                                if(!selectedSubArea.children){
-                                                  (component.addItem.bind(component,1)())
-                                                  $("input#subarea-0").click();
-                                                  $("input#subarea-0").focus();
-                                                } else {
-                                                  (component.selectItem.bind(component,2,selectedArea.children[0])());
-                                                  $("input#subarea-0").click();
-                                                  $("input#subarea-0").focus();
-                                                }
-                                              }
-                                            }
-                                          }
-                                        />
+                                        onChange={component.updateItem.bind(component,0,idx)}/>
                                     {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
                                 </div>
                             )
@@ -188,36 +161,10 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
                                     <input
-                                        id={"subarea-"+idx}
-                                        onClick={component.selectItem.bind(component,2,b)}
+                                        onClick={component.selectItem.bind(component,2,b)} 
                                         value={b.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,1,idx)}
-                                        onKeyDown={ ( event ) => {
-                                              if ( event.keyCode == 13 ) {
-                                                let len = selectedArea.children.length - 1 ;
-                                                if ( idx == len ) {
-                                                  (component.addItem.bind(component,1)());
-                                                } else {
-                                                  (component.selectItem.bind(component,2,selectedArea.children[idx+1])());
-                                                  $("input#subarea-"+(idx+1)).click();
-                                                  $("input#subarea-"+(idx+1)).focus();
-                                                }
-                                              }
-                                              if ( event.keyCode == 9 ) {
-                                                if(!selectedSubArea.children){
-                                                  (component.addItem.bind(component,2)());
-                                                  $("input#identity-0").click();
-                                                  $("input#identity-0").focus();
-                                                } else {
-                                                  (component.selectItem.bind(component,3,selectedSubArea.children[0])());
-                                                  $("input#identity-0").click();
-                                                  $("input#identity-0").focus();
-                                                }
-                                              }
-                                            }
-                                          }
-                                        />
+                                        onChange={component.updateItem.bind(component,1,idx)}/>
                                     {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
                                 </div>
                             )
@@ -239,25 +186,10 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
                                     <input
-                                        id={"identity-"+idx}
-                                        onClick={component.selectItem.bind(component,3,c)}
+                                        onClick={component.selectItem.bind(component,3,c)} 
                                         value={c.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,2,idx)}
-                                        onKeyDown={ ( event ) => {
-                                              if ( event.keyCode == 13 ) {
-                                                let len = selectedSubArea.children.length - 1 ;
-                                                if ( idx == len ) {
-                                                  (component.addItem.bind(component,2)());
-                                                } else {
-                                                  (component.selectItem.bind(component,3,selectedSubArea.children[idx+1])());
-                                                  $("input#identity-"+(idx+1)).click();
-                                                  $("input#identity-"+(idx+1)).focus();
-                                                }
-                                              }
-                                            }
-                                          }
-                                        />
+                                        onChange={component.updateItem.bind(component,2,idx)}/>
                                     {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
                                 </div>
                             )
