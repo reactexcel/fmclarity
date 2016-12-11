@@ -79,7 +79,7 @@ function FacilityPanel( { item } ) {
 					{
 						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
-						content:    <Inbox for = { facility } truncate = { true }/>
+						content:    <Inbox for = { facility } truncate = { true } readOnly = { true }/>
 					},{
 						hide:     	!facility.canAddDocument() || teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,
@@ -87,7 +87,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddMember() || role == "caretaker",
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager"] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager","caretaker"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,

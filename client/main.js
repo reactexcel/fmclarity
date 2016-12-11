@@ -55,7 +55,7 @@ Actions.addAccessRule( {
 		'create team request',
 		'create team document',
 	],
-	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager" ],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', "property manager", "caretaker" ],
 	rule: { alert: true, email: true }
 } )
 
@@ -78,25 +78,36 @@ Actions.addAccessRule( {
 	action: [
 		'edit facility',
 		'view facility',
+	],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', "property manager", "caretaker" ],
+	rule: { alert: true }
+} )
+
+
+Actions.addAccessRule( {
+	action: [
 		'destroy facility'
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', "property manager" ],
+	role: [ 'team fmc support', 'team portfolio manager' ],
 	rule: { alert: true }
 } )
 
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 'team fmc support', 'owner', 'team portfolio manager', 'team manager', 'supplier staff', 'supplier manager', 'facility manager', "property manager", "caretaker", 'assignee' ],
-	rule: { alert: true }
-} )
-
-Actions.addAccessRule( {
-	condition: { status: 'Draft' },
-	action: [
-		'create request',
+	role: [ 
+		'team fmc support', 
+		'owner', 
+		'team portfolio manager', 
+		'team manager', 
+		'supplier staff', 
+		'supplier manager', 
+		'facility manager', 
+		"property manager", 
+		"team caretaker", 
+		"facility caretaker", 
+		'assignee' 
 	],
-	role: [ 'staff', "caretaker" ],
 	rule: { alert: true }
 } )
 

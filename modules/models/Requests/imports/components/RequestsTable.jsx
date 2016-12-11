@@ -83,7 +83,7 @@ export default function RequestsTable( { requests, filter } ) {
     if ( filter ) {
         //let statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
         requests = Meteor.user().getRequests( { $and:[
-            { 'status': { $in: ['New','Open'] } },
+            { 'status': { $in: ['New','Issued'] } },
             filter 
         ] });
     }
