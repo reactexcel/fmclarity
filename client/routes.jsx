@@ -11,6 +11,9 @@ AccessGroups.loggedIn.add( {
 	name: 'root',
 	path: '/',
 	action() {
+		if(window.matchMedia("(max-width: 768px)").matches){
+			window.location.replace('/requests');
+		}
 		mount( LayoutMain, {
 			content: <PageDashboardContainer />
 		} );
