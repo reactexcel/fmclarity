@@ -69,7 +69,7 @@ export default function RequestsTable( { requests, filter } ) {
                 }
 			}
 			else{
-				let client = item.getOwner();
+				let client = item.getTeam();
                 if ( client ) {
     				return {
     					originalVal: client.name,
