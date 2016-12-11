@@ -484,7 +484,7 @@ const RequestSchema = {
 				return false;
 			}
 			let role = Meteor.user().getRole();
-			if( role == 'staff' ) {
+			if( role == 'staff' || role == 'tenant' || role == 'resident' ) {
 				return false;
 			}
 			return true;
