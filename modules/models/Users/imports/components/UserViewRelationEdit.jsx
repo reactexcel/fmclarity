@@ -23,13 +23,37 @@ export default UserViewRelationEdit = React.createClass( {
 		}
 
 		let relation = group.getMemberRelation( member );
+		let userRole = Meteor.user().getRole();
+
+		console.log( userRole );
+
+		if( userRole == 'caretaker' ) {
+			roles = [
+				"staff", 
+				"tenant", 
+				"resident", 
+				"property manager", 			
+			]
+		}
+		else {
+			roles = [
+				"staff", 
+				"tenant", 
+				"manager", 
+				"resident", 
+				"caretaker",
+				"fmc support", 
+				"property manager", 
+				"portfolio manager", 
+			]
+		}
 
 		if ( relation ) {
 			let role = relation.role;
 
 			return (
 				<Select
-					items 			= { [ "fmc support", "portfolio manager", "manager", "staff", "tenant", "resident", "property manager", "caretaker" ] }
+					items 			= { roles }
 					value			= { role }
 					onChange		= { this.handleRoleChange }
 					placeholder 	= "Role"

@@ -163,7 +163,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <table>
                 <tbody>
                 <tr>
-                    <th>Work Summary</th>
+                    <th>Summary</th>
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
@@ -239,7 +239,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <Tabs tabs={[
                 {
-                    tab:        <span id="discussion-tab"><span>Further Details</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
+                    tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,

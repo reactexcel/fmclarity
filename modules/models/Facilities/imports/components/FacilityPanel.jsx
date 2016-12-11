@@ -85,7 +85,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="documents-tab">Documents</span>,
 						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
-						hide:       !facility.canAddMember() || role == "caretaker",
+						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager","caretaker"] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
@@ -93,7 +93,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="tenants-tab">Tenants</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: ["tenant","resident"] } } } defaultRole = "resident" team = { facility.team }/>
 					},{
-						hide:       !facility.canSetAreas() || role == "caretaker",
+						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
 						content:    <AreasEditor item = { facility }/>
 					},{
@@ -101,7 +101,7 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="services-tab">Services</span>,
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
-						hide:     	!facility.canAddPMP()||teamType!='fm'|| role == "caretaker",
+						hide:     	!facility.canAddPMP()||teamType!='fm',
 						tab:        <span id="pmp-tab">PPM</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{
