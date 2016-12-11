@@ -95,7 +95,7 @@ class NavigationDrawer extends React.Component {
 					icon        = route.icon,
 					label       = route.label,
 					//path        = FlowRouter.path( pathName ),
-					classes     = [];
+					classes     = ["menu-item-"+route.name];
 
 				if( selectedRouteName == routeName ) {
 					classes.push("active");
