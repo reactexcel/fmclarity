@@ -59,8 +59,6 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		notifications = Messages.findAll( { 'inboxId.query._id': user._id }, { sort: { createdAt:-1 }, limit: 20 } );
 		unreadCount = Messages.find( { 'inboxId.query._id': user._id, read: false } ).count();
 
-		console.log( { userId:user._id, notifications} );
-
 //		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
 	//	if ( unshownNotifications.length ) {
 		//	chime.play();
