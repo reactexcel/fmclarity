@@ -234,6 +234,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
+                { 1 ?
+                <tr>
+                    <th>ETA</th>
+                    <td>{formatDate(request.eta)}</td>
+                </tr> : null }				
+				
                 </tbody>
             </table>
 
