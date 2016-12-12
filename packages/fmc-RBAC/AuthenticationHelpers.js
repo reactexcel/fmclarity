@@ -22,7 +22,7 @@ AuthHelpers = {
         return role == "manager" || role == "fmc support" || role == "portfolio manager" || role == "caretaker";
     },
     adminManager: function( role, user, team ) {
-        return ( role == "fmc support" || role == "portfolio manager" ) || ( team && ( team.type == "contractor" && role == "manager" ) );
+        return ( role == "fmc support" || role == "portfolio manager" || role == "caretaker" ) || ( team && ( team.type == "contractor" && role == "manager" ) );
     },
     managerOrOwner: function( role, user, team ) {
         return AuthHelpers.manager( role, user ) || AuthHelpers.owner( role, user, team )

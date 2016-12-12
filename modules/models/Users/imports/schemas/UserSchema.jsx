@@ -470,7 +470,6 @@ const UserSchema = {
 			type: "object",
 			input: Select,
 			condition: ( item ) => {
-				console.log({item});
 				return role === "resident" && item.apartment ? ( item.apartment.children ? true : false ) : false;
 			},
 			options: ( item ) => {

@@ -1,11 +1,9 @@
 import React from 'react';
 import { mount } from 'react-mounter';
 
-import { AccessGroups } from '/modules/core/Authentication';
-import { Routes } from '/modules/core/Actions';
-import { PageDashboardContainer } from '/modules/features/Reports';
 import { LayoutMain } from '/modules/core/Layouts';
-import { ActionGroup } from '/modules/core/Actions';
+import { Routes, ActionGroup } from '/modules/core/Actions';
+import { AccessGroups, PageLandingContainer } from '/modules/core/Authentication';
 
 AccessGroups.loggedIn.add( {
 	name: 'root',
@@ -15,7 +13,7 @@ AccessGroups.loggedIn.add( {
 			window.location.replace('/requests');
 		}
 		mount( LayoutMain, {
-			content: <PageDashboardContainer />
+			content: <PageLandingContainer />
 		} );
 	}
 } )
@@ -54,7 +52,7 @@ Routes.addAccessRule( {
 		'account',
 		'abc'
 	],
-	role: [ 'fmc support', 'portfolio manager', 'manager', "caretaker" ],
+	role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
 	condition: { type:'fm' }
 } )
 
@@ -72,11 +70,11 @@ Routes.addAccessRule( {
 
 NavigationDrawerRoutes = Routes.clone( [
 	'dashboard',
+	'requests',
+	'jobs',
 	'sites',
 	'portfolio',
 	'suppliers',
-	'requests',
-	'jobs',
 	'calendar',
 	'admin',
 	'all-facilities',

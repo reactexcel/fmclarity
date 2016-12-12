@@ -162,11 +162,16 @@
  			title = "Please provide eta and, if appropriate, an assignee."
  			model = { Requests }
  			item = { request }
- 			form = {
- 				[ 'eta', 'assignee', 'acceptComment' ] }
+ 			form = { [ 'eta', 'assignee', 'acceptComment' ] }
  			onSubmit = {
  				( request ) => {
  					//Requests.update( request._id, { $set: { status: 'In Progress' } } );
+					Requests.update( request._id, { 
+						$set: {
+							eta:request.eta,
+							acceptComment:request.acceptComment
+						} 
+					} );
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
@@ -178,7 +183,8 @@
  							body: request.acceptComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+					request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+
  					callback( request );
  				}
  			}
@@ -339,7 +345,7 @@
  				[ 'reopenComment' ] }
  			onSubmit = {
  				( request ) => {
- 					Requests.update( request._id, { $set: { status: 'New' } } )
+ 					Requests.update( request._id, { $set: { status: 'Issued' } } )
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {

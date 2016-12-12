@@ -3,26 +3,9 @@ CHANGELOG.md
 
 **TODO**
 
-* Fixed header scrolling table
-* Export flag needs to be set when an item is exported (...or if not then when)
-* Abstract toolbar from dash and report (and perhaps fab can inherit same mechanism - might be flux pattern)
-* Problem - there is no way to set the role of users who are not "owned" by you or your team
-* Problem - role confusion (manager perhaps should be facility manager)
-* Problem - setting rbac is confusing
-* Problem - Managers can add personnel but do not have permission to edit those owned by team
+**v1.6.5-02b
 
-* New workflow may have compatibility issues with self assigned requests
-* What is the workflow fow self-assigned requests
-* Roles - who can do what?
-* Notifications - what messages should be received at each of the stages?
-* Notifications - it is now more critical that notifications of actions required are reliably received
-* Multiple quotes (value should be stored with supplier)
-* How can we refer to the states consistently without relying on global const style definitions?
-* There are some problems with the modal including close button misalignment and unexpected behaviour in large mode
-* New modal not validated on mobile
-* Suppliers should not be able to create work orders
-* Manager should be able to go straight to issued or quoted from draft
-* New instructions needed for suppliers who are sent a quote request
+* Include caretaker role
 
 **v1.6.0**
 
