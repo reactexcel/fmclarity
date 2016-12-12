@@ -628,7 +628,7 @@ const RequestSchema = {
 					request.service = null;
 					request.subservice = null;
 					request.supplier = null;
-					request.members = getMembersDefaultValue( request );
+					//request.members = getMembersDefaultValue( request );
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.

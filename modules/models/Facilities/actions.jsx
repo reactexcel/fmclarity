@@ -13,7 +13,6 @@ const edit = new Action( {
 	type: 'facility',
 	label: "Edit facility",
 	action: ( facility ) => {
-		console.log( facility );
 		Modal.show( {
 			content: <FacilityStepperContainer params = { { item: facility } } />
 		} )
