@@ -5,11 +5,13 @@
 
 import AccessGroups from './imports/AccessGroups.jsx';
 import LoginService from './imports/LoginService.js';
+import PageLandingContainer from './imports/containers/PageLandingContainer.jsx';
 
 /**
  * @module 			core/Authentication
  */
 export {
 	AccessGroups,
-	LoginService
+	LoginService,
+	PageLandingContainer
 }

@@ -104,7 +104,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 						{/* Show supplier name when user is client (fm),
 							otherwise show client name for supplier user */}
 						<h2>
-							{ 	teamType=="fm" 
+							{ 	teamType=="fm" && request.supplier && request.supplier.name
 								? 
 								"Supplier: "+ request.supplier.name
 								: 
@@ -163,7 +163,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             <table>
                 <tbody>
                 <tr>
-                    <th>Work Summary</th>
+                    <th>Summary</th>
                     <td>{ request.name || <i>unnamed</i> }</td>
                 </tr>
 
@@ -234,12 +234,18 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
+                { request.eta ?
+                <tr>
+                    <th>ETA</th>
+                    <td>{formatDate(request.eta)}</td>
+                </tr> : null }				
+				
                 </tbody>
             </table>
 
             <Tabs tabs={[
                 {
-                    tab:        <span id="discussion-tab"><span>Further Details</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
+                    tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,

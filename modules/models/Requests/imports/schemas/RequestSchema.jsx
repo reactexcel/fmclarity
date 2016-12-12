@@ -45,7 +45,7 @@ const RequestSchema = {
 	},
 
 	name: {
-		label: "Work Summary",
+		label: "Summary",
 		type: "string",
 		required: true,
 		input: Text,
@@ -480,11 +480,11 @@ const RequestSchema = {
 		defaultValue: '500',
 		input: Currency,
 		condition: ( request ) => {
-			if( _.contains( [ "Ad-hoc", "Contract", "Tenancy" ], request.type )  ) {
+			if( _.contains( [ "Defect", "Preventative" ], request.type )  ) {
 				return false;
 			}
 			let role = Meteor.user().getRole();
-			if( role == 'staff' ) {
+			if( role == 'staff' || role == 'tenant' || role == 'resident' ) {
 				return false;
 			}
 			return true;
@@ -628,7 +628,7 @@ const RequestSchema = {
 					request.service = null;
 					request.subservice = null;
 					request.supplier = null;
-					request.members = getMembersDefaultValue( request );
+					//request.members = getMembersDefaultValue( request );
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.

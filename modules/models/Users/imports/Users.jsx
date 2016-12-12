@@ -208,7 +208,7 @@ Users.actions( {
                 } );
             }
             //if manager can be issued to team, created by team, created by me, or assigned to me
-            else if ( role == "manager" ) {
+            else if ( role == "manager" || role == "caretaker" ) {
                 if ( team.type == "contractor" ) {
                     query.push( {
                         $or: [ issuedToMyTeam, createdByMe, assignedToMe ]

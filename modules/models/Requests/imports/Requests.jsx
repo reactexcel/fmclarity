@@ -181,7 +181,8 @@ Requests.methods( {
 			let newRequestId = Meteor.call( 'Issues.save', request, {
 				status: status,
 				issuedAt: new Date(),
-				code: code
+				code: code,
+				members: getMembersDefaultValue( request )
 			} ),
 				newRequest = null;
 
@@ -485,12 +486,14 @@ function actionIssue( request ) {
 		Meteor.call( 'Issues.save', request, {
 			status: "Issued",
 			issuedAt: new Date(),
-			code: code
+			code: code,
+			members: getMembersDefaultValue( request )
 		} );
  	} else {
 		Meteor.call( 'Issues.save', request, {
 			status: "Issued",
 			issuedAt: new Date(),
+			members: getMembersDefaultValue( request )
 		} );
  	}
 
@@ -526,6 +529,58 @@ function actionIssue( request ) {
 		return request;
 	}
 }
+
+/*
+ *
+ *
+ *
+ */
+function getMembersDefaultValue( item ) {
+
+	if ( item.team == null ) {
+		return;
+	}
+
+	let owner = Meteor.user(),
+		team = Teams.findOne( item.team._id ),
+		teamMembers = team.getMembers( {
+			role: "portfolio manager"
+		} );
+
+	let members = [ {
+		_id: owner._id,
+		name: owner.profile.name,
+		role: "owner"
+	} ];
+
+	teamMembers.map( ( m ) => {
+		members.push( {
+			_id: m._id,
+			name: m.profile.name,
+			role: "team manager"
+		} )
+	} );
+
+	import { Facilities } from '/modules/models/Facilities';
+
+	if ( item.facility ) {
+		let facility = Facilities.findOne( item.facility._id ),
+			facilityMembers = facility.getMembers( {
+				role: "manager"
+			} );
+
+		facilityMembers.map( ( m ) => {
+			members.push( {
+				_id: m._id,
+				name: m.profile.name,
+				role: "facility manager"
+			} )
+		} );
+	}
+
+	return members;
+}
+
 
 function actionComplete( request ) {
 
@@ -581,9 +636,7 @@ function actionComplete( request ) {
 			newRequest.code = team.getNextWOCode();
 		}
 
-		//console.log( request._id );
 		var response = Meteor.call( 'Issues.create', newRequest );
-		//console.log( response._id );
 		var newRequest = Requests.findOne( response._id );
 		//ok cool - but why send notification and not distribute message?
 		//is it because distribute message automatically goes to all recipients
@@ -636,7 +689,6 @@ function actionComplete( request ) {
 				 message: {
 					 subject: "Overdue Work order #"+ request.code+" reminder",
 					 emailBody: function( recipient ) {
-						 console.log(recipient);
 						 var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
 						 var token = LoginService.generateLoginToken( recipient, expiry );
 						 return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
