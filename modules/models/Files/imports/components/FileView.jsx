@@ -130,7 +130,7 @@ const FileView = React.createClass( {
 							<input ref="input" type="file" onChange={this.handleChange}/>
 						</div>
 					</div>
-					<div className="close-button" onClick={this.deleteFile}>&times;</div>
+					{ Meteor.user().getTeam().type != 'contractor' ? <div className="close-button" onClick={this.deleteFile}>&times;</div>: null}
 					<div className="caption">{this.data.name}</div>
 				</div>
 			)
