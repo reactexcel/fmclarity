@@ -193,7 +193,7 @@ const TeamStepper = React.createClass( {
     render() {
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
-
+        var role = this.props.role;
 
         if ( !viewingTeam ) {
             return (
@@ -267,7 +267,7 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 if ( team.email && team.inviteMember && !team.members) {
                                                   team.inviteMember( team.email, {
-                                                    role: "manager",
+                                                    role: role ? role : "manager",
                                                     owner: {
                                                       type: 'team',
                                                       _id: team._id,
