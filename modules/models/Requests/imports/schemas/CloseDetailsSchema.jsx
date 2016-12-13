@@ -1,4 +1,4 @@
-import { DateTime, Select, Switch, FileField, TextArea, Text } from '/modules/ui/MaterialInputs';
+import { DateTime, Select, Switch, FileField, TextArea, Text, Currency } from '/modules/ui/MaterialInputs';
 
 export default CloseDetailsSchema = {
 
@@ -72,7 +72,7 @@ export default CloseDetailsSchema = {
 
     furtherQuoteValue: {
         label: "Value of quote",
-        input: Text,
+        input: Currency,
         optional: true,
         condition( item ) {
             return item.furtherWorkRequired == true;

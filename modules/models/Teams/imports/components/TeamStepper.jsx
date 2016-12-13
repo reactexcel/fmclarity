@@ -259,7 +259,7 @@ const TeamStepper = React.createClass( {
                                         <AutoForm
                                             model = { Teams }
                                             item = { viewingTeam }
-                                            form = { ["name","type","abn","email","phone","phone2"] }
+                                            form = { ["name","type","abn","email","phone","phone2","website"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             submitFormOnStepperNext = { true }

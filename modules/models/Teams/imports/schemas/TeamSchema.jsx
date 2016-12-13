@@ -45,9 +45,16 @@ export default TeamSchema = {
     },
 
     description: {
-        label: "Description",
+        label: "Company Profile",
         description: "Brief summary of services provided by this team",
         input: TextArea,
+        condition: "contractor"
+    },
+
+    website: {
+        label: "Website",
+        description: "Company's website url",
+        input: Text,
         condition: "contractor"
     },
 
