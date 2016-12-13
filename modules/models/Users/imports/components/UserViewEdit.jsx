@@ -135,6 +135,13 @@ export default UserViewEdit = React.createClass( {
 		if ( this.props.addPersonnel ) {
 			this.props.addPersonnel( newMember );
 		}
+		//change the primary email (used for login) if profile email is changed.
+		let primary = newMember.emails[0].address,
+			profileEmail = newMember.profile.email;
+		if ( primary !== profileEmail && /.+@.+\..+/i.test( profileEmail ) ) {
+				newMember.emails[0].address = profileEmail;
+				Users.save.call( newMember );
+		}
 	},
 
 	render() {
