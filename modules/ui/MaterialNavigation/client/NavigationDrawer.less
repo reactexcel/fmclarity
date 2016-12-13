@@ -136,18 +136,32 @@ body
             }
         }
     }
-    /*style wrapper for IE*/
+    /*style wrapper for IE10, IE11*/
     @media all and (-ms-high-contrast:none)
      {
+        /* IE10 */
      .page-wrapper-inner { 
-        top: 60px;margin-left: auto;
+        top: 60px;
+        margin-left: auto;
         margin-right: auto;
-    } /* IE10 */
+    } 
+        /* IE11 */
      *::-ms-backdrop, .page-wrapper-inner { top: 60px;
          margin-left: auto;
         margin-right: auto;
-         } /* IE11 */
+         } 
      }
+
+     /*style wrapper for IE 8,9,10*/
+
+     @media screen and ("min-width:0\0") and ("min-resolution: +72dpi") {
+      // IE9+ CSS
+      .page-wrapper-inner { 
+        top: 60px;
+        margin-left: auto;
+        margin-right: auto;
+        } 
+    }
     @media (max-width:768px)
     {
         .page-wrapper

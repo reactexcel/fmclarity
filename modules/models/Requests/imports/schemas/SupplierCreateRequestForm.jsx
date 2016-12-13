@@ -28,7 +28,5 @@ export default SupplierCreateRequestForm = [
 	//'requireServiceReport',
 	//'requireInvoice',
 
-	'description',
-	
-	'website'
+	'description'
 ];

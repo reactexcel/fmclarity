@@ -53,6 +53,7 @@ export default TeamSchema = {
 
     website: {
         label: "Website",
+        type: "string",
         description: "Company's website url",
         input: Text,
         condition: "contractor"
