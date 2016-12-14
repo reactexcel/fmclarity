@@ -123,18 +123,11 @@ Requests.methods( {
 		authentication: true,
 		helper: function( request ) {
 			let roles = Roles.getRoles( request ),
-				supplierManagers = roles.roles[ 'supplier manager' ],
-				teamManagers = roles.roles[ 'team manager' ];
+				supplierManagers = roles.roles[ 'supplier manager' ];
 
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
 					role: "supplier manager"
-				} );
-			}
-
-			if ( teamManagers ) {
-				request.dangerouslyReplaceMembers( teamManagers, {
-					role: "team manager"
 				} );
 			}
 		}
@@ -541,17 +534,19 @@ function getMembersDefaultValue( item ) {
 		return;
 	}
 
-	let owner = Meteor.user(),
-		team = Teams.findOne( item.team._id ),
-		teamMembers = team.getMembers( {
-			role: "portfolio manager"
-		} );
+	let owner = Meteor.user();
 
 	let members = [ {
 		_id: owner._id,
 		name: owner.profile.name,
 		role: "owner"
 	} ];
+
+	let team = Teams.findOne( item.team._id );
+	
+	let teamMembers = team.getMembers( {
+		role: "portfolio manager"
+	} );
 
 	teamMembers.map( ( m ) => {
 		members.push( {
@@ -564,16 +559,18 @@ function getMembersDefaultValue( item ) {
 	import { Facilities } from '/modules/models/Facilities';
 
 	if ( item.facility ) {
-		let facility = Facilities.findOne( item.facility._id ),
-			facilityMembers = facility.getMembers( {
-				role: "manager"
-			} );
+		let facility = Facilities.findOne( item.facility._id );
+		
+		let facilityMembers = facility.getMembers( {
+			role: { $in: ['manager', 'caretaker'] }
+		} );
 
-		facilityMembers.map( ( m ) => {
+		facilityMembers.map( ( member ) => {
+			let role = member.getRole( facility );
 			members.push( {
-				_id: m._id,
-				name: m.profile.name,
-				role: "facility manager"
+				_id: member._id,
+				name: member.profile.name,
+				role: `facility ${role}`
 			} )
 		} );
 	}
