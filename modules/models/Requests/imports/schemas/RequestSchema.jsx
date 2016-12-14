@@ -532,6 +532,7 @@ const RequestSchema = {
 		description: "Time the supplier is expected to attend the site",
 		size: 6,
 		required: true,
+		type: "date",
 		input: DateTime
 	},
 
@@ -749,6 +750,7 @@ const RequestSchema = {
 			}
 		},
 		input: Select,
+		type: "object",
 		options: ( request ) => {
 			request = Requests.collection._transform( request );
 			let supplier = request.getSupplier(),
