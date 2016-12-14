@@ -135,7 +135,7 @@ export default MessageView = React.createClass( {
                 </div>
             </div> )
         } else {
-            return ( <div>
+            return ( <div className="no-print">
                 <ContactAvatarSmall item={owner}/>
                 <div className="media-body">
                     <textarea

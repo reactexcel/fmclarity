@@ -53,6 +53,13 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
 	action: [
 		'create team request',
+	],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'tenant', 'resident' ],
+	rule: { alert: true, email: true }
+} )
+
+Actions.addAccessRule( {
+	action: [
 		'create team document',
 	],
 	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
@@ -86,7 +93,13 @@ Actions.addAccessRule( {
 		'edit facility',
 		'view facility',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'property manager', 'caretaker' ],
+	role: [ 
+		'team fmc support', 
+		'team portfolio manager', 
+		'team manager', 
+		'property manager', 
+		'caretaker' 
+	],
 	rule: { alert: true }
 } )
 
@@ -110,9 +123,9 @@ Actions.addAccessRule( {
 		'supplier staff', 
 		'supplier manager', 
 		'facility manager', 
-		"property manager", 
-		"team caretaker", 
-		"facility caretaker", 
+		'property manager', 
+		'team caretaker', 
+		'facility caretaker', 
 		'assignee' 
 	],
 	rule: { alert: true }
@@ -123,7 +136,12 @@ Actions.addAccessRule( {
 	action: [
 		'destroy request',
 	],
-	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	role: [ 
+		'owner', 
+		'team portfolio manager', 
+		'facility manager', 
+		'team fmc support' 
+	],
 	rule: { alert: true }
 } )
 
@@ -134,7 +152,7 @@ Actions.addAccessRule( {
 	action: [
 		'edit request',
 	],
-	role: [ 'owner', 'team portfolio manager', 'facility manager', 'team fmc support' ],
+	role: [ 'team portfolio manager', 'facility manager', 'team fmc support', 'owner' ],
 	rule: { alert: true }
 } )
 
@@ -166,7 +184,7 @@ Actions.addAccessRule( {
 		'issue request',
 		'reject request',
 	],
-	role: [ 'team fmc support', 'team portfolio manager', 'team manager', "property manager" ],
+	role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'property manager', 'fmc support' ],
 	rule: { alert: true }
 } )
 

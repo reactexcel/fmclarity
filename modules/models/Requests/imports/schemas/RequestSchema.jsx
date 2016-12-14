@@ -426,7 +426,7 @@ const RequestSchema = {
 	},
 
 	reopenComment: {
-		label: "Comment",
+		label: "Provide reason for reopening",
 		description: "Reason for reopening",
 		type: "string",
 		input: TextArea,

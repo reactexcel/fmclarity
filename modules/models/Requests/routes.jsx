@@ -8,6 +8,7 @@ import { LayoutMain, LayoutBlank } from '/modules/core/Layouts';
 import RequestsPageSingle from './imports/components/RequestsPageSingle.jsx';
 import RequestsPageAllContainer from './imports/containers/RequestsPageAllContainer.jsx';
 import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
+import PrintRequestContainer from './imports/containers/PrintRequestContainer.jsx';
 
 AccessGroups.loggedIn.add( {
 	name: 'all-requests',
@@ -51,6 +52,16 @@ AccessGroups.loggedIn.add( {
 	action( params ) {
 		mount( LayoutMain, {
 			content: <RequestsPageIndexContainer selectedRequestId = { params._id } />
+		} );
+	}
+} );
+
+AccessGroups.loggedIn.add( {
+	name: 'request-print',
+	path: '/requests/print/:_id',
+	action( params ) {
+		mount( LayoutMain, {
+			content: <PrintRequestContainer selectedRequestId = { params._id } />
 		} );
 	}
 } );
