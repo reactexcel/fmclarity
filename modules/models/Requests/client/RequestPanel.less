@@ -12,10 +12,19 @@
 
 @cover-image-min-height:150px;
 
+
+@media print
+{
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+
 .request-panel
 {
     width:100%;
-    
+
     @media (min-width: 768px) {
         min-width: 768px;
     }
