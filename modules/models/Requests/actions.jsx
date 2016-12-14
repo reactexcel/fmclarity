@@ -58,14 +58,14 @@
             }
           }
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager","supplier manager" ],
  						message: {
  							verb: "edited",
  							subject: `Work order ${request.code} has been edited`,
               body: notificationBody
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] )
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager","supplier manager" ] )
  				}
  			}
  			/>
@@ -95,7 +95,7 @@
  		Modal.hide();
  		request = Requests.collection._transform( request );
  		request.distributeMessage( {
- 			recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 			recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  			message: {
  				verb: "deleted",
  				subject: `Work order ${request.code} has been deleted`,
@@ -124,7 +124,7 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  						message: {
  							verb: "cancelled",
  							subject: `Work order ${request.code} has been cancelled`,
@@ -176,14 +176,14 @@
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  						message: {
  							verb: "accepted",
  							subject: `Work order ${request.code} has been accepted`,
  							body: request.acceptComment
  						}
  					} );
-					request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+					request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
 
  					callback( request );
  				}
@@ -212,14 +212,14 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  						message: {
  							verb: "rejected",
  							subject: `Work order ${request.code} has been rejected`,
  							body: request.rejectComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
  					callback( request );
  				}
  			}
@@ -315,14 +315,14 @@
  					Requests.update( request._id, { $set: { status: 'Closed' } } );
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  						message: {
  							verb: "closed",
  							subject: `Work order ${request.code} has been closed`,
  							body: request.closeComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
  					Modal.hide();
  					callback( request );
  				}
@@ -349,14 +349,14 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
  						message: {
  							verb: "reopened",
  							subject: `Work order ${request.code} has been reopened`,
  							body: request.reopenComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
  				}
  			}
  			/>
