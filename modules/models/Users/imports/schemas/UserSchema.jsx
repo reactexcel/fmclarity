@@ -512,7 +512,7 @@ const UserSchema = {
 							import { Teams, TeamStepper } from '/modules/models/Teams';
 							let team = Teams.create();
 							Modal.show( {
-								content: <TeamStepper item = { team } onFinish={ ( newItem ) => callback(newItem)} />
+								content: <TeamStepper item = { team } role={"property manager"} onFinish={ ( newItem ) => callback(newItem)} />
 							} )
 						}
 					},

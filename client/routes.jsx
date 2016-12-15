@@ -29,6 +29,7 @@ Routes.addAccessRule( {
 	action: [
 		'requests',
 		'portfolio',
+		'request-print'
 	],
 	role: [ '*' ],
 	condition: { type:'fm' }

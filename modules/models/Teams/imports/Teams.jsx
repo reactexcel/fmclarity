@@ -589,8 +589,11 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
-			$or: [ {
-				"team._id": this._id
+			$and: [ {
+				$or: [
+					{ 'team._id': this._id },
+					{ 'supplier._id': this._id }
+				]
 			}, {
 				_id: {
 					$in: facilityIds
