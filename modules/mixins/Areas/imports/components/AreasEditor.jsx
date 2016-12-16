@@ -6,6 +6,8 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Facilities } from '/modules/models/Facilities';
+import { AutoForm } from '/modules/core/AutoForm';
+import { Modal } from '/modules/ui/Modal';
 
 /**
  * @class           AreasEditor
@@ -135,12 +137,34 @@ FacilityAreasEditorInner = React.createClass( {
                         areas.map(function(a,idx){
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
-                                    <input 
-                                        onClick={component.selectItem.bind(component,1,a)} 
+                                    <input
+                                        onClick={component.selectItem.bind(component,1,a)}
                                         value={a.name||undefined}
                                         readOnly={!editable}
                                         onChange={component.updateItem.bind(component,0,idx)}/>
-                                    {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
+                                    {editable?<span className="areas-selector-delete-icon"
+                                      onClick = {
+                                        () => {
+                                          Modal.show({
+                                            content:  <div style={{padding:'20px'}}>
+                                              <div>
+                                                <h1>Area information</h1>
+                                              </div>
+                                              <AutoForm
+                                                model = { Facilities }
+                                                item = { a }
+                                                form = { ["areaDeatails"] }
+                                                onSubmit={
+                                                  ( item ) => {
+                                                    component.save();
+                                                    Modal.hide();
+                                                  }
+                                                }
+                                              />
+                                            </div>
+                                          })
+                                        //  component.removeItem.bind(component,0,idx)
+                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
                                 </div>
                             )
                         })
@@ -161,11 +185,33 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
                                     <input
-                                        onClick={component.selectItem.bind(component,2,b)} 
+                                        onClick={component.selectItem.bind(component,2,b)}
                                         value={b.name||undefined}
                                         readOnly={!editable}
                                         onChange={component.updateItem.bind(component,1,idx)}/>
-                                    {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
+                                    {editable?<span className="areas-selector-delete-icon"
+                                      //onClick={component.removeItem.bind(component,1,idx)}
+                                      onClick = {
+                                        () => {
+                                          Modal.show({
+                                            content:  <div style={{padding:'20px'}}>
+                                              <div>
+                                                <h1>Area information</h1>
+                                              </div>
+                                              <AutoForm
+                                                model = { Facilities }
+                                                item = { b }
+                                                form = { ["areaDeatails"] }
+                                                beforeSubmit={
+                                                  ( item ) => {
+                                                    component.save();
+                                                    Modal.hide();
+                                                  }
+                                                }
+                                              />
+                                            </div>
+                                          })
+                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
                                 </div>
                             )
                         }):null
@@ -186,11 +232,34 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
                                     <input
-                                        onClick={component.selectItem.bind(component,3,c)} 
+                                        onClick={component.selectItem.bind(component,3,c)}
                                         value={c.name||undefined}
                                         readOnly={!editable}
                                         onChange={component.updateItem.bind(component,2,idx)}/>
-                                    {editable?<span className="areas-selector-delete-icon" onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
+                                    {editable?<span className="areas-selector-delete-icon"
+                                      //onClick={component.removeItem.bind(component,2,idx)}
+                                      onClick = {
+                                        () => {
+                                          Modal.show({
+                                            content:  <div style={{padding:'20px'}}>
+                                              <div>
+                                                <h1>Area information</h1>
+                                              </div>
+                                              <AutoForm
+                                                model = { Facilities }
+                                                item = { c }
+                                                form = { ["areaDeatails"] }
+                                                beforeSubmit={
+                                                  ( item ) => {
+                                                    component.save();
+                                                    Model.hide();
+                                                  }
+                                                }
+                                              />
+                                            </div>
+                                          })
+                                        //  component.removeItem.bind(component,0,idx)
+                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
                                 </div>
                             )
                         }):null
