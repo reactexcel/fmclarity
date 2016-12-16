@@ -3,14 +3,32 @@ import { DocHead } from 'meteor/kadira:dochead';
 import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
-function loadScript() {
+function loadExternalScripts(  ) {
+	// load google map api script
+	loadGoogleMapApiScript(  );
+
+	// load browser-update.org browser compatibility script
+	loadBrowerCompatibilityScript();
+
+}
+function loadGoogleMapApiScript(  ){
 	var script= document.createElement('script');
 	script.type= 'text/javascript';
 	script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
 	script.async = true;
 	document.body.appendChild(script);
 }
-loadScript();
+function loadBrowerCompatibilityScript(  ){
+	window.$buoop = {vs:{i:10,f:-4,o:-4,s:8,c:-4},api:4, test:false};
+		$(window).bind('load', function() {
+		    const script = document.createElement("script"); 
+			script.src = "http://browser-update.org/update.min.js"; 
+			script.type = "text/javascript";
+			script.async = true;
+			document.body.appendChild(script);
+		});
+}
+loadExternalScripts();
 
 
 DocHead.setTitle( 'FM Clarity' );
