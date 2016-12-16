@@ -17,7 +17,6 @@ const create = new Action( {
 	icon: 'fa fa-group',
 	action: () => {
 		let team = Teams.create();
-		console.log( team );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )
@@ -30,7 +29,6 @@ const edit = new Action( {
 	icon: 'fa fa-group',
 	action: ( team ) => {
 		let { roles, actors } = Roles.getRoles( team );
-		//console.log( Roles.getRoles( team ) );
 		Modal.show( {
 			content: <TeamStepper item = { team } />
 		} )
@@ -63,7 +61,10 @@ const createFacility = new Action( {
 	label: "Create new facility",
 	icon: 'fa fa-building',
 	action: ( team ) => {
-		let item = { team };
+		let item = { team:{
+			_id: team._id,
+			name: team.name
+		} };
 		newItem = Facilities.create( item );
 
 		//newItem.setupCompliance( Config.compliance );
@@ -86,7 +87,6 @@ const createRequest = new Action( {
 	action: ( team, callback ) => {
 		let item = { team };
 		newItem = Requests.create( item );
-		//console.log( newItem );
 		Modal.show( {
 			content: <AutoForm
 				title 	= "Please tell us a little bit more about the work that is required."

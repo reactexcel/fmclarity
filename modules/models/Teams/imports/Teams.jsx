@@ -579,9 +579,11 @@ Teams.helpers( {
 		var requests, facilityIds = [];
 		requests = user.getRequests();
 		if ( requests && requests.length ) {
-			requests.map( function( i ) {
-				if ( i.facility ) {
-					facilityIds.push( i.facility._id );
+			requests.map( function( request ) {
+				let requestIsByThisTeam = request.team && request.team._id && request.team._id == this._id;
+				let requestIsForThisTeam = request.supplier && request.supplier._id && request.supplier._id == this._id;
+				if ( request.facility && ( requestIsForThisTeam || requestIsByThisTeam ) ) {
+					facilityIds.push( request.facility._id );
 				}
 			} )
 		}
@@ -589,16 +591,10 @@ Teams.helpers( {
 		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
-			$and: [ {
-				$or: [
-					{ 'team._id': this._id },
-					{ 'supplier._id': this._id }
-				]
-			}, {
-				_id: {
-					$in: facilityIds
-				}
-			} ]
+			$or: [
+				{ 'team._id': this._id },
+				{ _id: { $in: facilityIds } }
+			]
 		}, {
 			sort: {
 				name: 1
