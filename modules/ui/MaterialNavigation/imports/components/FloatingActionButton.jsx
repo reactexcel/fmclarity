@@ -7,13 +7,20 @@ export default class FloatingActionButton extends React.Component {
 			.tooltip( {
 				container: 'body'
 			} );
+			$(document).scroll( function () {
+				if( ($(window).scrollTop() + $(window).height()) > (document.body.scrollHeight - 100)  ) {
+					$("#fab").hide();
+				} else {
+					$("#fab").show();
+				}
+			})
 	}
 
 	render() {
 		let { actions, team } = this.props;
 
 		return (
-			<div className="fab-panel">
+			<div className="fab-panel" id="fab">
 			 { actions.map( ( actionName, idx ) => {
 				 let action = FloatingActionButtonActions.actions[ actionName ]
 			 	return (
