@@ -542,20 +542,31 @@ function getMembersDefaultValue( item ) {
 		role: "owner"
 	} ];
 
-	let team = Teams.findOne( item.team._id );
+	if( item.assignee && item.assignee._id ) {
+		members.push( {
+			_id: item.assignee._id,
+			name: item.assignee.name,
+			role: 'assignee'
+		} )
+	}
 	
+	// create team contacts
+	let team = Teams.findOne( item.team._id );	
 	let teamMembers = team.getMembers( {
 		role: "portfolio manager"
 	} );
-
 	teamMembers.map( ( m ) => {
-		members.push( {
-			_id: m._id,
-			name: m.profile.name,
-			role: "team manager"
-		} )
+		if( m._id != owner._id ) {
+			members.push( {
+				_id: m._id,
+				name: m.profile.name,
+				role: "team manager"
+			} )
+		}
 	} );
 
+
+	// create facility contacts
 	import { Facilities } from '/modules/models/Facilities';
 
 	if ( item.facility ) {
@@ -566,12 +577,14 @@ function getMembersDefaultValue( item ) {
 		} );
 
 		facilityMembers.map( ( member ) => {
-			let role = member.getRole( facility );
-			members.push( {
-				_id: member._id,
-				name: member.profile.name,
-				role: `facility ${role}`
-			} )
+			if( member._id != owner._id ) {
+				let role = member.getRole( facility );
+				members.push( {
+					_id: member._id,
+					name: member.profile.name,
+					role: `facility ${role}`
+				} )
+			}
 		} );
 	}
 
