@@ -83,8 +83,17 @@ const FileView = React.createClass( {
 			$( this.refs.input ).click();
 		}
 	},
-
 	componentDidMount() {
+		$(document).on('dragover', function (e)
+		{
+		  e.stopPropagation();
+		  e.preventDefault();
+		});
+		$(document).on('drop', function (e)
+		{
+			e.stopPropagation();
+      e.preventDefault();
+		});
 		$( this.refs.progress ).knob( {
 			readOnly: true,
 			format: function( value ) {
@@ -102,7 +111,14 @@ const FileView = React.createClass( {
 				.trigger( "change" );
 		}
 	},
-
+	handleDragFile(e){
+		e.stopPropagation();
+    e.preventDefault();
+	},
+	drop(e){
+     e.preventDefault();
+		 this.handleChange(e);
+	},
 	render() {
 		if ( this.data.file ) {
 			return (
@@ -136,7 +152,7 @@ const FileView = React.createClass( {
 			)
 		}
 		return (
-			<div className="fm-icon" style={{cursor:"pointer"}} onClick={this.onClick}>
+			<div className="fm-icon" style={{cursor:"pointer"}} onClick={this.onClick} onDrop={this.drop} onDragOver={this.handleDragFile}>
 				<div style={{width:0,height:0,overflow:"hidden"}}>
 					<input ref="input" type="file" onChange={this.handleChange}/>
 				</div>
