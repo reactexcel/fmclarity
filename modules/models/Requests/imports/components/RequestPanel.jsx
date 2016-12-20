@@ -81,7 +81,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             title = 'Room Booking';
         }
         else if( teamType == 'fm' ) {
-            title = "Work Order";
+            if (request.service.serviceDetails.purchaseOrder){
+              title = "Purchase Order";
+            } else {
+              title = "Work Order";
+            }
         }
         else {
             title = "Job";
