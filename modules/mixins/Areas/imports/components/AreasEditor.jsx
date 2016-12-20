@@ -81,6 +81,24 @@ FacilityAreasEditorInner = React.createClass( {
         }
         this.setState( {
             selection: selection
+        }, () => {
+          let selectorID = ""
+          switch (col) {
+            case 0: {
+              selectorID = '#area-';
+              break;
+            }
+            case 1: {
+              selectorID = '#subarea-';
+              break;
+            }
+            case 2: {
+              selectorID = '#identity-';
+              break;
+            }
+          }
+          $("input"+ selectorID +(selection[ col ].children.length - 1 )).click();
+          $("input"+ selectorID + (selection[ col ].children.length - 1 )).focus();
         } );
         this.save();
     },
@@ -119,6 +137,35 @@ FacilityAreasEditorInner = React.createClass( {
         this.save = _.debounce( this.save, 1000 );
     },
 
+    handleKeyDown( event, colAdd, colSelect, element, row ){
+      console.log(event.keyCode,"==========");
+      if ( event.keyCode == 13 ) {
+        let len = element.length - 1 ;
+        if ( row == len ) {
+          (this.addItem.bind(this,colAdd)());
+        } else {
+          (this.selectItem.bind(this,colSelect,element[row+1])());
+          let selectorID = ""
+          switch (colAdd) {
+            case 0: {
+              selectorID = '#area-';
+              break;
+            }
+            case 1: {
+              selectorID = '#subarea-';
+              break;
+            }
+            case 2: {
+              selectorID = '#identity-';
+              break;
+            }
+          }
+          $("input"+ selectorID +(row+1)).click();
+          $("input"+ selectorID +(row+1)).focus();
+        }
+      }
+    },
+
     render() {
         //refact - create a FacilityAreaSelectorRow class nad use that in these three instances below
         var component = this;
@@ -138,10 +185,12 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
                                     <input
+                                        id={"area-"+idx}
                                         onClick={component.selectItem.bind(component,1,a)}
                                         value={a.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,0,idx)}/>
+                                        onChange={component.updateItem.bind(component,0,idx)}
+                                        onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
                                     {editable?<span className="areas-selector-delete-icon"
                                       onClick = {
                                         () => {
@@ -185,10 +234,12 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
                                     <input
+                                        id={"subarea-"+idx}
                                         onClick={component.selectItem.bind(component,2,b)}
                                         value={b.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,1,idx)}/>
+                                        onChange={component.updateItem.bind(component,1,idx)}
+                                        onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
                                     {editable?<span className="areas-selector-delete-icon"
                                       //onClick={component.removeItem.bind(component,1,idx)}
                                       onClick = {
@@ -233,10 +284,13 @@ FacilityAreasEditorInner = React.createClass( {
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
                                     <input
+                                        id={"identity-"+idx}
                                         onClick={component.selectItem.bind(component,3,c)}
                                         value={c.name||undefined}
                                         readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,2,idx)}/>
+                                        onChange={component.updateItem.bind(component,2,idx)}
+                                        onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
+                                        />
                                     {editable?<span className="areas-selector-delete-icon"
                                       //onClick={component.removeItem.bind(component,2,idx)}
                                       onClick = {
