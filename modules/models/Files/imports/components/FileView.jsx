@@ -33,6 +33,10 @@ const FileView = React.createClass( {
 				icon = "/icons/48px/" + extension + ".png";
 			}
 		}
+		if (this.props.drag && this.props.drop) {
+			this.props.drag(this.handleDragFile);
+			this.props.drop(this.drop);
+		}
 		return {
 			file: file,
 			name: name,
@@ -88,11 +92,25 @@ const FileView = React.createClass( {
 		{
 		  e.stopPropagation();
 		  e.preventDefault();
+			$("div.dragdrop").css(
+				"border","2px dotted #bababa",
+			);
+			$("div.text").html(
+				'<strong>Drop here to upload.</strong>'
+			)
 		});
 		$(document).on('drop', function (e)
 		{
 			e.stopPropagation();
       e.preventDefault();
+			$("div.dragdrop").css(
+				"border","none",
+			);
+			$("div.text").html(
+					'<i class="fa fa-cloud-upload" style="font-size:40px;"></i>'+
+					'<br/>'+
+					'<span><strong>Choose a file</strong> or drag it here.</span>'
+				)
 		});
 		$( this.refs.progress ).knob( {
 			readOnly: true,
@@ -120,45 +138,57 @@ const FileView = React.createClass( {
 		 this.handleChange(e);
 	},
 	render() {
-		if ( this.data.file ) {
-			return (
-				<div className="fm-icon">
-					<div onClick={this.onClick}>
-						{
-						!this.data.file.isUploaded()?
-							<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
+		return (
+			<div>
+				{this.data.file?
+					<div className="fm-icon">
+						<div onClick={this.onClick}>
+							{
+							!this.data.file.isUploaded()?
+								<div style={{width:"100%",overflow:"hidden",textAlign:"center"}}>
+										<input
+											ref="progress"
+											type="text"
+											defaultValue={0}
+											data-max={100}
+											className="dial m-r-sm"
+											data-fgcolor="#3ca773"
+											data-width="80"
+											data-height="80"
+										/>
+									</div>
+							:
+									<img style={{marginTop:"20px",cursor:"pointer"}} title="Click to download" alt="image" src={this.data.icon} />
+							}
+							<div style={{width:0,height:0,overflow:"hidden"}}>
+								<input ref="input" type="file" onChange={this.handleChange}/>
+							</div>
+						</div>
+						{ Meteor.user().getTeam().type != 'contractor' ? <div className="close-button" onClick={this.deleteFile}>&times;</div>: null}
+						<div className="caption">{this.data.name}</div>
+					</div>:
 
-									<input
-										ref="progress"
-										type="text"
-										defaultValue={0}
-										data-max={100}
-										className="dial m-r-sm"
-										data-fgcolor="#3ca773"
-										data-width="80"
-										data-height="80"
-									/>
-						    </div>
-						:
-						    <img style={{marginTop:"20px",cursor:"pointer"}} title="Click to download" alt="image" src={this.data.icon} />
-						}
+					<div style={{
+							cursor:"pointer",
+    					textAlign: 'center',
+    					width: '180px',
+    					height: '104px',
+    					overflow: 'hidden',
+    					marginRight: '10px',
+    					marginTop: '10px',
+    					position: 'relative',
+						}}
+						onClick={this.onClick} >
 						<div style={{width:0,height:0,overflow:"hidden"}}>
 							<input ref="input" type="file" onChange={this.handleChange}/>
 						</div>
+						<div title="Upload file" style={{paddingTop:"25%",color:"#999"}} className="text">
+							<i className="fa fa-cloud-upload" style={{fontSize:"40px"}}></i>
+							<br/>
+							<span><strong>Choose a file</strong> or drag it here.</span>
+						</div>
 					</div>
-					{ Meteor.user().getTeam().type != 'contractor' ? <div className="close-button" onClick={this.deleteFile}>&times;</div>: null}
-					<div className="caption">{this.data.name}</div>
-				</div>
-			)
-		}
-		return (
-			<div className="fm-icon" style={{cursor:"pointer"}} onClick={this.onClick} onDrop={this.drop} onDragOver={this.handleDragFile}>
-				<div style={{width:0,height:0,overflow:"hidden"}}>
-					<input ref="input" type="file" onChange={this.handleChange}/>
-				</div>
-				<div title="Upload file" style={{paddingTop:"25%",fontSize:"40px",color:"#999"}}>
-					<i className="fa fa-cloud-upload"></i>
-				</div>
+				}
 			</div>
 		)
 	}
