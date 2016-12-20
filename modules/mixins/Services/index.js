@@ -4,6 +4,7 @@
  */
 import ServicesProvidedEditor from './imports/components/ServicesProvidedEditor.jsx';
 import ServicesRequiredEditor from './imports/components/ServicesRequiredEditor.jsx';
+import ServicesRequestsView from './imports/components/ServicesRequestsView.jsx';
 import ServiceDefaults from './imports/data/ServiceDefaults.js';
 
 /**
@@ -12,5 +13,6 @@ import ServiceDefaults from './imports/data/ServiceDefaults.js';
 export {
 	ServicesProvidedEditor,
 	ServicesRequiredEditor,
-	ServiceDefaults
+	ServiceDefaults,
+	ServicesRequestsView
 }
