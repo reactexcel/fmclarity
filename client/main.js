@@ -95,13 +95,13 @@ Actions.addAccessRule( {
 		'edit team member',
 		'delete team member',
 	],
-	role: [ 
-		'fmc support', 
-		'portfolio manager', 
-		'manager', 
-		'owner', 
-		'property manager', 
-		'caretaker' 
+	role: [
+		'fmc support',
+		'portfolio manager',
+		'manager',
+		'owner',
+		'property manager',
+		'caretaker'
 	],
 } )
 
@@ -111,12 +111,12 @@ Actions.addAccessRule( {
 		'edit facility',
 		'view facility',
 	],
-	role: [ 
-		'team fmc support', 
-		'team portfolio manager', 
-		'team manager', 
-		'property manager', 
-		'caretaker' 
+	role: [
+		'team fmc support',
+		'team portfolio manager',
+		'team manager',
+		'property manager',
+		'caretaker'
 	],
 	rule: { alert: true }
 } )
@@ -133,18 +133,18 @@ Actions.addAccessRule( {
 // Request rules
 Actions.addAccessRule( {
 	action: [ 'view request' ],
-	role: [ 
-		'team fmc support', 
-		'owner', 
-		'team portfolio manager', 
-		'team manager', 
-		'supplier staff', 
-		'supplier manager', 
-		'facility manager', 
-		'property manager', 
-		'team caretaker', 
-		'facility caretaker', 
-		'assignee' 
+	role: [
+		'team fmc support',
+		'owner',
+		'team portfolio manager',
+		'team manager',
+		'supplier staff',
+		'supplier manager',
+		'facility manager',
+		'property manager',
+		'team caretaker',
+		'facility caretaker',
+		'assignee'
 	],
 	rule: { alert: true }
 } )
@@ -154,11 +154,11 @@ Actions.addAccessRule( {
 	action: [
 		'destroy request',
 	],
-	role: [ 
-		'owner', 
-		'team portfolio manager', 
-		'facility manager', 
-		'team fmc support' 
+	role: [
+		'owner',
+		'team portfolio manager',
+		'facility manager',
+		'team fmc support'
 	],
 	rule: { alert: true }
 } )
@@ -262,7 +262,7 @@ Actions.addAccessRule( {
 	action: [
 		'destroy document'
 	],
-	role: [ '*' ],
+	role: [ 'facility manager', 'fmc support', 'portfolio manager' ],
 	rule: { alert: true }
 } )
 
@@ -287,15 +287,15 @@ Actions.addAccessRule( {
 	condition: ( item ) => {
 		return item.canAddMember();
 	},
-	role: [ 
-		'portfolio manager', 
+	role: [
+		'portfolio manager',
 		'property manager',
-		'fmc support', 
+		'fmc support',
 		'caretaker',
-		'manager', 
-		'owner', 
+		'manager',
+		'owner',
 		'team portfolio manager',
-		'team fmc support', 
+		'team fmc support',
 		'team caretaker',
 		'team manager'
 	],

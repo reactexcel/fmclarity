@@ -80,14 +80,14 @@ const Currency = React.createClass( {
         return;
     }
 		this.formatNum(event.target);
-		
+
 	},
 
 	CheckNumeric(e) {
     // Allow: backspace, delete, escape, enter and .
         if ($.inArray(e.keyCode, [46, 8, 27, 13, 110, 190]) !== -1 ||
              // Allow: Ctrl+A, Command+A, Ctrl+V
-            (e.keyCode === 65 || e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) || 
+            (e.keyCode === 65 || e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) ||
              // Allow: home, end, left, right, down, up
             (e.keyCode >= 35 && e.keyCode <= 40)) {
                  return;
@@ -99,7 +99,12 @@ const Currency = React.createClass( {
 	},
 
 	toggleCurrencyHolder(){
-		$('.currency-holder').toggle('display');
+		if(this.refs.input.value.length > 0){
+			$('.currency-holder').show();
+		}
+		if ( this.refs.input.value.length == 0 ) {
+			$('.currency-holder').toggle('display');
+		}
 	},
 
 	componentDidMount() {
@@ -129,7 +134,7 @@ const Currency = React.createClass( {
 
 		return (
 			<div className = "md-input">
-			
+
 			<span className = 'currency-holder' style = { { float: 'left', padding: '4px', display: 'none' } } >$</span>
 
       		<input

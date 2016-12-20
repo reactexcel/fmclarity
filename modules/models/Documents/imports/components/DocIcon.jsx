@@ -67,10 +67,12 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
 			<span style={{display:"inline-block",width:"40%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
-			<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
+				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 				<button
 					type 		= "button"
-					className 	= "btn btn-primary"
+					className 	= "btn btn-danger btn-flat"
+					title="Remove"
 					onClick={
 						( event ) => {
 							event.stopPropagation();
@@ -78,9 +80,9 @@ export default function DocIcon( props ) {
 							props.onChange();
 						}
 					}>
-					{ 'Delete' }
+					<i className="fa fa-trash" aria-hidden="true" style={{fontSize:"1.5em"}}></i>
 				</button>
-			</span>
+			</span> : null }
 		</div>
 	)
 }
