@@ -8,6 +8,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
+import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
 
@@ -90,7 +91,8 @@ const RequestBreakdownChart = React.createClass( {
 		return {
 			facility: facility,
 			labels: labels,
-			set: set //costs//counts
+			set: set, //costs//counts
+			buckets: buckets
 		}
 	},
 
@@ -257,6 +259,9 @@ const RequestBreakdownChart = React.createClass( {
 					<div>
 						<canvas id="bar-chart"></canvas>
 					</div>
+				</div>
+				<div>
+				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels }/>
 				</div>
 			</div>
 		)
