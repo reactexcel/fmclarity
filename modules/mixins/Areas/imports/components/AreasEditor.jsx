@@ -163,8 +163,8 @@ FacilityAreasEditorInner = React.createClass( {
                                               />
                                             </div>
                                           })
-                                        //  component.removeItem.bind(component,0,idx)
-                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                        } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                        {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
                                 </div>
                             )
                         })
@@ -211,7 +211,8 @@ FacilityAreasEditorInner = React.createClass( {
                                               />
                                             </div>
                                           })
-                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                        } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                        {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
                                 </div>
                             )
                         }):null
@@ -259,7 +260,8 @@ FacilityAreasEditorInner = React.createClass( {
                                             </div>
                                           })
                                         //  component.removeItem.bind(component,0,idx)
-                                        } } ><i className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                      } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                  {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
                                 </div>
                             )
                         }):null
