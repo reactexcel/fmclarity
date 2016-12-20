@@ -53,24 +53,46 @@ export default class DocExplorer extends React.Component {
   render() {
 		var oldDocumentsList = _.isArray(this.state.value) ? this.state.value : [], //getDocsList();//.concat( props.value || [] ) || [];
 			newDocumentsList = this.getDocsList(),
-			listLength = oldDocumentsList.length + newDocumentsList.length;
+			listLength = oldDocumentsList.length + newDocumentsList.length,
+      role = Meteor.user().getRole();
+      console.log(role);
     return (
 			<div>
 				<DocIconHeader />
 				{//Listing of old Documents
 					oldDocumentsList.map( ( doc, idx ) => (
-							<DocIcon key = { idx } item = { doc } onChange = { (doc) => { this.handleChange( idx, doc ) } } model = { this.props.model } selectedItem = { this.state.item }/>
+							<DocIcon
+                key = { idx }
+                item = { doc }
+                onChange = { (doc) => { this.handleChange( idx, doc ) } }
+                model = { this.props.model }
+                selectedItem = { this.state.item }
+                role = { role }
+                />
 						)
 					)
 				}
 				{//Listing of new documents
 					newDocumentsList.map( ( doc, idx ) => (
-							<DocIcon key = { idx } item = { doc } onChange = { (doc) => { this.handleChange( idx, doc ) } } model = { this.props.model } selectedItem = { this.state.item }/>
+							<DocIcon
+                key = { idx }
+                item = { doc }
+                onChange = { (doc) => { this.handleChange( idx, doc ) } }
+                model = { this.props.model }
+                selectedItem = { this.state.item }
+                role = {role}
+                />
 						)
 					)
 				}
 
-				<DocIcon onChange={ (doc) => { this.handleChange( listLength, doc ) } } model = { this.props.model }  selectedItem = { this.state.item } team = { this.state.item}/>
+				<DocIcon
+          onChange={ (doc) => { this.handleChange( listLength, doc ) } }
+          model = { this.props.model }
+          selectedItem = { this.state.item }
+          team = { this.state.item}
+          role = {role}
+          />
 
 			</div>
 		);
