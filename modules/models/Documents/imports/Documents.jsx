@@ -5,16 +5,34 @@
 
 import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/mixins/Owners';
+import { DocMessages } from '/modules/models/Messages';
+import { Members } from '/modules/mixins/Members';
 
 import DocumentSchema from './schemas/DocumentSchema.jsx';
 
 /**
  * @memberOf		module:models/Documents
  */
+
 const Documents = new Model( {
 	schema: DocumentSchema,
 	collection: "Files",
-	mixins: [ Owners ]
+	mixins: [
+		[ Owners ],
+		[ DocMessages, {
+			helpers: {
+				getInboxName() {
+					return "document #" + this.documentNumber + ' "' + this.getName() + '"';
+				},
+				getWatchers() {
+					let user = Meteor.user(),
+						owner = this.getOwner();
+					return [ user, owner ];
+				}
+			}
+		} ],
+		[ Members ]
+	]
 } )
 
 if ( Meteor.isServer ) {
@@ -46,6 +64,19 @@ Documents.actions( {
 			_.forEach( attachments, ( attach ) => {
 				Files.remove( { _id: attach._id } );
 			} );
+			if ( doc ) {
+				let owner = null;
+				if( doc.owner ) {
+					owner = doc.getOwner();
+				}
+				doc.distributeMessage( {
+					message: {
+						verb: "deleted",
+						subject: "A document has been deleted" + ( owner ? ` by ${owner.getName()}` : '' ),
+						body: doc.description
+					}
+		} );
+			}
 			Documents.remove( { _id: doc._id } );
 		}
 	},
