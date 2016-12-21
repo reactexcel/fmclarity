@@ -138,7 +138,6 @@ FacilityAreasEditorInner = React.createClass( {
     },
 
     handleKeyDown( event, colAdd, colSelect, element, row ){
-      console.log(event.keyCode,"==========");
       if ( event.keyCode == 13 ) {
         let len = element.length - 1 ;
         if ( row == len ) {

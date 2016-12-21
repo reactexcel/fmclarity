@@ -10,11 +10,13 @@ import FileView from './FileView.jsx';
  * @class 			FileExplorer
  * @memberOf 		module:models/Files
  */
+
+let onDragOverCallback = onDropCallback = null;
+
 function FileExplorer( props ) {
 
 	function handleChange( index, newValue ) {
 		let attachments = props.value || [];
-
 		if ( newValue ) {
 			attachments[ index ] = {
 				_id: newValue._id,
@@ -29,7 +31,24 @@ function FileExplorer( props ) {
 	let attachments = props.value || [];
 
 	return (
-		<div>
+		<div className="col-sm-12 dragdrop" style={{
+			border: "none"
+		}}
+		onDrop={
+			(e) => {
+				if (onDropCallback) {
+					onDropCallback(e);
+				}
+			}
+		}
+		onDragOver={
+			(e) => {
+				if (onDragOverCallback) {
+					onDragOverCallback(e);
+				}
+			}
+		}
+		>
 		{ attachments.map( ( file, idx ) => {
 			return (
 				<div key={idx} style={{display:"inline-block"}}>
@@ -39,7 +58,11 @@ function FileExplorer( props ) {
 		} ) }
 
 		<div style = { {display:"inline-block"} }>
-			<FileView onChange = { (newFile) => { handleChange( attachments.length, newFile ) } } />
+			<FileView
+				onChange = { (newFile) => { handleChange( attachments.length, newFile ) } }
+				drop = { drop => onDropCallback = drop }
+				drag = { drag => onDragOverCallback = drag }
+				/>
 		</div>
 
 		</div>
