@@ -7,7 +7,8 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { RequestSearch } from '/modules/models/Requests';
+import { RequestSearch, Requests } from '/modules/models/Requests';
+import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
 
@@ -30,7 +31,7 @@ const RequestActivityChart = React.createClass( {
 
 	getMeteorData() {
 
-		var openQuery = {}
+		var openQuery = {status:{$ne:'Closed'},}
 		var closedQuery = {
 			status: "Closed",
 		}
@@ -47,10 +48,14 @@ const RequestActivityChart = React.createClass( {
 			openQuery[ "facility._id" ] = facility._id;
 			closedQuery[ "facility._id" ] = facility._id;
 		}
+		
 
 		var viewConfig = this.state.viewConfig;
 		var open = RequestSearch.searchByDate( { q: openQuery, config: viewConfig } );
 		var closed = RequestSearch.searchByDate( { q: closedQuery, config: viewConfig } );
+
+		
+
 		var labels = open.labels;
 		var title = viewConfig.startDate.format( viewConfig.title );
 
@@ -58,8 +63,10 @@ const RequestActivityChart = React.createClass( {
 			facility: facility,
 			openSeries: open.sets,
 			closedSeries: closed.sets,
+			openQuery: openQuery,
 			labels: labels,
-			title: title
+			title: title,
+			closedQuery: closedQuery
 		}
 	},
 
@@ -265,6 +272,45 @@ const RequestActivityChart = React.createClass( {
 
 
 	render() {
+		var openQuery = {
+			status:{$ne:'Closed'},
+		}
+		var closedQuery = {
+			status: "Closed",
+		}
+
+		var team = Session.get( 'selectedTeam' );
+		//var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
+		if ( team ) {
+			openQuery[ "team._id" ] = team._id;
+			closedQuery[ "team._id" ] = team._id;
+		}
+
+		var facility = Session.get( 'selectedFacility' );
+		if ( facility ) {
+			openQuery[ "facility._id" ] = facility._id;
+			closedQuery[ "facility._id" ] = facility._id;
+		}
+		var buckets = {};
+		var requestStatuses = ['Open','Closed'];
+		var openRequests = Requests.find( openQuery );
+		var closedRequests = Requests.find( closedQuery );
+
+		openRequests.map(function(i){
+			// console.log(i);
+			if(!buckets['Open']){
+				buckets[ 'Open' ] = [];
+			}
+			buckets[ 'Open' ].push( i );
+			
+		});
+		
+		closedRequests.map(function(i){
+			if(!buckets['Closed']){
+				buckets[ 'Closed' ] = [];
+			}
+			buckets[ 'Closed' ].push( i );
+		});
 		return (
 			<div>
 		        <Menu items={this.getMenu()}/>
@@ -279,6 +325,9 @@ const RequestActivityChart = React.createClass( {
 							</div>
 				        </div>
 				    </div>
+				</div>
+				<div>
+				<ServicesRequestsView requests={buckets} labels={ requestStatuses }/>
 				</div>
 			</div>
 		)

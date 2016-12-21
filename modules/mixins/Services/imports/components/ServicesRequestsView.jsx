@@ -60,7 +60,7 @@ class ServicesRequestsView extends React.Component {
 		var component = this;
 		var requests = this.state.requests;
 		var labels = this.state.labels;
-		var readOnly = false;
+		var readOnly = true;
 		return (
 <div className="services-editor">
     <div className="services-editor-row services-editor-row-header">
