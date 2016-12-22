@@ -8,11 +8,13 @@ import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker}
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
 import React from "react";
+import moment from 'moment';
 
 /**
  * @memberOf 		module:models/Facilities
  */
 let initiallUnit = "m";
+let item = null;
 const FacilitySchema = {
 	//$schema:              "http://json-schema.org/draft-04/schema#",
 	//title:                "Facility",
@@ -490,8 +492,104 @@ const FacilitySchema = {
 					 });
 				 },
 			 },
-	},
- }
+		 },
+	 },
+	 serviceDetails:{
+		 label: "Area information",
+		 type: "object",
+		 subschema: {
+			 baseBuilding:{
+				 label: "Base Building",
+				 type: 'boolean',
+				 size:6,
+				 input: Switch,
+				 options:{
+					 afterChange(item){
+						 item.tenant = !item.baseBuilding;
+					 }
+				 }
+			 },
+			 tenant:{
+				 label: "Tenancy",
+				 type: "boolean",
+				 size:6,
+				 input: Switch,
+				 options:{
+					 afterChange(item){
+						 item.baseBuilding = !item.tenant;
+					 }
+				 }
+			 },
+			 glAccount:{
+				 label: "GL Account",
+				 type: "string",
+				 input: Select,
+				 options( item ){
+					 return {
+						 items:[ "Not applicable" ],
+					 }
+				 },
+				 condition(itm){
+					 item = itm
+					 return true;
+				 }
+			 },
+			 cfy: {
+				 size: 4,
+				 input( props ){
+					 return (
+						 <div className="col-sm-12">
+							 <span>Current Financial Year: {props.cfy?props.cfy:"FY"+moment().format("YY")}</span>
+						 </div>
+					 )
+				 }
+			 },
+			 budget:{
+				 label:"Enter budget",
+				 size: 8,
+				 input( props ){
+					 return(
+						 item.glAccount == "Not applicable"?
+						 	 <Currency { ...props }/>:
+						 <div>
+							 Budge: <span>{"$"+ props.value!=""?props.value:0 }</span>
+						 </div>
+					 )
+				 }
+			 },
+			 workOrder:{
+				 label: "WO#",
+				 type: "boolean",
+				 size: 6,
+				 input: Switch,
+				 options:{
+					 afterChange(item){
+						 item.purchaseOrder = !item.workOrder;
+					 }
+				 }
+			 },
+			 purchaseOrder:{
+				 label: "PO#",
+				 type: 'boolean',
+				 size: 6,
+				 input: Switch,
+				 options:{
+					 afterChange(item){
+						 item.workOrder = !item.purchaseOrder
+					 }
+				 }
+			 },
+			 assetTrackig:{
+				 label: "Asset tracking",
+				 type: 'boolean',
+				 size: 6,
+				 input: Switch,
+				 condition(item){
+					 return item.purchaseOrder;
+				 }
+			 }
+		 }
+	 },
 }
 
 export default FacilitySchema;

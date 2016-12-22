@@ -5,8 +5,10 @@
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Teams, TeamStepper } from '/modules/models/Teams';
+import { Facilities } from '/modules/models/Facilities';
 import { ContactCard } from '/modules/mixins/Members';
-
+import { AutoForm } from '/modules/core/AutoForm';
+import { Modal } from '/modules/ui/Modal';
 
 /**
  * @class 			ServicesRequiredEditorRow
@@ -66,8 +68,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	updateServiceName( event ) {
 		var service = this.data.service;
-		var newValue = event.target.value;
+		var newValue = event?event.target.value:this.data.service.name;
 		service.name = newValue;
+		console.log({service});
 		if ( this.props.onChange ) {
 			this.props.onChange( service );
 		}
@@ -84,7 +87,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 		service = this.data.service;
 		supplier = this.data.supplier;
 		clickExpand = this.props.clickExpand;
-		var onChange = this.props.onChange;
+		var onChange = this.props.onChange,
+			component = this;
 		readOnly = this.props.readOnly;
 		return (
 			<div>
@@ -96,7 +100,30 @@ const ServicesRequiredEditorRow = React.createClass( {
 		    			readOnly={readOnly}
 		    			onChange={this.updateServiceName}/>
 
-			    	{!readOnly?<span className="services-editor-delete-icon" onClick={onChange.bind(null,null)}>&times;</span>:null}
+
+						{!readOnly?<span className="services-editor-delete-icon"
+							onClick = {
+								() => {
+									Modal.show({
+										content:  <div style={{padding:'20px'}}>
+											<div>
+												<h1>{'Service Parameters - '+this.data.service.name}</h1>
+											</div>
+											<AutoForm
+												model = { Facilities }
+												item = { this.data.service }
+												form = { ["serviceDetails"] }
+												onSubmit={
+													( item ) => {
+														component.updateServiceName(null);
+														Modal.hide();
+													}
+												}
+											/>
+										</div>
+									})
+								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
 				</div>
 				<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
 					{supplier?
