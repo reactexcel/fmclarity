@@ -530,15 +530,14 @@ function actionIssue( request ) {
  */
 function getMembersDefaultValue( item ) {
 
-	if ( item.team == null ) {
+	if ( item.team == null || item.owner == null ) {
 		return;
 	}
 
-	let owner = Meteor.user();
-
+	let owner = item.owner;
 	let members = [ {
 		_id: owner._id,
-		name: owner.profile.name,
+		name: owner.name,
 		role: "owner"
 	} ];
 
