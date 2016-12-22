@@ -25,9 +25,12 @@ const Documents = new Model( {
 					return "document #" + this.documentNumber + ' "' + this.getName() + '"';
 				},
 				getWatchers() {
-					let user = Meteor.user(),
-						owner = this.getOwner();
-					return [ user, owner ];
+					let facility = Session.getSelectedFacility(),
+						recipients = [],
+						recipientsArray = recipients.concat( facility.getMembers( {
+							                role: "portfolio manager"
+							            } ) );
+					return  recipientsArray;
 				}
 			}
 		} ],

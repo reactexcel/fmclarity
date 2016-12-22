@@ -69,7 +69,7 @@ const DocViewEdit = React.createClass( {
 					};
 					Documents.save.call( item );
 					this.handleChangeCallback( null, item );
-					newItem = Documents.findOne( item._id );
+					let newItem = Documents.findOne( item._id );
 					if ( newItem ) {
 				let owner = null;
 				if( newItem.owner ) {
