@@ -101,6 +101,13 @@ const createRequest = new Action( {
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
 
+
+						let owner = Meteor.user();
+						newRequest.owner = {
+							_id: owner._id,
+							name: owner.profile?owner.profile.name:owner.name
+						};							
+
 						if ( newRequest.type == 'Preventative' ) {
 							Meteor.call('Issues.create', newRequest );
 							//RequestActions.clone.run( newRequest );

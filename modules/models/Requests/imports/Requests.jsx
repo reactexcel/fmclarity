@@ -211,6 +211,46 @@ Requests.methods( {
 		method: actionComplete
 	},
 
+	getCompleteRequest: {
+		authentication: true,
+		method: ( team, user ) => {
+			let teamsCursor = Teams.find( {
+				$or: [
+					{ "owner._id": user._id },
+					{ "members._id": user._id }
+				]
+			} );
+
+			let teamIds = [],
+				teamNames = [];
+
+			teamsCursor.forEach( ( team ) => {
+				teamIds.push( team._id );
+				teamNames.push( team.name );
+			} );
+
+			let requestsCursor = Requests.find( {
+				$and: [
+					{ status: { $in: [ "Closed", "Complete" ] } },
+					{ $or: [
+						{ "team._id": { $in: teamIds } },
+						{ $and: [
+							{ $or: [
+								{ "supplier._id": { $in: teamIds } },
+								{ "supplier.name": { $in: teamNames } },
+							] },
+							{ status: { $nin: [ "Draft", "New", "Issued" ] } }
+						] },
+						{ $or: [
+							{ "owner._id": user._id },
+							{ "members._id": user._id }
+						] }
+					] }
+				]
+			}, { sort: { createdAt: -1 } } );
+			return requestsCursor.fetch();
+		}
+	},
 	/* services toString()*/
 
 	getServiceString: {
@@ -530,15 +570,14 @@ function actionIssue( request ) {
  */
 function getMembersDefaultValue( item ) {
 
-	if ( item.team == null ) {
+	if ( item.team == null || item.owner == null ) {
 		return;
 	}
 
-	let owner = Meteor.user();
-
+	let owner = item.owner;
 	let members = [ {
 		_id: owner._id,
-		name: owner.profile.name,
+		name: owner.name,
 		role: "owner"
 	} ];
 
@@ -549,9 +588,9 @@ function getMembersDefaultValue( item ) {
 			role: 'assignee'
 		} )
 	}
-	
+
 	// create team contacts
-	let team = Teams.findOne( item.team._id );	
+	let team = Teams.findOne( item.team._id );
 	let teamMembers = team.getMembers( {
 		role: "portfolio manager"
 	} );
@@ -571,7 +610,7 @@ function getMembersDefaultValue( item ) {
 
 	if ( item.facility ) {
 		let facility = Facilities.findOne( item.facility._id );
-		
+
 		let facilityMembers = facility.getMembers( {
 			role: { $in: ['manager', 'caretaker'] }
 		} );

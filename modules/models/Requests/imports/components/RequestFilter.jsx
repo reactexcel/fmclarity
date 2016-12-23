@@ -15,10 +15,16 @@ export default class RequestFilter extends Component {
         super( props );
 
         this.state = {
-            item: props.items[ 0 ],
+            item: FlowRouter._current.path == "/requests/completed"? "Complete":props.items[ 0 ] ,
         };
     }
 
+    componentWillReceiveProps( props ){
+      this.setState({
+          item: FlowRouter._current.path == "/requests/completed"? "Complete":this.state.item ,
+      });
+    }
+    
     render() {
         return (
             <div style = { { position:"relative", zIndex:1300 } }>
@@ -26,12 +32,18 @@ export default class RequestFilter extends Component {
                 <Select
                     value       = { this.state.item }
                     items       = { this.props.items }
-                    onChange    = 
+                    onChange    =
                         { ( item ) => {
+                          if (_.contains([ "Closed", "Complete" ], item )) {
+                            FlowRouter.go("/requests/completed");
+                            this.props.onChange( {"status": { '$in': [ this.state.item ] } } );
+                          } else {
                             this.setState( { item: item } );
                             if(this.props.onChange){
-                            this.props.onChange( {"status": { '$in': item === "Open" ? ['New','Issued'] : [ item ] } } );
-                        } } }
+                              this.props.onChange( {"status": { '$in': item === "Open" ? ['New','Issued'] : [ item ] } } );
+                            }
+                          }
+                       } }
                 />
             </div>
         )
