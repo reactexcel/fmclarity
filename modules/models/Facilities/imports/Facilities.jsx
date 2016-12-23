@@ -134,11 +134,11 @@ Facilities.actions( {
 			} else {
 				services = facility.servicesRequired || [];
 			}
-			services.sort( function( a, b ) {
-				if ( a && a.name && b && b.name ) {
-					return ( a.name > b.name ) ? 1 : -1;
-				}
-			} )
+			// services.sort( function( a, b ) {
+			// 	if ( a && a.name && b && b.name ) {
+			// 		return ( a.name > b.name ) ? 1 : -1;
+			// 	}
+			// } )
 			return services;
 		}
 	},
