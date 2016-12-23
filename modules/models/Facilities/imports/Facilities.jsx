@@ -107,11 +107,11 @@ Facilities.actions( {
 				areas = parent.children || [];
 			}
 			areas = facility.areas || [];
-			areas.sort( function( a, b ) {
-				if ( a && a.name && b && b.name ) {
-					return ( a.name > b.name ) ? 1 : -1;
-				}
-			} )
+			// areas.sort( function( a, b ) {
+			// 	if ( a && a.name && b && b.name ) {
+			// 		return ( a.name > b.name ) ? 1 : -1;
+			// 	}
+			// } )
 			return areas;
 		}
 	},
