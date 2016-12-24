@@ -7,7 +7,7 @@ import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 import moment from 'moment';
 
-export default function RequestsTable( { requests, filter } ) {
+export default function RequestsTable( { requests, filter, columns } ) {
 
 	let team = Meteor.user().getTeam();
 	//when in client (fm) view, show supplier, else if in supplier view show client on table column name.
@@ -48,6 +48,7 @@ export default function RequestsTable( { requests, filter } ) {
             }
         },
         "Issue": "name",
+        "Amount": "costThreshold",
         "Issued": "issuedAt",
         "Due": ( item ) => {
             let dueDate = moment( item.dueDate );
@@ -87,14 +88,21 @@ export default function RequestsTable( { requests, filter } ) {
             filter 
         ] });
     }
-    if (Session.getSelectedFacility()) {
+    if (Session.get( 'selectedFacility' )) {
             delete this.fields['Facility'];
         }
-
+        var requiredColumns =  $.grep(columns, function(element) {
+                                return $.inArray(element, Object.keys(this.fields) ) !== -1;
+                                });
+        var newCols={};
+        requiredColumns.map(function(col){
+            newCols[col] = this.fields[col];
+        });
+        
     return ( 
         <DataTable 
             items   = { requests }
-            fields  = { this.fields }
+            fields  = { newCols }
             sortByColumn = "Issued"
             sortDirection = "up"
             onClick = {

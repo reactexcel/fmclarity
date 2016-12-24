@@ -18,7 +18,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 		return <div/>
 	}
 	return (
-		<div>
+		<div className="noprint">
 			<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
 				<i className={`fa fa-${icon}`}></i>
 			</a>
