@@ -71,7 +71,7 @@ if ( Meteor.isServer ) {
 		let requestsCursor = Requests.find( {
 			$and: [
 				//might be better to do inclusive search here (ie status in ...)
-				{ status: { $nin: [ "Deleted", "Cancelled" ] } },
+				{ status: { $nin: [ "Deleted", "Cancelled", "Closed", "Complete" ] } },
 				{ $or: [
 					{ "team._id": { $in: teamIds } },
 					{ $and: [

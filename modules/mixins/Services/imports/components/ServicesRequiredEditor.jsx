@@ -10,11 +10,12 @@ import ServicesRequiredEditorRow from './ServicesRequiredEditorRow.jsx';
  * @class 			ServicesRequiredEditor
  * @memberOf 		module:mixins/Services
  */
+ var _component = _services = null
 const ServicesRequiredEditor = React.createClass( {
 
 	getInitialState() {
 
-		let item = this.props.item,
+		let item = this.props.item || this.state.item,
 			field = this.props.field || "servicesRequired",
 			services = item && field ? item[ field ] : [];
 
@@ -22,7 +23,8 @@ const ServicesRequiredEditor = React.createClass( {
 			item,
 			field,
 			services: services || [],
-			expanded: {}
+			expanded: {},
+			drag: false,
 		}
 	},
 
@@ -44,8 +46,45 @@ const ServicesRequiredEditor = React.createClass( {
 		}
 	},
 
+	componentDidUpdate(){
+		_component = this;
+	},
+
 	componentDidMount() {
 		this.save = _.debounce( this.save, 1000 );
+		$("#sortable").sortable({
+			stop: function(event, ui) {
+				console.log( { val: ui.item.val() } );
+				console.log(parseInt(ui.position.top / ui.item.height()) -2 );
+				console.log( ui.position.top  );
+				let startIndex = ui.item.val(),
+					stopIndex = parseInt(ui.position.top / ui.item.height()) -2,
+					temp = null,
+					row = _services;
+					temp = row[startIndex];
+					//sort Top-Dowm
+					if ( startIndex < stopIndex ) {
+						for(var i = startIndex; i <= stopIndex; i++) {
+							row[i] = row[i+1];
+						}
+						row[stopIndex] = temp;
+					}
+					//sort Bottom-UP
+					if ( startIndex > stopIndex ) {
+						for(var i = startIndex + 1; i >= stopIndex; i--) {
+							row[i] = row[i-1];
+						}
+						row[stopIndex] = temp;
+					}
+					_component.setState({
+						services: row,
+					});
+					_component.save();
+			},
+			placeholder: "ui-state-highlight",
+			axis: "y",
+		});
+		$( "#sortable" ).disableSelection();
 	},
 
 	save() {
@@ -131,12 +170,15 @@ const ServicesRequiredEditor = React.createClass( {
 		let facility = this.state.item;
 		services = this.state.services;
 		readOnly = false;
+		_component = this;
+		_services = services;
 		return (
 			<div className="services-editor">
 				<div className="services-editor-row services-editor-row-header">
 					<div className="services-editor-col services-editor-col-header">Service</div>
 					<div className="services-editor-col services-editor-col-header">Supplier</div>
 				</div>
+				<ul id="sortable">
 				{services?services.map( (service,idx) => {
 
 					let expanded = this.state.expanded[service.name],
@@ -144,47 +186,65 @@ const ServicesRequiredEditor = React.createClass( {
 						key = size+'-'+idx;
 
 					return (
-						<div key={key} className={expanded?"services-editor-service-expanded":""}>
-							<div className="services-editor-row">
+						<li key={key} className={"ui-state-default services-editor-row-li"}>
+								<div style={{
+										height:'48px',
+										width: '2%,'
+									}}>
+									<span className="reorder">
+										<i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
+									</span>
+								</div>
+								<div style={{
+    							width: '97%',
+    							position: 'relative',
+    							bottom: '48px',
+    							left: '3%',
+									}}>
+									<div key={key} className={expanded?"services-editor-service-expanded":""}>
+										<div className="services-editor-row">
 
-								<ServicesRequiredEditorRow
-									facility 		= { facility }
-									service 		= { service }
-									readOnly 		= { readOnly }
-									clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
-									onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
-								/>
+											<ServicesRequiredEditorRow
+												facility 		= { facility }
+												service 		= { service }
+												readOnly 		= { readOnly }
+												clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
+												onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
+											/>
 
-							</div>
+										</div>
 
-							<div className="services-editor-child-block">
-								{expanded?
-									<div>
-										{service.children?service.children.map( (subservice,subIdx) => {
-											var size=service.children.length;
-											var key = size+'-'+subIdx;
-											return (
-												<div key={key} className="services-editor-row services-editor-row-child">
-													<ServicesRequiredEditorRow
-														facility 	= { facility }
-														service 	= { subservice }
-														readOnly 	= { readOnly }
-														onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }/>
+										<div className="services-editor-child-block">
+											{expanded?
+												<div>
+													{service.children?service.children.map( (subservice,subIdx) => {
+														var size=service.children.length;
+														var key = size+'-'+subIdx;
+														return (
+															<div key={key} className="services-editor-row services-editor-row-child">
+																<ServicesRequiredEditorRow
+																	facility 	= { facility }
+																	service 	= { subservice }
+																	readOnly 	= { readOnly }
+																	onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }/>
+															</div>
+														)
+													}):null}
+													{!readOnly?
+												    	<div onClick={ () => { this.addSubService( idx ) } } className="services-editor-row services-editor-row-child" style={{fontSize:"smaller",fontStyle:"italic"}}>
+															<span style={{position:"absolute",left:"15px",top:"15px"}}><i className="fa fa-plus"></i></span>
+														    <span style={{position:"absolute",left:"48px",top:"15px"}} className="active-link">Add subservice</span>
+													    </div>
+													:null}
 												</div>
-											)
-										}):null}
-										{!readOnly?
-									    	<div onClick={ () => { this.addSubService( idx ) } } className="services-editor-row services-editor-row-child" style={{fontSize:"smaller",fontStyle:"italic"}}>
-												<span style={{position:"absolute",left:"15px",top:"15px"}}><i className="fa fa-plus"></i></span>
-											    <span style={{position:"absolute",left:"48px",top:"15px"}} className="active-link">Add subservice</span>
-										    </div>
-										:null}
+											:null}
+										</div>
 									</div>
-								:null}
-							</div>
-						</div>
+								</div>
+						</li>
 					)
 				}):null}
+				</ul>
 				{!readOnly?
 				    <div onClick={this.addService} className="services-editor-row" style={{fontStyle:"italic"}}>
 						<span style={{position:"absolute",left:"15px",top:"15px"}}><i className="fa fa-plus"></i></span>
