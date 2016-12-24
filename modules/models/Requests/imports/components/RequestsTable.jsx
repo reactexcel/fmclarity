@@ -91,9 +91,9 @@ export default function RequestsTable( { requests, filter, columns } ) {
     if (Session.get( 'selectedFacility' )) {
             delete this.fields['Facility'];
         }
-        var requiredColumns =  $.grep(columns, function(element) {
+        var requiredColumns = columns ? $.grep(columns, function(element) {
                                 return $.inArray(element, Object.keys(this.fields) ) !== -1;
-                                });
+                                }) : Object.keys(this.fields);
         var newCols={};
         requiredColumns.map(function(col){
             newCols[col] = this.fields[col];
