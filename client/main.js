@@ -10,6 +10,8 @@ function loadExternalScripts(  ) {
 	// load browser-update.org browser compatibility script
 	loadBrowerCompatibilityScript();
 
+	sortableApiScript();
+
 }
 function loadGoogleMapApiScript(  ){
 	var script= document.createElement('script');
@@ -18,11 +20,24 @@ function loadGoogleMapApiScript(  ){
 	script.async = true;
 	document.body.appendChild(script);
 }
+function sortableApiScript(  ){
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.src= 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js';
+	script.async = true;
+	document.body.appendChild(script);
+
+	var link= document.createElement('link');
+	link.type= 'text/css';
+	link.href= 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css';
+	link.async = true;
+	document.body.appendChild(link);
+}
 function loadBrowerCompatibilityScript(  ){
 	window.$buoop = {vs:{i:10,f:-4,o:-4,s:8,c:-4},api:4, test:false};
 		$(window).bind('load', function() {
-		    const script = document.createElement("script"); 
-			script.src = "http://browser-update.org/update.min.js"; 
+		    const script = document.createElement("script");
+			script.src = "http://browser-update.org/update.min.js";
 			script.type = "text/javascript";
 			script.async = true;
 			document.body.appendChild(script);

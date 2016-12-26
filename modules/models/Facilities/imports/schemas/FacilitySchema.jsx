@@ -574,7 +574,7 @@ const FacilitySchema = {
 				 size: 4,
 				 input( props ){
 					 return (
-						 <div className="col-sm-12">
+						 <div className="col-sm-12" style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "14%", height: "10%" }}>
 							 <span>Current Financial Year: {props.cfy?props.cfy:"FY"+moment().format("YY")}</span>
 						 </div>
 					 )
