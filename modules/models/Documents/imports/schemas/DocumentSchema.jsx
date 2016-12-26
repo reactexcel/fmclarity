@@ -81,7 +81,9 @@ export default DocumentSchema = {
 			*/
 		},
 		input: Select,
-
+		defaultValue: ( item ) =>{
+				return Session.getSelectedFacility();
+		},
 		options: ( item ) => {
 			//console.log( item );
 			let team = Session.getSelectedTeam();
