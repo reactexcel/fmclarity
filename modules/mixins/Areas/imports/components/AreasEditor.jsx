@@ -181,6 +181,7 @@ FacilityAreasEditorInner = React.createClass( {
                     <div className="slimscroll">
                     {
                         areas.map(function(a,idx){
+                          a.data = a.data?a.data:{};
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
                                     <input
@@ -196,12 +197,12 @@ FacilityAreasEditorInner = React.createClass( {
                                           Modal.show({
                                             content:  <div style={{padding:'20px'}}>
                                               <div>
-                                                <h1>Area information</h1>
+                                                <h1>Lavel information: {a.name||""} </h1>
                                               </div>
                                               <AutoForm
                                                 model = { Facilities }
-                                                item = { a }
-                                                form = { ["areaDeatails"] }
+                                                item = { a.data }
+                                                form = { ["areaDetails"] }
                                                 onSubmit={
                                                   ( item ) => {
                                                     component.save();
@@ -230,6 +231,7 @@ FacilityAreasEditorInner = React.createClass( {
                     <div className="slimscroll">
                     {
                         selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
+                          b.data = b.data?b.data:{};
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
                                     <input
@@ -251,7 +253,7 @@ FacilityAreasEditorInner = React.createClass( {
                                               <AutoForm
                                                 model = { Facilities }
                                                 item = { b }
-                                                form = { ["areaDeatails"] }
+                                                form = { ["areaDetails"] }
                                                 beforeSubmit={
                                                   ( item ) => {
                                                     component.save();
@@ -280,6 +282,7 @@ FacilityAreasEditorInner = React.createClass( {
                     <div className="slimscroll">
                     {
                         selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
+                          c.data = c.data?c.data:{};
                             return (
                                 <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
                                     <input
@@ -297,12 +300,12 @@ FacilityAreasEditorInner = React.createClass( {
                                           Modal.show({
                                             content:  <div style={{padding:'20px'}}>
                                               <div>
-                                                <h1>Area information</h1>
+                                                <h1>Subarea information</h1>
                                               </div>
                                               <AutoForm
                                                 model = { Facilities }
                                                 item = { c }
-                                                form = { ["areaDeatails"] }
+                                                form = { ["areaDetails"] }
                                                 beforeSubmit={
                                                   ( item ) => {
                                                     component.save();
