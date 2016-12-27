@@ -88,22 +88,25 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: () => {
-			let role = Meteor.user().getRole();
-			return{
-				items: role !== "staff" ? [
-					"Ad-hoc",
-					"Booking",
-					//"Internal",
-					"Preventative",
-					//"Tenancy",
-					//"Base Building",
-					//"Contract",
-					"Defect",
-					//"Template",
-					//"Warranty",
-				] : [ "Ad-hoc", "Booking", "Tenancy", ]
+			let role = Meteor.user().getRole(),
+				team = Session.get( 'selectedTeam' ),
+				teamType = null;
+
+			if ( team ) {
+				teamType = team.type;
 			}
 
+			if( teamType == 'contractor' ) {
+				return { items:[ 'Base Building', 'Preventative', 'Defect' ]};
+			}
+			else {
+				if( role == 'staff' ) {
+					return {items:[ 'Ad-hoc', 'Booking', 'Tenancy' ]};
+				}
+				else {
+					return {items:[ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ]};
+				}
+			}
 		}
 	},
 

@@ -50,7 +50,7 @@ if ( Meteor.isServer ) {
 
 	} );
 
-	Meteor.publish( 'User: Facilities, Requests', function() {
+	Meteor.publish( 'User: Facilities, Requests', function( includeClosed ) {
 
 		//teams I am a member in
 		let teamsCursor = Teams.find( {
@@ -68,27 +68,29 @@ if ( Meteor.isServer ) {
 			teamNames.push( team.name );
 		} );
 
-		let requestsCursor = Requests.find( {
-			$and: [
-				//might be better to do inclusive search here (ie status in ...)
-				{ status: { $nin: [ "Deleted", "Cancelled", "Closed", "Complete" ] } },
+		let query = { $or: [
+			{ "team._id": { $in: teamIds } },
+			{ $and: [
 				{ $or: [
-					{ "team._id": { $in: teamIds } },
-					{ $and: [
-						{ $or: [
-							{ "supplier._id": { $in: teamIds } },
-							{ "supplier.name": { $in: teamNames } },
-						] },
-						{ status: { $nin: [ "Draft", "New" ] } }
-					] },
-					{ $or: [
-						{ "owner._id": this.userId },
-						{ "members._id": this.userId }
-					] }
-				] }
-			]
-		}, { sort: { createdAt: -1 } } );
+					{ "supplier._id": { $in: teamIds } },
+					{ "supplier.name": { $in: teamNames } },
+				] },
+				{ status: { $nin: [ "Draft", "New" ] } }
+			] },
+			{ $or: [
+				{ "owner._id": this.userId },
+				{ "members._id": this.userId }
+			] }
+		] };
 
+		if( !includeClosed ) {
+			query = { $and: [
+				{ status: { $nin: [ 'Deleted', 'Cancelled', 'Closed', 'Complete' ] } },
+				query
+			] };
+		}
+
+		let requestsCursor = Requests.find( query, { sort: { createdAt: -1 } } );
 		let facilityIds = [];
 
 		/* this seems a bit expensive given that it will be producing small results */
