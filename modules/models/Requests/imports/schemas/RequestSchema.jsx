@@ -603,6 +603,8 @@ const RequestSchema = {
 				if ( facilities.length == 1 ) {
 					return facilities[0];
 				}
+				// return the selected facility.
+				return Session.getSelectedFacility();
 		},
 
 		input: Select,
@@ -656,7 +658,7 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
 				facilities = team.getFacilities( { 'team._id': team._id } );
-				if ( facilities.length == 1 ) {
+				if ( facilities.length <= 1 ) {
 					return false;
 				}
 			return true;

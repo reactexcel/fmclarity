@@ -34,7 +34,7 @@ export default function TopNavigationBar( props ) {
     let { notifications, unreadCount, user, team, teams } = props;
 
     return (
-        <div className="top-navigation-bar">
+        <div className="top-navigation-bar noprint">
             <div className="sidebar-back-screen" onClick = { toggleLeftSideBar }></div>
             <nav className="nav-bar">
                 <div className="icon-region-1">
