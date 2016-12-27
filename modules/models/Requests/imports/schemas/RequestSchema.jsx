@@ -100,7 +100,7 @@ const RequestSchema = {
 				return { items:[ 'Base Building', 'Preventative', 'Defect' ]};
 			}
 			else {
-				if( role == 'staff' ) {
+				if( _.contains(["staff",'resident'], role) ) {
 					return {items:[ 'Ad-hoc', 'Booking', 'Tenancy' ]};
 				}
 				else {

@@ -307,7 +307,7 @@ const UserSchema = {
 
 					},
 					addNew:{
-						show: Meteor.user().getRole() != 'staff',
+						show: !_.contains(['resident', 'staff'], Meteor.user().getRole() ),
 						label: "Create New",
 						onAddNewItem: ( callback ) => {
 							let team = Teams.findOne( item.realEstateAgency._id ),
@@ -506,7 +506,7 @@ const UserSchema = {
 						item.agentContact = null;
 					},
 					addNew:{
-						show: Meteor.user().getRole() != 'staff',
+						show: !_.contains(['resident', 'staff'], Meteor.user().getRole()),
 						label: "Create New",
 						onAddNewItem: ( callback ) => {
 							import { Teams, TeamStepper } from '/modules/models/Teams';
