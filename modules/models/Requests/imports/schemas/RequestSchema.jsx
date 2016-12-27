@@ -90,7 +90,7 @@ const RequestSchema = {
 		options: () => {
 			let role = Meteor.user().getRole();
 			return{
-				items: role !== "staff" ? [
+				items: !_.contains(["staff",'resident'], role) ? [
 					"Ad-hoc",
 					"Booking",
 					//"Internal",

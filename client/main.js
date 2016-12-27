@@ -95,7 +95,7 @@ Actions.addAccessRule( {
 	action: [
 		'create team document',
 	],
-	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'resident' ],
 	rule: { alert: true, email: true }
 } )
 
@@ -159,7 +159,8 @@ Actions.addAccessRule( {
 		'property manager',
 		'team caretaker',
 		'facility caretaker',
-		'assignee'
+		'assignee',
+		'resident'
 	],
 	rule: { alert: true }
 } )
