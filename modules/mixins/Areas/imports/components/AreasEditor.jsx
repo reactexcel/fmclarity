@@ -256,7 +256,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   Modal.show({
                                                     content:  <div style={{padding:'20px'}}>
                                                       <div>
-                                                        <h1>Lavel information: {a.name||""} </h1>
+                                                        <h1>Area information: {a.name||""} </h1>
                                                       </div>
                                                       <AutoForm
                                                         model = { Facilities }
@@ -320,7 +320,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   Modal.show({
                                                     content:  <div style={{padding:'20px'}}>
                                                     <div>
-                                                      <h1>Area information: {b.name}</h1>
+                                                      <h1>Subarea information: {b.name}</h1>
                                                     </div>
                                                     <AutoForm
                                                       model = { Facilities }
@@ -385,12 +385,12 @@ FacilityAreasEditorInner = React.createClass( {
                                               Modal.show({
                                                 content:  <div style={{padding:'20px'}}>
                                                 <div>
-                                                  <h1>Subarea information: {c.name}</h1>
+                                                  <h1>Identifier information: {c.name}</h1>
                                                 </div>
                                                 <AutoForm
                                                   model = { Facilities }
                                                   item = { c.data }
-                                                  form = { ["areaDeatails"] }
+                                                  form = { ["areaDetails"] }
                                                   beforeSubmit={
                                                     ( item ) => {
                                                       component.save();
