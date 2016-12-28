@@ -535,24 +535,25 @@ const FacilitySchema = {
 				 }
 			 },
 			 cfy: {
-				 size: 4,
+				 size: 1,
 				 input( props ){
+					 let month = parseInt(moment().format("M"));
 					 return (
-						 <div className="col-sm-12" style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "14%", height: "10%" }}>
-							 <span>Current Financial Year: {props.cfy?props.cfy:"FY"+moment().format("YY")}</span>
+						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "63%", height: "10%" }}>
+							 <span style={{paddingLeft:"2px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
 						 </div>
 					 )
 				 }
 			 },
 			 budget:{
 				 label:"Enter budget",
-				 size: 8,
+				 size: 11,
 				 input( props ){
 					 return(
 						 item.glAccount == "Not applicable"?
 						 	 <Currency { ...props }/>:
-						 <div>
-							 Budge: <span>{"$"+ props.value!=""?props.value:0 }</span>
+						 <div style={{marginLeft:"-10px"}}>
+							 Budget: <span>${props.value!=""?props.value:0 }</span>
 						 </div>
 					 )
 				 }
