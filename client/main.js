@@ -4,12 +4,12 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 function loadExternalScripts(  ) {
-	// load google map api script
-	loadGoogleMapApiScript(  );
 
 	// load browser-update.org browser compatibility script
 	loadBrowerCompatibilityScript();
 
+	// load google map api script
+	loadGoogleMapApiScript(  );
 	sortableApiScript();
 
 }

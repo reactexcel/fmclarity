@@ -190,7 +190,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-				{ request.service && request.type != 'Booking' ?
+				{ teamType=='fm' && request.service && request.type != 'Booking' ?
 				<tr>
 					<th>Service</th>
 					<td>{request.getServiceString()}</td>
@@ -249,7 +249,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { request.eta ?
+                { teamType=='fm' && request.eta ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
