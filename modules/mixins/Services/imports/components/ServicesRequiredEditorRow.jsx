@@ -86,6 +86,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 	render() {
 		service = this.data.service;
 		supplier = this.data.supplier;
+		this.data.service.data = this.data.service.data? this.data.service.data: {};
 		clickExpand = this.props.clickExpand;
 		var onChange = this.props.onChange,
 			component = this;
@@ -111,7 +112,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 											</div>
 											<AutoForm
 												model = { Facilities }
-												item = { this.data.service }
+												item = { this.data.service.data }
 												form = { ["serviceDetails"] }
 												onSubmit={
 													( item ) => {

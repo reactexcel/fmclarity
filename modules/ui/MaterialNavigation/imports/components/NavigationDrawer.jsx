@@ -76,7 +76,7 @@ class NavigationDrawer extends React.Component {
 
 		return (
 
-			<nav className = "nav-drawer">
+			<nav className = "nav-drawer noprint">
 			<ul onClick = { this.onMenuClick }>
 
 			{/*******************************************/

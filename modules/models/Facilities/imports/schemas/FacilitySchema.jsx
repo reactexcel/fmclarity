@@ -199,19 +199,19 @@ const FacilitySchema = {
 
 	//}
 
-	areaDeatails: 	{
+	areaDetails: 	{
 		label: "Area information",
 		type: "object",
 		subschema: {
 			 bookable:{
-				 label: 'Bookable',
-				 size: 6,
+				 label: 'Bookable / Leasable',
+				 size: 12,
 				 input: Switch,
 				 type: "boolean",
 				 defaultValue: true,
 				 options:{
 					 afterChange( item ) {
-						 item.leasable = false;
+						 //item.leasable = false;
 						 item.unit = null;
 						 item.day = null;
 						 item.hour = null;
@@ -225,27 +225,27 @@ const FacilitySchema = {
 					 }
 				 }
 			 },
-			 leasable:{
-				 label: 'Leasable',
-				 size: 6,
-				 type: "boolean",
-				 input: Switch,
-				 options:{
-					 afterChange( item ) {
-						 item.bookable = false;
-						 item.unit = null;
-						 item.day = null;
-						 item.hour = null;
-						 item.week = null;
-						 item.month = null;
-						// item.tenant = null;
-						 item.nla = null;
-						 item.areaUnit = null;
-						 item.minimumAllowablePeriod = null;
-						 item.maximumAllowablePeriod = null;
-					 }
-				 }
-			 },
+			//  leasable:{
+			// 	 label: 'Leasable',
+			// 	 size: 6,
+			// 	 type: "boolean",
+			// 	 input: Switch,
+			// 	 options:{
+			// 		 afterChange( item ) {
+			// 			 item.bookable = false;
+			// 			 item.unit = null;
+			// 			 item.day = null;
+			// 			 item.hour = null;
+			// 			 item.week = null;
+			// 			 item.month = null;
+			// 			// item.tenant = null;
+			// 			 item.nla = null;
+			// 			 item.areaUnit = null;
+			// 			 item.minimumAllowablePeriod = null;
+			// 			 item.maximumAllowablePeriod = null;
+			// 		 }
+			// 	 }
+			//  },
 			//  tenant:{
 			// 	 label: "Select tenant or resident",
 			// 	 input: Select,
@@ -275,18 +275,25 @@ const FacilitySchema = {
 						 "Days",
 						 "Hours",
 					 ]
+				 },
+				 condition(item){
+					 return !item.bookable;
 				 }
 			 },
 			 hour:{
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
+				 options(item){
+					 let items = [
 						 "0.25", "0.5", "0.75", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 						"11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
 						"21", "22", "23",
 					 ]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Hours";
@@ -296,7 +303,7 @@ const FacilitySchema = {
 				 labe: "Days",
 				 type: "object",
 				 input( props ) {
-					 let days = [ "Sun", "Mon", "Thu", "Wed", "Thr", "Fri", "Sat", 'M-F' ];
+					 let days = [  'M-F', "Mon", "Thu", "Wed", "Thr", "Fri", "Sat", "Sun" ];
 					 let weekDays = [ "Mon", "Thu", "Wed", "Thr", "Fri" ]
 					 let weekEnds = [ "Sun", "Sat", ];
 					 let selected = props.value || {
@@ -411,10 +418,12 @@ const FacilitySchema = {
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
-						 "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-					 ]
+				 options(item){
+					 let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Months";
@@ -424,10 +433,12 @@ const FacilitySchema = {
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
-						 "1", "2", "3", "4"
-					 ]
+				 options(item){
+					 let items = ["1", "2", "3", "4"]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Weeks";
@@ -435,7 +446,7 @@ const FacilitySchema = {
 			 },
 			 areaType:{
 				 label: 'Area Type',
-				 size:6,
+				 size:12,
 				 input: Select,
 				 options:{
 					 items:[
@@ -445,26 +456,41 @@ const FacilitySchema = {
 						 "Other"
 					 ]
 				 },
+				 condition(item){
+					 return item.bookable;
+				 }
 			 },
 			 "minimumAllowablePeriod":{
 				 label: 'Minimum allowable period',
 				 size:6,
-				 input: Text
+				 input: Text,
+				 condition(item){
+					 return !item.bookable;
+				 }
 			 },
 			 "maximumAllowablePeriod":{
 				 label: 'Maximum allowable period',
 				 size:6,
-				 input: Text
+				 input:Text,
+				 condition(item){
+					 return !item.bookable;
+				 }
 			 },
 			 "cost":{
 				 label: 'Cost per unit',
 				 size:6,
-				 input: Currency
+				 input: Currency,
+				 condition(item){
+					 return !item.bookable;
+				 }
 			 },
 			 nla:{
 				 label: 'Net Lettable Area',
 				 size:6,
 				 input: Text,
+				 condition(item){
+					 return item.bookable;
+				 }
 			 },
 			 areaUnit:{
 				 label: 'Net Lettable Area in',
@@ -491,9 +517,19 @@ const FacilitySchema = {
 						 },
 					 });
 				 },
+				 condition(item){
+					 return item.bookable;
+				 }
 			 },
+			 areaDescription:{
+				 label: "Area description",
+				 size: 12,
+				 input: Text,
+			 }
 		 },
 	 },
+
+
 	 serviceDetails:{
 		 label: "Area information",
 		 type: "object",

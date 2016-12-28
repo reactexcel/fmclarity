@@ -41,33 +41,46 @@ const Text = React.createClass( {
 	},
 
 	render() {
-		let { value, errors } = this.props,
+		let { value, errors, item, fieldName } = this.props,
 			used = false,
 			invalid = false,
-			classes = [ "input" ];
+			classes = [ "input" ],
+			unit = '';
 
 		if ( value != null && value.length != 0 ) {
 			used = true;
 			classes.push( "used" );
+			unit = !_.contains(["areaDescription", "nla"], fieldName) && item && item.unit
 		}
 
 		if ( errors != null && errors.length ) {
 			invalid = true;
 			classes.push( "invalid" );
 		}
-
 		return (
 			<div className = "md-input">
 
       		<input
       			className		= { classes.join(' ') }
+						style = {{paddingRight:'60px'}}
       			ref 			= "input"
       			type 			= "text"
       			defaultValue	= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       		/>
-
+        {unit?
+          <span
+            style={{
+     		      position: 'absolute',
+              right: "20px",
+     		      marginTop: '-22px',
+     		      marginLeft: '329px',
+     		      display: 'block',
+     	      }}>
+              {unit}
+            </span>:""
+          }
 	        {
         	used?
     		<div

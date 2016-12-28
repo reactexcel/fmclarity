@@ -81,6 +81,10 @@ const RequestActivityChart = React.createClass( {
 		}
 	},
 
+	printChart(){
+		window.print();
+	},
+
 	getMenu() {
 		var component = this;
 		return [ {
@@ -272,8 +276,9 @@ const RequestActivityChart = React.createClass( {
 
 
 	render() {
+		var statusFilterQuery = ["Closed", "Deleted"];
 		var openQuery = {
-			status:{$ne:'Closed'},
+			status:{$nin:statusFilterQuery},
 		}
 		var closedQuery = {
 			status: "Closed",
@@ -313,9 +318,10 @@ const RequestActivityChart = React.createClass( {
 		});
 		return (
 			<div>
+			<i className="pull-left fa fa-print noprint" onClick={this.printChart} style={{padding:"10px",cursor:"pointer"}} aria-hidden="true"></i>
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
-		        	<h2>Request activity {this.data.title}</h2>
+		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name:" for all facilities"}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">
