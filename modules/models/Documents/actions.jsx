@@ -39,7 +39,7 @@ const destroy = new Action( {
 	verb:  {
 		shouldConfirm: true,
 	},
-	action: ( doc ) => {
+	action: ( team, doc ) => {
 		if( !doc.destroy ){
 			doc = Documents.findOne( doc._id );
 		}
@@ -47,8 +47,19 @@ const destroy = new Action( {
 	}
 } )
 
+const makePrivate = new Action( {
+	name: "private document",
+	type: 'document',
+	label: "Private document",
+	action: ( team, doc, private ) => {
+		doc = Documents.findOne( doc._id );
+		doc.makePrivate(private);
+	}
+} )
+
 export {
 	create,
 	edit,
-	destroy
+	destroy,
+	makePrivate
 }

@@ -9,6 +9,8 @@ import DocViewEdit from './DocViewEdit.jsx';
 
 import { DocActions } from '/modules/models/Documents';
 
+import { Switch } from '/modules/ui/MaterialInputs';
+
 export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
@@ -61,14 +63,16 @@ export default function DocIcon( props ) {
 		color = getColorFromString( item.type );
 	}
 	return (
+		<div>
+		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private ?
 		<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
-			<span style={{display:"inline-block",width:"40%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
+			<span style={{display:"inline-block",width:"43%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
 			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
-				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+				<span style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 				<button
 					type 		= "button"
 					className 	= "btn btn-danger btn-flat"
@@ -76,13 +80,27 @@ export default function DocIcon( props ) {
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							runaction( DocActions.destroy.bind( item ) );
+							runaction( DocActions.destroy.bind(props.team, item ) );
 							props.onChange();
 						}
 					}>
 					<i className="fa fa-trash" aria-hidden="true" style={{fontSize:"1.5em"}}></i>
 				</button>
 			</span> : null }
-		</div>
+			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
+				<span onClick={e => e.stopPropagation()} style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+					<Switch
+						value={item.private}
+						placeholder={item.private?"Hidden":"Visible"}
+						onChange={
+							( checked ) => {
+								runaction( DocActions.makePrivate.bind(props.team, item, checked ) );
+								props.onChange();
+							}
+						}
+    			/>
+			</span> : null }
+		</div>:null}
+	</div>
 	)
 }

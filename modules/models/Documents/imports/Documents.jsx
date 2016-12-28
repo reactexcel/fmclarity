@@ -26,6 +26,9 @@ if ( Meteor.isServer ) {
 Documents.collection.allow( {
 	remove: () => {
 		return true;
+	},
+	update: () => {
+		return true;
 	}
 } )
 
@@ -47,6 +50,12 @@ Documents.actions( {
 				Files.remove( { _id: attach._id } );
 			} );
 			Documents.remove( { _id: doc._id } );
+		}
+	},
+	makePrivate: {
+		authentication: true,
+		helper: ( doc, private ) => {
+			Documents.update( { _id: doc._id },{ $set: { "private": private } } )
 		}
 	},
 } )
