@@ -71,7 +71,7 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
 			<span style={{display:"inline-block",width:"43%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
-			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
+			{ _.contains(['fmc support', "portfolio manager" ], props.role ) ?
 				<span style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 				<button
 					type 		= "button"
