@@ -21,6 +21,7 @@
  	label: "View",
  	action: ( request, callback ) => {
  		Modal.show( {
+      id: `viewRequest-${request._id}`,
  			content: <RequestPanel item = { request } />
  		} )
  		callback( request );

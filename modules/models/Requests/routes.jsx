@@ -50,6 +50,9 @@ AccessGroups.loggedIn.add( {
 	name: 'request',
 	path: '/requests/:_id',
 	action( params ) {
+		if( params._id ) {
+			history.pushState( {}, '', '/requests' );
+		}
 		mount( LayoutMain, {
 			content: <RequestsPageIndexContainer selectedRequestId = { params._id } />
 		} );

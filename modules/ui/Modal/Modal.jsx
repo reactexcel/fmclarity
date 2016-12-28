@@ -44,11 +44,23 @@ export default Modal = React.createClass( {
     componentWillMount() {
         Dispatcher.subscribe( 'showModal', ( args ) => {
             var queue = this.state.queue;
+
+            if( args.id ) {
+                if( args.id == this.state.id ) {
+                    return false;
+                }
+
+                if( queue.find( ( modal ) => { return modal.id == args.id } ) ) {
+                    return false;
+                }
+            }
+
             queue.push( args );
             setTimeout( () => {
                 this.setState( {
                     show: true,
                     queue: queue,
+                    id: args.id,
                     title: args.title,
                     content: args.content,
                     onSubmit: args.onSubmit,
@@ -70,6 +82,7 @@ export default Modal = React.createClass( {
                 this.setState( {
                     show: true,
                     queue: queue,
+                    id: args.id,
                     title: args.title,
                     content: args.content,
                     onSubmit: args.onSubmit,
@@ -93,6 +106,7 @@ export default Modal = React.createClass( {
                 this.setState( {
                     show: true,
                     queue: queue,
+                    id: current.id,
                     title: current.title,
                     content: current.content,
                     onSubmit: current.onSubmit,
@@ -104,6 +118,7 @@ export default Modal = React.createClass( {
             setTimeout( () => {
                 this.setState( {
                     show: false,
+                    id: null,
                     queue: []
                 } )
             }, 0 );
