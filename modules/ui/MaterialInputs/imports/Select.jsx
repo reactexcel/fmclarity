@@ -44,7 +44,7 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			console.log( val );
+			//console.log( val );
 			this.props.onChange( val );
 		}
 		this.refs.input.blur();

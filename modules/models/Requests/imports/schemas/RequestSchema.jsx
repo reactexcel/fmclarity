@@ -88,22 +88,25 @@ const RequestSchema = {
 		},
 		input: Select,
 		options: () => {
-			let role = Meteor.user().getRole();
-			return{
-				items: role !== "staff" ? [
-					"Ad-hoc",
-					"Booking",
-					//"Internal",
-					"Preventative",
-					//"Tenancy",
-					//"Base Building",
-					//"Contract",
-					"Defect",
-					//"Template",
-					//"Warranty",
-				] : [ "Ad-hoc", "Booking", "Tenancy", ]
+			let role = Meteor.user().getRole(),
+				team = Session.get( 'selectedTeam' ),
+				teamType = null;
+
+			if ( team ) {
+				teamType = team.type;
 			}
 
+			if( teamType == 'contractor' ) {
+				return { items:[ 'Base Building', 'Preventative', 'Defect' ]};
+			}
+			else {
+				if( _.contains(["staff",'resident'], role) ) {
+					return {items:[ 'Ad-hoc', 'Booking', 'Tenancy' ]};
+				}
+				else {
+					return {items:[ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ]};
+				}
+			}
 		}
 	},
 
@@ -603,6 +606,8 @@ const RequestSchema = {
 				if ( facilities.length == 1 ) {
 					return facilities[0];
 				}
+				// return the selected facility.
+				return Session.getSelectedFacility();
 		},
 
 		input: Select,
@@ -656,7 +661,7 @@ const RequestSchema = {
 		condition: ( request ) => {
 			let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
 				facilities = team.getFacilities( { 'team._id': team._id } );
-				if ( facilities.length == 1 ) {
+				if ( facilities.length <= 1 ) {
 					return false;
 				}
 			return true;

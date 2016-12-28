@@ -157,11 +157,12 @@ export default ProgressOverviewChart = React.createClass( {
 
         render() {
             var results = this.data.results;
+            var facility = Session.get( 'selectedFacility' );
             return (
                 <div>
                 <Menu items={this.getMenu()} />
                 <div className="ibox-title">
-                    <h2>Overview {this.state.title}</h2>
+                    <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
                 </div>
                 <div className="ibox-content" style={{padding:"0px 50px 30px 50px"}}>
                     <div className="row" style={{textAlign:"center",clear:"both"}}>

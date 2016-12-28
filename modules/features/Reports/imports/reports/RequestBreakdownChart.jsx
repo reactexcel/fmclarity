@@ -96,6 +96,10 @@ const RequestBreakdownChart = React.createClass( {
 		}
 	},
 
+	printChart(){
+		window.print();
+	},
+
 	getMenu() {
 		return [ {
 			label: ( "Day" ),
@@ -249,11 +253,13 @@ const RequestBreakdownChart = React.createClass( {
 	},
 
 	render() {
+		var facility=this.data.facility;
 		return (
 			<div>
+			<i className="pull-left fa fa-print noprint" onClick={this.printChart} style={{padding:"10px",cursor:"pointer"}} aria-hidden="true"></i>
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
-					<h2>Request breakdown {this.state.title}</h2>
+					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
 					<div>

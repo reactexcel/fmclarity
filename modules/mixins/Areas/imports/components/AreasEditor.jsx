@@ -13,6 +13,8 @@ import { Modal } from '/modules/ui/Modal';
  * @class           AreasEditor
  * @memberOf        module:mixins/Areas
  */
+
+ var _component = _selectedArea = _selectedSubArea = null;
 const AreasEditor = React.createClass( {
 
     mixins: [ ReactMeteorData ],
@@ -44,7 +46,8 @@ FacilityAreasEditorInner = React.createClass( {
     getInitialState() {
         return {
             facility: this.props.facility,
-            selection: [ { name: "Root", children: this.props.areas } ]
+            selection: [ { name: "Root", children: this.props.areas } ],
+            sort: false,
         }
     },
 
@@ -54,6 +57,13 @@ FacilityAreasEditorInner = React.createClass( {
                 facility: props.facility,
                 selection: [ { name: "Root", children: props.areas } ]
             } )
+        }
+        if( this.state.sort ){
+          this.setState( {
+              facility: props.facility,
+              selection: [ { name: "Root", children: props.areas } ],
+              sort: false,
+          } )
         }
     },
 
@@ -123,18 +133,54 @@ FacilityAreasEditorInner = React.createClass( {
         this.save();
     },
 
-    save() {
+    save( _component ) {
         var facility = this.state.facility;
         var selection = this.state.selection;
         var areas = selection[ 0 ].children;
         facility.setAreas( areas );
     },
-
+    componentDidUpdate(){
+      _component = this
+    },
     componentDidMount() {
-        $( '.areas-selector .slimscroll' ).slimScroll( {
-            height: '504px'
-        } );
-        this.save = _.debounce( this.save, 1000 );
+      $("#sortableLevel, #sortableArea, #sortableSubarea").sortable({
+        stop: function(event, ui) {
+          let selected = ui.item.attr("id").split("-"),
+            heightOfSelectedElement = ui.item.height(),// Height of the selected element i.e. <LI>.
+            selectedCol = selected[0], // Selected col.
+            startIndex = parseInt(selected[1]), // Row number of the selected col.
+            dropPosition = ui.position.top,//Position w.r.t. parent element i.e. <UL>
+            col = selectedCol === "area"? _areas: ( selectedCol === "subarea"? _selectedArea : _selectedSubArea ),
+            stopIndex = parseInt( dropPosition/heightOfSelectedElement ),
+            temp = null;
+            temp = col[startIndex];
+            //sort Top-Dowm
+            if ( startIndex < stopIndex ) {
+              for(var i = startIndex; i <= stopIndex; i++) {
+                col[i] = col[i+1];
+              }
+              col[stopIndex] = temp;
+            }
+            //sort Bottom-UP
+            if ( startIndex > stopIndex && stopIndex > 0 ) {
+              for(var i = startIndex; i >= stopIndex; i--) {
+                col[i] = col[i-1];
+              }
+              col[stopIndex] = temp;
+            }
+            _component.setState({
+              selection: _component.state.selection,
+              sort: true,
+            })
+            _component.save();
+        },
+        placeholder: "ui-state-highlight",
+      });
+      $( "#sortable" ).disableSelection();
+      $( '.areas-selector .slimscroll' ).slimScroll( {
+          height: '504px'
+      } );
+      this.save = _.debounce( this.save, 1000 );
     },
 
     handleKeyDown( event, colAdd, colSelect, element, row ){
@@ -174,99 +220,131 @@ FacilityAreasEditorInner = React.createClass( {
         var editable = !facility || facility.canSetAreas();
         var selectedArea = selection[ 1 ] || {};
         var selectedSubArea = selection[ 2 ] || {};
+        _component = this;
+        _areas = areas;
+        _selectedArea = selectedArea.children;
+        _selectedSubArea = selectedSubArea.children;
         return (
             <div className="areas-selector">
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Level</div>
                     <div className="slimscroll">
-                    {
-                        areas.map(function(a,idx){
-                            return (
-                                <div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
-                                    <input
-                                        id={"area-"+idx}
-                                        onClick={component.selectItem.bind(component,1,a)}
-                                        value={a.name||undefined}
-                                        readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,0,idx)}
-                                        onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
-                                    {editable?<span className="areas-selector-delete-icon"
-                                      onClick = {
-                                        () => {
-                                          Modal.show({
-                                            content:  <div style={{padding:'20px'}}>
-                                              <div>
-                                                <h1>Area information</h1>
-                                              </div>
-                                              <AutoForm
-                                                model = { Facilities }
-                                                item = { a }
-                                                form = { ["areaDeatails"] }
-                                                onSubmit={
-                                                  ( item ) => {
-                                                    component.save();
-                                                    Modal.hide();
-                                                  }
-                                                }
-                                              />
-                                            </div>
-                                          })
-                                        } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                        {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
-                                </div>
-                            )
-                        })
-                    }
-                    {editable?
-                    <div onClick={component.addItem.bind(component,0)} className="areas-selector-row">
-                        <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-                        <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
-                    </div>
-                    :null}
+                      <ul id="sortableLevel">
+                        {
+                            areas.map(function(a,idx){
+                              a.data = a.data?a.data:{};
+                                return (
+                                  <li key={idx} id={"area-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==a.name?" active":"")}>
+                                    <div className="row">
+                                      <div className="col-xs-1">
+                                        <span className="reorder">
+                                          <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
+                                        </span>
+                                      </div>
+                                      <div className="col-xs-11">
+                                        <div className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
+                                            <input
+                                                id={"area-"+idx}
+                                                onClick={component.selectItem.bind(component,1,a)}
+                                                value={a.name||undefined}
+                                                readOnly={!editable}
+                                                onChange={component.updateItem.bind(component,0,idx)}
+                                                onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
+                                            {editable?<span className="areas-selector-delete-icon"
+                                              onClick = {
+                                                () => {
+                                                  Modal.show({
+                                                    content:  <div style={{padding:'20px'}}>
+                                                      <div>
+                                                        <h1>Lavel information: {a.name||""} </h1>
+                                                      </div>
+                                                      <AutoForm
+                                                        model = { Facilities }
+                                                        item = { a.data }
+                                                        form = { ["areaDetails"] }
+                                                        onSubmit={
+                                                          ( item ) => {
+                                                            component.save();
+                                                            Modal.hide();
+                                                          }
+                                                        }
+                                                      />
+                                                    </div>
+                                                  })
+                                                } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                              {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </li>
+                                )
+                            })
+                        }
+                      </ul>
+                        {editable?
+                          <div onClick={component.addItem.bind(component,0)} className="areas-selector-row">
+                              <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+                              <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
+                          </div>:
+                         null}
                     </div>
                 </div>
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Area</div>
                     <div className="slimscroll">
-                    {
-                        selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
-                            return (
-                                <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
-                                    <input
-                                        id={"subarea-"+idx}
-                                        onClick={component.selectItem.bind(component,2,b)}
-                                        value={b.name||undefined}
-                                        readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,1,idx)}
-                                        onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
-                                    {editable?<span className="areas-selector-delete-icon"
-                                      //onClick={component.removeItem.bind(component,1,idx)}
-                                      onClick = {
-                                        () => {
-                                          Modal.show({
-                                            content:  <div style={{padding:'20px'}}>
-                                              <div>
-                                                <h1>Area information</h1>
-                                              </div>
-                                              <AutoForm
-                                                model = { Facilities }
-                                                item = { b }
-                                                form = { ["areaDeatails"] }
-                                                beforeSubmit={
-                                                  ( item ) => {
-                                                    component.save();
-                                                    Modal.hide();
-                                                  }
-                                                }
-                                              />
+                        <ul id="sortableArea">
+                          {
+                              selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
+                                b.data = b.data?b.data:{};
+                                  return (
+                                    <li key={idx} id={"subarea-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedSubArea.name==b.name?" active":"")}>
+                                      <div className="row">
+                                        <div className="col-xs-1">
+                                          <span className="reorder">
+                                            <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
+                                          </span>
+                                        </div>
+                                        <div className="col-xs-11">
+                                          <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
+                                            <input
+                                              id={"subarea-"+idx}
+                                              onClick={component.selectItem.bind(component,2,b)}
+                                              value={b.name||undefined}
+                                              readOnly={!editable}
+                                              onChange={component.updateItem.bind(component,1,idx)}
+                                              onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
+                                            {editable?<span className="areas-selector-delete-icon"
+                                              //onClick={component.removeItem.bind(component,1,idx)}
+                                              onClick = {
+                                                () => {
+                                                  Modal.show({
+                                                    content:  <div style={{padding:'20px'}}>
+                                                    <div>
+                                                      <h1>Area information: {b.name}</h1>
+                                                    </div>
+                                                    <AutoForm
+                                                      model = { Facilities }
+                                                      item = { b.data }
+                                                      form = { ["areaDetails"] }
+                                                      beforeSubmit={
+                                                        ( item ) => {
+                                                          component.save();
+                                                          Modal.hide();
+                                                        }
+                                                      }
+                                                      />
+                                                  </div>
+                                                })
+                                              } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                              {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
                                             </div>
-                                          })
-                                        } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                        {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
-                                </div>
-                            )
-                        }):null
-                    }
+                                        </div>
+                                      </div>
+                                    </li>
+                                  )
+                              }):null
+                          }
+                        </ul>
                     {editable&&selection[1]?
                     <div onClick={component.addItem.bind(component,1)} className="areas-selector-row">
                         <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
@@ -278,47 +356,61 @@ FacilityAreasEditorInner = React.createClass( {
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Subarea</div>
                     <div className="slimscroll">
-                    {
-                        selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
-                            return (
-                                <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
-                                    <input
-                                        id={"identity-"+idx}
-                                        onClick={component.selectItem.bind(component,3,c)}
-                                        value={c.name||undefined}
-                                        readOnly={!editable}
-                                        onChange={component.updateItem.bind(component,2,idx)}
-                                        onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
-                                        />
-                                    {editable?<span className="areas-selector-delete-icon"
-                                      //onClick={component.removeItem.bind(component,2,idx)}
-                                      onClick = {
-                                        () => {
-                                          Modal.show({
-                                            content:  <div style={{padding:'20px'}}>
-                                              <div>
-                                                <h1>Area information</h1>
-                                              </div>
-                                              <AutoForm
-                                                model = { Facilities }
-                                                item = { c }
-                                                form = { ["areaDeatails"] }
-                                                beforeSubmit={
-                                                  ( item ) => {
-                                                    component.save();
-                                                    Model.hide();
+                      <ul id="sortableSubarea">
+                        {
+                            selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
+                              c.data = c.data?c.data:{};
+                              return (
+                                <li key={idx} id={"identity-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==c.name?" active":"")}>
+                                  <div className="row">
+                                    <div className="col-xs-1">
+                                      <span className="reorder">
+                                        <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
+                                      </span>
+                                    </div>
+                                    <div className="col-xs-11">
+                                      <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
+                                        <input
+                                          id={"identity-"+idx}
+                                          onClick={component.selectItem.bind(component,3,c)}
+                                          value={c.name||undefined}
+                                          readOnly={!editable}
+                                          onChange={component.updateItem.bind(component,2,idx)}
+                                          onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
+                                          />
+                                        {editable?<span className="areas-selector-delete-icon"
+                                          //onClick={component.removeItem.bind(component,2,idx)}
+                                          onClick = {
+                                            () => {
+                                              Modal.show({
+                                                content:  <div style={{padding:'20px'}}>
+                                                <div>
+                                                  <h1>Subarea information: {c.name}</h1>
+                                                </div>
+                                                <AutoForm
+                                                  model = { Facilities }
+                                                  item = { c.data }
+                                                  form = { ["areaDeatails"] }
+                                                  beforeSubmit={
+                                                    ( item ) => {
+                                                      component.save();
+                                                      Model.hide();
+                                                    }
                                                   }
-                                                }
-                                              />
-                                            </div>
-                                          })
-                                        //  component.removeItem.bind(component,0,idx)
-                                      } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                  {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
-                                </div>
-                            )
-                        }):null
-                    }
+                                                  />
+                                              </div>
+                                            })
+                                            //  component.removeItem.bind(component,0,idx)
+                                          } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+                                          {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
+                                        </div>
+                                    </div>
+                                  </div>
+                                </li>
+                                )
+                            }):null
+                        }
+                    </ul>
                     {editable&&selection[2]?
                     <div onClick={component.addItem.bind(component,2)} className="areas-selector-row">
                         <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
@@ -334,3 +426,38 @@ FacilityAreasEditorInner = React.createClass( {
 } )
 
 export default AreasEditor;
+
+/*
+<div key={idx} className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
+    <input
+        id={"area-"+idx}
+        onClick={component.selectItem.bind(component,1,a)}
+        value={a.name||undefined}
+        readOnly={!editable}
+        onChange={component.updateItem.bind(component,0,idx)}
+        onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
+    {editable?<span className="areas-selector-delete-icon"
+      onClick = {
+        () => {
+          Modal.show({
+            content:  <div style={{padding:'20px'}}>
+              <div>
+                <h1>Area information</h1>
+              </div>
+              <AutoForm
+                model = { Facilities }
+                item = { a }
+                form = { ["areaDeatails"] }
+                onSubmit={
+                  ( item ) => {
+                    component.save();
+                    Modal.hide();
+                  }
+                }
+              />
+            </div>
+          })
+        } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+        {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
+</div>
+*/

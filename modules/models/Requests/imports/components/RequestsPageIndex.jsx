@@ -37,7 +37,7 @@ export default class RequestsPageIndex extends Component {
 	}
 
 	render() {
-		let { team, facility, facilities, requests, selectedRequest } = this.props;
+		let { team, facility, facilities, requests, selectedRequest, selectedStatus } = this.props;
 		let user = Meteor.user();
 		if( !team ) {
 			return <div/>
@@ -54,13 +54,7 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3">
-						<RequestFilter
-							items = { [ "Open", "New", "Issued", "In Progress", "Complete", "Closed" ] }
-							onChange = { ( item ) => {
-								requests = this.props.user.getRequests( { $and: [ item, this.props.contextFilter ] } )
-								this.setState( { requests } )
-							} }
-						 />
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Closed' ] } selectedItem = { selectedStatus } />
 					</div>
 					{ user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >
