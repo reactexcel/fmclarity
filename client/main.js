@@ -4,12 +4,12 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 function loadExternalScripts(  ) {
-	// load google map api script
-	loadGoogleMapApiScript(  );
 
 	// load browser-update.org browser compatibility script
 	loadBrowerCompatibilityScript();
 
+	// load google map api script
+	loadGoogleMapApiScript(  );
 	sortableApiScript();
 
 }
@@ -95,7 +95,7 @@ Actions.addAccessRule( {
 	action: [
 		'create team document',
 	],
-	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
+	role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'resident' ],
 	rule: { alert: true, email: true }
 } )
 
@@ -159,7 +159,8 @@ Actions.addAccessRule( {
 		'property manager',
 		'team caretaker',
 		'facility caretaker',
-		'assignee'
+		'assignee',
+		'resident'
 	],
 	rule: { alert: true }
 } )
@@ -275,9 +276,17 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	action: [
-		'destroy document'
+		'destroy document',
 	],
-	role: [ 'facility manager', 'fmc support', 'portfolio manager' ],
+	role: [ 'fmc support', 'portfolio manager' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	action: [
+		'private document'
+	],
+	role: [ 'fmc support', 'portfolio manager', 'facility manager' ],
 	rule: { alert: true }
 } )
 

@@ -199,19 +199,23 @@ const FacilitySchema = {
 
 	//}
 
-	areaDeatails: 	{
+	areaDetails: 	{
 		label: "Area information",
 		type: "object",
 		subschema: {
-			 bookable:{
-				 label: 'Bookable',
-				 size: 6,
-				 input: Switch,
-				 type: "boolean",
-				 defaultValue: true,
+			 type:{
+				 label: 'Type',
+				 size: 12,
+				 input: Select,
+				 type: "string",
 				 options:{
+					 items:[
+						 'Bookable',
+						 'Leasable',
+						 'Standard'
+					 ],
 					 afterChange( item ) {
-						 item.leasable = false;
+						 //item.leasable = false;
 						 item.unit = null;
 						 item.day = null;
 						 item.hour = null;
@@ -223,29 +227,33 @@ const FacilitySchema = {
 						 item.minimumAllowablePeriod = null;
 						 item.maximumAllowablePeriod = null;
 					 }
+				 },
+				 condition(item) {
+					 item.type  = item.type || "Bookable";
+					 return true;
 				 }
 			 },
-			 leasable:{
-				 label: 'Leasable',
-				 size: 6,
-				 type: "boolean",
-				 input: Switch,
-				 options:{
-					 afterChange( item ) {
-						 item.bookable = false;
-						 item.unit = null;
-						 item.day = null;
-						 item.hour = null;
-						 item.week = null;
-						 item.month = null;
-						// item.tenant = null;
-						 item.nla = null;
-						 item.areaUnit = null;
-						 item.minimumAllowablePeriod = null;
-						 item.maximumAllowablePeriod = null;
-					 }
-				 }
-			 },
+			//  leasable:{
+			// 	 label: 'Leasable',
+			// 	 size: 6,
+			// 	 type: "boolean",
+			// 	 input: Switch,
+			// 	 options:{
+			// 		 afterChange( item ) {
+			// 			 item.bookable = false;
+			// 			 item.unit = null;
+			// 			 item.day = null;
+			// 			 item.hour = null;
+			// 			 item.week = null;
+			// 			 item.month = null;
+			// 			// item.tenant = null;
+			// 			 item.nla = null;
+			// 			 item.areaUnit = null;
+			// 			 item.minimumAllowablePeriod = null;
+			// 			 item.maximumAllowablePeriod = null;
+			// 		 }
+			// 	 }
+			//  },
 			//  tenant:{
 			// 	 label: "Select tenant or resident",
 			// 	 input: Select,
@@ -275,18 +283,25 @@ const FacilitySchema = {
 						 "Days",
 						 "Hours",
 					 ]
+				 },
+				 condition(item){
+					 return item.type === "Bookable";
 				 }
 			 },
 			 hour:{
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
+				 options(item){
+					 let items = [
 						 "0.25", "0.5", "0.75", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 						"11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
 						"21", "22", "23",
 					 ]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Hours";
@@ -296,16 +311,16 @@ const FacilitySchema = {
 				 labe: "Days",
 				 type: "object",
 				 input( props ) {
-					 let days = [ "Sun", "Mon", "Thu", "Wed", "Thr", "Fri", "Sat", 'M-F' ];
-					 let weekDays = [ "Mon", "Thu", "Wed", "Thr", "Fri" ]
+					 let days = [  'M-F', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
+					 let weekDays = [ "Mon", "Tue", "Wed", "Thu", "Fri" ]
 					 let weekEnds = [ "Sun", "Sat", ];
 					 let selected = props.value || {
 						  'M-F': {select:false,time:""},
 						  "Sun": {select:false,time:""},
 						  "Mon": {select:false,time:""},
-							"Thu": {select:false,time:""},
+							"Tue": {select:false,time:""},
 							"Wed": {select:false,time:""},
-							"Thr": {select:false,time:""},
+							"Thu": {select:false,time:""},
 							"Fri": {select:false,time:""},
 							"Sat": {select:false,time:""}
 					 };
@@ -411,10 +426,12 @@ const FacilitySchema = {
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
-						 "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-					 ]
+				 options(item){
+					 let items = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Months";
@@ -424,10 +441,12 @@ const FacilitySchema = {
 				 label: 'Booking increment',
 				 size:6,
 				 input: Select,
-				 options:{
-					 items:[
-						 "1", "2", "3", "4"
-					 ]
+				 options(item){
+					 let items = ["1", "2", "3", "4"]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
 				 },
 				 condition(item){
 					 return item.unit == "Weeks";
@@ -435,7 +454,7 @@ const FacilitySchema = {
 			 },
 			 areaType:{
 				 label: 'Area Type',
-				 size:6,
+				 size:12,
 				 input: Select,
 				 options:{
 					 items:[
@@ -445,26 +464,41 @@ const FacilitySchema = {
 						 "Other"
 					 ]
 				 },
+				 condition(item){
+					 return item.type === "Leasable" || item.type === "Standard";
+				 }
 			 },
 			 "minimumAllowablePeriod":{
 				 label: 'Minimum allowable period',
 				 size:6,
-				 input: Text
+				 input: Text,
+				 condition(item){
+					 return item.type === "Bookable";
+				 }
 			 },
 			 "maximumAllowablePeriod":{
 				 label: 'Maximum allowable period',
 				 size:6,
-				 input: Text
+				 input:Text,
+				 condition(item){
+					 return item.type === "Bookable";
+				 }
 			 },
 			 "cost":{
 				 label: 'Cost per unit',
 				 size:6,
-				 input: Currency
+				 input: Currency,
+				 condition(item){
+					 return item.type === "Bookable";;
+				 }
 			 },
 			 nla:{
 				 label: 'Net Lettable Area',
 				 size:6,
 				 input: Text,
+				 condition(item){
+					 return item.type === "Leasable" || item.type === "Standard" ;
+				 }
 			 },
 			 areaUnit:{
 				 label: 'Net Lettable Area in',
@@ -491,9 +525,18 @@ const FacilitySchema = {
 						 },
 					 });
 				 },
+				 condition(item){
+					 return item.type === "Leasable" || item.type === "Standard";
+				 }
 			 },
+			 areaDescription:{
+				 label: "Area description",
+				 size: 12,
+				 input: Text,
+			 }
 		 },
 	 },
+
 	 serviceDetails:{
 		 label: "Area information",
 		 type: "object",
@@ -535,24 +578,25 @@ const FacilitySchema = {
 				 }
 			 },
 			 cfy: {
-				 size: 4,
+				 size: 1,
 				 input( props ){
+					 let month = parseInt(moment().format("M"));
 					 return (
-						 <div className="col-sm-12" style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "14%", height: "10%" }}>
-							 <span>Current Financial Year: {props.cfy?props.cfy:"FY"+moment().format("YY")}</span>
+						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "63%", height: "10%" }}>
+							 <span style={{paddingLeft:"2px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
 						 </div>
 					 )
 				 }
 			 },
 			 budget:{
 				 label:"Enter budget",
-				 size: 8,
+				 size: 11,
 				 input( props ){
 					 return(
 						 item.glAccount == "Not applicable"?
 						 	 <Currency { ...props }/>:
-						 <div>
-							 Budge: <span>{"$"+ props.value!=""?props.value:0 }</span>
+						 <div style={{marginLeft:"-10px"}}>
+							 Budget: <span>${props.value!=""?props.value:0 }</span>
 						 </div>
 					 )
 				 }

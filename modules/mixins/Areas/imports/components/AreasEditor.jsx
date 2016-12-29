@@ -232,6 +232,7 @@ FacilityAreasEditorInner = React.createClass( {
                       <ul id="sortableLevel">
                         {
                             areas.map(function(a,idx){
+                              a.data = a.data?a.data:{};
                                 return (
                                   <li key={idx} id={"area-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==a.name?" active":"")}>
                                     <div className="row">
@@ -255,12 +256,12 @@ FacilityAreasEditorInner = React.createClass( {
                                                   Modal.show({
                                                     content:  <div style={{padding:'20px'}}>
                                                       <div>
-                                                        <h1>Area information</h1>
+                                                        <h1>Area information: {a.name||""} </h1>
                                                       </div>
                                                       <AutoForm
                                                         model = { Facilities }
-                                                        item = { a }
-                                                        form = { ["areaDeatails"] }
+                                                        item = { a.data }
+                                                        form = { ["areaDetails"] }
                                                         onSubmit={
                                                           ( item ) => {
                                                             component.save();
@@ -284,8 +285,8 @@ FacilityAreasEditorInner = React.createClass( {
                           <div onClick={component.addItem.bind(component,0)} className="areas-selector-row">
                               <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
                               <span className="active-link" style={{fontStyle:"italic"}}>Add another</span>
-                          </div>
-                        :null}
+                          </div>:
+                         null}
                     </div>
                 </div>
                 <div className="areas-selector-col">
@@ -294,6 +295,7 @@ FacilityAreasEditorInner = React.createClass( {
                         <ul id="sortableArea">
                           {
                               selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
+                                b.data = b.data?b.data:{};
                                   return (
                                     <li key={idx} id={"subarea-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedSubArea.name==b.name?" active":"")}>
                                       <div className="row">
@@ -318,12 +320,12 @@ FacilityAreasEditorInner = React.createClass( {
                                                   Modal.show({
                                                     content:  <div style={{padding:'20px'}}>
                                                     <div>
-                                                      <h1>Area information</h1>
+                                                      <h1>Subarea information: {b.name}</h1>
                                                     </div>
                                                     <AutoForm
                                                       model = { Facilities }
-                                                      item = { b }
-                                                      form = { ["areaDeatails"] }
+                                                      item = { b.data }
+                                                      form = { ["areaDetails"] }
                                                       beforeSubmit={
                                                         ( item ) => {
                                                           component.save();
@@ -357,6 +359,7 @@ FacilityAreasEditorInner = React.createClass( {
                       <ul id="sortableSubarea">
                         {
                             selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
+                              c.data = c.data?c.data:{};
                               return (
                                 <li key={idx} id={"identity-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==c.name?" active":"")}>
                                   <div className="row">
@@ -382,12 +385,12 @@ FacilityAreasEditorInner = React.createClass( {
                                               Modal.show({
                                                 content:  <div style={{padding:'20px'}}>
                                                 <div>
-                                                  <h1>Area information</h1>
+                                                  <h1>Identifier information: {c.name}</h1>
                                                 </div>
                                                 <AutoForm
                                                   model = { Facilities }
-                                                  item = { c }
-                                                  form = { ["areaDeatails"] }
+                                                  item = { c.data }
+                                                  form = { ["areaDetails"] }
                                                   beforeSubmit={
                                                     ( item ) => {
                                                       component.save();

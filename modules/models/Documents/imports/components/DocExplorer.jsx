@@ -37,12 +37,20 @@ export default class DocExplorer extends React.Component {
 			this.props.onChange( newValue );
 		}
 		if ( !newValue ){
-			//Update the component when a document get deleted.s
+			//Update the component when a document get deleted.
 			this.setState({
 				item: this.props.item,
 				//value: this.props.value,
 			});
 		}
+	}
+
+  handleListUpdate( doc ) {
+			//Update the component when a document get deleted.
+      let value =  _.filter( this.state.value, (d) => d._id != doc._id );
+			this.setState({
+				value: value,
+			});
 	}
 
 	//get Document list
@@ -68,6 +76,7 @@ export default class DocExplorer extends React.Component {
                 model = { this.props.model }
                 selectedItem = { this.state.item }
                 role = { role }
+                handleListUpdate={this.handleListUpdate.bind(this)}
                 />
 						)
 					)

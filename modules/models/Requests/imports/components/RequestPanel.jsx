@@ -81,7 +81,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             title = 'Room Booking';
         }
         else if( teamType == 'fm' ) {
-            if (request.service && request.service.serviceDetails && request.service.serviceDetails.purchaseOrder){
+            if (request.service && request.service.data && request.service.data.serviceDetails && request.service.data.serviceDetails.purchaseOrder){
               title = "Purchase Order";
             } else {
               title = "Work Order";
@@ -190,7 +190,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-				{ request.service && request.type != 'Booking' ?
+				{ teamType=='fm' && request.service && request.type != 'Booking' ?
 				<tr>
 					<th>Service</th>
 					<td>{request.getServiceString()}</td>
@@ -249,7 +249,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { request.eta ?
+                { teamType=='fm' && request.eta ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
