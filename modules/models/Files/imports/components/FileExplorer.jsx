@@ -14,7 +14,7 @@ import FileView from './FileView.jsx';
 let onDragOverCallback = onDropCallback = null;
 
 function FileExplorer( props ) {
-
+console.log(props);
 	function handleChange( index, newValue ) {
 		let attachments = props.value || [];
 		if ( newValue ) {
