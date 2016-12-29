@@ -370,6 +370,15 @@ Facilities.actions( {
 		}
 	},
 
+	removeDocument: {
+		authentication: true,
+		helper: ( facility, docToRemove ) => {
+			let documents = facility.documents;
+			documents = _.filter( documents, (d) => d._id != docToRemove._id );
+			Facilities.update( { _id: facility._id }, { $set: { "documents": documents} } );
+		}
+	},
+
 	sendMemberInvite: {
 		authentication: true,
 		method: sendMemberInvite
