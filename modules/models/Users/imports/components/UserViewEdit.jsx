@@ -100,6 +100,7 @@ export default UserViewEdit = React.createClass( {
 					} );
 				}
 				this.setItem( user );
+				Meteor.call("Teams.sendMemberInvite",team, user);
 			} );
 		}
 	},
@@ -160,7 +161,7 @@ export default UserViewEdit = React.createClass( {
 			return (
 				<form style={{padding:"15px"}} className="form-inline">
 
-                    <div className="form-group" style = { { 'min-width': '768px' } }>
+                    <div className="form-group" style = { { 'minWidth': '768px' } }>
 
                         <b>Let's search to see if this user already has an account.</b>
 
