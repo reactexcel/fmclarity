@@ -513,7 +513,7 @@ const RequestSchema = {
 		defaultValue: getDefaultDueDate,
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
-			if( role == 'staff' ) {
+			if( _.contains(["staff",'resident'], role) ) {
 				return false;
 			}
 			return true;
@@ -638,7 +638,7 @@ const RequestSchema = {
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
-					show: Meteor.user().getRole() != 'staff',
+					show: !_.contains(["staff",'resident'], role),//Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
@@ -682,7 +682,7 @@ const RequestSchema = {
 			if ( selectedTeam ) {
 				teamType = selectedTeam.type;
 			}
-			return (request.type != 'Booking' && teamType != 'contractor') ? ( Meteor.user().getRole() != "staff" ) : false;
+			return (request.type != 'Booking' && teamType != 'contractor') ? ( !_.contains( ["staff",'resident'], Meteor.user().getRole() ) ) : false;
 		},
 		defaultValue: ( item ) => {
 			let team = Session.getSelectedTeam(),
@@ -704,7 +704,7 @@ const RequestSchema = {
 				view: ContactCard,
 				addNew: {
 					//Add new supplier to request and selected facility.
-					show: Meteor.user().getRole() != 'staff',
+					show: !_.contains(["staff",'resident'], role),//Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { TeamStepper } from '/modules/models/Teams';
@@ -746,7 +746,7 @@ const RequestSchema = {
 		},
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
-			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" ) {
+			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident") {
 				return false;
 			}
 			let team = Session.getSelectedTeam();
