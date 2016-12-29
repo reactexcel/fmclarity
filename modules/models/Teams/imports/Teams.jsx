@@ -361,7 +361,15 @@ Teams.methods( {
 					$in: teamIds
 				}}, {type: 'fm','owner.id':Meteor.userId()}]  } ) : Teams.findAll( { type: 'fm' } );
 		},
-	}
+	},
+	removeDocument: {
+		authentication: true,
+		helper: ( team, docToRemove ) => {
+			let documents = team.documents;
+			documents = _.filter( documents, (d) => d._id != docToRemove._id );
+			Teams.update( { _id: team._id }, { $set: { "documents": documents} } );
+		}
+	},
 } );
 
 function getSuppliers() {

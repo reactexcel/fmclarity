@@ -24,7 +24,18 @@ export default function DocIcon( props ) {
 		} )
 	}
 
-
+function removeDocumentFromList( docToRemove ) {
+	let team = facility = null,
+		modelName = props.model._name;
+	if (modelName == "Facilities") {
+		facility = Session.getSelectedFacility();
+		facility.removeDocument( docToRemove );
+	} else if ( modelName == "Teams" ) {
+		team = Session.getSelectedTeam();
+		team.removeDocument( docToRemove );
+	}
+	props.handleListUpdate( docToRemove );
+}
 
 	function getColorFromString( str ) {
 		var r = ( str.charCodeAt( str.length - 3 ) % 25 ) * 10;
@@ -75,16 +86,20 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 				<button
 					type 		= "button"
-					className 	= "btn btn-danger btn-flat"
+					className 	= "btn btn-flat"
 					title="Remove"
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							runaction( DocActions.destroy.bind(props.team, item ) );
-							props.onChange();
+						//	runaction( DocActions.destroy.bind(props.team, item ) );
+							if(props.handleListUpdate){
+								removeDocumentFromList( item );
+							} else {
+								props.onChange();
+							}
 						}
 					}>
-					<i className="fa fa-trash" aria-hidden="true" style={{fontSize:"1.5em"}}></i>
+					<span>&times;</span>
 				</button>
 			</span> : null }
 			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
