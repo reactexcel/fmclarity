@@ -155,7 +155,10 @@ Requests.methods( {
 		authentication: true,
 		method: function( request ) {
 			let status = 'New';
-
+			if (request.costThreshold=="") {
+				request.costThreshold = '0';
+			}
+			
 			if( request.type == 'Preventative' ) {
 				status = 'PMP';
 			}
