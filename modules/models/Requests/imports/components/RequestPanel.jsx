@@ -264,7 +264,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     {request.readBy.map(function(u, idx){
                         var user = Meteor.users.findOne(u._id);
                         return (
-                            <li key={u._id}><a href="">{user.profile ? user.profile.name : user.name}</a></li>
+                            <li key={u._id}><a href="" title={u.readAt}>{user.profile ? user.profile.name : user.name}</a></li>
                             )
                     })}
                     </ul>
