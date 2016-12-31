@@ -192,7 +192,7 @@ Requests.methods( {
 					owner = newRequest.getOwner();
 				}
 				newRequest.distributeMessage( {
-					recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+					recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
 					message: {
 						verb: "created",
 						subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -438,6 +438,9 @@ Requests.methods( {
 				Requests.update( { _id: request._id }, {
 						$pull:{
 							unreadRecipents: user._id
+						},
+						$push:{
+							readBy:{ _id: user._id, readAt: new Date() }
 						}
 				})
 			}
@@ -540,7 +543,7 @@ function actionIssue( request ) {
 		request.updateSupplierManagers();
 		request = Requests.findOne( request._id );
 		request.distributeMessage( {
-			recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
+			recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier" ],
 			message: {
 				verb: "issued",
 				subject: "Work order #" + request.code + " has been issued",
