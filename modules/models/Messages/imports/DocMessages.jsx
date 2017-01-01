@@ -160,6 +160,12 @@ function getRecipientListFromRoles( obj, roles ) {
         else if ( role == "facility" && obj.facility ) {
             recipients.push( obj.facility );
         }
+
+        //else if we are sending it to supplier
+        else if ( role == "supplier" && obj.supplier ) {
+            recipients.push( obj.getSupplier() );
+        }
+
         //else if we are sending it to the member with "role"
         else if ( obj.getMembers ) {
             recipients = recipients.concat( obj.getMembers( {
@@ -198,7 +204,6 @@ function recipientIsCreator( message, recipient ) {
 
 function sendMessage( message, recipient ) {
     var msgCopy, emailBody;
-
     if ( !recipient.getInboxId ) {
         console.log( { 'Attempted to send message to entity with no inbox function': recipient } );
         return;

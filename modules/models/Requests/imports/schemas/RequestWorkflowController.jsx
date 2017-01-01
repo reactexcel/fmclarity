@@ -22,7 +22,7 @@ function actionGetQuote( request, user ) {
 	request = Requests.findOne( request._id );
 
 	request.distributeMessage( {
-		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier manager" ],
+		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier manager", "supplier" ],
 		message: {
 			verb: "requested a quote for",
 			subject: "Work order #" + request.code + " has a new quote request"
@@ -88,7 +88,7 @@ Requests.workflow.addState( [ 'Draft' ], {
 
 			request = Requests.findOne( request._id );
 			request.distributeMessage( {
-				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+				recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
 				message: {
 					verb: "created",
 					subject: `Work order #${request.code} has been created`,
@@ -197,7 +197,7 @@ Requests.workflow.addState( [ 'PMP' ], {
 			Requests.save.call( request );
 			request = Requests.findOne( request._id );
 			request.distributeMessage( {
-				recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+				recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
 				message: {
 					verb: "created",
 					subject: "Work order #" + request.code + " has been created",
@@ -284,7 +284,7 @@ Requests.workflow.addState( [ 'New', 'Quoted' ], {
 			Requests.save.call( request, { status: "Rejected" } );
 			request = Requests._transform( request );
 			request.distributeMessage( {
-				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
+				recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier" ],
 				message: {
 					verb: "rejected",
 					subject: "Work order #" + request.code + " has been rejected",
@@ -315,7 +315,7 @@ Requests.workflow.addState( 'Quoting', {
 			} );
 			request = Requests.findOne( request._id );
 			request.distributeMessage( {
-				recipientRoles: [ "owner", "team", "team manager", "facility manager" ],
+				recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
 				message: {
 					verb: "provided a quote for",
 					subject: "Work order #" + request.code + " has a new quote",
@@ -402,7 +402,7 @@ Requests.workflow.addState( 'Issued', {
 			} );
 			request = Requests.findOne( request._id );
 			request.distributeMessage( {
-				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
+				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager", "supplier" ],
 				message: {
 					verb: "deleted",
 					subject: "Work order #" + request.code + " has been deleted",
@@ -446,7 +446,7 @@ Requests.workflow.addState( 'Complete', {
 			} );
 			request = Requests._transform( request );
 			request.distributeMessage( {
-				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
+				recipientRoles: [ "team", "team manager", "facility manager", "supplier manager", "supplier" ],
 				message: {
 					verb: "closed",
 					subject: "Work order #" + request.code + " has been closed",
@@ -518,7 +518,7 @@ function actionIssue( request ) {
 	request.updateSupplierManagers();
 	request = Requests.findOne( request._id );
 	request.distributeMessage( {
-		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager" ],
+		recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager","supplier" ],
 		message: {
 			verb: "issued",
 			subject: "Work order #" + request.code + " has been issued",
@@ -526,7 +526,7 @@ function actionIssue( request ) {
 	} );
 
 	request.distributeMessage( {
-		recipientRoles: [ "supplier manager" ],
+		recipientRoles: [ "supplier manager", "supplier" ],
 		suppressOriginalPost: true,
 		message: {
 			verb: "issued",
@@ -679,7 +679,7 @@ function actionReverse( request ) {
 	//distribute message on new request
 	request = Requests.findOne( request._id );
 	request.distributeMessage( {
-		recipientRoles: [ "team", "team manager", "facility manager", "supplier manager" ],
+		recipientRoles: [ "team", "team manager", "facility manager", "supplier manager", "supplier" ],
 		message: {
 			verb: "requested",
 			subject: "Work order #" + request.code + " has been reversed and reversal #" + newRequest.code + " has been created"
