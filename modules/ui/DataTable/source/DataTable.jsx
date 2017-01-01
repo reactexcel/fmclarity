@@ -152,7 +152,7 @@ export default DataTable = React.createClass( {
 
 									return (
 										<td
-											className 	= "data-grid-cell"
+											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
 											key 		= {('val('+rowIdx+','+colIdx+')-'+row[col].val)}
 											style 		= {row[col].style?row[col].style:{}}
 										>
