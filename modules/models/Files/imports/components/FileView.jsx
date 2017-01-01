@@ -78,13 +78,19 @@ const FileView = React.createClass( {
 	},
 
 	onClick() {
-		if ( this.data.isImage ) {
-			this.showImageInModal()
-		} else if ( this.data.file ) {
-			//this.showFileDetailsModal();
-			this.downloadFile();
-		} else {
-			$( this.refs.input ).click();
+		let user = Meteor.user(),
+			roles = [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ],
+			role = user.getRole();
+
+		if ( _.contains( roles, role ) ) {
+			if ( this.data.isImage ) {
+				this.showImageInModal()
+			} else if ( this.data.file ) {
+				//this.showFileDetailsModal();
+				this.downloadFile();
+			} else {
+				$( this.refs.input ).click();
+			}
 		}
 	},
 	componentDidMount() {
