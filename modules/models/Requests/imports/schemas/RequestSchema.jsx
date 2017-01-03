@@ -643,7 +643,8 @@ const RequestSchema = {
 					onAddNewItem: ( callback ) => {
 						import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
 						let team = Session.getSelectedTeam(),
-						    facility = Facilities.collection._transform( { team } );
+						    facility = Facilities.create( { team } );
+								facility = 	Facilities.collection._transform( facility );
 						Modal.show( {
 							content:
 								<FacilityStepperContainer params = { {
