@@ -671,6 +671,8 @@ Teams.helpers( {
 		//console.log(role);
 		if ( role == "fmc support" || role == "portfolio manager" ) {
 			return this.getManagerFacilities( q );
+		} else if ( role == "manager" ) {
+		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
 		}
 		return this.getStaffFacilities( q );
 	},
