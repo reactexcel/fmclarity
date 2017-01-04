@@ -16,8 +16,6 @@ const CreateSupplierFacility = React.createClass({
 
 		if ( this.state.addTo == "Add facility to client's portfolio" && this.state.team ) {
 			item.team = this.state.team;
-			item.owner._id = this.state.team._id;
-			item.owner.name = this.state.team.name;
 		} else {
 			item.team = selectedTeam
 		}
@@ -38,7 +36,7 @@ const CreateSupplierFacility = React.createClass({
 					</div>
 					{this.state.addTo == "Add facility to client's portfolio" ?<div style={{margin: "10px"}}>
 						<Select
-							items={Session.getSelectedTeam().getClients()}
+							items={this.props.clients}
 							view={ContactCard}
 							onChange={( team ) => {
 								this.setState( { team } );

@@ -370,6 +370,12 @@ Teams.methods( {
 			Teams.update( { _id: team._id }, { $set: { "documents": documents} } );
 		}
 	},
+	getClientsOfSupplier: {
+		authentication: true,
+		helper: ( team ) => {
+			return Teams.findAll( { "owner._id": team._id } );
+		}
+	},
 } );
 
 function getSuppliers() {

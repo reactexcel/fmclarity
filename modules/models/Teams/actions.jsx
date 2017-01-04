@@ -65,15 +65,15 @@ const createFacility = new Action( {
 			_id: team._id,
 			name: team.name
 		} };
-		console.log(CreateSupplierFacility);
 		newItem = Facilities.create( item );
 
 		//newItem.setupCompliance( Config.compliance );
 
 		item = Facilities.collection._transform( newItem );
 		if( Meteor.user().getRole() == "manager" ) {
+			let clientsOfSupplier = team.getClientsOfSupplier();
 			Modal.show({
-				content: <CreateSupplierFacility />
+				content: <CreateSupplierFacility clients={clientsOfSupplier} />
 			})
 		} else {
 			Modal.show( {
