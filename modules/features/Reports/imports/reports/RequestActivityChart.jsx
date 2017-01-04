@@ -71,18 +71,29 @@ const RequestActivityChart = React.createClass( {
 	},
 
 	getInitialState() {
-		return {
-			viewConfig: {
-				format: 'MMM',
-				title: "[since] MMMM YYYY",
-				startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-				endDate: moment().endOf( 'month' ),
-			}
-		}
+		return ({
+					viewConfig: {
+						format: 'MMM',
+						title: "[since] MMMM YYYY",
+						startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
+						endDate: moment().endOf( 'month' ),
+					},
+					expandall: false
+				})
 	},
 
 	printChart(){
-		window.print();
+		var component = this;
+		component.setState( {
+			expandall: true
+		} );
+		
+		setTimeout(function(){
+			window.print();	
+			component.setState( {
+				expandall: false
+			} );
+		},200);
 	},
 
 	getMenu() {
@@ -335,7 +346,7 @@ const RequestActivityChart = React.createClass( {
 				    </div>
 				</div>
 				<div>
-				<ServicesRequestsView requests={buckets} labels={ requestStatuses }/>
+				<ServicesRequestsView requests={buckets} labels={ requestStatuses } expandall = {this.state.expandall}/>
 				</div>
 			</div>
 		)

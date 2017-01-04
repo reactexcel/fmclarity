@@ -30,7 +30,8 @@ const RequestBreakdownChart = React.createClass( {
 		var title = startDate.format( "[since] MMMM YYYY" )
 		return ( {
 			startDate: startDate,
-			title: title
+			title: title,
+			expandall: false
 		} )
 	},
 
@@ -98,7 +99,20 @@ const RequestBreakdownChart = React.createClass( {
 	},
 
 	printChart(){
-		window.print();
+		var component = this;
+		component.setState( {
+			expandall: true
+		} );
+		
+		setTimeout(function(){
+			window.print();	
+			component.setState( {
+				expandall: false
+			} );
+		},200);
+
+		
+		
 	},
 
 	getMenu() {
@@ -270,7 +284,7 @@ const RequestBreakdownChart = React.createClass( {
 					</div>
 				</div>
 				<div>
-				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels }/>
+				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
 				</div>
 			</div>
 		)

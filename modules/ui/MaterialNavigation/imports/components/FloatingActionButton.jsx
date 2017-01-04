@@ -20,7 +20,7 @@ export default class FloatingActionButton extends React.Component {
 		let { actions, team } = this.props;
 
 		return (
-			<div className="fab-panel" id="fab">
+			<div className="fab-panel noprint" id="fab">
 			 { actions.map( ( actionName, idx ) => {
 				 let action = FloatingActionButtonActions.actions[ actionName ]
 			 	return (
