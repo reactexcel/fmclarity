@@ -40,7 +40,8 @@ const RequestBreakdownChart = React.createClass( {
 		var query = {
 			createdAt: {
 				$gte: this.state.startDate.toDate()
-			}
+			},
+			status:{$ne:'Deleted'}
 		}
 
 		var facility = Session.get( 'selectedFacility' );
@@ -256,7 +257,9 @@ const RequestBreakdownChart = React.createClass( {
 		var facility=this.data.facility;
 		return (
 			<div>
-			<i className="pull-left fa fa-print noprint" onClick={this.printChart} style={{padding:"10px",cursor:"pointer"}} aria-hidden="true"></i>
+			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+			<i className="fa fa-print" aria-hidden="true"></i>
+			</button>
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
 					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>

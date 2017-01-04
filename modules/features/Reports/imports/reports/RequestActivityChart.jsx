@@ -318,7 +318,9 @@ const RequestActivityChart = React.createClass( {
 		});
 		return (
 			<div>
-			<i className="pull-left fa fa-print noprint" onClick={this.printChart} style={{padding:"10px",cursor:"pointer"}} aria-hidden="true"></i>
+			<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
+			<i className="fa fa-print" aria-hidden="true"></i>
+			</button>
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
 		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name:" for all facilities"}</h2>
