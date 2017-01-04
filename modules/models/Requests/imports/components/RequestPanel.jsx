@@ -101,13 +101,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     let url = '/requests/print/' + request._id;
     var viewers=[];
-    request.readBy.map(function(u, idx){
+    request.readBy ? request.readBy.map(function(u, idx){
         var user = Meteor.users.findOne(u._id);
         if ((request.readBy.length-1) != idx) {
             viewers.push(user.profile.name);
         }
          
-     });
+     }) : null;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
