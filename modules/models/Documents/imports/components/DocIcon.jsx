@@ -26,7 +26,18 @@ export default function DocIcon( props ) {
 		} )
 	}
 
-
+function removeDocumentFromList( docToRemove ) {
+	let team = facility = null,
+		modelName = props.model._name;
+	if (modelName == "Facilities") {
+		facility = Session.getSelectedFacility();
+		facility.removeDocument( docToRemove );
+	} else if ( modelName == "Teams" ) {
+		team = Session.getSelectedTeam();
+		team.removeDocument( docToRemove );
+	}
+	props.handleListUpdate( docToRemove );
+}
 
 	function getColorFromString( str ) {
 		var r = ( str.charCodeAt( str.length - 3 ) % 25 ) * 10;
@@ -85,11 +96,15 @@ export default function DocIcon( props ) {
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							runaction( DocActions.destroy.bind(props.team, item ) );
-							props.onChange();
+							if(props.handleListUpdate){
+								removeDocumentFromList( item );
+							} else {
+								runaction( DocActions.destroy.bind(props.team, item ) );
+								props.onChange();
+							}
 						}
 					}>
-					&times;
+					<span>&times;</span>
 				</button>
 			</span> : null }
 			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?

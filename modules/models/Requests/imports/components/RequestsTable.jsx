@@ -100,6 +100,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
         });
         
     return ( 
+        <div className = "request-table">
         <DataTable 
             items   = { requests }
             fields  = { newCols }
@@ -118,5 +119,6 @@ export default function RequestsTable( { requests, filter, columns } ) {
                 }
             } // need a better solution for this
         />
+        </div>
     )
 }

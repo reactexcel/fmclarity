@@ -203,13 +203,17 @@ const FacilitySchema = {
 		label: "Area information",
 		type: "object",
 		subschema: {
-			 bookable:{
-				 label: 'Bookable / Leasable',
+			 type:{
+				 label: 'Type',
 				 size: 12,
-				 input: Switch,
-				 type: "boolean",
-				 defaultValue: true,
+				 input: Select,
+				 type: "string",
 				 options:{
+					 items:[
+						 'Bookable',
+						 'Leasable',
+						 'Standard'
+					 ],
 					 afterChange( item ) {
 						 //item.leasable = false;
 						 item.unit = null;
@@ -223,6 +227,10 @@ const FacilitySchema = {
 						 item.minimumAllowablePeriod = null;
 						 item.maximumAllowablePeriod = null;
 					 }
+				 },
+				 condition(item) {
+					 item.type  = item.type || "Bookable";
+					 return true;
 				 }
 			 },
 			//  leasable:{
@@ -277,7 +285,7 @@ const FacilitySchema = {
 					 ]
 				 },
 				 condition(item){
-					 return !item.bookable;
+					 return item.type === "Bookable";
 				 }
 			 },
 			 hour:{
@@ -303,16 +311,16 @@ const FacilitySchema = {
 				 labe: "Days",
 				 type: "object",
 				 input( props ) {
-					 let days = [  'M-F', "Mon", "Thu", "Wed", "Thr", "Fri", "Sat", "Sun" ];
-					 let weekDays = [ "Mon", "Thu", "Wed", "Thr", "Fri" ]
+					 let days = [  'M-F', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
+					 let weekDays = [ "Mon", "Tue", "Wed", "Thu", "Fri" ]
 					 let weekEnds = [ "Sun", "Sat", ];
 					 let selected = props.value || {
 						  'M-F': {select:false,time:""},
 						  "Sun": {select:false,time:""},
 						  "Mon": {select:false,time:""},
-							"Thu": {select:false,time:""},
+							"Tue": {select:false,time:""},
 							"Wed": {select:false,time:""},
-							"Thr": {select:false,time:""},
+							"Thu": {select:false,time:""},
 							"Fri": {select:false,time:""},
 							"Sat": {select:false,time:""}
 					 };
@@ -457,7 +465,7 @@ const FacilitySchema = {
 					 ]
 				 },
 				 condition(item){
-					 return item.bookable;
+					 return item.type === "Leasable" || item.type === "Standard";
 				 }
 			 },
 			 "minimumAllowablePeriod":{
@@ -465,7 +473,7 @@ const FacilitySchema = {
 				 size:6,
 				 input: Text,
 				 condition(item){
-					 return !item.bookable;
+					 return item.type === "Bookable";
 				 }
 			 },
 			 "maximumAllowablePeriod":{
@@ -473,7 +481,7 @@ const FacilitySchema = {
 				 size:6,
 				 input:Text,
 				 condition(item){
-					 return !item.bookable;
+					 return item.type === "Bookable";
 				 }
 			 },
 			 "cost":{
@@ -481,7 +489,7 @@ const FacilitySchema = {
 				 size:6,
 				 input: Currency,
 				 condition(item){
-					 return !item.bookable;
+					 return item.type === "Bookable";;
 				 }
 			 },
 			 nla:{
@@ -489,7 +497,7 @@ const FacilitySchema = {
 				 size:6,
 				 input: Text,
 				 condition(item){
-					 return item.bookable;
+					 return item.type === "Leasable" || item.type === "Standard" ;
 				 }
 			 },
 			 areaUnit:{
@@ -518,7 +526,7 @@ const FacilitySchema = {
 					 });
 				 },
 				 condition(item){
-					 return item.bookable;
+					 return item.type === "Leasable" || item.type === "Standard";
 				 }
 			 },
 			 areaDescription:{
@@ -528,7 +536,6 @@ const FacilitySchema = {
 			 }
 		 },
 	 },
-
 
 	 serviceDetails:{
 		 label: "Area information",
@@ -571,24 +578,25 @@ const FacilitySchema = {
 				 }
 			 },
 			 cfy: {
-				 size: 4,
+				 size: 1,
 				 input( props ){
+					 let month = parseInt(moment().format("M"));
 					 return (
-						 <div className="col-sm-12" style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "14%", height: "10%" }}>
-							 <span>Current Financial Year: {props.cfy?props.cfy:"FY"+moment().format("YY")}</span>
+						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "63%", height: "10%" }}>
+							 <span style={{paddingLeft:"2px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
 						 </div>
 					 )
 				 }
 			 },
 			 budget:{
 				 label:"Enter budget",
-				 size: 8,
+				 size: 11,
 				 input( props ){
 					 return(
 						 item.glAccount == "Not applicable"?
 						 	 <Currency { ...props }/>:
-						 <div>
-							 Budge: <span>{"$"+ props.value!=""?props.value:0 }</span>
+						 <div style={{marginLeft:"-10px"}}>
+							 Budget: <span>${props.value!=""?props.value:0 }</span>
 						 </div>
 					 )
 				 }

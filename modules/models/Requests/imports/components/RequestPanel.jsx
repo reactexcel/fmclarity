@@ -8,6 +8,7 @@ import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
+import { Users } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
@@ -190,7 +191,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-				{ request.service && request.type != 'Booking' ?
+				{ teamType=='fm' && request.service && request.type != 'Booking' ?
 				<tr>
 					<th>Service</th>
 					<td>{request.getServiceString()}</td>
@@ -249,10 +250,25 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { request.eta ?
+                { teamType=='fm' && request.eta ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
+                </tr> : null }
+
+                { request.readBy ?
+                <tr>
+                    <td></td>
+                    <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen By</span>
+                    <ul className="seen-by-list">
+                    {request.readBy.map(function(u, idx){
+                        var user = Meteor.users.findOne(u._id);
+                        return (
+                            <li key={u._id}><a href="" title={u.readAt}>{user.profile ? user.profile.name : user.name}</a></li>
+                            )
+                    })}
+                    </ul>
+                    </td>
                 </tr> : null }
 
                 </tbody>

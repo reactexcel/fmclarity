@@ -78,13 +78,19 @@ const FileView = React.createClass( {
 	},
 
 	onClick() {
-		if ( this.data.isImage ) {
-			this.showImageInModal()
-		} else if ( this.data.file ) {
-			//this.showFileDetailsModal();
-			this.downloadFile();
-		} else {
-			$( this.refs.input ).click();
+		let user = Meteor.user(),
+			roles = [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ],
+			role = user.getRole();
+
+		if ( _.contains( roles, role ) ) {
+			if ( this.data.isImage ) {
+				this.showImageInModal()
+			} else if ( this.data.file ) {
+				//this.showFileDetailsModal();
+				this.downloadFile();
+			} else {
+				$( this.refs.input ).click();
+			}
 		}
 	},
 	componentDidMount() {
@@ -138,6 +144,7 @@ const FileView = React.createClass( {
 		 this.handleChange(e);
 	},
 	render() {
+		let role = Meteor.user().getRole();
 		return (
 			<div>
 				{this.data.file?
@@ -164,7 +171,7 @@ const FileView = React.createClass( {
 								<input ref="input" type="file" onChange={this.handleChange}/>
 							</div>
 						</div>
-						{ Meteor.user().getTeam().type != 'contractor' ? <div className="close-button" onClick={this.deleteFile}>&times;</div>: null}
+						{ Meteor.user().getTeam().type != 'contractor' && _.contains([ 'fmc support', "portfolio manager" ], role ) ? <div className="close-button" onClick={this.deleteFile}>&times;</div>: null}
 						<div className="caption">{this.data.name}</div>
 					</div>:
 

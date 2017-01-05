@@ -4,12 +4,12 @@ import { Actions } from '/modules/core/Actions';
 
 //console.log( { Actions, Routes } );
 function loadExternalScripts(  ) {
-	// load google map api script
-	loadGoogleMapApiScript(  );
 
 	// load browser-update.org browser compatibility script
 	loadBrowerCompatibilityScript();
 
+	// load google map api script
+	loadGoogleMapApiScript(  );
 	sortableApiScript();
 
 }
@@ -34,7 +34,18 @@ function sortableApiScript(  ){
 	document.body.appendChild(link);
 }
 function loadBrowerCompatibilityScript(  ){
-	window.$buoop = {vs:{i:10,f:-4,o:-4,s:8,c:-4},api:4, test:false};
+	window.$buoop = {
+		vs:{
+			i:10,
+			f:-4,
+			o:-4,
+			s:8,
+			c:-4
+		},
+		api:4,
+		text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
+		test:false //change this to true to show message onscreen for testing purposes
+	};
 		$(window).bind('load', function() {
 		    const script = document.createElement("script");
 			script.src = "http://browser-update.org/update.min.js";
