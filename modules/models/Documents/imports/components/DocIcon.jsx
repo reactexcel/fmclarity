@@ -11,6 +11,8 @@ import { DocActions } from '/modules/models/Documents';
 
 import { Switch } from '/modules/ui/MaterialInputs';
 
+import { Documents } from '/modules/models/Documents';
+
 export default function DocIcon( props ) {
 
 	function showFileDetailsModal() {
@@ -50,6 +52,9 @@ export default function DocIcon( props ) {
 	}
 
 	let item = props.item;
+		if ( item ) {
+			item = Documents.findOne( { "_id": props.item._id } );
+		}
 	if ( item == null ) {
 		return (
 			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={handleClick}>
@@ -69,13 +74,13 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
-			<span style={{display:"inline-block",width:"43%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
+			<span style={{display:"inline-block",width:"40%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
 			{ _.contains(['fmc support', "portfolio manager" ], props.role ) ?
-				<span style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+				<span style={{display:"inline-block",width:"5%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
 				<button
 					type 		= "button"
-					className 	= "btn btn-danger btn-flat"
+					className 	= "btn btn-flat"
 					title="Remove"
 					onClick={
 						( event ) => {
@@ -84,7 +89,7 @@ export default function DocIcon( props ) {
 							props.onChange();
 						}
 					}>
-					<i className="fa fa-trash" aria-hidden="true" style={{fontSize:"1.5em"}}></i>
+					&times;
 				</button>
 			</span> : null }
 			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?

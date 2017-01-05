@@ -375,6 +375,7 @@ Requests.methods( {
 					name: doc.name,
 					type: doc.type,
 					description: doc.description,
+					private: doc.private,
 				}
 			} );
 		}
