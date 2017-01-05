@@ -31,6 +31,8 @@ const RequestActivityChart = React.createClass( {
 
 	getMeteorData() {
 
+		const handle = Meteor.subscribe('User: Facilities, Requests');
+
 		var openQuery = {status:{$ne:'Closed'},}
 		var closedQuery = {
 			status: "Closed",
@@ -61,6 +63,7 @@ const RequestActivityChart = React.createClass( {
 
 		return {
 			facility: facility,
+			ready: handle.ready(),
 			openSeries: open.sets,
 			closedSeries: closed.sets,
 			openQuery: openQuery,
@@ -327,6 +330,11 @@ const RequestActivityChart = React.createClass( {
 			}
 			buckets[ 'Closed' ].push( i );
 		});
+		facilities=null;
+		if (this.data.ready) {
+			facilities = Meteor.user().getTeam().getFacilities();
+			}
+		
 		return (
 			<div>
 			<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
@@ -334,7 +342,7 @@ const RequestActivityChart = React.createClass( {
 			</button>
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
-		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name:" for all facilities"}</h2>
+		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">

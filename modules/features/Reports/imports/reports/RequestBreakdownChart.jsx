@@ -55,6 +55,7 @@ const RequestBreakdownChart = React.createClass( {
 		if ( team ) {
 			query[ "team._id" ] = team._id;
 		}
+		const handle = Meteor.subscribe('User: Facilities, Requests');
 
 		var requests = Requests.find( query );
 
@@ -94,7 +95,8 @@ const RequestBreakdownChart = React.createClass( {
 			facility: facility,
 			labels: labels,
 			set: set, //costs//counts
-			buckets: buckets
+			buckets: buckets,
+			ready: handle.ready()
 		}
 	},
 
@@ -269,6 +271,10 @@ const RequestBreakdownChart = React.createClass( {
 
 	render() {
 		var facility=this.data.facility;
+		facilities=null;
+		if (this.data.ready) {
+			facilities = Meteor.user().getTeam().getFacilities();
+		}
 		return (
 			<div>
 			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
@@ -276,7 +282,7 @@ const RequestBreakdownChart = React.createClass( {
 			</button>
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
-					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
+					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
 					<div>
