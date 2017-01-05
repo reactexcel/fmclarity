@@ -283,7 +283,7 @@ const RequestBreakdownChart = React.createClass( {
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
-				<div>
+				<div className="gragh-table">
 				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
 				</div>
 			</div>

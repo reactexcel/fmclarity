@@ -345,7 +345,7 @@ const RequestActivityChart = React.createClass( {
 				        </div>
 				    </div>
 				</div>
-				<div>
+				<div className="gragh-table">
 				<ServicesRequestsView requests={buckets} labels={ requestStatuses } expandall = {this.state.expandall}/>
 				</div>
 			</div>
