@@ -427,7 +427,6 @@ export default DocumentSchema = {
 				"House Rules",
 				"Induction",
 				"Inspection",
-				"Insurance",
 				"Invoice",
 				"Lease",
 				"MSDS",
