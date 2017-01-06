@@ -779,7 +779,6 @@ const RequestSchema = {
 					}
 				},
 				afterChange: ( item ) => {
-					console.log( item.assignee );
 					let found = false;
 					if( item.assignee ) {
 						import { Users } from '/modules/models/Users';

@@ -71,6 +71,9 @@ Requests.save.before( ( request ) => {
 	} else if ( request.type == "Booking" ) {
 		request.status = "Booking";
 		request.priority = "Booking";
+	} 
+	if (request.costThreshold.length === 0 || !request.costThreshold.trim()) {
+				request.costThreshold = '0';
 	}
 } );
 
