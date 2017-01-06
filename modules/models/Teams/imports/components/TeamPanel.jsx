@@ -68,6 +68,7 @@ const TeamPanel = React.createClass( {
 		}
 
 		if ( team ) {
+			Meteor.subscribe( 'Inbox: Messages', team._id );
 			if( team.getAvailableServices ) {
 				services = team.getAvailableServices();
 			}

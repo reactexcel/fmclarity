@@ -26,7 +26,7 @@ function ServicesRequestsViewRow( props ) {
 
 					<span
 						onClick 	= { clickExpand }
-						className 	= "services-editor-expand-icon"
+						className 	= "services-editor-expand-icon noprint"
 					>
 						<i className="fa fmc-fa-icon-expand"></i>
 					</span>
