@@ -264,7 +264,16 @@ Facilities.actions( {
 	getDocs: {
 		authentication: true,
 		helper: function( facility ) {
-			return Documents.find( { 'facility._id': facility._id } ).fetch();
+			let docs =  Documents.find( { 'facility._id': facility._id } ).fetch();
+			return _.map( docs, ( doc ) => {
+					return {
+							_id: doc._id,
+							name: doc.name,
+							type: doc.type,
+							description: doc.description,
+							private: doc.private,
+					}
+			} );
 		}
 	},
 	/**

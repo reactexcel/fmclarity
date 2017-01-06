@@ -53,7 +53,7 @@ const makePrivate = new Action( {
 	label: "Private document",
 	action: ( team, doc, private ) => {
 		doc = Documents.findOne( doc._id );
-		doc.makePrivate(private);
+		doc && doc.makePrivate(private);
 	}
 } )
 
