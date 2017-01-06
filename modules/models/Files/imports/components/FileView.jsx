@@ -77,7 +77,7 @@ const FileView = React.createClass( {
 		}
 	},
 
-	onClick() {
+	onClick(event,add) {
 		let user = Meteor.user(),
 			roles = [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ],
 			role = user.getRole();
@@ -91,6 +91,8 @@ const FileView = React.createClass( {
 			} else {
 				$( this.refs.input ).click();
 			}
+		} else if ( add ) {
+			$( this.refs.input ).click();
 		}
 	},
 	componentDidMount() {
@@ -185,7 +187,7 @@ const FileView = React.createClass( {
     					marginTop: '10px',
     					position: 'relative',
 						}}
-						onClick={this.onClick} >
+						onClick={ (e) => this.onClick(e,1)} >
 						<div style={{width:0,height:0,overflow:"hidden"}}>
 							<input ref="input" type="file" onChange={this.handleChange}/>
 						</div>
