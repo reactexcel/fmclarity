@@ -85,7 +85,7 @@ function removeDocumentFromList( docToRemove ) {
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
-			<span style={{display:"inline-block",width:"40%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
+			<span style={{display:"inline-block",width:"46%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
 			{ _.contains(['fmc support', "portfolio manager" ], props.role ) ?
 				<span style={{display:"inline-block",width:"5%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
@@ -108,17 +108,8 @@ function removeDocumentFromList( docToRemove ) {
 				</button>
 			</span> : null }
 			{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) ?
-				<span onClick={e => e.stopPropagation()} style={{display:"inline-block",width:"5%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
-					<Switch
-						value={item.private}
-						placeholder={item.private?"Hidden":"Visible"}
-						onChange={
-							( checked ) => {
-								runaction( DocActions.makePrivate.bind(props.team, item, checked ) );
-								props.onChange();
-							}
-						}
-    			/>
+				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
+					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
 		</div>:null}
 	</div>
