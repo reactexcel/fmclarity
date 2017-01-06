@@ -615,7 +615,8 @@ const RequestSchema = {
 		options: ( request ) => {
 
 			let team = Teams.findOne( request.team._id ),
-				facilities = team.getFacilities( { 'team._id': request.team._id } );
+				facilities = team.getFacilities( { 'team._id': request.team._id } ),
+				role = Meteor.user().getRole();
 			/*
 			import { Facilities } from '/modules/models/Facilities';
 			let facilities = Facilities.findAll( { 'team._id': request.team._id } );
@@ -638,7 +639,7 @@ const RequestSchema = {
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
-					show: !_.contains(["staff",'resident'], role),//Meteor.user().getRole() != 'staff',
+					show: !_.contains(["staff",'resident'], role),
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
@@ -698,7 +699,8 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			let facility = item.facility,
-				supplier = null;
+				supplier = null,
+				role = Meteor.user().getRole();
 			return {
 				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
 				view: ContactCard,
