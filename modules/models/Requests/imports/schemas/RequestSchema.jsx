@@ -615,6 +615,7 @@ const RequestSchema = {
 		options: ( request ) => {
 
 			let team = Teams.findOne( request.team._id ),
+				role = Meteor.user().getRole(),
 				facilities = team.getFacilities( { 'team._id': request.team._id } );
 			/*
 			import { Facilities } from '/modules/models/Facilities';
@@ -698,7 +699,8 @@ const RequestSchema = {
 		input: Select,
 		options: ( item ) => {
 			let facility = item.facility,
-				supplier = null;
+				supplier = null,
+				role = Meteor.user().getRole();
 			return {
 				items: item.facility && item.facility.getSuppliers ? item.facility.getSuppliers() : null,
 				view: ContactCard,
