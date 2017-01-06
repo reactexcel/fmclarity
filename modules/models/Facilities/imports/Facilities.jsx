@@ -475,7 +475,7 @@ function invitePropertyManager( team, email, ext ) {
 
 }
 
-function sendMemberInvite( team, recipient ) {
+function sendMemberInvite( facility, recipient, team ) {
 	console.log( recipient );
 	let body = ReactDOMServer.renderToStaticMarkup(
 		React.createElement( TeamInviteEmailTemplate, {
