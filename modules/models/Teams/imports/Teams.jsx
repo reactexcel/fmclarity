@@ -370,6 +370,12 @@ Teams.methods( {
 			Teams.update( { _id: team._id }, { $set: { "documents": documents} } );
 		}
 	},
+	getClientsOfSupplier: {
+		authentication: true,
+		helper: ( team ) => {
+			return Teams.findAll( { "owner._id": team._id } );
+		}
+	},
 } );
 
 function getSuppliers() {
@@ -671,6 +677,8 @@ Teams.helpers( {
 		//console.log(role);
 		if ( role == "fmc support" || role == "portfolio manager" ) {
 			return this.getManagerFacilities( q );
+		} else if ( role == "manager" ) {
+		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
 		}
 		return this.getStaffFacilities( q );
 	},

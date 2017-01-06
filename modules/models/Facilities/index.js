@@ -10,6 +10,7 @@ import FacilityStepper from './imports/components/FacilityStepper.jsx';
 import FacilityStepperContainer from './imports/containers/FacilityStepperContainer.jsx';
 import FacilityDetails from './imports/components/FacilityDetails.jsx';
 import FacilityListTile from './imports/components/FacilityListTile.jsx';
+import CreateSupplierFacility from './imports/components/CreateSupplierFacility.jsx';
 
 import FacilityActions from './actions.jsx'
 
@@ -24,6 +25,7 @@ export {
 	FacilityStepper,
 	FacilityStepperContainer,
 	FacilityListTile,
-	
+	CreateSupplierFacility,
+
 	FacilityActions
 }
