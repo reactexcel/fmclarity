@@ -6,7 +6,7 @@ import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm, RequestActions } from '/modules/models/Requests';
-import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
+import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import moment from 'moment';
@@ -70,10 +70,16 @@ const createFacility = new Action( {
 		//newItem.setupCompliance( Config.compliance );
 
 		item = Facilities.collection._transform( newItem );
-
-		Modal.show( {
-            content: <FacilityStepperContainer params = { { item } } />
-		} )
+		if( Meteor.user().getRole() == "manager" ) {
+			let clientsOfSupplier = team.getClientsOfSupplier();
+			Modal.show({
+				content: <CreateSupplierFacility clients={clientsOfSupplier} />
+			})
+		} else {
+			Modal.show( {
+				content: <FacilityStepperContainer params = { { item } } />
+			} )
+		}
 	}
 } )
 

@@ -248,7 +248,9 @@ const TeamStepper = React.createClass( {
                     }
                   }
                   onFinish = { () => {
-                      this.props.onFinish( viewingTeam )
+                      if(this.props.onFinish){
+                        this.props.onFinish( viewingTeam )
+                      }
                     }
                   }
                   tabs={[

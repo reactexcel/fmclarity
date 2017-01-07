@@ -471,7 +471,18 @@ const FacilitySchema = {
 			 "minimumAllowablePeriod":{
 				 label: 'Minimum allowable period',
 				 size:6,
-				 input: Text,
+				 input(props){
+					 return(
+						 	<div className="row">
+								<div className="col-xs-10">
+									<Text {...props}/>
+								</div>
+								<div className="col-xs-2" style={{marginTop: "7%"}}>
+									<span>{props.item.unit}</span>
+								</div>
+							</div>
+					 )
+				 },
 				 condition(item){
 					 return item.type === "Bookable";
 				 }
@@ -479,7 +490,18 @@ const FacilitySchema = {
 			 "maximumAllowablePeriod":{
 				 label: 'Maximum allowable period',
 				 size:6,
-				 input:Text,
+				 input(props){
+					 return(
+						 	<div className="row">
+								<div className="col-xs-10">
+									<Text {...props}/>
+								</div>
+								<div className="col-xs-2" style={{marginTop: "7%"}}>
+									<span>{props.item.unit}</span>
+								</div>
+							</div>
+					 )
+				 },
 				 condition(item){
 					 return item.type === "Bookable";
 				 }

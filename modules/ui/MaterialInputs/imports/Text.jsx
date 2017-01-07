@@ -44,13 +44,11 @@ const Text = React.createClass( {
 		let { value, errors, item, fieldName } = this.props,
 			used = false,
 			invalid = false,
-			classes = [ "input" ],
-			unit = '';
+			classes = [ "input" ];
 
 		if ( value != null && value.length != 0 ) {
 			used = true;
 			classes.push( "used" );
-			unit = !_.contains(["areaDescription", "nla"], fieldName) && item && item.unit
 		}
 
 		if ( errors != null && errors.length ) {
@@ -70,18 +68,6 @@ const Text = React.createClass( {
       			onSelect		= { this.handleSelect }
       			maxLength		= { this.props.maxLength }
       		/>
-        {unit?
-          <span
-            style={{
-     		      position: 'absolute',
-              right: "20px",
-     		      marginTop: '-22px',
-     		      marginLeft: '329px',
-     		      display: 'block',
-     	      }}>
-              {unit}
-            </span>:""
-          }
 	        {
         	used?
     		<div

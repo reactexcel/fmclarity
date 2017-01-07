@@ -33,7 +33,8 @@ const DocForm = [
 	'optionExerciseFromDate',
 	'optionExerciseToDate',
 	'area',
-	'attachments'
+	'private',
+	'attachments',
 
 ]
 

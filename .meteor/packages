@@ -79,3 +79,4 @@ jquery@1.11.10
 # MDG Extensions
 mdg:geolocation
 mdg:validation-error
+percolate:synced-cron

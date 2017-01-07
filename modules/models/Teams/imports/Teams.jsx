@@ -326,6 +326,7 @@ Teams.methods( {
 					name: doc.name,
 					type: doc.type,
 					description: doc.description,
+					private: doc.private,
 				}
 			} );
 		}
@@ -368,6 +369,12 @@ Teams.methods( {
 			let documents = team.documents;
 			documents = _.filter( documents, (d) => d._id != docToRemove._id );
 			Teams.update( { _id: team._id }, { $set: { "documents": documents} } );
+		}
+	},
+	getClientsOfSupplier: {
+		authentication: true,
+		helper: ( team ) => {
+			return Teams.findAll( { "owner._id": team._id } );
 		}
 	},
 } );
@@ -671,6 +678,8 @@ Teams.helpers( {
 		//console.log(role);
 		if ( role == "fmc support" || role == "portfolio manager" ) {
 			return this.getManagerFacilities( q );
+		} else if ( role == "manager" ) {
+		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
 		}
 		return this.getStaffFacilities( q );
 	},
