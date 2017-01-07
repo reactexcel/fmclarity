@@ -91,6 +91,14 @@ Actions.addAccessRule( {
 	alert: true
 } );
 
+Actions.addAccessRule( {
+	action: [
+		'create team',
+	],
+	role: [ 'manager' ],
+	alert: true
+} );
+
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
 //  it should be accessed through a team action. ie edit team member

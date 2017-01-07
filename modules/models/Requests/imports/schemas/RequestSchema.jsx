@@ -639,12 +639,13 @@ const RequestSchema = {
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
-					show: !_.contains(["staff",'resident'], role),//Meteor.user().getRole() != 'staff',
+					show: !_.contains(["staff",'resident'], Meteor.user().getRole()),//Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
 						let team = Session.getSelectedTeam(),
-						    facility = Facilities.collection._transform( { team } );
+						    facility = Facilities.create( { team } );
+								facility = 	Facilities.collection._transform( facility );
 						Modal.show( {
 							content:
 								<FacilityStepperContainer params = { {
@@ -706,7 +707,7 @@ const RequestSchema = {
 				view: ContactCard,
 				addNew: {
 					//Add new supplier to request and selected facility.
-					show: !_.contains(["staff",'resident'], role),//Meteor.user().getRole() != 'staff',
+					show: !_.contains(["staff",'resident'], Meteor.user().getRole()),//Meteor.user().getRole() != 'staff',
 					label: "Create New",
 					onAddNewItem: ( callback ) => {
 						import { TeamStepper } from '/modules/models/Teams';

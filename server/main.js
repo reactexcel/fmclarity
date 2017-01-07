@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import CronJobs from "./cronJobs.js";
 
 Meteor.startup( function() {
 
@@ -8,6 +9,24 @@ Meteor.startup( function() {
 	process.env.ROOT_URL = 'https://app.fmclarity.com';
 	process.env.MAIL_URL = "smtp://" + smtpUsername + ":" + encodeURIComponent( smtpPassword ) + "@email-smtp.us-west-2.amazonaws.com:465/";
 
+	SyncedCron.config({
+    log: true,
+    logger: null,
+    collectionName: 'cronHistory',
+    utc: false,
+    collectionTTL: 172800
+  });
+
+	SyncedCron.add({
+	  name: 'Issue PPM Request',
+	  schedule: function(parser) {
+	    //return parser.text('every 5 secs');
+	    return parser.text("at 09:00 am");
+	  },
+	  job: CronJobs.issuePPMRequest,
+	});
+
+	//SyncedCron.start();
 } );
 
 FM.inDevelopment = function() {

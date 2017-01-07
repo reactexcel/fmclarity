@@ -34,8 +34,15 @@ const invite = new Action( {
 	action: ( group, member, onUpdate ) => {
 		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		import { Teams } from '/modules/models/Teams';
-		if ( Teams.findOne( { _id: group._id} ) ) {
-			group.sendMemberInvite( member );
+		let collection = null,
+			team = Session.getSelectedTeam();
+
+		if ( group && group.collectionName ) {
+			collection = ORM.collections[ group.collectionName ];
+		}
+
+		if ( collection && collection.findOne( { _id: group._id} ) ) {
+			group.sendMemberInvite( member, team );
 			window.alert("Invitation has been sent to \""+ member.getName() + "\"");
 		}
 	}
