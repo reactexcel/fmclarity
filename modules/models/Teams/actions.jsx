@@ -106,7 +106,7 @@ const createRequest = new Action( {
 						newRequest.owner = {
 							_id: owner._id,
 							name: owner.profile?owner.profile.name:owner.name
-						};							
+						};
 
 						if ( newRequest.type == 'Preventative' ) {
 							Meteor.call('Issues.create', newRequest );
