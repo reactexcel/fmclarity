@@ -175,6 +175,9 @@ const Select = React.createClass( {
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
+		        	if( !item ) {
+		        		return null;
+		        	}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
 			    		className = "dropdown-menu-item"
