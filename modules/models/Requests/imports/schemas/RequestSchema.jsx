@@ -48,6 +48,7 @@ const RequestSchema = {
 		label: "Summary",
 		type: "string",
 		required: true,
+		maxLength: 45,
 		input: Text,
 		description: "A brief, descriptive, title for the work request"
 	},

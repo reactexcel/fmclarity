@@ -66,6 +66,7 @@ const Text = React.createClass( {
       			defaultValue	= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
+      			maxLength		= { this.props.maxLength }
       		/>
 	        {
         	used?
