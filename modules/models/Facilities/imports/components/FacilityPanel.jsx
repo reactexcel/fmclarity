@@ -79,7 +79,7 @@ function FacilityPanel( { item } ) {
 					{
 						hide:       !facility.canGetMessages(),
 						tab:        <span id="discussion-tab">Updates</span>,
-						content:    <Inbox for = { facility } truncate = { true } readOnly = { true }/>
+						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
 						hide:     	!facility.canAddDocument() || teamType!='fm',
 						tab:        <span id="documents-tab">Documents</span>,

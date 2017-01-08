@@ -106,7 +106,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         if ((request.readBy.length-1) != idx) {
             viewers.push(user.profile.name);
         }
-         
+
      }) : null;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
@@ -269,16 +269,16 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td></td>
                     <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen By</span>
                     <ul className="seen-by-list">
-                    {request.readBy.length > 2 ? 
+                    {request.readBy.length > 2 ?
                         <li>
                         <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
-                         and <a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
+                        <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
                         var user = Meteor.users.findOne(u._id);
                         return (
                             <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user._id==Meteor.userId() ? "me " : (user.profile ? user.profile.name : user.name)}</a></li>
                             )
                     })}
-                    
+
                     </ul>
                     </td>
                 </tr> : null }
@@ -291,6 +291,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
+                    hide:       !_.contains( [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ], Meteor.user().getRole()),
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 

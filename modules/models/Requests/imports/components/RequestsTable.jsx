@@ -11,7 +11,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
 
 	let team = Meteor.user().getTeam();
 	//when in client (fm) view, show supplier, else if in supplier view show client on table column name.
-	let ClientOrSupplier = team.type == 'fm' ? 'Supplier' : 'Client'; 
+	let ClientOrSupplier = team.type == 'fm' ? 'Supplier' : 'Client';
     this.fields = {
         /*  Priority: "priority",
         Status: "status",
@@ -28,7 +28,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
             }*/
         "Prty": ( item ) => {
             return {
-                originalVal: item.priority,                
+                originalVal: item.priority,
                 val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >
                     <i className = {`fa fa-circle priority-${item.priority}`}></i>
                 </span>)
@@ -41,7 +41,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
             }
         },
         "Facility": "facility.name",
-        "PO#": ( item ) => {
+        "WO#": ( item ) => {
             return {
                 val:item.code? item.code : "",
                 originalVal: item.code
@@ -59,7 +59,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
         },
 		//use square brackets for dynamic JSON keys (as variables)
 		[ ClientOrSupplier ] : ( item ) => {
-			
+
 			if ( team.type == 'fm' ) {
 				let supplier = item.getSupplier();
                 if( supplier ) {
@@ -85,7 +85,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
         //let statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
         requests = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
-            filter 
+            filter
         ] });
     }
     if (Session.get( 'selectedFacility' )) {
@@ -98,10 +98,10 @@ export default function RequestsTable( { requests, filter, columns } ) {
         requiredColumns.map(function(col){
             newCols[col] = this.fields[col];
         });
-        
-    return ( 
+
+    return (
         <div className = "request-table">
-        <DataTable 
+        <DataTable
             items   = { requests }
             fields  = { newCols }
             sortByColumn = "Issued"
