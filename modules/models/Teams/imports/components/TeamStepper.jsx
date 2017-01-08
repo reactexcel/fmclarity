@@ -201,7 +201,7 @@ const TeamStepper = React.createClass( {
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
                         {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder="Select Supplier from dropdown"/> : null }
-                        <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
+                        <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
                         <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
                     </div>
                 </form>

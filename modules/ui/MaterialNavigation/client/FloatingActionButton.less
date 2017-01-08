@@ -1,107 +1,75 @@
-.fab-panel
-{
-	position: fixed;
-	z-index: 1300;
-	right: 0;
-	bottom: 0;
-
-	overflow: visible;
-
-	width: 90px;
-	height: 300px;
-
-	transition: opacity .2s;
-	text-align: center;
+.fab-panel {
+    position: fixed;
+    z-index: 1300;
+    right: 0;
+    bottom: 0;
+    overflow: visible;
+    width: 90px;
+    height: 300px;
+    transition: opacity .2s;
+    text-align: center;
 }
 
-.fab
-{
-	font-size: 0;
-
-	position: absolute;
-	right: 40px;
-	bottom: 100px;
-
-	width: 10px;
-	height: 10px;
-	padding: 0;
-
-	cursor: pointer;
-	transition: .75s ease-in-out 1.5s;
-
-	opacity: 0;
-	color: #fff;
-	border: none;
-	border-radius: 50%;
-	outline: none;
-	background-color: #666;
-	box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+.fab {
+    font-size: 0;
+    position: absolute;
+    right: 40px;
+    bottom: 100px;
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    cursor: pointer;
+    transition: font .2s, right .2s, bottom .2s, height .2s, width .2s, opacity .2s, background-color .2s;
+    transition-delay: 1.5s;
+    opacity: 0;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    background-color: #666;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
 }
 
-.fab:first-child
-{
-	font-size: 30px;
-
-	right: 17px;
-	bottom: 20px;
-
-	width: 56px;
-	height: 56px;
-
-	opacity: .8;
-	color: #fff;
-	background-color: #3ca773;
+.fab-1 {
+    font-size: 30px;
+    right: 17px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    opacity: .8;
+    color: #fff;
+    background-color: #3ca773;
 }
 
-.fab:first-child:hover
-{
-	opacity: 1;
-}
 
-.fab-1:hover ~ .fab
-{
-	font-size: 20px;
-
-	right: 25px;
-
-	width: 40px;
-	height: 40px;
-
-	opacity: .7;
-	transition: height .25s ease-in-out 0s; 
-}
-
-.fab-panel:hover .fab:not(:first-child):hover
-{
-	opacity: 1;
-}
-
-.fab-panel:hover .fab-2
-{
-	background-color:red;
-	bottom: 90px;
-}
-
-.fab-panel:hover .fab-3
-{
-	background-color:orange;
-	bottom: 145px;
-}
-
-.fab-panel:hover .fab-4
-{
-	background-color:yellow;
-	bottom: 200px;
-}
-
-.fab-panel:hover .fab-5
-{
-	background-color:green;
-	bottom: 255px;
-}
-
-.fab-panel:hover .fab-6
-{
-	background-color:blue;
-	bottom: 310px;
+.fab-1:hover {
+    opacity: 1;
+    ~ .fab {
+        font-size: 20px;
+        right: 25px;
+        width: 40px;
+        height: 40px;
+        opacity: .7;
+        transition-delay: 0s;
+    }
+    ~ .fab-2 {
+        background-color: red;
+        bottom: 90px;
+    }
+    ~ .fab-3 {
+        background-color: orange;
+        bottom: 145px;
+    }
+    ~ .fab-4 {
+        background-color: yellow;
+        bottom: 200px;
+    }
+    ~ .fab-5 {
+        background-color: green;
+        bottom: 255px;
+    }
+    ~ .fab-6 {
+        background-color: blue;
+        bottom: 310px;
+    }
 }
