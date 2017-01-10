@@ -96,6 +96,8 @@ export default DataTable = React.createClass( {
 		}
 
 		//console.log( rows );
+		var unreadRows=[];
+		var readRows =[];
 
 		return (
 			<div className="data-grid">
@@ -137,15 +139,24 @@ export default DataTable = React.createClass( {
 							if( row._item.unreadRecipents ){
 								if( _.indexOf( row._item.unreadRecipents, user._id ) > -1){
 									unread = true;
+									unreadRows.push(row);
 								}else if( _.indexOf( row._item.unreadRecipents, facility._id ) > -1){
 									unread = true;
+									unreadRows.push(row);
 								}
 							}
+							if (!unread) {
+								readRows.push(row);
+							}
+							
+						})}
+						{unreadRows.map((unreadRow, idx)=>{
+
 							return (
 							<tr
 								className 	= "data-grid-row"
-								key 		= { rowIdx }
-								onClick 	= { () => { this.props.onClick( row._item ) } }
+								key 		= { idx }
+								onClick 	= { () => { this.props.onClick( unreadRow._item ) } }
 							>
 								<td className="data-grid-select-col">&nbsp;</td>
 								{ cols.map( (col,colIdx) => {
@@ -153,10 +164,10 @@ export default DataTable = React.createClass( {
 									return (
 										<td
 											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-											key 		= {('val('+rowIdx+','+colIdx+')-'+row[col].val)}
-											style 		= {row[col].style?row[col].style:{}}
+											key 		= {('val('+idx+','+colIdx+')-'+unreadRow[col].val)}
+											style 		= {unreadRow[col].style?unreadRow[col].style:{}}
 										>
-											{ unread? <strong style={{fontWeight: "900"}}> {row[col].val} </strong> : row[col].val }
+											<strong style={{fontWeight: "900"}}> {unreadRow[col].val} </strong> 
 
 										</td>
 									)
@@ -164,6 +175,35 @@ export default DataTable = React.createClass( {
 								} ) }
 							</tr>
 							)
+
+						})}
+
+						{readRows.map((readRow, idx)=>{
+
+							return (
+							<tr
+								className 	= "data-grid-row"
+								key 		= { idx }
+								onClick 	= { () => { this.props.onClick( readRow._item ) } }
+							>
+								<td className="data-grid-select-col">&nbsp;</td>
+								{ cols.map( (col,colIdx) => {
+
+									return (
+										<td
+											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+											key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+											style 		= {readRow[col].style?readRow[col].style:{}}
+										>
+											{readRow[col].val} 
+
+										</td>
+									)
+
+								} ) }
+							</tr>
+							)
+
 						})}
 					</tbody>
 
