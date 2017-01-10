@@ -9,6 +9,7 @@ import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm, R
 import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 
 const create = new Action( {
@@ -18,7 +19,9 @@ const create = new Action( {
 	action: () => {
 		let team = Teams.create();
 		Modal.show( {
-			content: <TeamStepper item = { team } />
+			content: <DropFileContainer model={Teams}>
+								 <TeamStepper item = { team } />
+							 </DropFileContainer>
 		} )
 	}
 } )
@@ -30,7 +33,9 @@ const edit = new Action( {
 	action: ( team ) => {
 		let { roles, actors } = Roles.getRoles( team );
 		Modal.show( {
-			content: <TeamStepper item = { team } />
+			content: <DropFileContainer model={Teams}>
+								 <TeamStepper item = { team } />
+								</DropFileContainer>
 		} )
 	}
 } )
@@ -41,7 +46,9 @@ const view = new Action( {
 	icon: 'fa fa-group',
 	action: ( team ) => {
 		Modal.show( {
-			content: <TeamPanel item = { team } />
+			content: <DropFileContainer model={Teams}>
+								 <TeamPanel item = { team } />
+               </DropFileContainer>
 		} )
 	}
 } )
@@ -73,11 +80,15 @@ const createFacility = new Action( {
 		if( Meteor.user().getRole() == "manager" ) {
 			let clientsOfSupplier = team.getClientsOfSupplier();
 			Modal.show({
-				content: <CreateSupplierFacility clients={clientsOfSupplier} />
+				content: <DropFileContainer model={Facilities}>
+										<CreateSupplierFacility clients={clientsOfSupplier} />
+									</DropFileContainer>
 			})
 		} else {
 			Modal.show( {
-				content: <FacilityStepperContainer params = { { item } } />
+				content: <DropFileContainer model={Facilities}>
+								 		<FacilityStepperContainer params = { { item } } />
+									</DropFileContainer>
 			} )
 		}
 	}
@@ -102,7 +113,9 @@ const createRequest = new Action( {
 				onSubmit = {
 					( newRequest ) => {
 						Modal.replace( {
-							content: <RequestPanel item = { newRequest }/>
+							content: <DropFileContainer model={Requests} request={request}>
+											 	 <RequestPanel item = { newRequest }/>
+												</DropFileContainer>
 						} );
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
