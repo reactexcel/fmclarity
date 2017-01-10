@@ -15,6 +15,11 @@ import FloatingActionButtonContainer from '../containers/FloatingActionButtonCon
  * @memberOf        module:core/Layouts
  */
 function LayoutMain( props ) {
+  $(document).on("drag", (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    $("#drop-box").css("display","block");;
+  })
     return (
         <MuiThemeProvider muiTheme = { getMuiTheme() }>
         <div>
