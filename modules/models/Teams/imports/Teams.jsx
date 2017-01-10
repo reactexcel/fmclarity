@@ -609,8 +609,6 @@ Teams.helpers( {
 			} )
 		}
 
-		console.log(facilityIds);
-
 		var facilities = Facilities.findAll( {
 			$or: [
 				{ 'team._id': this._id },
