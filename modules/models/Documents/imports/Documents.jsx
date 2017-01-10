@@ -27,9 +27,9 @@ const Documents = new Model( {
 				getWatchers() {
 					let facility = Session.getSelectedFacility(),
 						recipients = [],
-						recipientsArray = recipients.concat( facility.getMembers( {
+						recipientsArray = recipients.concat( facility?facility.getMembers( {
 							                role: "portfolio manager"
-							            } ) );
+							            } ):[] );
 					return  recipientsArray;
 				}
 			}
