@@ -267,7 +267,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.readBy ?
                 <tr>
                     <td></td>
-                    <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen By</span>
+                    <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
                     <ul className="seen-by-list">
                     {request.readBy.length > 2 ?
                         <li>
@@ -275,8 +275,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
                         var user = Meteor.users.findOne(u._id);
                         return (
-                            <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user._id==Meteor.userId() ? "me " : (user.profile ? user.profile.name : user.name)}</a></li>
-                            )
+                            <li key={u._id}>
+                                <a href = "" title = { formatDate( u.readAt ) }>
+                                    { user._id==Meteor.userId() ? "" : (user.profile ? user.profile.name : user.name) }
+                                </a>
+                            </li>
+                        )
                     })}
 
                     </ul>
