@@ -187,6 +187,7 @@ const FacilitySchema = {
     documents: {
         label: "Documents",
         description: "Saved facility documents",
+        type: "array",
         /*relation:
         {
             type: ORM.HasMembers,
