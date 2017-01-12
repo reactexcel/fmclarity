@@ -11,12 +11,28 @@ function loadExternalScripts(  ) {
 	// load google map api script
 	loadGoogleMapApiScript(  );
 	sortableApiScript();
+	loadDataTablePlugin(  );
 
 }
 function loadGoogleMapApiScript(  ){
 	var script= document.createElement('script');
 	script.type= 'text/javascript';
 	script.src= 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4K6_g45PARJ4sYQjr5uRi2OPgyIyn7ZY&libraries=places';
+	script.async = true;
+	document.body.appendChild(script);
+}
+function loadDataTablePlugin(  ){
+	
+		
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.src= 'https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js';
+	script.async = true;
+	document.body.appendChild(script);
+
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.src= 'https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js';
 	script.async = true;
 	document.body.appendChild(script);
 }
