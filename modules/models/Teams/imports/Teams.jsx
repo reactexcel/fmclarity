@@ -595,17 +595,19 @@ Teams.helpers( {
 		var user = Meteor.user();
 		var requests, facilityIds = [];
 		requests = user.getRequests();
+
 		if ( requests && requests.length ) {
-			requests.map( function( request ) {
+			requests.map( ( request ) => {
 				let requestIsByThisTeam = request.team && request.team._id && request.team._id == this._id;
-				let requestIsForThisTeam = request.supplier && request.supplier._id && request.supplier._id == this._id;
+				let requestIsForThisTeam = request.supplier && ( 
+					( request.supplier._id && request.supplier._id == this._id ) ||
+					( request.supplier.name && request.supplier.name == this.name )
+				);
 				if ( request.facility && ( requestIsForThisTeam || requestIsByThisTeam ) ) {
 					facilityIds.push( request.facility._id );
 				}
 			} )
 		}
-
-		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
 			$or: [
@@ -676,11 +678,12 @@ Teams.helpers( {
 		//of course if we only have the name then we need to add the id at some point
 		var role = this.getMemberRole( Meteor.user() );
 		//console.log(role);
-		if ( role == "fmc support" || role == "portfolio manager" ) {
+		if ( role == "fmc support" || role == "portfolio manager" || ( this.type == "contractor" && role == "manager" ) ) {
 			return this.getManagerFacilities( q );
-		} else if ( role == "manager" ) {
-		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
 		}
+		/*else if ( role == "manager" ) {
+		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
+		}*/
 		return this.getStaffFacilities( q );
 	},
 

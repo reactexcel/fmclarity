@@ -82,7 +82,7 @@ const FileView = React.createClass( {
 			roles = [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ],
 			role = user.getRole();
 
-		if ( _.contains( roles, role ) ) {
+		// if ( _.contains( roles, role ) ) {
 			if ( this.data.isImage ) {
 				this.showImageInModal()
 			} else if ( this.data.file ) {
@@ -91,9 +91,9 @@ const FileView = React.createClass( {
 			} else {
 				$( this.refs.input ).click();
 			}
-		} else if ( add ) {
-			$( this.refs.input ).click();
-		}
+		// } else if ( add ) {
+		// 	$( this.refs.input ).click();
+		// }
 	},
 	componentDidMount() {
 		$(document).on('dragover', function (e)

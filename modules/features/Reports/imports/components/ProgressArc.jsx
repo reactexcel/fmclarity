@@ -39,7 +39,7 @@ export default ProgressArc = React.createClass(
 			<div>
 				<div style={{padding:0,height:"155px"}}>
 					<h5 style={{float:"none"}}>{title}</h5>
-                    <div>
+                    <div style={{width:"100px"}}>
 						<input 
 							ref="input" 
 							type="text" 
