@@ -285,7 +285,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                                          </td>
                                  </tr> : null }
 
-
                 </tbody>
             </table>
 
