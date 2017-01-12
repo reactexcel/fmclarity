@@ -140,27 +140,27 @@ body
     @media all and (-ms-high-contrast:none)
      {
         /* IE10 */
-     .page-wrapper-inner { 
+     .page-wrapper-inner {
         top: 60px;
         margin-left: auto;
         margin-right: auto;
-    } 
+    }
         /* IE11 */
      *::-ms-backdrop, .page-wrapper-inner { top: 60px;
-         margin-left: auto;
+        margin-left: auto;
         margin-right: auto;
-         } 
+         }
      }
 
      /*style wrapper for IE 8,9,10*/
 
      @media screen and ("min-width:0\0") and ("min-resolution: +72dpi") {
       // IE9+ CSS
-      .page-wrapper-inner { 
+      .page-wrapper-inner {
         top: 60px;
         margin-left: auto;
         margin-right: auto;
-        } 
+        }
     }
     @media (max-width:768px)
     {
@@ -276,4 +276,48 @@ body
             }
         }
     }
+}
+
+
+.drop{
+//  position: absolute;
+  top: inherit;
+  left: inherit;
+  width: 100%;
+
+  //background-color: #b2b2b2;
+  z-index: -1;
+}
+
+.drop-container{
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: #111;
+  opacity: 0.5;
+  z-index: 2000;
+  padding: 10px;
+  border: 2px dashed white;
+  display: none;
+}
+
+.drop-container-inner{
+  height: 100%;
+  padding-top: 10%;
+  border: 2px dashed white;
+  background-color: #666;
+}
+
+.drop-upload-icon{
+  margin-left: 36%;
+  color: #fff;
+  font-size: 2em;
+}
+
+.drop-upload-text{
+  margin-left: 16%;
+  color: #fff;
+  font-size: 20px;
 }

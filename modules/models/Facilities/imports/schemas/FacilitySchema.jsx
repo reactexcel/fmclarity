@@ -187,6 +187,7 @@ const FacilitySchema = {
     documents: {
         label: "Documents",
         description: "Saved facility documents",
+        type: "array",
         /*relation:
         {
             type: ORM.HasMembers,
@@ -229,7 +230,7 @@ const FacilitySchema = {
 					 }
 				 },
 				 condition(item) {
-					 item.type  = item.type || "Bookable";
+					 item.type  = item.type || "Standard";
 					 return true;
 				 }
 			 },
@@ -288,6 +289,21 @@ const FacilitySchema = {
 					 return item.type === "Bookable";
 				 }
 			 },
+			 day:{
+				 label: 'Booking increment',
+				 size:6,
+				 input: Select,
+				 options(item){
+					 let items = ["1", "2", "3", "4", "5", "6"]
+					 items = items.map((m)=>{
+						 return m +" "+ item.unit
+					 });
+				 return({items:items,})
+				 },
+				 condition(item){
+					 return item.unit == "Days";
+				 }
+			 },
 			 hour:{
 				 label: 'Booking increment',
 				 size:6,
@@ -307,7 +323,7 @@ const FacilitySchema = {
 					 return item.unit == "Hours";
 				 }
 			 },
-			 day:{
+			 daySelector:{
 				 labe: "Days",
 				 type: "object",
 				 input( props ) {
@@ -397,7 +413,7 @@ const FacilitySchema = {
 													}
 													props.onChange(selected);
 												}
-											} value={selected[d] ? selected[d].time : ""} placeholder={"Time of avaliability"}/>
+											} value={selected[d] ? selected[d].time : ""} placeholder={"Time of availability"}/>
 									</div>
 								</div>
 								)

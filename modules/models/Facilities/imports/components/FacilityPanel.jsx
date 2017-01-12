@@ -15,7 +15,7 @@ import { RequestsTable } from '/modules/models/Requests';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Facilities, FacilityActions } from '/modules/models/Facilities';
-
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import FacilityStepper from './FacilityStepper.jsx';
 
 /**
@@ -38,6 +38,7 @@ function FacilityPanel( { item } ) {
 	}
 
 	return (
+		<DropFileContainer model={Facilities}>
 		<div>
 			<div className="facility-card">
 
@@ -115,6 +116,7 @@ function FacilityPanel( { item } ) {
 			<Menu items = { menuItems } />
 
 		</div>
+		</DropFileContainer>
 	)
 }
 

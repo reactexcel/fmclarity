@@ -52,6 +52,10 @@ meteorhacks:kadira
 #meteorhacks:kadira-profiler
 
 ############################
+# Testing
+practicalmeteor:mocha
+
+############################
 # Meteor Core
 accounts-password@1.3.3
 static-html
