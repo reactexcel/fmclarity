@@ -258,7 +258,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { teamType=='fm' && request.eta ?
+                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
