@@ -268,14 +268,16 @@ const TeamStepper = React.createClass( {
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
                                                 if ( team.email && team.inviteMember && !team.members) {
-                                                  team.inviteMember( team.email, {
-                                                    role: role ? role : "manager",
-                                                    owner: {
-                                                      type: 'team',
-                                                      _id: team._id,
-                                                      name: team.name
+                                                team.inviteMember( team.email, {
+                                                      role: role ? role : "manager",
+                                                      owner: {
+                                                        type: 'team',
+                                                        _id: team._id,
+                                                        name: team.name
+                                                      },
+                                                      flag: true,
                                                     }
-                                                  } );
+                                                   );
                                                 }
                                               }
                                             }
