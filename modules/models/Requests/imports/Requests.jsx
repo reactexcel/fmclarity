@@ -125,8 +125,16 @@ Requests.methods( {
 	updateSupplierManagers: {
 		authentication: true,
 		helper: function( request ) {
-			let roles = Roles.getRoles( request ),
-				supplierManagers = roles.roles[ 'supplier manager' ];
+			let supplier = request.getSupplier(),
+				supplierManagers = null;
+			if( supplier ) {
+				if( supplier.type == 'fm' ) {
+					supplierManagers = supplier.getMembers( { role:'portfolio manager' } );
+				}
+				else {
+					supplierManagers = supplier.getMembers( { role:'manager' } );
+				}
+			}
 
 			if ( supplierManagers ) {
 				request.dangerouslyReplaceMembers( supplierManagers, {
