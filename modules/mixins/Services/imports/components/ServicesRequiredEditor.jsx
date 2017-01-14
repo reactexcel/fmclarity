@@ -187,10 +187,11 @@ const ServicesRequiredEditor = React.createClass( {
 
 					return (
 						<li key={key} className={"ui-state-default services-editor-row-li"}>
-								<div style={{
+              <div className="row">
+                <div style={{
 										height:'48px',
-										width: '2%,'
-									}}>
+										width: '2%',
+									}} className="col-xs-2">
 									<span className="reorder">
 										<i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
 									</span>
@@ -198,9 +199,9 @@ const ServicesRequiredEditor = React.createClass( {
 								<div style={{
     							width: '97%',
     							position: 'relative',
-    							bottom: '48px',
-    							left: '3%',
-									}}>
+    							//bottom: '48px',
+    							left: '1%',
+                }} className="col-xs-10">
 									<div key={key} className={expanded?"services-editor-service-expanded":""}>
 										<div className="services-editor-row">
 
@@ -241,6 +242,7 @@ const ServicesRequiredEditor = React.createClass( {
 										</div>
 									</div>
 								</div>
+							</div>
 						</li>
 					)
 				}):null}
