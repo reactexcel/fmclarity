@@ -144,7 +144,7 @@ export default MessageView = React.createClass( {
                 { is_ie ? <span><label>Leave a message and hit enter...</label></span> : null }
                     <textarea
                         ref="input"
-                        style={{width:"80%",marginTop:"0px"}}
+                        style={{width:"80%",marginTop:"0px",overflowY:"inherit"}}
                         placeholder="Leave a message and hit enter..."
                         className={"input "+(used?'used':'')}
                         defaultValue={message.body}

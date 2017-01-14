@@ -37,7 +37,7 @@ export default ProgressArc = React.createClass(
 		var color = this.props.color || '#3ca773';
 		return (
 			<div>
-				<div style={{padding:0,height:"155px"}}>
+				<div style={{padding:0,height:"155px", paddingRight:"10px"}}>
 					<h5 style={{float:"none"}}>{title}</h5>
                     <div style={{width:"100px"}}>
 						<input 

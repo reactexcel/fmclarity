@@ -537,7 +537,8 @@ const RequestSchema = {
 		size: 6,
 		required: true,
 		type: "date",
-		input: DateTime
+		input: DateTime,
+		defaultValue: ""
 	},
 
 	//////////////////////////////////////////////////
