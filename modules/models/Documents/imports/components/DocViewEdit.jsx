@@ -84,7 +84,7 @@ const DocViewEdit = React.createClass( {
 			}
 
 				}
-				
+
 			
 			});
 		//	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );

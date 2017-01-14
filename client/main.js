@@ -319,6 +319,14 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
 	action: [
+		'create property manager',
+	],
+	role: [ '*' ],
+	rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+	action: [
 		'private document'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'facility manager' ],

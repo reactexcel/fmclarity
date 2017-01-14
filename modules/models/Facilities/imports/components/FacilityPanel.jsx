@@ -14,7 +14,7 @@ import { AreasEditor } from '/modules/mixins/Areas';
 import { RequestsTable } from '/modules/models/Requests';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
-import { Facilities, FacilityActions } from '/modules/models/Facilities';
+import { Facilities, FacilityActions, PropertyManagerDetails } from '/modules/models/Facilities';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import FacilityStepper from './FacilityStepper.jsx';
 
@@ -109,6 +109,10 @@ function FacilityPanel( { item } ) {
 						hide:     	teamType!='fm',
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
+					},{
+					//	hide:     	teamType !='fm',
+						tab:        <span id="requests-tab">Lease</span>,
+						content:    <PropertyManagerDetails facility={facility} />
 					}
 				] } />
 			</div>
