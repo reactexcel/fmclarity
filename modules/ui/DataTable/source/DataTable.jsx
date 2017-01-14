@@ -60,37 +60,10 @@ export default DataTable = React.createClass( {
 
 	componentWillMount() {
 		this.update( this.props );
-		$('.data-table').DataTable({
-		  "ordering": false,
-		  "searching": false
-		});
-	},
-	componentDidMount() {
-		$('.data-table').DataTable({
-		  "ordering": false,
-		  "searching": false
-		});
-	},
-	componentDidUpdate() {
-		$.fn.dataTable.ext.errMode = 'none';
-		$('.data-table').DataTable({
-		  "ordering": false,
-		  "searching": false
-		});
-	},
-	componentWillUpdate() {
-		$('.data-table').DataTable({
-		  "ordering": false,
-		  "searching": false
-		});
 	},
 
 	componentWillReceiveProps( props ) {
 		this.update( props );
-		$('.data-table').DataTable({
-		  "ordering": false,
-		  "searching": false
-		});
 	},
 
 
@@ -103,6 +76,7 @@ export default DataTable = React.createClass( {
 		}
 
 		let rows = dataset.sortBy( col, dir );
+
 		this.setState( {
 			sortCol: col,
 			sortDir: dir,
@@ -131,7 +105,7 @@ export default DataTable = React.createClass( {
 					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
 				</div>*/}
 				<div ref="printable">
-				<table className="table data-table compact">
+				<table className="table">
 
 					<thead>
 
