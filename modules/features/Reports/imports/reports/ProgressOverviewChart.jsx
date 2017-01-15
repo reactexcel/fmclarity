@@ -159,7 +159,7 @@ export default ProgressOverviewChart = React.createClass( {
             var results = this.data.results;
             var facility = Session.get( 'selectedFacility' );
             return (
-                <div>
+                <div className="overview-graph">
                 <Menu items={this.getMenu()} />
                 <div className="ibox-title">
                     <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
