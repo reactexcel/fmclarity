@@ -111,6 +111,7 @@ function FacilityPanel( { item } ) {
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					},{
 					//	hide:     	teamType !='fm',
+						hide: 		true,
 						tab:        <span id="requests-tab">Lease</span>,
 						content:    <PropertyManagerDetails facility={facility} />
 					}
