@@ -81,15 +81,15 @@ const UserProfileSchema = {
 
 
 /*
-propertyManger: {
+propertyManager: {
 	label: "Property manager",
 	input: Select,
 	type: 'object',
 	optional: true,
 	condition: ( item ) => {
-		if ( item.apartment.propertyManger ) {
-			let _id = item.apartment.propertyManger._id || "";
-			item.apartment.propertyManger = Users.findOne( _id );
+		if ( item.apartment.propertyManager ) {
+			let _id = item.apartment.propertyManager._id || "";
+			item.apartment.propertyManager = Users.findOne( _id );
 		}
 		return role === "resident"
 	},
@@ -97,22 +97,22 @@ propertyManger: {
 		return {
 			view: ContactCard,
 			addNew:{//Add new facility to current selectedTeam.
-				show: !item.propertyManger && item.facility && item.apartment,
+				show: !item.propertyManager && item.facility && item.apartment,
 				label: "Add Property Manger",
 				onAddNewItem: ( callback ) => {
 					Modal.show( {
 						content: <UserViewEdit team={Session.getSelectedTeam()} group={item.facility} addPersonnel={
 							( pm ) => {
 								callback( pm );
-								item.propertyMangerPhone = pm.profile.phone;
-								item.propertyMangerEmail = pm.profile.email;
-								item.apartment.propertyManger = pm;
+								item.propertyManagerPhone = pm.profile.phone;
+								item.propertyManagerEmail = pm.profile.email;
+								item.apartment.propertyManager = pm;
 								let areas = item.facility.areas,
 									level = item.level,
 									apartment = item.apartment;
 								for ( i in level.children || [] ) {
 									if ( level.children[i].name === apartment.name ) {
-										level.children[i].propertyManger = pm;
+										level.children[i].propertyManager = pm;
 										break;
 									}
 								}
@@ -253,7 +253,7 @@ const UserSchema = {
 		},
 
 
-		propertyManger:{
+		propertyManager:{
 			label: "Property manager",
 			optional: true,
 			type: "object",
@@ -266,8 +266,8 @@ const UserSchema = {
 						<a href="javascript:void(0);" style={ { fontSize:"14px"} }
 							onClick={ ( e ) => {
 								let facility = currentState.facility,
-									propertyManger = currentState.propertyManger,
-									email = propertyManger ? propertyManger.profile.email : "" ,
+									propertyManager = currentState.propertyManager,
+									email = propertyManager ? propertyManager.profile.email : "" ,
 									regex = /.+@.+\..+/i;
 								if ( !facility ){
 									return;
@@ -311,12 +311,13 @@ const UserSchema = {
 						label: "Create New",
 						onAddNewItem: ( callback ) => {
 							let team = Teams.findOne( item.realEstateAgency._id ),
-								group = item.facility;
+								group = Facilities.findOne({_id:item.facility._id});
 							import { MemberActions } from '/modules/mixins/Members';
 							MemberActions.create.run( group,
 								 null,
 								 ( newMember ) => callback( newMember ),
-								 team );
+								 team,
+							   "property manager"	);
 						}
 					},
 				}
@@ -327,7 +328,7 @@ const UserSchema = {
 		},
 
 
-		// propertyMangerEmail: {
+		// propertyManagerEmail: {
 		// 	label: 'Property manger\'s email address',
 		// 	type: 'string',
 		// 	input: ( props ) => (
@@ -339,7 +340,7 @@ const UserSchema = {
 		// 				<a href="javascript:void(0);" style={ { fontSize:"14px", marginLeft:"35px" } }
 		// 					onClick={ ( e ) => {
 		// 						let facility = currentState.facility,
-		// 							email = currentState.propertyMangerEmail ,
+		// 							email = currentState.propertyManagerEmail ,
 		// 							regex = /.+@.+\..+/i;
 		// 						if ( !facility ){
 		// 							return;
@@ -412,7 +413,7 @@ const UserSchema = {
 						}
 						item.level = null;
 						item.apartment = null;
-						item.propertyManger = null;
+						item.propertyManager = null;
 						item.realEstateAgency = null;
 						currentState = item;
 					},
@@ -437,7 +438,7 @@ const UserSchema = {
 				return {
 					items: item.facility ? item.facility.areas : null,
 					afterChange: ( item ) => {
-						item.apartment = item.propertyManger  = item.realEstateAgency = null;
+						item.apartment = item.propertyManager  = item.realEstateAgency = null;
 					}
 				}
 			}
@@ -457,7 +458,7 @@ const UserSchema = {
 				return {
 					items: item.level ? item.level.children : null,
 					afterChange: ( item ) => {
-						item.propertyManger = item.realEstateAgency = null;
+						item.propertyManager = item.realEstateAgency = null;
 						currentState = item;
 					}
 				}
@@ -510,7 +511,10 @@ const UserSchema = {
 						label: "Create New",
 						onAddNewItem: ( callback ) => {
 							import { Teams, TeamStepper } from '/modules/models/Teams';
-							let team = Teams.create();
+							let facility = currentState?currentState.facility:item.facility,
+								team = Teams.create();
+								team.facilities = team.facilities || [];
+								team.facilities.push(_.pick(facility, "_id", "name"));
 							Modal.show( {
 								content: <TeamStepper item = { team } role={"property manager"} onFinish={ ( newItem ) => callback(newItem)} />
 							} )
@@ -673,7 +677,7 @@ function updatePropertyManager( item ) {
 		currentState = item;
 	for ( i in level.children || [] ) {
 		if ( level.children[i].name === apartment.name ) {
-			level.children[i].propertyManger = item.propertyManger || {};
+			level.children[i].propertyManager = item.propertyManager || {};
 			break;
 		}
 	}

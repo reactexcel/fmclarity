@@ -14,7 +14,7 @@ const UserProfileForm = [
 
   'realEstateAgency',
 
-  'propertyManger',
+  'propertyManager',
 
   'moveInDate',
   'leaseExpiry',
