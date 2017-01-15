@@ -76,6 +76,23 @@ export default ContactList = React.createClass( {
 		var canCreate = !this.props.readOnly;// && ( team && team.canAddMember() || group && group.canAddMember() );
 		return (
 			<div className="contact-list">
+			{canCreate?
+			    <div
+			    	className	= "contact-list-item"
+			        onClick		= { () => { MemberActions.create.run( group, null, null, team, role ) } }
+			        style 		= { { paddingLeft:"24px" } }
+			    >
+
+					<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
+						<i className = "fa fa-plus"></i>
+					</span>
+
+			        <span className = "active-link" style = {{ fontStyle:"italic" }} >
+			        	Add another
+			        </span>
+
+			    </div>
+			    :null}
 			    {members?members.map( ( member,idx ) => {
 			        return (
 			            <div
@@ -100,23 +117,7 @@ export default ContactList = React.createClass( {
 			            </div>
 		            )
 			    }):null}
-			    {canCreate?
-			    <div
-			    	className	= "contact-list-item"
-			        onClick		= { () => { MemberActions.create.run( group, null, null, team, role ) } }
-			        style 		= { { paddingLeft:"24px" } }
-			    >
-
-					<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
-						<i className = "fa fa-plus"></i>
-					</span>
-
-			        <span className = "active-link" style = {{ fontStyle:"italic" }} >
-			        	Add another
-			        </span>
-
-			    </div>
-			    :null}
+			    
 			</div>
 		)
 	}

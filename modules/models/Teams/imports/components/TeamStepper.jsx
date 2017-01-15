@@ -201,7 +201,7 @@ const TeamStepper = React.createClass( {
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
                         {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder="Select Supplier from dropdown"/> : null }
-                        <h2><input className="inline-form-control" ref="invitation" placeholder="Supplier name"/></h2>
+                        <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
                         <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
                     </div>
                 </form>
@@ -248,7 +248,9 @@ const TeamStepper = React.createClass( {
                     }
                   }
                   onFinish = { () => {
-                      this.props.onFinish( viewingTeam )
+                      if(this.props.onFinish){
+                        this.props.onFinish( viewingTeam )
+                      }
                     }
                   }
                   tabs={[
@@ -266,14 +268,16 @@ const TeamStepper = React.createClass( {
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
                                                 if ( team.email && team.inviteMember && !team.members) {
-                                                  team.inviteMember( team.email, {
-                                                    role: role ? role : "manager",
-                                                    owner: {
-                                                      type: 'team',
-                                                      _id: team._id,
-                                                      name: team.name
+                                                team.inviteMember( team.email, {
+                                                      role: role ? role : "manager",
+                                                      owner: {
+                                                        type: 'team',
+                                                        _id: team._id,
+                                                        name: team.name
+                                                      },
+                                                      flag: true,
                                                     }
-                                                  } );
+                                                   );
                                                 }
                                               }
                                             }

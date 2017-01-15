@@ -14,6 +14,7 @@ import TextArea from './imports/TextArea.jsx';
 import ABN from './imports/ABN.jsx';
 import Phone from './imports/Phone.jsx';
 import StartEndTimePicker from './imports/StartEndTimePicker.jsx';
+import DropFileContainer from './imports/DropFile.jsx';
 
 checkModules( {
 	Currency,
@@ -28,6 +29,7 @@ checkModules( {
 	ABN,
 	Phone,
 	StartEndTimePicker,
+	DropFileContainer,
 } );
 
 /**
@@ -45,5 +47,6 @@ export {
 	TextArea,
 	ABN,
 	Phone,
-	StartEndTimePicker
+	StartEndTimePicker,
+	DropFileContainer,
 }

@@ -118,6 +118,7 @@ function checkString( rule, value, key, errors ) {
 }
 
 function checkNumber( rule, value, key, errors ) {
+	value = value == "" ? 0 : value;
 	value = parseInt( value );
 	if ( !_.isNumber( value ) || isNaN( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a number" } );

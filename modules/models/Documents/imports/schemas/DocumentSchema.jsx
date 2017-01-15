@@ -1,7 +1,7 @@
 import { FileExplorer } from '/modules/models/Files';
 import DocTypes from './DocTypes.jsx';
 
-import { Text, TextArea, Select, DateInput, Currency } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, DateInput, Currency, Switch } from '/modules/ui/MaterialInputs';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Requests } from '/modules/models/Requests';
 
@@ -81,7 +81,9 @@ export default DocumentSchema = {
 			*/
 		},
 		input: Select,
-
+		defaultValue: ( item ) =>{
+				return Session.getSelectedFacility();
+		},
 		options: ( item ) => {
 			//console.log( item );
 			let team = Session.getSelectedTeam();
@@ -425,7 +427,6 @@ export default DocumentSchema = {
 				"House Rules",
 				"Induction",
 				"Inspection",
-				"Insurance",
 				"Invoice",
 				"Lease",
 				"MSDS",
@@ -545,6 +546,17 @@ export default DocumentSchema = {
 		size: 6,
 		optional: true,
 		label: "Area (m2)"
+	},
+	private: {
+		label: "Private documrent",
+		description: "Turn switch on/off to make document public/private",
+		input: Switch,
+		defaultValue: () => false,
+		condition: ( item ) =>  {
+			return _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], Meteor.user().getRole() );
+		},
+		size: 12,
+		type: "boolean",
 	},
 	attachments: {
 		//type: "array",

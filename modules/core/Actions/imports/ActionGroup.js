@@ -244,6 +244,7 @@ class ActionGroup {
 					else {
 						path = action.path;
 					}
+					if(!history.replaceState) {   history.replaceState = function() {} }
 					history.pushState( {}, '', path );
 				}
 				if ( access.alert ) {

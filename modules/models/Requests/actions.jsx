@@ -10,6 +10,7 @@
 
  import { Teams } from '/modules/models/Teams';
 
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
  const view = new Action( {
  	name: "view request",
  	type: 'request',
@@ -21,7 +22,10 @@
  	label: "View",
  	action: ( request, callback ) => {
  		Modal.show( {
- 			content: <RequestPanel item = { request } />
+      id: `viewRequest-${request._id}`,
+ 			content: <DropFileContainer request={request} model={Requests}>
+                 <RequestPanel item = { request } />
+               </DropFileContainer>
  		} )
  		callback( request );
     request.markRecipentAsRead();
@@ -42,6 +46,7 @@
  			form = { CreateRequestForm }
  			onSubmit = {
  				( request ) => {
+          request.costThreshold = request.costThreshold == '' ? '0' : request.costThreshold;
  					Requests.save.call( request );
  					Modal.hide();
  				  request = Requests.collection._transform( request );
@@ -58,14 +63,14 @@
             }
           }
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager","supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager","supplier" ],
  						message: {
  							verb: "edited",
  							subject: `Work order ${request.code} has been edited`,
               body: notificationBody
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager","supplier manager" ] )
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager","supplier" ] )
  				}
  			}
  			/>
@@ -95,7 +100,7 @@
  		Modal.hide();
  		request = Requests.collection._transform( request );
  		request.distributeMessage( {
- 			recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 			recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  			message: {
  				verb: "deleted",
  				subject: `Work order ${request.code} has been deleted`,
@@ -124,7 +129,7 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "cancelled",
  							subject: `Work order ${request.code} has been cancelled`,
@@ -166,24 +171,24 @@
  			onSubmit = {
  				( request ) => {
  					//Requests.update( request._id, { $set: { status: 'In Progress' } } );
-					Requests.update( request._id, { 
+					Requests.update( request._id, {
 						$set: {
 							eta:request.eta,
 							acceptComment:request.acceptComment
-						} 
+						}
 					} );
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "accepted",
  							subject: `Work order ${request.code} has been accepted`,
  							body: request.acceptComment
  						}
  					} );
-					request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
+					request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
 
  					callback( request );
  				}
@@ -212,14 +217,14 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "rejected",
  							subject: `Work order ${request.code} has been rejected`,
  							body: request.rejectComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
  					callback( request );
  				}
  			}
@@ -315,14 +320,14 @@
  					Requests.update( request._id, { $set: { status: 'Closed' } } );
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "closed",
  							subject: `Work order ${request.code} has been closed`,
  							body: request.closeComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
  					Modal.hide();
  					callback( request );
  				}
@@ -349,14 +354,14 @@
  					Modal.hide();
  					request = Requests.collection._transform( request );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier manager" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "reopened",
  							subject: `Work order ${request.code} has been reopened`,
  							body: request.reopenComment
  						}
  					} );
-          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier manager" ] );
+          request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
  				}
  			}
  			/>
@@ -402,7 +407,9 @@
  		});
 
 		Modal.replace( {
-			content: <RequestPanel item = { newRequest }/>
+			content: <DropFileContainer request={newRequest} model={Requests}>
+                 <RequestPanel item = { newRequest } />
+               </DropFileContainer>
 		} );
 
  		Meteor.call( 'Issues.issue', newRequest );

@@ -135,18 +135,23 @@ export default MessageView = React.createClass( {
                 </div>
             </div> )
         } else {
+             ua = navigator.userAgent;
+              /* MSIE used to detect old browsers and Trident used to newer ones*/
+              var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
             return ( <div className="no-print">
                 <ContactAvatarSmall item={owner}/>
                 <div className="media-body">
+                { is_ie ? <span><label>Leave a message and hit enter...</label></span> : null }
                     <textarea
                         ref="input"
-                        style={{width:"80%",marginTop:"0px"}}
+                        style={{width:"80%",marginTop:"0px",overflowY:"inherit"}}
                         placeholder="Leave a message and hit enter..."
                         className={"input "+(used?'used':'')}
                         defaultValue={message.body}
                         onKeyDown={this.handleKeyPress}
                     >
                     </textarea>
+                
                 </div>
             </div> )
         }

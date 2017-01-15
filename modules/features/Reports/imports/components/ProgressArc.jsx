@@ -36,10 +36,10 @@ export default ProgressArc = React.createClass(
 		var max = Math.max( thisPeriod, lastPeriod );
 		var color = this.props.color || '#3ca773';
 		return (
-			<div>
-				<div style={{padding:0,height:"155px"}}>
+			<div style = {{ width:"33.333%", minWidth:"120px", display:"inline-block" }}>
+				<div style={{padding:0,height:"155px",textAlign:"center"}}>
 					<h5 style={{float:"none"}}>{title}</h5>
-                    <div>
+                    <div style={{width:"100px", display:"inline-block"}}>
 						<input 
 							ref="input" 
 							type="text" 

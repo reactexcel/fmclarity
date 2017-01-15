@@ -6,16 +6,34 @@ import { Requests } from '/modules/models/Requests';
 
 export default RequestsPageIndexContainer = createContainer( ( { selectedRequestId } ) => {
 
-	Meteor.subscribe( 'User: Facilities, Requests' );
-
 	let facility = Session.getSelectedFacility(),
+		selectedStatus = Session.get('selectedStatus'),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
 		requests = null,
 		facilities = null,
-		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } },
+		statusFilter = null,
 		contextFilter = {},
-		selectedRequest = null;
+		selectedRequest = null,
+		includeClosed = false;
+
+	if ( selectedStatus == 'New' ) {
+		statusFilter = { "status": 'New' };		
+	}
+	else if ( selectedStatus == 'Issued' ) {
+		statusFilter = { "status": 'Issued' };		
+	}
+	else if ( selectedStatus == 'Closed' ) {
+		statusFilter = { "status": { $in: [ 'Closed', 'Complete' ] } };
+		includeClosed = true;
+	}
+	else {
+		selectedStatus = 'Open';
+		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
+	}
+
+	Meteor.subscribe( 'User: Facilities, Requests', includeClosed );
+
 
 	if ( selectedRequestId ) {
 		selectedRequest = Requests.findOne( selectedRequestId );
@@ -48,8 +66,9 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		facilities,
 		facility,
 		requests,
+		selectedStatus,
 		selectedRequest,
 		contextFilter,
-		user,
+		user
 	}
 }, RequestsPageIndex );

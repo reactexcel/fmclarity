@@ -8,6 +8,7 @@ import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
+import { Users } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
@@ -81,7 +82,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             title = 'Room Booking';
         }
         else if( teamType == 'fm' ) {
-            if (request.service && request.service.serviceDetails && request.service.serviceDetails.purchaseOrder){
+            if (request.service && request.service.data && request.service.data.serviceDetails && request.service.data.serviceDetails.purchaseOrder){
               title = "Purchase Order";
             } else {
               title = "Work Order";
@@ -99,6 +100,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     }
 
     let url = '/requests/print/' + request._id;
+    var viewers=[];
+    request.readBy ? request.readBy.map(function(u, idx){
+        var user = Meteor.users.findOne(u._id);
+        if ((request.readBy.length-1) != idx && u._id != Meteor.userId()) {
+            viewers.push(user.profile.name);
+        }
+
+     }) : null;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -190,7 +199,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-				{ request.service && request.type != 'Booking' ?
+				{ teamType=='fm' && request.service && request.type != 'Booking' ?
 				<tr>
 					<th>Service</th>
 					<td>{request.getServiceString()}</td>
@@ -249,11 +258,32 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { request.eta ?
+                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
                 </tr> : null }
+
+                { request.readBy ?
+                request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null :
+                    <tr>
+                                     <td></td>
+                                     <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
+                                                         <ul className="seen-by-list">
+                                                         {request.readBy.length > 2 ?
+                                                             <li>
+                                                             <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
+                                                             <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
+                                                             var user = Meteor.users.findOne(u._id);
+                                                             if (u._id==Meteor.userId()) {user=null;}
+                                                             return (
+                                                                 user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                                                 )
+                                                         })}
+                                     
+                                                         </ul>
+                                                         </td>
+                                 </tr> : null }
 
                 </tbody>
             </table>
@@ -263,6 +293,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
+                    hide:       !_.contains( [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ], Meteor.user().getRole()),
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 

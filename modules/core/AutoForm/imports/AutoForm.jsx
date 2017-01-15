@@ -126,7 +126,7 @@ class AutoForm extends React.Component {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
 
-			let { input, size = 12, label, description, options, condition } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
 				placeholder = label,
 				Input = null;
 
@@ -214,6 +214,7 @@ class AutoForm extends React.Component {
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
+							maxLength 	= { maxLength }
 
 							item 		= { this.props.item }
 							model 		= { this.props.model }

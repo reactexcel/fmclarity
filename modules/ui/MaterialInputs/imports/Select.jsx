@@ -44,7 +44,7 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			console.log( val );
+			//console.log( val );
 			this.props.onChange( val );
 		}
 		this.refs.input.blur();
@@ -175,6 +175,9 @@ const Select = React.createClass( {
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
+		        	if( !item ) {
+		        		return null;
+		        	}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
 			    		className = "dropdown-menu-item"

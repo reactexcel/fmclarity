@@ -109,6 +109,9 @@ const Currency = React.createClass( {
 
 	componentDidMount() {
 		this.handleChange = _.debounce( this.handleChange, 200 );
+		if(this.refs.input.value.length > 0){
+			$('.currency-holder').show();
+		}
 	},
 
 	componentWillReceiveProps( newProps ) {

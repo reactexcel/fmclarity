@@ -9,7 +9,6 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocForm from '../schemas/DocForm.jsx';
-import { Facilities } from '/modules/models/Facilities';
 /**
  * @class 			DocViewEdit
  * @memberOf 		module:models/Documents
@@ -69,7 +68,24 @@ const DocViewEdit = React.createClass( {
 					};
 					Documents.save.call( item );
 					this.handleChangeCallback( null, item );
+					let newItem = Documents.findOne( item._id );
+					if ( newItem ) {
+				let owner = null;
+				if( newItem.owner ) {
+					owner = newItem.getOwner();
 				}
+				newItem.distributeMessage( {
+					message: {
+						verb: "created",
+						subject: "A new document has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+						body: newItem.description
+					}
+		} );
+			}
+
+				}
+
+			
 			});
 		//	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
 		} else {
@@ -103,6 +119,19 @@ const DocViewEdit = React.createClass( {
 				}
 			}
 			Documents.save.call( item );
+			if ( item ) {
+				let owner = null;
+				if( item.owner ) {
+					owner = item.getOwner();
+				}
+				item.distributeMessage( {
+					message: {
+						verb: "edited",
+						subject: "A document has been edited" + ( owner ? ` by ${owner.getName()}` : '' ),
+						body: item.description
+					}
+		} );
+			}
 			this.handleChangeCallback(null, item);
 		}
 	},

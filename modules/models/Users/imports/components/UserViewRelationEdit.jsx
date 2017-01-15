@@ -29,23 +29,26 @@ export default UserViewRelationEdit = React.createClass( {
 
 		if( userRole == 'caretaker' ) {
 			roles = [
-				"staff", 
-				"tenant", 
-				"resident", 
-				"property manager", 			
+				"staff",
+				"tenant",
+				"resident",
+				"property manager",
 			]
-		}
-		else {
+		} else if ( userRole == "manager") {
+			roles = [ "staff", "manager"]
+		} else {
 			roles = [
-				"staff", 
-				"tenant", 
-				"manager", 
-				"resident", 
+				"staff",
+				"tenant",
+				"manager",
+				"resident",
 				"caretaker",
-				"fmc support", 
-				"property manager", 
-				"portfolio manager", 
+				"property manager",
+				"portfolio manager",
 			]
+			if( userRole == "fmc support" ) {
+				roles.push("fmc support");
+			}
 		}
 
 		if ( relation ) {

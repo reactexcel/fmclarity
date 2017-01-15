@@ -41,7 +41,7 @@ const Text = React.createClass( {
 	},
 
 	render() {
-		let { value, errors } = this.props,
+		let { value, errors, item, fieldName } = this.props,
 			used = false,
 			invalid = false,
 			classes = [ "input" ];
@@ -55,19 +55,19 @@ const Text = React.createClass( {
 			invalid = true;
 			classes.push( "invalid" );
 		}
-
 		return (
 			<div className = "md-input">
 
       		<input
       			className		= { classes.join(' ') }
+						style = {{paddingRight:'60px'}}
       			ref 			= "input"
       			type 			= "text"
       			defaultValue	= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
+      			maxLength		= { this.props.maxLength }
       		/>
-
 	        {
         	used?
     		<div

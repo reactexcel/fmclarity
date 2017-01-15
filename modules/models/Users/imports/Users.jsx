@@ -116,6 +116,7 @@ Users.actions( {
                     name: doc.name,
                     type: doc.type,
                     description: doc.description,
+                    private: doc.private,
                 }
             } );
         }
@@ -199,7 +200,9 @@ Users.actions( {
                 }, isNotDraft ]
             };
 
-            var query = [];
+            var query = [
+                { $or:[ issuedToMyTeam, createdByMyTeam ] }
+            ];
 
             //if staff or tenant restrict to requests created by or assigned to me
             if ( role == "portfolio manager" || role == "fmc support" ) {

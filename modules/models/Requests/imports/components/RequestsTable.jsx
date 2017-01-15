@@ -7,11 +7,11 @@ import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 import moment from 'moment';
 
-export default function RequestsTable( { requests, filter } ) {
+export default function RequestsTable( { requests, filter, columns } ) {
 
 	let team = Meteor.user().getTeam();
 	//when in client (fm) view, show supplier, else if in supplier view show client on table column name.
-	let ClientOrSupplier = team.type == 'fm' ? 'Supplier' : 'Client'; 
+	let ClientOrSupplier = team.type == 'fm' ? 'Supplier' : 'Client';
     this.fields = {
         /*  Priority: "priority",
         Status: "status",
@@ -28,7 +28,7 @@ export default function RequestsTable( { requests, filter } ) {
             }*/
         "Prty": ( item ) => {
             return {
-                originalVal: item.priority,                
+                originalVal: item.priority,
                 val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >
                     <i className = {`fa fa-circle priority-${item.priority}`}></i>
                 </span>)
@@ -41,13 +41,14 @@ export default function RequestsTable( { requests, filter } ) {
             }
         },
         "Facility": "facility.name",
-        "PO#": ( item ) => {
+        "WO#": ( item ) => {
             return {
                 val:item.code? item.code : "",
                 originalVal: item.code
             }
         },
         "Issue": "name",
+        "Amount": "costThreshold",
         "Issued": "issuedAt",
         "Due": ( item ) => {
             let dueDate = moment( item.dueDate );
@@ -58,7 +59,7 @@ export default function RequestsTable( { requests, filter } ) {
         },
 		//use square brackets for dynamic JSON keys (as variables)
 		[ ClientOrSupplier ] : ( item ) => {
-			
+
 			if ( team.type == 'fm' ) {
 				let supplier = item.getSupplier();
                 if( supplier ) {
@@ -84,17 +85,25 @@ export default function RequestsTable( { requests, filter } ) {
         //let statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
         requests = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
-            filter 
+            filter
         ] });
     }
-    if (Session.getSelectedFacility()) {
+    if (Session.get( 'selectedFacility' )) {
             delete this.fields['Facility'];
         }
+        var requiredColumns = columns ? $.grep(columns, function(element) {
+                                return $.inArray(element, Object.keys(this.fields) ) !== -1;
+                                }) : Object.keys(this.fields);
+        var newCols={};
+        requiredColumns.map(function(col){
+            newCols[col] = this.fields[col];
+        });
 
-    return ( 
-        <DataTable 
+    return (
+        <div className = "request-table">
+        <DataTable
             items   = { requests }
-            fields  = { this.fields }
+            fields  = { newCols }
             sortByColumn = "Issued"
             sortDirection = "up"
             onClick = {
@@ -110,5 +119,6 @@ export default function RequestsTable( { requests, filter } ) {
                 }
             } // need a better solution for this
         />
+        </div>
     )
 }

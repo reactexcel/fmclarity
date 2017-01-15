@@ -23,6 +23,7 @@ import { Users } from '/modules/models/Users'
 // to be removed
 import { Facilities } from '/modules/models/Facilities';
 
+import { SupplierInviteEmailTemplate } from '/modules/core/Email';
 //console.log( Members );
 
 if ( Meteor.isServer ) {
@@ -50,7 +51,7 @@ if ( Meteor.isServer ) {
 
 	} );
 
-	Meteor.publish( 'User: Facilities, Requests', function() {
+	Meteor.publish( 'User: Facilities, Requests', function( includeClosed ) {
 
 		//teams I am a member in
 		let teamsCursor = Teams.find( {
@@ -68,27 +69,29 @@ if ( Meteor.isServer ) {
 			teamNames.push( team.name );
 		} );
 
-		let requestsCursor = Requests.find( {
-			$and: [
-				//might be better to do inclusive search here (ie status in ...)
-				{ status: { $nin: [ "Deleted", "Cancelled" ] } },
+		let query = { $or: [
+			{ "team._id": { $in: teamIds } },
+			{ $and: [
 				{ $or: [
-					{ "team._id": { $in: teamIds } },
-					{ $and: [
-						{ $or: [
-							{ "supplier._id": { $in: teamIds } },
-							{ "supplier.name": { $in: teamNames } },
-						] },
-						{ status: { $nin: [ "Draft", "New" ] } }
-					] },
-					{ $or: [
-						{ "owner._id": this.userId },
-						{ "members._id": this.userId }
-					] }
-				] }
-			]
-		}, { sort: { createdAt: -1 } } );
+					{ "supplier._id": { $in: teamIds } },
+					{ "supplier.name": { $in: teamNames } },
+				] },
+				{ status: { $nin: [ "Draft", "New" ] } }
+			] },
+			{ $or: [
+				{ "owner._id": this.userId },
+				{ "members._id": this.userId }
+			] }
+		] };
 
+		if( !includeClosed ) {
+			query = { $and: [
+				{ status: { $nin: [ 'Deleted', 'Cancelled', 'Closed', 'Complete' ] } },
+				query
+			] };
+		}
+
+		let requestsCursor = Requests.find( query, { sort: { createdAt: -1 } } );
 		let facilityIds = [];
 
 		/* this seems a bit expensive given that it will be producing small results */
@@ -270,6 +273,11 @@ Teams.methods( {
 		method: sendMemberInvite
 	},
 
+	sendSupplierInvite: {
+		authentication: true,
+		method: sendSupplierInvite
+	},
+
 	setServicesRequired: {
 		authentication: AuthHelpers.managerOrOwner,
 		method: function( team, servicesRequired ) {
@@ -324,6 +332,7 @@ Teams.methods( {
 					name: doc.name,
 					type: doc.type,
 					description: doc.description,
+					private: doc.private,
 				}
 			} );
 		}
@@ -359,7 +368,21 @@ Teams.methods( {
 					$in: teamIds
 				}}, {type: 'fm','owner.id':Meteor.userId()}]  } ) : Teams.findAll( { type: 'fm' } );
 		},
-	}
+	},
+	removeDocument: {
+		authentication: true,
+		helper: ( team, docToRemove ) => {
+			let documents = team.documents;
+			documents = _.filter( documents, (d) => d._id != docToRemove._id );
+			Teams.update( { _id: team._id }, { $set: { "documents": documents} } );
+		}
+	},
+	getClientsOfSupplier: {
+		authentication: true,
+		helper: ( team ) => {
+			return Teams.findAll( { "owner._id": team._id } );
+		}
+	},
 } );
 
 function getSuppliers() {
@@ -458,6 +481,7 @@ function inviteMember( team, email, ext ) {
 		}, {
 			role: ext.role || user.getRole()
 		} );
+		ext.callback?ext.callback( user, found ):"";
 		return {
 			user: user,
 			found: found
@@ -481,7 +505,9 @@ function inviteMember( team, email, ext ) {
 				}, {
 					role: ext.role
 				} );
-
+				if (ext.flag) {
+					Meteor.call("Teams.sendSupplierInvite", team, user );
+				}
 				return {
 					user: user,
 					found: true
@@ -519,6 +545,20 @@ function sendMemberInvite( team, recipient ) {
     	    emailBody:body
 		}
 	}*/
+	Meteor.call( 'Messages.sendEmail', recipient, {
+		subject: team.name + " has invited you to join FM Clarity",
+		emailBody: body
+	} )
+}
+
+function sendSupplierInvite( team, recipient ) {
+	let body = ReactDOMServer.renderToStaticMarkup(
+		React.createElement( SupplierInviteEmailTemplate, {
+			team: team,
+			user: recipient,
+			token: LoginService.generatePasswordResetToken( recipient )
+		} )
+	);
 	Meteor.call( 'Messages.sendEmail', recipient, {
 		subject: team.name + " has invited you to join FM Clarity",
 		emailBody: body
@@ -578,17 +618,19 @@ Teams.helpers( {
 		var user = Meteor.user();
 		var requests, facilityIds = [];
 		requests = user.getRequests();
+
 		if ( requests && requests.length ) {
-			requests.map( function( request ) {
+			requests.map( ( request ) => {
 				let requestIsByThisTeam = request.team && request.team._id && request.team._id == this._id;
-				let requestIsForThisTeam = request.supplier && request.supplier._id && request.supplier._id == this._id;
+				let requestIsForThisTeam = request.supplier && (
+					( request.supplier._id && request.supplier._id == this._id ) ||
+					( request.supplier.name && request.supplier.name == this.name )
+				);
 				if ( request.facility && ( requestIsForThisTeam || requestIsByThisTeam ) ) {
 					facilityIds.push( request.facility._id );
 				}
 			} )
 		}
-
-		//console.log(facilityIds);
 
 		var facilities = Facilities.findAll( {
 			$or: [
@@ -659,9 +701,12 @@ Teams.helpers( {
 		//of course if we only have the name then we need to add the id at some point
 		var role = this.getMemberRole( Meteor.user() );
 		//console.log(role);
-		if ( role == "fmc support" || role == "portfolio manager" ) {
+		if ( role == "fmc support" || role == "portfolio manager" || ( this.type == "contractor" && role == "manager" ) ) {
 			return this.getManagerFacilities( q );
 		}
+		/*else if ( role == "manager" ) {
+		  return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
+		}*/
 		return this.getStaffFacilities( q );
 	},
 

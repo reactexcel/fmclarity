@@ -13,7 +13,7 @@ class ServicesRequestsView extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		let { requests, labels } = props;
+		let { requests, labels, expandall } = props;
 		//Convert requests from object to Array.
 		
 			if ( !_.isArray( requests ) ){
@@ -29,7 +29,8 @@ class ServicesRequestsView extends React.Component {
 		this.state = {
 			requests: requests,
 			labels: props.labels,
-			expanded: {}
+			expanded: {},
+			expandall: props.expandall || false
 		}
 	}
 
@@ -41,7 +42,8 @@ class ServicesRequestsView extends React.Component {
 			this.setState( {
 				requests: requests || [],
 				labels: labels || [],
-				expanded: {}
+				expanded: {},
+				expandall: props.expandall || false
 			} );
 		
 	}
@@ -60,6 +62,7 @@ class ServicesRequestsView extends React.Component {
 		var component = this;
 		var requests = this.state.requests;
 		var labels = this.state.labels;
+		var expandall = this.state.expandall;
 		var readOnly = true;
 		return (
 <div className="services-editor">
@@ -68,16 +71,16 @@ class ServicesRequestsView extends React.Component {
         <div className="services-editor-col services-editor-col-header"></div>
     </div>
     {labels?labels.map(function(label,idx){ var expanded = component.state.expanded[label]; var size = labels.length; var key = size+'-'+idx; return (
-    <div key={key} className={expanded? "services-editor-service-expanded": ""}>
+    <div key={key} className={expanded || expandall? "services-editor-service-expanded" : ""}>
         <div className="services-editor-row">
             <ServicesRequestsViewRow service={label} readOnly={readOnly} clickExpand={component.toggleExpanded.bind(component,label)} />
         </div>
 
         <div className="services-editor-child-block">
-            {expanded?
+            {expanded || expandall?
             <div>
                 <div key={key} className="services-editor-row-child">
-                    <RequestsTable requests={requests[label]}/>
+                    <RequestsTable requests={requests[label]} columns = {['Status','Facility','Amount','PO#','Issue','Issued']}/>
                 </div>
             </div>
             :null}

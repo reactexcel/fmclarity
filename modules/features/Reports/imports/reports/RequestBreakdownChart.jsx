@@ -30,7 +30,8 @@ const RequestBreakdownChart = React.createClass( {
 		var title = startDate.format( "[since] MMMM YYYY" )
 		return ( {
 			startDate: startDate,
-			title: title
+			title: title,
+			expandall: false
 		} )
 	},
 
@@ -40,7 +41,8 @@ const RequestBreakdownChart = React.createClass( {
 		var query = {
 			createdAt: {
 				$gte: this.state.startDate.toDate()
-			}
+			},
+			status:{$ne:'Deleted'}
 		}
 
 		var facility = Session.get( 'selectedFacility' );
@@ -53,6 +55,7 @@ const RequestBreakdownChart = React.createClass( {
 		if ( team ) {
 			query[ "team._id" ] = team._id;
 		}
+		const handle = Meteor.subscribe('User: Facilities, Requests');
 
 		var requests = Requests.find( query );
 
@@ -92,8 +95,26 @@ const RequestBreakdownChart = React.createClass( {
 			facility: facility,
 			labels: labels,
 			set: set, //costs//counts
-			buckets: buckets
+			buckets: buckets,
+			ready: handle.ready()
 		}
+	},
+
+	printChart(){
+		var component = this;
+		component.setState( {
+			expandall: true
+		} );
+		
+		setTimeout(function(){
+			window.print();	
+			component.setState( {
+				expandall: false
+			} );
+		},200);
+
+		
+		
 	},
 
 	getMenu() {
@@ -249,19 +270,27 @@ const RequestBreakdownChart = React.createClass( {
 	},
 
 	render() {
+		var facility=this.data.facility;
+		facilities=null;
+		if (this.data.ready) {
+			facilities = Meteor.user().getTeam().getFacilities();
+		}
 		return (
 			<div>
+			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+			<i className="fa fa-print" aria-hidden="true"></i>
+			</button>
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
-					<h2>Request breakdown {this.state.title}</h2>
+					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
 					<div>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
-				<div>
-				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels }/>
+				<div className="gragh-table">
+				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
 				</div>
 			</div>
 		)

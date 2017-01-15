@@ -31,6 +31,8 @@ const RequestActivityChart = React.createClass( {
 
 	getMeteorData() {
 
+		const handle = Meteor.subscribe('User: Facilities, Requests');
+
 		var openQuery = {status:{$ne:'Closed'},}
 		var closedQuery = {
 			status: "Closed",
@@ -61,6 +63,7 @@ const RequestActivityChart = React.createClass( {
 
 		return {
 			facility: facility,
+			ready: handle.ready(),
 			openSeries: open.sets,
 			closedSeries: closed.sets,
 			openQuery: openQuery,
@@ -71,14 +74,29 @@ const RequestActivityChart = React.createClass( {
 	},
 
 	getInitialState() {
-		return {
-			viewConfig: {
-				format: 'MMM',
-				title: "[since] MMMM YYYY",
-				startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-				endDate: moment().endOf( 'month' ),
-			}
-		}
+		return ({
+					viewConfig: {
+						format: 'MMM',
+						title: "[since] MMMM YYYY",
+						startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
+						endDate: moment().endOf( 'month' ),
+					},
+					expandall: false
+				})
+	},
+
+	printChart(){
+		var component = this;
+		component.setState( {
+			expandall: true
+		} );
+		
+		setTimeout(function(){
+			window.print();	
+			component.setState( {
+				expandall: false
+			} );
+		},200);
 	},
 
 	getMenu() {
@@ -272,8 +290,9 @@ const RequestActivityChart = React.createClass( {
 
 
 	render() {
+		var statusFilterQuery = ["Closed", "Deleted"];
 		var openQuery = {
-			status:{$ne:'Closed'},
+			status:{$nin:statusFilterQuery},
 		}
 		var closedQuery = {
 			status: "Closed",
@@ -311,11 +330,19 @@ const RequestActivityChart = React.createClass( {
 			}
 			buckets[ 'Closed' ].push( i );
 		});
+		facilities=null;
+		if (this.data.ready) {
+			facilities = Meteor.user().getTeam().getFacilities();
+			}
+		
 		return (
 			<div>
+			<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
+			<i className="fa fa-print" aria-hidden="true"></i>
+			</button>
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
-		        	<h2>Request activity {this.data.title}</h2>
+		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">
@@ -326,8 +353,8 @@ const RequestActivityChart = React.createClass( {
 				        </div>
 				    </div>
 				</div>
-				<div>
-				<ServicesRequestsView requests={buckets} labels={ requestStatuses }/>
+				<div className="gragh-table">
+				<ServicesRequestsView requests={buckets} labels={ requestStatuses } expandall = {this.state.expandall}/>
 				</div>
 			</div>
 		)

@@ -50,11 +50,16 @@ AccessGroups.loggedIn.add( {
 	name: 'request',
 	path: '/requests/:_id',
 	action( params ) {
+		if( params._id ) {
+			if(!history.replaceState) {   history.replaceState = function() {} }
+			history.pushState( {}, '', '/requests' );
+		}
 		mount( LayoutMain, {
 			content: <RequestsPageIndexContainer selectedRequestId = { params._id } />
 		} );
 	}
 } );
+
 
 AccessGroups.loggedIn.add( {
 	name: 'request-print',
