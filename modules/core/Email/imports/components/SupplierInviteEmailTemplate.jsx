@@ -1,8 +1,7 @@
-
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
- // import { Teams } from '/modules/models/Teams';
- // import { Users } from '/modules/models/Users';
+// import { Teams } from '/modules/models/Teams';
+// import { Users } from '/modules/models/Users';
 
 import moment from 'moment';
 
@@ -11,34 +10,34 @@ const SupplierInviteEmailTemplate = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-      import { Teams } from '/modules/models/Teams';
-      import { Users } from '/modules/models/Users';
-    	var team,user,secret,expiry;
-    	if(this.props.team)
-	    	team = Teams.findOne(this.props.team._id);
-	    if(this.props.user)
-	    	user = Users.findOne(this.props.user._id);
-		if(this.props.token) {
+        import { Teams } from '/modules/models/Teams';
+        import { Users } from '/modules/models/Users';
+        var team, user, secret, expiry;
+        if (this.props.team)
+            team = Teams.findOne(this.props.team._id);
+        if (this.props.user)
+            user = Users.findOne(this.props.user._id);
+        if (this.props.token) {
             secret = this.props.token.token;
             expiry = this.props.token.expiry;
         }
         return {
-        	team:team,
-        	user:user,
-        	secret:secret,
-        	expiry:expiry
+            team: team,
+            user: user,
+            secret: secret,
+            expiry: expiry
         }
     },
 
     render() {
-    	var team = this.data.team;
-    	var user = this.data.user;
-    	var secret = this.data.secret;
-    	var expiry = this.data.expiry?moment(this.data.expiry).fromNow():null;
-    	var url = Meteor.absoluteUrl('enroll-account/'+ secret, {rootUrl: "https://app.fmclarity.com"});
-      var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName();
-      return(
-        <div style={{padding:"30px", backgroundColor:"#f5f5f5"}}>
+        var team = this.data.team;
+        var user = this.data.user;
+        var secret = this.data.secret;
+        var expiry = this.data.expiry ? moment(this.data.expiry).fromNow() : null;
+        var url = Meteor.absoluteUrl('enroll-account/' + secret, { rootUrl: "https://app.fmclarity.com" });
+        var userName = (user.profile && user.profile.firstName) ? user.profile.firstName : user.getName();
+        return (
+            <div style={{padding:"30px", backgroundColor:"#f5f5f5"}}>
           <div style={{
               border: "1px solid transparent",
               backgroundColor: "#fff",
@@ -80,7 +79,7 @@ const SupplierInviteEmailTemplate = React.createClass({
               upload your documents.
             </p>
             <p style={{textAlign: "justify"}}>
-              If you need any help, a user guide can be found here [link to supplier user guide] which has help screens.
+              If you need any help, a user guide can be found <a href="https://app.fmclarity.com/documentation/FM Clarity Supplier User Guide.pdf">here</a> which has help screens.
               If your answer isn’t there, please contact us <strong>&#x2709; <a href="mailto:support@fmclarity.com?" style={{textDecoration: "none"}}>support@fmclarity.com</a></strong> or phone on <strong><span>&#x2706;</span> (03) 8376 6333</strong>.
             </p>
             <br/>
@@ -89,8 +88,8 @@ const SupplierInviteEmailTemplate = React.createClass({
               <a href="https://www..fmclarity.com" style={{textDecoration: "none"}}>fmclarity.com</a>
             </p>
           </div>
-        </div>
-      );
+          </div>
+        );
     }
 });
 
