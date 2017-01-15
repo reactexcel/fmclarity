@@ -164,7 +164,7 @@ export default ProgressOverviewChart = React.createClass( {
                 <div className="ibox-title">
                     <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
                 </div>
-                <div className="ibox-content" style={{padding:"0px 50px 30px 50px"}}>
+                <div className="ibox-content progress-ibox">
                     <div className="row" style={{textAlign:"center",clear:"both"}}>
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
