@@ -14,6 +14,9 @@ import RequestSearch from './imports/schemas/RequestSearchController';
 import RequestActions from './actions.jsx';
 
 import RequestFilter from './imports/components/RequestFilter.jsx';
+
+import RequestFrequencySchema from './imports/schemas/RequestFrequencySchema.jsx';
+
 /**
  * @module  		models/Requests
  */
@@ -28,4 +31,6 @@ export {
 	RequestSearch,
 
 	RequestFilter,
+
+	RequestFrequencySchema
 }

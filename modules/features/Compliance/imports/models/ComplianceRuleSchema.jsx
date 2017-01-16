@@ -1,22 +1,31 @@
 import { MDPPMEventSelector } from '/modules/features/Compliance';
 import { DocTypes } from '/modules/models/Documents';
 
-ComplianceRuleSchema = {
+import { FacilityListTile } from '/modules/models/Facilities';
+
+import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
+
+
+import { Text, Select } from '/modules/ui/MaterialInputs';
+import { RequestFrequencySchema } from '/modules/models/Requests';
+
+export default ComplianceRuleSchema = {
 
     facility: {
         label: "Facility",
         description: "The site for this job",
-        relation: {
+        /*relation: {
             type: ORM.OneToOne,
             source: Facilities
-        },
-        input: "MDSelect",
+        },*/
+        input: Select,
 
         options: ( item ) => {
+            let team = Session.getSelectedTeam();
             return {
-                items: ( item.team ? item.team.facilities : null ),
-                view: ( Meteor.isClient ? FacilitySummary : null ),
-
+                items: ( team ? team.getFacilities() : null ),
+                view: ( Meteor.isClient ? FacilityListTile : null ),
+                /*
                 transform: ( item ) => {
                     if ( item == null ) {
                         return;
@@ -28,14 +37,14 @@ ComplianceRuleSchema = {
                     item.subservice = null;
                     item.supplier = null;
                 }
+                */
             }
         },
     },
 
-
     type: {
         label: "Check type",
-        input: "MDSelect",
+        input: Select,
         options: {
             items: [
                 "Document exists",
@@ -45,21 +54,25 @@ ComplianceRuleSchema = {
             ]
         }
     },
+
     docType: {
         label: "Document type",
-        input: "MDSelect",
+        input: Select,
         condition: [ "Document exists", "Document is current" ],
         options: {
             items: DocTypes
         },
     },
+
     docName: {
         label: "Document name",
+        input: Text,
         condition: [ "Document exists", "Document is current" ]
     },
+
     service: {
         type: Object,
-        input: "MDSelect",
+        input: Select,
         condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
@@ -70,8 +83,10 @@ ComplianceRuleSchema = {
             }
         }
     },
+
     event: {
         label: "PMP event",
+        input: Text,
         condition: "PPM event completed",
         /*
         input:Meteor.isClient?MDPPMEventSelector:null,
@@ -82,9 +97,10 @@ ComplianceRuleSchema = {
         }
         */
     },
+
     frequency: {
         condition: "PPM event completed",
         subschema: RequestFrequencySchema
-    },
+    }
 
 }

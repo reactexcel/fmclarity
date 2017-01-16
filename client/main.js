@@ -126,6 +126,7 @@ Actions.addAccessRule( {
 		'view team member',
 		'create team member',
 		'create team facility',
+		'create compliance rule',
 		'edit team member',
 		'delete team member',
 	],

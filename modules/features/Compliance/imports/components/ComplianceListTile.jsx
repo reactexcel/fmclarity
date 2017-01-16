@@ -5,7 +5,7 @@ import { AutoForm } from '/modules/core/AutoForm';
 
 import '../services/ComplianceEvaluationService.jsx';
 
-ComplianceListTile = React.createClass( {
+export default ComplianceListTile = React.createClass( {
 
   mixins: [ ReactMeteorData ],
 
