@@ -23,6 +23,7 @@ import { Users } from '/modules/models/Users'
 // to be removed
 import { Facilities } from '/modules/models/Facilities';
 
+import { SupplierInviteEmailTemplate } from '/modules/core/Email';
 //console.log( Members );
 
 if ( Meteor.isServer ) {
@@ -272,6 +273,11 @@ Teams.methods( {
 		method: sendMemberInvite
 	},
 
+	sendSupplierInvite: {
+		authentication: true,
+		method: sendSupplierInvite
+	},
+
 	setServicesRequired: {
 		authentication: AuthHelpers.managerOrOwner,
 		method: function( team, servicesRequired ) {
@@ -475,6 +481,7 @@ function inviteMember( team, email, ext ) {
 		}, {
 			role: ext.role || user.getRole()
 		} );
+		ext.callback?ext.callback( user, found ):"";
 		return {
 			user: user,
 			found: found
@@ -498,7 +505,9 @@ function inviteMember( team, email, ext ) {
 				}, {
 					role: ext.role
 				} );
-
+				if (ext.flag) {
+					Meteor.call("Teams.sendSupplierInvite", team, user );
+				}
 				return {
 					user: user,
 					found: true
@@ -536,6 +545,20 @@ function sendMemberInvite( team, recipient ) {
     	    emailBody:body
 		}
 	}*/
+	Meteor.call( 'Messages.sendEmail', recipient, {
+		subject: team.name + " has invited you to join FM Clarity",
+		emailBody: body
+	} )
+}
+
+function sendSupplierInvite( team, recipient ) {
+	let body = ReactDOMServer.renderToStaticMarkup(
+		React.createElement( SupplierInviteEmailTemplate, {
+			team: team,
+			user: recipient,
+			token: LoginService.generatePasswordResetToken( recipient )
+		} )
+	);
 	Meteor.call( 'Messages.sendEmail', recipient, {
 		subject: team.name + " has invited you to join FM Clarity",
 		emailBody: body
@@ -599,7 +622,7 @@ Teams.helpers( {
 		if ( requests && requests.length ) {
 			requests.map( ( request ) => {
 				let requestIsByThisTeam = request.team && request.team._id && request.team._id == this._id;
-				let requestIsForThisTeam = request.supplier && ( 
+				let requestIsForThisTeam = request.supplier && (
 					( request.supplier._id && request.supplier._id == this._id ) ||
 					( request.supplier.name && request.supplier.name == this.name )
 				);

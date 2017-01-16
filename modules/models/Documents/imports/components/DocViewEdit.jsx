@@ -9,7 +9,6 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocForm from '../schemas/DocForm.jsx';
-import { Facilities } from '/modules/models/Facilities';
 /**
  * @class 			DocViewEdit
  * @memberOf 		module:models/Documents

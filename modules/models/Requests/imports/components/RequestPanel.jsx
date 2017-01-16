@@ -103,7 +103,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     var viewers=[];
     request.readBy ? request.readBy.map(function(u, idx){
         var user = Meteor.users.findOne(u._id);
-        if ((request.readBy.length-1) != idx) {
+        if ((request.readBy.length-1) != idx && u._id != Meteor.userId()) {
             viewers.push(user.profile.name);
         }
 
@@ -258,34 +258,32 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.assignee.getName()}</td>
                 </tr> : null }
 
-                { teamType=='fm' && request.eta ?
+                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
                 </tr> : null }
 
                 { request.readBy ?
-                <tr>
-                    <td></td>
-                    <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
-                    <ul className="seen-by-list">
-                    {request.readBy.length > 2 ?
-                        <li>
-                        <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
-                        <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
-                        var user = Meteor.users.findOne(u._id);
-                        return (
-                            <li key={u._id}>
-                                <a href = "" title = { formatDate( u.readAt ) }>
-                                    { user._id==Meteor.userId() ? "" : (user.profile ? user.profile.name : user.name) }
-                                </a>
-                            </li>
-                        )
-                    })}
-
-                    </ul>
-                    </td>
-                </tr> : null }
+                request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null :
+                    <tr>
+                                     <td></td>
+                                     <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
+                                                         <ul className="seen-by-list">
+                                                         {request.readBy.length > 2 ?
+                                                             <li>
+                                                             <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
+                                                             <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
+                                                             var user = Meteor.users.findOne(u._id);
+                                                             if (u._id==Meteor.userId()) {user=null;}
+                                                             return (
+                                                                 user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                                                 )
+                                                         })}
+                                     
+                                                         </ul>
+                                                         </td>
+                                 </tr> : null }
 
                 </tbody>
             </table>
