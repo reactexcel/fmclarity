@@ -7,6 +7,8 @@ import { Requests } from '/modules/models/Requests';
 
 import { ContactCard } from '/modules/mixins/Members';
 
+import React from 'react';
+
 export default DocumentSchema = {
 
 	name: {
@@ -557,6 +559,76 @@ export default DocumentSchema = {
 		},
 		size: 12,
 		type: "boolean",
+	},
+	visibleTo:{
+		label:'Visible to roles.',
+		size: 12,
+		type: "array",
+		input(props){
+			let roles = [
+				"staff",
+				"tenant",
+				"manager",
+				"resident",
+				"caretaker",
+			];
+			props.value = props.value || [];
+			return(
+				<div className="row">
+					<div className="col-sm-12">
+						<Select
+							placeholder="Select role from the list"
+							items={_.filter( roles,  r => props.value.indexOf(r) === -1 )}
+							onChange={ ( selected ) => {
+								if(props.value.indexOf(selected) < 0 ){
+									props.value.push( selected );
+									props.onChange(props.value);
+								}
+							}}/>
+						<div style={{marginTop:"15px"}}>
+							{props.value.length!=0?<h4>Document will be visible to the following role(s).</h4>:null}
+							{_.map(
+								props.value,
+								( r, i ) => <div
+										className={r.length > 13?"col-sm-3":"col-sm-2"}
+										key={i}
+										style={{
+											paddingTop: '4px',
+	    								paddingBottom: '4px',
+	    								paddingLeft: '15px',
+	    								backgroundColor: '#bcaab1',
+	    								fontSize: '13px',
+	    								fontWeight: '400',
+											marginLeft: '5px',
+											border: '1px solid transparent',
+	    								borderRadius: '13px',
+											margin: "2px",
+										}}>
+											{r}
+											<span onClick={() => {
+													let role = r;
+													let newValue =	_.filter( props.value,  v => v !== role );
+													props.onChange(newValue);
+												}}
+												style={{
+													float: 'right',
+	    										cursor: 'pointer',
+	    										fontSize: '14px',
+	    										fontWeight: 'bold',
+													marginRight: '10px',
+												}} title="Remove tag">&times;</span>
+									</div>
+							)}
+						</div>
+					</div>
+				</div>
+			);
+		},
+		condition(item){
+			return(
+				item.private && _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], Meteor.user().getRole() )
+			);
+		}
 	},
 	attachments: {
 		//type: "array",
