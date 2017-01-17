@@ -77,6 +77,7 @@ export default class DocExplorer extends React.Component {
                 selectedItem = { this.state.item }
                 role = { role }
                 handleListUpdate={this.handleListUpdate.bind(this)}
+                team = { this.state.item}
                 />
 						)
 					)
@@ -90,6 +91,7 @@ export default class DocExplorer extends React.Component {
                 model = { this.props.model }
                 selectedItem = { this.state.item }
                 role = {role}
+                team = { this.state.item}
                 />
 						)
 					)
