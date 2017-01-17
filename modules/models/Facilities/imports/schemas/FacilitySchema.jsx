@@ -620,8 +620,8 @@ const FacilitySchema = {
 				 input( props ){
 					 let month = parseInt(moment().format("M"));
 					 return (
-						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "63%", height: "10%" }}>
-							 <span style={{paddingLeft:"2px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
+						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "34%", height: "20%", marginTop:'100%' }}>
+							 <span style={{paddingLeft:"0px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
 						 </div>
 					 )
 				 }
@@ -633,7 +633,7 @@ const FacilitySchema = {
 					 return(
 						 item.glAccount == "Not applicable"?
 						 	 <Currency { ...props }/>:
-						 <div style={{marginLeft:"-10px"}}>
+						 <div style={{marginLeft:"-7px"}}>
 							 Budget: <span>${props.value!=""?props.value:0 }</span>
 						 </div>
 					 )

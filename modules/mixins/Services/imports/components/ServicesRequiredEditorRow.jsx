@@ -106,7 +106,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 							onClick = {
 								() => {
 									Modal.show({
-										content:  <div style={{padding:'20px'}}>
+										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
 												<h1>{'Service Parameters - '+this.data.service.name}</h1>
 											</div>
