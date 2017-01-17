@@ -159,31 +159,37 @@ export default ProgressOverviewChart = React.createClass( {
             var results = this.data.results;
             var facility = Session.get( 'selectedFacility' );
             return (
-                <div>
+                <div className="overview-graph">
                 <Menu items={this.getMenu()} />
                 <div className="ibox-title">
                     <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
                 </div>
-                <div className="ibox-content" style={{padding:"0px 20px 30px 20px"}}>
-                    <div style={{textAlign:"center",clear:"both"}}>
+                <div className="ibox-content" style={{padding:"0px 50px 30px 50px"}}>
+                    <div className="row" style={{textAlign:"center",clear:"both"}}>
+                        <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="New Requests" 
                                 thisPeriod = {results['New'].thisPeriod}
                                 lastPeriod = {results['New'].lastPeriod}
                                 color="#3ca773"
                             />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Issued Requests" 
                                 thisPeriod = {results['Issued'].thisPeriod}
                                 lastPeriod = {results['Issued'].lastPeriod}
                                 color="#b8e986"
                             />
+                        </div>
+                        <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
                                 title="Closed Requests" 
                                 thisPeriod = {results['Closed'].thisPeriod}
                                 lastPeriod = {results['Closed'].lastPeriod}
                                 color="#333333"
                             />
+                        </div>
                         {/*
                         <div className="col-xs-4" style={{padding:0}}>
                             <ProgressArc 
