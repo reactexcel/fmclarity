@@ -158,7 +158,7 @@ Facilities.actions({
 	        }
 
            	if (requestIds) {
-                messages = Messages.findAll({ 'inboxId.query._id': { $in: requestIds } });
+                messages = Messages.findAll({ 'inboxId.query._id': { $in: requestIds } }, { sort : { createdAt : 1 } } );
             }
             return messages;
         }

@@ -15,82 +15,96 @@ import DocumentSchema from './schemas/DocumentSchema.jsx';
  */
 
 const Documents = new Model( {
-	schema: DocumentSchema,
-	collection: "Files",
-	mixins: [
-		[ Owners ],
-		[ DocMessages, {
-			helpers: {
-				getInboxName() {
-					return "document #" + this.documentNumber + ' "' + this.getName() + '"';
-				},
-				getWatchers() {
-					let facility = Session.getSelectedFacility(),
-						recipients = [],
-						recipientsArray = recipients.concat( facility?facility.getMembers( {
-							                role: "portfolio manager"
-							            } ):[] );
-					return  recipientsArray;
-				}
-			}
-		} ],
-		[ Members ]
-	]
+    schema: DocumentSchema,
+    collection: "Files",
+    mixins: [
+        [ Owners ],
+        [ DocMessages, {
+            helpers: {
+                getInboxName() {
+                    return "document #" + this.documentNumber + ' "' + this.getName() + '"';
+                },
+                getWatchers() {
+                    let team = this.getTeam(),
+                        members = [];
+                    if ( team ) {
+                        members = team.getMembers( {
+                            role: "portfolio manager"
+                        } )
+                    }
+                    return members;
+                }
+            }
+        } ],
+        [ Members ]
+    ]
 } )
 
 if ( Meteor.isServer ) {
-	Meteor.publish( 'Documents', () => {
-		return Documents.find();
-	} );
+    Meteor.publish( 'Documents', () => {
+        return Documents.find();
+    } );
 }
 
 Documents.collection.allow( {
-	remove: () => {
-		return true;
-	},
-	update: () => {
-		return true;
-	}
+    remove: () => {
+        return true;
+    },
+    update: () => {
+        return true;
+    }
 } )
 
-if( Meteor.isServer ) {
-	Documents.collection._ensureIndex( { 'team._id': 1 } );
-	Documents.collection._ensureIndex( { 'facility._id': 1 } );
-	Documents.collection._ensureIndex( { 'request._id': 1 } );
+if ( Meteor.isServer ) {
+    Documents.collection._ensureIndex( { 'team._id': 1 } );
+    Documents.collection._ensureIndex( { 'facility._id': 1 } );
+    Documents.collection._ensureIndex( { 'request._id': 1 } );
 }
 
 Documents.actions( {
-	destroy: {
-		authentication: true,
-		helper: ( doc ) => {
-			let attachments = doc.attachments;
+    getTeam: {
+        authentication: true,
+        helper: ( doc ) => {
 
-			import { Files } from '/modules/models/Files';
+            import { Teams } from '/modules/models/Teams';
 
-			_.forEach( attachments, ( attach ) => {
-				Files.remove( { _id: attach._id } );
-			} );
-			if ( doc ) {
-				let owner = null;
-				if( doc.owner ) {
-					owner = doc.getOwner();
-				}
-				doc.distributeMessage( {
-					message: {
-						verb: "deleted",
-						subject: "A document has been deleted" + ( owner ? ` by ${owner.getName()}` : '' ),
-						body: doc.description
-					}
-		} );
-			}
-			Documents.remove( { _id: doc._id } );
-		}
-	},
-	makePrivate: {
-		authentication: true,
-		helper: ( doc, private ) => {
-			Documents.update( { _id: doc._id },{ $set: { "private": private } } )
-		}
-	},
+            if ( doc.team && doc.team._id ) {
+                return Teams.findOne( doc.team._id );
+            }
+        }
+    },
+    destroy: {
+        authentication: true,
+        helper: ( doc ) => {
+
+            import { Files } from '/modules/models/Files';
+
+            let attachments = doc.attachments;
+
+            _.forEach( attachments, ( attach ) => {
+                Files.remove( { _id: attach._id } );
+            } );
+            if ( doc ) {
+                let owner = null;
+                if ( doc.owner ) {
+                    owner = doc.getOwner();
+                }
+                doc.distributeMessage( {
+                    message: {
+                        verb: "deleted",
+                        subject: "A document has been deleted" + ( owner ? ` by ${owner.getName()}` : '' ),
+                        body: doc.description
+                    }
+                } );
+            }
+            Documents.remove( { _id: doc._id } );
+        }
+    },
+    makePrivate: {
+        authentication: true,
+        helper: ( doc, private ) => {
+            Documents.update( { _id: doc._id }, { $set: { "private": private } } )
+        }
+    },
 } )
 export default Documents;
