@@ -551,7 +551,7 @@ export default DocumentSchema = {
 		label: "Area (m2)"
 	},
 	private: {
-		label: "Private documrent",
+		label: "Private document",
 		description: "Turn switch on/off to make document public/private",
 		input: Switch,
 		defaultValue: () => false,
