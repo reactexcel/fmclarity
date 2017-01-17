@@ -162,7 +162,7 @@ export default ProgressOverviewChart = React.createClass( {
                 <div>
                 <Menu items={this.getMenu()} />
                 <div className="ibox-title">
-                    <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
+                    <h2>Overview {this.state.title} {facility&&facility.name?" for "+facility.name:" for all facilities"}</h2>
                 </div>
                 <div className="ibox-content" style={{padding:"0px 20px 30px 20px"}}>
                     <div style={{textAlign:"center",clear:"both"}}>

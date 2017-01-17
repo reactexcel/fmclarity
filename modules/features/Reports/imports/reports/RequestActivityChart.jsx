@@ -342,7 +342,7 @@ const RequestActivityChart = React.createClass( {
 			</button>
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
-		        	<h2>Request activity {this.data.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
+		        	<h2>Request activity {this.data.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 		        </div>
 		        <div className="ibox-content">
 			        <div className="row">
@@ -353,9 +353,11 @@ const RequestActivityChart = React.createClass( {
 				        </div>
 				    </div>
 				</div>
+				{/*
 				<div className="gragh-table">
 				<ServicesRequestsView requests={buckets} labels={ requestStatuses } expandall = {this.state.expandall}/>
 				</div>
+				*/}
 			</div>
 		)
 	}
