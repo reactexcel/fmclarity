@@ -2,7 +2,7 @@ import React from "react"
 
 import { ComplianceEvaluationService } from '/modules/features/Compliance';
 
-ServiceListTile = React.createClass( {
+export default ServiceListTile = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 

@@ -12,6 +12,9 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 
+
+	Meteor.subscribe( 'User: Facilities, Requests' );
+
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		facilities = null,

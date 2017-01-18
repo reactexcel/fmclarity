@@ -158,7 +158,7 @@ Facilities.actions({
 	        }
 
            	if (requestIds) {
-                messages = Messages.findAll({ 'inboxId.query._id': { $in: requestIds } });
+                messages = Messages.findAll({ 'inboxId.query._id': { $in: requestIds } }, { sort : { createdAt : 1 } } );
             }
             return messages;
         }
@@ -391,6 +391,25 @@ Facilities.actions({
             let documents = facility.documents;
             documents = _.filter(documents, (d) => d._id != docToRemove._id);
             Facilities.update({ _id: facility._id }, { $set: { "documents": documents } });
+        }
+    },
+
+    updateRealEstateAgency: {
+        authentication: true,
+        helper: (facility, item, callback) => {
+          Facilities.update( {
+                 "_id": facility._id
+               }, {
+                 $set: {
+                   realEstateAgency: {
+                       _id: item._id,
+                       name: item.name,
+                       type: item.type
+                     }
+                  }
+                }, ( ) => {
+                     callback( facility );
+                } );
         }
     },
 

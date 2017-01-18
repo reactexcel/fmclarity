@@ -4,6 +4,7 @@
  */
 import PMPList from './imports/components/PMPList.jsx';
 import ComplianceEvaluationService from './imports/services/ComplianceEvaluationService.jsx';
+import ComplianceActions from './actions.jsx';
 
 /**
  * @module 			features/Compliance
@@ -11,4 +12,5 @@ import ComplianceEvaluationService from './imports/services/ComplianceEvaluation
 export {
 	PMPList,
 	ComplianceEvaluationService,
+	ComplianceActions
 }
