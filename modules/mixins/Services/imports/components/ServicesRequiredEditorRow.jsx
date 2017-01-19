@@ -99,7 +99,10 @@ const ServicesRequiredEditorRow = React.createClass( {
 		    		<input
 		    			defaultValue={service.name||undefined}
 		    			readOnly={readOnly}
-		    			onChange={this.updateServiceName}/>
+		    			onChange={this.updateServiceName}
+							onKeyDown={ (evt) => this.props.onKeyDown(evt) }
+							id={this.props.id}
+							/>￼
 
 
 						{!readOnly?<span className="services-editor-delete-icon"
