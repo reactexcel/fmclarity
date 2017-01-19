@@ -3,6 +3,7 @@ import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import ComplianceList from './ComplianceList.jsx';
+import ComplianceActions from '../../actions.jsx';
 
 
 export default ComplianceViewDetail = React.createClass( {
@@ -63,7 +64,12 @@ export default ComplianceViewDetail = React.createClass( {
                             <span>{results.servicesFailed} non-compliant services</span>
                         </div>
                         <div style={{textAlign:"right"}}>
-                            <button onClick={()=>{FABActions.createComplianceRule()}} className="btn btn-flat" style={{backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px"}}>New Rule</button>
+                            <button onClick     = { ()=>{ ComplianceActions.createRule.run() } } 
+                                    className   = "btn btn-flat" 
+                                    style       = { { backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px" } } 
+                            >
+                                New Rule
+                            </button>
                         </div>
                     </div>                    
                 </div>

@@ -18,7 +18,7 @@ var defaultHelpers = {
     getNotifications: getNotifications,
     getMessageCount: getMessageCount,
     //getRecipients:getRecipients,
-    markAsUnread:markAsUnread
+    markAsUnread: markAsUnread
 }
 
 function register( collection, opts ) {
@@ -111,7 +111,7 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
 
     var user = Meteor.user();
     var obj = this;
-    message.target = message.target||obj.getInboxId();
+    message.target = message.target || obj.getInboxId();
     message.owner = {
             _id: user._id,
             name: user.getName()
@@ -137,11 +137,12 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
         }
     } )
 
-    //console.log(recipients);
+    console.log( recipients );
+
     recipients.map( function( r ) {
         if ( r ) {
             console.log( {
-                "sending notification to": r.profile?r.profile.name:r.name
+                "sending notification to": r.profile ? r.profile.name : r.name
             } );
             sendMessage( message, r );
         } else {
@@ -222,7 +223,6 @@ function sendMessage( message, recipient ) {
         emailBody: emailBody
     } );
 
-
     //check if we should mark the message as read
     if ( recipientIsCreator( message, recipient ) ) {
         msgCopy.read = true;
@@ -230,10 +230,14 @@ function sendMessage( message, recipient ) {
 
     //create the message
     Meteor.call( "Messages.create", msgCopy, ( error, response ) => {
-        //console.log( { error, response } );
-        //then email if we are supposed to
-        if ( !msgCopy.read ) {
-            Meteor.call( "Messages.sendEmail", recipient, msgCopy );
+        if( error ) {
+            console.log( error );
+        }
+        else {
+            //then email if we are supposed to
+            if ( !msgCopy.read ) {
+                Meteor.call( "Messages.sendEmail", recipient, msgCopy );
+            }
         }
     } );
 }
@@ -287,28 +291,28 @@ function markAllNotificationsAsRead() {
 }
 
 function markAsUnread( recipientRoles ) {
-  let recipients = null,
-    user = Meteor.user(),
-    request = this;
+    let recipients = null,
+        user = Meteor.user(),
+        request = this;
     if ( recipientRoles ) {
-      recipients = getRecipientListFromRoles( this, recipientRoles );
+        recipients = getRecipientListFromRoles( this, recipientRoles );
     } else {
-      recipients = getRecipients( this.getWatchers(), [] );
+        recipients = getRecipients( this.getWatchers(), [] );
     }
-  import { Requests } from '/modules/models/Requests';
-  recipients =  _.uniq( recipients, false, function( i ) {
-      return i._id;
+    import { Requests } from '/modules/models/Requests';
+    recipients = _.uniq( recipients, false, function( i ) {
+        return i._id;
     } );
-  recipients.map( ( r ) => {
-    if( r._id != user._id ){
-      Requests.update( { _id: request._id }, {
-          $addToSet : {
-            unreadRecipents: r._id
-          },
-          $set:{
-            lastUpdate: new Date()
-          }
-      } );
-    }
-  } );
+    recipients.map( ( r ) => {
+        if ( r._id != user._id ) {
+            Requests.update( { _id: request._id }, {
+                $addToSet: {
+                    unreadRecipents: r._id
+                },
+                $set: {
+                    lastUpdate: new Date()
+                }
+            } );
+        }
+    } );
 }

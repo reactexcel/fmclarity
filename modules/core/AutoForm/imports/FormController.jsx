@@ -118,12 +118,14 @@ class FormController {
 		// remove all extraneous fields from the provided item
 		// to avoid validation errors related to fields we aren't handling
 		let validationFields = _.pick( this.item, this.keys );
-		let error = this.model.validate( validationFields );
-		if ( error ) {
-			console.log( error );
-			this.processValidationErrors( error );
-			this.triggerCallbacks();
-			return false;
+		if( this.model ) {
+			let error = this.model.validate( validationFields );
+			if ( error ) {
+				console.log( error );
+				this.processValidationErrors( error );
+				this.triggerCallbacks();
+				return false;
+			}
 		}
 		return true;
 	}

@@ -34,6 +34,7 @@ const DocForm = [
 	'optionExerciseToDate',
 	'area',
 	'private',
+	'visibleTo',
 	'attachments',
 
 ]

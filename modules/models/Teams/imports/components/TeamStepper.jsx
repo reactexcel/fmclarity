@@ -45,12 +45,16 @@ const TeamStepper = React.createClass( {
         if( this.state.item ) {
             viewingTeam = Teams.findOne( this.state.item._id );
             if( !viewingTeam && this.state.searchName ) {
-                viewingTeam = Teams.findOne( {
-                    name: {
-                        $regex: this.state.searchName,
-                        $options: 'i'
-                    }
-                } )
+              let query = {
+                  name: {
+                      $regex: this.state.searchName,
+                      $options: 'i'
+                  },
+              };
+              if(this.state.teamType){
+                query.type = this.state.teamType
+              }
+              viewingTeam = Teams.findOne( query );
             }
         }
 
@@ -102,7 +106,8 @@ const TeamStepper = React.createClass( {
             shouldShowMessage: false,
             foundTeams: false,
             facility: this.props.facility,
-            item: this.props.item
+            item: this.props.item,
+            teamType: this.props.teamType || null,
         }
     },
     //Update the state of ui
@@ -173,12 +178,18 @@ const TeamStepper = React.createClass( {
     },
 
     checkName(event){
-        event.preventDefault();
+      event.preventDefault();
       var inputName = this.refs.invitation.value;
-      searchTeams = Teams.findAll( {name: {
-        $regex: inputName,
-        $options: 'i'
-    }}, { sort: { name: 1 } } );
+      let query = {
+        name: {
+          $regex: inputName,
+          $options: 'i'
+        }
+      };
+      if(this.state.teamType){
+        query.type = this.state.teamType
+      }
+      searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
       if (searchTeams.length>0) {
         this.setState( { foundTeams: true} );
 
@@ -200,7 +211,7 @@ const TeamStepper = React.createClass( {
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
                         <b>Lets search to see if this team already has an account.</b>
-                        {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder="Select Supplier from dropdown"/> : null }
+                        {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder={"Select "+(this.props.title?this.props.title:"Supplier")+" from dropdown"}/> : null }
                         <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
                         <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
                     </div>
@@ -274,8 +285,7 @@ const TeamStepper = React.createClass( {
                                                         type: 'team',
                                                         _id: team._id,
                                                         name: team.name
-                                                      },
-                                                      flag: true,
+                                                      }
                                                     }
                                                    );
                                                 }

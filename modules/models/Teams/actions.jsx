@@ -20,8 +20,8 @@ const create = new Action( {
 		let team = Teams.create();
 		Modal.show( {
 			content: <DropFileContainer model={Teams}>
-								 <TeamStepper item = { team } />
-							 </DropFileContainer>
+				<TeamStepper item = { team } />
+			</DropFileContainer>
 		} )
 	}
 } )
@@ -34,8 +34,8 @@ const edit = new Action( {
 		let { roles, actors } = Roles.getRoles( team );
 		Modal.show( {
 			content: <DropFileContainer model={Teams}>
-								 <TeamStepper item = { team } />
-								</DropFileContainer>
+				<TeamStepper item = { team } />
+			</DropFileContainer>
 		} )
 	}
 } )
@@ -47,8 +47,8 @@ const view = new Action( {
 	action: ( team ) => {
 		Modal.show( {
 			content: <DropFileContainer model={Teams}>
-								 <TeamPanel item = { team } />
-               </DropFileContainer>
+				<TeamPanel item = { team } />
+            </DropFileContainer>
 		} )
 	}
 } )
@@ -81,14 +81,14 @@ const createFacility = new Action( {
 			let clientsOfSupplier = team.getClientsOfSupplier();
 			Modal.show({
 				content: <DropFileContainer model={Facilities}>
-										<CreateSupplierFacility clients={clientsOfSupplier} />
-									</DropFileContainer>
+					<CreateSupplierFacility clients={clientsOfSupplier} />
+				</DropFileContainer>
 			})
 		} else {
 			Modal.show( {
 				content: <DropFileContainer model={Facilities}>
-								 		<FacilityStepperContainer params = { { item } } />
-									</DropFileContainer>
+					<FacilityStepperContainer params = { { item } } />
+				</DropFileContainer>
 			} )
 		}
 	}
@@ -114,8 +114,8 @@ const createRequest = new Action( {
 					( newRequest ) => {
 						Modal.replace( {
 							content: <DropFileContainer model={Requests} request={request}>
-											 	 <RequestPanel item = { newRequest }/>
-												</DropFileContainer>
+								<RequestPanel item = { newRequest }/>
+							</DropFileContainer>
 						} );
 						let team = Teams.findOne( newRequest.team._id ),
 							role = Meteor.user().getRole( team );
@@ -255,6 +255,17 @@ const inviteMember = new Action( {
 	}
 } )
 
+const inviteSupplier = new Action( {
+	name: 'invite supplier',
+	label: "Invite supplier",
+	type: [ 'team' ],
+	action: ( supplier ) => {
+		let inviter = Session.getSelectedTeam();
+		Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
+		//invite supplier
+	}
+} )
+
 const resetMemberTours = new Action( {
 	name: 'reset team member tours',
 	label: "Reset member tours",
@@ -307,6 +318,8 @@ export {
 	editMember,
 	destroyMember,
 	removeMember,
+
+	inviteSupplier,
 
 	resetMemberTours,
 	loginMember,

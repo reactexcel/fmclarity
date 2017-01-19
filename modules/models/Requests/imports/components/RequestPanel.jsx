@@ -173,7 +173,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
               <div className="row">
                 <div className="col-md-1">
                   <div>
-                    <button onClick={()=>{FlowRouter.go( url );}} className="btn btn-flat">
+                    <button onClick={()=>{window.print(  );}} className="btn btn-flat">
                       <i className="fa fa-print" aria-hidden="true"></i>
                     </button>
                   </div>

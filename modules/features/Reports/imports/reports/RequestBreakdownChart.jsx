@@ -282,16 +282,18 @@ const RequestBreakdownChart = React.createClass( {
 			</button>
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
-					<h2>Request breakdown {this.state.title} {facility?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
+					<h2>Request breakdown {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
 					<div>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
+				{/*
 				<div className="gragh-table">
 				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
 				</div>
+				*/}
 			</div>
 		)
 	}
