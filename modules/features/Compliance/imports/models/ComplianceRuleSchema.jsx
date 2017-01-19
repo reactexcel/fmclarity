@@ -73,6 +73,7 @@ export default ComplianceRuleSchema = {
     service: {
         type: Object,
         input: Select,
+        label: "Service",
         condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
