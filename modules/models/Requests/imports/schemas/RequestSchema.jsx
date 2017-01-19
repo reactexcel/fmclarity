@@ -402,7 +402,7 @@ const RequestSchema = {
 		description: "Comment about the acceptance of this work request",
 		type: "string",
 		input: TextArea,
-		required: true,
+		required: false,
 	},
 
 	rejectComment: {
