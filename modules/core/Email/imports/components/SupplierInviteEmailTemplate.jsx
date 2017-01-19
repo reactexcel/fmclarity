@@ -65,7 +65,7 @@ const SupplierInviteEmailTemplate = React.createClass( {
                     </p>
                     <p style={{textAlign: "justify"}}>
                       FM Clarity however is not just used to issue work orders but is also used by FMs to <strong>search for </strong>
-                      <strong>new suppliers</strong>, just like your company. Think of it like a LinkedIn for suppliers.. and it won’t cost
+                      <strong>new suppliers</strong>, just like your company. Think of it like a LinkedIn for suppliers... and it won’t cost
                       you a thing.
                     </p>
                     <p style={{textAlign: "justify"}}>
@@ -91,7 +91,7 @@ const SupplierInviteEmailTemplate = React.createClass( {
                       <strong>Cheers from the team at FM Clarity</strong><br/>
                       <a href="https://www..fmclarity.com" style={{textDecoration: "none"}}>fmclarity.com</a>
                     </p>
-                </div> < /div>
+                </div> </div>
         );
     }
 } );
