@@ -50,13 +50,13 @@ const RequestActivityChart = React.createClass( {
 			openQuery[ "facility._id" ] = facility._id;
 			closedQuery[ "facility._id" ] = facility._id;
 		}
-		
+
 
 		var viewConfig = this.state.viewConfig;
 		var open = RequestSearch.searchByDate( { q: openQuery, config: viewConfig } );
 		var closed = RequestSearch.searchByDate( { q: closedQuery, config: viewConfig } );
 
-		
+
 
 		var labels = open.labels;
 		var title = viewConfig.startDate.format( viewConfig.title );
@@ -90,9 +90,9 @@ const RequestActivityChart = React.createClass( {
 		component.setState( {
 			expandall: true
 		} );
-		
+
 		setTimeout(function(){
-			window.print();	
+			window.print();
 			component.setState( {
 				expandall: false
 			} );
@@ -321,9 +321,9 @@ const RequestActivityChart = React.createClass( {
 				buckets[ 'Open' ] = [];
 			}
 			buckets[ 'Open' ].push( i );
-			
+
 		});
-		
+
 		closedRequests.map(function(i){
 			if(!buckets['Closed']){
 				buckets[ 'Closed' ] = [];
@@ -334,7 +334,7 @@ const RequestActivityChart = React.createClass( {
 		if (this.data.ready) {
 			facilities = Meteor.user().getTeam().getFacilities();
 			}
-		
+
 		return (
 			<div>
 			<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>

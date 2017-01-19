@@ -23,31 +23,31 @@ import moment from 'moment';
 
 
 function addTeamMenuItem( menu, item, team ) {
-	if ( team ) {
-		if ( /*team.hasSupplier( item ) && team.canRemoveSupplier && team.canRemoveSupplier() && team._id != item._id*/ true ) {
+    if ( team ) {
+        if ( /*team.hasSupplier( item ) && team.canRemoveSupplier && team.canRemoveSupplier() && team._id != item._id*/ true ) {
 
-			menu.push( {
-				label: "Remove supplier from " + team.name,
-				shouldConfirm: true,
-				action() {
-					team.removeSupplier( item );
-					Modal.hide();
-				}
-			} );
+            menu.push( {
+                label: "Remove supplier from " + team.name,
+                shouldConfirm: true,
+                action() {
+                    team.removeSupplier( item );
+                    Modal.hide();
+                }
+            } );
 
-		}
+        }
 
-		if ( item && item.ownerIs && item.ownerIs( team ) ) {
-			var itemName = item.name;
-			menu.push( {
-				label: "Revoke ownership of " + itemName,
-				shouldConfirm: true,
-				action() {
-					item.clearOwner();
-				}
-			} )
-		}
-	}
+        if ( item && item.ownerIs && item.ownerIs( team ) ) {
+            var itemName = item.name;
+            menu.push( {
+                label: "Revoke ownership of " + itemName,
+                shouldConfirm: true,
+                action() {
+                    item.clearOwner();
+                }
+            } )
+        }
+    }
 }
 
 /**
@@ -56,65 +56,69 @@ function addTeamMenuItem( menu, item, team ) {
  */
 const TeamPanel = React.createClass( {
 
-	mixins: [ ReactMeteorData ],
+    mixins: [ ReactMeteorData ],
 
-	getMeteorData() {
-		let team = null,
-			services = null,
-			insuranceDocs = null;
+    getMeteorData() {
+        let team = null,
+            services = null,
+            insuranceDocs = null;
 
-		if ( this.props.item && this.props.item._id ) {
-			team = Teams.findOne( this.props.item._id );
-		}
+        if ( this.props.item && this.props.item._id ) {
+            team = Teams.findOne( this.props.item._id );
+        }
 
-		if ( team ) {
-			Meteor.subscribe( 'Inbox: Messages', team._id );
-			if( team.getAvailableServices ) {
-				services = team.getAvailableServices();
-			}
+        if ( team ) {
+            Meteor.subscribe( 'Inbox: Messages', team._id );
+            if ( team.getAvailableServices ) {
+                services = team.getAvailableServices();
+            }
 
-			/*
-			insuranceDocs = Documents.findAll( {'team._id':team._id, type:'Insurance'} );
-			need to migrate schema by moving references out to document
+            /*
+            insuranceDocs = Documents.findAll( {'team._id':team._id, type:'Insurance'} );
+            need to migrate schema by moving references out to document
 
-			insuranceDocs = team.getDocs( {
-				type: "Insurance"
-			} );
-			*/
+            insuranceDocs = team.getDocs( {
+            	type: "Insurance"
+            } );
+            */
 
-		}
-		return {
-			team: team,
-			availableServices: services,
-			insuranceDocs: insuranceDocs
-		}
-	},
+        }
+        return {
+            team: team,
+            availableServices: services,
+            insuranceDocs: insuranceDocs
+        }
+    },
 
-	getMenu() {
-		return [ TeamActions.edit.bind( this.props.item ) /*TeamActions.destroy.bind( this.props.item )*/ ];
-	},
+    getMenu() {
+        return [
+            TeamActions.edit.bind( this.props.item ),
+            ( this.props.item.type == "contractor" ? TeamActions.inviteSupplier.bind( this.props.item ) : null ),
+            /*TeamActions.destroy.bind( this.props.item )*/
+        ];
+    },
 
-	render() {
-		let { team, availableServices, insuranceDocs } = this.data;
+    render() {
+        let { team, availableServices, insuranceDocs } = this.data;
 
 
-		if ( !team ) {
-			return <div/>
-		}
+        if ( !team ) {
+            return <div/>
+        }
 
-		let contactName = team.contact ? team.contact.name : null,
-			insuranceExpiry;
+        let contactName = team.contact ? team.contact.name : null,
+            insuranceExpiry;
 
-		if ( insuranceDocs && insuranceDocs.length ) {
-			let primaryDoc = insuranceDocs[ 0 ];
-			if ( primaryDoc.expiryDate != null ) {
-				insuranceExpiry = moment( primaryDoc.expiryDate )
-					.format( 'DD/MM/YYYY' );
-			}
-		}
+        if ( insuranceDocs && insuranceDocs.length ) {
+            let primaryDoc = insuranceDocs[ 0 ];
+            if ( primaryDoc.expiryDate != null ) {
+                insuranceExpiry = moment( primaryDoc.expiryDate )
+                    .format( 'DD/MM/YYYY' );
+            }
+        }
 
-		return (
-			<div>
+        return (
+            <div>
 				{ this.props.onBack? 
 									<div style = { { padding:'10px', fontSize: '20px', color: '#999', cursor: 'pointer', float: 'left' } }>
 										<i className = "fa fa-arrow-left" onClick = { () => {
@@ -175,8 +179,8 @@ const TeamPanel = React.createClass( {
 			<Menu items = { this.getMenu() } />
 
 		</div>
-		)
-	}
+        )
+    }
 } );
 
 export default TeamPanel;
