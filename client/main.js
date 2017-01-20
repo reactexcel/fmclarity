@@ -173,18 +173,20 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     action: [ 'view request' ],
     role: [
-        'team fmc support',
-        'owner',
-        'team portfolio manager',
-        'team manager',
-        'supplier staff',
-        'supplier manager',
-        'facility manager',
-        'property manager',
-        'team caretaker',
-        'facility caretaker',
-        'assignee',
-        'resident'
+      '*'
+      // 'team fmc support',
+      // 'owner',
+      // 'team portfolio manager',
+      // 'team manager',
+      // 'supplier staff',
+      // 'supplier manager',
+      // 'facility manager',
+      // 'property manager',
+      // 'team caretaker',
+      // 'facility caretaker',
+      // 'assignee',
+      // 'resident',
+      // 'support',
     ],
     rule: { alert: true }
 } )

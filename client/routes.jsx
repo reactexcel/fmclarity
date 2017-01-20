@@ -31,9 +31,37 @@ Routes.addAccessRule( {
 		'portfolio',
 		'request-print'
 	],
-	role: [ '*' ],
+	role: [
+		'owner',
+		'staff',
+		'tenant',
+		'manager',
+		'assignee',
+		'resident',
+		'caretaker',
+		'fmc support',
+		'team manager',
+		'team caretaker',
+		'property manager',
+		'team fmc support',
+		'facility manager',
+		'supplier manager',
+		'portfolio manager',
+		'supplier fmc support',
+		'team portfolio manager',
+		'supplier portfolio manager',
+ 	],
 	condition: { type:'fm' }
 } )
+// Routes.addAccessRule( {
+// 	action: [
+// 		'requests',
+// 		'portfolio',
+// 		'request-print'
+// 	],
+// 	role: [ '*' ],
+// 	condition: { type:'fm' }
+// } )
 
 Routes.addAccessRule( {
 	action: [
@@ -55,6 +83,29 @@ Routes.addAccessRule( {
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
 	condition: { type:'fm' }
+} )
+
+Routes.addAccessRule( {
+	action: [
+		'requests',
+	],
+	role: [ 'support' ],
+	condition: { type:'fm' }
+} )
+
+Routes.addAccessRule( {
+	action: [
+		'calendar',
+		'request-print',
+	],
+	role: [ 'support' ]
+} )
+Routes.addAccessRule( {
+	action: [
+		'jobs',
+	],
+	role: [ 'support' ],
+	condition: { type:'contractor' }
 } )
 
 Routes.addAccessRule( {
