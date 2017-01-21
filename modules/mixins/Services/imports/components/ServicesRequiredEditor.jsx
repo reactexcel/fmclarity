@@ -25,6 +25,7 @@ const ServicesRequiredEditor = React.createClass( {
 			services: services || [],
 			expanded: {},
 			drag: false,
+      suppliers: this.props.suppliers,
 		}
 	},
 
@@ -41,7 +42,8 @@ const ServicesRequiredEditor = React.createClass( {
 				item: item,
 				field: field,
 				services: services || [],
-				expanded: {}
+				expanded: {},
+        suppliers: this.props.suppliers,
 			} );
 		}
 	},
@@ -197,7 +199,7 @@ const ServicesRequiredEditor = React.createClass( {
 		_component = this;
 		_services = services;
 		return (
-			<div className="services-editor">
+			<div className="services-editor" style={{overflow: 'hidden'}}>
 				<div className="services-editor-row services-editor-row-header">
 					<div className="services-editor-col services-editor-col-header">Service</div>
 					<div className="services-editor-col services-editor-col-header">Supplier</div>
@@ -237,6 +239,7 @@ const ServicesRequiredEditor = React.createClass( {
 												clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
 												onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
                         onKeyDown  ={ evt => this.handleKeyDown( evt, services, "#service-", idx ) }
+                        suppliers  ={this.state.suppliers}
 											/>
 
 										</div>
@@ -256,6 +259,7 @@ const ServicesRequiredEditor = React.createClass( {
 																	readOnly 	= { readOnly }
 																	onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }
                                   onKeyDown  ={ evt => this.handleKeyDown( evt, service.children, "#subservice-", idx, subIdx ) }
+                                  suppliers  ={this.state.suppliers}
                                   />
 															</div>
 														)

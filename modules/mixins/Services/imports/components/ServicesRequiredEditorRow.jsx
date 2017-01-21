@@ -9,6 +9,7 @@ import { Facilities } from '/modules/models/Facilities';
 import { ContactCard } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Modal } from '/modules/ui/Modal';
+import { Select } from '/modules/ui/MaterialInputs';
 
 /**
  * @class 			ServicesRequiredEditorRow
@@ -19,8 +20,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var service, supplier;
+		var service, supplier, suppliers;
 		service = this.props.service;
+		suppliers = this.props.suppliers;
 		if ( service.data && service.data.supplier ) {
 			var q = service.data.supplier;
 			if ( q._id ) {
@@ -38,7 +40,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 		}
 		return {
 			service,
-			supplier
+			supplier,
+			suppliers,
 		}
 	},
 
@@ -67,6 +70,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 	},
 
 	updateServiceName( event ) {
+		//Modal.hide();
 		var service = this.data.service;
 		var newValue = event?event.target.value:this.data.service.name;
 		service.name = newValue;
@@ -78,7 +82,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	showSupplierModal( supplier ) {
 		var facility = Session.getSelectedFacility();
-		Modal.show( {
+		Modal.replace( {
 			content: <TeamStepper item = { supplier } facility = { facility } onChange = { this.updateSupplier }/>
 		} )
 	},
@@ -129,13 +133,42 @@ const ServicesRequiredEditorRow = React.createClass( {
 								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
 								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
 				</div>
-				<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
+				<div className="services-editor-col services-editor-col-supplier"
+					title="Click to set/change default supplier."
+					onClick={ () => {
+						_component = this;
+						Modal.show({
+							content:  <div style={{padding:'20px', maxWidth:"500px"}}>
+								<div>
+									<Select
+										value={this.data.supplier}
+										items={this.data.suppliers}
+										view={ContactCard}
+										placeholder="Select default supplier"
+										onChange={ ( item ) => {
+											Modal.hide();
+											this.updateSupplier(item);
+										}}
+										addNew={{
+											show: true,
+											label: "Add supplier",
+											onAddNewItem: ( callback ) => {
+												_component.showSupplierModal( supplier );
+											}
+										}}
+									/>
+								</div>
+							</div>
+						})
+					}}>
 					{supplier?
 						<ContactCard item={supplier}/>
 					:
-						null
+						<div className='placeholder-text'>
+							<span >Click to set defult supplier.</span>
+						</div>
 					}
-			    	{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
+					{!readOnly && supplier?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
 				</div>
 			</div>
 		)
@@ -143,3 +176,14 @@ const ServicesRequiredEditorRow = React.createClass( {
 } )
 
 export default ServicesRequiredEditorRow;
+
+/*
+<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
+	{supplier?
+		<ContactCard item={supplier}/>
+	:
+		null
+	}
+		{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
+</div>
+*/

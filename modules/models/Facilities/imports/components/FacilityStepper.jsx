@@ -101,6 +101,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
         )
     }
     */
+    var suppliers = facility.getSuppliers();
     return (
         <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
@@ -136,7 +137,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
                         tab:        <span id="discussion-tab">Basic Details</span>,
                         content:    <div className="row">
                                         <div className = "col-sm-7">
-                                        
+
                                         <GeoLocation
                                             onSuggestSelect = {onSuggestSelect}
                                         />
@@ -161,7 +162,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
                         content:    <AreasEditor item = { facility }/>
                     },{
                         tab:        <span id = "services-tab">Services</span>,
-                        content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>,
+                        content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" } suppliers={suppliers}/>,
                         guide:      <div>Enter the services required by this facility. If you want you can also match the services to a supplier. If you want to configure this later simply hit finish.</div>
                     },{
                         tab:        <span id="personnel-tab">Personnel</span>,
