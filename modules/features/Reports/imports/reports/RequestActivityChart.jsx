@@ -74,6 +74,7 @@ const RequestActivityChart = React.createClass( {
 	},
 
 	getInitialState() {
+		var minimal = this.props.minimal ? this.props.minimal : false;
 		return ({
 					viewConfig: {
 						format: 'MMM',
@@ -81,7 +82,8 @@ const RequestActivityChart = React.createClass( {
 						startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
 						endDate: moment().endOf( 'month' ),
 					},
-					expandall: false
+					expandall: false,
+					minimal: minimal
 				})
 	},
 
@@ -290,6 +292,7 @@ const RequestActivityChart = React.createClass( {
 
 
 	render() {
+		var minimal = this.state.minimal;
 		var statusFilterQuery = ["Closed", "Deleted"];
 		var openQuery = {
 			status:{$nin:statusFilterQuery},
@@ -337,9 +340,11 @@ const RequestActivityChart = React.createClass( {
 
 		return (
 			<div>
-			<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
-			<i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+				{!minimal ? 
+				<button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
+				<i className="fa fa-print" aria-hidden="true"></i>
+				</button> : null 
+				}
 		        <Menu items={this.getMenu()}/>
 		        <div className="ibox-title">
 		        	<h2>Request activity {this.data.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
@@ -353,11 +358,11 @@ const RequestActivityChart = React.createClass( {
 				        </div>
 				    </div>
 				</div>
-				{/*
+				{!minimal ?
 				<div className="gragh-table">
 				<ServicesRequestsView requests={buckets} labels={ requestStatuses } expandall = {this.state.expandall}/>
-				</div>
-				*/}
+				</div> : null
+				}
 			</div>
 		)
 	}
