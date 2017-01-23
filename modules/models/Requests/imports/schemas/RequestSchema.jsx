@@ -24,6 +24,7 @@ import React from "react";
 /**
  * @memberOf 		module:models/Requests
  */
+ const defaultContactRole = 'supplier manager';
 const RequestSchema = {
 
 	//$schema: 				"http://json-schema.org/draft-04/schema#",
@@ -303,19 +304,24 @@ const RequestSchema = {
 					if ( item == null || teamType == 'contractor' ) {
 						return;
 					}
-					if ( item.service.data ) {
-						let supplier = item.service.data.supplier;
+					if ( item.service.data && item.service.data.serviceDetails) {
+						let supplier = item.service.data.serviceDetails.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
-								defaultSupplier = Teams.findOne( item.service.data.supplier._id );
+								defaultSupplier = Teams.findOne( supplier._id );
 								if ( !defaultSupplier && supplier.name ) {
-									defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
+									defaultSupplier = Teams.findOne( { name: supplier.name } );
 								}
 							} else if ( supplier.name ) {
-								defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
+								defaultSupplier = Teams.findOne( { name: supplier.name } );
 							}
 							item.supplier = defaultSupplier;
+							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
+							if ( item.service.data.serviceDetails.defaultContact ) {
+								members.push( item.service.data.serviceDetails.defaultContact );
+							}
+							item.members = members;
 						} else {
 							item.supplier = null;
 							item.subservice = null;
@@ -357,19 +363,24 @@ const RequestSchema = {
 					if ( item == null ) {
 						return;
 					}
-					if ( item.subservice.data ) {
-						let supplier = item.subservice.data.supplier;
+					if ( item.subservice.data && item.subservice.data.serviceDetails) {
+						let supplier = item.subservice.data.serviceDetails.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
-								defaultSupplier = Teams.findOne( item.subservice.data.supplier._id );
+								defaultSupplier = Teams.findOne( supplier._id );
 								if ( !defaultSupplier && supplier.name ) {
-									defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
+									defaultSupplier = Teams.findOne( { name: supplier.name } );
 								}
 							} else if ( supplier.name ) {
-								defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
+								defaultSupplier = Teams.findOne( { name: supplier.name } );
 							}
 							item.supplier = defaultSupplier;
+							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
+							if ( item.subservice.data.serviceDetails) {
+								members.push( item.subservice.data.serviceDetails.defaultContact );
+							}
+							item.members = members;
 						} else {
 							item.supplier = null;
 						}
@@ -641,6 +652,7 @@ const RequestSchema = {
 					request.subservice = null;
 					request.supplier = null;
 					//request.members = getMembersDefaultValue( request );
+					request.members = (_.filter( item.members, m => m.role!==defaultContactRole ));
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
@@ -726,7 +738,7 @@ const RequestSchema = {
 						} )
 					}
 				},
-				afterChange: ( ) => {
+				afterChange: ( item ) => {
 
 				}
 			}
@@ -752,7 +764,7 @@ const RequestSchema = {
 								props.item.members.push( {
 									_id: val._id,
 									name: val.name || val.profile.name,
-									role: 'supplier manager',
+									role: defaultContactRole,
 									email: val.profile.email,
 								 } );
 								props.onChange( "" );
@@ -760,7 +772,7 @@ const RequestSchema = {
 						/>
 					</div>
 					<div className="col-xs-12">
-						{_.map( (_.filter( props.item.members, m => m.role=='supplier manager' )) , ( sc, i ) => (
+						{_.map( (_.filter( props.item.members, m => m.role==defaultContactRole )) , ( sc, i ) => (
 							<div className="col-sm-5" key={i}
 								style={{
 									backgroundColor: 'aliceblue',

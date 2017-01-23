@@ -6,6 +6,7 @@ import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Teams, TeamStepper } from '/modules/models/Teams';
 import { Facilities } from '/modules/models/Facilities';
+import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Modal } from '/modules/ui/Modal';
@@ -20,7 +21,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var service, supplier, suppliers;
+		var service, supplier, suppliers, defaultContact;
 		service = this.props.service;
 		suppliers = this.props.suppliers;
 		if ( service.data && service.data.supplier ) {
@@ -41,7 +42,6 @@ const ServicesRequiredEditorRow = React.createClass( {
 		return {
 			service,
 			supplier,
-			suppliers,
 		}
 	},
 
@@ -74,7 +74,6 @@ const ServicesRequiredEditorRow = React.createClass( {
 		var service = this.data.service;
 		var newValue = event?event.target.value:this.data.service.name;
 		service.name = newValue;
-		console.log({service});
 		if ( this.props.onChange ) {
 			this.props.onChange( service );
 		}
@@ -89,7 +88,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	render() {
 		service = this.data.service;
-		supplier = this.data.supplier;
+		//supplier = this.data.supplier;
 		this.data.service.data = this.data.service.data? this.data.service.data: {};
 		clickExpand = this.props.clickExpand;
 		var onChange = this.props.onChange,
@@ -132,43 +131,6 @@ const ServicesRequiredEditorRow = React.createClass( {
 									})
 								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
 								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
-				</div>
-				<div className="services-editor-col services-editor-col-supplier"
-					title="Click to set/change default supplier."
-					onClick={ () => {
-						_component = this;
-						Modal.show({
-							content:  <div style={{padding:'20px', maxWidth:"500px"}}>
-								<div>
-									<Select
-										value={this.data.supplier}
-										items={this.data.suppliers}
-										view={ContactCard}
-										placeholder="Select default supplier"
-										onChange={ ( item ) => {
-											Modal.hide();
-											this.updateSupplier(item);
-										}}
-										addNew={{
-											show: true,
-											label: "Add supplier",
-											onAddNewItem: ( callback ) => {
-												_component.showSupplierModal( supplier );
-											}
-										}}
-									/>
-								</div>
-							</div>
-						})
-					}}>
-					{supplier?
-						<ContactCard item={supplier}/>
-					:
-						<div className='placeholder-text'>
-							<span >Click to set defult supplier.</span>
-						</div>
-					}
-					{!readOnly && supplier?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
 				</div>
 			</div>
 		)
