@@ -51,7 +51,7 @@ function loadBrowerCompatibilityScript() {
     };
     $( window ).bind( 'load', function() {
         const script = document.createElement( "script" );
-        script.src = "http://browser-update.org/update.min.js";
+        script.src = "https://browser-update.org/update.min.js";
         script.type = "text/javascript";
         script.async = true;
         document.body.appendChild( script );
