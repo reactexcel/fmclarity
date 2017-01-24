@@ -1,3 +1,8 @@
+import { Facilities } from '/modules/models/Facilities';
+import { Requests } from '/modules/models/Requests';
+import { Documents, DocViewEdit } from '/modules/models/Documents';
+import React from 'react';
+
 ComplianceEvaluationService = new function() {
 
   var defaultResult = {
@@ -10,11 +15,163 @@ ComplianceEvaluationService = new function() {
     }
   }
 
+
+  var docList1 = [
+        "Audit",
+        "Contract",
+        "Inspection",
+        "Invoice",
+        "MSDS",
+        "Plan",
+        "Procedure",
+        "Quote",
+        "Register",
+        "Registration",
+        "Service Report",
+        "SWMS",
+      ],
+      docList2 = [
+        'Bank Guarantee',
+        'Contract',
+        'Emergency Management',
+        'Insurance',
+        'Lease',
+        'Quote',
+        'Register',
+        'Registration'
+      ];
+
   var evaluators = {
     //can pass in facility and service for more efficient calculation
     "Document exists":function(rule,facility,service){
+    //  console.log({rule});
+
+      var docCount = null,
+        query = {
+          'facility._id': facility._id,
+            $or: [
+              {'type': rule.docType},
+              {'name': rule.docName},
+            ]
+         };
+
+      if ( _.contains(docList1, rule.docType ) ) {
+        query['$or'].push( { 'serviceType': rule.service.name } );
+        docCount = Documents.find( query ).count();
+      } else if ( _.contains( docList2, rule.docType ) ) {
+        if( rule.insuranceType ) query['$or'].push( { 'insuranceType': rule.insuranceType } );
+        if( rule.expiryDate ) query['$or'].push( { 'expiryDate': rule.expiryDate } );
+        docCount = Documents.find( query ).count();
+      }
+      // console.log({count: docCount});
+      // console.log(query);
+      if(docCount){
+        return _.extend({},defaultResult,{
+          passed:true,
+          message:{
+            summary:"passed",
+            detail:docCount+ " "+(rule.docType?(rule.docType+" "):"")+"documents exists."
+          },
+        })
+      }
+
+      return _.extend({},defaultResult,{
+        passed:false,
+        message:{
+          summary:"failed",
+          detail:"Documents dose not exists."
+        },
+        resolve:function(){
+          let type = "team",
+            team = Session.getSelectedFacility(),
+            _id = team._id,
+            name = team.name,
+            owner = Meteor.user();
+
+          let newDocument = Documents.create( {
+            team: { _id, name },
+            owner: { type, _id, name },
+            name: rule.docName,
+          } );
+          Modal.show( {
+            content: <DocViewEdit item = { newDocument } model={Facilities} />
+          } )
+        }
+      })
     },
+
     "Document is current":function(rule,facility,service){
+
+      var docCount = null,
+        query = {
+          'facility._id': facility._id,
+          'expiryDate': {
+            $lte: new Date()
+          },
+          $or: [
+            {'type': rule.docType},
+            {'name': rule.docName},
+          ]
+        };
+
+      if ( _.contains(docList1, rule.docType ) ) {
+        query['$or'].push( { 'serviceType': rule.service.name } );
+        docCount = Documents.find( query ).count();
+      } else if ( _.contains( docList2, rule.docType ) ) {
+        if( rule.insuranceType ) query['$or'].push( { 'insuranceType': rule.insuranceType } );
+        if( rule.expiryDate ) query.expiryDate= rule.expiryDate;
+        docCount = Documents.find( query ).count();
+      }
+      // console.log({count: docCount});
+      // console.log(query);
+      if(docCount){
+        return _.extend({},defaultResult,{
+          passed:false,
+          message:{
+            summary:"passed",
+            detail:docCount+ " "+(rule.docType?(rule.docType+" "):"")+"documents exists."
+          },
+          resolve:function(){
+            let type = "team",
+              team = Session.getSelectedFacility(),
+        			_id = team._id,
+        			name = team.name,
+              owner = Meteor.user();
+
+        		let newDocument = Documents.create( {
+        			team: { _id, name },
+        			owner: { type, _id, name },
+              name: rule.docName
+        		} );
+            Modal.show( {
+              content: <DocViewEdit item = { newDocument } model={Facilities} />
+            } )
+          }
+        })
+      }
+
+      return _.extend({},defaultResult,{
+        passed:false,
+        message:{
+          summary:"failed",
+          detail:"Documents dose not exists."
+        },
+        resolve:function(){
+          let type = "team",
+            team = Session.getSelectedFacility(),
+            _id = team._id,
+            name = team.name,
+            owner = Meteor.user();
+
+          let newDocument = Documents.create( {
+            team: { _id, name },
+            owner: { type, _id, name }
+          } );
+          Modal.show( {
+            content: <DocViewEdit item = { newDocument } model={Facilities} />
+          } )
+        }
+      })
 
     },
     "PPM schedule established":function(rule,facility,service){
@@ -72,7 +229,7 @@ ComplianceEvaluationService = new function() {
           name:rule.event
         });
       }
-      
+
       if(event) {
         return _.extend({},defaultResult,{
           passed:true,
