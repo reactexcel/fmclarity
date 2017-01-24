@@ -33,9 +33,10 @@ const RequestActivityChart = React.createClass( {
 
 		const handle = Meteor.subscribe('User: Facilities, Requests');
 
-		var openQuery = {status:{$ne:'Closed'},}
+		var closedStatus = ['Closed','Complete'];
+		var openQuery = {status:{$nin:closedStatus},}
 		var closedQuery = {
-			status: "Closed",
+			status: {$in:closedStatus},
 		}
 
 		var team = Session.get( 'selectedTeam' );
@@ -293,12 +294,13 @@ const RequestActivityChart = React.createClass( {
 
 	render() {
 		var minimal = this.state.minimal;
-		var statusFilterQuery = ["Closed", "Deleted"];
+		var statusFilterQuery = ["Closed", "Deleted","Complete"];
 		var openQuery = {
 			status:{$nin:statusFilterQuery},
 		}
+		var closedStatusFilter = ['Closed','Complete'];
 		var closedQuery = {
-			status: "Closed",
+			status: {$in: closedStatusFilter},
 		}
 
 		var team = Session.get( 'selectedTeam' );
