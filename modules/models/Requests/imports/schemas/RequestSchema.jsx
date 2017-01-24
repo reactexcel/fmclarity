@@ -550,6 +550,7 @@ const RequestSchema = {
 		label: "Client",
 		description: "The team who created this work request",
 		type: "object",
+		/*
 		relation: {
 			join: ( item ) => {
 				return Teams.findOne( item.team._id )
@@ -560,6 +561,7 @@ const RequestSchema = {
 				}
 			}
 		},
+		*/
 		input: Select,
 		options: ( item ) => {
 			let team = Session.getSelectedTeam(),

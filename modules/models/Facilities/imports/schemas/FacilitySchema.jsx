@@ -620,7 +620,7 @@ const FacilitySchema = {
 				 input( props ){
 					 let month = parseInt(moment().format("M"));
 					 return (
-						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "34%", height: "20%", marginTop:'100%' }}>
+						 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "3px", marginTop:'100%' }}>
 							 <span style={{paddingLeft:"0px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
 						 </div>
 					 )

@@ -255,6 +255,17 @@ const inviteMember = new Action( {
 	}
 } )
 
+const inviteSupplier = new Action( {
+	name: 'invite supplier',
+	label: "Invite supplier",
+	type: [ 'team' ],
+	action: ( supplier ) => {
+		let inviter = Session.getSelectedTeam();
+		Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
+		//invite supplier
+	}
+} )
+
 const resetMemberTours = new Action( {
 	name: 'reset team member tours',
 	label: "Reset member tours",
@@ -307,6 +318,8 @@ export {
 	editMember,
 	destroyMember,
 	removeMember,
+
+	inviteSupplier,
 
 	resetMemberTours,
 	loginMember,

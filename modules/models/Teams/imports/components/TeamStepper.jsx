@@ -285,8 +285,7 @@ const TeamStepper = React.createClass( {
                                                         type: 'team',
                                                         _id: team._id,
                                                         name: team.name
-                                                      },
-                                                      flag: true,
+                                                      }
                                                     }
                                                    );
                                                 }

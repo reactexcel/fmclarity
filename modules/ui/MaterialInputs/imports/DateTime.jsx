@@ -87,9 +87,10 @@ const DateTime = React.createClass( {
 						className 			= { "date-input" }
 						floatingLabelText	= { this.props.placeholder }
 						style 				= { {fontSize:"13px"} }
-						mode 				= "landscape"
+						mode 				= {$(window).width()>450?"landscape":"portrait"}
 						onChange 			= { this.handleDateChange }
 						formatDate 			= { ( date ) => { return moment(date).format("D-MMM-YY HH:mm") } }
+						autoOk			={$(window).width()<450}
 					/>
 
 					<TimePicker
