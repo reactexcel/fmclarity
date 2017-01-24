@@ -137,8 +137,6 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
         }
     } )
 
-    console.log( recipients );
-
     recipients.map( function( r ) {
         if ( r ) {
             console.log( {
