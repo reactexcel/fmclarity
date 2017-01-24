@@ -52,24 +52,10 @@ const Teams = new Model( {
                     return this.getName();
                 },
                 getWatchers() {
-                    return this.getMembers( {
-                        role: {
-                            $in: [ "manager", "portfolio manager" ]
-                        }
-                    } );
-                    var members = this.getMembers( {
-                        role: "manager"
-                    } );
-                    var watchers = [];
-                    if ( members && members.length ) {
-                        members.map( ( m ) => {
-                            watchers.push( {
-                                role: "manager",
-                                watcher: m
-                            } );
-                        } )
+                    if( this.type == 'fm' ) {
+                        return this.getMembers( { role: "portfolio manager" } );
                     }
-                    return watchers;
+                    return this.getMembers( { role: "manager" } );
                 }
             }
         } ]

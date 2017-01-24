@@ -35,12 +35,15 @@ const Requests = new Model( {
                     return "work order #" + this.code + ' "' + this.getName() + '"';
                 },
                 getWatchers() {
+                    return this.getMembers();
+                    /*
                     let user = Meteor.user(),
                         owner = this.getOwner(),
                         team = this.getTeam(),
                         supplier = this.getSupplier(),
                         assignee = this.assignee;
                     return [ user, owner, team, supplier, assignee ];
+                    */
                 }
             }
         } ],
@@ -198,7 +201,7 @@ Requests.methods( {
                     owner = newRequest.getOwner();
                 }
                 newRequest.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
+                    recipientRoles: [ "team", "team manager", "facility manager", "supplier" ],
                     message: {
                         verb: "created",
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -558,7 +561,7 @@ function actionIssue( request ) {
         request.updateSupplierManagers();
         request = Requests.findOne( request._id );
         request.distributeMessage( {
-            recipientRoles: [ "owner", "team", "team manager", "facility", "facility manager", "supplier" ],
+            recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
