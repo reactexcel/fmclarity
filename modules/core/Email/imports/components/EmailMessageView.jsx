@@ -3,6 +3,8 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Messages } from '/modules/models/Messages';
 
+import moment from 'moment';
+
 const EmailMessageView = React.createClass({
 
     mixins: [ReactMeteorData],
