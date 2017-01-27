@@ -274,9 +274,17 @@ export default DocumentSchema = {
 		},
 	},
 	insuranceType: {
-		input: Text,
+		input: Select,
 		label: "Insurance type",
 		optional: true,
+		options: {
+			items:[
+				'Public Liablity',
+				'Professional Indemnity',
+				'Worker\'s Compensation',
+				'Other',
+			],
+		},
 		size: 6,
 		condition: function( item ) {
 			return [
