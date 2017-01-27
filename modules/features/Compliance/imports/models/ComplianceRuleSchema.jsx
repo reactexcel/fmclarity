@@ -7,8 +7,12 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 
 
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
-import { RequestFrequencySchema } from '/modules/models/Requests';
+import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
+import { TeamActions } from '/modules/models/Teams';
 
+import React from 'react';
+
+var number = null;
 export default ComplianceRuleSchema = {
 
     facility: {
@@ -51,7 +55,11 @@ export default ComplianceRuleSchema = {
                 "Document is current",
                 "PPM schedule established",
                 "PPM event completed",
-            ]
+            ],
+            afterChange( item ) {
+                console.log( { item } );
+
+            }
         }
     },
 
@@ -62,54 +70,54 @@ export default ComplianceRuleSchema = {
         options( item ) {
             // Import DocTypes here to remove circular dependency.
             import { DocTypes } from '/modules/models/Documents';
-            return{
-              items: DocTypes,
+            return {
+                items: DocTypes,
             };
         },
     },
 
     insuranceType: {
-  		input: Select,
-  		label: "Insurance type",
-  		optional: true,
-  		options: {
-  			items:[
-  				'Public Liablity',
-  				'Professional Indemnity',
-  				'Worker\'s Compensation',
-  				'Other',
-  			],
-  		},
-  		size: 12,
-  		condition: function( item ) {
-  			return [
-  				"Insurance",
-  			].indexOf( item.docType ) > -1;
-  		},
-  	},
+        input: Select,
+        label: "Insurance type",
+        optional: true,
+        options: {
+            items: [
+                'Public Liablity',
+                'Professional Indemnity',
+                'Worker\'s Compensation',
+                'Other',
+            ],
+        },
+        size: 12,
+        condition: function( item ) {
+            return [
+                "Insurance",
+            ].indexOf( item.docType ) > -1;
+        },
+    },
 
     expiryDate: {
-  		type: "date",
-  		condition: function( item ) {
-  			return [
-  				'Bank Guarantee',
-  				'Contract',
-  				'Emergency Management',
-  				'Insurance',
-  				'Lease',
-  				'Quote',
-  				'Register',
-  				'Registration'
-  			].indexOf( item.docType ) > -1;
-  		},
-  		defaultValue: function( item ) {
-  			return new Date();
-  		},
-  		label: "Expiry",
-  		optional: true,
-  		size: 12,
-  		input: DateInput,
-  	},
+        type: "date",
+        condition: function( item ) {
+            return [
+                'Bank Guarantee',
+                'Contract',
+                'Emergency Management',
+                'Insurance',
+                'Lease',
+                'Quote',
+                'Register',
+                'Registration'
+            ].indexOf( item.docType ) > -1;
+        },
+        defaultValue: function( item ) {
+            return new Date();
+        },
+        label: "Expiry",
+        optional: true,
+        size: 12,
+        input: DateInput,
+    },
 
     docName: {
         label: "Document name",
@@ -133,10 +141,39 @@ export default ComplianceRuleSchema = {
         }
     },
 
+    subservice: {
+        type: Object,
+        input: Select,
+        label: "Sub-Service",
+        condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        options: function( item ) {
+            if ( item.service ) {
+                return {
+                    items: item.service.children,
+                    view: ServiceListTile
+                }
+            }
+        }
+    },
+
     event: {
-        label: "PMP event",
-        input: Text,
-        condition: "PPM event completed",
+        label: "PMP event name",
+        input: Select,
+        condition: [ "PPM event completed", "PPM schedule established" ],
+        options( item ) {
+            import { Requests } from '/modules/models/Requests';
+            return {
+                items: Requests.findAll( { "facility._id": item.facility._id, status: "PMP", type: "Preventative" } ),
+                addNew: {
+                    show: true,
+                    label: "Add New",
+                    onAddNewItem: ( callback ) => {
+                        let team = Session.getSelectedTeam();
+                        TeamActions.createRequest.bind( team ).run()
+                    }
+                }
+            }
+        }
         /*
         input:Meteor.isClient?MDPPMEventSelector:null,
         options:function(item){
@@ -146,10 +183,149 @@ export default ComplianceRuleSchema = {
         }
         */
     },
-
+    lastEventLink: {
+        size: 6,
+        input( props ) {
+            let item = props.item
+            let query = {}
+            item.event && ( query.name = item.event.name );
+            item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
+            item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
+            let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+                //console.log(lastWO[lastWO.length - 1]);
+            let team = Session.getSelectedTeam();
+            return (
+                lastWO.length ? ( <div>
+            <span>
+              <a className="link" href={"javascript:void(0);"} onClick={() => {
+                   RequestActions.view.bind(lastWO[0]).run()
+                 }
+               }> Previous work order link </a>
+            </span>
+            <span style={{marginLeft:"5px"}}>status: <strong>{lastWO[lastWO.length - 1].status}</strong></span>
+          </div> ) : null
+            );
+        },
+        condition: item => item.event
+    },
+    nextEventLink: {
+        size: 6,
+        input( props ) {
+            let item = props.item
+            let query = {}
+            item.event && ( query.name = item.event.name );
+            item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
+            item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
+            let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+                //console.log(nextWO[nextWO.length - 2],"asc");
+            let team = Session.getSelectedTeam();
+            return (
+                nextWO.length ? ( <div>
+            <span>
+              <a className="link" href={"javascript:void(0);"} onClick={() => {
+                   RequestActions.view.bind(nextWO[0]).run()
+                 }
+               }> Next work order link </a>
+            </span>
+            <span style={{marginLeft:"5px"}}>status: <strong>{nextWO[nextWO.length - 2].status}</strong></span>
+          </div> ) : null
+            );
+        },
+        condition: item => item.event
+    },
     frequency: {
         condition: "PPM event completed",
-        subschema: RequestFrequencySchema
+        subschema: {
+            number: {
+                label: "Frequency (number)",
+                description: "The number of days, weeks, months etc between repeats",
+                input: Text,
+                type: "number",
+                defaultValue: 6,
+                size: 6,
+                options: {
+                    afterChange( item ) {
+                        number = item.number;
+                    }
+                }
+            },
+            unit: {
+                label: "Frequency (unit)",
+                description: "The unit (days, weeks, months etc) of the repeats",
+                input( props ) {
+                    return (
+                        <Select
+                  placeholder={props.placeholder}
+                  item={props.item}
+                  items={props.items}
+                  value={props.value?(props.value==="custom"?"Custom":"Repeat "+props.value+" until stopped"):""}
+                  onChange={ item => props.onChange(item) }
+                />
+                    );
+                },
+                defaultValue: "months",
+                type: "string",
+                size: 6,
+                options: {
+                    items: [
+                        { name: 'Daily', val: "daily" },
+                        { name: 'Weekly', val: "Weekly" },
+                        { name: 'Fortnightly', val: "fortnightly" },
+                        { name: 'Monthly', val: "monthly" },
+                        { name: 'Quarterly', val: "quarterly" },
+                        { name: 'Annually', val: "annually" },
+                        { name: 'Custom', val: "custom" },
+                    ]
+                },
+                condition: item => item.number.length,
+            },
+
+            period: {
+                label: "Period",
+                description: "The unit (days, weeks, months etc) of the repeats",
+                input( props ) {
+                    return (
+                        <Select
+                  placeholder={props.placeholder}
+                  item={props.item}
+                  items={props.items}
+                  value={props.value?"Repeat every "+ (number||"")+" "+props.value:""}
+                  onChange={ item => props.onChange(item) }
+                />
+                    );
+                },
+                defaultValue: "months",
+                type: "string",
+                size: 6,
+                options: {
+                    items: [
+                        { name: 'Daily', val: "daily" },
+                        { name: 'Weekly', val: "Weekly" },
+                        { name: 'Fortnightly', val: "fortnightly" },
+                        { name: 'Monthly', val: "monthly" },
+                        { name: 'Quarterly', val: "quarterly" },
+                        { name: 'Annually', val: "annually" },
+                    ]
+                },
+                condition: item => item.unit === "custom",
+            },
+            repeats: {
+                label: "Repeats",
+                description: "The number of times this item should happen",
+                input: Text,
+                type: "number",
+                defaultValue: 6,
+                size: 6,
+                condition: item => item.number.length && item.unit === "custom",
+            },
+
+            endDate: {
+                label: 'End date',
+                size: 6,
+                input: DateInput,
+                condition: item => item.unit === "custom"
+            }
+        }
     }
 
 }

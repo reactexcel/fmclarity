@@ -27,7 +27,7 @@ export default ComplianceListTile = React.createClass( {
         break;
       case "PPM event completed":
         name = rule.type;
-        info = rule.event; //(rule.event?rule.event.name:"");
+        info = rule.event.name?rule.event.name:rule.event;
         break;
     }
     results = ComplianceEvaluationService.evaluateRule( rule ) || {};
@@ -39,11 +39,11 @@ export default ComplianceListTile = React.createClass( {
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
     Modal.show( {
-      content: <AutoForm 
+      content: <AutoForm
             item = { rule }
-            form = { ComplianceRuleSchema } 
+            form = { ComplianceRuleSchema }
             onSubmit={ () => { Modal.hide() } }
-        >            
+        >
             <h2>Edit Compliance Rule</h2>
         </AutoForm>,
     } )
