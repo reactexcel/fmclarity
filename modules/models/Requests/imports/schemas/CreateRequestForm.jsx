@@ -1,7 +1,7 @@
 export default CreateRequestForm = [
 	/*'team',*/
 	'type',
-	
+
 	'facility',
 
 	/* location */
@@ -16,6 +16,8 @@ export default CreateRequestForm = [
 	'subservice',
 	'supplier',
 
+	'supplierContact',
+	
 	'assignee',
 
 	'priority',

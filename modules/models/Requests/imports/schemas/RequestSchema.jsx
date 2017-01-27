@@ -8,6 +8,7 @@ import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 import { Requests } from '/modules/models/Requests';
 import { DocExplorer } from '/modules/models/Documents';
 import { FileExplorer } from '/modules/models/Files';
@@ -23,6 +24,7 @@ import React from "react";
 /**
  * @memberOf 		module:models/Requests
  */
+ const defaultContactRole = 'supplier manager';
 const RequestSchema = {
 
 	//$schema: 				"http://json-schema.org/draft-04/schema#",
@@ -302,19 +304,24 @@ const RequestSchema = {
 					if ( item == null || teamType == 'contractor' ) {
 						return;
 					}
-					if ( item.service.data ) {
-						let supplier = item.service.data.supplier;
+					if ( item.service.data && item.service.data.serviceDetails) {
+						let supplier = item.service.data.serviceDetails.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
-								defaultSupplier = Teams.findOne( item.service.data.supplier._id );
+								defaultSupplier = Teams.findOne( supplier._id );
 								if ( !defaultSupplier && supplier.name ) {
-									defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
+									defaultSupplier = Teams.findOne( { name: supplier.name } );
 								}
 							} else if ( supplier.name ) {
-								defaultSupplier = Teams.findOne( { name: item.service.data.supplier.name } );
+								defaultSupplier = Teams.findOne( { name: supplier.name } );
 							}
 							item.supplier = defaultSupplier;
+							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
+							if ( item.service.data.serviceDetails.defaultContact ) {
+								members.push( item.service.data.serviceDetails.defaultContact );
+							}
+							item.members = members;
 						} else {
 							item.supplier = null;
 							item.subservice = null;
@@ -356,19 +363,24 @@ const RequestSchema = {
 					if ( item == null ) {
 						return;
 					}
-					if ( item.subservice.data ) {
-						let supplier = item.subservice.data.supplier;
+					if ( item.subservice.data && item.subservice.data.serviceDetails) {
+						let supplier = item.subservice.data.serviceDetails.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
-								defaultSupplier = Teams.findOne( item.subservice.data.supplier._id );
+								defaultSupplier = Teams.findOne( supplier._id );
 								if ( !defaultSupplier && supplier.name ) {
-									defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
+									defaultSupplier = Teams.findOne( { name: supplier.name } );
 								}
 							} else if ( supplier.name ) {
-								defaultSupplier = Teams.findOne( { name: item.subservice.data.supplier.name } );
+								defaultSupplier = Teams.findOne( { name: supplier.name } );
 							}
 							item.supplier = defaultSupplier;
+							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
+							if ( item.subservice.data.serviceDetails) {
+								members.push( item.subservice.data.serviceDetails.defaultContact );
+							}
+							item.members = members;
 						} else {
 							item.supplier = null;
 						}
@@ -640,6 +652,7 @@ const RequestSchema = {
 					request.subservice = null;
 					request.supplier = null;
 					//request.members = getMembersDefaultValue( request );
+					request.members = (_.filter( item.members, m => m.role!==defaultContactRole ));
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.
@@ -725,11 +738,86 @@ const RequestSchema = {
 						} )
 					}
 				},
-				afterChange: ( ) => {
+				afterChange: ( item ) => {
 
 				}
 			}
 		},
+	},
+
+	supplierContact:{
+		label: 'Supplier contact',
+		type: 'string',
+		size: 12,
+		input(props) {
+			console.log(props.item.members);
+			return(
+				<div className="row">
+					<div className="col-xs-12">
+						<Select
+							placeholder="Supplier contact"
+							items={props.items}
+							Model={props.Model}
+							view={props.view}
+							item={props.item}
+							onChange={ ( val ) => {
+								props.item.members.push( {
+									_id: val._id,
+									name: val.name || val.profile.name,
+									role: defaultContactRole,
+									email: val.profile.email,
+								 } );
+								props.onChange( "" );
+							} }
+						/>
+					</div>
+					<div className="col-xs-12">
+						{_.map( (_.filter( props.item.members, m => m.role==defaultContactRole )) , ( sc, i ) => (
+							<div className="col-sm-5" key={i}
+								style={{
+									backgroundColor: 'aliceblue',
+    							padding: '5px',
+    							border: '1px solid transparent',
+    							borderRadius: '5px',
+									margin: '5px',
+									borderLeft: '4px solid aquamarine',
+								}}>
+								<span onClick={() => {
+										let id = sc._id;
+										let newValue =	_.filter( props.item.members,  v => v._id !== id );
+										props.item.members = newValue;
+										props.onChange( "" );
+									}}
+									style={{
+										float: 'right',
+										cursor: 'pointer',
+										fontSize: '14px',
+										fontWeight: 'bold',
+										marginRight: '0px',
+										marginTop: '-6px',
+									}} title="Remove tag">&times;</span>
+								<ContactCard item={sc} team={props.team} group={props.group} />
+							</div>))}
+					</div>
+			</div>)
+		},
+		options( item ) {
+			let supplier = null,
+			 	members = [];
+			if ( item.supplier ) {
+				let query = {};
+				item.supplier._id ? (query._id  = item.supplier._id) : (query.name = item.supplier.name);
+				supplier = Teams.findOne( query );
+			}
+			if ( supplier && supplier.members ) {
+				ids = _.pluck( supplier.members, '_id' );
+				members = Users.findAll( { _id: { $in: ids } } );
+			}
+			return{
+				items: members,
+				view: ContactCard
+			}
+		}
 	},
 
 	assignee: {

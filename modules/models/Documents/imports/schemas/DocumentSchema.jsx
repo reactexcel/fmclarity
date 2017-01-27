@@ -274,9 +274,17 @@ export default DocumentSchema = {
 		},
 	},
 	insuranceType: {
-		input: Text,
+		input: Select,
 		label: "Insurance type",
 		optional: true,
+		options: {
+			items:[
+				'Public Liablity',
+				'Professional Indemnity',
+				'Worker\'s Compensation',
+				'Other',
+			],
+		},
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -596,7 +604,7 @@ export default DocumentSchema = {
 											paddingTop: '4px',
 	    								paddingBottom: '4px',
 	    								paddingLeft: '15px',
-	    								backgroundColor: '#bcaab1',
+	    								backgroundColor: 'aliceblue',
 	    								fontSize: '13px',
 	    								fontWeight: '400',
 											marginLeft: '5px',

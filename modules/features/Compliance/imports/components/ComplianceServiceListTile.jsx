@@ -1,6 +1,6 @@
 import React from "react"
 
-import { ComplianceEvaluationService } from '/modules/features/Compliance';
+//import { ComplianceEvaluationService } from '/modules/features/Compliance';
 
 export default ServiceListTile = React.createClass( {
 

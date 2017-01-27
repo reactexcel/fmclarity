@@ -18,6 +18,7 @@ export default ProgressOverviewChart = React.createClass( {
                 New: {},
                 Issued: {},
                 Closed: {},
+                Complete: {},
             };
 
             var facility = Session.get( 'selectedFacility' );
@@ -180,8 +181,8 @@ export default ProgressOverviewChart = React.createClass( {
                             />
                             <ProgressArc 
                                 title="Closed Requests" 
-                                thisPeriod = {results['Closed'].thisPeriod}
-                                lastPeriod = {results['Closed'].lastPeriod}
+                                thisPeriod = {results['Closed'].thisPeriod + results['Complete'].thisPeriod}
+                                lastPeriod = {results['Closed'].lastPeriod + results['Complete'].lastPeriod}
                                 color="#333333"
                             />
                         {/*

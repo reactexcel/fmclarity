@@ -201,7 +201,6 @@ Requests.methods( {
                     owner = newRequest.getOwner();
                 }
                 newRequest.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility manager", "supplier" ],
                     message: {
                         verb: "created",
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),

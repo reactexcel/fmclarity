@@ -669,7 +669,51 @@ const FacilitySchema = {
 				 condition(item){
 					 return item.purchaseOrder;
 				 }
-			 }
+			 },
+			 supplier:{
+				 label: "Default supplier",
+				 size: 12,
+				 input: Select,
+				 options(item){
+					 return{
+						 items: Session.getSelectedFacility().getSuppliers(),
+					 	 view: ContactCard,
+						 afterChange(item){
+							 item.defaultContact = null;
+						 }
+					 }
+				 }
+			 },
+			 defaultContact:{
+				 label: "Default supplier contact",
+				 size: 12,
+				 input(props){
+					return
+						(<Select
+							placeholder={props.placeholder}
+							item={props.item}
+							items={props.items}
+							value={props.value}
+							view={props.view}
+							onChange={( item ) => {
+								props.onChange({
+									_id: item._id,
+									name: item.name || item.profile.name,
+									role: "supplier manager",
+									email: item.email || item.profile.email,
+								});
+							}}
+						 />)
+				 },
+				 options( item ){
+					 var memberIds = _.pluck( item.supplier?item.supplier.members:[], "_id");
+					 var members = Users.findAll( { _id: { $in: memberIds } } );
+					 return {
+						 items: members,
+					 	 view: ContactCard
+					 }
+				 }
+			 },
 		 }
 	 },
 }

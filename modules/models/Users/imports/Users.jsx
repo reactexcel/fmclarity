@@ -225,6 +225,8 @@ Users.actions( {
                         } ]
                     } );
                 }
+            } else if ( role == "support" ) {
+              query.push( createdByMyTeam );
             } else {
                 query.push( {
                     $or: [ imAMember, createdByMe, assignedToMe ]

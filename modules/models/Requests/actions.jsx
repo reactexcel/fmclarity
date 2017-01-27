@@ -53,7 +53,7 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  					Modal.hide();
  				  request = Requests.collection._transform( request );
           let notificationBody = "",
-            keys = [ 'costThreshold', 'priority', 'description', 'type' ] ;
+            keys = [ 'costThreshold', 'priority', 'description', 'type', 'name', ] ;
           for ( let i in keys ) {
             let key = keys[ i ];
 
@@ -65,7 +65,7 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
             }
           }
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager","supplier" ],
+ 						recipientRoles: [ "team", "team manager", "facility", "facility manager","supplier", "supplier manager" ],
  						message: {
  							verb: "edited",
  							subject: `Work order ${request.code} has been edited`,
@@ -183,7 +183,6 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "accepted",
  							subject: `Work order ${request.code} has been accepted`,

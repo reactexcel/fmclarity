@@ -522,7 +522,7 @@ Teams.helpers( {
         //of course if we only have the name then we need to add the id at some point
         var role = this.getMemberRole( Meteor.user() );
         //console.log(role);
-        if ( role == "fmc support" || role == "portfolio manager" || ( this.type == "contractor" && role == "manager" ) ) {
+        if ( role == "fmc support" || role == "support" || role == "portfolio manager" || ( this.type == "contractor" && role == "manager" ) ) {
             return this.getManagerFacilities( q );
         }
         /*else if ( role == "manager" ) {

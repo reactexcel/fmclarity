@@ -299,7 +299,7 @@ Facilities.actions({
                 _.map(facility.servicesRequired, (s) => {
                         let supplier = null;
                         //add children service supplier to list
-                        if (s.children) {
+                        if (s &&s.children) {
                             _.map(s.children, (c) => {
                                 if (c.data && c.data.supplier) {
                                     if (c.data.supplier.name) {
@@ -319,7 +319,7 @@ Facilities.actions({
                                 }
                             });
                         }
-                        if (s.data) {
+                        if (s && s.data) {
                             supplier = s.data.supplier;
                             //add parent service's supplier to list
                             if (supplier) {
