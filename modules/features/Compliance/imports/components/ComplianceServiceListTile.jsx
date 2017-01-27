@@ -30,7 +30,7 @@ export default ServiceListTile = React.createClass( {
 	render() {
 		var data = this.data;
 		return (
-			<div className="service-list-tile">
+			<div className="service-list-tile" onClick={this.props.onClick?this.props.onClick:null}>
 				<div className="facility-thumbnail">
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+data.thumb+"')",backgroundSize:"cover"}}/>
 				 </div>
