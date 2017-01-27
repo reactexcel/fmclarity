@@ -28,10 +28,12 @@ const RequestBreakdownChart = React.createClass( {
 	getInitialState() {
 		var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
 		var title = startDate.format( "[since] MMMM YYYY" )
+		var minimal = this.props.minimal ? this.props.minimal : false;
 		return ( {
 			startDate: startDate,
 			title: title,
-			expandall: false
+			expandall: false,
+			minimal: minimal
 		} )
 	},
 
@@ -271,15 +273,17 @@ const RequestBreakdownChart = React.createClass( {
 
 	render() {
 		var facility=this.data.facility;
+		var minimal = this.state.minimal;
 		facilities=null;
 		if (this.data.ready) {
 			facilities = Meteor.user().getTeam().getFacilities();
 		}
 		return (
 			<div>
-			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-			<i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+				{!minimal ? 
+				<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+				<i className="fa fa-print" aria-hidden="true"></i>
+				</button> : null}
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
 					<h2>Request breakdown {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
@@ -289,11 +293,10 @@ const RequestBreakdownChart = React.createClass( {
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
-				{/*
+				{!minimal ? 
 				<div className="gragh-table">
 				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
-				</div>
-				*/}
+				</div>: null}
 			</div>
 		)
 	}

@@ -1,187 +1,168 @@
-.services-editor-col
-{
+.services-editor-col {
     position: relative;
-
     float: left;
-
     width: 100%;
     //height: 48px;
     padding: 15px;
-    .contact-card
-    {
+    .contact-card {
         position: absolute;
         top: 6px;
         left: 15px;
         margin-top: -10px;
         width: 100%;
     }
-    input
-    {
+    input {
         position: absolute;
         top: 0;
         left: 32px;
-
         width: 100%;
         height: 47px;
         margin: 0;
         padding: 16px;
-
         border: none;
         outline: none;
         background-color: transparent;
     }
 }
 
-.services-editor-col:last-child
-{
+.services-editor-col:last-child {
     border-color: transparent;
 }
 
-.services-editor-service-expanded .services-editor-col-service
-{
+.services-editor-service-expanded .services-editor-col-service {
     font-weight: bold;
 }
 
-.services-editor-service-expanded .services-editor-child-block
-{
+.services-editor-service-expanded .services-editor-child-block {
     //max-height: 700px;
 }
 
-.services-editor-service-expanded .fmc-fa-icon-expand::before
-{
+.services-editor-service-expanded .fmc-fa-icon-expand::before {
     content: '\f0d7';
 }
 
-.services-editor-service-expanded .services-editor-expand-icon
-{
+.services-editor-service-expanded .services-editor-expand-icon {
     opacity: 1;
 }
 
-.fmc-fa-icon-expand::before
-{
+.fmc-fa-icon-expand::before {
     content: '\f0da';
 }
 
-.services-editor-child-block
-{
+.services-editor-child-block {
     //overflow: scroll;
     width: 100%;
     //max-height: 0;
     transition: max-height .5s;
 }
 
-.services-editor-row
-{
+.services-editor-row {
     position: relative;
-
     width: 100%;
     height: 48px;
     margin: 0;
-
     cursor: pointer;
-
     border-bottom: 1px solid #eee;
 }
 
-.services-editor-col-service
-{
+.services-editor-col-service {
     padding-left: 48px;
 }
 
-.services-editor-row-child .services-editor-col-service
-{
+.services-editor-row-child .services-editor-col-service {
     font-size: smaller;
     font-weight: normal;
-
     padding-left: 48px;
 }
 
-.services-editor-delete-icon
-{
+.services-editor-delete-icon {
     font-size: 20px;
     font-weight: normal;
-
     position: absolute;
     top: 10px;
     right: 30px;
-
     opacity: 0;
 }
 
-.services-editor-expand-icon
-{
+.services-editor-expand-icon {
     font-size: 20px;
     font-weight: normal;
-
     position: absolute;
     top: 10px;
     left: 18px;
-
     opacity: .5;
 }
 
 .services-editor-row:last-child,
 .services-editor-row:last-child.active,
-.services-editor-row:last-child:hover
-{
+.services-editor-row:last-child:hover {
     border: none;
     background-color: transparent;
 }
 
-.services-editor-row.active
-{
+.services-editor-row.active {
     background-color: #eee;
 }
 
-.services-editor-col:hover
-{
+.services-editor-col:hover {
     background-color: #eee;
 }
 
-.services-editor-col:hover .services-editor-delete-icon
-{
+.services-editor-col:hover .services-editor-delete-icon {
     opacity: .5;
 }
 
-.services-editor-col:hover .services-editor-delete-icon:hover
-{
+.services-editor-col:hover .services-editor-delete-icon:hover {
     opacity: 1;
 }
 
-.services-editor-row-header
-{
+.services-editor-row-header {
     font-weight: bold;
-
     border-top: 1px solid #ddd;
     border-bottom-color: #ddd;
     background-color: #eee;
 }
 
-
-
-.services-editor-row-li
-{
+.services-editor-row-li {
     position: relative;
-
     width: 100%;
-  //  height: 48px;
+    //  height: 48px;
     margin: 0;
-
     cursor: pointer;
-
     // border-bottom: 1px solid #eee;
 }
-.services-editor-row-li:hover .reorder{
-  opacity: 0.5;
-  cursor: move;
-}
-.services-editor-row-li:hover .reorder:hover{
-  opacity: 1.0;
-  cursor: move;
+
+.services-editor-row-li:hover .reorder {
+    opacity: 0.5;
+    cursor: move;
 }
 
-.placeholder-text{
-  color: #d3d3d3;
-  font-size: 14px;
-  text-align: center;
+.services-editor-row-li:hover .reorder:hover {
+    opacity: 1.0;
+    cursor: move;
+}
+
+.placeholder-text {
+    color: #d3d3d3;
+    font-size: 14px;
+    text-align: center;
+}
+
+.services-list-col {
+    position: relative;
+    width: 50%;
+    height: 48px;
+    padding: 15px;
+    input {
+        position: absolute;
+        top: 0;
+        left: 32px;
+        width: 100%;
+        height: 47px;
+        margin: 0;
+        padding: 16px;
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
 }
