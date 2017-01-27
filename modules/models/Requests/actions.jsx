@@ -183,7 +183,6 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  					request = Requests.collection._transform( request );
  					request.setAssignee( request.assignee );
  					request.distributeMessage( {
- 						recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
  						message: {
  							verb: "accepted",
  							subject: `Work order ${request.code} has been accepted`,
