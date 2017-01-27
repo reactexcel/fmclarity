@@ -35,11 +35,12 @@ export default UserViewRelationEdit = React.createClass( {
 				"property manager",
 			]
 		} else if ( userRole == "manager") {
-			roles = [ "staff", "manager"]
+			roles = [ "staff", "manager", "support" ]
 		} else {
 			roles = [
 				"staff",
 				"tenant",
+				"support",
 				"manager",
 				"resident",
 				"caretaker",
