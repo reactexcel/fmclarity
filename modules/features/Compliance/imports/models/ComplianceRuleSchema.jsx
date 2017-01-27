@@ -1,7 +1,7 @@
 import { MDPPMEventSelector } from '/modules/features/Compliance';
 // import { DocTypes } from '/modules/models/Documents';
 
-import { FacilityListTile } from '/modules/models/Facilities';
+import { FacilityListTile, Facilities } from '/modules/models/Facilities';
 
 import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 
@@ -26,6 +26,9 @@ export default ComplianceRuleSchema = {
 
         options: ( item ) => {
             let team = Session.getSelectedTeam();
+            if( item.facility ) {
+              item.facility = Facilities.findOne({ _id: item.facility._id });
+            }
             return {
                 items: ( team ? team.getFacilities() : null ),
                 view: ( Meteor.isClient ? FacilityListTile : null ),

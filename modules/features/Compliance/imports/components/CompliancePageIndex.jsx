@@ -20,7 +20,7 @@ function CompliancePageIndex( props ) {
 	return (
 		<div className = "facility-page animated fadeIn">
 
-	        <FacilityFilter items = { facilities }/>
+	        <FacilityFilter items = { facilities } selectedItem = { facility } />
 	        <div style = { {paddingTop:"50px"} }>
 				<div className="card-body ibox">
 					<ComplianceViewDetail items = { services } item = { facility } />
