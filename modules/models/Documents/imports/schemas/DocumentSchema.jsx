@@ -263,7 +263,7 @@ export default DocumentSchema = {
 	},
 	issuer: {
 		input: Text,
-		label: "Issuer",
+		label: "Insurer",
 		optional: true,
 		size: 6,
 		condition: function( item ) {
