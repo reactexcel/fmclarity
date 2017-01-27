@@ -6,9 +6,11 @@ import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Teams, TeamStepper } from '/modules/models/Teams';
 import { Facilities } from '/modules/models/Facilities';
+import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Modal } from '/modules/ui/Modal';
+import { Select } from '/modules/ui/MaterialInputs';
 
 /**
  * @class 			ServicesRequiredEditorRow
@@ -19,8 +21,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		var service, supplier;
+		var service, supplier, suppliers, defaultContact;
 		service = this.props.service;
+		suppliers = this.props.suppliers;
 		if ( service.data && service.data.supplier ) {
 			var q = service.data.supplier;
 			if ( q._id ) {
@@ -38,7 +41,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 		}
 		return {
 			service,
-			supplier
+			supplier,
 		}
 	},
 
@@ -67,10 +70,10 @@ const ServicesRequiredEditorRow = React.createClass( {
 	},
 
 	updateServiceName( event ) {
+		//Modal.hide();
 		var service = this.data.service;
 		var newValue = event?event.target.value:this.data.service.name;
 		service.name = newValue;
-		console.log({service});
 		if ( this.props.onChange ) {
 			this.props.onChange( service );
 		}
@@ -78,14 +81,14 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	showSupplierModal( supplier ) {
 		var facility = Session.getSelectedFacility();
-		Modal.show( {
+		Modal.replace( {
 			content: <TeamStepper item = { supplier } facility = { facility } onChange = { this.updateSupplier }/>
 		} )
 	},
 
 	render() {
 		service = this.data.service;
-		supplier = this.data.supplier;
+		//supplier = this.data.supplier;
 		this.data.service.data = this.data.service.data? this.data.service.data: {};
 		clickExpand = this.props.clickExpand;
 		var onChange = this.props.onChange,
@@ -129,17 +132,20 @@ const ServicesRequiredEditorRow = React.createClass( {
 								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
 								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
 				</div>
-				<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
-					{supplier?
-						<ContactCard item={supplier}/>
-					:
-						null
-					}
-			    	{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
-				</div>
 			</div>
 		)
 	}
 } )
 
 export default ServicesRequiredEditorRow;
+
+/*
+<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
+	{supplier?
+		<ContactCard item={supplier}/>
+	:
+		null
+	}
+		{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
+</div>
+*/

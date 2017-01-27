@@ -30,7 +30,7 @@ function FacilityPanel( { item } ) {
 		menuItems = [];
 	let actionNames = Object.keys( FacilityMenuActions.actions ),
 		validActions = Actions.filter( actionNames, facility );
-
+	let suppliers = item.getSuppliers();
 
 	for( actionName in validActions ) {
 		let action = validActions[ actionName ];
@@ -100,7 +100,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canSetServicesRequired(),
 						tab:        <span id="services-tab">Services</span>,
-						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
+						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" } suppliers={suppliers}/>
 					},{
 						hide:     	!facility.canAddPMP()||teamType!='fm',
 						tab:        <span id="pmp-tab">PPM</span>,
