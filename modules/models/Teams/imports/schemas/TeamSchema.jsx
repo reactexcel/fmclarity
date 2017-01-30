@@ -37,9 +37,9 @@ export default TeamSchema = {
         },
         options: {
             items: [
-                { name:'Facility Management', val:"fm" },
-                { name:'Supplier', val:"contractor" },
-                { name:'Real Estate Agent', val:"real estate" }
+                { name: 'Facility Management', val: "fm" },
+                { name: 'Supplier', val: "contractor" },
+                { name: 'Real Estate Agent', val: "real estate" }
             ]
         },
     },

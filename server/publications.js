@@ -22,7 +22,7 @@ Meteor.publish( 'User: Teams', function() {
 
 } );
 
-Meteor.publish( 'User: Facilities, Requests', function( includeClosed ) {
+Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
 
     //teams I am a member in
     let teamsCursor = Teams.find( {
@@ -60,10 +60,10 @@ Meteor.publish( 'User: Facilities, Requests', function( includeClosed ) {
         ]
     };
 
-    if ( !includeClosed ) {
+    if ( !includeComplete ) {
         query = {
             $and: [
-                { status: { $nin: [ 'Deleted', 'Cancelled', 'Closed', 'Complete' ] } },
+                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
                 query
             ]
         };
