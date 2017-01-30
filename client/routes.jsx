@@ -79,7 +79,8 @@ Routes.addAccessRule( {
 		'suppliers',
 		'calendar',
 		'account',
-		'abc'
+		'abc',
+		'user-docs'
 	],
 	role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
 	condition: { type:'fm' }
@@ -129,6 +130,7 @@ NavigationDrawerRoutes = Routes.clone( [
 	'suppliers',
 	'calendar',
 	'abc',
+	'user-docs',
 	'admin',
 	'all-facilities',
 	'all-files',
