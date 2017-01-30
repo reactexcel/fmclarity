@@ -216,9 +216,10 @@ export default DocumentSchema = {
 
 	},
 	serviceType: {
-		input: Text,
+		input: Select,
 		label: "Service type",
 		optional: true,
+		type: "object",
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -236,6 +237,25 @@ export default DocumentSchema = {
 				"SWMS",
 			].indexOf( item.type ) > -1;
 		},
+		options: function( item ) {
+			let selectedTeam = Session.getSelectedTeam(),
+				teamType = null,
+				items = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+
+			if ( teamType == 'fm' && item.facility ) {
+				items = item.facility.servicesRequired;
+			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
+				items = team.getAvailableServices();
+			}
+
+
+			return {
+				items: items
+			}
+		}
 	},
 	supplier: {
 		input: Select,

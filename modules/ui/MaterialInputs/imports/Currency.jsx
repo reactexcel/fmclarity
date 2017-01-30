@@ -82,6 +82,14 @@ const Currency = React.createClass( {
 		this.formatNum(event.target);
 
 	},
+	handleOnBlur(event){
+		this.toggleCurrencyHolder();
+		// format number and delimit multiple 0's eg 0000, 0000.0002, 0002 etc
+		var curval = this.refs.input.value.replace(/,/g , "");
+		this.refs.input.value=Number(curval);
+		this.formatNum(this.refs.input);
+
+	},
 
 	CheckNumeric(e) {
     // Allow: backspace, delete, escape, enter and .
@@ -151,7 +159,7 @@ const Currency = React.createClass( {
       			onKeyUp			= { this.handleKeyUp }
       			onKeyDown		= { this.CheckNumeric }
       			onFocus			= { this.toggleCurrencyHolder }
-      			onBlur			= { this.toggleCurrencyHolder }
+      			onBlur			= { this.handleOnBlur }
       		/>
 
 	        {
