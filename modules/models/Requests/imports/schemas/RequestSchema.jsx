@@ -761,13 +761,16 @@ const RequestSchema = {
 							view={props.view}
 							item={props.item}
 							onChange={ ( val ) => {
-								props.item.members.push( {
-									_id: val._id,
-									name: val.name || val.profile.name,
-									role: defaultContactRole,
-									email: val.profile.email,
-								 } );
-								props.onChange( "" );
+                console.log(_.find(props.item.members, m => m._id === val._id));
+                if ( !_.find( props.item.members, m => m._id === val._id) ) {
+                  props.item.members.push( {
+                    _id: val._id,
+                    name: val.name || val.profile.name,
+                    role: defaultContactRole,
+                    email: val.profile.email,
+                  } );
+                  props.onChange( "" );
+                }
 							} }
 						/>
 					</div>
