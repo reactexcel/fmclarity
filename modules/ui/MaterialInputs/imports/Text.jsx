@@ -27,6 +27,9 @@ const Text = React.createClass( {
 	},
 
 	handleSelect( event ) {
+		if( this.props.datepicker){
+			this.refs.input.blur();
+		}
 		if ( this.props.onSelect ) {
 			this.props.onSelect( event.target.value );
 		}
@@ -40,7 +43,7 @@ const Text = React.createClass( {
 		var fieldName=this.props.fieldName ? this.props.fieldName : "";
 		var fieldType = this.props.model.schema[fieldName].type ? this.props.model.schema[fieldName].type : null;
 		if (fieldType && fieldType == "number" && new RegExp("^[0\s]+$").test(event.target.value.replace(/\D+/g, ""))) {
-			
+
 			this.refs.input.value="0";
 			
 		}
@@ -82,6 +85,7 @@ const Text = React.createClass( {
       			onSelect		= { this.handleSelect }
       			maxLength		= { this.props.maxLength }
       			onBlur			= { this.handleOnBlur }
+				readonly= {true}
       		/>
 	        {
         	used?
