@@ -75,6 +75,13 @@ Requests.save.before( ( request ) => {
     if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
         request.costThreshold = '0';
     }
+    if (request.supplier) {
+        request.supplier={
+                            _id:request.supplier._id,
+                            name: request.supplier.name
+                        };
+        
+    }
 } );
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
