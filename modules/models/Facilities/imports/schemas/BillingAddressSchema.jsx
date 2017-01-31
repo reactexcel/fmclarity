@@ -6,14 +6,14 @@ export default BillingAddressSchema = {
 		input: Text,
 		label: "Company",
 		type: "string",
-		optional: false,
+		required: true,
 		size: 3
 	},
 	address_1: {
 		input: Text,
 		type: "string",
 		label: "Address 1",
-		optional: false,
+		required: true,
 		size: 6
 	},
 	address_2: {
