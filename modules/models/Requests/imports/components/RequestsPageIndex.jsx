@@ -54,7 +54,7 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Closed' ] } selectedItem = { selectedStatus } />
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete' ] } selectedItem = { selectedStatus } />
 					</div>
 					{ user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >

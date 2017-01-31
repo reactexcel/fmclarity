@@ -49,7 +49,13 @@ export default function RequestsTable( { requests, filter, columns } ) {
         },
         "Issue": "name",
         "Amount": "costThreshold",
-        "Issued": "issuedAt",
+        "Issued": ( item ) => {
+            let issuedAt = moment( item.issuedAt );
+            return {
+                originalVal: item.issuedAt,
+                val: <span title = { issuedAt.format( 'ddd Do MMM, h:mm a' ) }>{ moment(item.issuedAt, "DD/MM/YY").format("MM/DD/YY") }</span>
+            }
+        },
         "Due": ( item ) => {
             let dueDate = moment( item.dueDate );
             return {

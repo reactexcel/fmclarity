@@ -3,6 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 import './AddressSchema.jsx';
+import './BillingAddressSchema.jsx';
 import { Documents, DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker} from '/modules/ui/MaterialInputs';
 import { Users } from '/modules/models/Users';
@@ -708,6 +709,11 @@ const FacilitySchema = {
 				 }
 			 },
 		 }
+	 },
+	 billingDetails : {
+	 	label: "Billing Details",
+	 	type: "object",
+	 	subschema: BillingAddressSchema,
 	 },
 }
 

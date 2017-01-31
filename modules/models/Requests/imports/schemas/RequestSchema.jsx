@@ -24,7 +24,8 @@ import React from "react";
 /**
  * @memberOf 		module:models/Requests
  */
- const defaultContactRole = 'supplier manager';
+const defaultContactRole = 'supplier manager';
+
 const RequestSchema = {
 
 	//$schema: 				"http://json-schema.org/draft-04/schema#",
@@ -300,12 +301,12 @@ const RequestSchema = {
 
 			return {
 				items: items,
-				afterChange: ( item ) => {
-					if ( item == null || teamType == 'contractor' ) {
+				afterChange: ( request ) => {
+					if ( request == null || teamType == 'contractor' ) {
 						return;
 					}
-					if ( item.service.data && item.service.data.serviceDetails) {
-						let supplier = item.service.data.serviceDetails.supplier;
+					if ( request.service.data && request.service.data.serviceDetails) {
+						let supplier = request.service.data.serviceDetails.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
@@ -316,15 +317,15 @@ const RequestSchema = {
 							} else if ( supplier.name ) {
 								defaultSupplier = Teams.findOne( { name: supplier.name } );
 							}
-							item.supplier = defaultSupplier;
-							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
-							if ( item.service.data.serviceDetails.defaultContact ) {
-								members.push( item.service.data.serviceDetails.defaultContact );
+							request.supplier = defaultSupplier;
+							let members = (_.filter( request.members, m => m.role !== defaultContactRole ));
+							if ( request.service.data.serviceDetails.defaultContact ) {
+								members.push( request.service.data.serviceDetails.defaultContact );
 							}
-							item.members = members;
+							request.members = members;
 						} else {
-							item.supplier = null;
-							item.subservice = null;
+							request.supplier = null;
+							request.subservice = null;
 						}
 					}
 				}
@@ -414,7 +415,7 @@ const RequestSchema = {
 		description: "Comment about the acceptance of this work request",
 		type: "string",
 		input: TextArea,
-		required: true,
+		required: false,
 	},
 
 	rejectComment: {
@@ -652,7 +653,7 @@ const RequestSchema = {
 					request.subservice = null;
 					request.supplier = null;
 					//request.members = getMembersDefaultValue( request );
-					request.members = (_.filter( item.members, m => m.role!==defaultContactRole ));
+					request.members = (_.filter( request.members, m => m.role!==defaultContactRole ));
 				},
 				addNew:{
 					//Add new facility to current selectedTeam.

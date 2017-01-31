@@ -50,7 +50,7 @@ const EmailMessageView = React.createClass({
         var url;
 
         if(secret) {
-                url = Meteor.absoluteUrl('u/'+ secret + '/' + message.getEncodedAbsoluteTargetUrl(), {rootUrl: "https://app.fmclarity.com"} );
+                url = Meteor.absoluteUrl('u/'+ secret + '/' + message.getEncodedAbsoluteTargetUrl() );
             }
             else {
                 url = message.getAbsoluteTargetUrl();

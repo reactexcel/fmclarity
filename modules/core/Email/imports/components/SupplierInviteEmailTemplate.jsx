@@ -37,7 +37,7 @@ const SupplierInviteEmailTemplate = React.createClass( {
     render() {
         let { team, inviter, user, secret } = this.data,
             expiry = this.data.expiry ? moment( this.data.expiry ).fromNow() : null,
-            url = Meteor.absoluteUrl( 'enroll-account/' + secret, { rootUrl: "https://app.fmclarity.com" } ),
+            url = Meteor.absoluteUrl( 'enroll-account/' + secret ),
             userName = ( user.profile && user.profile.firstName ) ? user.profile.firstName : user.getName();
 
         return (

@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
@@ -27,7 +27,7 @@ import { SupplierInviteEmailTemplate } from '/modules/core/Email';
 //console.log( Members );
 
 /**
- * @memberOf 		module:models/Teams
+ * @memberOf module:models/Teams
  */
 const Teams = new Model( {
     schema: TeamSchema,
@@ -52,7 +52,7 @@ const Teams = new Model( {
                     return this.getName();
                 },
                 getWatchers() {
-                    if( this.type == 'fm' ) {
+                    if ( this.type == 'fm' ) {
                         return this.getMembers( { role: "portfolio manager" } );
                     }
                     return this.getMembers( { role: "manager" } );
@@ -237,7 +237,7 @@ function inviteSupplier( team, searchName, id, callback ) {
 
     searchName = searchName.trim();
     if ( !supplier ) {
-        //	supplier = Meteor.call( "Teams.create", {
+        //  supplier = Meteor.call( "Teams.create", {
         supplier = Teams.create( {
             _id: id,
             type: "contractor",
@@ -338,21 +338,21 @@ function sendMemberInvite( team, recipient ) {
     );
 
     /*
-		getEmail( notification ) {
-		// we need to see the notification to do this
-		let body = ReactDOMServer.renderToStaticMarkup(
-    	    	React.createElement( EmailMessageView, { notification } )
-    	   );
+        getEmail( notification ) {
+        // we need to see the notification to do this
+        let body = ReactDOMServer.renderToStaticMarkup(
+                React.createElement( EmailMessageView, { notification } )
+           );
 
-		let { recipient } = notification;
-		console.log( body );
-		return {
-        	to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
-			from:"FM Clarity <no-reply@fmclarity.com>",
-	        subject:"FM Clarity notification",
-    	    emailBody:body
-		}
-	}*/
+        let { recipient } = notification;
+        console.log( body );
+        return {
+            to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+            from:"FM Clarity <no-reply@fmclarity.com>",
+            subject:"FM Clarity notification",
+            emailBody:body
+        }
+    }*/
     Meteor.call( 'Messages.sendEmail', recipient, {
         subject: team.name + " has invited you to join FM Clarity",
         emailBody: body
@@ -421,11 +421,11 @@ Teams.helpers( {
         Teams.save.call( this );
         /*
         Teams.collection.update( {
-        	_id: this._id
+            _id: this._id
         }, {
-        	$inc: {
-        		"counters.WO": 1
-        	}
+            $inc: {
+                "counters.WO": 1
+            }
         } );
         */
         return this.counters.WO;

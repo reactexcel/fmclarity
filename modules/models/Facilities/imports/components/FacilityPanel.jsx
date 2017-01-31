@@ -14,7 +14,7 @@ import { AreasEditor } from '/modules/mixins/Areas';
 import { RequestsTable } from '/modules/models/Requests';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
-import { Facilities, FacilityActions, PropertyManagerDetails } from '/modules/models/Facilities';
+import { Facilities, FacilityActions, PropertyManagerDetails, BillingAddressDetails } from '/modules/models/Facilities';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import FacilityStepper from './FacilityStepper.jsx';
 
@@ -30,7 +30,7 @@ function FacilityPanel( { item } ) {
 		menuItems = [];
 	let actionNames = Object.keys( FacilityMenuActions.actions ),
 		validActions = Actions.filter( actionNames, facility );
-	let suppliers = item.getSuppliers();
+
 
 	for( actionName in validActions ) {
 		let action = validActions[ actionName ];
@@ -100,7 +100,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canSetServicesRequired(),
 						tab:        <span id="services-tab">Services</span>,
-						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" } suppliers={suppliers}/>
+						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
 						hide:     	!facility.canAddPMP()||teamType!='fm',
 						tab:        <span id="pmp-tab">PPM</span>,
@@ -110,9 +110,13 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					},{
-						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support"], Meteor.user().getRole()),
+						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support", "manager"], Meteor.user().getRole()),
 						tab:        <span id="requests-tab">Lease</span>,
 						content:    <PropertyManagerDetails facility={facility} />
+					},{
+						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support"], Meteor.user().getRole()),
+						tab:        <span id="requests-tab">Property</span>,
+						content:    <BillingAddressDetails facility={facility} />
 					}
 				] } />
 			</div>

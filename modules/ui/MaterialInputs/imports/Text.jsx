@@ -32,6 +32,20 @@ const Text = React.createClass( {
 		}
 	},
 
+	handleOnBlur( event ) {
+		if ( this.props.onBlur ) {
+			this.props.onBlur( event );
+		}
+		// format number and delimit 0's only input to single 0 eg 0000 to 0
+		var fieldName=this.props.fieldName ? this.props.fieldName : "";
+		var fieldType = this.props.model.schema[fieldName].type ? this.props.model.schema[fieldName].type : null;
+		if (fieldType && fieldType == "number" && new RegExp("^[0\s]+$").test(event.target.value.replace(/\D+/g, ""))) {
+			
+			this.refs.input.value="0";
+			
+		}
+	},
+
 	componentDidMount() {
 		this.handleChange = _.debounce( this.handleChange, 200 );
 	},
@@ -67,6 +81,7 @@ const Text = React.createClass( {
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       			maxLength		= { this.props.maxLength }
+      			onBlur			= { this.handleOnBlur }
       		/>
 	        {
         	used?

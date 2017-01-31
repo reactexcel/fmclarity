@@ -53,7 +53,8 @@ ComplianceGroup = React.createClass({
             <div>
                 {rules&&rules.length?rules.map((r,idx)=>{
                     return (
-                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}}>
+                        <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}}
+													onClick={this.props.onClick?this.props.onClick:null} >
                             <ComplianceListTile item={r}/>
                         </div>
                     )
