@@ -117,7 +117,7 @@ Actions.addAccessRule( {
     action: [
         'create team document',
     ],
-    role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'resident' ],
+    role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
     rule: { alert: true, email: true }
 } )
 
