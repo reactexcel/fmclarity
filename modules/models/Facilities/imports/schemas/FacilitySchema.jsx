@@ -688,28 +688,21 @@ const FacilitySchema = {
 				 label: "Default supplier contact",
 				 size: 12,
 				 input(props){
-					return
-						(<Select
-							placeholder={props.placeholder}
-							item={props.item}
-							items={props.items}
-							value={props.value}
-							view={props.view}
-							onChange={( item ) => {
-								props.onChange({
-									_id: item._id,
-									name: item.name || item.profile.name,
-									role: "supplier manager",
-									email: item.email || item.profile.email,
-								});
-							}}
-						 />)
+					 props.onChange = ( item ) => {
+						 props.onChange({
+							 _id: item._id,
+							 name: item.name || item.profile.name,
+							 role: "supplier manager",
+							 email: item.email || item.profile.email,
+						 });
+					 }
+					return <Select {...props} />
 				 },
 				 options( item ){
 					 var memberIds = _.pluck( item.supplier?item.supplier.members:[], "_id");
 					 var members = Users.findAll( { _id: { $in: memberIds } } );
 					 return {
-						 items: members,
+						 items: members.length?members:null,
 					 	 view: ContactCard
 					 }
 				 }
