@@ -76,6 +76,7 @@ const DateTime = React.createClass( {
 					onSelect 	= { this.handleSelect }
 					onClear 	= { this.handleClear }
 					errors 		= { this.props.errors }
+					datepicker  = { true }
 				/>
 
 				{/* The Material-ui date pickers don't match our styling so we hide them */}

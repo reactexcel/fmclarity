@@ -52,26 +52,27 @@ const DateInput = React.createClass( {
 		return (
 			<div>
 				<Text
-					placeholder = { this.props.placeholder } 
-					value 		= { this.state.value } 
+					placeholder = { this.props.placeholder }
+					value 		= { this.state.value }
 					onSelect 	= { this.handleSelect }
 					onClear 	= { this.handleClear }
 					errors 		= { this.props.errors }
+					datepicker  = { true }
 				/>
 				<div style = {{display:"none"}}>
 
-					<DatePicker 
-						id 					= { "date-input" } 
+					<DatePicker
+						id 					= { "date-input" }
 						ref 				= "datepicker"
 						className 			= { "date-input" }
 						floatingLabelText 	= { this.props.placeholder }
 						style 				= { {fontSize: "13px"} }
-						mode 				= "landscape" 
+						mode 				= "landscape"
 						onChange 			= { this.handleDateChange }
 						//defaultDate={this.state.dateValue}
 						formatDate 			= { (date) => { return moment(date).format("D-MMM-YY") } }
 					/>
-					
+
 				</div>
 			</div>
 		)
