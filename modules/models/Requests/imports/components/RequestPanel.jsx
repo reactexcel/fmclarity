@@ -13,6 +13,7 @@ import { Users } from '/modules/models/Users';
 
 import { Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
+import { Facilities } from '/modules/models/Facilities';
 
 import moment from 'moment';
 
@@ -27,7 +28,8 @@ export default RequestPanel = React.createClass( {
             previousRequest = null,
             nextDate = null,
             previousDate = null,
-            owner = null;
+            owner = null,
+            caretaker = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
@@ -35,6 +37,11 @@ export default RequestPanel = React.createClass( {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
 				supplier = request.getSupplier();
+                let facility = Facilities.findOne( { _id: request.facility._id } );
+                if( facility ) {
+                    caretaker = facility ? facility.getMembers( {'role':'caretaker'} ) : null;
+                }
+                console.log({caretaker});
                 if( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
@@ -43,7 +50,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, owner, caretaker }
     },
 
     render() {
@@ -52,7 +59,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner, caretaker } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -127,7 +134,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
 						{/* Show supplier contact details when user is client (fm),
 							otherwise show client details for supplier user */}
-						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+						<ContactDetails item = { teamType=="fm" ? supplier : ( caretaker && caretaker.length ? caretaker[0] : owner ) }/>
 
 						<FacilityDetails item = { request.facility }/>
 					</div>
@@ -280,7 +287,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                                                  user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
                                                                  )
                                                          })}
-                                     
+
                                                          </ul>
                                                          </td>
                                  </tr> : null }

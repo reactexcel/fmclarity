@@ -36,7 +36,8 @@ function FacilityPanel( { item } ) {
 		let action = validActions[ actionName ];
 		menuItems.push( action.bind( facility ) );
 	}
-
+	let caretaker = facility.getMembers( { 'role': "caretaker" } );
+	console.log({caretaker},"facility");
 	return (
 		<DropFileContainer model={Facilities}>
 		<div>
@@ -54,7 +55,7 @@ function FacilityPanel( { item } ) {
 							<div className="col-md-4">
 								<div
 									className = "facility-title"
-									style = { {borderBottom:facility.contact?"1px solid #fff":"none"} }>
+									style = { {borderBottom:facility.contact || (caretaker && caretaker.length) ?"1px solid #fff":"none"} }>
 
 									<div style = { { fontSize:"20px", color:"#fff", cursor: "pointer" } }>
 										<i className = "fa fa-arrow-left" onClick = { () => {
@@ -69,7 +70,7 @@ function FacilityPanel( { item } ) {
 									: null }
 
 								</div>
-								<ContactDetails item = { facility.contact }/>
+								<ContactDetails item = { caretaker && caretaker.length ? caretaker[0] : facility.contact }/>
 							</div>
 						</div>
 					</div>
