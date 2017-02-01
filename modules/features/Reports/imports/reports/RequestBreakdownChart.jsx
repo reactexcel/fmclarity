@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
@@ -14,7 +13,7 @@ import moment from 'moment';
 
 
 if ( Meteor.isClient ) {
-	import Chart from 'chart.js';
+    import Chart from 'chart.js';
 }
 
 /**
@@ -23,283 +22,239 @@ if ( Meteor.isClient ) {
  */
 const RequestBreakdownChart = React.createClass( {
 
-	mixins: [ ReactMeteorData ],
+    updateStats( { startDate } ) {
 
-	getInitialState() {
-		var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
-		var title = startDate.format( "[since] MMMM YYYY" )
-		var minimal = this.props.minimal ? this.props.minimal : false;
-		return ( {
-			startDate: startDate,
-			title: title,
-			expandall: false,
-			minimal: minimal
-		} )
-	},
+        Meteor.call( 'getRequestBreakdownStats', {
+            startDate: startDate,
+            facilityQuery: Session.get( 'selectedFacility' ),
+            teamQuery: Session.get( 'selectedTeam' )
+        }, ( error, results ) => {
+            console.log( { error, results } );
+            if ( !error ) {
+                this.setState( results );
+            }
+        } )
+    },
 
-	getMeteorData() {
+    getInitialState() {
+        let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
+            title = startDate.format( "[since] MMMM YYYY" ),
+            minimal = this.props.minimal ? this.props.minimal : false;
 
-		var startDate = this.state.startDate;
-		var query = {
-			createdAt: {
-				$gte: this.state.startDate.toDate()
-			},
-			status:{$ne:'Deleted'}
-		}
+        return ( {
+            startDate: startDate.toDate(), //cannot send moment obj through method
+            title: title,
+            expandall: false,
+            minimal: minimal
+        } )
+    },
 
-		var facility = Session.get( 'selectedFacility' );
-		if ( facility ) {
-			query[ "facility._id" ] = facility._id;
-		}
 
-		var team = Session.get( 'selectedTeam' );
-		//var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-		if ( team ) {
-			query[ "team._id" ] = team._id;
-		}
-		const handle = Meteor.subscribe('User: Facilities, Requests');
+    componentDidMount() {
+        this.resetChart();
+        this.updateStats( { startDate: this.state.startDate } );
+    },
 
-		var requests = Requests.find( query );
+    componentDidUpdate() {
+        if ( this.state.set ) {
+            this.updateChart();
+        }
+    },
 
-		var buckets = {};
-		var costs = {};
-		var labels = [];
-		var counts = [];
-		var set = [];
-		requests.map( function( i ) {
-			var serviceName;
-			if ( i.service && i.service.name ) {
-				serviceName = i.service.name;
-				if ( serviceName.length > 15 ) {
-					serviceName = serviceName.substring( 0, 13 ) + '...';
-				}
-				if ( !costs[ serviceName ] ) {
-					costs[ serviceName ] = 0;
-				}
-				if ( !buckets[ serviceName ] ) {
-					labels.push( serviceName );
-					buckets[ serviceName ] = [];
-				}
-				buckets[ serviceName ].push( i );
-				var newCost = parseInt( i.costThreshold );
-				if ( _.isNaN( newCost ) ) {
-					newCost = 0;
-				}
-				costs[ serviceName ] += newCost;
-			}
-		} );
-		labels.map( function( serviceName, idx ) {
-			counts[ idx ] = buckets[ serviceName ].length;
-			set[ idx ] = costs[ serviceName ];
-		} );
+    printChart() {
+        var component = this;
+        component.setState( {
+            expandall: true
+        } );
 
-		return {
-			facility: facility,
-			labels: labels,
-			set: set, //costs//counts
-			buckets: buckets,
-			ready: handle.ready()
-		}
-	},
+        setTimeout( function() {
+            window.print();
+            component.setState( {
+                expandall: false
+            } );
+        }, 200 );
 
-	printChart(){
-		var component = this;
-		component.setState( {
-			expandall: true
-		} );
-		
-		setTimeout(function(){
-			window.print();	
-			component.setState( {
-				expandall: false
-			} );
-		},200);
 
-		
-		
-	},
 
-	getMenu() {
-		return [ {
-			label: ( "Day" ),
-			run: () => {
-				var startDate = moment().startOf( 'day' );
-				var title = startDate.format( "[on] dddd Do MMMM" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		}, {
-			label: ( "Week" ),
-			run: () => {
-				var startDate = moment().startOf( 'week' );
-				var title = startDate.format( "[for week starting] Do MMMM" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		}, {
-			label: ( "Month" ),
-			run: () => {
-				var startDate = moment().startOf( 'month' );
-				var title = startDate.format( "[for] MMMM YYYY" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		}, {
-			label: ( "3 Months" ),
-			run: () => {
-				var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
-				var title = startDate.format( "[since] MMMM YYYY" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		}, {
-			label: ( "6 Months" ),
-			run: () => {
-				var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
-				var title = startDate.format( "[since] MMMM YYYY" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		}, {
-			label: ( "Year" ),
-			run: () => {
-				var startDate = moment().startOf( 'year' );
-				var title = startDate.format( "YYYY" )
-				this.setState( {
-					startDate: startDate,
-					title: title
-				} )
-			}
-		} ];
-	},
-	
-	getChartConfiguration() {
-		//console.log(this.data);
-		return {
-			barData: {
-				labels: this.data.labels || [ '' ],
-				datasets: [ {
-					backgroundColor: "rgba(117,170,238,0.8)",
-					borderColor: "rgba(117,170,238,1)",
-					hoverBackgroundColor: "rgba(117,170,238,0.5)",
-					hoverBorderColor: "rgba(117,170,238,1)",
-					data: this.data.set || [ 0 ]
-				} ]
-			},
-			barOptions: {
-				scales: {
-					xAxes: [ {
-						gridLines: {
-							//offsetGridLines:false,
-						},
-						ticks: {
-							//fontSize:10,
-							autoSkip: false,
-						}
-					} ],
-					yAxes: [ {
-						ticks: {
-							beginAtZero: true
-						}
-					} ]
-				},
-				legend: {
-					display: false
-				}
-				/*                
-				scaleBeginAtZero: true,
-				scaleShowGridLines: true,
-				scaleGridLineColor: "rgba(0,0,0,.05)",
-				scaleGridLineWidth: 1,
-				barShowStroke: true,
-				barStrokeWidth: 1,
-				barValueSpacing: 5,
-				barDatasetSpacing: 1,
-				responsive: true
-				*/
-			}
-		}
+    },
 
-	},
+    getMenu() {
+        return [ {
+            label: ( "Day" ),
+            run: () => {
+                var startDate = moment().startOf( 'day' );
+                var title = startDate.format( "[on] dddd Do MMMM" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        }, {
+            label: ( "Week" ),
+            run: () => {
+                var startDate = moment().startOf( 'week' );
+                var title = startDate.format( "[for week starting] Do MMMM" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        }, {
+            label: ( "Month" ),
+            run: () => {
+                var startDate = moment().startOf( 'month' );
+                var title = startDate.format( "[for] MMMM YYYY" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        }, {
+            label: ( "3 Months" ),
+            run: () => {
+                var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
+                var title = startDate.format( "[since] MMMM YYYY" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        }, {
+            label: ( "6 Months" ),
+            run: () => {
+                var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
+                var title = startDate.format( "[since] MMMM YYYY" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        }, {
+            label: ( "Year" ),
+            run: () => {
+                var startDate = moment().startOf( 'year' );
+                var title = startDate.format( "YYYY" )
+                this.setState( {
+                    startDate: startDate,
+                    title: title
+                } )
+            }
+        } ];
+    },
 
-	resetChart() {
-		var config = this.getChartConfiguration();
-		if ( this.chart ) {
-			this.chart.destroy();
-		}
-		var ctx = document.getElementById( "bar-chart" ).getContext( "2d" );
-		this.chart = new Chart( ctx, {
-			type: 'bar',
-			data: config.barData,
-			options: config.barOptions
-		} );
-	},
+    getChartConfiguration() {
+        //console.log(this.state);
+        return {
+            barData: {
+                labels: this.state.labels || [ '' ],
+                datasets: [ {
+                    backgroundColor: "rgba(117,170,238,0.8)",
+                    borderColor: "rgba(117,170,238,1)",
+                    hoverBackgroundColor: "rgba(117,170,238,0.5)",
+                    hoverBorderColor: "rgba(117,170,238,1)",
+                    data: this.state.set || [ 0 ]
+                } ]
+            },
+            barOptions: {
+                scales: {
+                    xAxes: [ {
+                        gridLines: {
+                            //offsetGridLines:false,
+                        },
+                        ticks: {
+                            //fontSize:10,
+                            autoSkip: false,
+                        }
+                    } ],
+                    yAxes: [ {
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    } ]
+                },
+                legend: {
+                    display: false
+                }
+                /*                
+                scaleBeginAtZero: true,
+                scaleShowGridLines: true,
+                scaleGridLineColor: "rgba(0,0,0,.05)",
+                scaleGridLineWidth: 1,
+                barShowStroke: true,
+                barStrokeWidth: 1,
+                barValueSpacing: 5,
+                barDatasetSpacing: 1,
+                responsive: true
+                */
+            }
+        }
 
-	updateChart() {
-		//console.log(this.data.set);
-		//console.log(this.chart.data);
-		//for(var i=0;i<this.data.set.length;i++) {
-		this.chart.data.datasets[ 0 ].data = this.data.set;
-		//}
-		this.chart.data.labels = this.data.labels;
-		//this.chart.scale.xLabels = this.data.labels;
-		this.chart.update();
-		//this.chart.reDraw();
-	},
+    },
 
-	componentDidMount() {
-		this.resetChart();
-	},
+    resetChart() {
+        var config = this.getChartConfiguration();
+        if ( this.chart ) {
+            this.chart.destroy();
+        }
+        var ctx = document.getElementById( "bar-chart" ).getContext( "2d" );
+        this.chart = new Chart( ctx, {
+            type: 'bar',
+            data: config.barData,
+            options: config.barOptions
+        } );
+    },
 
-	componentDidUpdate() {
-		// ???
-		//if(this.chart&&this.data.labels.length==this.chart.scale.xLabels.length) {
-		this.updateChart();
-		//}
-		//else {
-		//this.resetChart();
-		//}
-	},
+    updateChart() {
+        this.chart.data.datasets[ 0 ].data = this.state.set;
+        this.chart.data.labels = this.state.labels;
+        this.chart.update();
+    },
 
-	render() {
-		var facility=this.data.facility;
-		var minimal = this.state.minimal;
-		facilities=null;
-		if (this.data.ready) {
-			facilities = Meteor.user().getTeam().getFacilities();
-		}
-		return (
-			<div>
+    render() {
+        let { facility, minimal, labels, expandall, set, title } = this.state,
+        	buckets = null,
+            facilities = null;
+
+        if ( set ) {
+            facilities = Meteor.user().getTeam().getFacilities();
+        }
+
+        return (
+            <div>
+
 				{!minimal ? 
 				<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
 				<i className="fa fa-print" aria-hidden="true"></i>
-				</button> : null}
-				<Menu items={this.getMenu()}/>
+				</button> 
+				: null}
+
+				<Menu items = { this.getMenu() }/>
+
 				<div className="ibox-title">
-					<h2>Request breakdown {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
+					<h2>Request breakdown {title} {facility && facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
+
 				<div className="ibox-content">
 					<div>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
-				{!minimal ? 
+
+				{ !minimal ? 
 				<div className="gragh-table">
-				<ServicesRequestsView requests={this.data.buckets} labels={ this.data.labels } expandall={this.state.expandall}/>
-				</div>: null}
+
+				<ServicesRequestsView 
+					requests 	= { buckets } 
+					labels 		= { labels } 
+					expandall 	= { expandall }
+				/>
+
+				</div>
+				: null}
+
 			</div>
-		)
-	}
+        )
+    }
 
 } );
 

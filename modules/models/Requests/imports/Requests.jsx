@@ -62,6 +62,7 @@ if ( Meteor.isServer ) {
 
     Requests.collection._ensureIndex( { 'team._id': 1 } );
     Requests.collection._ensureIndex( { 'owner._id': 1 } );
+    Requests.collection._ensureIndex( { 'members._id': 1 } );
 }
 
 Requests.save.before( ( request ) => {

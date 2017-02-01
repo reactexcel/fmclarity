@@ -178,8 +178,8 @@ class Model {
 	 * Calls the models collection's findOne method and called the related join function
 	 */
 	findOne( ...args ) {
-		let doc = this.collection.findOne( ...args );
-		return this.join( doc );
+		return this.collection.findOne( ...args );
+		//return this.join( doc );
 	}
 
 	/*

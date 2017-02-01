@@ -18,11 +18,10 @@ export default ProgressOverviewChart = React.createClass( {
                 title: startDate.format( "[since] MMMM YYYY" )
             } );
 
-            this.updateOverviewStats( { startDate, endDate, period } );
+            this.updateStats( { startDate, endDate, period } );
         },
 
-
-        updateOverviewStats( { startDate, endDate, period } ) {
+        updateStats( { startDate, endDate, period } ) {
 
             Meteor.call( 'getProgressOverviewStats', {
                 startDate: startDate.toDate(),
@@ -31,6 +30,7 @@ export default ProgressOverviewChart = React.createClass( {
                 facilityQuery: Session.get( 'selectedFacility' ),
                 teamQuery: Session.get( 'selectedTeam' )
             }, ( error, results ) => {
+                console.log( { error, results } );
                 if ( !error ) {
                     this.setState( {
                         results
@@ -65,7 +65,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for] dddd Do MMMM" )
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );                    
+                    this.updateStats( { startDate, endDate, period } );                    
                 }
             }, {
                 label: ( "Week" ),
@@ -79,7 +79,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title : startDate.format( "[for week starting] Do MMMM" )
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "Month" ),
@@ -93,7 +93,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for] MMMM YYYY" )
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "3 Months" ),
@@ -107,7 +107,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for 3 months since] MMMM YYYY" )
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );
+                    this.updateStats( { startDate, endDate, period } );
 
                 }
             }, {
@@ -122,7 +122,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for 6 months since] MMMM YYYY" )                        
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );
+                    this.updateStats( { startDate, endDate, period } );
 
                 }
             }, {
@@ -137,7 +137,7 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for] YYYY" )
                     } );
 
-                    this.updateOverviewStats( { startDate, endDate, period } );
+                    this.updateStats( { startDate, endDate, period } );
 
                 }
             } ];

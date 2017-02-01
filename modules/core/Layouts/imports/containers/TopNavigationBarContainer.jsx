@@ -15,11 +15,8 @@ import { TeamActions } from '/modules/models/Teams';
 const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
 	Meteor.subscribe( 'User: Teams' );
-
 	Meteor.subscribe( 'Users' );
 	Meteor.subscribe( 'Teams' );
-	
-	Meteor.subscribe( 'Files' );
 	
 	////////////////////////////////////////
 	//Meteor.subscribe( 'Request: Files' );
@@ -28,7 +25,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
 	Meteor.subscribe( 'User: Messages' );
 
-	Meteor.subscribe( 'Documents' );
+	//Meteor.subscribe( 'Documents' );
+	//Meteor.subscribe( 'Files' );
 
 	let user = Meteor.user(),
 		team = null,
@@ -43,7 +41,9 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		// select initial team
 		team = user.getTeam();
 		teams = user.getTeams();
-		if ( !teams || !teams.length ) {} else if ( !team ) {
+		if ( !teams || !teams.length ) {
+
+		} else if ( !team ) {
 			team = teams[ 0 ];
 			user.selectTeam( team );
 			// if user has no teams then this is most likely first visit after account creation
@@ -51,6 +51,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 		} else if ( !team.name && !this.showingModal ) {
 			this.showingModal = true;
 			TeamActions.edit.run( team );
+		} else {
+			Meteor.subscribe( 'Team: Facilities', team._id );
 		}
 
 		//subscribe to team specific guff here

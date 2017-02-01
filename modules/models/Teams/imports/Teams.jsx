@@ -62,6 +62,10 @@ const Teams = new Model( {
     ]
 } );
 
+
+//Teams.collection._ensureIndex( { 'members._id': 1 } );
+//Teams.collection._ensureIndex( { 'owner._id': 1 } );
+
 Teams.methods( {
 
     inviteMember: {

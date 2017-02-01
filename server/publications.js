@@ -4,6 +4,8 @@ import { Requests } from '/modules/models/Requests';
 import { Messages } from '/modules/models/Messages';
 import { Files } from '/modules/models/Files';
 
+import moment from 'moment';
+
 Meteor.publish( 'User: Teams', function() {
 
     //teams I am a member in
@@ -22,9 +24,35 @@ Meteor.publish( 'User: Teams', function() {
 
 } );
 
+
+Meteor.publish( 'Requests this month', function() {
+
+    let startDate = moment().subtract( 1, 'month' ).startOf( 'month' ),
+        endDate = moment().clone().add( 1, 'month' ).endOf( 'month' );
+
+    let requestsCursor = Requests.find( {
+        'members._id': this.userId,
+        dueDate: {
+            $gte: startDate.toDate(),
+            $lte: endDate.toDate()
+        }
+    } )
+
+    return requestsCursor;
+} );
+
+Meteor.publish( 'Team: Facilities', function( teamId ) {
+    let facilitiesCursor = Facilities.find( {
+        'team._id': teamId
+    } );
+    return facilitiesCursor;
+} );
+
+
 Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
 
     //teams I am a member in
+    /*
     let teamsCursor = Teams.find( {
         $or: [
             { "owner._id": this.userId },
@@ -39,7 +67,9 @@ Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
         teamIds.push( team._id );
         teamNames.push( team.name );
     } );
+    */
 
+    /*
     let query = {
         $or: [
             { "team._id": { $in: teamIds } }, {
@@ -59,6 +89,11 @@ Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
             }
         ]
     };
+    */
+
+    let query = {
+        'members._id':this.userId
+    }
 
     if ( !includeComplete ) {
         query = {
@@ -70,9 +105,10 @@ Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
     }
 
     let requestsCursor = Requests.find( query, { sort: { createdAt: -1 } } );
+
+    /*
     let facilityIds = [];
 
-    /* this seems a bit expensive given that it will be producing small results */
     requestsCursor.forEach( ( request ) => {
         if ( request.facility && request.facility._id ) {
             facilityIds.push( request.facility._id );
@@ -88,6 +124,8 @@ Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
     } );
 
     return [ facilitiesCursor, requestsCursor ];
+    */
+    return requestsCursor;
 } );
 
 

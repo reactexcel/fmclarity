@@ -128,6 +128,7 @@ Users.actions( {
         //subscription:???
         helper: function( user, filter, options = { expandPMP: false } ) {
 
+            /*
             var team = user.getSelectedTeam();
             var role = user.getRole();
             //console.log( role );
@@ -232,12 +233,21 @@ Users.actions( {
                     $or: [ imAMember, createdByMe, assignedToMe ]
                 } );
             }
+
+            */
+
+            let query = [
+                { 'members._id': user._id }
+            ]
+
+            
             //if filter passed to function then add that to the query
             if ( filter ) {
                 query.push( filter );
             }
 
             //console.log( query );
+
 
             //perform query
             var requests = Requests.find( {
