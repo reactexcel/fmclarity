@@ -16,7 +16,7 @@ oaf:html5-desktop-notifications
 
 ############################
 # Routing
-kadira:flow-router
+kadira:flow-router-ssr
 tomwasd:flow-router-autoscroll
 zimme:active-route
 

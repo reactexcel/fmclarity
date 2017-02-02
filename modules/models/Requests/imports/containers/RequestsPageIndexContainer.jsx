@@ -32,7 +32,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
 	}
 
-	Meteor.subscribe( 'User: Facilities, Requests', includeComplete );
+	Meteor.subscribe( 'User: Requests, Facilities', { includeComplete } );
 
 
 	if ( selectedRequestId ) {

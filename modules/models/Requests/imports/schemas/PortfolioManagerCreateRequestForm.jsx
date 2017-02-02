@@ -563,18 +563,6 @@ const PortfolioManagerCreateRequestForm = {
 		label: "Client",
 		description: "The team who created this work request",
 		type: "object",
-		/*
-		relation: {
-			join: ( item ) => {
-				return Teams.findOne( item.team._id )
-			},
-			unjoin: ( item ) => {
-				if ( item.team ) {
-					return _.pick( item.team, [ '_id', 'name' ] )
-				}
-			}
-		},
-		*/
 		input: Select,
 		options: ( item ) => {
 			let team = Session.getSelectedTeam(),
@@ -605,18 +593,6 @@ const PortfolioManagerCreateRequestForm = {
 		description: "The site for this job",
 		type: "object",
 		required: true,
-		relation: {
-			join: ( item ) => {
-				if ( item.facility && item.facility._id ) {
-					return Facilities.findOne( item.facility._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if ( item.facility && item.facility._id ) {
-					return _.pick( item.facility, '_id', 'name' );
-				}
-			}
-		},
 		defaultValue: ( request ) =>{
 			let team = Teams.collection._transform( request.team ),
 				facilities = team.getFacilities( { 'team._id': request.team._id } );
@@ -827,22 +803,6 @@ const PortfolioManagerCreateRequestForm = {
 	assignee: {
 		label: "Assignee",
 		description: "The individual who has been allocated to this job",
-		relation: {
-			join: ( item ) => {
-				if ( item.assignee && item.assignee._id ) {
-					import { Users } from '/modules/models/Users';
-					return Users.findOne( item.assignee._id )
-				}
-			},
-			unjoin: ( item ) => {
-				if ( item.assignee && item.assignee.profile ) {
-					return {
-						_id: item.assignee._id,
-						name: item.assignee.profile.name
-					}
-				}
-			}
-		},
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
 			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident") {

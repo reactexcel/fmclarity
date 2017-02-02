@@ -27,6 +27,7 @@ function FacilityPanel( { item } ) {
 	let facility = item,
 		teamType = Session.get('selectedTeam').type,
 		role = Meteor.user().getRole(),
+		thumbUrl = facility.getThumbUrl(),
 		menuItems = [];
 	let actionNames = Object.keys( FacilityMenuActions.actions ),
 		validActions = Actions.filter( actionNames, facility );
@@ -36,8 +37,13 @@ function FacilityPanel( { item } ) {
 		let action = validActions[ actionName ];
 		menuItems.push( action.bind( facility ) );
 	}
-	let caretaker = facility.getMembers( { 'role': "caretaker" } );
-	console.log({caretaker},"facility");
+	let caretaker = facility.getMembers( { 'role': "caretaker" } ),
+		contact = facility.getMembers( { 'role': "manager" } );
+
+	if( contact ) {
+		contact = contact[0];
+	}
+
 	return (
 		<DropFileContainer model={Facilities}>
 		<div>
@@ -46,8 +52,8 @@ function FacilityPanel( { item } ) {
 				{/* standfirst, banner??? */}
 				<div className="contact-thumbnail">
 
-					{ facility.thumbUrl ?
-					<div className = "cover-image" style = { {backgroundImage:"url('"+facility.thumbUrl+"')"} }></div>
+					{ thumbUrl ?
+					<div className = "cover-image" style = { {backgroundImage:"url('"+thumbUrl+"')"} }></div>
 					: null }
 
 					<div className="title-overlay">
@@ -55,7 +61,7 @@ function FacilityPanel( { item } ) {
 							<div className="col-md-4">
 								<div
 									className = "facility-title"
-									style = { {borderBottom:facility.contact || (caretaker && caretaker.length) ?"1px solid #fff":"none"} }>
+									style = { {borderBottom:contact || (caretaker && caretaker.length) ?"1px solid #fff":"none"} }>
 
 									<div style = { { fontSize:"20px", color:"#fff", cursor: "pointer" } }>
 										<i className = "fa fa-arrow-left" onClick = { () => {
@@ -70,7 +76,7 @@ function FacilityPanel( { item } ) {
 									: null }
 
 								</div>
-								<ContactDetails item = { caretaker && caretaker.length ? caretaker[0] : facility.contact }/>
+								<ContactDetails item = { caretaker && caretaker.length ? caretaker[0] : contact }/>
 							</div>
 						</div>
 					</div>

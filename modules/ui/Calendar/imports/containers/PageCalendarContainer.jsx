@@ -13,7 +13,7 @@ import { Facilities } from '/modules/models/Facilities';
 const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	//Meteor.subscribe( 'Requests this month' );
-	Meteor.subscribe( 'User: Facilities, Requests' );
+	
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),

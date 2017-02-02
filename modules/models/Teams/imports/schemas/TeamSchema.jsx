@@ -139,77 +139,10 @@ export default TeamSchema = {
         }
     },
 
-    //////////////////////////////////////////////
-    // Relations
-    //////////////////////////////////////////////
-    facilities: {
-        label: "Facilities",
-        description: "Sites maintained by this team",
-        relation: {
-            //type: ORM.OneToMany,
-            //source: "Facilities",
-            //key: "team._id"
-            join: ( team ) => {
-                return Facilities.findAll( { 'team._id': team._id }, { sort: { name: 1 } } )
-            },
-            unjoin: ( team ) => {
-                return null
-            }
-        }
-    },
-
-    members: {
-        label: "Members",
-        description: "Members of this team",
-    },
-
-    contact: {
-        label: "Primary contact",
-        description: "Primary contact for the facility",
-        relation: {
-            join: ( team ) => {
-                var managers = team.getMembers( {
-                    role: "manager"
-                } );
-                if ( managers && managers.length ) {
-                    return managers[ 0 ];
-                }
-            },
-            unjoin: ( team ) => {
-                return null;
-            }
-        }
-    },
-
-    // cull
-    suppliers: {
-        label: "Suppliers",
-        description: "Common suppliers for facilities within this team",
-        /*relation:
-        {
-            type: ORM.HasMembers,
-            source: "Teams",
-            key: "team._id"
-        }*/
-    },
-
     documents: {
         label: "Documents",
         description: "Saved team documents",
-        /*relation:
-        {
-            type: ORM.HasMembers,
-            source: "Files",
-            key: "team._id"
-        },*/
         input: DocExplorer
     },
 
-    /*
-        notifications / messages :
-        {
-
-        }
-      */
-    //}
 }

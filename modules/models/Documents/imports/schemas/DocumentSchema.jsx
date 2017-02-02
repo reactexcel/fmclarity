@@ -68,20 +68,6 @@ export default DocumentSchema = {
 		description: "The site for this job",
 		type: "object",
 		size: 12,
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return Facilities.findOne( item.facility._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return _.pick( item.facility, '_id', 'name' );
-				}
-			}
-			*/
-		},
 		input: Select,
 		defaultValue: ( item ) =>{
 				return Session.getSelectedFacility();
@@ -102,20 +88,6 @@ export default DocumentSchema = {
 		optional: true,
 		description: "Document is related to request",
 		type: "object",
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.request && item.request._id ) {
-					return Requests.findOne( item.request._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.request && item.request._id ) {
-					return _.pick( item.request, '_id', 'name' );
-				}
-			}
-			*/
-		},
 
 		options: ( item ) => {
 			if ( item.facility ) {

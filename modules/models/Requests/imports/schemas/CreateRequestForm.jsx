@@ -9,7 +9,6 @@ export default CreateRequestForm = [
 	'area',
 	'identifier',
 
-
 	'name',
 
 	'service',

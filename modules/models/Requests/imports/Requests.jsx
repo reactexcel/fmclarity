@@ -66,6 +66,7 @@ if ( Meteor.isServer ) {
 }
 
 Requests.save.before( ( request ) => {
+    
     if ( request.type == "Preventative" ) {
         request.status = "PMP";
         request.priority = "PMP";
@@ -73,15 +74,22 @@ Requests.save.before( ( request ) => {
         request.status = "Booking";
         request.priority = "Booking";
     }
+
     if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
         request.costThreshold = '0';
     }
+
     if (request.supplier) {
         request.supplier={
-                            _id:request.supplier._id,
-                            name: request.supplier.name
-                        };
-        
+            _id:request.supplier._id,
+            name: request.supplier.name
+        };        
+    }
+    if (request.team) {
+        request.team = {
+            _id:request.team._id,
+            name: request.team.name
+        };        
     }
 } );
 

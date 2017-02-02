@@ -137,16 +137,6 @@ const FacilitySchema = {
 	team: {
 		label: "Team",
 		description: "The team that maintains this site",
-		/*relation: {
-			join: ( item ) => {
-				if ( item.team && item.team._id ) {
-					return Teams.findOne( item.team._id );
-				}
-			},
-			unjoin: ( item ) => {
-				return _.pick( item.team, '_id', 'name' );
-			}
-		},*/
 		input: Select,
 		options: ( item ) => {
 
@@ -165,24 +155,6 @@ const FacilitySchema = {
 	suppliers: {
 		label: "Suppliers",
 		description: "Contractors supplying services for this facility",
-	},
-
-	contact: {
-		label: "Primary contact",
-		description: "Primary contact for the facility",
-		relation: {
-			join: ( facility ) => {
-				var contacts = facility.getMembers( {
-					role: "manager"
-				} );
-				if ( contacts && contacts.length ) {
-					return contacts[ 0 ]
-				}
-			},
-			unjoin: ( facility ) => {
-				return null
-			}
-		}
 	},
 
     documents: {

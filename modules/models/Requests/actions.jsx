@@ -30,6 +30,7 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
                </DropFileContainer>
  		} )
  		callback( request );
+    request = Requests.collection._transform( request );
     request.markRecipentAsRead();
  	}
  } )
@@ -41,7 +42,8 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  	action: ( request ) => {
     let oldRequest = Object.assign({}, request);
  		Modal.show( {
- 			content: <AutoForm
+ 			content: 
+            <AutoForm
  			title = "Edit Request"
  			model = { Requests }
  			item = { request }

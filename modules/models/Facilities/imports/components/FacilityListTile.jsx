@@ -5,9 +5,9 @@
 import React from "react";
 
 let css = {
-	'facility-list-tile': {
-		overflow: 'hidden'
-	}
+    'facility-list-tile': {
+        overflow: 'hidden'
+    }
 }
 
 /**
@@ -15,22 +15,22 @@ let css = {
  * @memberOf 		module:models/Facilities
  */
 function FacilityListTile( props ) {
-	let { item, notification } = props;
-	contact = null;
+    let { item, notification } = props;
+    contact = null;
 
-	if ( item == null ) {
-		return <div/>
-	}
+    if ( item == null ) {
+        return <div/>
+    }
 
-	if ( item.contact != null ) {
-		contact = item.contact.profile;
-	}
+    if ( item.contact != null ) {
+        contact = item.contact.profile;
+    }
 
-	return (
-		<div style={css['facility-list-tile']} className="facility-list-tile">
+    return (
+        <div style={css['facility-list-tile']} className="facility-list-tile">
 
 			<div className="facility-thumbnail pull-left">
-				<div style={{width:"37px",height:"37px",backgroundImage:"url('"+item.thumbUrl+"')",backgroundSize:"cover"}}/>
+				<div style={{width:"37px",height:"37px",backgroundImage:"url('"+item.getThumbUrl()+"')",backgroundSize:"cover"}}/>
 
 				{notification?
 				<div style={{position:"absolute",bottom:"0px",right:"0px"}}>
@@ -59,7 +59,7 @@ function FacilityListTile( props ) {
 		    </div>
 
 		</div>
-	)
+    )
 }
 
 export default FacilityListTile;

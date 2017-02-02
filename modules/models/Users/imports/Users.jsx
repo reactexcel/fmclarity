@@ -128,126 +128,14 @@ Users.actions( {
         //subscription:???
         helper: function( user, filter, options = { expandPMP: false } ) {
 
-            /*
-            var team = user.getSelectedTeam();
-            var role = user.getRole();
-            //console.log( role );
-
-            //console.log( role );
-
-            if ( !team ) {
-                return [];
-            }
-
-            import { Facilities } from '/modules/models/Facilities';
-            var myFacilities = Facilities.find( {
-                    "members._id": user._id
-                } )
-                .fetch();
-            var myFacilityIds = _.pluck( myFacilities, '_id' );
-
-
-            //fragments to use in query
-            var isNotDraft = {
-                status: {
-                    $in: [ "New", "Issued", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Complete", "Closed" ]
-                }
-            };
-            var isIssued = {
-                status: {
-                    $in: [ "Issued", "In Progress", "Progress", "Quoting", "Quoted", "Complete", "Closed" ]
-                }
-            };
-            var isOpen = {
-                status: {
-                    $in: [ "New", "PMP", "In Progress", "Progress", "Issued" ]
-                }
-            };
-            var isNotClosed = {
-                status: {
-                    $in: [ "Draft", "New", "PMP", "In Progress", "Progress", "Quoting", "Quoted", "Issued" ]
-                }
-            };
-            var createdByMe = {
-                "owner._id": user._id
-            };
-
-            var imAMember = {
-                "members._id": user._id
-            };
-
-            var createdByMyTeam = {
-                $and: [ {
-                    "team._id": team._id
-                }, isNotDraft ]
-            };
-            var issuedToMyTeam = {
-                $and: [ {
-                    $or: [ {
-                        "supplier._id": team._id
-                    }, {
-                        "supplier.name": team.name
-                    } ]
-                }, isIssued ]
-            };
-            var assignedToMe = {
-                $and: [ { "assignee._id": user._id }, isIssued ]
-            };
-            var inMyFacilities = {
-                $and: [ {
-                    "facility._id": {
-                        $in: myFacilityIds
-                    }
-                }, isNotDraft ]
-            };
-
-            var query = [
-                { $or:[ issuedToMyTeam, createdByMyTeam ] }
-            ];
-
-            //if staff or tenant restrict to requests created by or assigned to me
-            if ( role == "portfolio manager" || role == "fmc support" ) {
-                query.push( {
-                    $or: [ issuedToMyTeam, createdByMyTeam, createdByMe, assignedToMe ]
-                } );
-            }
-            //if manager can be issued to team, created by team, created by me, or assigned to me
-            else if ( role == "manager" || role == "caretaker" ) {
-                if ( team.type == "contractor" ) {
-                    query.push( {
-                        $or: [ issuedToMyTeam, createdByMe, assignedToMe ]
-                    } );
-                } else if ( team.type == "fm" ) {
-                    query.push( {
-                        $or: [ inMyFacilities, {
-                            $and: [ createdByMe, isNotClosed ]
-                        }, {
-                            $and: [ assignedToMe, isOpen ]
-                        } ]
-                    } );
-                }
-            } else if ( role == "support" ) {
-              query.push( createdByMyTeam );
-            } else {
-                query.push( {
-                    $or: [ imAMember, createdByMe, assignedToMe ]
-                } );
-            }
-
-            */
-
             let query = [
                 { 'members._id': user._id }
             ]
-
             
             //if filter passed to function then add that to the query
             if ( filter ) {
                 query.push( filter );
             }
-
-            //console.log( query );
-
 
             //perform query
             var requests = Requests.find( {

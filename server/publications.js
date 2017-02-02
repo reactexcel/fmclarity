@@ -25,74 +25,44 @@ Meteor.publish( 'User: Teams', function() {
 } );
 
 
-Meteor.publish( 'Requests this month', function() {
-
-    let startDate = moment().subtract( 1, 'month' ).startOf( 'month' ),
-        endDate = moment().clone().add( 1, 'month' ).endOf( 'month' );
-
-    let requestsCursor = Requests.find( {
-        'members._id': this.userId,
-        dueDate: {
-            $gte: startDate.toDate(),
-            $lte: endDate.toDate()
-        }
-    } )
-
-    return requestsCursor;
-} );
-
 Meteor.publish( 'Team: Facilities', function( teamId ) {
     let facilitiesCursor = Facilities.find( {
         'team._id': teamId
+    }, {
+        sort: {
+            name: 1
+        },
+        fields: {
+            _id: 1,
+            type: 1,
+            address: 1,
+            operatingTimes: 1,
+            'owner._id': 1,
+            'ownert.name': 1,
+            createdAt: 1,
+            'team._id': 1,
+            'team.name': 1,
+            name: 1,
+            members: 1,
+            lease: 1,
+            areas: 1,
+            levels: 1,
+            description: 1,
+            servicesRequired: 1,
+            thumb: 1,
+            size: 1,
+            attachments: 1,
+            documents: 1
+        }
     } );
     return facilitiesCursor;
 } );
 
 
-Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
-
-    //teams I am a member in
-    /*
-    let teamsCursor = Teams.find( {
-        $or: [
-            { "owner._id": this.userId },
-            { "members._id": this.userId }
-        ]
-    } );
-
-    let teamIds = [],
-        teamNames = [];
-
-    teamsCursor.forEach( ( team ) => {
-        teamIds.push( team._id );
-        teamNames.push( team.name );
-    } );
-    */
-
-    /*
-    let query = {
-        $or: [
-            { "team._id": { $in: teamIds } }, {
-                $and: [ {
-                        $or: [
-                            { "supplier._id": { $in: teamIds } },
-                            { "supplier.name": { $in: teamNames } },
-                        ]
-                    },
-                    { status: { $nin: [ "Draft", "New" ] } }
-                ]
-            }, {
-                $or: [
-                    { "owner._id": this.userId },
-                    { "members._id": this.userId }
-                ]
-            }
-        ]
-    };
-    */
+Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, includeFacilities } ) {
 
     let query = {
-        'members._id':this.userId
+        'members._id': this.userId
     }
 
     if ( !includeComplete ) {
@@ -104,28 +74,61 @@ Meteor.publish( 'User: Facilities, Requests', function( includeComplete ) {
         };
     }
 
-    let requestsCursor = Requests.find( query, { sort: { createdAt: -1 } } );
-
-    /*
-    let facilityIds = [];
-
-    requestsCursor.forEach( ( request ) => {
-        if ( request.facility && request.facility._id ) {
-            facilityIds.push( request.facility._id );
+    let requestsCursor = Requests.find( query, {
+        sort: {
+            createdAt: -1
+        },
+        fields: {
+            _id: 1,
+            area: 1,
+            attachments: 1,
+            'assignee._id': 1,
+            'assignee.name': 1,
+            code: 1,
+            costThreshold: 1,
+            createdAt: 1,
+            description: 1,
+            dueDate: 1,
+            duration: 1,
+            eta: 1,
+            'facility._id': 1,
+            'facility.name': 1,
+            identifier: 1,
+            issuedAt: 1,
+            level: 1,
+            members: 1,
+            name: 1,
+            'owner._id': 1,
+            'owner.name': 1,
+            priority: 1,
+            service: 1,
+            subservice: 1,
+            'supplier._id': 1,
+            'supplier.name': 1,
+            status: 1,
+            'team._id': 1,
+            'team.name': 1,
+            type: 1,
         }
-    } )
-
-    //find all of the facilities that are in those teams
-    let facilitiesCursor = Facilities.find( {
-        $or: [
-            { "team._id": { $in: teamIds } },
-            { "_id": { $in: facilityIds } }
-        ]
     } );
 
-    return [ facilitiesCursor, requestsCursor ];
-    */
-    return requestsCursor;
+    if( !includeFacilities ) {
+        return requestsCursor;
+    }
+    else {
+
+        let facilityIds = [];
+
+        requestsCursor.forEach( ( request ) => {
+            if ( request.facility && request.facility._id ) {
+                facilityIds.push( request.facility._id );
+            }
+        } )
+
+        let facilitiesCursor = Facilities.find( { "_id": { $in: facilityIds } } );
+
+        return [ facilitiesCursor, requestsCursor ];
+    }
 } );
 
 
