@@ -20,6 +20,12 @@ const createRule = new Action( {
 
 
 function createNewComplianceRule( newRule ) {
+    if( newRule.document ){
+        newRule.docType = newRule.document.type;
+        newRule.docName = newRule.document.name;
+        var query = JSON.stringify(newRule.document.query);
+        newRule.document.query = query;
+    }
     var facility = newRule.facility;
     if ( facility ) {
         var services = facility.servicesRequired;
