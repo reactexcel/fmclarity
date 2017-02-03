@@ -15,6 +15,7 @@ import ABN from './imports/ABN.jsx';
 import Phone from './imports/Phone.jsx';
 import StartEndTimePicker from './imports/StartEndTimePicker.jsx';
 import DropFileContainer from './imports/DropFile.jsx';
+import FMInstantSearchBox from './imports/FMInstantSearchBox.jsx';
 
 checkModules( {
 	Currency,
@@ -30,6 +31,7 @@ checkModules( {
 	Phone,
 	StartEndTimePicker,
 	DropFileContainer,
+	FMInstantSearchBox,
 } );
 
 /**
@@ -49,4 +51,5 @@ export {
 	Phone,
 	StartEndTimePicker,
 	DropFileContainer,
+	FMInstantSearchBox,
 }
