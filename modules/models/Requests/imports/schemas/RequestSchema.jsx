@@ -290,7 +290,9 @@ const RequestSchema = {
 
                 if ( teamType == 'fm' && item.facility && item.facility._id ) {
                     let facility = Facilities.findOne( item.facility._id );
-                    items = facility.servicesRequired;
+                    if( facility ) {
+                        items = facility.servicesRequired;
+                    }
                 } else if ( teamType == 'contractor' && team.getAvailableServices ) {
                     items = team.getAvailableServices();
                 }

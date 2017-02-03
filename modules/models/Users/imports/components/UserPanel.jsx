@@ -63,10 +63,15 @@ class UserPanel extends React.Component {
 		let profile = null,
 			availableServices = null,
 			contact = this.state.item,
+			thumbUrl = null,
 			hideMenu = this.props.hideMenu;
 
 		if ( !contact ) {
 			return <div/>
+		}
+
+		if( contact.getThumbUrl ) {
+			thumbUrl = contact.getThumbUrl();
 		}
 
 		let roles = Roles.getUserRoles( contact );
@@ -81,7 +86,7 @@ class UserPanel extends React.Component {
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
-				    <img alt = "image" src = { contact.getThumbUrl() } />
+				    <img alt = "image" src = { thumbUrl } />
 				 </div>
 				 <div className = "contact-info">
 				 	<div>

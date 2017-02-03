@@ -15,11 +15,16 @@ let css = {
  * @memberOf 		module:models/Facilities
  */
 function FacilityListTile( props ) {
-    let { item, notification } = props;
-    contact = null;
+    let { item, notification } = props,
+    	contact = null,
+    	thumbUrl = '';
 
     if ( item == null ) {
         return <div/>
+    }
+
+    if ( item.getThumbUrl ) {
+    	thumbUrl = item.getThumbUrl();
     }
 
     if ( item.contact != null ) {
@@ -30,7 +35,7 @@ function FacilityListTile( props ) {
         <div style={css['facility-list-tile']} className="facility-list-tile">
 
 			<div className="facility-thumbnail pull-left">
-				<div style={{width:"37px",height:"37px",backgroundImage:"url('"+item.getThumbUrl()+"')",backgroundSize:"cover"}}/>
+				<div style={{width:"37px",height:"37px",backgroundImage:"url('"+thumbUrl+"')",backgroundSize:"cover"}}/>
 
 				{notification?
 				<div style={{position:"absolute",bottom:"0px",right:"0px"}}>

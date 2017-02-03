@@ -29,7 +29,10 @@ export default RequestPanel = React.createClass( {
             nextDate = null,
             previousDate = null,
             owner = null,
+            assignee = null,
+            facility = null,
             caretaker = null;
+
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
@@ -37,8 +40,12 @@ export default RequestPanel = React.createClass( {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 supplier = request.getSupplier();
-                assignee = request.getAssignee();
-                let facility = Facilities.findOne( { _id: request.facility._id } );
+
+                if( request.assignee && request.assignee._id ) {
+                    assignee = Users.findOne( request.assignee._id );                    
+                }
+
+                facility = Facilities.findOne( { _id: request.facility._id } );
                 if ( facility ) {
                     caretaker = facility ? facility.getMembers( { 'role': 'caretaker' } ) : null;
                 }

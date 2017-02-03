@@ -27,11 +27,15 @@ function FacilityPanel( { item } ) {
 	let facility = item,
 		teamType = Session.get('selectedTeam').type,
 		role = Meteor.user().getRole(),
-		thumbUrl = facility.getThumbUrl(),
+		thumbUrl = null,
 		menuItems = [];
+
 	let actionNames = Object.keys( FacilityMenuActions.actions ),
 		validActions = Actions.filter( actionNames, facility );
 
+	if( facility.getThumbUrl ) {
+		thumbUrl = facility.getThumbUrl();
+	}
 
 	for( actionName in validActions ) {
 		let action = validActions[ actionName ];
