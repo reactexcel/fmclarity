@@ -317,11 +317,13 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
-                                let members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
-                                if ( request.service.data.serviceDetails.defaultContact ) {
-                                    members.push( request.service.data.serviceDetails.defaultContact );
-                                }
-                                request.members = members;
+                                // let members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
+                                // if ( request.service.data.serviceDetails.defaultContact ) {
+                                //     members.push( request.service.data.serviceDetails.defaultContact );
+                                // }
+                                // request.members = members;
+                                request.members = _.union(request.members,request.service.data.serviceDetails.defaultContact);
+                                console.log({member: request.member});
                             } else {
                                 request.supplier = null;
                                 request.subservice = null;
