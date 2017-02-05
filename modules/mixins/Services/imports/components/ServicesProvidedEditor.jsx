@@ -178,8 +178,8 @@ class ServicesProvidedEditor extends React.Component {
 										}):null}
 										{!readOnly?
 									    	<div onClick={component.addSubService.bind(component,idx)} className="services-editor-row services-editor-row-child" style={{fontSize:"smaller",fontStyle:"italic"}}>
-												<span style={{position:"absolute",left:"15px",top:"15px"}}><i className="fa fa-plus"></i></span>
-											    <span style={{position:"absolute",left:"48px",top:"15px"}} className="active-link">Add subservice</span>
+												<span style={{position:"relative",left:"15px",top:"15px",paddingBottom:"15px"}}><i className="fa fa-plus"></i></span>
+											    <span style={{position:"relative",left:"48px",top:"15px",paddingBottom:"15px"}} className="active-link">Add subservice</span>
 										    </div>
 										:null}
 									</div>
