@@ -5,6 +5,8 @@
 import Facilities from './imports/Facilities.jsx';
 import AddressSchema from './imports/schemas/AddressSchema.jsx';
 import BillingAddressSchema from './imports/schemas/AddressSchema.jsx';
+import ServiceDetailsSchema from './imports/schemas/ServiceDetailsSchema.jsx';
+import AreaDetailsSchema from './imports/schemas/AreaDetailsSchema.jsx';
 
 import FacilityFilter from './imports/components/FacilityFilter.jsx';
 import FacilityStepper from './imports/components/FacilityStepper.jsx';
@@ -24,6 +26,8 @@ export {
 	Facilities,
 	AddressSchema,
 	BillingAddressSchema,
+	ServiceDetailsSchema,
+	AreaDetailsSchema,
 	BillingAddressDetails,
 	FacilityFilter,
 	FacilityDetails,
