@@ -29,6 +29,7 @@ const PMPListTile = React.createClass( {
 
         let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data,
             nextDateString = null,
+            frequency = request.frequency || {},
             previousDateString = null;
 
         if( nextDate ) {
@@ -47,7 +48,7 @@ const PMPListTile = React.createClass( {
                 { request.name }
             </div>
             <div className = "issue-summary-col" style = {{width:"10%"}}>
-                due every {`${request.frequency.number||''} ${request.frequency.unit||''}`}
+                due every {`${frequency.number||''} ${frequency.unit||''}`}
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
                 { previousDateString ? 

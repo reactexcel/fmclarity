@@ -212,7 +212,7 @@ Actions.addAccessRule( {
     action: [
         'edit request',
     ],
-    role: [ 'team portfolio manager', 'facility manager', 'team fmc support', 'owner' ],
+    role: [ 'team portfolio manager', 'facility manager', 'team fmc support' ],
     rule: { alert: true }
 } )
 
@@ -253,13 +253,13 @@ Actions.addAccessRule( {
     action: [
         'delete request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'owner' ],
+    role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
     rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'In Progress', 'Issued' ], request.status ) && !request.assignee
+        return _.contains( [ 'In Progress', 'Issued' ], request.status ) && ( !request.assignee || !request.assignee._id )
     },
     action: [
         'accept request',

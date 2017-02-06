@@ -93,6 +93,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             eta: 1,
             'facility._id': 1,
             'facility.name': 1,
+            'facility.thumb': 1,
             identifier: 1,
             issuedAt: 1,
             level: 1,
