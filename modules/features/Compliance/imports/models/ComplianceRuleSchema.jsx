@@ -9,6 +9,7 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
 import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
+import '/modules/models/Documents/imports/schemas/DocumentSearchSchema'
 
 import React from 'react';
 
@@ -65,67 +66,24 @@ export default ComplianceRuleSchema = {
             }
         }
     },
-
-    docType: {
-        label: "Document type",
-        input: Select,
+    document:{
+        type: "object",
+        subschema: DocumentSearchSchema,
+        options(item) {
+            if ( !item.document ) {
+                item.document = {
+                    "query": {
+                        $and:[
+                            { "facility._id": item.facility._id }
+                        ],
+                    },
+                    hideFacilityField: true,
+                }
+            } else if ( item.document && item.document.query && typeof item.document.query === "string") {
+                item.document.query = JSON.parse(item.document.query);
+            }
+        },
         condition: [ "Document exists", "Document is current" ],
-        options( item ) {
-            // Import DocTypes here to remove circular dependency.
-            import { DocTypes } from '/modules/models/Documents';
-            return {
-                items: DocTypes,
-            };
-        },
-    },
-
-    insuranceType: {
-        input: Select,
-        label: "Insurance type",
-        optional: true,
-        options: {
-            items: [
-                'Public Liablity',
-                'Professional Indemnity',
-                'Worker\'s Compensation',
-                'Other',
-            ],
-        },
-        size: 12,
-        condition: function( item ) {
-            return [
-                "Insurance",
-            ].indexOf( item.docType ) > -1;
-        },
-    },
-
-    expiryDate: {
-        type: "date",
-        condition: function( item ) {
-            return [
-                'Bank Guarantee',
-                'Contract',
-                'Emergency Management',
-                'Insurance',
-                'Lease',
-                'Quote',
-                'Register',
-                'Registration'
-            ].indexOf( item.docType ) > -1;
-        },
-        defaultValue: function( item ) {
-            return new Date();
-        },
-        label: "Expiry",
-        optional: true,
-        size: 12,
-        input: DateInput,
-    },
-
-    docName: {
-        label: "Document name",
-        input: Text,
-        condition: [ "Document exists", "Document is current" ]
     },
 
     service: {

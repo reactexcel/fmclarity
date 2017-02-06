@@ -48,22 +48,8 @@ ComplianceEvaluationService = new function() {
     //  console.log({rule});
 
       var docCount = null,
-        query = {
-          'facility._id': facility._id,
-            $or: [
-              {'type': rule.docType},
-              {'name': rule.docName},
-            ]
-         };
-
-      if ( _.contains(docList1, rule.docType ) ) {
-        query['$or'].push( { 'serviceType': rule.service.name } );
-        docCount = Documents.find( query ).count();
-      } else if ( _.contains( docList2, rule.docType ) ) {
-        if( rule.insuranceType ) query['$or'].push( { 'insuranceType': rule.insuranceType } );
-        if( rule.expiryDate ) query['$or'].push( { 'expiryDate': rule.expiryDate } );
-        docCount = Documents.find( query ).count();
-      }
+      query = rule.document ? JSON.parse( rule.document.query ) : "";
+      docCount = query && Documents.find( query ).count();
       // console.log({count: docCount});
       // console.log(query);
       if(docCount){
@@ -104,25 +90,8 @@ ComplianceEvaluationService = new function() {
     "Document is current":function(rule,facility,service){
 
       var docCount = null,
-        query = {
-          'facility._id': facility._id,
-          'expiryDate': {
-            $lte: new Date()
-          },
-          $or: [
-            {'type': rule.docType},
-            {'name': rule.docName},
-          ]
-        };
-
-      if ( _.contains(docList1, rule.docType ) ) {
-        query['$or'].push( { 'serviceType': rule.service.name } );
-        docCount = Documents.find( query ).count();
-      } else if ( _.contains( docList2, rule.docType ) ) {
-        if( rule.insuranceType ) query['$or'].push( { 'insuranceType': rule.insuranceType } );
-        if( rule.expiryDate ) query.expiryDate= rule.expiryDate;
-        docCount = Documents.find( query ).count();
-      }
+      query = rule.document ? JSON.parse( rule.document.query ) : "";
+      docCount = query && Documents.find( query ).count();
       // console.log({count: docCount});
       // console.log(query);
       if(docCount){

@@ -41,7 +41,7 @@ const Text = React.createClass( {
         }
         // format number and delimit 0's only input to single 0 eg 0000 to 0
         var fieldName = this.props.fieldName ? this.props.fieldName : "";
-        var fieldType = this.props.model.schema[ fieldName ].type ? this.props.model.schema[ fieldName ].type : null;
+        var fieldType = this.props.model && this.props.model.schema[ fieldName ].type ? this.props.model.schema[ fieldName ].type : null;
         if ( fieldType && fieldType == "number" && new RegExp( "^[0\s]+$" ).test( event.target.value.replace( /\D+/g, "" ) ) ) {
 
             this.refs.input.value = "0";
