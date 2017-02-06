@@ -249,7 +249,7 @@ class AutoForm extends React.Component {
 						className 	= "btn btn-flat btn-primary"
 						onClick 	= { ( ) => { this.submit() } }
 					>
-						Submit
+						{this.props.submitText?this.props.submitText:'Submit'}
 					</button>
 				</div>
 

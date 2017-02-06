@@ -85,9 +85,6 @@ DocumentSearchSchema = {
                 }
             }
         },
-        condition( item ){
-            return !item.hideFacilityField;
-        }
     },
     'name': {
         label: "Name",
@@ -163,7 +160,7 @@ DocumentSearchSchema = {
 	},
     issueDateFrom:{
         label:'Issue date from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -185,7 +182,7 @@ DocumentSearchSchema = {
     },
     issueDateTo:{
         label:'Issue date to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -207,7 +204,7 @@ DocumentSearchSchema = {
     },
     expiryDateFrom:{
         label:'Expiry date from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -229,7 +226,7 @@ DocumentSearchSchema = {
     },
     expiryDateTo:{
         label:'Expiry date to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -499,7 +496,7 @@ DocumentSearchSchema = {
 	},
     applicablePeriodStartDateFrom:{
         label:'Applicable period start from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -530,7 +527,7 @@ DocumentSearchSchema = {
     },
     applicablePeriodStartDateTo:{
         label:'Applicable period start to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -561,7 +558,7 @@ DocumentSearchSchema = {
     },
     applicablePeriodEndDateFrom:{
         label:'Applicable period end from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -592,7 +589,7 @@ DocumentSearchSchema = {
     },
     applicablePeriodEndDateTo:{
         label:'Applicable period end to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -623,7 +620,7 @@ DocumentSearchSchema = {
     },
     tenantExecutedDateFrom:{
         label:'Date tenant executed from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -645,7 +642,7 @@ DocumentSearchSchema = {
     },
     tenantExecutedDateTo:{
         label:'Date tenant executed to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -667,7 +664,7 @@ DocumentSearchSchema = {
     },
 	lessorExecutedDateFrom:{
         label:'Date lessor executed from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -689,7 +686,7 @@ DocumentSearchSchema = {
     },
     lessorExecutedDateTo:{
         label:'Date tenant executed to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -774,7 +771,7 @@ DocumentSearchSchema = {
 	},
 	commencementDateFrom:{
         label:'Commencement from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -801,7 +798,7 @@ DocumentSearchSchema = {
     },
     commencementDateTo:{
         label:'Commencement to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -828,7 +825,7 @@ DocumentSearchSchema = {
     },
     clientExecutedDateFrom:{
         label:'Date client executed from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -850,7 +847,7 @@ DocumentSearchSchema = {
     },
     clientExecutedDateTo:{
         label:'Date client executed to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -872,7 +869,7 @@ DocumentSearchSchema = {
     },
 	supplierExecutedDateFrom:{
         label:'Date supplier executed from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -894,7 +891,7 @@ DocumentSearchSchema = {
     },
     supplierExecutedDateTo:{
         label:'Date supplier executed to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -916,7 +913,7 @@ DocumentSearchSchema = {
     },
 	annualReviewFrom:{
         label:'Annual review from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -938,7 +935,7 @@ DocumentSearchSchema = {
     },
     annualReviewTo:{
         label:'Annual review to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -1008,7 +1005,7 @@ DocumentSearchSchema = {
 	},
     optionExerciseFromDateFrom:{
         label:'Option exercise from date from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -1030,7 +1027,7 @@ DocumentSearchSchema = {
     },
     optionExerciseFromDateTo:{
         label:'Option exercise from date to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -1052,7 +1049,7 @@ DocumentSearchSchema = {
     },
     optionExerciseToDateFrom:{
         label:'Option exercise to date from',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
@@ -1074,7 +1071,7 @@ DocumentSearchSchema = {
     },
     optionExerciseToDateTo:{
         label:'Option exercise to date to',
-        size: 4,
+        size: 2,
         type: 'date',
         input(props){
             return(
