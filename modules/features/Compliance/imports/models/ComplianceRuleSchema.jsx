@@ -9,7 +9,7 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
 import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
-import '/modules/models/Documents/imports/schemas/DocumentSearchSchema'
+import ComplianceDocumentSearchSchema from './ComplianceDocumentSearchSchema.jsx';
 
 import React from 'react';
 
@@ -66,32 +66,12 @@ export default ComplianceRuleSchema = {
             }
         }
     },
-    document:{
-        type: "object",
-        subschema: DocumentSearchSchema,
-        options(item) {
-            if ( !item.document ) {
-                item.document = {
-                    "query": {
-                        $and:[
-                            { "facility._id": item.facility._id }
-                        ],
-                    },
-                    hideFacilityField: true,
-                }
-            } else if ( item.document && item.document.query && typeof item.document.query === "string") {
-                item.document.query = JSON.parse(item.document.query);
-            }
-        },
-        condition: [ "Document exists", "Document is current" ],
-    },
-
     service: {
         label: 'Service',
         type: Object,
         input: Select,
         label: "Service",
-        condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
+        //condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
                 return {
@@ -106,8 +86,9 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Sub-Service",
-        condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
         options: function( item ) {
+            console.log({item},"sub service");
             if ( item.service ) {
                 return {
                     items: item.service.children,
@@ -116,7 +97,18 @@ export default ComplianceRuleSchema = {
             }
         }
     },
-
+    document:{
+        type: "object",
+        subschema: ComplianceDocumentSearchSchema,
+        options(item){
+            if ( !item.document ) {
+                item.document = { };
+            } else if ( item.document && item.document.query && typeof item.document.query === "string") {
+                item.document.query = JSON.parse(item.document.query);
+            }
+        },
+        condition: [ "Document exists", "Document is current" ],
+    },
     event: {
         label: "PMP event name",
         input: Select,

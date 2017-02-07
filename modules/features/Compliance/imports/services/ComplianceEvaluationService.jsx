@@ -48,11 +48,16 @@ ComplianceEvaluationService = new function() {
     //  console.log({rule});
 
       var docCount = null,
-      query = rule.document ? JSON.parse( rule.document.query ) : "";
+      tomorrow = moment( moment().add(1,"days").format("MM-DD-YYYY")).toDate()
+      query = rule.document&&rule.document.query ? JSON.parse( rule.document.query) : "";
+      if (_.contains(docList1, rule.document.type)){
+          query.$and.push({ 'serviceType.name': rule.service.name });
+      }
+      query && query.$and.push({ expiryDate: {$gte: tomorrow} });
       docCount = query && Documents.find( query ).count();
-      // console.log({count: docCount});
-      // console.log(query);
-      if(docCount){
+    //   console.log({count: docCount});
+    //   console.log(query);
+     if(docCount){
         return _.extend({},defaultResult,{
           passed:true,
           message:{
@@ -91,9 +96,19 @@ ComplianceEvaluationService = new function() {
 
       var docCount = null,
       query = rule.document ? JSON.parse( rule.document.query ) : "";
+      if (_.contains(docList1, rule.document.type)){
+          query.$and.push({ 'serviceType.name': rule.service.name });
+      }
+      if (_.contains(docList2, rule.document.type)){
+          //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
+          let yesterday = moment( moment().subtract(1,"days").format("MM-DD-YYYY")).toDate(),
+            tomorrow = moment( moment().add(1,"days").format("MM-DD-YYYY")).toDate(),
+            today = Object.assign({},{$gt: yesterday, $lt: tomorrow});
+          query.$and.push({ expiryDate: today });
+      }
       docCount = query && Documents.find( query ).count();
-      // console.log({count: docCount});
-      // console.log(query);
+    //    console.log({count: docCount});
+    //    console.log(query);
       if(docCount){
         return _.extend({},defaultResult,{
           passed:false,
