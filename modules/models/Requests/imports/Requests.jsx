@@ -16,6 +16,7 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
@@ -549,24 +550,58 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
-    let code = null;
+    let code = null,
+    userId = Meteor.user( ), 
+    user = Users.findOne( userId._id );
     if ( request && request.team && !request.code ) {
         team = Teams.findOne( {
             _id: request.team._id
         } );
         code = team.getNextWOCode();
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            code: code,
-            members: getMembersDefaultValue( request )
-        } );
+        
+        
+        if (user.profile.requestIssueThreshold ) {
+            if (user.profile.requestIssueThreshold>0) {
+                Meteor.call( 'Issues.save', request, {
+                    status: "Issued",
+                    issuedAt: new Date(),
+                    code: code,
+                    members: getMembersDefaultValue( request )
+                } );
+                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
+                Users.save.call( user );
+            }
+            
+        }
+        else{
+            Meteor.call( 'Issues.save', request, {
+                status: "Issued",
+                issuedAt: new Date(),
+                code: code,
+                members: getMembersDefaultValue( request )
+            } );
+        }
     } else {
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            members: getMembersDefaultValue( request )
-        } );
+        
+        if (user.profile.requestIssueThreshold ) {
+            if (user.profile.requestIssueThreshold>0) {
+                Meteor.call( 'Issues.save', request, {
+                    status: "Issued",
+                    issuedAt: new Date(),
+                    members: getMembersDefaultValue( request )
+                } );
+                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
+                Users.save.call( user );
+            }
+            
+        }
+        else{
+            Meteor.call( 'Issues.save', request, {
+                status: "Issued",
+                issuedAt: new Date(),
+                members: getMembersDefaultValue( request )
+            } );
+        }
     }
 
 
