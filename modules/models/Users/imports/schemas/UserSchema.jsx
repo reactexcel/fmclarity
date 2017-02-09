@@ -77,6 +77,23 @@ const UserProfileSchema = {
 			return role === "tenant";
 		},
 	},
+	requestIssueThreshold: {
+		label: "WO Issue Threshold",
+		description: "Number of Work Orders user can issue to suppliers",
+		input: Text,
+		optional: true,
+		type: "string",
+		condition: ( item ) => {
+				group = user.getSelectedFacility() || user.getSelectedTeam();
+				relation = group.getMemberRelation( item );
+				if(relation) {
+					Itemrole = relation.role;
+				}
+				console.log(Itemrole);
+
+			return role === "portfolio manager" && _.contains(['manager', 'caretaker'], Itemrole );
+		},
+	},
 
 
 

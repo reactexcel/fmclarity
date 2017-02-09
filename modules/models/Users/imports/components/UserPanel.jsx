@@ -91,10 +91,13 @@ class UserPanel extends React.Component {
 				 <div className = "contact-info">
 				 	<div>
 						<h2>{ contact.getName() }</h2>
-
 						{ this.props.role ?
 							<span>{this.props.role}<br/></span>
 						: null }
+
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && profile.requestIssueThreshold) ? 
+							<span><b>WO Issue Threshold</b> {profile.requestIssueThreshold}<br/></span>
+							 : null}
 
 						{ profile.email ?
 							<span><b>Email</b> {profile.email}<br/></span>
