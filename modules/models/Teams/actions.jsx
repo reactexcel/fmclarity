@@ -135,7 +135,12 @@ const createRequest = new Action( {
 							Meteor.call('Issues.issue', newRequest );
 						}
 						else {
-							Meteor.call('Issues.create', newRequest );
+							if (team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold) {
+								Meteor.call('Issues.issue', newRequest );
+							}
+							else{
+								Meteor.call('Issues.create', newRequest );
+							}
 						}
 
 						let request = Requests.collection._transform( newRequest );

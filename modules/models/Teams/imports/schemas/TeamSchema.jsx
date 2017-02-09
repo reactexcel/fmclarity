@@ -115,6 +115,15 @@ export default TeamSchema = {
         condition: "fm"
     },
 
+    defaultCostThreshold: {
+        label: "Threshold value for work orders",
+        description: "Maximum value set for the value of a work order",
+        type: "number",
+        input: Text,
+        defaultValue: 1000,
+        condition: "fm"
+    },
+
     services: {
         label: "Services",
         type: "object",
