@@ -103,7 +103,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: ["tenant","resident"] } } } defaultRole = "resident" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: ["tenant","resident"] } } } defaultRole = "tenant" team = { facility.team }/>
 					},{
 						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
