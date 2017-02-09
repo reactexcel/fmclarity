@@ -66,7 +66,7 @@ ComplianceEvaluationService = new function() {
         passed:false,
         message:{
           summary:"failed",
-          detail:"Documents dose not exists."
+          detail:"Document does not exist."
         },
         resolve:function(){
           let type = "team",

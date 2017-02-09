@@ -702,13 +702,13 @@ function actionComplete( request ) {
             closerRole = closer.getRole();
 
         var newRequest = {
+            owner: request.owner,
+            team: request.team,
             facility: request.facility,
             supplier: request.supplier,
-            team: request.team,
 
             level: request.level,
             area: request.area,
-            members: request.members,
             attachments: request.attachments || [],
             status: "New",
             service: request.service,
