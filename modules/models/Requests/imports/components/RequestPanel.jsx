@@ -282,7 +282,7 @@ const RequestPanelInner = ( {
                     <td>{request.description}</td>
                 </tr>:null}
 
-                { assignee ?
+                { assignee && assignee.getName() ?
                 <tr>
                     <th>Assignee</th>
                     <td>{assignee.getName()}</td>
