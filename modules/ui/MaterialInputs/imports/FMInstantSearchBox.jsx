@@ -41,7 +41,7 @@ var DisplayTable = React.createClass({
         var comp=this;
         if(this.props.data && this.props.data.length > 0){
             this.props.data.forEach(function(data, idx) {
-                rows.push(<li key={idx} onClick={data.action ? data.action : comp.handleClick } ><a href={data.searchUrl ? data.searchUrl : ""}>{data.name}</a></li>)
+                rows.push(<li key={idx} onClick={data.action ? data.action : comp.handleClick } ><a href={data.searchUrl ? data.searchUrl : ""}>{data.listText ? data.listText : data.name}</a></li>)
                 });
         }
         //returning the table
@@ -67,8 +67,12 @@ const FMInstantSearchBox = React.createClass({
 
         var requests= Requests.find().fetch();
         requests.forEach(function(request){
-            if(request.name.toLowerCase().indexOf(queryText)!=-1){
+            if(
+                (request.name.toLowerCase().indexOf(queryText)!=-1) || 
+                (request.code.toString().indexOf(queryText)!=-1)
+            ){
                 request.searchUrl="/requests/"+request._id;
+                request.listText=request.code.toString().indexOf(queryText)!=-1 ? request.code+" - "+request.name : request.name;
                 queryResult.push(request);
                         }
         });
