@@ -112,6 +112,7 @@ export default ServiceDetailsSchema =  {
     },
     defaultContact:{
         label: "Default supplier contact",
+        type: 'array',
         size: 12,
         input(props){
             // props.onChange = ( item ) => {
@@ -131,7 +132,10 @@ export default ServiceDetailsSchema =  {
                         view = {props.view}
                         model = {props.model}
                         onChange ={ ( contact ) => {
-                            if ( !_.find( props.item.defaultContact, m => m._id === contact._id) ){
+                            if ( !_.find( props.item.defaultContact, m => m._id === contact._id) ) {
+                                if( ! props.item.defaultContact ) {
+                                    props.item.defaultContact = [];
+                                }
                                 props.item.defaultContact.push({
                                     _id: contact._id,
                                     name: contact.name || contact.profile.name,
