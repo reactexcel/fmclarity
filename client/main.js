@@ -109,15 +109,17 @@ Actions.addAccessRule( {
     action: [
         'create team request',
     ],
-    role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'tenant', 'resident' ],
-    rule: { alert: true, email: true }
-} )
-
-Actions.addAccessRule( {
-    action: [
-        'create team document',
+    role: [ 
+        'staff', 
+        'fmc support', 
+        'portfolio manager', 
+        'manager', 
+        'owner', 
+        'property manager', 
+        'caretaker', 
+        'tenant', 
+        'resident' 
     ],
-    role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
     rule: { alert: true, email: true }
 } )
 
@@ -125,22 +127,23 @@ Actions.addAccessRule( {
     action: [
         'edit team',
         'view team',
-        'edit team member',
         'view team member',
+        'edit team member',
+        'delete team member',
         'create team member',
         'create team facility',
         'create compliance rule',
-        'edit team member',
-        'delete team member',
+        'create team document',
         'invite supplier'
     ],
     role: [
-        'fmc support',
+        '*',
+        /*'fmc support',
         'portfolio manager',
         'manager',
         'owner',
         'property manager',
-        'caretaker'
+        'caretaker'*/
     ],
 } )
 
@@ -173,20 +176,20 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     action: [ 'view request' ],
     role: [
-      '*'
-      // 'team fmc support',
-      // 'owner',
-      // 'team portfolio manager',
-      // 'team manager',
-      // 'supplier staff',
-      // 'supplier manager',
-      // 'facility manager',
-      // 'property manager',
-      // 'team caretaker',
-      // 'facility caretaker',
-      // 'assignee',
-      // 'resident',
-      // 'support',
+        '*'
+        // 'team fmc support',
+        // 'owner',
+        // 'team portfolio manager',
+        // 'team manager',
+        // 'supplier staff',
+        // 'supplier manager',
+        // 'facility manager',
+        // 'property manager',
+        // 'team caretaker',
+        // 'facility caretaker',
+        // 'assignee',
+        // 'resident',
+        // 'support',
     ],
     rule: { alert: true }
 } )
@@ -327,10 +330,10 @@ Actions.addAccessRule( {
 
 /*
 Actions.addAccessRule( {
-	action: 'rejectRequest',
-	role: 'supplier manager',
-	condition: { status: 'Issued' },
-	rule: { alert: true }
+    action: 'rejectRequest',
+    role: 'supplier manager',
+    condition: { status: 'Issued' },
+    rule: { alert: true }
 } );
 */
 
@@ -376,8 +379,8 @@ UserPanelActions = Actions.clone( [
 
 /*
 TeamPanelActions = Actions.clone( [
-	'edit team',
-	'invite supplier'
+    'edit team',
+    'invite supplier'
 ] );
 */
 
