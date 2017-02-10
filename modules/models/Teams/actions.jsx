@@ -260,8 +260,9 @@ const inviteSupplier = new Action( {
 	label: "Invite supplier",
 	type: [ 'team' ],
 	action: ( supplier ) => {
+		console.log({supplier});
 		let inviter = Session.getSelectedTeam();
-		Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
+		//Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
 		//invite supplier
 	}
 } )

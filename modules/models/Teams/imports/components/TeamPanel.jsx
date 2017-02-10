@@ -119,7 +119,7 @@ const TeamPanel = React.createClass( {
 
         return (
             <div>
-				{ this.props.onBack? 
+				{ this.props.onBack?
 									<div style = { { padding:'10px', fontSize: '20px', color: '#999', cursor: 'pointer', float: 'left' } }>
 										<i className = "fa fa-arrow-left" onClick = { () => {
 											this.props.onBack();
