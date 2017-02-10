@@ -294,7 +294,7 @@ const TeamStepper = React.createClass( {
                                         <AutoForm
                                             model = { Teams }
                                             item = { viewingTeam }
-                                            form = { ["defaultWorkOrderValue","description"] }
+                                            form = { ["defaultWorkOrderValue", "defaultCostThreshold", "description"] }
                                             onNext = { this.onNextWorkOrder }
                                             hideSubmit = { true }
                                             submitFormOnStepperNext = { true }
