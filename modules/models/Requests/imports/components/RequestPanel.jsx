@@ -3,7 +3,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Inbox } from '/modules/models/Messages';
 import { AutoForm } from '/modules/core/AutoForm';
-import { FacilityDetails } from '/modules/models/Facilities';
+import { AddressLink, BillingDetails } from '/modules/models/Facilities';
 import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
@@ -63,6 +63,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     }
     let teamType = Session.get('selectedTeam').type,
         title = "",
+        billingOrderNumber="",
         nextDateString = null,
         previousDateString = null;
 
@@ -93,6 +94,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
         if( request.code ) {
             title += ` # ${request.code}`
+            billingOrderNumber+= ` WO# ${request.code}`
         }
         else {
             title = "New "+title;
@@ -124,12 +126,15 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 								"Client: "+ request.team.name
 							}
 						</h2>
+                        <AddressLink item = { request.facility.address }/>
 
 						{/* Show supplier contact details when user is client (fm),
 							otherwise show client details for supplier user */}
 						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
 
-						<FacilityDetails item = { request.facility }/>
+                        <BillingDetails item = { request.facility }/>
+
+                        { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
 					</div>
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
 
