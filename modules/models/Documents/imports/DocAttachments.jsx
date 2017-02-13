@@ -8,96 +8,82 @@ export default DocAttachments = { register }
 
 function register( collection, { fieldName, authentication } = {} ) {
 
-	//console.log(collection);
+    //console.log(collection);
 
-	if ( fieldName == null ) {
-		fieldName = "documents";
-	}
+    if ( fieldName == null ) {
+        fieldName = "documents";
+    }
 
-	if ( authentication == null ) {
-		authentication = ( () => {
-			return false;
-		} );
-	}
+    if ( authentication == null ) {
+        authentication = ( () => {
+            return false;
+        } );
+    }
 
-	collection.helpers( {
-		getDocs: getDocs( fieldName ),
-		getAttachmentUrl
-	} );
+    collection.helpers( {
+        getDocs: getDocs( fieldName ),
+        getAttachmentUrl
+    } );
 
-	// add the documents field to the schema for this selected collection
-	collection.schema[fieldName] = {
-		label: "Documents",
-		description: "Documents pertaining to this item",
-		type: "array",
-		input: DocExplorer,
-		relation:{
-			join: ( item ) => {
-				let ids = _.pluck( item.documents, '_id' );
-				if ( !_.isEmpty( ids ) ) {
-					return Documents.find( { _id: { $in: ids } } ).fetch();
-				}
-			},
-			unjoin: ( item ) => {
-				let documents = [];
-				item.documents.map( ( doc ) => {
-					documents.push( _.pick( doc, '_id', 'name', 'role' ) );
-				} )
-			}
-		}
-	}
+    // add the documents field to the schema for this selected collection
+    collection.schema[ fieldName ] = {
+        label: "Documents",
+        description: "Documents pertaining to this item",
+        type: "array",
+        input: DocExplorer,
+    }
 
-	collection.actions( {
-		addDocument: {
-			authentication
-		}
-	} );
+    collection.actions( {
+        addDocument: {
+            authentication
+        }
+    } );
 }
 
 function getAttachmentUrl( index ) {
 
-	index = index || 0;
-	var file;
-	if ( this.attachments && this.attachments[ index ] ) {
-		file = Files.findOne( this.attachments[ index ]._id );
-		if ( file != null ) {
-			return file.url();
-		}
-	}
-	return this.defaultThumb;
+    index = index || 0;
+    var file;
+    if ( this.attachments && this.attachments[ index ] ) {
+        file = Files.findOne( this.attachments[ index ]._id );
+        if ( file != null ) {
+            return file.url();
+        }
+    }
+    return this.defaultThumb;
 }
 
 function getDocs( fieldName ) {
-	// this is not the best way to do it, should store foreign key in document instead
-	return function( filter ) {
+    // this is not the best way to do it, should store foreign key in document instead
+    return function( filter ) {
 
-		let item = this,
-			ids = [],
-			names = [],
-			docs = item[ fieldName ];
+        let item = this,
+            ids = [],
+            names = [],
+            docs = item[ fieldName ];
 
-		if ( docs == null ) {
-			return null;
-		}
+        if ( docs == null ) {
+            return null;
+        }
 
-		docs.map( ( doc ) => {
+        docs.map( ( doc ) => { 
 
-			if ( !filter || !doc.type || filter.type == doc.type ) {
-				if ( doc._id ) {
-					ids.push( doc._id );
-				} else if ( doc.name ) {
-					names.push( doc.name );
-				}
-			}
+            if ( !filter || !doc.type || filter.type == doc.type ) {
+                if ( doc._id ) {
+                    ids.push( doc._id );
+                } else if ( doc.name ) {
+                    names.push( doc.name );
+                }
+            }
 
-		} );
+        } );
 
-		return Documents.find( {
-				$or: [
-					{ _id: { $in: ids } },
-					{ name: { $in: names } }
-				]
-			}, { sort: { name: 1, _id: 1 } } )
-			.fetch();
-	}
+        return Documents.find( {
+                $or: [
+                    { _id: { $in: ids } },
+                    { name: { $in: names } }
+                ]
+            }, { sort: { name: 1, _id: 1 } } )
+            .fetch();
+    }
 }

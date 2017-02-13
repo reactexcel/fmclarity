@@ -15,71 +15,71 @@ import { Documents } from '/modules/models/Documents';
 
 export default function DocIcon( props ) {
 
-	function showFileDetailsModal() {
-		Modal.show( {
-			content: <DocViewEdit
+    function showFileDetailsModal() {
+        Modal.show( {
+            content: <DocViewEdit
 				item = { props.item }
 				onChange = { (data) => { props.onChange(data); }}
 				model={props.model}
 				selectedItem={props.selectedItem}
 				team = {props.team}/>
-		} )
-	}
+        } )
+    }
 
-function removeDocumentFromList( docToRemove ) {
-	let team = facility = null,
-		modelName = props.model._name;
-	if (modelName == "Facilities") {
-		facility = Session.getSelectedFacility();
-		facility.removeDocument( docToRemove );
-	} else if ( modelName == "Teams" ) {
-		team = Session.getSelectedTeam();
-		team.removeDocument( docToRemove );
-	}
-	props.handleListUpdate( docToRemove );
-}
+    function removeDocumentFromList( docToRemove ) {
+        let team = facility = null,
+            modelName = props.model._name;
+        if ( modelName == "Facilities" ) {
+            facility = Session.getSelectedFacility();
+            facility.removeDocument( docToRemove );
+        } else if ( modelName == "Teams" ) {
+            team = Session.getSelectedTeam();
+            team.removeDocument( docToRemove );
+        }
+        props.handleListUpdate( docToRemove );
+    }
 
-	function getColorFromString( str ) {
-		var r = ( str.charCodeAt( str.length - 3 ) % 25 ) * 10;
-		var g = ( str.charCodeAt( str.length - 2 ) % 25 ) * 10;
-		var b = ( str.charCodeAt( str.length - 1 ) % 25 ) * 10;
-		return 'rgb(' + r + ',' + g + ',' + b + ')';
-	}
+    function getColorFromString( str ) {
+        var r = ( str.charCodeAt( str.length - 3 ) % 25 ) * 10;
+        var g = ( str.charCodeAt( str.length - 2 ) % 25 ) * 10;
+        var b = ( str.charCodeAt( str.length - 1 ) % 25 ) * 10;
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
 
-	function handleClick() {
-		showFileDetailsModal();
-	}
+    function handleClick() {
+        showFileDetailsModal();
+    }
 
-	function runaction( item ){
-		if ( item.verb ) {
-			if ( item.verb.shouldConfirm ) {
-				var message = confirm( item.label + ". Are you sure?" );
-				if ( message != true ) {
-					return;
-				}
-			}
-		}
-		item.run( );
-	}
+    function runaction( item ) {
+        if ( item.verb ) {
+            if ( item.verb.shouldConfirm ) {
+                var message = confirm( item.label + ". Are you sure?" );
+                if ( message != true ) {
+                    return;
+                }
+            }
+        }
+        item.run();
+    }
 
-	let item = props.item;
-		if ( item ) {
-			item = Documents.findOne( { "_id": props.item._id } );
-		}
-	if ( item == null ) {
-		return (
-			<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={handleClick}>
+    let item = props.item;
+    if ( item && item._id ) {
+        item = Documents.findOne( { "_id": props.item._id } );
+    }
+    if ( item == null ) {
+        return (
+            <div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",cursor:"pointer"}} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 			<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 		</div>
-		)
-	}
-	let color = "#000";
-	if ( item.type ) {
-		color = getColorFromString( item.type );
-	}
-	return (
-		<div>
+        )
+    }
+    let color = "#000";
+    if ( item.type ) {
+        color = getColorFromString( item.type );
+    }
+    return (
+        <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
 		<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #eee",overflow:"hidden",cursor:"pointer"}} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
@@ -113,5 +113,5 @@ function removeDocumentFromList( docToRemove ) {
 			</span> : null }
 		</div>:null}
 	</div>
-	)
+    )
 }

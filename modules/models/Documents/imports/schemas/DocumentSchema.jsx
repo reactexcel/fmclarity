@@ -229,6 +229,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
+	/*
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -253,6 +254,7 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 	},
+	*/
 	issuer: {
 		input: Text,
 		label: "Insurer",
