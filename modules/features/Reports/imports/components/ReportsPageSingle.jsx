@@ -20,9 +20,7 @@ function ReportsPageSingle( props ) {
 	}
 	return (
 		<div className="report-page animated fadeIn">
-			<div className="ibox">
-				<ReportComponent/>
-			</div>
+			<ReportComponent/>
 		</div>
 	)
 }

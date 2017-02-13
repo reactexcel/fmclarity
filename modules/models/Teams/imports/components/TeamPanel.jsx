@@ -154,6 +154,7 @@ const TeamPanel = React.createClass( {
 
 					:null}
 				</div>
+                <div>{ team.description }</div>
 			</div>
 
 			<Tabs tabs={[
