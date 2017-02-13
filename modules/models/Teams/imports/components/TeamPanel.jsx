@@ -139,7 +139,7 @@ const TeamPanel = React.createClass( {
 
 					<h2>{team.name}</h2>
 
-					<i style={{color:"#999",display:"block",padding:"3px"}}>{ contactName ? contactName : null }<br/></i>
+					<i style = { {color:"#999",display:"block",padding:"3px"} } >{ contactName ? contactName : null }<br/></i>
 					<b>Email</b> { team.email }<br/>
 					{ team.phone ? <span><b>Phone</b> { team.phone }<br/></span> :null }
 					{ team.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { team.phone2 }<br/></span> :null }
@@ -154,7 +154,9 @@ const TeamPanel = React.createClass( {
 
 					:null}
 				</div>
-                <div>{ team.description }</div>
+                <div style = { { padding: "10px 30px 20px 30px" } } >
+                    { team.description }
+                </div>
 			</div>
 
 			<Tabs tabs={[
