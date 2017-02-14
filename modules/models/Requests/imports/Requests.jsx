@@ -77,7 +77,7 @@ Requests.save.before( ( request ) => {
     }
 
     if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
-        request.costThreshold = '0';
+        request.costThreshold = 0;
     }
 
     if (request.supplier) {
@@ -183,7 +183,7 @@ Requests.methods( {
         method: function( request ) {
             let status = 'New';
             if ( request.costThreshold == "" ) {
-                request.costThreshold = '0';
+                request.costThreshold = 0;
             }
 
             if ( request.type == 'Preventative' ) {

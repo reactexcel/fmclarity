@@ -26,19 +26,27 @@ import ProgressArc from '../components/ProgressArc';
  */
 const RequestActivityChart = React.createClass( {
 
-    updateStats( { viewConfig }, callback ) {
+    startComputation() {
+
+        this.computation = Tracker.autorun( () => {
+
+            this.updateStats( {
+                viewConfig: this.state.viewConfig,
+                facilityQuery: facilityQuery = Session.get( 'selectedFacility' ),
+                teamQuery: teamQuery = Session.get( 'selectedTeam' )
+            } );
+
+        } );
+
+    },
+
+    updateStats( { viewConfig, facilityQuery, teamQuery } ) {
 
         Meteor.call( 'getRequestActivityStats', {
-            viewConfig: {
-                format: 'MMM',
-                title: "[since] MMMM YYYY",
-                startDate: moment().subtract( 2, 'months' ).startOf( 'month' ).toDate(),
-                endDate: moment().endOf( 'month' ).toDate(),
-            },
+            viewConfig: viewConfig || this.state.viewConfig,
             facilityQuery: Session.get( 'selectedFacility' ),
             teamQuery: Session.get( 'selectedTeam' )
         }, ( error, results ) => {
-            console.log( { error, results } );
             if ( !error ) {
                 this.setState( results );
             }
@@ -47,7 +55,11 @@ const RequestActivityChart = React.createClass( {
 
     componentDidMount() {
         this.resetChart();
-        this.updateStats( { viewConfig: this.state.viewConfig } );
+        setTimeout( () => { this.startComputation() }, 0 );
+    },
+
+    componentWillUnmount() {
+        this.computation.stop();
     },
 
     componentDidUpdate() {
@@ -62,10 +74,9 @@ const RequestActivityChart = React.createClass( {
             viewConfig: {
                 format: 'MMM',
                 title: "[since] MMMM YYYY",
-                startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-                endDate: moment().endOf( 'month' ),
+                startDate: moment().subtract( 2, 'months' ).startOf( 'month' ).toDate(),
+                endDate: moment().endOf( 'month' ).toDate(),
             },
-            facility: Session.get( 'selectedFacility' ),
             expandall: false,
             minimal: minimal
         } )
@@ -86,82 +97,81 @@ const RequestActivityChart = React.createClass( {
     },
 
     getMenu() {
-        var component = this;
         return [ {
             label: ( "Day" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'hA',
-                        title: "dddd Do MMMM",
-                        startDate: moment().startOf( 'day' ),
-                        endDate: moment().endOf( 'day' ),
-                        groupBy: 'hour'
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'hA',
+                    title: "dddd Do MMMM",
+                    startDate: moment().startOf( 'day' ).toDate(),
+                    endDate: moment().endOf( 'day' ).toDate(),
+                    groupBy: 'hour'
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         }, {
             label: ( "Week" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'ddd',
-                        title: "for [week starting] Do MMMM",
-                        startDate: moment().startOf( 'week' ),
-                        endDate: moment().endOf( 'week' ),
-                        groupBy: 'day'
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'ddd',
+                    title: "for [week starting] Do MMMM",
+                    startDate: moment().startOf( 'week' ).toDate(),
+                    endDate: moment().endOf( 'week' ).toDate(),
+                    groupBy: 'day'
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         }, {
             label: ( "Month" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'D',
-                        title: "MMMM YYYY",
-                        startDate: moment().startOf( 'month' ),
-                        endDate: moment().endOf( 'month' ),
-                        groupBy: 'day'
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'D',
+                    title: "MMMM YYYY",
+                    startDate: moment().startOf( 'month' ).toDate(),
+                    endDate: moment().endOf( 'month' ).toDate(),
+                    groupBy: 'day'
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         }, {
             label: ( "3 Months" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'MMM',
-                        title: "[since] MMMM YYYY",
-                        startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-                        endDate: moment().endOf( 'month' ),
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'MMM',
+                    title: "[since] MMMM YYYY",
+                    startDate: moment().subtract( 2, 'months' ).startOf( 'month' ).toDate(),
+                    endDate: moment().endOf( 'month' ).toDate(),
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         }, {
             label: ( "6 Months" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'MMM',
-                        title: "[since] MMMM YYYY",
-                        startDate: moment().subtract( 5, 'months' ).startOf( 'month' ),
-                        endDate: moment().endOf( 'month' ),
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'MMM',
+                    title: "[since] MMMM YYYY",
+                    startDate: moment().subtract( 5, 'months' ).startOf( 'month' ).toDate(),
+                    endDate: moment().endOf( 'month' ).toDate(),
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         }, {
             label: ( "Year" ),
-            run() {
-                component.setState( {
-                    viewConfig: {
-                        format: 'MMM',
-                        title: "YYYY",
-                        startDate: moment().startOf( 'year' ),
-                        endDate: moment().endOf( 'year' ),
-                        groupBy: 'month',
-                    }
-                } );
+            run: () => {
+                let viewConfig = {
+                    format: 'MMM',
+                    title: "YYYY",
+                    startDate: moment().startOf( 'year' ).toDate(),
+                    endDate: moment().endOf( 'year' ).toDate(),
+                    groupBy: 'month',
+                }
+                this.setState( { viewConfig } );
+                this.updateStats( { viewConfig } );
             }
         } ];
     },
@@ -263,7 +273,9 @@ const RequestActivityChart = React.createClass( {
 
 
     render() {
-        let { minimal, facility, ready, title } = this.state;
+        let { minimal, ready, title } = this.state;
+
+        let facility = Session.get( 'selectedFacility' );
 
         if ( !minimal ) {
 
