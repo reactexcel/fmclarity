@@ -22,7 +22,7 @@ export default class SupplierFilter extends React.Component {
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
-        suppliers = inputName?Teams.findAll( query, { sort: { name: 1 } } ):Teams.findAll( { type: "contractor" }, { sort: { name: 1 } } );
+        suppliers = inputName?Teams.findAll( query, { sort: { name: 1 } } ):null;
         if( this.props.onChange) this.props.onChange( suppliers );
     }
     render() {
