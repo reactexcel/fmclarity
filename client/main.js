@@ -106,6 +106,10 @@ Actions.addAccessRule( {
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
 //  it should be accessed through a team action. ie edit team member
 Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        //nb: this check can be removed when we have a dedicated supplier manager role
+        return team.type == 'fm';
+    },
     action: [
         'create team request',
     ],
@@ -120,7 +124,6 @@ Actions.addAccessRule( {
         'tenant', 
         'resident' 
     ],
-    rule: { alert: true, email: true }
 } )
 
 Actions.addAccessRule( {
@@ -131,7 +134,6 @@ Actions.addAccessRule( {
         'edit team member',
         'delete team member',
         'create team member',
-        'create team facility',
         'create compliance rule',
         'create team document',
         'invite supplier'
@@ -146,6 +148,28 @@ Actions.addAccessRule( {
         'caretaker'*/
     ],
 } )
+
+
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        //nb: this check can be removed when we have a dedicated supplier manager role
+        return team.type == 'fm';
+    },
+    action: [
+        'create team facility',
+    ],
+    role: [
+        '*',
+        /*'fmc support',
+        'portfolio manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker'*/
+    ],
+} )
+
 
 // Facility rules
 Actions.addAccessRule( {
@@ -252,7 +276,7 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'Issued' },
+    condition: { status: 'New' },
     action: [
         'delete request',
     ],
@@ -268,7 +292,7 @@ Actions.addAccessRule( {
         'accept request',
         //'reject request',
     ],
-    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee', "property manager" ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', "property manager" ],
     rule: { alert: true }
 } )
 
@@ -403,3 +427,5 @@ FloatingActionButtonActions = Actions.clone( [
     'create team',
     'create team document'
 ] );
+
+console.log( Actions );
