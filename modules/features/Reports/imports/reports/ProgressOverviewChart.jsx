@@ -37,7 +37,9 @@ export default ProgressOverviewChart = React.createClass( {
         },
 
         componentWillUnmount() {
-            this.computation.stop();
+            if ( this.computation ) {
+                this.computation.stop();
+            }
         },
 
         updateStats( { startDate, endDate, period, facilityQuery, teamQuery } ) {

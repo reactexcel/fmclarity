@@ -271,7 +271,7 @@ Actions.addAccessRule( {
         'issue request',
         'reject request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'property manager', 'fmc support' ],
+    role: [ 'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager' ],
     rule: { alert: true }
 } )
 
@@ -292,7 +292,7 @@ Actions.addAccessRule( {
         'accept request',
         //'reject request',
     ],
-    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', "property manager" ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'property manager' ],
     rule: { alert: true }
 } )
 
@@ -370,9 +370,12 @@ Actions.addAccessRule( {
         'invite member'
     ],
     condition: ( item ) => {
-        return item.canAddMember();
+        /*return item.canAddMember();*/
+        //console.log( item );
+        return item.type == 'contractor' || item.canAddMember();
     },
     role: [
+        /*
         'portfolio manager',
         'property manager',
         'fmc support',
@@ -382,11 +385,29 @@ Actions.addAccessRule( {
         'team portfolio manager',
         'team fmc support',
         'team caretaker',
-        'team manager'
+        'team manager',
+        */
+        '*'
     ],
     rule: { alert: true }
 } )
 
+/*
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'view member',
+        'create member',
+        'remove member',
+        'invite member'
+    ],
+    condition: ( item ) => {
+        return item.type == 'contractor';
+    },
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+*/
 UserMenuActions = Actions.clone( [
     'edit team',
     'create team',

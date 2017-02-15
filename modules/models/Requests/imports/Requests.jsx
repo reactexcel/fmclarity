@@ -202,7 +202,6 @@ Requests.methods( {
 
             let newRequestId = Meteor.call( 'Issues.save', request, {
                     status: status,
-                    issuedAt: new Date(),
                     code: code,
                     members: getMembersDefaultValue( request )
                 } ),

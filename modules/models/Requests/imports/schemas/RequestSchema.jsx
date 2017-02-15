@@ -682,7 +682,12 @@ const RequestSchema = {
                 if ( selectedTeam ) {
                     teamType = selectedTeam.type;
                 }
-                return ( request.type != 'Booking' && teamType != 'contractor' ) ? ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false;
+                //do not show for booking, contractors, staff or resident
+                return (
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    : false
+                )
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam(),
@@ -738,7 +743,21 @@ const RequestSchema = {
             label: 'Supplier contact',
             type: 'string',
             size: 12,
+            condition: ( request ) => {
+                let selectedTeam = Session.get( 'selectedTeam' );
+                teamType = null;
+                if ( selectedTeam ) {
+                    teamType = selectedTeam.type;
+                }
+                //do not show for booking, contractors, staff or resident
+                return (
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    : false
+                )
+            },
             input( props ) {
+                // this should be in it's own component
                 return (
                         <div className="row">
 					<div className="col-xs-12">

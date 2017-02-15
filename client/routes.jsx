@@ -79,11 +79,18 @@ Routes.addAccessRule( {
         'suppliers',
         'calendar',
         'account',
+    ],
+    role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
+    condition: { type: 'fm' }
+} )
+
+Routes.addAccessRule( {
+    action: [
         'abc',
         'global suppliers',
         'user-docs',
     ],
-    role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
+    role: [ 'fmc support' ],
     condition: { type: 'fm' }
 } )
 

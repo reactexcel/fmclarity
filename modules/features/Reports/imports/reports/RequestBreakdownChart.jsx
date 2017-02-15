@@ -69,7 +69,9 @@ const RequestBreakdownChart = React.createClass( {
     },
 
     componentWillUnmount() {
-        this.computation.stop();
+        if ( this.computation ) {
+            this.computation.stop();
+        }
     },
 
     componentDidUpdate() {
