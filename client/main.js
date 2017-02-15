@@ -331,7 +331,7 @@ Actions.addAccessRule( {
     action: [
         'destroy document',
     ],
-    role: [ 'fmc support', 'portfolio manager' ],
+    role: [ 'fmc support', 'portfolio manager', 'team portfolio manager' ],
     rule: { alert: true }
 } )
 
