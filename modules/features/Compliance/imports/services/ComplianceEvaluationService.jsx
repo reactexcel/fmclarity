@@ -80,7 +80,7 @@ ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "Document does not exist."
+                    detail: "Document does not exist"
                 },
                 resolve: function() {
                     let type = "team",
@@ -110,8 +110,8 @@ ComplianceEvaluationService = new function() {
             //     return;
             // }
 
-            var docCount = null,
-            query = rule.document && rule.document.query ?
+            var docCount = null, yesterday, tomorrow, today,
+                query = rule.document && rule.document.query ?
                     JSON.parse( rule.document.query ) : {
                         "facility._id": facility["_id"],
                         $and: [
@@ -124,9 +124,9 @@ ComplianceEvaluationService = new function() {
             }
             if ( _.contains( docList2, rule.docType ) ) {
                 //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
-                let yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                    tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                    today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
+                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
                 query.$and.push( { expiryDate: today } );
             }
             docCount = query && Documents.find( query ).count();
@@ -152,6 +152,7 @@ ComplianceEvaluationService = new function() {
                             name: rule.docName,
                             type: rule.docType,
                             serviceType: rule.service,
+                            expiry: today,
                         } );
                         Modal.show( {
                             content: <DocViewEdit item = { newDocument } model={Facilities} />
@@ -164,7 +165,7 @@ ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "Documents dose not exists."
+                    detail: "Document does not exist"
                 },
                 resolve: function() {
                     let type = "team",
@@ -175,7 +176,10 @@ ComplianceEvaluationService = new function() {
 
                     let newDocument = Documents.create( {
                         team: { _id, name },
-                        owner: { type, _id, name }
+                        owner: { type, _id, name },
+                        name: rule.docName,
+                        type: rule.docType,
+                        serviceType: rule.service,
                     } );
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />

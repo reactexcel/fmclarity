@@ -36,7 +36,14 @@ export default ComplianceViewDetail = React.createClass( {
             this.data.facility.setServicesRequired( services );
         }
     },
+    loadDefaultRules() {
+		let facility = Session.getSelectedFacility();
+		let servicesRequired = facility && facility.servicesRequired;
+		if( facility ) {
+			Meteor.call("Facilities.setupCompliance", facility, DefaultComplianceRule )
+		}
 
+	},
     setCoverImage( event, service ) {
       if ( this.state.coverImageName !== service.name ){
         this.setState({
@@ -85,6 +92,13 @@ export default ComplianceViewDetail = React.createClass( {
                                     style       = { { backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px" } }
                             >
                                 New Rule
+                            </button>
+
+                            <button
+                                style       = { { backgroundColor:"transparent",color:"#fff",padding:"10px 20px 0px 20px" } }
+                                className="btn btn-flat"
+                                onClick={this.loadDefaultRules}>
+                                {`load default rules`}
                             </button>
                         </div>
                     </div>

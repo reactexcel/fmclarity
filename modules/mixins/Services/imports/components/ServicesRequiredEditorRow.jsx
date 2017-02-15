@@ -88,7 +88,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	render() {
 		service = this.data.service;
-		//supplier = this.data.supplier;
+		supplier = service.data && service.data.serviceDetails && service.data.serviceDetails.supplier || null;
 		this.data.service.data = this.data.service.data? this.data.service.data: {};
 		clickExpand = this.props.clickExpand;
 		var onChange = this.props.onChange,
@@ -96,7 +96,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 		readOnly = this.props.readOnly;
 		return (
 			<div>
-				<div className="services-editor-col services-editor-col-service">
+				<div className="services-editor-col services-editor-col-service" style={{width:'75%'}}>
 					{clickExpand?<span onClick={clickExpand} className="services-editor-expand-icon"><i className="fa fmc-fa-icon-expand"></i></span>:null}
 
 		    		<input
@@ -106,31 +106,36 @@ const ServicesRequiredEditorRow = React.createClass( {
 						onKeyDown={ (evt) => this.props.onKeyDown(evt) }
 						id={this.props.id}
 					/>
-
-
-						{!readOnly?<span className="services-editor-delete-icon"
-							onClick = {
-								() => {
-									Modal.show({
-										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
-											<div>
-												<h1>{'Service Parameters - '+this.data.service.name}</h1>
-											</div>
-											<AutoForm
-												model = { Facilities }
-												item = { this.data.service.data }
-												form = { ["serviceDetails"] }
-												onSubmit={
-													( item ) => {
-														component.updateServiceName(null);
-														Modal.hide();
-													}
-												}
-											/>
+					{!readOnly?<span className="services-editor-delete-icon"
+						onClick = {
+							() => {
+								Modal.show({
+									content:  <div style={{padding:'20px', maxWidth:"500px"}}>
+										<div>
+											<h1>{'Service Parameters - '+this.data.service.name}</h1>
 										</div>
-									})
-								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
+										<AutoForm
+											model = { Facilities }
+											item = { this.data.service.data }
+											form = { ["serviceDetails"] }
+											onSubmit={
+												( item ) => {
+													component.updateServiceName(null);
+													Modal.hide();
+												}
+											}
+										/>
+									</div>
+								})
+							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
+					{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
+				</div>
+				<div style={{width: "25%", paddingTop:"0.5%", float: "left"}}>
+					{supplier?
+						<ContactCard item={supplier}/>
+						:
+						null
+					}
 				</div>
 			</div>
 		)
