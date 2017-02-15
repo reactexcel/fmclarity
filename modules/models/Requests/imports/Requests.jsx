@@ -690,15 +690,25 @@ function getMembersDefaultValue( item ) {
 
         facilityMembers.map( ( member ) => {
             if ( member._id != owner._id ) {
+
                 let role = member.getRole( facility );
-                if( role != 'property manager' ) {
-                    role = `facility ${role}`;
+
+                if( role == 'property manager' ) {
+                    if( item.service.data && item.service.data.baseBuilding ) {
+                        members.push( {
+                            _id: member._id,
+                            name: member.profile.name,
+                            role: 'property manager'
+                        } )
+                    }
                 }
-                members.push( {
-                    _id: member._id,
-                    name: member.profile.name,
-                    role: role
-                } )
+                else {
+                    members.push( {
+                        _id: member._id,
+                        name: member.profile.name,
+                        role: `facility ${role}`
+                    } )
+                }
             }
         } );
     }

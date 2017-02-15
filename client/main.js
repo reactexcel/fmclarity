@@ -265,13 +265,27 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( item ) => {
-        return item.status == 'New' && item.supplier && item.supplier._id;
+        let user = Meteor.user(),
+            role = item.getMemberRole( user );
+
+        console.log( item );
+        if( item.status == 'New' && item.supplier && item.supplier._id ) {
+            if( role == 'team manager' ) {
+                return true;
+            }
+            else if( item.service.data.baseBuilding ) {
+                return role == 'property manager';
+            }
+            else {
+                return role == 'facility manager';
+            }
+        }
     },
     action: [
         'issue request',
         'reject request',
     ],
-    role: [ 'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager' ],
+    role: [ '*'/*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
     rule: { alert: true }
 } )
 
