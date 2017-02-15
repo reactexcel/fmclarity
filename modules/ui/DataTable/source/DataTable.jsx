@@ -116,7 +116,7 @@ export default DataTable = React.createClass( {
 					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
 				</div>*/}
 				<div ref="printable">
-				<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>
+				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">
 
 					<thead>

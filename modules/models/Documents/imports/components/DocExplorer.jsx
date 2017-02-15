@@ -66,44 +66,47 @@ export default class DocExplorer extends React.Component {
 
         return (
             <div>
+
 				<DocIconHeader />
+
 				{//Listing of old Documents
 					oldDocumentsList.map( ( doc, idx ) => (
 							<DocIcon
-                key = { idx }
-                item = { doc }
-                onChange = { (doc) => { this.handleChange( idx, doc ) } }
-                model = { this.props.model }
-                selectedItem = { this.state.item }
-                role = { role }
-                handleListUpdate={this.handleListUpdate.bind(this)}
-                team = { this.state.item}
-                />
+                                key = { idx }
+                                item = { doc }
+                                onChange = { (doc) => { this.handleChange( idx, doc ) } }
+                                model = { this.props.model }
+                                selectedItem = { this.state.item }
+                                role = { role }
+                                handleListUpdate={this.handleListUpdate.bind(this)}
+                                team = { this.state.item}
+                            />
 						)
 					)
 				}
+
 				{//Listing of new documents
 					newDocumentsList.map( ( doc, idx ) => (
 							<DocIcon
-                key = { idx }
-                item = { doc }
-                onChange = { (doc) => { this.handleChange( idx, doc ) } }
-                model = { this.props.model }
-                selectedItem = { this.state.item }
-                role = {role}
-                team = { this.state.item}
-                />
+                                key = { idx }
+                                item = { doc }
+                                onChange = { (doc) => { this.handleChange( idx, doc ) } }
+                                model = { this.props.model }
+                                selectedItem = { this.state.item }
+                                role = {role}
+                                team = { this.state.item}
+                            />
 						)
 					)
 				}
 
 				<DocIcon
-          onChange={ (doc) => { this.handleChange( listLength, doc ) } }
-          model = { this.props.model }
-          selectedItem = { this.state.item }
-          team = { this.state.item}
-          role = {role}
-          />
+                    onChange={ (doc) => { this.handleChange( listLength, doc ) } }
+                    model = { this.props.model }
+                    selectedItem = { this.state.item }
+                    team = { this.state.item}
+                    role = {role}
+                />
 
 			</div>
         );

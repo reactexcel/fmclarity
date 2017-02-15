@@ -17,19 +17,32 @@ if ( Meteor.isClient ) {
 }
 
 /**
- * @class 			RequestBreakdownChart
- * @memberOf 		module:features/Reports
+ * @class           RequestBreakdownChart
+ * @memberOf        module:features/Reports
  */
 const RequestBreakdownChart = React.createClass( {
 
-    updateStats( { startDate } ) {
+    startComputation() {
+
+        this.computation = Tracker.autorun( () => {
+
+            this.updateStats( {
+                startDate: this.state.startDate || moment().subtract( 2, 'months' ).startOf( 'month' ),
+                facilityQuery: facilityQuery = Session.get( 'selectedFacility' ),
+                teamQuery: teamQuery = Session.get( 'selectedTeam' )
+            } );
+
+        } );
+
+    },
+
+    updateStats( { startDate, facilityQuery, teamQuery } ) {
 
         Meteor.call( 'getRequestBreakdownStats', {
-            startDate: startDate,
-            facilityQuery: Session.get( 'selectedFacility' ),
-            teamQuery: Session.get( 'selectedTeam' )
+            startDate: startDate.toDate(),
+            facilityQuery: facilityQuery || Session.get( 'selectedFacility' ),
+            teamQuery: teamQuery || Session.get( 'selectedTeam' )
         }, ( error, results ) => {
-            console.log( { error, results } );
             if ( !error ) {
                 this.setState( results );
             }
@@ -42,7 +55,7 @@ const RequestBreakdownChart = React.createClass( {
             minimal = this.props.minimal ? this.props.minimal : false;
 
         return ( {
-            startDate: startDate.toDate(), //cannot send moment obj through method
+            startDate: startDate, //cannot send moment obj through method
             title: title,
             expandall: false,
             minimal: minimal
@@ -52,7 +65,13 @@ const RequestBreakdownChart = React.createClass( {
 
     componentDidMount() {
         this.resetChart();
-        this.updateStats( { startDate: this.state.startDate } );
+        setTimeout( () => { this.startComputation() }, 0 );
+    },
+
+    componentWillUnmount() {
+        if ( this.computation ) {
+            this.computation.stop();
+        }
     },
 
     componentDidUpdate() {
@@ -87,7 +106,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         }, {
             label: ( "Week" ),
@@ -97,7 +117,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         }, {
             label: ( "Month" ),
@@ -107,7 +128,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         }, {
             label: ( "3 Months" ),
@@ -117,7 +139,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         }, {
             label: ( "6 Months" ),
@@ -127,7 +150,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         }, {
             label: ( "Year" ),
@@ -137,7 +161,8 @@ const RequestBreakdownChart = React.createClass( {
                 this.setState( {
                     startDate: startDate,
                     title: title
-                } )
+                } );
+                this.updateStats( { startDate } )
             }
         } ];
     },
@@ -212,7 +237,7 @@ const RequestBreakdownChart = React.createClass( {
 
     render() {
         let { facility, minimal, labels, expandall, set, title } = this.state,
-        	buckets = null,
+            buckets = null,
             facilities = null;
 
         if ( set ) {
@@ -222,37 +247,37 @@ const RequestBreakdownChart = React.createClass( {
         return (
             <div>
 
-				{!minimal ? 
-				<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-				<i className="fa fa-print" aria-hidden="true"></i>
-				</button> 
-				: null}
+                {!minimal ? 
+                <button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+                <i className="fa fa-print" aria-hidden="true"></i>
+                </button> 
+                : null}
 
-				<Menu items = { this.getMenu() }/>
+                <Menu items = { this.getMenu() }/>
 
-				<div className="ibox-title">
-					<h2>Request breakdown {title} {facility && facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
-				</div>
+                <div className="ibox-title">
+                    <h2>Request breakdown {title} {facility && facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
+                </div>
 
-				<div className="ibox-content">
-					<div>
-						<canvas id="bar-chart"></canvas>
-					</div>
-				</div>
+                <div className="ibox-content">
+                    <div>
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                </div>
 
-				{ !minimal ? 
-				<div className="gragh-table">
+                { !minimal ? 
+                <div className="gragh-table">
 
-				<ServicesRequestsView 
-					requests 	= { buckets } 
-					labels 		= { labels } 
-					expandall 	= { expandall }
-				/>
+                <ServicesRequestsView 
+                    requests    = { buckets } 
+                    labels      = { labels } 
+                    expandall   = { expandall }
+                />
 
-				</div>
-				: null}
+                </div>
+                : null}
 
-			</div>
+            </div>
         )
     }
 

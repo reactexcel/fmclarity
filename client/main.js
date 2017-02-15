@@ -106,43 +106,70 @@ Actions.addAccessRule( {
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
 //  it should be accessed through a team action. ie edit team member
 Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        //nb: this check can be removed when we have a dedicated supplier manager role
+        return team.type == 'fm';
+    },
     action: [
         'create team request',
     ],
-    role: [ 'staff', 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker', 'tenant', 'resident' ],
-    rule: { alert: true, email: true }
-} )
-
-Actions.addAccessRule( {
-    action: [
-        'create team document',
+    role: [ 
+        'staff', 
+        'fmc support', 
+        'portfolio manager', 
+        'manager', 
+        'owner', 
+        'property manager', 
+        'caretaker', 
+        'tenant', 
+        'resident' 
     ],
-    role: [ 'fmc support', 'portfolio manager', 'manager', 'owner', 'property manager', 'caretaker' ],
-    rule: { alert: true, email: true }
 } )
 
 Actions.addAccessRule( {
     action: [
         'edit team',
         'view team',
-        'edit team member',
         'view team member',
-        'create team member',
-        'create team facility',
-        'create compliance rule',
         'edit team member',
         'delete team member',
+        'create team member',
+        'create compliance rule',
+        'create team document',
         'invite supplier'
     ],
     role: [
-        'fmc support',
+        '*',
+        /*'fmc support',
         'portfolio manager',
         'manager',
         'owner',
         'property manager',
-        'caretaker'
+        'caretaker'*/
     ],
 } )
+
+
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        //nb: this check can be removed when we have a dedicated supplier manager role
+        return team.type == 'fm';
+    },
+    action: [
+        'create team facility',
+    ],
+    role: [
+        '*',
+        /*'fmc support',
+        'portfolio manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker'*/
+    ],
+} )
+
 
 // Facility rules
 Actions.addAccessRule( {
@@ -173,20 +200,20 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     action: [ 'view request' ],
     role: [
-      '*'
-      // 'team fmc support',
-      // 'owner',
-      // 'team portfolio manager',
-      // 'team manager',
-      // 'supplier staff',
-      // 'supplier manager',
-      // 'facility manager',
-      // 'property manager',
-      // 'team caretaker',
-      // 'facility caretaker',
-      // 'assignee',
-      // 'resident',
-      // 'support',
+        '*'
+        // 'team fmc support',
+        // 'owner',
+        // 'team portfolio manager',
+        // 'team manager',
+        // 'supplier staff',
+        // 'supplier manager',
+        // 'facility manager',
+        // 'property manager',
+        // 'team caretaker',
+        // 'facility caretaker',
+        // 'assignee',
+        // 'resident',
+        // 'support',
     ],
     rule: { alert: true }
 } )
@@ -244,12 +271,12 @@ Actions.addAccessRule( {
         'issue request',
         'reject request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'property manager', 'fmc support' ],
+    role: [ 'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager' ],
     rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'Issued' },
+    condition: { status: 'New' },
     action: [
         'delete request',
     ],
@@ -265,7 +292,7 @@ Actions.addAccessRule( {
         'accept request',
         //'reject request',
     ],
-    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'assignee', "property manager" ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'property manager' ],
     rule: { alert: true }
 } )
 
@@ -327,10 +354,10 @@ Actions.addAccessRule( {
 
 /*
 Actions.addAccessRule( {
-	action: 'rejectRequest',
-	role: 'supplier manager',
-	condition: { status: 'Issued' },
-	rule: { alert: true }
+    action: 'rejectRequest',
+    role: 'supplier manager',
+    condition: { status: 'Issued' },
+    rule: { alert: true }
 } );
 */
 
@@ -343,9 +370,12 @@ Actions.addAccessRule( {
         'invite member'
     ],
     condition: ( item ) => {
-        return item.canAddMember();
+        /*return item.canAddMember();*/
+        //console.log( item );
+        return item.type == 'contractor' || item.canAddMember();
     },
     role: [
+        /*
         'portfolio manager',
         'property manager',
         'fmc support',
@@ -355,11 +385,29 @@ Actions.addAccessRule( {
         'team portfolio manager',
         'team fmc support',
         'team caretaker',
-        'team manager'
+        'team manager',
+        */
+        '*'
     ],
     rule: { alert: true }
 } )
 
+/*
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'view member',
+        'create member',
+        'remove member',
+        'invite member'
+    ],
+    condition: ( item ) => {
+        return item.type == 'contractor';
+    },
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+*/
 UserMenuActions = Actions.clone( [
     'edit team',
     'create team',
@@ -376,8 +424,8 @@ UserPanelActions = Actions.clone( [
 
 /*
 TeamPanelActions = Actions.clone( [
-	'edit team',
-	'invite supplier'
+    'edit team',
+    'invite supplier'
 ] );
 */
 
@@ -400,3 +448,5 @@ FloatingActionButtonActions = Actions.clone( [
     'create team',
     'create team document'
 ] );
+
+console.log( Actions );
