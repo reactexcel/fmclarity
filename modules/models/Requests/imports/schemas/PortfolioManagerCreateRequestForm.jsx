@@ -305,8 +305,8 @@ const PortfolioManagerCreateRequestForm = {
 					if ( request == null || teamType == 'contractor' ) {
 						return;
 					}
-					if ( request.service.data && request.service.data.serviceDetails) {
-						let supplier = request.service.data.serviceDetails.supplier;
+					if ( request.service.data ) {
+						let supplier = request.service.data.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
@@ -319,8 +319,8 @@ const PortfolioManagerCreateRequestForm = {
 							}
 							request.supplier = defaultSupplier;
 							let members = (_.filter( request.members, m => m.role !== defaultContactRole ));
-							if ( request.service.data.serviceDetails.defaultContact ) {
-								members.push( request.service.data.serviceDetails.defaultContact );
+							if ( request.service.data.defaultContact ) {
+								members.push( request.service.data.defaultContact );
 							}
 							request.members = members;
 						} else {
@@ -364,8 +364,8 @@ const PortfolioManagerCreateRequestForm = {
 					if ( item == null ) {
 						return;
 					}
-					if ( item.subservice.data && item.subservice.data.serviceDetails) {
-						let supplier = item.subservice.data.serviceDetails.supplier;
+					if ( item.subservice.data ) {
+						let supplier = item.subservice.data.supplier;
 						let defaultSupplier;
 						if ( supplier ) {
 							if ( supplier._id ) {
@@ -378,8 +378,8 @@ const PortfolioManagerCreateRequestForm = {
 							}
 							item.supplier = defaultSupplier;
 							let members = (_.filter( item.members, m => m.role!==defaultContactRole ));
-							if ( item.subservice.data.serviceDetails) {
-								members.push( item.subservice.data.serviceDetails.defaultContact );
+							if ( item.subservice.data ) {
+								members.push( item.subservice.data.defaultContact );
 							}
 							item.members = members;
 						} else {

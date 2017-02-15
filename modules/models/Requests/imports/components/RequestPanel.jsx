@@ -31,11 +31,11 @@ export default RequestPanel = React.createClass( {
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
-            if( request ) {
+            if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
-				supplier = request.getSupplier();
-                if( request.type == 'Preventative' ) {
+                supplier = request.getSupplier();
+                if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
@@ -61,90 +61,86 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     if ( !request ) {
         return <div/>
     }
-    let teamType = Session.get('selectedTeam').type,
+    let teamType = Session.get( 'selectedTeam' ).type,
         title = "",
-        billingOrderNumber="",
+        billingOrderNumber = "",
         nextDateString = null,
         previousDateString = null;
 
-    if( request.type == 'Preventative' ) {
+    if ( request.type == 'Preventative' ) {
         title = 'PPM';
 
-        if( nextDate ) {
-            nextDateString = moment( nextDate ).format('ddd Do MMM');
+        if ( nextDate ) {
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
         }
-        if( previousDate ) {
-            previousDateString = moment( previousDate ).format('ddd Do MMM');
+        if ( previousDate ) {
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
         }
 
-    }
-    else {
-        if( request.type == 'Booking' ) {
+    } else {
+        if ( request.type == 'Booking' ) {
             title = 'Room Booking';
-        }
-        else if( teamType == 'fm' ) {
-            if (request.service && request.service.data && request.service.data.serviceDetails && request.service.data.serviceDetails.purchaseOrder){
-              title = "Purchase Order";
+        } else if ( teamType == 'fm' ) {
+            if ( request.service && request.service.data && request.service.data.purchaseOrder ) {
+                title = "Purchase Order";
             } else {
-              title = "Work Order";
+                title = "Work Order";
             }
-        }
-        else {
+        } else {
             title = "Job";
         }
-        if( request.code ) {
+        if ( request.code ) {
             title += ` # ${request.code}`
-            billingOrderNumber+= ` WO# ${request.code}`
-        }
-        else {
-            title = "New "+title;
+            billingOrderNumber += ` WO# ${request.code}`
+        } else {
+            title = "New " + title;
         }
     }
 
     let url = '/requests/print/' + request._id;
-    var viewers=[];
-    request.readBy ? request.readBy.map(function(u, idx){
-        var user = Meteor.users.findOne(u._id);
-        if ((request.readBy.length-1) != idx && u._id != Meteor.userId()) {
-            viewers.push(user.profile.name);
+    var viewers = [];
+    request.readBy ? request.readBy.map( function( u, idx ) {
+        var user = Meteor.users.findOne( u._id );
+        if ( ( request.readBy.length - 1 ) != idx && u._id != Meteor.userId() ) {
+            viewers.push( user.profile.name );
         }
 
-     }) : null;
+    } ) : null;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
             <div className="wo-detail">
                 <div className="row">
                     <div className="col-md-6 col-xs-6">
-						{/* Show supplier name when user is client (fm),
-							otherwise show client name for supplier user */}
-						<h2>
-							{ 	teamType=="fm" && request.supplier && request.supplier.name
-								?
-								"Supplier: "+ request.supplier.name
-								:
-								"Client: "+ request.team.name
-							}
-						</h2>
+                        {/* Show supplier name when user is client (fm),
+                            otherwise show client name for supplier user */}
+                        <h2>
+                            {   teamType=="fm" && request.supplier && request.supplier.name
+                                ?
+                                "Supplier: "+ request.supplier.name
+                                :
+                                "Client: "+ request.team.name
+                            }
+                        </h2>
                         <AddressLink item = { request.facility.address }/>
 
-						{/* Show supplier contact details when user is client (fm),
-							otherwise show client details for supplier user */}
-						<ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+                        {/* Show supplier contact details when user is client (fm),
+                            otherwise show client details for supplier user */}
+                        <ContactDetails item = { teamType=="fm" ? supplier : owner }/>
 
                         <BillingDetails item = { request.facility }/>
 
                         { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
-					</div>
+                    </div>
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
 
                             <h2>{title}</h2>
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-							{ request.type == 'Ad-hoc' &&
-							  request.costThreshold &&
-							  Meteor.user().getRole() != 'staff' ?
+                            { request.type == 'Ad-hoc' &&
+                              request.costThreshold &&
+                              Meteor.user().getRole() != 'staff' ?
                             <h2>${request.costThreshold}</h2>
                             : null }
 
@@ -204,11 +200,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-				{ teamType=='fm' && request.service && request.type != 'Booking' ?
-				<tr>
-					<th>Service</th>
-					<td>{request.getServiceString()}</td>
-				</tr>
+                { teamType=='fm' && request.service && request.type != 'Booking' ?
+                <tr>
+                    <th>Service</th>
+                    <td>{request.getServiceString()}</td>
+                </tr>
                 : null
                 }
 
@@ -250,18 +246,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{request.duration}</td>
                 </tr>
                 : null }
-
-                {request.description ?
-                <tr>
-                    <th>Description</th>
-                    <td>{request.description}</td>
-                </tr>:null}
-
-                { request.assignee ?
-                <tr>
-                    <th>Assignee</th>
-                    <td>{request.assignee.getName()}</td>
-                </tr> : null }
 
                 { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>

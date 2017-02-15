@@ -181,7 +181,7 @@ const FacilitySchema = {
 		subschema: AreaDetailsSchema,
 	 },
 
-	 serviceDetails:{
+	 data:{
 		 label: "Area information",
 		 type: "object",
 		 subschema:  ServiceDetailsSchema,

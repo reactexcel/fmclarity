@@ -691,10 +691,13 @@ function getMembersDefaultValue( item ) {
         facilityMembers.map( ( member ) => {
             if ( member._id != owner._id ) {
                 let role = member.getRole( facility );
+                if( role != 'property manager' ) {
+                    role = `facility ${role}`;
+                }
                 members.push( {
                     _id: member._id,
                     name: member.profile.name,
-                    role: `facility ${role}`
+                    role: role
                 } )
             }
         } );

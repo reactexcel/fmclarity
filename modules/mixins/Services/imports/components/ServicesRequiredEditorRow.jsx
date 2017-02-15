@@ -88,7 +88,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	render() {
 		service = this.data.service;
-		//supplier = this.data.supplier;
+		supplier = this.data.supplier;
 		this.data.service.data = this.data.service.data? this.data.service.data: {};
 		clickExpand = this.props.clickExpand;
 		var onChange = this.props.onChange,
@@ -118,8 +118,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 											</div>
 											<AutoForm
 												model = { Facilities }
-												item = { this.data.service.data }
-												form = { ["serviceDetails"] }
+												item = { this.data.service }
+												form = { ["data"] }
 												onSubmit={
 													( item ) => {
 														component.updateServiceName(null);
@@ -132,20 +132,17 @@ const ServicesRequiredEditorRow = React.createClass( {
 								} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
 								{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
 				</div>
+				<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
+					{supplier?
+						<ContactCard item={supplier}/>
+					:
+						null
+					}
+			    	{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
+				</div>
 			</div>
 		)
 	}
 } )
 
 export default ServicesRequiredEditorRow;
-
-/*
-<div className="services-editor-col services-editor-col-supplier" onClick={this.showSupplierModal.bind(this,supplier)}>
-	{supplier?
-		<ContactCard item={supplier}/>
-	:
-		null
-	}
-		{!readOnly?<span className="services-editor-delete-icon" onClick={this.updateSupplier.bind(this,null)}>&times;</span>:null}
-</div>
-*/

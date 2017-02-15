@@ -200,8 +200,9 @@ const ServicesRequiredEditor = React.createClass( {
 		_services = services;
 		return (
 			<div className="services-editor" style={{overflow: 'hidden'}}>
-				<div className="services-editor-row services-editor-row-header">
+				<div className="services-editor-row services-editor-row-header" style={{paddingLeft:"30px"}}>
 					<div className="services-editor-col services-editor-col-header">Service</div>
+					<div className="services-editor-col services-editor-col-header">Supplier</div>
 				</div>
 				<ul id="sortable">
 				{services?services.map( (service,idx) => {
