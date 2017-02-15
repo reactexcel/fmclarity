@@ -121,13 +121,12 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					},{
-						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support", "manager"], Meteor.user().getRole()),
-						tab:        <span id="requests-tab">Lease</span>,
-						content:    <PropertyManagerDetails facility={facility} />
-					},{
-						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support"], Meteor.user().getRole()),
-						tab:        <span id="requests-tab">Property</span>,
-						content:    <BillingAddressDetails facility={facility} />
+						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support" ], Meteor.user().getRole()),
+						tab:        <span id="requests-tab">Config</span>,
+						content:    <div>
+										<BillingAddressDetails facility={facility} />
+										<PropertyManagerDetails facility={facility} />
+									</div>
 					}
 				] } />
 			</div>

@@ -685,7 +685,7 @@ function getMembersDefaultValue( item ) {
         let facility = Facilities.findOne( item.facility._id );
 
         let facilityMembers = facility.getMembers( {
-            role: { $in: [ 'manager', 'caretaker' ] }
+            role: { $in: [ 'manager', 'caretaker', 'property manager' ] }
         } );
 
         facilityMembers.map( ( member ) => {
