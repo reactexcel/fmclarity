@@ -685,16 +685,19 @@ function getMembersDefaultValue( item ) {
         let facility = Facilities.findOne( item.facility._id );
 
         let facilityMembers = facility.getMembers( {
-            role: { $in: [ 'manager', 'caretaker' ] }
+            role: { $in: [ 'manager', 'caretaker', 'property manager' ] }
         } );
 
         facilityMembers.map( ( member ) => {
             if ( member._id != owner._id ) {
                 let role = member.getRole( facility );
+                if( role != 'property manager' ) {
+                    role = `facility ${role}`;
+                }
                 members.push( {
                     _id: member._id,
                     name: member.profile.name,
-                    role: `facility ${role}`
+                    role: role
                 } )
             }
         } );

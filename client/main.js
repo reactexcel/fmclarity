@@ -98,7 +98,7 @@ Actions.addAccessRule( {
     action: [
         'create team',
     ],
-    role: [ 'manager' ],
+    role: [ 'portfolio manager', 'fmc support' ],
     alert: true
 } );
 
@@ -331,7 +331,7 @@ Actions.addAccessRule( {
     action: [
         'destroy document',
     ],
-    role: [ 'fmc support', 'portfolio manager' ],
+    role: [ 'fmc support', 'portfolio manager', 'team portfolio manager' ],
     rule: { alert: true }
 } )
 

@@ -87,9 +87,8 @@ const UserProfileSchema = {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 				relation = group.getMemberRelation( item );
 				if(relation) {
-					Itemrole = relation.role;
+					Itemrole = relation.role ? relation.role : "";
 				}
-				console.log(Itemrole);
 
 			return role === "portfolio manager" && _.contains(['manager', 'caretaker'], Itemrole );
 		},
