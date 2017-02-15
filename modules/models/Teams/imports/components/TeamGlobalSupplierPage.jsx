@@ -83,9 +83,7 @@ export default TeamGlobalSupplierPage = React.createClass( {
 		}
 		return <div className="facility-page animated fadeIn">
 			<div style = { { paddingTop:"50px" } }>
-			<div>
-				<SupplierFilter onChange={ ( suppliers ) => { this.setState({suppliers})}}/>
-			</div>
+			<SupplierFilter onChange={ ( suppliers ) => { this.setState({suppliers})}} />
             <div className = "nav-list">
 	            { suppliers ? suppliers.map( ( supplier, idx ) => {
 	        	    return 	<div

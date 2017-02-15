@@ -27,15 +27,17 @@ export default class SupplierFilter extends React.Component {
     }
     render() {
         return (
-            <div className="row" style={{marginLeft:"0px"}}>
-                <div className="col-lg-12" style={{backgroundColor:"#FFFFFF",borderBottom:"1px solid #e3e3e3" }}>
-                    <form style={{padding:"15px"}} className="form-inline">
-                        <div className="form-group">
-                            <b>Lets search to see if this team already has an account.</b>
-                            <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
-                            <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName.bind(this) }>Invite</button>
-                        </div>
-                    </form>
+            <div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
+                <h2>Supplier Filter</h2>
+                <div className="row" style={{marginLeft:"0px"}}>
+                    <div className="col-lg-12">
+                        <form style={{padding:"15px"}} className="form-inline">
+                            <div className="form-group">
+                                <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
+                                <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName.bind(this) }>Invite</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         );
