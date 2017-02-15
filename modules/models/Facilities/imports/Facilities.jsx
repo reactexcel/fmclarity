@@ -225,7 +225,34 @@ Facilities.actions({
                         })
                     }
                 })
-                //console.log(services);
+                let keys = Object.keys(rules);
+                keys.map( ( key ) => {
+                    let found = false;
+                    for (var i in services) {
+                        if ( services[i].name == key ) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if ( !found ) {
+                        let complianceRules = rules[ key ].map((rule) => {
+                            rule.facility = {
+                                _id: facility._id
+                            };
+                            rule.service = {
+                                name: key
+                            };
+                            return rule;
+                        });
+                        services.push({
+                            name: key,
+                            data: {
+                                complianceRules
+                            }
+                        })
+                    }
+                } );
+                //console.log({services});
             Meteor.call('Facilities.save', facility, {
                 servicesRequired: services
             });
