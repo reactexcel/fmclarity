@@ -37,14 +37,6 @@ const Requests = new Model( {
                 },
                 getWatchers() {
                     return this.getMembers();
-                    /*
-                    let user = Meteor.user(),
-                        owner = this.getOwner(),
-                        team = this.getTeam(),
-                        supplier = this.getSupplier(),
-                        assignee = this.assignee;
-                    return [ user, owner, team, supplier, assignee ];
-                    */
                 }
             }
         } ],

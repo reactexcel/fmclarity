@@ -86,7 +86,7 @@ AccessGroups.loggedIn.add( {
 	icon: 'fa fa-sign-out',
 	action() {
 		Meteor.logout( function() {
-			return FlowRouter.go( '/' );
+			FlowRouter.go( '/' );
 		} );
 	}
 } );

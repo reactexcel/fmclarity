@@ -5,6 +5,7 @@
 
 import React from "react";
 import Reports from '../Reports.js';
+import { FacilityFilter } from '/modules/models/Facilities';
 
 /**
  * A componet that displays a single report
@@ -13,14 +14,24 @@ import Reports from '../Reports.js';
  * @param 			{string} id - the registered id of the report that should be rendered
  */
 function ReportsPageSingle( props ) {
-	let report = Reports.get( { id: props.id } ),
+	let { id, facilities, facility } = props;
+	let report = Reports.get( { id } ),
 		ReportComponent = null;
 	if ( report ) {
 		ReportComponent = report.content;
 	}
 	return (
 		<div className="report-page animated fadeIn">
-			<ReportComponent/>
+			<FacilityFilter items = { facilities } selectedItem = { facility }/>
+			<div className="row" style={{paddingTop:'50px'}}>
+				<div className="col-md-12">
+					<div className="ibox">
+						<div className="ibox-content">
+							<ReportComponent/>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }

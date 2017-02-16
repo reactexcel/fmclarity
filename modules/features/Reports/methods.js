@@ -138,7 +138,7 @@ Meteor.methods( {
             facility: facilityQuery,
             labels: labels,
             set: set, //costs//counts
-            //buckets: buckets,
+            buckets: buckets,
             //ready: handle.ready()
         }
     }

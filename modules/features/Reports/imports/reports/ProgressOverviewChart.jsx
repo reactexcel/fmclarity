@@ -29,6 +29,8 @@ export default ProgressOverviewChart = React.createClass( {
                 endDate = moment().endOf( 'month' ),
                 period = { number: 3, unit: 'month' };
 
+            this._mounted = true;
+
             this.setState( {
                 title: startDate.format( "[since] MMMM YYYY" )
             } );
@@ -37,6 +39,7 @@ export default ProgressOverviewChart = React.createClass( {
         },
 
         componentWillUnmount() {
+            this._mounted = false;
             if ( this.computation ) {
                 this.computation.stop();
             }
@@ -54,7 +57,7 @@ export default ProgressOverviewChart = React.createClass( {
                 teamQuery: teamQuery || Session.get( 'selectedTeam' )
             }, ( error, results ) => {
                 //console.log( { error, results } );
-                if ( !error ) {
+                if ( !error && this._mounted ) {
                     this.setState( {
                         results
                     } )
