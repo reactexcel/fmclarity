@@ -284,6 +284,9 @@ const TeamStepper = React.createClass( {
                                                       }
                                                     }
                                                    );
+                                                   if (role == "property manager") {
+                                                       this.props.onChange && this.props.onChange( item );
+                                                   }
                                                 }
                                               }
                                             }
