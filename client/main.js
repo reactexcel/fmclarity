@@ -268,7 +268,6 @@ Actions.addAccessRule( {
         let user = Meteor.user(),
             role = item.getMemberRole( user );
 
-        console.log( item );
         if( item.status == 'New' && item.supplier && item.supplier._id ) {
             if( role == 'team manager' ) {
                 return true;
@@ -462,5 +461,3 @@ FloatingActionButtonActions = Actions.clone( [
     'create team',
     'create team document'
 ] );
-
-console.log( Actions );
