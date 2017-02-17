@@ -98,7 +98,7 @@ Actions.addAccessRule( {
     action: [
         'create team',
     ],
-    role: [ 'manager' ],
+    role: [ 'portfolio manager', 'fmc support' ],
     alert: true
 } );
 
@@ -265,13 +265,26 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( item ) => {
-        return item.status == 'New' && item.supplier && item.supplier._id;
+        let user = Meteor.user(),
+            role = item.getMemberRole( user );
+
+        if( item.status == 'New' && item.supplier && item.supplier._id ) {
+            if( role == 'team manager' ) {
+                return true;
+            }
+            else if( item.service.data.baseBuilding ) {
+                return role == 'property manager';
+            }
+            else {
+                return role == 'facility manager';
+            }
+        }
     },
     action: [
         'issue request',
         'reject request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'property manager', 'fmc support' ],
+    role: [ '*'/*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
     rule: { alert: true }
 } )
 
@@ -292,7 +305,7 @@ Actions.addAccessRule( {
         'accept request',
         //'reject request',
     ],
-    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', "property manager" ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'property manager' ],
     rule: { alert: true }
 } )
 
@@ -331,7 +344,7 @@ Actions.addAccessRule( {
     action: [
         'destroy document',
     ],
-    role: [ 'fmc support', 'portfolio manager' ],
+    role: [ 'fmc support', 'portfolio manager', 'team portfolio manager' ],
     rule: { alert: true }
 } )
 
@@ -370,9 +383,12 @@ Actions.addAccessRule( {
         'invite member'
     ],
     condition: ( item ) => {
-        return item.canAddMember();
+        /*return item.canAddMember();*/
+        //console.log( item );
+        return item.type == 'contractor' || item.canAddMember();
     },
     role: [
+        /*
         'portfolio manager',
         'property manager',
         'fmc support',
@@ -382,11 +398,29 @@ Actions.addAccessRule( {
         'team portfolio manager',
         'team fmc support',
         'team caretaker',
-        'team manager'
+        'team manager',
+        */
+        '*'
     ],
     rule: { alert: true }
 } )
 
+/*
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'view member',
+        'create member',
+        'remove member',
+        'invite member'
+    ],
+    condition: ( item ) => {
+        return item.type == 'contractor';
+    },
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+*/
 UserMenuActions = Actions.clone( [
     'edit team',
     'create team',
@@ -427,5 +461,3 @@ FloatingActionButtonActions = Actions.clone( [
     'create team',
     'create team document'
 ] );
-
-console.log( Actions );

@@ -304,8 +304,8 @@ const RequestSchema = {
                         if ( request == null || teamType == 'contractor' ) {
                             return;
                         }
-                        if ( request.service.data && request.service.data.serviceDetails ) {
-                            let supplier = request.service.data.serviceDetails.supplier;
+                        if ( request.service.data ) {
+                            let supplier = request.service.data.supplier;
                             let defaultSupplier;
                             if ( supplier ) {
                                 if ( supplier._id ) {
@@ -318,11 +318,11 @@ const RequestSchema = {
                                 }
                                 request.supplier = defaultSupplier;
                                 // let members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
-                                // if ( request.service.data.serviceDetails.defaultContact ) {
-                                //     members.push( request.service.data.serviceDetails.defaultContact );
+                                // if ( request.service.data.defaultContact ) {
+                                //     members.push( request.service.data.defaultContact );
                                 // }
                                 // request.members = members;
-                                request.members = _.union(request.members,request.service.data.serviceDetails.defaultContact);
+                                request.members = _.union(request.members,request.service.data.defaultContact);
                                 console.log({member: request.member});
                             } else {
                                 request.supplier = null;
@@ -365,8 +365,8 @@ const RequestSchema = {
                         if ( item == null ) {
                             return;
                         }
-                        if ( item.subservice.data && item.subservice.data.serviceDetails ) {
-                            let supplier = item.subservice.data.serviceDetails.supplier;
+                        if ( item.subservice.data ) {
+                            let supplier = item.subservice.data.supplier;
                             let defaultSupplier;
                             if ( supplier ) {
                                 if ( supplier._id ) {
@@ -379,8 +379,8 @@ const RequestSchema = {
                                 }
                                 item.supplier = defaultSupplier;
                                 let members = ( _.filter( item.members, m => m.role !== defaultContactRole ) );
-                                if ( item.subservice.data.serviceDetails ) {
-                                    members.push( item.subservice.data.serviceDetails.defaultContact );
+                                if ( item.subservice.data ) {
+                                    members.push( item.subservice.data.defaultContact );
                                 }
                                 item.members = members;
                             } else {
@@ -682,7 +682,12 @@ const RequestSchema = {
                 if ( selectedTeam ) {
                     teamType = selectedTeam.type;
                 }
-                return ( request.type != 'Booking' && teamType != 'contractor' ) ? ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false;
+                //do not show for booking, contractors, staff or resident
+                return (
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    : false
+                )
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam(),
@@ -738,7 +743,21 @@ const RequestSchema = {
             label: 'Supplier contact',
             type: 'string',
             size: 12,
+            condition: ( request ) => {
+                let selectedTeam = Session.get( 'selectedTeam' );
+                teamType = null;
+                if ( selectedTeam ) {
+                    teamType = selectedTeam.type;
+                }
+                //do not show for booking, contractors, staff or resident
+                return (
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    : false
+                )
+            },
             input( props ) {
+                // this should be in it's own component
                 return (
                         <div className="row">
 					<div className="col-xs-12">

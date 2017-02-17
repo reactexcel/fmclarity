@@ -47,7 +47,7 @@ const RequestActivityChart = React.createClass( {
             facilityQuery: Session.get( 'selectedFacility' ),
             teamQuery: Session.get( 'selectedTeam' )
         }, ( error, results ) => {
-            if ( !error ) {
+            if ( !error && this._mounted ) {
                 this.setState( results );
             }
         } )
@@ -55,11 +55,15 @@ const RequestActivityChart = React.createClass( {
 
     componentDidMount() {
         this.resetChart();
+        this._mounted = true;
         setTimeout( () => { this.startComputation() }, 0 );
     },
 
     componentWillUnmount() {
-        this.computation.stop();
+        this._mounted = false;
+        if ( this.computation ) {
+            this.computation.stop();
+        }
     },
 
     componentDidUpdate() {

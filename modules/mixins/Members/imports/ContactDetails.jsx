@@ -20,11 +20,11 @@ export default function ContactDetails( props ) {
         <span><i className="fa fa-envelope"></i> {contact.email}<br/></span>
 
         {contact.phone?
-        <span><i className="fa fa-phone"></i> {contact.phone}<br/></span>
+        <span className="phone-number"><i className="fa fa-phone"></i> {contact.phone}<br/></span>
         :null}
 
         {contact.phone2?
-        <span><i className="fa fa-phone"></i> {contact.phone2}<br/></span>
+        <span className="phone-number"><i className="fa fa-phone"></i> {contact.phone2}<br/></span>
         :null}
 
     </div>

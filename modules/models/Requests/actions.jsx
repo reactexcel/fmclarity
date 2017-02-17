@@ -25,9 +25,9 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  	action: ( request, callback ) => {
  		Modal.show( {
       id: `viewRequest-${request._id}`,
- 			content: <DropFileContainer request={request} model={Requests}>
+ 			content: //<DropFileContainer request={request} model={Requests}>
                  <RequestPanel item = { request } />
-               </DropFileContainer>
+               //</DropFileContainer>
  		} )
  		callback( request );
     request = Requests.collection._transform( request );
@@ -410,9 +410,9 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  		});
 
 		Modal.replace( {
-			content: <DropFileContainer request={newRequest} model={Requests}>
+			content: //<DropFileContainer request={newRequest} model={Requests}>
                  <RequestPanel item = { newRequest } />
-               </DropFileContainer>
+               //</DropFileContainer>
 		} );
 
  		Meteor.call( 'Issues.issue', newRequest );

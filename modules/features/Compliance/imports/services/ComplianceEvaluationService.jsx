@@ -48,12 +48,21 @@ ComplianceEvaluationService = new function() {
             //  console.log({rule});
 
             var docCount = null,
-                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate()
-            query = rule.document && rule.document.query ? JSON.parse( rule.document.query ) : "";
-            if ( _.contains( docList1, rule.document.type ) ) {
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
+                query = rule.document && rule.document.query ?
+                        JSON.parse( rule.document.query ) : {
+                            "facility._id": facility["_id"],
+                            $and: [
+                                { type: rule.docType },
+                                { name: { $regex: rule.docName, $options: "i" } }
+                            ]
+                        };
+            if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
-            query && query.$and.push( { expiryDate: { $gte: tomorrow } } );
+            if ( _.contains( docList2, rule.docType ) ) {
+                query && query.$and.push( { expiryDate: { $gte: tomorrow } } );
+            }
             docCount = query && Documents.find( query ).count();
             //   console.log({count: docCount});
             //   console.log(query);
@@ -71,7 +80,7 @@ ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "Document does not exist."
+                    detail: "Document does not exist"
                 },
                 resolve: function() {
                     let type = "team",
@@ -84,6 +93,8 @@ ComplianceEvaluationService = new function() {
                         team: { _id, name },
                         owner: { type, _id, name },
                         name: rule.docName,
+                        type: rule.docType,
+                        serviceType: rule.service,
                     } );
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
@@ -94,21 +105,28 @@ ComplianceEvaluationService = new function() {
 
         "Document is current": function( rule, facility, service ) {
 
-            console.log( rule );
-            if( !rule || !rule.document ) {
-                return;
-            }
+            //console.log( rule );
+            // if( !rule || !rule.document ) {
+            //     return;
+            // }
 
-            var docCount = null,
-                query = rule.document ? JSON.parse( rule.document.query ) : "";
-            if ( _.contains( docList1, rule.document.type ) ) {
+            var docCount = null, yesterday, tomorrow, today,
+                query = rule.document && rule.document.query ?
+                    JSON.parse( rule.document.query ) : {
+                        "facility._id": facility["_id"],
+                        $and: [
+                            { type: rule.docType },
+                            { name: { $regex: rule.docName, $options: "i" } }
+                        ]
+                    };
+            if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
-            if ( _.contains( docList2, rule.document.type ) ) {
+            if ( _.contains( docList2, rule.docType ) ) {
                 //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
-                let yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                    tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                    today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
+                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
                 query.$and.push( { expiryDate: today } );
             }
             docCount = query && Documents.find( query ).count();
@@ -116,7 +134,7 @@ ComplianceEvaluationService = new function() {
             //    console.log(query);
             if ( docCount ) {
                 return _.extend( {}, defaultResult, {
-                    passed: false,
+                    passed: true,
                     message: {
                         summary: "passed",
                         detail: docCount + " " + ( rule.docType ? ( rule.docType + " " ) : "" ) + "documents exists."
@@ -131,7 +149,10 @@ ComplianceEvaluationService = new function() {
                         let newDocument = Documents.create( {
                             team: { _id, name },
                             owner: { type, _id, name },
-                            name: rule.docName
+                            name: rule.docName,
+                            type: rule.docType,
+                            serviceType: rule.service,
+                            expiry: today,
                         } );
                         Modal.show( {
                             content: <DocViewEdit item = { newDocument } model={Facilities} />
@@ -144,7 +165,7 @@ ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "Documents dose not exists."
+                    detail: "Document does not exist"
                 },
                 resolve: function() {
                     let type = "team",
@@ -155,7 +176,10 @@ ComplianceEvaluationService = new function() {
 
                     let newDocument = Documents.create( {
                         team: { _id, name },
-                        owner: { type, _id, name }
+                        owner: { type, _id, name },
+                        name: rule.docName,
+                        type: rule.docType,
+                        serviceType: rule.service,
                     } );
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />

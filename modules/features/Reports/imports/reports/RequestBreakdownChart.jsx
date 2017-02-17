@@ -43,7 +43,7 @@ const RequestBreakdownChart = React.createClass( {
             facilityQuery: facilityQuery || Session.get( 'selectedFacility' ),
             teamQuery: teamQuery || Session.get( 'selectedTeam' )
         }, ( error, results ) => {
-            if ( !error ) {
+            if ( !error && this._mounted ) {
                 this.setState( results );
             }
         } )
@@ -65,11 +65,15 @@ const RequestBreakdownChart = React.createClass( {
 
     componentDidMount() {
         this.resetChart();
+        this._mounted = true;
         setTimeout( () => { this.startComputation() }, 0 );
     },
 
     componentWillUnmount() {
-        this.computation.stop();
+        this._mounted = false;
+        if ( this.computation ) {
+            this.computation.stop();
+        }
     },
 
     componentDidUpdate() {
@@ -234,8 +238,7 @@ const RequestBreakdownChart = React.createClass( {
     },
 
     render() {
-        let { facility, minimal, labels, expandall, set, title } = this.state,
-            buckets = null,
+        let { facility, minimal, labels, expandall, set, title, buckets } = this.state,
             facilities = null;
 
         if ( set ) {

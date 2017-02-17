@@ -37,14 +37,6 @@ const Requests = new Model( {
                 },
                 getWatchers() {
                     return this.getMembers();
-                    /*
-                    let user = Meteor.user(),
-                        owner = this.getOwner(),
-                        team = this.getTeam(),
-                        supplier = this.getSupplier(),
-                        assignee = this.assignee;
-                    return [ user, owner, team, supplier, assignee ];
-                    */
                 }
             }
         } ],
@@ -202,7 +194,6 @@ Requests.methods( {
 
             let newRequestId = Meteor.call( 'Issues.save', request, {
                     status: status,
-                    issuedAt: new Date(),
                     code: code,
                     members: getMembersDefaultValue( request )
                 } ),
@@ -686,17 +677,30 @@ function getMembersDefaultValue( item ) {
         let facility = Facilities.findOne( item.facility._id );
 
         let facilityMembers = facility.getMembers( {
-            role: { $in: [ 'manager', 'caretaker' ] }
+            role: { $in: [ 'manager', 'caretaker', 'property manager' ] }
         } );
 
         facilityMembers.map( ( member ) => {
             if ( member._id != owner._id ) {
+
                 let role = member.getRole( facility );
-                members.push( {
-                    _id: member._id,
-                    name: member.profile.name,
-                    role: `facility ${role}`
-                } )
+
+                if( role == 'property manager' ) {
+                    if( item.service.data && item.service.data.baseBuilding ) {
+                        members.push( {
+                            _id: member._id,
+                            name: member.profile.name,
+                            role: 'property manager'
+                        } )
+                    }
+                }
+                else {
+                    members.push( {
+                        _id: member._id,
+                        name: member.profile.name,
+                        role: `facility ${role}`
+                    } )
+                }
             }
         } );
     }
