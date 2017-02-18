@@ -82,7 +82,7 @@ const UserProfileSchema = {
 		description: "Number of Work Orders user can issue to suppliers",
 		input: Text,
 		optional: true,
-		type: "string",
+		type: "number",
 		condition: ( item ) => {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 				relation = group.getMemberRelation( item );
