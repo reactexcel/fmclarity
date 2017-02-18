@@ -20,7 +20,7 @@ import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currenc
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
-
+import moment from 'moment';
 /**
  * @memberOf 		module:models/Requests
  */
@@ -683,8 +683,8 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
-                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) )
                     : false
                 )
             },
@@ -756,8 +756,8 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
-                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) )
                     : false
                 )
             },
@@ -953,7 +953,45 @@ const RequestSchema = {
                 }
             },
 
+            footer:{
+                size: 12,
+                input( props ){
+                    let period
+                    if( props.item.frequency.period ){
+                        switch (props.item.frequency.period) {
+                            case "daily":
+                                period = "day"
+                                break;
+                            case "fortnightly":
+                                period = "fortnight"
+                                break;
+                            case "weekly":
+                                period = "week"
+                                break;
+                            case "monthly":
+                                period = "month"
+                                break;
+                            case "quarterly":
+                                period = "quarter"
+                                break;
+                            case "annually":
+                                period = "year"
+                                break;
+                            default:
 
+                        }
+                    }
+                    return (
+                        <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
+                            {props.item.frequency.number && props.item.frequency.period && props.item.frequency.endDate?
+                                <div>
+                                {`Summary: Repeat every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
+                            </div>: null}
+                        </div>
+                    );
+                },
+                condition: "Preventative",
+            }
 
         }
 
