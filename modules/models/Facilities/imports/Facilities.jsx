@@ -420,6 +420,15 @@ Facilities.actions({
             Facilities.update({ _id: facility._id }, { $set: { "documents": documents } });
         }
     },
+    removeComplianceRule: {
+        authentication: true,
+        helper: (facility, servicePosition, rulePosition, serviceName ) => {
+            let servicesRequired = facility.servicesRequired;
+            _.map( servicesRequired, ( svc, i ) => { if(svc.name == serviceName) servicePosition = i } );
+            servicesRequired[ servicePosition ].data.complianceRules.splice(rulePosition,1);
+            Facilities.update({ _id: facility._id }, { $set: { "servicesRequired": servicesRequired } });
+        }
+    },
 
     updateRealEstateAgency: {
         authentication: true,

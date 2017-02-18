@@ -51,6 +51,10 @@ export default ComplianceViewDetail = React.createClass( {
         })
       }
     },
+    removeComplianceRule(servicePosition, rulePosition, serviceName ) {
+        let facility = this.data.facility;
+        facility.removeComplianceRule(servicePosition, rulePosition, serviceName);
+    },
 
     render() {
         var facility = this.data.facility;
@@ -113,7 +117,9 @@ export default ComplianceViewDetail = React.createClass( {
                         <ComplianceGroup item={service}
                           onClick={( event) => {
                             this.setCoverImage( event, service );
-                          }}/>
+                          }}
+                          removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                          />
                         <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"5px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
                     </div>
                 })}
