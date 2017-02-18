@@ -12,6 +12,7 @@ import { TeamActions } from '/modules/models/Teams';
 import ComplianceDocumentSearchSchema from './ComplianceDocumentSearchSchema.jsx';
 
 import React from 'react';
+import moment from 'moment';
 
 var number = null;
 export default ComplianceRuleSchema = {
@@ -61,7 +62,7 @@ export default ComplianceRuleSchema = {
                 "PPM event completed",
             ],
             afterChange( item ) {
-                console.log( { item } );
+                //console.log( { item } );
 
             }
         }
@@ -88,7 +89,6 @@ export default ComplianceRuleSchema = {
         label: "Sub-Service",
         //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
         options: function( item ) {
-            console.log({item},"sub service");
             if ( item.service ) {
                 return {
                     items: item.service.children,
@@ -187,98 +187,47 @@ export default ComplianceRuleSchema = {
         condition: item => item.event
     },
     frequency: {
+        type: "object",
         condition: "PPM event completed",
-        subschema: {
-            number: {
-                label: "Frequency (number)",
-                description: "The number of days, weeks, months etc between repeats",
-                input: Text,
-                type: "number",
-                defaultValue: 6,
-                size: 6,
-                options: {
-                    afterChange( item ) {
-                        number = item.number;
-                    }
+        subschema: RequestFrequencySchema,
+
+    },
+    footer:{
+        size: 12,
+        input( props ){
+            let period
+            if( props.item.frequency.period ){
+                switch (props.item.frequency.period) {
+                    case "daily":
+                        period = "day"
+                        break;
+                    case "fortnightly":
+                        period = "fortnight"
+                        break;
+                    case "weekly":
+                        period = "week"
+                        break;
+                    case "monthly":
+                        period = "month"
+                        break;
+                    case "quarterly":
+                        period = "quarter"
+                        break;
+                    case "annually":
+                        period = "year"
+                        break;
+                    default:
+
                 }
-            },
-            unit: {
-                label: "Frequency (unit)",
-                description: "The unit (days, weeks, months etc) of the repeats",
-                input( props ) {
-                    return (
-                        <Select
-                  placeholder={props.placeholder}
-                  item={props.item}
-                  items={props.items}
-                  value={props.value?(props.value==="custom"?"Custom":"Repeat "+props.value+" until stopped"):""}
-                  onChange={ item => props.onChange(item) }
-                />
-                    );
-                },
-                defaultValue: "months",
-                type: "string",
-                size: 6,
-                options: {
-                    items: [
-                        { name: 'Daily', val: "daily" },
-                        { name: 'Weekly', val: "Weekly" },
-                        { name: 'Fortnightly', val: "fortnightly" },
-                        { name: 'Monthly', val: "monthly" },
-                        { name: 'Quarterly', val: "quarterly" },
-                        { name: 'Annually', val: "annually" },
-                        { name: 'Custom', val: "custom" },
-                    ]
-                },
-                condition: item => item.number.length,
-            },
-
-            period: {
-                label: "Period",
-                description: "The unit (days, weeks, months etc) of the repeats",
-                input( props ) {
-                    return (
-                        <Select
-                  placeholder={props.placeholder}
-                  item={props.item}
-                  items={props.items}
-                  value={props.value?"Repeat every "+ (number||"")+" "+props.value:""}
-                  onChange={ item => props.onChange(item) }
-                />
-                    );
-                },
-                defaultValue: "months",
-                type: "string",
-                size: 6,
-                options: {
-                    items: [
-                        { name: 'Daily', val: "daily" },
-                        { name: 'Weekly', val: "Weekly" },
-                        { name: 'Fortnightly', val: "fortnightly" },
-                        { name: 'Monthly', val: "monthly" },
-                        { name: 'Quarterly', val: "quarterly" },
-                        { name: 'Annually', val: "annually" },
-                    ]
-                },
-                condition: item => item.unit === "custom",
-            },
-            repeats: {
-                label: "Repeats",
-                description: "The number of times this item should happen",
-                input: Text,
-                type: "number",
-                defaultValue: 6,
-                size: 6,
-                condition: item => item.number.length && item.unit === "custom",
-            },
-
-            endDate: {
-                label: 'End date',
-                size: 6,
-                input: DateInput,
-                condition: item => item.unit === "custom"
             }
+            return (
+                <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
+                    {props.item.frequency.number && props.item.frequency.period && props.item.frequency.endDate?
+                        <div>
+                        {`Summary: Repeat every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
+                    </div>: null}
+                </div>
+            );
         }
-    }
-
+    },
 }

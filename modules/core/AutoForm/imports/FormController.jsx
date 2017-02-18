@@ -49,7 +49,37 @@ class FormController {
 		if ( this.model ) {
 			return this.model.getDefaultValue( key, item );
 		} else {
-			return "";
+			// This will return the default value for the subschema components.
+			// If we are not providing MODEL as a prop to the Autoform then
+			// the default value property of schema is not working.
+			if(this.schema){
+				if( this.schema[key] ){
+					let field = this.schema[ key ];
+			        if ( typeof field !== 'undefined' ) {
+			            if ( _.isFunction( field.defaultValue ) ) {
+			                return field.defaultValue( item );
+			            } else if ( field.defaultValue != null ) {
+			                return field.defaultValue;
+			            } else if ( field.type == "string" ) {
+			                return "";
+			            } else if ( field.type == "number" ) {
+			                return 0;
+			            } else if ( field.type == "date" ) {
+			                return new Date();
+			            } else if ( field.schema != null ) {
+			                if ( _.isFunction( field.schema.create ) ) {
+			                    return field.schema.create();
+			                }
+			                return {};
+			            } else if ( field.type == "array" ) {
+			                return [];
+			            } else if ( field.type == "object" ) {
+			                return {};
+			            }
+			        }
+				}
+				return "";
+			}
 		}
 	}
 
