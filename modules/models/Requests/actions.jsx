@@ -50,7 +50,9 @@ import { DropFileContainer } from '/modules/ui/MaterialInputs';
  			form = { CreateRequestForm }
  			onSubmit = {
  				( request ) => {
-          request.costThreshold = request.costThreshold == '' ? '0' : request.costThreshold;
+          // this should really be in a Request action called 'update' or something
+          // that's where the create and issue code is located
+          request.costThreshold = request.costThreshold == '' ? 0 : request.costThreshold;
  					Requests.save.call( request );
  					Modal.hide();
  				  request = Requests.collection._transform( request );

@@ -305,15 +305,14 @@ const RequestSchema = {
                             return;
                         }
                         if ( request.service.data ) {
-                            let supplier = request.service.data.supplier;
-                            let defaultSupplier;
+                            let supplier = request.service.data.supplier,
+                                defaultSupplier = null;
+
                             if ( supplier ) {
                                 if ( supplier._id ) {
                                     defaultSupplier = Teams.findOne( supplier._id );
-                                    if ( !defaultSupplier && supplier.name ) {
-                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                    }
-                                } else if ( supplier.name ) {
+                                }
+                                if ( !defaultSupplier && supplier.name ) {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
@@ -739,6 +738,12 @@ const RequestSchema = {
             },
         },
 
+        supplierContacts: {
+            label: "Supplier contacts",
+            type: 'array',
+            size: 12
+        },
+
         supplierContact: {
             label: 'Supplier contact',
             type: 'string',
@@ -757,6 +762,9 @@ const RequestSchema = {
                 )
             },
             input( props ) {
+                if( !props.item.supplierContacts ) {
+                    props.item.supplierContacts = [];
+                }
                 // this should be in it's own component
                 return (
                         <div className="row">
@@ -768,8 +776,11 @@ const RequestSchema = {
 							view 			= {props.view}
 							item 			= {props.item}
 							onChange 		= { ( val ) => {
-				                if ( !_.find( props.item.members, m => m._id === val._id) ) {
-				                	props.item.members.push( {
+                                let memberExists = find( props.item.supplierContacts, ( contact ) => {
+                                    return contact._id === val._id;
+                                } );
+				                if ( !memberExists) {
+				                	props.item.supplierContacts.push( {
 				                    	_id: val._id,
 				                    	name: val.name || val.profile.name,
 				                    	role: defaultContactRole,
@@ -781,7 +792,7 @@ const RequestSchema = {
 						/>
 					</div>
 					<div className="col-xs-12">
-						{_.map( (_.filter( props.item.members, m => m.role==defaultContactRole )) , ( sc, i ) => (
+						{_.map( props.item.supplierContacts, ( sc, i ) => (
 							<div className="col-sm-5" key={i}
 								style={{
 									backgroundColor: 'aliceblue',
@@ -792,10 +803,10 @@ const RequestSchema = {
 									borderLeft: '4px solid aquamarine',
 								}}>
 								<span onClick={() => {
-										let id = sc._id;
-										let newValue =	_.filter( props.item.members,  v => v._id !== id );
-										props.item.members = newValue;
-										props.onChange( "" );
+                                        let id = sc._id,
+                                            newValue =  _.filter( props.item.supplierContacts,  v => v._id !== id );
+                                        props.item.supplierContacts = newValue;
+                                        props.onChange( "" );
 									}}
 									style={{
 										float: 'right',

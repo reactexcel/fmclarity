@@ -107,6 +107,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             subservice: 1,
             'supplier._id': 1,
             'supplier.name': 1,
+            supplierContacts: 1,
             status: 1,
             'team._id': 1,
             'team.name': 1,

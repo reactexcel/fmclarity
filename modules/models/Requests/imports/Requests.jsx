@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import { Model } from '/modules/core/ORM';
@@ -23,7 +23,7 @@ import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 import moment from 'moment';
 
 /**
- * @memberOf 		module:models/Requests
+ * @memberOf        module:models/Requests
  */
 const Requests = new Model( {
     schema: RequestSchema,
@@ -59,7 +59,7 @@ if ( Meteor.isServer ) {
 }
 
 Requests.save.before( ( request ) => {
-    
+
     if ( request.type == "Preventative" ) {
         request.status = "PMP";
         request.priority = "PMP";
@@ -72,17 +72,17 @@ Requests.save.before( ( request ) => {
         request.costThreshold = 0;
     }
 
-    if (request.supplier) {
-        request.supplier={
-            _id:request.supplier._id,
+    if ( request.supplier ) {
+        request.supplier = {
+            _id: request.supplier._id,
             name: request.supplier.name
-        };        
+        };
     }
-    if (request.team) {
+    if ( request.team ) {
         request.team = {
-            _id:request.team._id,
+            _id: request.team._id,
             name: request.team.name
-        };        
+        };
     }
 } );
 
@@ -134,18 +134,8 @@ Requests.methods( {
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
-            let supplier = request.getSupplier(),
-                supplierManagers = null;
-            if ( supplier ) {
-                if ( supplier.type == 'fm' ) {
-                    supplierManagers = supplier.getMembers( { role: 'portfolio manager' } );
-                } else {
-                    supplierManagers = supplier.getMembers( { role: 'manager' } );
-                }
-            }
-
-            if ( supplierManagers ) {
-                request.dangerouslyReplaceMembers( supplierManagers, {
+            if ( request.supplierContacts ) {
+                request.dangerouslyReplaceMembers( request.supplierContacts, {
                     role: "supplier manager"
                 } );
             }
@@ -542,58 +532,26 @@ function setAssignee( request, assignee ) {
 function actionIssue( request ) {
 
     let code = null,
-    userId = Meteor.user( ), 
-    user = Users.findOne( userId._id );
-    if ( request && request.team && !request.code ) {
-        team = Teams.findOne( {
-            _id: request.team._id
-        } );
-        code = team.getNextWOCode();
-        
-        
-        if (user.profile.requestIssueThreshold ) {
-            if (user.profile.requestIssueThreshold>0) {
-                Meteor.call( 'Issues.save', request, {
-                    status: "Issued",
-                    issuedAt: new Date(),
-                    code: code,
-                    members: getMembersDefaultValue( request )
-                } );
-                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
-                Users.save.call( user );
-            }
-            
-        }
-        else{
-            Meteor.call( 'Issues.save', request, {
-                status: "Issued",
-                issuedAt: new Date(),
-                code: code,
-                members: getMembersDefaultValue( request )
+        userId = Meteor.user(),
+        user = Users.findOne( userId._id );
+
+    if ( request ) {
+        if ( request.code ) {
+            code = request.code;
+        } else if ( request.team ) {
+            let team = Teams.findOne( {
+                _id: request.team._id
             } );
-        }
-    } else {
-        
-        if (user.profile.requestIssueThreshold ) {
-            if (user.profile.requestIssueThreshold>0) {
-                Meteor.call( 'Issues.save', request, {
-                    status: "Issued",
-                    issuedAt: new Date(),
-                    members: getMembersDefaultValue( request )
-                } );
-                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
-                Users.save.call( user );
-            }
-            
-        }
-        else{
-            Meteor.call( 'Issues.save', request, {
-                status: "Issued",
-                issuedAt: new Date(),
-                members: getMembersDefaultValue( request )
-            } );
+            code = team.getNextWOCode();
         }
     }
+
+    Meteor.call( 'Issues.save', request, {
+        status: "Issued",
+        issuedAt: new Date(),
+        code: code,
+        members: getMembersDefaultValue( request )
+    } );
 
 
     request = Requests.findOne( request._id );
@@ -685,16 +643,15 @@ function getMembersDefaultValue( item ) {
 
                 let role = member.getRole( facility );
 
-                if( role == 'property manager' ) {
-                    if( item.service.data && item.service.data.baseBuilding ) {
+                if ( role == 'property manager' ) {
+                    if ( item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
                             role: 'property manager'
                         } )
                     }
-                }
-                else {
+                } else {
                     members.push( {
                         _id: member._id,
                         name: member.profile.name,
