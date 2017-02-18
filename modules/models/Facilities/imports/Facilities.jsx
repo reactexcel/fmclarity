@@ -423,20 +423,20 @@ Facilities.actions({
 
     updateRealEstateAgency: {
         authentication: true,
-        helper: (facility, item, callback) => {
-          Facilities.update( {
-                 "_id": facility._id
-               }, {
-                 $set: {
-                   realEstateAgency: {
-                       _id: item._id,
-                       name: item.name,
-                       type: item.type
-                     }
-                  }
-                }, ( ) => {
-                     callback( facility );
-                } );
+        method: (facility, item) => {
+            Facilities.update( {
+                    "_id": facility._id
+                }, {
+                     $set: {
+                        realEstateAgency: {
+                            _id: item._id,
+                            name: item.name,
+                            type: item.type
+                        }
+                    }
+                }
+            );
+            return Facilities.findOne( { _id: facility._id } ) || facility;
         }
     },
 

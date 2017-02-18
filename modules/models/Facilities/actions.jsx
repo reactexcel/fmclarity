@@ -64,7 +64,10 @@ const createPropertyManager = new Action( {
 				teamType={"real estate"}
 				title="Real Estate Agency"
 				onChange={ ( item ) => {
-					facility.updateRealEstateAgency( item, callback );
+					let facility = Session.getSelectedFacility();
+					Meteor.call("Facilities.updateRealEstateAgency", facility, item, (err, facility ) => {
+							callback( facility )
+						});
 					}
 				}
 				/>

@@ -52,7 +52,8 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
             thumb: 1,
             size: 1,
             attachments: 1,
-            documents: 1
+            documents: 1,
+            realEstateAgency: 1,
         }
     } );
     return facilitiesCursor;
