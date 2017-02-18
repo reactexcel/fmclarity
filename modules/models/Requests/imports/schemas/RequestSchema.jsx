@@ -316,13 +316,7 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
-                                // let members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
-                                // if ( request.service.data.defaultContact ) {
-                                //     members.push( request.service.data.defaultContact );
-                                // }
-                                // request.members = members;
-                                request.members = _.union(request.members,request.service.data.defaultContact);
-                                console.log({member: request.member});
+                                request.supplierContacts = request.service.data.defaultContact;
                             } else {
                                 request.supplier = null;
                                 request.subservice = null;

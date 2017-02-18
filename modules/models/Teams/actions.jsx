@@ -96,6 +96,8 @@ const createFacility = new Action( {
     }
 } )
 
+// now that we are evaluating people based on their role in the request then we can perhaps actually
+// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -120,7 +122,8 @@ const createRequest = new Action( {
 							</DropFileContainer>
                     } );
                     let team = Teams.findOne( newRequest.team._id ),
-                        role = Meteor.user().getRole( team );
+                        role = Meteor.user().getRole( team ),
+                        hasSupplier = newRequest.supplier && newRequest.supplier._id;
 
 
                     let owner = Meteor.user();
@@ -129,14 +132,23 @@ const createRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
+                    // if the request is PPM then create
                     if ( newRequest.type == 'Preventative' ) {
                         Meteor.call( 'Issues.create', newRequest );
                         //RequestActions.clone.run( newRequest );
-                    } else if ( _.contains( [ 'portfolio manager', 'fmc support' ], role ) && newRequest.supplier && newRequest.supplier._id ) {
+                    }
+
+                    // it might make more sense to make this a switch statement
+                    else if ( hasSupplier && newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding && _.contains( [ 'property manager' ], role ) ) {
                         Meteor.call( 'Issues.issue', newRequest );
-                    } else if ( _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
+                    }
+                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                         Meteor.call( 'Issues.issue', newRequest );
-                    } else {
+                    } 
+                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
+                        Meteor.call( 'Issues.issue', newRequest );
+                    } 
+                    else {
                         Meteor.call( 'Issues.create', newRequest );
                     }
 
