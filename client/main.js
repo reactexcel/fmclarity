@@ -265,20 +265,31 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( item ) => {
-        let user = Meteor.user(),
-            role = item.getMemberRole( user );
-
         if( item.status == 'New' && item.supplier && item.supplier._id ) {
-            if( role == 'team manager' ) {
-                return true;
-            }
-            else if( item.service.data.baseBuilding ) {
-                return role == 'property manager';
+            let user = Meteor.user(),
+                team = item.getTeam(),
+                facility = item.getFacility(),
+                teamRole = team.getMemberRole( user ),
+                facilityRole = facility.getMemberRole( user );
+
+            if( item.service.data.baseBuilding ) {
+                if( facilityRole == 'property manager') {
+                    return true;
+                }
             }
             else {
-                return role == 'facility manager';
+                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                    return true;
+                }
+                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;                    
+                }
+                else if( facilityRole == 'manager' ) {
+                    return true;
+                }
             }
         }
+        return false;
     },
     action: [
         'issue request',

@@ -113,6 +113,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             'team._id': 1,
             'team.name': 1,
             type: 1,
+            unreadRecipents: 1,
         }
     } );
 

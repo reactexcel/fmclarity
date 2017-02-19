@@ -20,8 +20,8 @@ const create = new Action( {
         let team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -34,8 +34,8 @@ const edit = new Action( {
         let { roles, actors } = Roles.getRoles( team );
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -47,7 +47,7 @@ const view = new Action( {
     action: ( team ) => {
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamPanel item = { team } />
+                <TeamPanel item = { team } />
             </DropFileContainer>
         } )
     }
@@ -83,14 +83,14 @@ const createFacility = new Action( {
             let clientsOfSupplier = team.getClientsOfSupplier();
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<CreateSupplierFacility clients={clientsOfSupplier} />
-				</DropFileContainer>
+                    <CreateSupplierFacility clients={clientsOfSupplier} />
+                </DropFileContainer>
             } )
         } else {
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<FacilityStepperContainer params = { { item } } />
-				</DropFileContainer>
+                    <FacilityStepperContainer params = { { item } } />
+                </DropFileContainer>
             } )
         }
     }
@@ -109,7 +109,7 @@ const createRequest = new Action( {
         let item = { team };
         newItem = Requests.create( item );
         Modal.show( {
-            content: <AutoForm
+            content: < AutoForm
             title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
             form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
@@ -118,8 +118,8 @@ const createRequest = new Action( {
                 ( newRequest ) => {
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-								<RequestPanel item = { newRequest }/>
-							</DropFileContainer>
+                                <RequestPanel item = { newRequest }/>
+                            </DropFileContainer>
                     } );
                     let team = Teams.findOne( newRequest.team._id ),
                         role = Meteor.user().getRole( team ),
@@ -141,18 +141,15 @@ const createRequest = new Action( {
                     // it might make more sense to make this a switch statement
                     else if ( hasSupplier && newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding && _.contains( [ 'property manager' ], role ) ) {
                         Meteor.call( 'Issues.issue', newRequest );
-                    }
-                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                    } else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                         Meteor.call( 'Issues.issue', newRequest );
-                    } 
-                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
+                    } else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
                         Meteor.call( 'Issues.issue', newRequest );
-                    } 
-                    else {
+                    } else {
                         Meteor.call( 'Issues.create', newRequest );
                     }
 
-                    let request = Requests.collection._transform( newRequest );
+                    let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     //callback( newRequest );
                 }

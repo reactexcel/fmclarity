@@ -76,7 +76,7 @@ const edit = new Action( {
                             body: notificationBody
                         }
                     } );
-                    request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] )
+                    request.markAsUnread()
                 }
             }
             />
@@ -199,7 +199,7 @@ const accept = new Action( {
                             body: request.acceptComment
                         }
                     } );
-                    request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
+                    request.markAsUnread();
 
                     callback( request );
                 }
@@ -236,7 +236,7 @@ const reject = new Action( {
                             body: request.rejectComment
                         }
                     } );
-                    request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
+                    request.markAsUnread();
                     callback( request );
                 }
             }
@@ -341,7 +341,7 @@ const close = new Action( {
                             body: request.closeComment
                         }
                     } );
-                    request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
+                    request.markAsUnread();
                     Modal.hide();
                     callback( request );
                 }
@@ -376,7 +376,7 @@ const reopen = new Action( {
                             body: request.reopenComment
                         }
                     } );
-                    request.markAsUnread( [ "team", "team manager", "facility", "facility manager", "supplier" ] );
+                    request.markAsUnread();
                 }
             }
             />

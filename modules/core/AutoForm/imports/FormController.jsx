@@ -98,7 +98,7 @@ class FormController {
 		delete this.errors[ key ];
 
 		if ( options != null && _.isFunction( options.afterChange ) ) {
-			options.afterChange( this.item );
+			options.afterChange( this.item, newValue );
 		}
 
 		if ( otherModifications != null ) {
