@@ -56,6 +56,7 @@ ComplianceGroup = React.createClass({
                         <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}}
 													onClick={this.props.onClick?this.props.onClick:null} >
                             <ComplianceListTile item={r}/>
+							<button className="btn btn-flat" onClick={ () => this.props.removeComplianceRule(idx)}> &times; </button>
                         </div>
                     )
                 }):null}
