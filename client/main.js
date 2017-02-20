@@ -166,10 +166,9 @@ Actions.addAccessRule( {
         'create team facility',
     ],
     role: [
-        '*',
-        /*'fmc support',
+        'fmc support',
         'portfolio manager',
-        'manager',
+        /*'manager',
         'owner',
         'property manager',
         'caretaker'*/

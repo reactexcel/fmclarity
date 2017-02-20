@@ -64,7 +64,7 @@ export default function TopNavigationBar( props ) {
                         <DesktopNotificationPopUp { ...props } />
                     </div>
                     <div className="searchbox">
-                    <FMInstantSearchBox/>
+                    {/*<FMInstantSearchBox/>*/}
                     </div>
                 </div>
             </nav>
