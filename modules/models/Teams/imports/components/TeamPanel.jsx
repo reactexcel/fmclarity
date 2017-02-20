@@ -146,7 +146,8 @@ const TeamPanel = React.createClass( {
 					{ insuranceExpiry ? <span><b>Insurance Expiry</b> { insuranceExpiry }</span> :null }
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
 
-					{/*this should def be own component*/availableServices && availableServices.length?
+					{/*this should def be own component*/}
+                    {availableServices && availableServices.length?
 
 					availableServices.map( (service,index) => {
 						return <span key = { service.name }>{ index?' | ':'' }{ service.name }</span>

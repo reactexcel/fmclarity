@@ -2,6 +2,8 @@
 /* And what's more - this doesn't need to be latched to another collection because it can store it's own keys */
 
 import { Documents } from '/modules/models/Documents';
+import { Files } from '/modules/models/Files';
+
 import DocExplorer from './components/DocExplorer.jsx';
 
 export default DocAttachments = { register }
@@ -66,7 +68,7 @@ function getDocs( fieldName ) {
             return null;
         }
 
-        docs.map( ( doc ) => { 
+        docs.map( ( doc ) => {
 
             if ( !filter || !doc.type || filter.type == doc.type ) {
                 if ( doc._id ) {
