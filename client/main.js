@@ -127,6 +127,12 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'contractor' || role == 'portfolio manager' || role == 'fmc support';
+    },
     action: [
         'edit team',
         'view team',
@@ -234,12 +240,48 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status )
+
+        if( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
+            let user = Meteor.user(),
+                team = request.getTeam(),
+                facility = request.getFacility(),
+                teamRole = team.getMemberRole( user ),
+                facilityRole = facility.getMemberRole( user );
+
+            if( request.service && request.service.data && request.service.data.baseBuilding ) {
+                if( facilityRole == 'property manager') {
+                    return true;
+                }
+            }
+            else {
+                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                    return true;
+                }
+                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;                    
+                }
+                else if( facilityRole == 'manager' ) {
+                    let costString = request.costThreshold;
+                    if( _.isString( costString ) ) {
+                        costString = costString.replace(',','')
+                    }
+
+                    let costThreshold = parseInt( team.defaultCostThreshold ),
+                        cost = parseInt( costString );
+
+                    if( cost <= costThreshold ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+
     },
     action: [
         'edit request',
     ],
-    role: [ 'team portfolio manager', 'facility manager', 'team fmc support' ],
+    role: [ '*'/*'team portfolio manager', 'facility property manager', 'facility manager', 'team fmc support', 'property manager'*/ ],
     rule: { alert: true }
 } )
 
@@ -264,15 +306,17 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: ( item ) => {
-        if( item.status == 'New' && item.supplier && item.supplier._id ) {
+    condition: ( request ) => {
+        console.log( request );
+        if( request.status == 'New' && request.supplier && request.supplier._id ) {
+            // this in own function - DRY!
             let user = Meteor.user(),
-                team = item.getTeam(),
-                facility = item.getFacility(),
+                team = request.getTeam(),
+                facility = request.getFacility(),
                 teamRole = team.getMemberRole( user ),
                 facilityRole = facility.getMemberRole( user );
 
-            if( item.service.data.baseBuilding ) {
+            if( request.service && request.service.data && request.service.data.baseBuilding ) {
                 if( facilityRole == 'property manager') {
                     return true;
                 }
@@ -285,7 +329,17 @@ Actions.addAccessRule( {
                     return true;                    
                 }
                 else if( facilityRole == 'manager' ) {
-                    return true;
+                    let costString = request.costThreshold;
+                    if( _.isString( costString ) ) {
+                        costString = costString.replace(',','')
+                    }
+
+                    let costThreshold = parseInt( team.defaultCostThreshold ),
+                        cost = parseInt( costString );
+
+                    if( cost <= costThreshold ) {
+                        return true;
+                    }
                 }
             }
         }
@@ -304,7 +358,7 @@ Actions.addAccessRule( {
     action: [
         'delete request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'team manager' ],
+    role: [ 'team fmc support', 'team portfolio manager', 'facility manager', 'facility property manager', 'owner' ],
     rule: { alert: true }
 } )
 
@@ -316,7 +370,7 @@ Actions.addAccessRule( {
         'accept request',
         //'reject request',
     ],
-    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support', 'property manager' ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
     rule: { alert: true }
 } )
 
@@ -327,7 +381,7 @@ Actions.addAccessRule( {
     action: [
         'complete request',
     ],
-    role: [ 'supplier manager', 'assignee', 'team manager', 'team portfolio manager', 'team fmc support', 'team caretaker' ],
+    role: [ 'supplier manager', 'assignee', 'facility manager', 'facility caretaker', 'facility property manager', 'team portfolio manager', 'team fmc support' ],
     rule: { alert: true }
 } )
 
