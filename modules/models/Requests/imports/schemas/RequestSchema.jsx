@@ -210,7 +210,14 @@ const RequestSchema = {
                 return {
                     items: facility ? facility.areas : null
                 }
-            }
+            },
+            defaultValue: (request ) => {
+                let user = Meteor.user(), val=null;
+                if ( user.profile.tenancy && _.contains( [ "tenant", 'resident' ], user.getRole() ) ) {
+                    val = user.profile.tenancy;
+                }
+                return val;
+            },
         },
 
         area: {
