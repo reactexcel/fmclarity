@@ -713,7 +713,7 @@ const RequestSchema = {
                 return {
                     items: facility && facility.getSuppliers ? facility.getSuppliers() : null,
                     view: ContactCard,
-                    readOnly: item.status != 'New',
+                    readOnly: item.status == 'Issued',
                     addNew: {
                         //Add new supplier to request and selected facility.
                         show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -842,7 +842,7 @@ const RequestSchema = {
                             members = Users.findAll( { _id: { $in: ids } } );
                         }
                         return {
-                            readOnly: item.status != 'New',
+                            readOnly: item.status == 'Issued',
                             items: members,
                             view: ContactCard
                         }
