@@ -18,7 +18,7 @@ const ContactAvatarSmall = React.createClass( {
 
 		let contact = this.props.item,
 			profile = this.props.item,
-			name = profile.name,
+			name = profile?profile.name:"",
 			url = null,
 			style = {},
 			initials = "";

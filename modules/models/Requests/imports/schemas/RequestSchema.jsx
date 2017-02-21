@@ -51,7 +51,7 @@ const RequestSchema = {
             label: "Summary",
             type: "string",
             required: true,
-            maxLength: 45,
+            maxLength: 90,
             input: Text,
             description: "A brief, descriptive, title for the work request"
         },
@@ -677,6 +677,7 @@ const RequestSchema = {
                 source: Teams,
             },
             condition: ( request ) => {
+
                 let selectedTeam = Session.get( 'selectedTeam' );
                 teamType = null;
                 if ( selectedTeam ) {
@@ -712,6 +713,7 @@ const RequestSchema = {
                 return {
                     items: facility && facility.getSuppliers ? facility.getSuppliers() : null,
                     view: ContactCard,
+                    readOnly: item.status != 'New',
                     addNew: {
                         //Add new supplier to request and selected facility.
                         show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -764,7 +766,7 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( request.status == 'New' && request.type != 'Booking' && teamType != 'contractor' ) ?
                     ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
                 )
             },
@@ -840,6 +842,7 @@ const RequestSchema = {
                             members = Users.findAll( { _id: { $in: ids } } );
                         }
                         return {
+                            readOnly: item.status != 'New',
                             items: members,
                             view: ContactCard
                         }

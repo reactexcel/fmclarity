@@ -306,7 +306,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        console.log( request );
+        //console.log( request );
         if( request.status == 'New' && request.supplier && request.supplier._id ) {
             // this in own function - DRY!
             let user = Meteor.user(),
