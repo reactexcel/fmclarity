@@ -69,7 +69,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
         'members._id': this.userId
     }
 
-    if( user.role == 'admin' ) {
+    if( user && user.role == 'admin' ) {
         query = { _id: {$ne:null} }
     }
 
