@@ -357,11 +357,11 @@ const RequestSchema = {
                 }
                 return true;
             },
-            options: ( item ) => {
+            options: ( request ) => {
                 return {
-                    items: item.service ? item.service.children : null,
-                    afterChange: ( item ) => {
-                        if ( item == null ) {
+                    items: request.service ? request.service.children : null,
+                    afterChange: ( request ) => {
+                        if ( request == null ) {
                             return;
                         }
                         if ( request.subservice && request.subservice.data ) {

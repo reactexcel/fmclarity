@@ -105,8 +105,12 @@ const createRequest = new Action( {
     verb: "created a work order",
     icon: 'fa fa-plus',
     // action should return restult and that gets used in the notification
-    action: ( team, callback ) => {
+    action: ( team, callback, options ) => {
         let item = { team };
+        if ( options ) {
+            options.team = team;
+            item = options
+        }
         newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
@@ -177,7 +181,7 @@ const createRequest = new Action( {
                                     let costThreshold = parseInt( team.defaultCostThreshold ),
                                         cost = parseInt( costString );
 
-                                    console.log( { 
+                                    console.log( {
                                         role,
                                         costThreshold,
                                         cost
