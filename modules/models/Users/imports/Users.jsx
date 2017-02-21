@@ -27,8 +27,7 @@ const Users = new Model( {
     collection: Meteor.users,
     mixins: [
         Owners,
-        DocMessages,
-        [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        DocMessages, [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 
@@ -126,12 +125,18 @@ Users.actions( {
     getRequests: {
         authentication: true,
         //subscription:???
+
+        // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
 
-            let query = [
-                { 'members._id': user._id }
-            ]
-            
+            let query = [ {
+                'members._id': user._id
+            } ]
+
+            if ( user.role == 'admin' ) {
+                query = [ { _id: { $ne: null } } ]
+            }
+
             //if filter passed to function then add that to the query
             if ( filter ) {
                 query.push( filter );
