@@ -116,7 +116,15 @@ export default ComplianceRuleSchema = {
         options( item ) {
             import { Requests } from '/modules/models/Requests';
             return {
-                items: Requests.findAll( { "facility._id": item.facility._id, status: "PMP", type: "Preventative" } ),
+                items: _.pluck(Requests.findAll( {
+                     "facility._id": item.facility._id,
+                       type: "Preventative"
+                    }, {
+                        fields: {
+                             name: true
+                         }
+                     }
+                 ), "name"),
                 addNew: {
                     show: true,
                     label: "Add New",

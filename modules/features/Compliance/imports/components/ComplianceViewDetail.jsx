@@ -9,7 +9,7 @@ import ComplianceActions from '../../actions.jsx';
 export default ComplianceViewDetail = React.createClass( {
 
     mixins: [ ReactMeteorData ],
-
+    // currentSetviceTabToShow:0,
     getMeteorData() {
         var data = {};
         data.facility = Session.getSelectedFacility();
@@ -55,6 +55,16 @@ export default ComplianceViewDetail = React.createClass( {
         let facility = this.data.facility;
         facility.removeComplianceRule(servicePosition, rulePosition, serviceName);
     },
+//
+    // handelCollaps(  idx ) {
+    //     let currentSetviceTabToShow = this.currentSetviceTabToShow;
+    //         $.("div.serviceTabHeader").each( function() {
+    //             if ( $(this).attr("id") == idx )
+    //                 $(this).show();
+    //             else
+    //                 $(this).hide();
+    //         } );
+    // },
 
     render() {
         var facility = this.data.facility;
@@ -109,17 +119,19 @@ export default ComplianceViewDetail = React.createClass( {
                 </div>
 
                 {services.map((service,idx)=>{
-                    return <div key={idx+'-'+service.name} style={{position:"relative"}}>
+                    return <div key={idx+'-'+service.name} style={{position:"relative"}} onClick={() => this.handelCollaps(idx)}>
                         <ServiceListTile item={service}
                           onClick={( event) => {
                             this.setCoverImage( event, service );
                           }}/>
-                        <ComplianceGroup item={service}
-                          onClick={( event) => {
-                            this.setCoverImage( event, service );
-                          }}
-                          removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
-                          />
+                      <div id={idx} className="serviceTabHeader">
+                          <ComplianceGroup item={service}
+                            onClick={( event) => {
+                              this.setCoverImage( event, service );
+                            }}
+                            removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                            />
+                      </div>
                         <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"5px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
                     </div>
                 })}
