@@ -17,8 +17,6 @@ import { Members } from '/modules/mixins/Members';
  */
 const TeamPageSuppliersContainer = createContainer((params) => {
 
-    Meteor.subscribe('User: Facilities, Requests');
-
     let user = Meteor.user(),
         facility = Session.getSelectedFacility(),
         team = Session.getSelectedTeam(),

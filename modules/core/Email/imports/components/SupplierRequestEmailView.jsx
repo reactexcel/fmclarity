@@ -54,7 +54,7 @@ const SupplierRequestEmailView = React.createClass({
         }
 
         if(secret) {
-            url = Meteor.absoluteUrl('u/'+ secret + '/' + request.getEncodedPath(), {rootUrl: "https://app.fmclarity.com"} );
+            url = Meteor.absoluteUrl('u/'+ secret + '/' + request.getEncodedPath() );
         }
         else {
             url = request.getUrl();

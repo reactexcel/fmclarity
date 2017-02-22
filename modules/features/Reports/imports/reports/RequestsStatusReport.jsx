@@ -167,6 +167,9 @@ const RequestsStatusReport = React.createClass( {
 			}
 		}
 	},
+	printChart() {
+            window.print();
+    },
 
 	render() {
 		var data = this.data.reportData.requests;
@@ -180,10 +183,12 @@ const RequestsStatusReport = React.createClass( {
 		
 		return (
 			<div>
-				<div style = { {padding:"15px"} } className = "report-details">
+				<div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
 
 					<h2>Status Report</h2>
-
+					<button className="btn btn-flat pull-right noprint"  onClick={this.printChart}>
+	                	<i className="fa fa-print" aria-hidden="true"></i>
+	                </button>
 					<div className="row">
 						<div className="col-md-4">
 
@@ -243,7 +248,9 @@ const RequestsStatusReport = React.createClass( {
 					</div>
 
 				</div>
-				<DataTable items={data} fields={fields}/>
+				<div className = "ibox">
+					<DataTable items={data} fields={fields}/>
+				</div>
 			</div>
 		)
 	}

@@ -14,8 +14,6 @@ import { Roles } from '/modules/mixins/Roles';
  */
 const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 
-	Meteor.subscribe( 'User: Facilities, Requests' );
-
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
 		facilities = [];

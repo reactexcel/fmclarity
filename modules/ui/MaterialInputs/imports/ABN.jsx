@@ -26,6 +26,15 @@ const ABN = React.createClass( {
 		this.refs.input.value = "";
 	},
 
+	handleOnBlur(e){
+		// format number and delimit 0's only as inpu eg 0000 etc
+		var curval = e.target.value.replace(/\D+/g, "");
+		if (new RegExp("^[0\s]+$").test(curval)) {
+			e.target.value="0";
+		}
+
+	},
+
 	handleKeyDown(e){
 		// Allow: backspace, delete, tab, escape, enter and .
         if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
@@ -99,6 +108,7 @@ const ABN = React.createClass( {
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
       			onKeyDown		= { this.handleKeyDown }
+      			onBlur			= { this.handleOnBlur }
       		/>
 
 	        {

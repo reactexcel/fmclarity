@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import EmailMessageView from './imports/components/EmailMessageView.jsx';
+import { LoginService } from '/modules/core/Authentication';
+
+import moment from 'moment';
 
 Meteor.methods({
 	//probably Messages.markAllNotificationsRead
@@ -51,7 +54,10 @@ Meteor.methods({
       if(user&&user.emails) {
 
         var subject, html, address, to, email, devMsg;
-        var element = React.createElement(EmailMessageView,{user:user,item:message});
+
+        var expiry = moment( new Date() ).add( { days: 3 } ).toDate();
+        var token = LoginService.generateLoginToken( user, expiry );
+        var element = React.createElement(EmailMessageView,{user:user,item:message, token: token});
 
         //console.log( element );
 

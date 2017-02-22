@@ -295,12 +295,13 @@ function markAsUnread( recipientRoles ) {
     if ( recipientRoles ) {
         recipients = getRecipientListFromRoles( this, recipientRoles );
     } else {
-        recipients = getRecipients( this.getWatchers(), [] );
+        recipients = this.getWatchers();
     }
     import { Requests } from '/modules/models/Requests';
     recipients = _.uniq( recipients, false, function( i ) {
         return i._id;
     } );
+    console.log( recipients );
     recipients.map( ( r ) => {
         if ( r._id != user._id ) {
             Requests.update( { _id: request._id }, {

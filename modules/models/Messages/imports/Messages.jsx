@@ -46,6 +46,15 @@ Messages.helpers( {
 		if ( target.path ) {
 			return Meteor.absoluteUrl( target.path + '/' + target.query._id );
 		}
+	},
+	getEncodedAbsoluteTargetUrl() {
+		var target = this.target ? this.target : this.inboxId;
+		//console.log(target);
+		//return FlowRouter.path(target.path,target.query);
+		if ( target.path ) {
+			//return Meteor.absoluteUrl( target.path + '/' + target.query._id );
+			return encodeURIComponent( Base64.encode( target.path + '/' + target.query._id ) );
+		}
 	}
 } );
 

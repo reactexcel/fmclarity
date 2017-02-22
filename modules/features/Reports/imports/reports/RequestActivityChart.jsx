@@ -33,9 +33,9 @@ const RequestActivityChart = React.createClass( {
 
 		const handle = Meteor.subscribe('User: Facilities, Requests');
 
-		var openQuery = {status:{$ne:'Closed'},}
+		var openQuery = {status:{$ne:'Complete'},}
 		var closedQuery = {
-			status: "Closed",
+			status: "Complete",
 		}
 
 		var team = Session.get( 'selectedTeam' );
@@ -185,7 +185,7 @@ const RequestActivityChart = React.createClass( {
 			lineData: {
 				labels: this.data.labels || [ '' ],
 				datasets: [ {
-					label: "Closed",
+					label: "Complete",
 
 					backgroundColor: "rgba(193,217,245,0.3)",
 					borderColor: "rgba(193,217,245,1)",
@@ -290,12 +290,12 @@ const RequestActivityChart = React.createClass( {
 
 
 	render() {
-		var statusFilterQuery = ["Closed", "Deleted"];
+		var statusFilterQuery = ["Complete", "Deleted"];
 		var openQuery = {
 			status:{$nin:statusFilterQuery},
 		}
 		var closedQuery = {
-			status: "Closed",
+			status: "Complete",
 		}
 
 		var team = Session.get( 'selectedTeam' );
@@ -311,7 +311,7 @@ const RequestActivityChart = React.createClass( {
 			closedQuery[ "facility._id" ] = facility._id;
 		}
 		var buckets = {};
-		var requestStatuses = ['Open','Closed'];
+		var requestStatuses = ['Open','Complete'];
 		var openRequests = Requests.find( openQuery );
 		var closedRequests = Requests.find( closedQuery );
 
@@ -325,10 +325,10 @@ const RequestActivityChart = React.createClass( {
 		});
 
 		closedRequests.map(function(i){
-			if(!buckets['Closed']){
-				buckets[ 'Closed' ] = [];
+			if(!buckets['Complete']){
+				buckets[ 'Complete' ] = [];
 			}
-			buckets[ 'Closed' ].push( i );
+			buckets[ 'Complete' ].push( i );
 		});
 		facilities=null;
 		if (this.data.ready) {

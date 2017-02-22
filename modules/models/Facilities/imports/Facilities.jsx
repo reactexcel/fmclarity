@@ -225,7 +225,34 @@ Facilities.actions({
                         })
                     }
                 })
-                //console.log(services);
+                let keys = Object.keys(rules);
+                keys.map( ( key ) => {
+                    let found = false;
+                    for (var i in services) {
+                        if ( services[i].name == key ) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if ( !found ) {
+                        let complianceRules = rules[ key ].map((rule) => {
+                            rule.facility = {
+                                _id: facility._id
+                            };
+                            rule.service = {
+                                name: key
+                            };
+                            return rule;
+                        });
+                        services.push({
+                            name: key,
+                            data: {
+                                complianceRules
+                            }
+                        })
+                    }
+                } );
+                //console.log({services});
             Meteor.call('Facilities.save', facility, {
                 servicesRequired: services
             });
@@ -299,7 +326,7 @@ Facilities.actions({
                 _.map(facility.servicesRequired, (s) => {
                         let supplier = null;
                         //add children service supplier to list
-                        if (s.children) {
+                        if (s &&s.children) {
                             _.map(s.children, (c) => {
                                 if (c.data && c.data.supplier) {
                                     if (c.data.supplier.name) {
@@ -319,7 +346,7 @@ Facilities.actions({
                                 }
                             });
                         }
-                        if (s.data) {
+                        if (s && s.data) {
                             supplier = s.data.supplier;
                             //add parent service's supplier to list
                             if (supplier) {
@@ -393,23 +420,32 @@ Facilities.actions({
             Facilities.update({ _id: facility._id }, { $set: { "documents": documents } });
         }
     },
+    removeComplianceRule: {
+        authentication: true,
+        helper: (facility, servicePosition, rulePosition, serviceName ) => {
+            let servicesRequired = facility.servicesRequired;
+            _.map( servicesRequired, ( svc, i ) => { if(svc.name == serviceName) servicePosition = i } );
+            servicesRequired[ servicePosition ].data.complianceRules.splice(rulePosition,1);
+            Facilities.update({ _id: facility._id }, { $set: { "servicesRequired": servicesRequired } });
+        }
+    },
 
     updateRealEstateAgency: {
         authentication: true,
-        helper: (facility, item, callback) => {
-          Facilities.update( {
-                 "_id": facility._id
-               }, {
-                 $set: {
-                   realEstateAgency: {
-                       _id: item._id,
-                       name: item.name,
-                       type: item.type
-                     }
-                  }
-                }, ( ) => {
-                     callback( facility );
-                } );
+        method: (facility, item) => {
+            Facilities.update( {
+                    "_id": facility._id
+                }, {
+                     $set: {
+                        realEstateAgency: {
+                            _id: item._id,
+                            name: item.name,
+                            type: item.type
+                        }
+                    }
+                }
+            );
+            return Facilities.findOne( { _id: facility._id } ) || facility;
         }
     },
 

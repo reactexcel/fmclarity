@@ -5,6 +5,7 @@
 import React from "react";
 import ComplianceViewDetail from './ComplianceViewDetail.jsx';
 import { FacilityFilter } from '/modules/models/Facilities';
+import DefaultComplianceRule from './../../data/DefaultComplianceRule.js'
 
 /**
  * @class 			CompliancePageIndex
@@ -16,11 +17,9 @@ function CompliancePageIndex( props ) {
 	if( !team ) {
 		return <div/>
 	}
-
 	return (
 		<div className = "facility-page animated fadeIn">
-
-	        <FacilityFilter items = { facilities }/>
+			<FacilityFilter items = { facilities } selectedItem = { facility } />
 	        <div style = { {paddingTop:"50px"} }>
 				<div className="card-body ibox">
 					<ComplianceViewDetail items = { services } item = { facility } />

@@ -9,7 +9,9 @@ export default function FacilityDetails( props ) {
 	return (
 		<div className="contact-info">
         	<span className="contact-title">Site: {props.item.name}<br/></span>
+        	
         	<span><AddressLink item={props.item.address}/><br/></span>
+        	
     	</div>
 	)
 }

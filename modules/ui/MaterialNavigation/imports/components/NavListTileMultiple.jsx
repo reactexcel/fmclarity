@@ -12,22 +12,20 @@ import React from "react";
  * @memberOf 		module:ui/MaterialNavigation
  * @param 			{array} items - An array of items to use in generating the icon
  */
-function NavListTileMultiple( props )
-{
-	var items = props.items;
-	var images = [];
-	if ( items && items.length )
-	{
-		for ( var i = 0; i < 3; i++ )
-		{
-			if ( items[ i ] )
-			{
-				images.push( items[ i ].thumbUrl );
-			}
-		}
-	}
-	return (
-		<div>
+function NavListTileMultiple( props ) {
+    var items = props.items;
+    var images = [];
+    if ( items && items.length ) {
+        for ( var i = 0; i < 3; i++ ) {
+            if ( items[ i ] ) {
+            	if( items[ i ].getThumbUrl ) {
+	                images.push( items[ i ].getThumbUrl() );
+	            }
+            }
+        }
+    }
+    return (
+        <div>
 
 			<div className="avatar" style={{position:"relative",float:"left"}}>
 
@@ -46,7 +44,7 @@ function NavListTileMultiple( props )
 			<div style={{float:"left",paddingLeft:"42px"}}>All Facilities</div>
 
 		</div>
-	)
+    )
 }
 
 export default NavListTileMultiple;

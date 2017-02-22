@@ -68,20 +68,6 @@ export default DocumentSchema = {
 		description: "The site for this job",
 		type: "object",
 		size: 12,
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return Facilities.findOne( item.facility._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return _.pick( item.facility, '_id', 'name' );
-				}
-			}
-			*/
-		},
 		input: Select,
 		defaultValue: ( item ) =>{
 				return Session.getSelectedFacility();
@@ -102,20 +88,6 @@ export default DocumentSchema = {
 		optional: true,
 		description: "Document is related to request",
 		type: "object",
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.request && item.request._id ) {
-					return Requests.findOne( item.request._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.request && item.request._id ) {
-					return _.pick( item.request, '_id', 'name' );
-				}
-			}
-			*/
-		},
 
 		options: ( item ) => {
 			if ( item.facility ) {
@@ -216,9 +188,10 @@ export default DocumentSchema = {
 
 	},
 	serviceType: {
-		input: Text,
+		input: Select,
 		label: "Service type",
 		optional: true,
+		type: "object",
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -236,7 +209,27 @@ export default DocumentSchema = {
 				"SWMS",
 			].indexOf( item.type ) > -1;
 		},
+		options: function( item ) {
+			let selectedTeam = Session.getSelectedTeam(),
+				teamType = null,
+				items = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+
+			if ( teamType == 'fm' && item.facility ) {
+				items = item.facility.servicesRequired;
+			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
+				items = team.getAvailableServices();
+			}
+
+
+			return {
+				items: items
+			}
+		}
 	},
+	/*
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -261,9 +254,10 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 	},
+	*/
 	issuer: {
 		input: Text,
-		label: "Issuer",
+		label: "Insurer",
 		optional: true,
 		size: 6,
 		condition: function( item ) {
@@ -274,9 +268,17 @@ export default DocumentSchema = {
 		},
 	},
 	insuranceType: {
-		input: Text,
+		input: Select,
 		label: "Insurance type",
 		optional: true,
+		options: {
+			items:[
+				'Public Liablity',
+				'Professional Indemnity',
+				'Worker\'s Compensation',
+				'Other',
+			],
+		},
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -596,7 +598,7 @@ export default DocumentSchema = {
 											paddingTop: '4px',
 	    								paddingBottom: '4px',
 	    								paddingLeft: '15px',
-	    								backgroundColor: '#bcaab1',
+	    								backgroundColor: 'aliceblue',
 	    								fontSize: '13px',
 	    								fontWeight: '400',
 											marginLeft: '5px',

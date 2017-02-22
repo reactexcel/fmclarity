@@ -7,7 +7,7 @@ import { AccessGroups } from '/modules/core/Authentication';
 
 import PageDashboardContainer from '../imports/containers/PageDashboardContainer.jsx';
 import ReportsPageIndex from '../imports/components/ReportsPageIndex.jsx';
-import ReportsPageSingle from '../imports/components/ReportsPageSingle.jsx';
+import ReportsPageSingleContainer from '../imports/containers/ReportsPageSingleContainer.jsx';
 
 AccessGroups.loggedIn.add( {
     name: 'reports',
@@ -25,8 +25,9 @@ AccessGroups.loggedIn.add( {
     name: 'report',
     path: '/report/:reportId',
     action( params ) {
+        console.log( params );
         mount( LayoutMain, {
-            content: <ReportsPageSingle id = {params.reportId}/>
+            content: <ReportsPageSingleContainer id = {params.reportId} />
         } );
     }
 } );

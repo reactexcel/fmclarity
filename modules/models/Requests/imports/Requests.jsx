@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import { Model } from '/modules/core/ORM';
@@ -16,13 +16,14 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
 
 /**
- * @memberOf 		module:models/Requests
+ * @memberOf        module:models/Requests
  */
 const Requests = new Model( {
     schema: RequestSchema,
@@ -36,14 +37,6 @@ const Requests = new Model( {
                 },
                 getWatchers() {
                     return this.getMembers();
-                    /*
-                    let user = Meteor.user(),
-                        owner = this.getOwner(),
-                        team = this.getTeam(),
-                        supplier = this.getSupplier(),
-                        assignee = this.assignee;
-                    return [ user, owner, team, supplier, assignee ];
-                    */
                 }
             }
         } ],
@@ -62,9 +55,11 @@ if ( Meteor.isServer ) {
 
     Requests.collection._ensureIndex( { 'team._id': 1 } );
     Requests.collection._ensureIndex( { 'owner._id': 1 } );
+    Requests.collection._ensureIndex( { 'members._id': 1 } );
 }
 
 Requests.save.before( ( request ) => {
+
     if ( request.type == "Preventative" ) {
         request.status = "PMP";
         request.priority = "PMP";
@@ -72,8 +67,22 @@ Requests.save.before( ( request ) => {
         request.status = "Booking";
         request.priority = "Booking";
     }
+
     if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
-        request.costThreshold = '0';
+        request.costThreshold = 0;
+    }
+
+    if ( request.supplier ) {
+        request.supplier = {
+            _id: request.supplier._id,
+            name: request.supplier.name
+        };
+    }
+    if ( request.team ) {
+        request.team = {
+            _id: request.team._id,
+            name: request.team.name
+        };
     }
 } );
 
@@ -125,18 +134,22 @@ Requests.methods( {
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
-            let supplier = request.getSupplier(),
-                supplierManagers = null;
-            if ( supplier ) {
-                if ( supplier.type == 'fm' ) {
-                    supplierManagers = supplier.getMembers( { role: 'portfolio manager' } );
-                } else {
-                    supplierManagers = supplier.getMembers( { role: 'manager' } );
+            let supplierContacts = null;
+            if( request.supplierContacts && request.supplierContacts.length ) {
+                supplierContacts = request.supplierContacts;
+            }
+            else {
+                let supplier = request.getSupplier();
+                if ( supplier ) {
+                    if ( supplier.type == 'fm' ) {
+                        supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
+                    } else {
+                        supplierContacts = supplier.getMembers( { role: 'manager' } );
+                    }
                 }
             }
-
-            if ( supplierManagers ) {
-                request.dangerouslyReplaceMembers( supplierManagers, {
+            if ( supplierContacts && supplierContacts.length ) {
+                request.dangerouslyReplaceMembers( supplierContacts, {
                     role: "supplier manager"
                 } );
             }
@@ -166,7 +179,7 @@ Requests.methods( {
         method: function( request ) {
             let status = 'New';
             if ( request.costThreshold == "" ) {
-                request.costThreshold = '0';
+                request.costThreshold = 0;
             }
 
             if ( request.type == 'Preventative' ) {
@@ -185,7 +198,6 @@ Requests.methods( {
 
             let newRequestId = Meteor.call( 'Issues.save', request, {
                     status: status,
-                    issuedAt: new Date(),
                     code: code,
                     members: getMembersDefaultValue( request )
                 } ),
@@ -201,7 +213,6 @@ Requests.methods( {
                     owner = newRequest.getOwner();
                 }
                 newRequest.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility manager", "supplier" ],
                     message: {
                         verb: "created",
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -448,7 +459,7 @@ Requests.methods( {
 
     markRecipentAsRead: {
         authentication: true,
-        helper: function( request ) {
+        method: function( request ) {
             let user = Meteor.user();
             if ( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ) {
                 Requests.update( { _id: request._id }, {
@@ -534,25 +545,27 @@ function setAssignee( request, assignee ) {
 
 function actionIssue( request ) {
 
-    let code = null;
-    if ( request && request.team && !request.code ) {
-        team = Teams.findOne( {
-            _id: request.team._id
-        } );
-        code = team.getNextWOCode();
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            code: code,
-            members: getMembersDefaultValue( request )
-        } );
-    } else {
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            members: getMembersDefaultValue( request )
-        } );
+    let code = null,
+        userId = Meteor.user(),
+        user = Users.findOne( userId._id );
+
+    if ( request ) {
+        if ( request.code ) {
+            code = request.code;
+        } else if ( request.team ) {
+            let team = Teams.findOne( {
+                _id: request.team._id
+            } );
+            code = team.getNextWOCode();
+        }
     }
+
+    Meteor.call( 'Issues.save', request, {
+        status: "Issued",
+        issuedAt: new Date(),
+        code: code,
+        members: getMembersDefaultValue( request )
+    } );
 
 
     request = Requests.findOne( request._id );
@@ -636,17 +649,29 @@ function getMembersDefaultValue( item ) {
         let facility = Facilities.findOne( item.facility._id );
 
         let facilityMembers = facility.getMembers( {
-            role: { $in: [ 'manager', 'caretaker' ] }
+            role: { $in: [ 'manager', 'caretaker', 'property manager' ] }
         } );
 
         facilityMembers.map( ( member ) => {
             if ( member._id != owner._id ) {
+
                 let role = member.getRole( facility );
-                members.push( {
-                    _id: member._id,
-                    name: member.profile.name,
-                    role: `facility ${role}`
-                } )
+
+                if ( role == 'property manager' ) {
+                    if ( item.service.data && item.service.data.baseBuilding ) {
+                        members.push( {
+                            _id: member._id,
+                            name: member.profile.name,
+                            role: 'property manager'
+                        } )
+                    }
+                } else {
+                    members.push( {
+                        _id: member._id,
+                        name: member.profile.name,
+                        role: `facility ${role}`
+                    } )
+                }
             }
         } );
     }
@@ -687,13 +712,13 @@ function actionComplete( request ) {
             closerRole = closer.getRole();
 
         var newRequest = {
+            owner: request.owner,
+            team: request.team,
             facility: request.facility,
             supplier: request.supplier,
-            team: request.team,
 
             level: request.level,
             area: request.area,
-            members: request.members,
             attachments: request.attachments || [],
             status: "New",
             service: request.service,

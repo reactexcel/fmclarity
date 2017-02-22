@@ -18,7 +18,6 @@ export default function RequestFilter( { items, selectedItem, onChange } ) {
                 items       = { items }
                 onChange    = 
                     { ( item ) => {
-                        console.log( item );
                         Session.set( 'selectedStatus', item );
                     } }
             />

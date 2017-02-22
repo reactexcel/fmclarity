@@ -119,12 +119,12 @@ const TeamPanel = React.createClass( {
 
         return (
             <div>
-				{ this.props.onBack? 
-									<div style = { { padding:'10px', fontSize: '20px', color: '#999', cursor: 'pointer', float: 'left' } }>
-										<i className = "fa fa-arrow-left" onClick = { () => {
-											this.props.onBack();
-										} }/>
-									</div>
+				{ this.props.onBack?
+					<div style = { { padding:'10px', fontSize: '20px', color: '#999', cursor: 'pointer', float: 'left' } }>
+						<i className = "fa fa-arrow-left" onClick = { () => {
+							this.props.onBack();
+						} }/>
+					</div>
 				: null }
 
 
@@ -139,14 +139,15 @@ const TeamPanel = React.createClass( {
 
 					<h2>{team.name}</h2>
 
-					<i style={{color:"#999",display:"block",padding:"3px"}}>{ contactName ? contactName : null }<br/></i>
+					<i style = { {color:"#999",display:"block",padding:"3px"} } >{ contactName ? contactName : null }<br/></i>
 					<b>Email</b> { team.email }<br/>
 					{ team.phone ? <span><b>Phone</b> { team.phone }<br/></span> :null }
 					{ team.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { team.phone2 }<br/></span> :null }
 					{ insuranceExpiry ? <span><b>Insurance Expiry</b> { insuranceExpiry }</span> :null }
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
 
-					{/*this should def be own component*/availableServices && availableServices.length?
+					{/*this should def be own component*/}
+                    {availableServices && availableServices.length?
 
 					availableServices.map( (service,index) => {
 						return <span key = { service.name }>{ index?' | ':'' }{ service.name }</span>
@@ -154,6 +155,9 @@ const TeamPanel = React.createClass( {
 
 					:null}
 				</div>
+                <div style = { { padding: "10px 30px 20px 30px" } } >
+                    { team.description }
+                </div>
 			</div>
 
 			<Tabs tabs={[

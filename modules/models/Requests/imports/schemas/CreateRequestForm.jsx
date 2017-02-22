@@ -1,7 +1,7 @@
 export default CreateRequestForm = [
 	/*'team',*/
 	'type',
-	
+
 	'facility',
 
 	/* location */
@@ -9,12 +9,13 @@ export default CreateRequestForm = [
 	'area',
 	'identifier',
 
-
 	'name',
 
 	'service',
 	'subservice',
 	'supplier',
+
+	'supplierContact',
 
 	'assignee',
 
@@ -31,5 +32,7 @@ export default CreateRequestForm = [
 
 	'description',
 
-	'attachments'
+	'attachments',
+	'footer'
+
 ];

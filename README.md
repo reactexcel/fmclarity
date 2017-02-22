@@ -1,6 +1,6 @@
 FM Clarity is a commercial SaaS app for facility management. 
 
-It is written in Meteor (currently 1.3.2.4) with interface components rendered primarily using ReactJS. 
+It is written in Meteor (currently 1.3.2.5) with interface components rendered primarily using ReactJS. 
 
 The back end is driven by MongoDB (currently version 2.6) with a custom ORM, RBAC and interface components. 
 
@@ -14,7 +14,7 @@ To run a local development copy of FMC make a local clone of [https://bitbucket.
 
 ```bash
 cd fm-clarity
-meteor install
+meteor update
 npm install
 meteor
 ```
@@ -79,7 +79,11 @@ The data model consists of eight main entities listed here in order of significa
 * **Documents** _Flexible documents which represent an actual real world physical document such as insurance policy or floor plan. Can be tagged against a team, facility, supplier or user._ ([See DocumentSchema](models_Documents_imports_schemas_DocumentSchema.jsx.html))
 * **Files** _A CollectionFS collection using _the sadly deprecated [CollectionFS Package](https://github.com/CollectionFS/Meteor-CollectionFS). Used by thumbs and documents_ 
 
-**Mixins**
+## Models
+
+At the core of the FMC app is a custom Object Relational-Mapping module (`/modules/core/ORM/`) that wraps around each of the Mongo collections and a custom Role Based Access Control package (`/packages/fmc-RBAC/`) that handles methods and permissions.
+
+## Mixins
 
 In addition to the Mongo collections used by this application, a number of mixins are used that add functionality to the collections. [(See module:mixins)](module-mixins.html) These include:
 
@@ -89,7 +93,6 @@ In addition to the Mongo collections used by this application, a number of mixin
 * **Thumbs** _A mixin that adds a thumb field to documents in the collection and add helpers related to saving and manipulating a document thumb._
 * **Areas** _Adds fields and helpers related to areas/location in a document. Used primarily by [Facilities](module-models_Facilities.html) but implemented as a mixin for potential reusability._
 * **Services** _Adds fields and helpers related to services in a document. For [Facilities](module-models_Facilities.html) this is mainly [ServicesRequired](module-mixins_Services.ServicesRequiredEditor.html). For [Teams](module-models_Teams.html) it is primarily [ServicesProvided](module-mixins_Services.ServicesProvidedEditor.html). Also provides helpers for matching services required with services provided._
-
 
 ## Interface components
 

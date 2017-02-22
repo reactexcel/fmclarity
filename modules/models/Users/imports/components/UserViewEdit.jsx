@@ -198,7 +198,7 @@ export default UserViewEdit = React.createClass( {
 
 		    		{ team ?
 	    			<div className = "col-sm-12">
-	    				<UserViewRelationEdit member = { user } team = { team } group = { group }/>
+	    				<UserViewRelationEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 	    			</div>
 		    		: null }
 

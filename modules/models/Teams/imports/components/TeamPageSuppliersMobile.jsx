@@ -23,7 +23,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 	// Causes facility selected in filterbox left nav to be also selected globally
 	handleSelect( selectedSupplier ) {
 		this.setState( {
-			selectedSupplier 
+			selectedSupplier
 		} )
 	}
 
@@ -52,8 +52,8 @@ export default class TeamPageSuppliersMobile extends React.Component {
 			<div style = { { paddingTop:"50px" } }>
             <div className = "nav-list">
 	        { suppliers ? suppliers.map( ( supplier, idx ) => {
-	        	return 	<div 
-								key 		= { `${idx}-${supplier._id}` } 
+	        	return 	<div
+								key 		= { `${idx}-${supplier._id}` }
 								className 	= "list-tile"
 								onClick		= { () => { TeamActions.view.run( supplier ) } }
 							>

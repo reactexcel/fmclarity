@@ -4,6 +4,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Notifications, NotificationList } from '/modules/models/Notifications';
 
 import UserProfileMenu from './UserProfileMenu.jsx';
+import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
 
 export default function TopNavigationBar( props ) {
 
@@ -61,6 +62,9 @@ export default function TopNavigationBar( props ) {
                         </span>
                         <NotificationList items = { notifications }/>
                         <DesktopNotificationPopUp { ...props } />
+                    </div>
+                    <div className="searchbox">
+                    {/*<FMInstantSearchBox/>*/}
                     </div>
                 </div>
             </nav>

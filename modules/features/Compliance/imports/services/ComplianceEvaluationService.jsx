@@ -1,7 +1,11 @@
-import moment from 'moment';
 import { Facilities } from '/modules/models/Facilities';
+import { Requests } from '/modules/models/Requests';
+import { Documents, DocViewEdit } from '/modules/models/Documents';
+import { TeamActions } from '/modules/models/Teams';
+import React from 'react';
+import moment from 'moment';
 
-export default ComplianceEvaluationService = new function() {
+ComplianceEvaluationService = new function() {
 
     var defaultResult = {
         passed: false,
@@ -13,14 +17,160 @@ export default ComplianceEvaluationService = new function() {
         }
     }
 
+
+    var docList1 = [
+            "Audit",
+            "Contract",
+            "Inspection",
+            "Invoice",
+            "MSDS",
+            "Plan",
+            "Procedure",
+            "Quote",
+            "Register",
+            "Registration",
+            "Service Report",
+            "SWMS",
+        ],
+        docList2 = [
+            'Bank Guarantee',
+            'Contract',
+            'Emergency Management',
+            'Insurance',
+            'Lease',
+            'Quote',
+            'Register',
+            'Registration'
+        ];
+
     var evaluators = {
         //can pass in facility and service for more efficient calculation
-        "Document exists": function( rule, facility, service ) {},
-        "Document is current": function( rule, facility, service ) {
+        "Document exists": function( rule, facility, service ) {
+            //  console.log({rule});
+            var docCount = null, docs = null, docName = null, docCurser = null,
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
+                query = rule.document && rule.document.query ?
+                        JSON.parse( rule.document.query ) : {
+                            "facility._id": facility["_id"],
+                            $and: [
+                                { type: rule.docType },
+                                { name: { $regex: rule.docName, $options: "i" } }
+                            ]
+                        };
+            if ( _.contains( docList1, rule.docType ) ) {
+                query.$and.push( { 'serviceType.name': rule.service.name } );
+            }
+            if ( _.contains( docList2, rule.docType ) ) {
+                query && query.$and.push( { expiryDate: { $gte: tomorrow } } );
+            }
+            docCurser = query && Documents.find( query );
+            docCount = docCurser.count();
+            docs = docCurser.fetch();
+            if( docs && docs.length ) {
+                let doc = docs[ docCount - 1 ];
+                docName = doc.name;
+            }
+            //   console.log({count: docCount});
+            //   console.log(query);
+            if ( docCount ) {
+                return _.extend( {}, defaultResult, {
+                    passed: true,
+                    message: {
+                        summary: "passed",
+                        detail: docCount + " " + ( docName ? ( docName + " " ) : "" ) + "documents exists."
+                    },
+                } )
+            }
 
+            return _.extend( {}, defaultResult, {
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail: "Create document"
+                },
+                resolve: function() {
+                    let type = "team",
+                        team = Session.getSelectedFacility(),
+                        _id = team._id,
+                        name = team.name,
+                        owner = Meteor.user(),
+                        newDocument = Documents.create( {
+                            team: { _id, name },
+                            owner: { type, _id, name },
+                            name: rule.docName,
+                            type: rule.docType,
+                            serviceType: rule.service,
+                        } );
+                    Modal.show( {
+                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                    } )
+                }
+            } )
+        },
+        "Document is current": function( rule, facility, service ) {
+            //console.log( rule );
+            // if( !rule || !rule.document ) {
+            //     return;
+            // }
+            var doc = null, yesterday, tomorrow, today,
+                query = rule.document && rule.document.query ?
+                    JSON.parse( rule.document.query ) : {
+                        "facility._id": facility["_id"],
+                        $and: [
+                            { type: rule.docType },
+                            { name: { $regex: rule.docName, $options: "i" } }
+                        ]
+                    };
+            if ( _.contains( docList1, rule.docType ) ) {
+                query.$and.push( { 'serviceType.name': rule.service.name } );
+            }
+            if ( _.contains( docList2, rule.docType ) ) {
+                //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
+                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
+                query.$and.push( { expiryDate: today } );
+            }
+            doc = query && Documents.findOne( query );
+            //    console.log({count: docCount});
+            //    console.log(query);
+            if ( doc ) {
+                return _.extend( {}, defaultResult, {
+                    passed: true,
+                    message: {
+                        summary: "passed",
+                        detail: ( doc.name? ( doc.name + " " ) : "" )
+                    }
+                } )
+            }
+
+            return _.extend( {}, defaultResult, {
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail: "Create document"
+                },
+                resolve: function() {
+                    let type = "team",
+                        team = Session.getSelectedFacility(),
+                        _id = team._id,
+                        name = team.name,
+                        owner = Meteor.user();
+
+                    let newDocument = Documents.create( {
+                        team: { _id, name },
+                        owner: { type, _id, name },
+                        name: rule.docName,
+                        type: rule.docType,
+                        serviceType: rule.service,
+                    } );
+                    Modal.show( {
+                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                    } )
+                }
+            } )
         },
         "PPM schedule established": function( rule, facility, service ) {
-            import { Requests } from '/modules/models/Requests';
             //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
@@ -53,26 +203,27 @@ export default ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM rules"
+                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 resolve: function() {
+                    let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let id = Meteor.call('Issues.save', {
+                    let newRequest = Requests.create({
                         facility: {
                             _id: facility._id,
                             name: facility.name
                         },
+                        team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
                         status: 'PMP',
                         service: rule.service
-                    } );
-                    console.log ( id );
+                    });
+                    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
         "PPM event completed": function( rule, facility, service ) {
-            import { Requests } from '/modules/models/Requests';
             var event;
             if ( rule.event ) {
                 //event = Requests.findOne(rule.event._id);
@@ -83,11 +234,15 @@ export default ComplianceEvaluationService = new function() {
             }
 
             if ( event ) {
+                let nextDate = event.getNextDate();
+                    previousDate = event.getPreviousDate();
+                    nextRequest = event.findCloneAt( nextDate );
+                    previousRequest = event.findCloneAt( previousDate );
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: "Last completed " + moment( event.dueDate ).format( 'ddd Do MMM' )
+                        detail: `Last completed ${moment( previousDate ).format( 'ddd Do MMM YY' )} ➡️️ Next due date is ${moment( nextDate ).format( 'ddd Do MMM YY' )}`
                     },
                     data: event
                 } )
@@ -96,22 +251,37 @@ export default ComplianceEvaluationService = new function() {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: "PPM event not found"
+                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 resolve: function() {
                     let team = Session.getSelectedTeam();
-                    Meteor.call('Issues.save', {
+                    console.log( 'attempting to resolve' );
+                    let newRequest = Requests.create({
                         facility: {
                             _id: facility._id,
                             name: facility.name
                         },
+                        team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
                         service: rule.service
-                    } );
+                    });
+                    Meteor.call( 'Issues.save', newRequest );
+                    // Meteor.call( 'Issues.save', {
+                    //     facility: {
+                    //         _id: facility._id,
+                    //         name: facility.name
+                    //     },
+                    //     type: 'Preventative',
+                    //     priority: 'Scheduled',
+                    //     status: 'PMP',
+                    //     name: rule.event,
+                    //     frequency: rule.frequency,
+                    //     service: rule.service
+                    // } );
                 }
             } )
         }

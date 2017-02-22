@@ -1,7 +1,6 @@
-import { AddressSchema } from '/modules/models/Facilities';
 import { DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select, ABN, Phone } from '/modules/ui/MaterialInputs';
-import { Facilities } from '/modules/models/Facilities';
+import { Facilities, AddressSchema } from '/modules/models/Facilities';
 import { ServiceDefaults } from '/modules/mixins/Services';
 
 //import { Facilities } from '/modules/models/Facilities';
@@ -37,9 +36,9 @@ export default TeamSchema = {
         },
         options: {
             items: [
-                { name:'Facility Management', val:"fm" },
-                { name:'Supplier', val:"contractor" },
-                { name:'Real Estate Agent', val:"real estate" }
+                { name: 'Facility Management', val: "fm" },
+                { name: 'Supplier', val: "contractor" },
+                { name: 'Real Estate Agent', val: "real estate" }
             ]
         },
     },
@@ -92,9 +91,54 @@ export default TeamSchema = {
     },
 
     address: {
-        label: "Address",
-        description: "Location of primary office",
-        subschema: AddressSchema,
+        type: "object",
+        condition: "contractor",
+        subschema: {
+
+                streetNumber: {
+                    input: Text,
+                    label: "Number",
+                    type: "string",
+                    size: 3
+                },
+                streetName: {
+                    input: Text,
+                    type: "string",
+                    label: "Street name",
+                    size: 6
+                },
+                city: {
+                    input: Text,
+                    label: "City",
+                    size: 6,
+                    type: "string",
+                },
+                state: {
+                    label: "State",
+                    size: 3,
+                    input: Select,
+                    type: "string",
+                    options: {
+                        items: [
+                            "ACT",
+                            "NSW",
+                            "SA",
+                            "TAS",
+                            "NT",
+                            "QLD",
+                            "VIC",
+                            "WA"
+                        ]
+                    }
+                },
+                postcode: {
+                    input: Text,
+                    label: "Postcode",
+                    type: "string",
+                    size: 3
+                }
+            }
+
     },
 
     thumb: {
@@ -112,6 +156,15 @@ export default TeamSchema = {
         type: "number",
         input: Text,
         defaultValue: 500,
+        condition: "fm"
+    },
+
+    defaultCostThreshold: {
+        label: "Threshold value for work orders",
+        description: "Maximum value set for the value of a work order",
+        type: "number",
+        input: Text,
+        defaultValue: 1000,
         condition: "fm"
     },
 
@@ -139,77 +192,10 @@ export default TeamSchema = {
         }
     },
 
-    //////////////////////////////////////////////
-    // Relations
-    //////////////////////////////////////////////
-    facilities: {
-        label: "Facilities",
-        description: "Sites maintained by this team",
-        relation: {
-            //type: ORM.OneToMany,
-            //source: "Facilities",
-            //key: "team._id"
-            join: ( team ) => {
-                return Facilities.findAll( { 'team._id': team._id }, { sort: { name: 1 } } )
-            },
-            unjoin: ( team ) => {
-                return null
-            }
-        }
-    },
-
-    members: {
-        label: "Members",
-        description: "Members of this team",
-    },
-
-    contact: {
-        label: "Primary contact",
-        description: "Primary contact for the facility",
-        relation: {
-            join: ( team ) => {
-                var managers = team.getMembers( {
-                    role: "manager"
-                } );
-                if ( managers && managers.length ) {
-                    return managers[ 0 ];
-                }
-            },
-            unjoin: ( team ) => {
-                return null;
-            }
-        }
-    },
-
-    // cull
-    suppliers: {
-        label: "Suppliers",
-        description: "Common suppliers for facilities within this team",
-        /*relation:
-        {
-            type: ORM.HasMembers,
-            source: "Teams",
-            key: "team._id"
-        }*/
-    },
-
     documents: {
         label: "Documents",
         description: "Saved team documents",
-        /*relation:
-        {
-            type: ORM.HasMembers,
-            source: "Files",
-            key: "team._id"
-        },*/
         input: DocExplorer
     },
 
-    /*
-        notifications / messages :
-        {
-
-        }
-      */
-    //}
 }
