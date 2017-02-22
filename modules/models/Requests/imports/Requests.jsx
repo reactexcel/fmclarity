@@ -134,8 +134,22 @@ Requests.methods( {
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
-            if ( request.supplierContacts ) {
-                request.dangerouslyReplaceMembers( request.supplierContacts, {
+            let supplierContacts = null;
+            if( request.supplierContacts && request.supplierContacts.length ) {
+                supplierContacts = request.supplierContacts;
+            }
+            else {
+                let supplier = request.getSupplier();
+                if ( supplier ) {
+                    if ( supplier.type == 'fm' ) {
+                        supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
+                    } else {
+                        supplierContacts = supplier.getMembers( { role: 'manager' } );
+                    }
+                }
+            }
+            if ( supplierContacts && supplierContacts.length ) {
+                request.dangerouslyReplaceMembers( supplierContacts, {
                     role: "supplier manager"
                 } );
             }
@@ -445,7 +459,7 @@ Requests.methods( {
 
     markRecipentAsRead: {
         authentication: true,
-        helper: function( request ) {
+        method: function( request ) {
             let user = Meteor.user();
             if ( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ) {
                 Requests.update( { _id: request._id }, {

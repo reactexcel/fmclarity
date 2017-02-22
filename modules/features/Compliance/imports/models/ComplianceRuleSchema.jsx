@@ -116,7 +116,15 @@ export default ComplianceRuleSchema = {
         options( item ) {
             import { Requests } from '/modules/models/Requests';
             return {
-                items: Requests.findAll( { "facility._id": item.facility._id, status: "PMP", type: "Preventative" } ),
+                items: _.pluck(Requests.findAll( {
+                     "facility._id": item.facility._id,
+                       type: "Preventative"
+                    }, {
+                        fields: {
+                             name: true
+                         }
+                     }
+                 ), "name"),
                 addNew: {
                     show: true,
                     label: "Add New",
@@ -196,7 +204,7 @@ export default ComplianceRuleSchema = {
         size: 12,
         input( props ){
             let period
-            if( props.item.frequency.period ){
+            if( props.item.frequency.period && props.item.frequency.number ){
                 switch (props.item.frequency.period) {
                     case "daily":
                         period = "day"
@@ -224,8 +232,22 @@ export default ComplianceRuleSchema = {
                 <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
                     {props.item.frequency.number && props.item.frequency.period && props.item.frequency.endDate?
                         <div>
-                        {`Summary: Repeat every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
-                    </div>: null}
+                            {`Repeats every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
+                        </div>:(
+                            props.item.frequency.number && props.item.frequency.period ?
+                            <div>
+                                {`Repeats every ${props.item.frequency.number} ${period} until stopped`}
+                            </div>:(
+                                props.item.frequency.period && props.item.frequency.endDate?
+                                <div>
+                                    {props.item.frequency.endDate?`Repeat ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                </div>:
+                                <div>
+                                    {props.item.frequency.unit?`Repeat ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                </div>
+                            )
+                        )
+                    }
                 </div>
             );
         }

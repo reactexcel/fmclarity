@@ -56,7 +56,7 @@ export default class RequestsPageIndex extends Component {
 					<div className="col-xs-offset-3 col-xs-3 desktop-only">
 						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete' ] } selectedItem = { selectedStatus } />
 					</div>
-					{ user.getRole && user.getRole() == 'fmc support' ?
+					{ /*user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >
 							<Switch
 								value={ this.state.active}
@@ -72,7 +72,7 @@ export default class RequestsPageIndex extends Component {
 								Show Overdue Work Order only
 							</Switch>
 						</div> : null
-					}
+					*/ }
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">

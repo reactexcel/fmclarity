@@ -95,7 +95,6 @@ export default function RequestsTable( { requests, filter, columns } ) {
     }
 
     if ( filter ) {
-        //let statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected" ] } },
         requests = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
             filter
@@ -123,14 +122,10 @@ export default function RequestsTable( { requests, filter, columns } ) {
                 ( request ) => {
                     let team = Session.getSelectedTeam();
                     let supplier = request.supplier;
-                    //Issue WO if team id and suppliers id of request matches.
-                    /*if ( request.status == "New" && team && supplier && team._id == supplier._id ) {
-                        RequestActions.issue.run( request );
-                    }*/
                     RequestActions.view.run( request )
 
                 }
-            } // need a better solution for this
+            }
         />
         </div>
     )

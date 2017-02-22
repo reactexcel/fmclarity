@@ -12,7 +12,7 @@ export default RequestFrequencySchema = {
 	      			placeholder={props.placeholder}
 	      			item={props.item}
 	      			items={props.items}
-	      			value={props.value?(props.value==="custom"?"Custom":"Repeat "+props.value+" until stopped"):""}
+	      			value={props.value}
 	      			onChange={ item => props.onChange(item) }
 	    		/>
 	        );
@@ -40,7 +40,7 @@ export default RequestFrequencySchema = {
 
 	number: {
 	    label: "Repeats every...",
-	    description: "The number of days, weeks, months etc between repeats",
+	    description: "The number of days, weeks, months etc.",
 	    input: Text,
 	    type: "string",
 	    defaultValue: 6,
@@ -81,7 +81,7 @@ export default RequestFrequencySchema = {
 			],
 			afterChange: item => { period = item.period; },
 		},
-		condition: item => item.number && item.number.length && item.unit === "custom",
+		condition: item => item.unit === "custom",
 	},
 
 
@@ -89,7 +89,7 @@ export default RequestFrequencySchema = {
 	    label: 'End date',
 	    size: 6,
 	    input: DateInput,
-	    condition: item => item.number && item.number.length && item.unit === "custom",
+	    condition: item => item.unit === "custom",
 	}
 }
 

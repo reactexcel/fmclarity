@@ -20,8 +20,8 @@ const create = new Action( {
         let team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -34,8 +34,8 @@ const edit = new Action( {
         let { roles, actors } = Roles.getRoles( team );
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -47,7 +47,7 @@ const view = new Action( {
     action: ( team ) => {
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamPanel item = { team } />
+                <TeamPanel item = { team } />
             </DropFileContainer>
         } )
     }
@@ -83,14 +83,14 @@ const createFacility = new Action( {
             let clientsOfSupplier = team.getClientsOfSupplier();
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<CreateSupplierFacility clients={clientsOfSupplier} />
-				</DropFileContainer>
+                    <CreateSupplierFacility clients={clientsOfSupplier} />
+                </DropFileContainer>
             } )
         } else {
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<FacilityStepperContainer params = { { item } } />
-				</DropFileContainer>
+                    <FacilityStepperContainer params = { { item } } />
+                </DropFileContainer>
             } )
         }
     }
@@ -105,8 +105,12 @@ const createRequest = new Action( {
     verb: "created a work order",
     icon: 'fa fa-plus',
     // action should return restult and that gets used in the notification
-    action: ( team, callback ) => {
+    action: ( team, callback, options ) => {
         let item = { team };
+        if ( options ) {
+            options.team = team;
+            item = options
+        }
         newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
@@ -118,41 +122,81 @@ const createRequest = new Action( {
                 ( newRequest ) => {
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-								<RequestPanel item = { newRequest }/>
-							</DropFileContainer>
+                                <RequestPanel item = { newRequest }/>
+                            </DropFileContainer>
                     } );
-                    let team = Teams.findOne( newRequest.team._id ),
-                        role = Meteor.user().getRole( team ),
-                        hasSupplier = newRequest.supplier && newRequest.supplier._id;
-
 
                     let owner = Meteor.user();
+
                     newRequest.owner = {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
-                    // if the request is PPM then create
-                    if ( newRequest.type == 'Preventative' ) {
-                        Meteor.call( 'Issues.create', newRequest );
-                        //RequestActions.clone.run( newRequest );
+                    // this is a big of a mess - for starters it would be better placed in the create method
+                    //  and then perhaps in its own function "canAutoIssue( request )"
+                    let hasSupplier = newRequest.supplier && newRequest.supplier._id,
+                        method = 'Issues.create';
+
+                    if ( newRequest != 'Preventative' && hasSupplier ) {
+
+                        let team = Teams.findOne( newRequest.team._id ),
+                            role = Meteor.user().getRole( team ),
+                            baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
+
+                        if( baseBuilding ) {
+
+                            console.log( 'bb' );
+
+                            if( role == 'property manager' ) {
+                                method = 'Issues.issue';
+                            }
+                        }
+                        else if( !baseBuilding ) {
+
+                            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                                method = 'Issues.issue';
+                            }
+
+                            else if( _.contains( [ 'manager', 'caretaker' ], role ) ) {
+
+                                console.log( 'non bb manager or caretaker' );
+
+                                method = 'Issues.issue';
+                                if( team.defaultCostThreshold ) {
+
+                                    // strips out commas
+                                    //  this is a hack due to an inadequete implementation of number formatting
+                                    //  needs a refactor
+                                    let costString = newRequest.costThreshold;
+
+                                    console.log( costString );
+
+                                    if( _.isString( costString ) ) {
+                                        costString = costString.replace(',','')
+                                    }
+
+                                    console.log( costString );
+
+                                    let costThreshold = parseInt( team.defaultCostThreshold ),
+                                        cost = parseInt( costString );
+
+                                    console.log( {
+                                        role,
+                                        costThreshold,
+                                        cost
+                                    } );
+
+                                    if( cost > costThreshold ) {
+                                        method = 'Issues.create';
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    // it might make more sense to make this a switch statement
-                    else if ( hasSupplier && newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding && _.contains( [ 'property manager' ], role ) ) {
-                        Meteor.call( 'Issues.issue', newRequest );
-                    }
-                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                        Meteor.call( 'Issues.issue', newRequest );
-                    } 
-                    else if ( hasSupplier && newRequest.service && newRequest.service.data && !newRequest.service.data.baseBuilding && _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
-                        Meteor.call( 'Issues.issue', newRequest );
-                    } 
-                    else {
-                        Meteor.call( 'Issues.create', newRequest );
-                    }
-
-                    let request = Requests.collection._transform( newRequest );
+                    Meteor.call( method, newRequest );
+                    let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     //callback( newRequest );
                 }
