@@ -18,4 +18,11 @@ export default DocTypes = [
     "Registration",
     "Service Report",
     "SWMS",
+    "Management Plan",
+    "Assessment",
+    "Confirmation",
+    "Certificate",
+    "Report",
+    "Licence",
+    "Log",
 ];

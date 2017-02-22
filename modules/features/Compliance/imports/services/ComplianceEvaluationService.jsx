@@ -25,6 +25,11 @@ ComplianceEvaluationService = new function() {
             "Invoice",
             "MSDS",
             "Plan",
+            "Assessment",
+            "Confirmation",
+            "Certificate",
+            "Log",
+            "Management Plan",
             "Procedure",
             "Quote",
             "Register",
@@ -49,7 +54,7 @@ ComplianceEvaluationService = new function() {
             //  console.log({rule});
             var docCount = null, docs = null, docName = null, docCurser = null,
                 tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                query = rule.document && rule.document.query ?
+                query = rule.document &&rule.document.query ?
                         JSON.parse( rule.document.query ) : {
                             "facility._id": facility["_id"],
                             $and: [
@@ -57,6 +62,11 @@ ComplianceEvaluationService = new function() {
                                 { name: { $regex: rule.docName, $options: "i" } }
                             ]
                         };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
@@ -121,6 +131,11 @@ ComplianceEvaluationService = new function() {
                             { name: { $regex: rule.docName, $options: "i" } }
                         ]
                     };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
@@ -284,7 +299,10 @@ ComplianceEvaluationService = new function() {
                     // } );
                 }
             } )
-        }
+        },
+        "Compliance level": function( rule, facility, service ){
+
+        },
     }
 
     function evaluateRule( rule, facility, service ) {

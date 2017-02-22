@@ -48,6 +48,39 @@ export default ComplianceDocumentSearchSchema = {
 			].indexOf( item.type ) > -1;
 		},
 	},
+    reportType: {
+		input: Select,
+		label: "Report type",
+		optional: true,
+		options: {
+			items:[
+				'Validation Report',
+			],
+            afterChange( item ) {
+                createQuery(item, item.insuranceType, "reportType" )
+            }
+		},
+		size: 6,
+		condition: "Report",
+	},
+	confirmationType: {
+		input: Select,
+		label: "Confirmation type",
+		optional: true,
+		options: {
+			items:[
+				'Bunding',
+				'Manifest',
+				'Signage',
+				'Spill bins',
+			],
+            afterChange( item ) {
+                createQuery(item, item.insuranceType, "confirmationType" )
+            }
+		},
+		size: 6,
+		condition: "Confirmation",
+	},
     serviceType: {
         input: Select,
         label: "Service type",
