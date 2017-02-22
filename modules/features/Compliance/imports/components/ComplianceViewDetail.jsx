@@ -9,7 +9,7 @@ import ComplianceActions from '../../actions.jsx';
 export default ComplianceViewDetail = React.createClass( {
 
     mixins: [ ReactMeteorData ],
-    // currentSetviceTabToShow:0,
+    currentSetviceTabToShow:0,
     getMeteorData() {
         var data = {};
         data.facility = Session.getSelectedFacility();
@@ -55,16 +55,22 @@ export default ComplianceViewDetail = React.createClass( {
         let facility = this.data.facility;
         facility.removeComplianceRule(servicePosition, rulePosition, serviceName);
     },
-//
-    // handelCollaps(  idx ) {
-    //     let currentSetviceTabToShow = this.currentSetviceTabToShow;
-    //         $.("div.serviceTabHeader").each( function() {
-    //             if ( $(this).attr("id") == idx )
-    //                 $(this).show();
-    //             else
-    //                 $(this).hide();
-    //         } );
-    // },
+    componentDidUpdate(){
+        this.handelCollaps( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
+    },
+    handelCollaps(  idx ) {
+            $("div.serviceTabHeader").each( function() {
+                if ( idx == null && $(this).attr("id") == 0 ) {
+                    $(this).show();
+                } else if ( idx != null && $(this).attr("id") == idx ) {
+                    $(this).toggle();
+                    this.currentSetviceTabToShow = idx;
+                }
+                else {
+                    $(this).hide();
+                }
+            } );
+    },
 
     render() {
         var facility = this.data.facility;
@@ -124,7 +130,7 @@ export default ComplianceViewDetail = React.createClass( {
                           onClick={( event) => {
                             this.setCoverImage( event, service );
                           }}/>
-                      <div id={idx} className="serviceTabHeader">
+                      <div id={idx} className={"serviceTabHeader"} >
                           <ComplianceGroup item={service}
                             onClick={( event) => {
                               this.setCoverImage( event, service );
@@ -132,7 +138,14 @@ export default ComplianceViewDetail = React.createClass( {
                             removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                             />
                       </div>
-                        <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"5px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
+                        <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"15px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
+                        <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"25px",top:"2px"}}>
+                            <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                    this.handelCollaps(idx)
+                                }}>
+                                <i className={`fa fa-expand`} aria-hidden="true"/>
+                            </button>
+                        </span>
                     </div>
                 })}
 

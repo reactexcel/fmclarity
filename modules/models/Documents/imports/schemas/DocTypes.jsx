@@ -1,5 +1,4 @@
 export default DocTypes = [
-    "Image",
     "Audit",
     "Bank Guarantee",
     "Budget",
@@ -19,4 +18,11 @@ export default DocTypes = [
     "Registration",
     "Service Report",
     "SWMS",
+    "Management Plan",
+    "Assessment",
+    "Confirmation",
+    "Certificate",
+    "Report",
+    "Licence",
+    "Log",
 ];
