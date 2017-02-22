@@ -27,6 +27,8 @@ export default RequestPanel = React.createClass( {
             previousRequest = null,
             nextDate = null,
             previousDate = null,
+            contact = null,
+            facility = null,
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
@@ -34,6 +36,12 @@ export default RequestPanel = React.createClass( {
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+                facility = request.getFacility();
+                //console.log( facility );
+                if( facility ) {
+                    let fms = facility.getMembers({role:'manager'});
+                    contact = fms[0];
+                }
                 supplier = request.getSupplier();
                 if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
@@ -43,7 +51,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner }
     },
 
     render() {
@@ -52,7 +60,9 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner } ) => {
+
+    //console.log( facility );
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -122,13 +132,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 "Client: "+ request.team.name
                             }
                         </h2>
-                        <AddressLink item = { request.facility.address }/>
+                        <AddressLink item = { facility.address }/>
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+                        <ContactDetails item = { teamType=="fm" ? supplier : contact }/>
 
-                        <BillingDetails item = { request.facility }/>
+                        <BillingDetails item = { facility }/>
 
                         { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
                     </div>
@@ -256,24 +266,24 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.readBy ?
                 request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null :
                     <tr>
-                                     <td></td>
-                                     <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
-                                                         <ul className="seen-by-list">
-                                                         {request.readBy.length > 2 ?
-                                                             <li>
-                                                             <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
-                                                             <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
-                                                             var user = Meteor.users.findOne(u._id);
-                                                             if (u._id==Meteor.userId()) {user=null;}
-                                                             return (
-                                                                 user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
-                                                                 )
-                                                         })}
-                                     
-                                                         </ul>
-                                                         </td>
-                                 </tr> : null }
-
+                        <td></td>
+                        <td>
+                            <i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
+                            <ul className="seen-by-list">
+                                {request.readBy.length > 2 ?
+                                    <li>
+                                        <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
+                                        <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
+                                        var user = Meteor.users.findOne(u._id);
+                                        if (u._id==Meteor.userId()) {user=null;}
+                                        return (
+                                            user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                        )
+                                })}
+                                         
+                            </ul>
+                        </td>
+                    </tr> : null }
                 </tbody>
             </table>
 
@@ -287,7 +297,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+                    recipientRoles: [ "team", "team manager", "facility manager" ],
                     message: {
                         verb: "uploaded a file to",
                         subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
