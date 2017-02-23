@@ -52,14 +52,7 @@ const Facilities = new Model({
                     return this.getName() + " announcements"
                 },
                 getWatchers() {
-                    var members = this.getMembers();
-                    var watchers = [];
-                    if (members && members.length) {
-                        members.map((m) => {
-                            watchers.push(m);
-                        })
-                    }
-                    return watchers;
+                    return this.getMembers();
                 }
             }
         }],

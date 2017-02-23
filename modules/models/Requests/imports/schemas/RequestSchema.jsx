@@ -766,7 +766,7 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.status == 'New' && request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
                     ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
                 )
             },
