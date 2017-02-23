@@ -60,6 +60,7 @@ export default ComplianceRuleSchema = {
                 "Document is current",
                 "PPM schedule established",
                 "PPM event completed",
+                "Compliance level",
             ],
             afterChange( item ) {
                 //console.log( { item } );

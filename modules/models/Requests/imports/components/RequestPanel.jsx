@@ -287,6 +287,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
             </table>
 
+            { Meteor.user().getRole()=='staff' && request.status!= 'New' ? null :
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
@@ -297,7 +298,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility manager" ],
+                    recipientRoles: [ "team manager", "facility manager" ],
                     message: {
                         verb: "uploaded a file to",
                         subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -316,6 +317,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 />
                 }
             ]} />
+            }
 
         </div>
     )

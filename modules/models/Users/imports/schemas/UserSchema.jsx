@@ -77,6 +77,7 @@ const UserProfileSchema = {
 			return role === "tenant";
 		},
 	},
+	/*
 	requestIssueThreshold: {
 		label: "WO Issue Threshold",
 		description: "Number of Work Orders user can issue to suppliers",
@@ -93,6 +94,7 @@ const UserProfileSchema = {
 			return role === "portfolio manager" && _.contains(['manager', 'caretaker'], Itemrole );
 		},
 	},
+	*/
 
 
 

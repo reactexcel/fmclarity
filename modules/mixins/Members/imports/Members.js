@@ -244,7 +244,13 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
     if ( members ) {
         members.map( ( m ) => {
-            if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
+            if ( 
+                !filter || 
+                !m.role || 
+                filter.role == m.role || 
+                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
+                ( filter.role.$ne && filter.role.$ne != m.role )
+            ) {
                 if ( !m ) {
                     console.log( { 'Found an empty member in the array': members } );
                 } else if ( m._id ) {
