@@ -150,22 +150,24 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
+            let status = lastWO.length && lastWO[lastWO.length - 1].status;
             return (
                 lastWO.length ? ( <div>
-            <span>
-              <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(lastWO[0]).run()
-                 }
-               }> Previous work order link </a>
-            </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{lastWO[lastWO.length - 1].status}</strong></span>
-          </div> ) : null
+                    <span>
+                        <a className="link" href={"javascript:void(0);"} onClick={() => {
+                                RequestActions.view.bind(lastWO[lastWO.length - 1]).run()
+                            }}>
+                            Previous work order link
+                        </a>
+                    </span>
+                    <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
+                </div> ) : null
             );
         },
         condition: item => item.event
@@ -175,21 +177,22 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
+            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[0]).run()
+                   RequestActions.view.bind(nextWO[nextWO.length > 1 ? nextWO.length - 2: 0]).run()
                  }
                }> Next work order link </a>
             </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{nextWO[nextWO.length - 2].status}</strong></span>
+            <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
           </div> ) : null
             );
         },

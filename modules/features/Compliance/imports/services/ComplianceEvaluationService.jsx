@@ -59,7 +59,7 @@ ComplianceEvaluationService = new function() {
                             "facility._id": facility["_id"],
                             $and: [
                                 { type: rule.docType },
-                                { name: { $regex: rule.docName, $options: "i" } }
+                                { name: { $regex: rule.docName || "", $options: "i" } }
                             ]
                         };
             if( !rule.document && rule.docSubType ){
@@ -128,7 +128,7 @@ ComplianceEvaluationService = new function() {
                         "facility._id": facility["_id"],
                         $and: [
                             { type: rule.docType },
-                            { name: { $regex: rule.docName, $options: "i" } }
+                            { name: { $regex: rule.docName || "", $options: "i" } }
                         ]
                     };
             if( !rule.document && rule.docSubType ){

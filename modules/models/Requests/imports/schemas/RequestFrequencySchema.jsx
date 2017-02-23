@@ -57,7 +57,7 @@ export default RequestFrequencySchema = {
 		label: "Period",
 		description: "The unit (days, weeks, months etc) of the repeats",
 		input(props){
-			props.item.period = props.value?props.value:"monthly";
+			props.item.period = props.value?props.value:(props.item.unit === "custom"?"monthly":"");
  			return(
 				<Select
 					placeholder={props.placeholder}
