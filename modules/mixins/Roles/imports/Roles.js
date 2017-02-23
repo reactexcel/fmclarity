@@ -125,7 +125,7 @@ Roles = new class {
 			facility = Facilities.findOne( facility._id );
 			if ( facility && facility.members && facility.members.length ) {
 				facility.members.map( ( member ) => {
-					this.addRole( results, member, `facility ${member.role} (${facility.name})` );
+					this.addRole( results, member, `facility ${member.role}`/*` (${facility.name})`*/ );
 				} )
 			}
 		}

@@ -34,26 +34,27 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
         },
         fields: {
             _id: 1,
-            type: 1,
             address: 1,
-            operatingTimes: 1,
-            'owner._id': 1,
-            'ownert.name': 1,
+            areas: 1,
             createdAt: 1,
+            documents: 1,
+            type: 1,
             'team._id': 1,
             'team.name': 1,
             name: 1,
             members: 1,
+            operatingTimes: 1,
+            'owner._id': 1,
+            'owner.name': 1,
             lease: 1,
-            areas: 1,
             levels: 1,
             description: 1,
             servicesRequired: 1,
             thumb: 1,
             size: 1,
             attachments: 1,
-            documents: 1,
             realEstateAgency: 1,
+            billingDetails: 1,
         }
     } );
     return facilitiesCursor;
@@ -62,8 +63,15 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
 
 Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, includeFacilities } ) {
 
+    import { Users } from '/modules/models/Users';
+    let user = Users.findOne( this.userId );
+
     let query = {
         'members._id': this.userId
+    }
+
+    if( user && user.role == 'admin' ) {
+        query = { _id: {$ne:null} }
     }
 
     if ( !includeComplete ) {
@@ -85,6 +93,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             attachments: 1,
             'assignee._id': 1,
             'assignee.name': 1,
+            closeDetails: 1,
             code: 1,
             costThreshold: 1,
             createdAt: 1,

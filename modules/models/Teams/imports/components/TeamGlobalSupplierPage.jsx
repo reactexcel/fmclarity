@@ -1,7 +1,8 @@
 import React from "react";
 import { ContactCard } from '/modules/mixins/Members';
-import { SupplierFilter, Teams, TeamPanel } from '/modules/models/Teams';
+import { SupplierFilter, Teams } from '/modules/models/Teams';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { Modal } from '/modules/ui/Modal';
 
 export default TeamGlobalSupplierPage = React.createClass( {
 
@@ -12,6 +13,7 @@ export default TeamGlobalSupplierPage = React.createClass( {
         return {
             suppliers
         }
+
     },
 	getInitialState() {
 		return {
@@ -33,7 +35,7 @@ export default TeamGlobalSupplierPage = React.createClass( {
             }, null );
         }
     },
-	/*openTeamPanel( supplier ) {
+	openTeamPanel( supplier ) {
         let contactName = supplier.contact ? supplier.contact.name : null,
 			availableServices = null;
 		if ( supplier.getAvailableServices ) {
@@ -73,62 +75,27 @@ export default TeamGlobalSupplierPage = React.createClass( {
 				</div>
 			)
 		})
-	},*/
+	},
 	render() {
-		let idList = []
 		let { team, facility, facilities, ...other } = this.props;
 		let { suppliers } = this.data;
 		if ( !team ) {
 			return <div/>
 		}
-		idList = _.pluck(team.suppliers, '_id');
-
 		return <div className="facility-page animated fadeIn">
 			<div style = { { paddingTop:"50px" } }>
-			<SupplierFilter onChange={ ( suppliers ) => { this.setState({suppliers})}} />
-			<div className="row" style={{'marginLeft':'0px'}}>
+			<SupplierFilter onChange={ ( suppliers ) => { this.setState({suppliers})}} team={this.props.team}/>
+            <div className = "nav-list">
 	            { suppliers ? suppliers.map( ( supplier, idx ) => {
-					let contactName = supplier.contact ? supplier.contact.name : null,
-					    availableServices = null;
-				    if ( supplier.getAvailableServices ) {
-					    availableServices = supplier.getAvailableServices();
-				    }
-	        	    return (
-						<div className="col-xs-12" key={idx}  style={{'backgroundColor':'white','marginBottom':'1%','padding':'0px'}}>
-							{_.contains(idList, supplier._id) == true ?
-								<TeamPanel item={supplier}/>:
-								<div className="business-card">
-								<div className="contact-thumbnail pull-left">
-									{supplier.thumbUrl?
-										<img alt="image" src={supplier.thumbUrl} />
-									:null}
-								 </div>
-								 <div className="contact-info">
-									<h2>{supplier.name}</h2>
-									<i style={{color:"#999",display:"block",padding:"3px"}}>{ contactName ? contactName : null }<br/></i>
-									<b>Email</b> { supplier.email }<br/>
-									{ supplier.phone ? <span><b>Phone</b> { supplier.phone }<br/></span> :null }
-									{ supplier.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { supplier.phone2 }<br/></span> :null }
-									<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
-									{availableServices && availableServices.length?
-									availableServices.map( (service,index) => {
-										return <span key = { service.name }>{ index?' | ':'' }{ service.name }</span>
-									})
-									:null}
-									<br />
-									<span>
-										<button
-											title={"Click to save supplier in your team."}
-											className="btn btn-flat btn-primary" onClick={() => this.handleInvite( supplier )}>
-											Save supplier
-										</button>
-									</span>
-								</div>
-							</div>}
-						</div>
-					)
+	        	    return 	<div
+						key 		= { `${idx}-${supplier._id}` }
+						className 	= "list-tile"
+						onClick		= { () => { this.openTeamPanel(supplier) } }
+						>
+						<ContactCard item = { supplier }/>
+					</div>
 	            } ) : null }
-			</div>
+	        </div>
 	        </div>
 		</div>
 	}

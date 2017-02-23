@@ -113,6 +113,7 @@ export default ServiceDetailsSchema =  {
     defaultContact:{
         label: "Default supplier contact",
         type: 'array',
+        required: true,
         size: 12,
         input(props){
             // props.onChange = ( item ) => {
@@ -130,6 +131,7 @@ export default ServiceDetailsSchema =  {
                         item = {props.item}
                         items = {props.items}
                         view = {props.view}
+                        errors = {props.errors}
                         model = {props.model}
                         onChange ={ ( contact ) => {
                             if ( !_.find( props.item.defaultContact, m => m._id === contact._id) ) {
@@ -177,10 +179,16 @@ export default ServiceDetailsSchema =  {
             )
         },
         options( item ){
-            var memberIds = _.pluck( item.supplier?item.supplier.members:[], "_id");
-            var members = Users.findAll( { _id: { $in: memberIds } } );
+            let members = [];
+            if( item.supplier && item.supplier._id ) {
+                import { Teams } from '/modules/models/Teams';
+                let supplier = Teams.findOne( item.supplier._id );
+                if( supplier ) {
+                    members = supplier.getMembers();
+                }
+            }
             return {
-                items: members.length?members:null,
+                items: members,
                 view: ContactCard
             }
         }
