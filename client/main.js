@@ -353,11 +353,33 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'New' },
+    condition: 
+		( request ) => {
+			let user = Meteor.user(),
+			team = request.getTeam(),
+			teamRole = team.getMemberRole( user );
+
+			if ( teamRole == 'fmc support' ) {
+				/* Allow action for this role regardless of requests status */
+				return true;
+			}
+			else if ( request.status == 'New' ) {    
+				/* 	Allow action if status is new and only for 
+					roles specified below
+				*/
+
+				let facility = Facilities.findOne( request.facility._id ),
+				facilityRole = facility.getMemberRole( user ),
+				requestRole = request.getMemberRole( user );
+				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || 		facilityRole == 'property manager' ) {
+				return true;
+				}
+			}
+		},
     action: [
         'delete request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'facility manager', 'facility property manager', 'owner' ],
+    role: [ '*' ],
     rule: { alert: true }
 } )
 
