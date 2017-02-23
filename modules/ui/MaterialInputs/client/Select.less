@@ -16,6 +16,20 @@
             height: auto;
             height: auto;
             padding: 10px;
+            .searchInput {
+                height:20px;
+                width:100%;
+                padding:2px 5px;
+                border: 1px solid #ccc;
+                border-radius:4px;
+                box-sizing:border-box;
+                display: inline-block;
+                &:focus {
+                    outline: none;
+                    border-color: #9ecaed;
+                    box-shadow: 0 0 10px #9ecaed;
+                }
+            }
         }
         .dropdown-menu-item {
             font-size: inherit;

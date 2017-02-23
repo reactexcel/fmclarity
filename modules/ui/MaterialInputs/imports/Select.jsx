@@ -35,7 +35,12 @@ const PlainCard = React.createClass( {
 const Select = React.createClass( {
 
 	getInitialState() {
-		return { open: false }
+		return {
+			open: false,
+			displaySearchBox:'none',
+			searchBoxSelected:true,
+			searchedValue:''
+	  	}
 	},
 
 	handleChange( newItem ) {
@@ -44,9 +49,9 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			//console.log( val );
 			this.props.onChange( val );
 		}
+		this.setOpen( false );
 		this.refs.input.blur();
 	},
 
@@ -70,8 +75,13 @@ const Select = React.createClass( {
 	},
 
 	setOpen( val ) {
-		this.setState( { open: val } );
+		this.setState( {
+			open: val,
+			displaySearchBox:val==false?'none':'block',
+			searchedValue:''
+		 } );
 	},
+
 
 	render() {
 		let {
@@ -97,6 +107,22 @@ const Select = React.createClass( {
 				readOnly = true;
 			}
 			items = [];
+		}
+		if(this.state.searchedValue != '' && this.state.searchedValue != "null"){
+			let value = this.state.searchedValue
+			let searchedValue = []
+			_.forEach(items, function(itm, i) {
+				if(_.isObject(itm)){
+					if((itm.name.toLowerCase().indexOf(value.toLowerCase()) != -1)){
+						searchedValue.push(itm)
+					}
+				}else{
+					if((itm.toLowerCase().indexOf(value.toLowerCase()) != -1)){
+						searchedValue.push(itm)
+					}
+				}
+			})
+			items = searchedValue
 		}
 
 		if ( errors != null && errors.length > 0 ) {
@@ -143,8 +169,27 @@ const Select = React.createClass( {
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
-				onFocus = { () => { this.setOpen( true ) } }
-				onBlur = { () => { this.setOpen( false ) } }>
+				onFocus = { () => {
+					this.setOpen( true );
+				 } }
+				/*onBlur = { (e) => {
+					if(this.state.searchBoxSelected==true){
+						this.setState({
+							open:false,
+							searchBoxSelected:false
+						})
+					}else{
+						this.setState({
+							open:true,
+							searchBoxSelected:true
+						})
+					}
+				 } }*/
+				onKeyDown={(e)=>{
+					if(e.keyCode==9){
+						this.setOpen( false )
+					}
+				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
 
@@ -166,12 +211,40 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-
 				<ul className = "dropdown-menu">
 
 		        	{description?
-		        	<li><div className = "helper-text">{ description }</div></li>
+					<div>
+		        	    <li><div className = "helper-text">{ description }</div></li>
+					</div>
 		        	:null}
+					<li>
+						<div className = "helper-text">
+							<input
+								onFocus={()=>{
+									this.setState({
+										searchBoxSelected:true
+									})
+								}}
+								onBlur={()=>{
+									this.setState({
+										searchBoxSelected:false,
+										open:false
+									})
+								}}
+								onChange={ (e) => {
+									this.setState({
+										searchedValue:e.target.value
+									})
+                        		} }
+								value={this.state.searchedValue}
+								className="searchInput"
+								ref="search"
+								placeholder="Search"
+							/>
+						</div>
+					</li>
+
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
