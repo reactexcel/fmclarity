@@ -43,6 +43,9 @@ const TeamStepper = React.createClass( {
         //getting value of item from state instead of props
         if ( this.state.item ) {
             viewingTeam = Teams.findOne( this.state.item._id );
+            if(viewingTeam.type == "contractor"){
+                Teams.schema.email.required=false;
+            }
             if ( !viewingTeam && this.state.searchName ) {
                 let query = {
                     name: {
@@ -201,6 +204,11 @@ const TeamStepper = React.createClass( {
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
+        var teamType = this.state.teamType;
+        var component = this;
+        if(viewingTeam.type == "contractor"){
+            Teams.schema.email.required=false;
+        }
 
         if ( !viewingTeam ) {
             return (
@@ -271,6 +279,13 @@ const TeamStepper = React.createClass( {
                                             form = { ["name","type","abn","email","phone","phone2","website","address"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
+                                            onChange =  { ( newItem ) => { 
+                                                console.log(newItem);
+                                                if(newItem.item.type == "contractor"){
+                                                    Teams.schema.email.required=false;
+                                                }
+                                                }
+                                            }
                                             submitFormOnStepperNext = { true }
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
