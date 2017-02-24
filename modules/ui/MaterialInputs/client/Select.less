@@ -17,17 +17,19 @@
             height: auto;
             padding: 10px;
             .searchInput {
-                height:20px;
+                height:28px;
                 width:100%;
                 padding:2px 5px;
                 border: 1px solid #ccc;
                 border-radius:4px;
                 box-sizing:border-box;
                 display: inline-block;
+                color:black;
                 &:focus {
                     outline: none;
                     border-color: #9ecaed;
                     box-shadow: 0 0 10px #9ecaed;
+                    border: 1px solid gray;
                 }
             }
         }
@@ -42,6 +44,12 @@
             &:hover {
                 background-color: #eee;
             }
+            &:focus {
+                background-color: #eee;
+            }
+        }
+        .onFocus {
+            background-color: #eee;
         }
     }
     .dropdown-toggle {

@@ -38,9 +38,29 @@ const Select = React.createClass( {
 		return {
 			open: false,
 			displaySearchBox:'none',
-			searchBoxSelected:true,
 			searchedValue:''
 	  	}
+	},
+
+	componentDidUpdate(){
+		if(this.state.open == true){
+			$( ".searchInput" ).focus();
+			if(this.state.keyPress == true){
+				$( ".searchInput" ).blur();
+				let id = $('li.dropdown-menu-item').eq(0)[0].id
+				//console.log(id)
+				//$('li#'+id).eq(0).addClass('onFocus')
+				$('li#'+id).eq(0).focus()
+			}
+		}
+		if(this.refs.input){
+			ReactDom.findDOMNode(this).addEventListener('keydown',function(){
+
+			})
+		}
+	},
+
+	componentDidMount(){
 	},
 
 	handleChange( newItem ) {
@@ -78,7 +98,6 @@ const Select = React.createClass( {
 		this.setState( {
 			open: val,
 			displaySearchBox:val==false?'none':'block',
-			searchedValue:''
 		 } );
 	},
 
@@ -223,23 +242,31 @@ const Select = React.createClass( {
 							<input
 								onFocus={()=>{
 									this.setState({
-										searchBoxSelected:true
+										keyPress:false
 									})
 								}}
-								onBlur={()=>{
-									this.setState({
-										searchBoxSelected:false,
-										open:false
-									})
+								onBlur={(e)=>{
+									if(this.state.keyPress != true){
+										this.setState({
+											open:false
+										})
+									}
+								}}
+								onKeyDown={(e)=>{
+									if(e.keyCode == 40){
+										this.setState({
+											keyPress:true
+										})
+									}
 								}}
 								onChange={ (e) => {
 									this.setState({
 										searchedValue:e.target.value
 									})
                         		} }
-								value={this.state.searchedValue}
 								className="searchInput"
 								ref="search"
+								id="searchInput"
 								placeholder="Search"
 							/>
 						</div>
@@ -253,8 +280,12 @@ const Select = React.createClass( {
 		        	}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
+						id={idx+'-'+(item._id || item.name)}
+						//tabIndex="0"
 			    		className = "dropdown-menu-item"
-			    		onClick = { () => { this.handleChange( item ) } }>
+			    		onClick = { () => {
+							this.handleChange( item )
+						} }>
 
 			    		<ListTile item = { item } />
 
