@@ -4,21 +4,21 @@
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="selenium.base" href="http://52.62.112.58:3000//" />
-<title>Requests-CheckNewRequestAsPM</title>
+<title>Requests-LoginAsStaff-Leonie_Roberts</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">Requests-CheckNewRequestAsPM</td></tr>
+<tr><td rowspan="1" colspan="3">Requests-LoginAsStaff-Leonie_Roberts</td></tr>
 </thead><tbody>
-<tr>
-	<td>click</td>
-	<td>css=i.fa.fa-cog</td>
-	<td></td>
-</tr>
 <tr>
 	<td>waitForElementPresent</td>
 	<td>css=.contact-card-line-1:contains('Kaplan Australia Pty Ltd')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=i.fa.fa-cog</td>
 	<td></td>
 </tr>
 <tr>
@@ -33,12 +33,12 @@
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=.dropdown-menu-item:contains('Closed')</td>
+	<td>css=.dropdown-menu-item:contains('New')</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.dropdown-menu-item:contains('Closed')</td>
+	<td>css=.dropdown-menu-item:contains('New')</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,38 +62,48 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>css=i.fa.fa-cog</td>
+	<td></td>
+</tr>
+<tr>
 	<td>waitForElementPresent</td>
-	<td>css=.data-grid-cell.data-grid-col-3:contains('FOLLOW UP - SELENIUM TEST - Aircon not working')</td>
+	<td>link=Edit team</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.data-grid-cell.data-grid-col-3:contains('FOLLOW UP - SELENIUM TEST - Aircon not working')</td>
+	<td>link=Edit team</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[@class='btn btn-flat' and contains(., 'Reopen')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>xpath=//div[@class='md-textarea' and ./label[contains(.,'Provide reason for reopening')]]/textarea</td>
-	<td></td>
-</tr>
-<tr>
-	<td>sendKeys</td>
-	<td>xpath=//div[@class='md-textarea' and ./label[contains(.,'Provide reason for reopening')]]/textarea</td>
-	<td>Selenium test</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>id=members-tab</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.btn.btn-flat.btn-primary:contains('Submit')</td>
+	<td>css=.contact-card-line-1:contains('Bee Jarintip')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=div.business-card &gt; div.noprint &gt; a.dropdown-toggle.tools-icon</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Login as user</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>300000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=i.fa.fa-cog</td>
 	<td></td>
 </tr>
 </tbody></table>
