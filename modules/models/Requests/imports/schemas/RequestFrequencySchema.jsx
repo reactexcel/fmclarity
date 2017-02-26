@@ -31,7 +31,7 @@ export default RequestFrequencySchema = {
 	            { name: 'Custom', val: "custom" },
 	        ],
 			afterChange( item ){
-				item.number = "";
+				item.number = item.unit == "custom" ? 1 : "";
 				item.period = "";
 				item.endDate = "";
 			}
@@ -43,7 +43,6 @@ export default RequestFrequencySchema = {
 	    description: "The number of days, weeks, months etc.",
 	    input: Text,
 	    type: "string",
-	    defaultValue: 6,
 	    size: 6,
 	    options: {
 	        afterChange( item ) {
@@ -72,12 +71,12 @@ export default RequestFrequencySchema = {
 		size: 6,
 		options: {
 			items: [
-				{ name: 'Daily', val: "daily" },
-				{ name: 'Weekly', val: "weekly" },
-				{ name: 'Fortnightly', val: "fortnightly" },
-				{ name: 'Monthly', val: "monthly" },
-				{ name: 'Quarterly', val: "quarterly" },
-				{ name: 'Annually', val: "annually" },
+				{ name: 'Day', val: "day" },
+	            { name: 'Week', val: "week" },
+	            { name: 'Fortnight', val: "fortnight" },
+	            { name: 'Month', val: "month" },
+	            { name: 'Quarter', val: "quarter" },
+	            { name: 'Year', val: "year" },
 			],
 			afterChange: item => { period = item.period; },
 		},
