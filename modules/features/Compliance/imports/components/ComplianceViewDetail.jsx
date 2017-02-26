@@ -59,17 +59,18 @@ export default ComplianceViewDetail = React.createClass( {
         this.handelCollaps( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
     },
     handelCollaps(  idx ) {
-            $("div.serviceTabHeader").each( function() {
-                if ( idx == null && $(this).attr("id") == 0 ) {
+        $("div.serviceTabHeader").each( function() {
+            if ( idx == null ) {
+                if ( $(this).attr("id") == 0 ) {
                     $(this).show();
-                } else if ( idx != null && $(this).attr("id") == idx ) {
-                    $(this).toggle();
-                    this.currentSetviceTabToShow = idx;
-                }
-                else {
+                } else{
                     $(this).hide();
                 }
-            } );
+            } else if ( idx != null && $(this).attr("id") == idx ) {
+                $(this).toggle();
+                this.currentSetviceTabToShow = idx;
+            }
+        } );
     },
 
     render() {
@@ -125,7 +126,7 @@ export default ComplianceViewDetail = React.createClass( {
                 </div>
 
                 {services.map((service,idx)=>{
-                    return <div key={idx+'-'+service.name} style={{position:"relative"}} onClick={() => this.handelCollaps(idx)}>
+                    return <div key={idx+'-'+service.name} style={{position:"relative"}}   className="service-list-header">
                         <ServiceListTile item={service}
                           onClick={( event) => {
                             this.setCoverImage( event, service );
@@ -138,13 +139,21 @@ export default ComplianceViewDetail = React.createClass( {
                             removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                             />
                       </div>
-                        <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"15px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
-                        <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"25px",top:"2px"}}>
-                            <button className="btn btn-flat" id={idx} onClick={( event ) => {
-                                    this.handelCollaps(idx)
-                                }}>
-                                <i className={`fa fa-expand`} aria-hidden="true"/>
-                            </button>
+                      <span className="service-list-header-icon">
+                          <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"2px"}}>
+                              <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                      this.deleteRules(service.name)
+                                  }}>
+                                  <i className={`fa fa-times`} aria-hidden="true"/>
+                              </button>
+                          </span>
+                          <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"2px"}}>
+                              <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                      this.handelCollaps(idx)
+                                  }}>
+                                  <i className={`fa fa-expand`} aria-hidden="true"/>
+                              </button>
+                          </span>
                         </span>
                     </div>
                 })}
