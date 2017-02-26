@@ -35,7 +35,32 @@ const PlainCard = React.createClass( {
 const Select = React.createClass( {
 
 	getInitialState() {
-		return { open: false }
+		return {
+			open: false,
+			displaySearchBox:'none',
+			searchedValue:''
+	  	}
+	},
+
+	componentDidUpdate(){
+		if(this.state.open == true){
+			$( ".searchInput" ).focus();
+			if(this.state.keyPress == true){
+				$( ".searchInput" ).blur();
+				let id = $('li.dropdown-menu-item').eq(0)[0].id
+				//console.log(id)
+				//$('li#'+id).eq(0).addClass('onFocus')
+				$('li#'+id).eq(0).focus()
+			}
+		}
+		if(this.refs.input){
+			ReactDom.findDOMNode(this).addEventListener('keydown',function(){
+
+			})
+		}
+	},
+
+	componentDidMount(){
 	},
 
 	handleChange( newItem ) {
@@ -44,9 +69,9 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			//console.log( val );
 			this.props.onChange( val );
 		}
+		this.setOpen( false );
 		this.refs.input.blur();
 	},
 
@@ -70,8 +95,12 @@ const Select = React.createClass( {
 	},
 
 	setOpen( val ) {
-		this.setState( { open: val } );
+		this.setState( {
+			open: val,
+			displaySearchBox:val==false?'none':'block',
+		 } );
 	},
+
 
 	render() {
 		let {
@@ -99,6 +128,22 @@ const Select = React.createClass( {
 				hidden = true;
 			}
 			items = [];
+		}
+		if(this.state.searchedValue != '' && this.state.searchedValue != "null"){
+			let value = this.state.searchedValue
+			let searchedValue = []
+			_.forEach(items, function(itm, i) {
+				if(_.isObject(itm)){
+					if((itm.name.toLowerCase().indexOf(value.toLowerCase()) != -1)){
+						searchedValue.push(itm)
+					}
+				}else{
+					if((itm.toLowerCase().indexOf(value.toLowerCase()) != -1)){
+						searchedValue.push(itm)
+					}
+				}
+			})
+			items = searchedValue
 		}
 
 		if ( errors != null && errors.length > 0 ) {
@@ -145,8 +190,27 @@ const Select = React.createClass( {
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
-				onFocus = { () => { this.setOpen( true ) } }
-				onBlur = { () => { this.setOpen( false ) } }>
+				onFocus = { () => {
+					this.setOpen( true );
+				 } }
+				/*onBlur = { (e) => {
+					if(this.state.searchBoxSelected==true){
+						this.setState({
+							open:false,
+							searchBoxSelected:false
+						})
+					}else{
+						this.setState({
+							open:true,
+							searchBoxSelected:true
+						})
+					}
+				 } }*/
+				onKeyDown={(e)=>{
+					if(e.keyCode==9){
+						this.setOpen( false )
+					}
+				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
 
@@ -168,12 +232,48 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-
 				<ul className = "dropdown-menu">
 
 		        	{description?
-		        	<li><div className = "helper-text">{ description }</div></li>
+					<div>
+		        	    <li><div className = "helper-text">{ description }</div></li>
+					</div>
 		        	:null}
+					<li>
+						<div className = "helper-text">
+							<input
+								onFocus={()=>{
+									this.setState({
+										keyPress:false
+									})
+								}}
+								onBlur={(e)=>{
+									if(this.state.keyPress != true){
+										this.setState({
+											open:false
+										})
+									}
+								}}
+								onKeyDown={(e)=>{
+									if(e.keyCode == 40){
+										this.setState({
+											keyPress:true
+										})
+									}
+								}}
+								onChange={ (e) => {
+									this.setState({
+										searchedValue:e.target.value
+									})
+                        		} }
+								className="searchInput"
+								ref="search"
+								id="searchInput"
+								placeholder="Search"
+							/>
+						</div>
+					</li>
+
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
@@ -182,8 +282,12 @@ const Select = React.createClass( {
 		        	}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
+						id={idx+'-'+(item._id || item.name)}
+						//tabIndex="0"
 			    		className = "dropdown-menu-item"
-			    		onClick = { () => { this.handleChange( item ) } }>
+			    		onClick = { () => {
+							this.handleChange( item )
+						} }>
 
 			    		<ListTile item = { item } />
 
