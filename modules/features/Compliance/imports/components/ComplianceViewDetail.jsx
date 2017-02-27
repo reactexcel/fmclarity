@@ -126,7 +126,6 @@ export default ComplianceViewDetail = React.createClass( {
                 </div>
 
                 {services.map( (service, idx) => {
-                    console.log(service.name, " -> ", service.children);
                     return <div key={idx+'-'+service.name} style={{position:"relative"}}   className="service-list-header">
                             <ServiceListTile item={service}
                                 onClick={( event) => {
@@ -157,7 +156,6 @@ export default ComplianceViewDetail = React.createClass( {
                                 </span>
                             </span>
                             { service.children && service.children.map( ( subservice, idy) => {
-                                console.log(service.name,":subservice => ",subservice);
                                 return <div key={idx+'-'+subservice.name} style={{position:"relative", paddingLeft: "40px"}}   className="service-list-header">
                                         <ServiceListTile item={subservice}
                                             onClick={( event) => {
