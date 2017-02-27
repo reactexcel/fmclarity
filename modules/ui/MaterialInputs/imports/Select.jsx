@@ -37,26 +37,22 @@ const Select = React.createClass( {
 	getInitialState() {
 		return {
 			open: false,
-			displaySearchBox:'none',
 			searchedValue:''
 	  	}
 	},
 
 	componentDidUpdate(){
 		if(this.state.open == true){
-			$( ".searchInput" ).focus();
+			if(this.state.keyPress != true){
+				$( ".searchInput" ).focus();
+			}
 			if(this.state.keyPress == true){
 				$( ".searchInput" ).blur();
-				let id = $('li.dropdown-menu-item').eq(0)[0].id
+				//let id = $('a.dropdown-menu-item').eq(0)[0].id
 				//console.log(id)
 				//$('li#'+id).eq(0).addClass('onFocus')
-				$('li#'+id).eq(0).focus()
+				//$('a#'+id).focus()
 			}
-		}
-		if(this.refs.input){
-			ReactDom.findDOMNode(this).addEventListener('keydown',function(){
-
-			})
 		}
 	},
 
@@ -97,9 +93,9 @@ const Select = React.createClass( {
 	setOpen( val ) {
 		this.setState( {
 			open: val,
-			displaySearchBox:val==false?'none':'block',
 		 } );
 	},
+
 
 
 	render() {
@@ -185,25 +181,13 @@ const Select = React.createClass( {
 
 		return (
 			<div
+				id = "mainDiv"
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
 				onFocus = { () => {
 					this.setOpen( true );
-				 } }
-				/*onBlur = { (e) => {
-					if(this.state.searchBoxSelected==true){
-						this.setState({
-							open:false,
-							searchBoxSelected:false
-						})
-					}else{
-						this.setState({
-							open:true,
-							searchBoxSelected:true
-						})
-					}
-				 } }*/
+				} }
 				onKeyDown={(e)=>{
 					if(e.keyCode==9){
 						this.setOpen( false )
@@ -230,7 +214,7 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-				<ul className = "dropdown-menu">
+				<ul tabIndex = "-1" className = "dropdown-menu">
 
 		        	{description?
 					<div>
@@ -250,6 +234,14 @@ const Select = React.createClass( {
 										this.setState({
 											open:false
 										})
+									}else{
+										let id = $('a.dropdown-menu-item').eq(0)[0].id
+										$('ul a#'+id).eq(0).focus();
+										if(!$('a').is(':focus')){
+											let $selected = $('a').filter(':focus');
+											$selected.next().focus();
+											$('a').eq(0).focus();
+										}
 									}
 								}}
 								onKeyDown={(e)=>{
@@ -278,18 +270,36 @@ const Select = React.createClass( {
 		        	if( !item ) {
 		        		return null;
 		        	}
+					let tab = idx + 1;
 		        	return (
-			    	<li key = { idx+'-'+(item._id || item.name) }
+			    	<a key = { idx+'-'+(item._id || item.name) }
 						id={idx+'-'+(item._id || item.name)}
-						//tabIndex="0"
+						tabIndex={idx.toString()}
 			    		className = "dropdown-menu-item"
 			    		onClick = { () => {
 							this.handleChange( item )
-						} }>
+						} }
+						onKeyDown={(e)=>{
+							let $selected = $( document.activeElement )
+							if(e.keyCode == 40){
+								if( !$selected.is(':last-child')){
+									$selected.next().eq(0).focus()
+								}
+							}else if(e.keyCode == 38){
+								if(idx == 0){
+									$( ".searchInput" ).focus();
+								}else{
+									$selected.prev().eq(0).focus()
+								}
+							}
+						}}
+						style={{'color':'black'}}
+						href="">
 
 			    		<ListTile item = { item } />
 
-			    	</li> )
+			    	</a>
+				     )
 		        	/********************************************/
 			        })}
 							{ addNew && addNew.show? <li className = "dropdown-menu-item">
@@ -300,7 +310,7 @@ const Select = React.createClass( {
 											addNew.onAddNewItem( this.handleChange );
 										}
 									} }
-									style 		= { { paddingLeft:"24px" } }
+									style = { { paddingLeft:"24px" } }
 								>
 
 										<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
