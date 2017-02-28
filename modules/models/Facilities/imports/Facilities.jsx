@@ -213,12 +213,16 @@ Facilities.actions({
                     }
                 }
                 if ( service != null && serviceIndex != null ) {
+
+                    services[ serviceIndex ].data.complianceRules = [];
+
                     rule.map( ( r, idx ) => {
                         r.facility = {
                             _id: facility._id
                         };
                         if( !r.subservice ){
                             if ( services[ serviceIndex ].data ) {
+
                                 if( services[ serviceIndex ].data.complianceRules ){
                                     services[ serviceIndex ].data.complianceRules.push(r);
                                 } else {
@@ -234,6 +238,7 @@ Facilities.actions({
                                 for ( var i in services[ serviceIndex ].children ) {
                                     if ( services[ serviceIndex ].children[i].name == r.subservice.name ) {
                                         cfound = true;
+                                        /*
                                         if( services[ serviceIndex ].children[i].data ){
                                             if( services[ serviceIndex ].children[i].data.complianceRules != null ) {
                                                 services[ serviceIndex ].children[i].data.complianceRules.push( r );
@@ -241,9 +246,10 @@ Facilities.actions({
                                                 services[ serviceIndex ].children[i].data.complianceRules = [ r ];
                                             }
                                         } else {
+                                        */
                                             services[ serviceIndex ].children[i].data = {};
                                             services[ serviceIndex ].children[i].data.complianceRules = [ r ];
-                                        }
+                                        //}
                                         break;
                                     }
                                 }

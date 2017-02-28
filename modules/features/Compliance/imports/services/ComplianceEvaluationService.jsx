@@ -414,7 +414,9 @@ ComplianceEvaluationService = new function() {
             } else {
                 results.failed.push( result );
             }
-            rules = rules.concat( s.data.complianceRules );
+            if( s.data && s.data.complianceRules ) {
+                rules = rules.concat( s.data.complianceRules );
+            }
         } )
 
         overall = evaluate( rules );

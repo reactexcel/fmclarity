@@ -35,19 +35,7 @@ const PlainCard = React.createClass( {
 const Select = React.createClass( {
 
 	getInitialState() {
-		return {
-			open: false,
-			searchedValue:''
-	  	}
-	},
-
-	componentDidUpdate(){
-		if(this.state.open == true){
-				$( ".searchInput" ).focus();
-			}
-	},
-
-	componentDidMount(){
+		return { open: false }
 	},
 
 	handleChange( newItem ) {
@@ -56,9 +44,9 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
+			//console.log( val );
 			this.props.onChange( val );
 		}
-		this.setOpen( false );
 		this.refs.input.blur();
 	},
 
@@ -82,12 +70,8 @@ const Select = React.createClass( {
 	},
 
 	setOpen( val ) {
-		this.setState( {
-			open: val,
-		 } );
+		this.setState( { open: val } );
 	},
-
-
 
 	render() {
 		let {
@@ -115,22 +99,6 @@ const Select = React.createClass( {
 				hidden = true;
 			}
 			items = [];
-		}
-		if(this.state.searchedValue != '' && this.state.searchedValue != "null"){
-			let value = this.state.searchedValue
-			let searchedValue = []
-			_.forEach(items, function(itm, i) {
-				if(_.isObject(itm)){
-					if((itm.name.toLowerCase().indexOf(value.toLowerCase()) != -1)){
-						searchedValue.push(itm)
-					}
-				}else{
-					if((itm.toLowerCase().indexOf(value.toLowerCase()) != -1)){
-						searchedValue.push(itm)
-					}
-				}
-			})
-			items = searchedValue
 		}
 
 		if ( errors != null && errors.length > 0 ) {
@@ -174,18 +142,11 @@ const Select = React.createClass( {
 
 		return (
 			<div
-				id = "mainDiv"
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
-				onFocus = { () => {
-					this.setOpen( true );
-				} }
-				onKeyDown={(e)=>{
-					if(e.keyCode==9){
-						this.setOpen( false )
-					}
-				}}>
+				onFocus = { () => { this.setOpen( true ) } }
+				onBlur = { () => { this.setOpen( false ) } }>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
 
@@ -207,38 +168,12 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
+
 				<ul className = "dropdown-menu">
 
 		        	{description?
-					<div>
-		        	    <li><div className = "helper-text">{ description }</div></li>
-					</div>
+		        	<li><div className = "helper-text">{ description }</div></li>
 		        	:null}
-					<li>
-						<div className = "helper-text">
-							<input
-								onBlur={(e)=>{
-									this.setState({
-										open:false
-									})
-								}}
-								onKeyDown={(e)=>{
-									if(e.keyCode == 40){
-									}
-								}}
-								onChange={ (e) => {
-									this.setState({
-										searchedValue:e.target.value
-									})
-                        		} }
-								className="searchInput"
-								ref="search"
-								id="searchInput"
-								placeholder="Search"
-							/>
-						</div>
-					</li>
-
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
@@ -246,21 +181,13 @@ const Select = React.createClass( {
 		        		return null;
 		        	}
 		        	return (
-			    	<li  key = { idx+'-'+(item._id || item.name) }
-						id={idx+'-'+(item._id || item.name)}
+			    	<li key = { idx+'-'+(item._id || item.name) }
 			    		className = "dropdown-menu-item"
-			    		onClick = { () => {
-							this.handleChange( item )
-						} }
-						onKeyDown={(e)=>{
-						}}
-						style={{'color':'black'}}
-						>
+			    		onClick = { () => { this.handleChange( item ) } }>
 
 			    		<ListTile item = { item } />
 
-			    	</li>
-				     )
+			    	</li> )
 		        	/********************************************/
 			        })}
 							{ addNew && addNew.show? <li className = "dropdown-menu-item">
@@ -271,7 +198,7 @@ const Select = React.createClass( {
 											addNew.onAddNewItem( this.handleChange );
 										}
 									} }
-									style = { { paddingLeft:"24px" } }
+									style 		= { { paddingLeft:"24px" } }
 								>
 
 										<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
