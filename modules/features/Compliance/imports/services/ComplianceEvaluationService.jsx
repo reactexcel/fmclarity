@@ -1,5 +1,9 @@
 import { Facilities } from '/modules/models/Facilities';
+<<<<<<< HEAD
+import { Requests, RequestPanel } from '/modules/models/Requests';
+=======
 import { Requests, RequestActions } from '/modules/models/Requests';
+>>>>>>> bca7d4a511b7c0c9d44724e2de4937379620b2aa
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -251,6 +255,8 @@ ComplianceEvaluationService = new function() {
                         type: 'Preventative',
                         priority: 'Scheduled',
                         status: 'PMP',
+                        name: rule.event,
+                        frequency: rule.frequency,
                         service: rule.service
                     });
                     //Meteor.call( 'Issues.save', newRequest );
@@ -264,7 +270,10 @@ ComplianceEvaluationService = new function() {
                 //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( {
                     'facility._id': rule.facility._id,
-                    name: rule.event
+                    name: rule.event,
+                    status: "Issued",
+                    type: "Ad-Hoc",
+                    priority: "PMP"
                 } );
             }
 
@@ -281,8 +290,10 @@ ComplianceEvaluationService = new function() {
                     },
                     data: event,
                     resolve: function() {
-                        let completedRequest = event;
-                        RequestActions.edit.bind(completedRequest).run();
+                        Modal.show( {
+                            id: `viewRequest-${event._id}`,
+                            content: <RequestPanel item = { event } />
+                        } );
                     }
                 } )
             }
@@ -295,33 +306,36 @@ ComplianceEvaluationService = new function() {
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let newRequest = Requests.create({
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
-                        team: team,
-                        type: 'Preventative',
-                        priority: 'Scheduled',
-                        status: 'PMP',
-                        name: rule.event,
-                        frequency: rule.frequency,
-                        service: rule.service
-                    });
+                    let request = Requests.findOne( {
+                            "facility._id": facility._id,
+                            type: 'Preventative',
+                            status:"PMP",
+                            service: rule.service,
+                            name: rule.event
+                        } );
+                    // If PPM event exists.
+                    if( request ){
+                        Modal.show( {
+                            id: `viewRequest-${request._id}`,
+                            content: <RequestPanel item = { request } />
+                        } );
+                    } else if( !request ) { // If no PPM event exists.
+                        let newRequest = Requests.create({
+                            facility: {
+                                _id: facility._id,
+                                name: facility.name
+                            },
+                            team: team,
+                            type: 'Preventative',
+                            priority: 'Scheduled',
+                            status: 'PMP',
+                            name: rule.event,
+                            frequency: rule.frequency,
+                            service: rule.service
+                        });
+                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    }
                 //    Meteor.call( 'Issues.save', newRequest );
-                TeamActions.createRequest.bind(team, null, newRequest).run();
-                    // Meteor.call( 'Issues.save', {
-                    //     facility: {
-                    //         _id: facility._id,
-                    //         name: facility.name
-                    //     },
-                    //     type: 'Preventative',
-                    //     priority: 'Scheduled',
-                    //     status: 'PMP',
-                    //     name: rule.event,
-                    //     frequency: rule.frequency,
-                    //     service: rule.service
-                    // } );
                 }
             } )
         },
