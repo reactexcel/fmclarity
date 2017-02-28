@@ -43,16 +43,7 @@ const Select = React.createClass( {
 
 	componentDidUpdate(){
 		if(this.state.open == true){
-			if(this.state.keyPress != true){
-				$( ".searchInput" ).focus();
-			}
-			if(this.state.keyPress == true){
-				$( ".searchInput" ).blur();
-				//let id = $('a.dropdown-menu-item').eq(0)[0].id
-				//console.log(id)
-				//$('li#'+id).eq(0).addClass('onFocus')
-				//$('a#'+id).focus()
-			}
+			$( ".searchInput" ).focus();
 		}
 	},
 
@@ -216,7 +207,7 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-				<ul tabIndex = "-1" className = "dropdown-menu">
+				<ul className = "dropdown-menu">
 
 		        	{description?
 					<div>
@@ -226,32 +217,13 @@ const Select = React.createClass( {
 					<li>
 						<div className = "helper-text">
 							<input
-								onFocus={()=>{
+								onBlur={(e)=>{
 									this.setState({
-										keyPress:false
+										open:false
 									})
 								}}
-								onBlur={(e)=>{
-									if(this.state.keyPress != true){
-										this.setState({
-											open:false
-										})
-									}else{
-										let id = $('a.dropdown-menu-item').eq(0)[0].id
-										$('ul a#'+id).eq(0).focus();
-										if(!$('a').is(':focus')){
-											let $selected = $('a').filter(':focus');
-											$selected.next().focus();
-											$('a').eq(0).focus();
-										}
-									}
-								}}
 								onKeyDown={(e)=>{
-									if(e.keyCode == 40){
-										this.setState({
-											keyPress:true
-										})
-									}
+
 								}}
 								onChange={ (e) => {
 									this.setState({
@@ -272,35 +244,17 @@ const Select = React.createClass( {
 		        	if( !item ) {
 		        		return null;
 		        	}
-					let tab = idx + 1;
 		        	return (
-			    	<a key = { idx+'-'+(item._id || item.name) }
+			    	<li key = { idx+'-'+(item._id || item.name) }
 						id={idx+'-'+(item._id || item.name)}
-						tabIndex={idx.toString()}
 			    		className = "dropdown-menu-item"
 			    		onClick = { () => {
 							this.handleChange( item )
-						} }
-						onKeyDown={(e)=>{
-							let $selected = $( document.activeElement )
-							if(e.keyCode == 40){
-								if( !$selected.is(':last-child')){
-									$selected.next().eq(0).focus()
-								}
-							}else if(e.keyCode == 38){
-								if(idx == 0){
-									$( ".searchInput" ).focus();
-								}else{
-									$selected.prev().eq(0).focus()
-								}
-							}
-						}}
-						style={{'color':'black'}}
-						href="">
+						} }>
 
 			    		<ListTile item = { item } />
 
-			    	</a>
+			    	</li>
 				     )
 		        	/********************************************/
 			        })}

@@ -234,7 +234,8 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         service: rule.service
                     });
-                    Meteor.call( 'Issues.save', newRequest );
+                    //Meteor.call( 'Issues.save', newRequest );
+                    TeamActions.createRequest.bind(team, null, newRequest).run();
                 }
             } )
         },
@@ -284,7 +285,8 @@ ComplianceEvaluationService = new function() {
                         frequency: rule.frequency,
                         service: rule.service
                     });
-                    Meteor.call( 'Issues.save', newRequest );
+                //    Meteor.call( 'Issues.save', newRequest );
+                TeamActions.createRequest.bind(team, null, newRequest).run();
                     // Meteor.call( 'Issues.save', {
                     //     facility: {
                     //         _id: facility._id,
