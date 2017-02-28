@@ -353,7 +353,7 @@ export default DefaultComplianceRule = {
 			"unit":"years",
 			"repeats":"1"
 		}
-	}, {
+	},/* {
 		"service":{
 			name:"Fire Protection"
 		},
@@ -2605,7 +2605,7 @@ export default DefaultComplianceRule = {
 		"type":"Document exists",
 		"docType":"Service Report",
 		"docName":"Height safety recommendations completed"
-	}, {
+	},*/ {
 		"service":{
 			name:"High Access"
 		},

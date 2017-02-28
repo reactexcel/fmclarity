@@ -1,5 +1,9 @@
 import { Facilities } from '/modules/models/Facilities';
+<<<<<<< HEAD
 import { Requests, RequestPanel } from '/modules/models/Requests';
+=======
+import { Requests, RequestActions } from '/modules/models/Requests';
+>>>>>>> bca7d4a511b7c0c9d44724e2de4937379620b2aa
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -89,6 +93,13 @@ ComplianceEvaluationService = new function() {
                         summary: "passed",
                         detail: docCount + " " + ( docName ? ( docName + " " ) : "" ) + "documents exists."
                     },
+                    resolve: function() {
+                        //Select the last document
+                        let existDocuent = docs[ docCount - 1 ]
+                        Modal.show( {
+                            content: <DocViewEdit item = { existDocuent } model={Facilities} />
+                        } )
+                    }
                 } )
             }
 
@@ -155,6 +166,12 @@ ComplianceEvaluationService = new function() {
                     message: {
                         summary: "passed",
                         detail: ( doc.name? ( doc.name + " " ) : "" )
+                    },
+                    resolve: function() {
+                        let currentDocument = doc;
+                        Modal.show( {
+                            content: <DocViewEdit item = { currentDocument } model={Facilities} />
+                        } )
                     }
                 } )
             }
@@ -204,13 +221,19 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
-            var numEvents = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } ).count();
+            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var numEvents = requestCurser.count();
+            var requests = requestCurser.fetch();
             if ( numEvents ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                    },
+                    resolve: function() {
+                        let establishedRequest = requests[ numEvents - 1 ];
+                        RequestActions.edit.bind(establishedRequest).run();
                     }
                 } )
             }
@@ -232,9 +255,12 @@ ComplianceEvaluationService = new function() {
                         type: 'Preventative',
                         priority: 'Scheduled',
                         status: 'PMP',
+                        name: rule.event,
+                        frequency: rule.frequency,
                         service: rule.service
                     });
-                    Meteor.call( 'Issues.save', newRequest );
+                    //Meteor.call( 'Issues.save', newRequest );
+                    TeamActions.createRequest.bind(team, null, newRequest).run();
                 }
             } )
         },
@@ -319,6 +345,9 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateRule( rule, facility, service ) {
+        if( !rule ) {
+            return;
+        }
         if ( !facility && rule.facility ) {
             facility = Facilities.findOne( rule.facility._id );
         }
@@ -344,7 +373,10 @@ ComplianceEvaluationService = new function() {
         }
         rules.map( ( r ) => {
             var result = evaluateRule( r );
-            if ( result.passed ) {
+            if( !result ) {
+                // do nothing
+            }
+            else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
@@ -354,6 +386,9 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateService( service ) {
+        if( !service || !service.data || !service.data.complianceRules ) {
+            return;
+        }
         var results = evaluate( service.data.complianceRules );
         var numRules = service.data.complianceRules.length;
         var numPassed = results.passed.length;
@@ -385,12 +420,17 @@ ComplianceEvaluationService = new function() {
 
         services.map( ( s ) => {
             let result = evaluateService( s );
-            if ( result.passed ) {
+            if( !result ) {
+                // do nothing
+            }
+            else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
             }
-            rules = rules.concat( s.data.complianceRules );
+            if( s.data && s.data.complianceRules ) {
+                rules = rules.concat( s.data.complianceRules );
+            }
         } )
 
         overall = evaluate( rules );

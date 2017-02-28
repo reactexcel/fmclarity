@@ -92,7 +92,7 @@ export default ComplianceListTile = React.createClass( {
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
-          <b onClick={()=>{this.showModal(rule)}}>{name}</b>
+          <span onClick={()=>{this.showModal(rule)}}>{name}</span>
         </div>
         <div className="issue-summary-col" style={{width:"30%"}}>
           {info}
@@ -102,7 +102,10 @@ export default ComplianceListTile = React.createClass( {
             results.passed?
               <span style={{color:"green"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
-                {message.detail?": "+message.detail:""}
+                {message.detail?
+                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                      {message.detail}
+                  </span></span>:null}
               </span>
             :
               <span style={{color:"red"}}>
