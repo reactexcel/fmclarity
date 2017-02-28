@@ -163,6 +163,7 @@ export default ComplianceViewDetail = React.createClass( {
                             { service.children && service.children.map( ( subservice, idy) => {
                                 return ( !subservice || !subservice.data || !subservice.data.complianceRules || !subservice.data.complianceRules.length ) ? <div  key={idy}/>
                                 : <div key={idx+'-'+subservice.name} className="service-list-header">
+                                        {/*<span>{subservice.name}</span>*/}
                                         <ServiceListTile item={subservice}
                                             onClick={( event) => {
                                                 this.setCoverImage( event, service );

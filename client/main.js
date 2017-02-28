@@ -253,7 +253,7 @@ Actions.addAccessRule( {
                 }
             }
             else {
-                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' )) {
                     return true;
                 }
                 else if ( team.type == 'contractor' && teamRole == 'manager' ) {
