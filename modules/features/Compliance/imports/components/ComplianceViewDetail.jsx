@@ -126,7 +126,8 @@ export default ComplianceViewDetail = React.createClass( {
                 </div>
 
                 {services.map( (service, idx) => {
-                    return <div key={idx+'-'+service.name} style={{position:"relative"}}   className="service-list-header">
+
+                    if( service && service.data && service.data.complianceRules && service.data.complianceRules.length ) return <div key={idx+'-'+service.name} className="service-list-header">
                             <ServiceListTile item={service}
                                 onClick={( event) => {
                                     this.setCoverImage( event, service );
@@ -156,7 +157,7 @@ export default ComplianceViewDetail = React.createClass( {
                                 </span>
                             </span>
                             { service.children && service.children.map( ( subservice, idy) => {
-                                return <div key={idx+'-'+subservice.name} style={{position:"relative", paddingLeft: "40px"}}   className="service-list-header">
+                                if( subservice && subservice.data && subservice.data.complianceRules && subservice.data.complianceRules.length ) return <div key={idx+'-'+subservice.name} className="service-list-header">
                                         <ServiceListTile item={subservice}
                                             onClick={( event) => {
                                                 this.setCoverImage( event, service );
