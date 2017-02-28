@@ -1,5 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-import { Requests } from '/modules/models/Requests';
+import { Requests, RequestActions } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -89,6 +89,13 @@ ComplianceEvaluationService = new function() {
                         summary: "passed",
                         detail: docCount + " " + ( docName ? ( docName + " " ) : "" ) + "documents exists."
                     },
+                    resolve: function() {
+                        //Select the last document
+                        let existDocuent = docs[ docCount - 1 ]
+                        Modal.show( {
+                            content: <DocViewEdit item = { existDocuent } model={Facilities} />
+                        } )
+                    }
                 } )
             }
 
@@ -155,6 +162,12 @@ ComplianceEvaluationService = new function() {
                     message: {
                         summary: "passed",
                         detail: ( doc.name? ( doc.name + " " ) : "" )
+                    },
+                    resolve: function() {
+                        let currentDocument = doc;
+                        Modal.show( {
+                            content: <DocViewEdit item = { currentDocument } model={Facilities} />
+                        } )
                     }
                 } )
             }
@@ -204,13 +217,19 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
-            var numEvents = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } ).count();
+            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var numEvents = requestCurser.count();
+            var requests = requestCurser.fetch();
             if ( numEvents ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                    },
+                    resolve: function() {
+                        let establishedRequest = requests[ numEvents - 1 ];
+                        RequestActions.edit.bind(establishedRequest).run();
                     }
                 } )
             }
@@ -259,7 +278,11 @@ ComplianceEvaluationService = new function() {
                         summary: "passed",
                         detail: `Last completed ${moment( previousDate ).format( 'ddd Do MMM YY' )} ➡️️ Next due date is ${moment( nextDate ).format( 'ddd Do MMM YY' )}`
                     },
-                    data: event
+                    data: event,
+                    resolve: function() {
+                        let completedRequest = event;
+                        RequestActions.edit.bind(completedRequest).run();
+                    }
                 } )
             }
             return _.extend( {}, defaultResult, {
