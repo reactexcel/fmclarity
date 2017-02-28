@@ -166,10 +166,9 @@ Actions.addAccessRule( {
         'create team facility',
     ],
     role: [
-        '*',
-        /*'fmc support',
+        'fmc support',
         'portfolio manager',
-        'manager',
+        /*'manager',
         'owner',
         'property manager',
         'caretaker'*/
@@ -254,7 +253,7 @@ Actions.addAccessRule( {
                 }
             }
             else {
-                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' )) {
                     return true;
                 }
                 else if ( team.type == 'contractor' && teamRole == 'manager' ) {
@@ -307,7 +306,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        console.log( request );
+        //console.log( request );
         if( request.status == 'New' && request.supplier && request.supplier._id ) {
             // this in own function - DRY!
             let user = Meteor.user(),
@@ -354,11 +353,33 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'New' },
+    condition: 
+		( request ) => {
+			let user = Meteor.user(),
+			team = request.getTeam(),
+			teamRole = team.getMemberRole( user );
+
+			if ( teamRole == 'fmc support' ) {
+				/* Allow action for this role regardless of requests status */
+				return true;
+			}
+			else if ( request.status == 'New' ) {    
+				/* 	Allow action if status is new and only for 
+					roles specified below
+				*/
+
+				let facility = Facilities.findOne( request.facility._id ),
+				facilityRole = facility.getMemberRole( user ),
+				requestRole = request.getMemberRole( user );
+				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || 		facilityRole == 'property manager' ) {
+				return true;
+				}
+			}
+		},
     action: [
         'delete request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'facility manager', 'facility property manager', 'owner' ],
+    role: [ '*' ],
     rule: { alert: true }
 } )
 

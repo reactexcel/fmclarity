@@ -146,7 +146,7 @@ Requests.methods( {
                     } else {
                         supplierContacts = supplier.getMembers( { role: 'manager' } );
                     }
-                }                
+                }
             }
             if ( supplierContacts && supplierContacts.length ) {
                 request.dangerouslyReplaceMembers( supplierContacts, {

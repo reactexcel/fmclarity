@@ -5,6 +5,20 @@ import { AutoForm } from '/modules/core/AutoForm';
 
 import '../services/ComplianceEvaluationService.jsx';
 
+const serviceDocType = [
+    "Audit",
+    "Contract",
+    "Inspection",
+    "Invoice",
+    "MSDS",
+    "Plan",
+    "Procedure",
+    "Quote",
+    "Register",
+    "Registration",
+    "Service Report",
+    "SWMS",
+];
 export default ComplianceListTile = React.createClass( {
 
   mixins: [ ReactMeteorData ],
@@ -38,11 +52,31 @@ export default ComplianceListTile = React.createClass( {
 
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
+    if ( rule.document && rule.document.query ){
+        let query = JSON.parse(rule.document.query);
+        rule.document.query = query;
+    }
+    if ( rule.docName && !rule.document ) {
+        rule.document = {};
+        rule.document.name = rule.docName;
+        rule.document.type = rule.docType;
+        if (rule.docSubType) {
+            if ( rule.docType == "Insurance" ) rule.document.insuranceType = rule.docSubType;
+            else if ( rule.docType == "Validation Report" ) rule.document.reportType = rule.docSubType;
+            else if ( _.contains(['Bunding', 'Manifest', 'Signage', 'Spill bins'], rule.docType) )
+                rule.document.confirmationType = rule.docSubType;
+            else if ( _.contains(serviceDocType, rule.docType) )
+                rule.document.serviceType = rule.docSubType;
+        }
+    }
     Modal.show( {
       content: <AutoForm
             item = { rule }
             form = { ComplianceRuleSchema }
-            onSubmit={ () => { Modal.hide() } }
+            onSubmit={ ( updatedRule ) => {
+                Modal.hide();
+                if(this.props.onUpdate) this.props.onUpdate( updatedRule );
+            } }
         >
             <h2>Edit Compliance Rule</h2>
         </AutoForm>,
@@ -58,7 +92,7 @@ export default ComplianceListTile = React.createClass( {
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
-          <b onClick={()=>{this.showModal(rule)}}>{name}</b>
+          <span onClick={()=>{this.showModal(rule)}}>{name}</span>
         </div>
         <div className="issue-summary-col" style={{width:"30%"}}>
           {info}
@@ -68,7 +102,10 @@ export default ComplianceListTile = React.createClass( {
             results.passed?
               <span style={{color:"green"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
-                {message.detail?": "+message.detail:""}
+                {message.detail?
+                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                      {message.detail}
+                  </span></span>:null}
               </span>
             :
               <span style={{color:"red"}}>

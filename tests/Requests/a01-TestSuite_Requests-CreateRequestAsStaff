@@ -9,7 +9,7 @@
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="Requests-LoginAsPortfolioManager.html">Requests-LoginAsPortfolioManager</a></td></tr>
-<tr><td><a href="Requests-LoginAsStaff-Leonie_Roberts.html">Requests-LoginAsStaff-Leonie_Roberts</a></td></tr>
+<tr><td><a href="Requests-LoginAsStaff.html">Requests-LoginAsStaff</a></td></tr>
 <tr><td><a href="Requests-CreateNewRequestAsStaff.html">Requests-CreateNewRequestAsStaff</a></td></tr>
 <tr><td><a href="Requests-AddCommentToRequest.html">Requests-AddCommentToRequest</a></td></tr>
 <tr><td><a href="Requests-Logout.html">Requests-Logout</a></td></tr>
