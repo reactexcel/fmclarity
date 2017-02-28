@@ -61,13 +61,13 @@ export default ComplianceViewDetail = React.createClass( {
     handelCollaps(  idx ) {
         $("div.serviceTabHeader").each( function() {
             if ( idx == null ) {
-                if ( $(this).attr("id") == 0 ) {
-                    $(this).show();
-                } else{
-                    $(this).hide();
-                }
+                // if ( $(this).attr("id") == 0 ) {
+                //     $(this).show();
+                // } else{
+                //     $(this).hide();
+                // }
             } else if ( idx != null && $(this).attr("id") == idx ) {
-                $(this).toggle();
+                $(this).slideToggle();
                 this.currentSetviceTabToShow = idx;
             }
         } );
@@ -125,39 +125,65 @@ export default ComplianceViewDetail = React.createClass( {
                     </div>
                 </div>
 
-                {services.map((service,idx)=>{
+                {services.map( (service, idx) => {
                     return <div key={idx+'-'+service.name} style={{position:"relative"}}   className="service-list-header">
-                        <ServiceListTile item={service}
-                          onClick={( event) => {
-                            this.setCoverImage( event, service );
-                          }}/>
-                      <div id={idx} className={"serviceTabHeader"} >
-                          <ComplianceGroup item={service}
-                            onClick={( event) => {
-                              this.setCoverImage( event, service );
-                            }}
-                            removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
-                            />
-                      </div>
-                      <span className="service-list-header-icon">
-                          <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"2px"}}>
-                              <button className="btn btn-flat" id={idx} onClick={( event ) => {
-                                      this.deleteRules(service.name)
-                                  }}>
-                                  <i className={`fa fa-times`} aria-hidden="true"/>
-                              </button>
-                          </span>
-                          <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"2px"}}>
-                              <button className="btn btn-flat" id={idx} onClick={( event ) => {
-                                      this.handelCollaps(idx)
-                                  }}>
-                                  <i className={`fa fa-expand`} aria-hidden="true"/>
-                              </button>
-                          </span>
-                        </span>
-                    </div>
-                })}
-
+                            <ServiceListTile item={service}
+                                onClick={( event) => {
+                                    this.setCoverImage( event, service );
+                                }}/>
+                            <div id={idx} className={"serviceTabHeader"} >
+                                <ComplianceGroup item={service}
+                                    onClick={( event) => {
+                                        this.setCoverImage( event, service );
+                                    }}
+                                    removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                    />
+                            </div>
+                            <span className="service-list-header-icon">
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"2px"}}>
+                                    <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                        this.deleteRules(service.name)
+                                    }}>
+                                        <i className={`fa fa-times`} aria-hidden="true"/>
+                                    </button>
+                                </span>
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"20px",top:"2px"}}>
+                                    <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                        this.handelCollaps(idx)
+                                    }}>
+                                        <i className={`fa fa-expand`} aria-hidden="true"/>
+                                    </button>
+                                </span>
+                            </span>
+                            { service.children && service.children.map( ( subservice, idy) => {
+                                return <div key={idx+'-'+subservice.name} style={{position:"relative", paddingLeft: "40px"}}   className="service-list-header">
+                                        <ServiceListTile item={subservice}
+                                            onClick={( event) => {
+                                                this.setCoverImage( event, service );
+                                            }}/>
+                                        <div id={idx+"-"+idy} className={"serviceTabHeader"} >
+                                            <ComplianceGroup item={subservice}
+                                                onClick={( event) => {
+                                                    this.setCoverImage( event, service );
+                                                }}
+                                                removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                                />
+                                        </div>
+                                        <span className="service-list-header-icon">
+                                            <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"2px"}}>
+                                                <button className="btn btn-flat" id={idy} onClick={( event ) => {
+                                                    this.handelCollaps(idx+"-"+idy)
+                                                }}>
+                                                    <i className={`fa fa-expand`} aria-hidden="true"/>
+                                                </button>
+                                            </span>
+                                        </span>
+                                    </div>
+                            })}
+                        </div>
+                    }
+                )
+            }
             </div>
         )
     }

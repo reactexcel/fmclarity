@@ -201,51 +201,126 @@ Facilities.actions({
         authentication: true,
         method: function(facility, rules) {
             let services = facility.servicesRequired;
-            services.map(({
-                    name
-                }, idx) => {
-                    if (rules[name]) {
-                        services[idx].data = services[idx].data || {};
-                        services[idx].data.complianceRules = [];
-                        rules[name].map((rule) => {
-                            rule.facility = {
-                                _id: facility._id
-                            };
-                            rule.service = {
-                                name
-                            };
-                            services[idx].data.complianceRules.push(rule);
-                        })
+            for ( key in rules) {
+                let rule = rules[ key ];
+                let service = null;
+                let serviceIndex = null;
+                for (var i in services) {
+                    if ( services[i].name == key ) {
+                        service = services[ i ];
+                        serviceIndex = i;
+                        break;
                     }
-                })
-                let keys = Object.keys(rules);
-                keys.map( ( key ) => {
-                    let found = false;
-                    for (var i in services) {
-                        if ( services[i].name == key ) {
-                            found = true;
-                            break;
+                }
+                if ( service != null && serviceIndex != null ) {
+                    rule.map( ( r, idx ) => {
+                        r.facility = {
+                            _id: facility._id
+                        };
+                        if( !r.subservice ){
+                            if ( services[ serviceIndex ].data ) {
+                                if( services[ serviceIndex ].data.complianceRules ){
+                                    services[ serviceIndex ].data.complianceRules.push(r);
+                                } else {
+                                    services[ serviceIndex ].data.complianceRules = [ r ];
+                                }
+                            } else {
+                                services[ serviceIndex ].data = {};
+                                services[ serviceIndex ].data.complianceRules = [ r ];
+                            }
+                        } else if ( r.subservice ) {
+                            let cfound = false;
+                            if( services[ serviceIndex ].children ) {
+                                for ( var i in services[ serviceIndex ].children ) {
+                                    if ( services[ serviceIndex ].children[i].name == r.subservice.name ) {
+                                        cfound = true;
+                                        if( services[ serviceIndex ].children[i].data ){
+                                            if( services[ serviceIndex ].children[i].data.complianceRules != null ) {
+                                                services[ serviceIndex ].children[i].data.complianceRules.push( r );
+                                            } else {
+                                                services[ serviceIndex ].children[i].data.complianceRules = [ r ];
+                                            }
+                                        } else {
+                                            services[ serviceIndex ].children[i].data = {};
+                                            services[ serviceIndex ].children[i].data.complianceRules = [ r ];
+                                        }
+                                        break;
+                                    }
+                                }
+                                if ( !cfound) {
+                                    services[ serviceIndex ].children.push({
+                                        name: r.subservice.name,
+                                        data: {
+                                            complianceRules: [
+                                                r
+                                            ]
+                                        }
+                                    });
+                                }
+                            }
                         }
-                    }
-                    if ( !found ) {
-                        let complianceRules = rules[ key ].map((rule) => {
-                            rule.facility = {
-                                _id: facility._id
-                            };
-                            rule.service = {
-                                name: key
-                            };
-                            return rule;
-                        });
+                    })
+                } else {
+                    let len = services.length
+                    if( services[ len ] == null && key ){
                         services.push({
                             name: key,
                             data: {
-                                complianceRules
-                            }
-                        })
+                                complianceRules: []
+                            },
+                            children:[]
+                        });
                     }
-                } );
-                //console.log({services});
+                    rule.map( ( r, idx ) => {
+                        r.facility = {
+                            _id: facility._id
+                        };
+                        if( !r.subservice ){
+                            if ( services[ len ].data ) {
+                                if( services[ len ].data.complianceRules ){
+                                    services[ len ].data.complianceRules.push(r);
+                                } else {
+                                    services[ len ].data.complianceRules = [ r ];
+                                }
+                            } else {
+                                services[ len ].data = {};
+                                services[ len ].data.complianceRules = [ r ];
+                            }
+                        } else if ( r.subservice ) {
+                            let cfound = false;
+                            if( services[ len ].children ) {
+                                for ( var i in services[ len ].children ) {
+                                    if ( services[ len ].children[i].name == r.subservice.name ) {
+                                        cfound = true;
+                                        if( services[ len ].children[i].data ){
+                                            if( services[ len ].children[i].data.complianceRules != null ) {
+                                                services[ len ].children[i].data.complianceRules.push( r );
+                                            } else {
+                                                services[ len ].children[i].data.complianceRules = [ r ];
+                                            }
+                                        } else {
+                                            services[ len ].children[i].data = {};
+                                            services[ len ].children[i].data.complianceRules = [ r ];
+                                        }
+                                        break;
+                                    }
+                                }
+                                if ( !cfound) {
+                                    services[ len ].children.push({
+                                        name: r.subservice.name,
+                                        data: {
+                                            complianceRules: [
+                                                r
+                                            ]
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                }
+            }
             Meteor.call('Facilities.save', facility, {
                 servicesRequired: services
             });
