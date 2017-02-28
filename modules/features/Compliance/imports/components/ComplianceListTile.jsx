@@ -92,7 +92,7 @@ export default ComplianceListTile = React.createClass( {
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
-          <b onClick={()=>{this.showModal(rule)}}>{name}</b>
+          <span onClick={()=>{this.showModal(rule)}}>{name}</span>
         </div>
         <div className="issue-summary-col" style={{width:"30%"}}>
           {info}

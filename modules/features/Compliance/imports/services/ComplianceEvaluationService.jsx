@@ -306,6 +306,9 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateRule( rule, facility, service ) {
+        if( !rule ) {
+            return;
+        }
         if ( !facility && rule.facility ) {
             facility = Facilities.findOne( rule.facility._id );
         }
@@ -331,7 +334,10 @@ ComplianceEvaluationService = new function() {
         }
         rules.map( ( r ) => {
             var result = evaluateRule( r );
-            if ( result.passed ) {
+            if( !result ) {
+                // do nothing
+            }
+            else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
@@ -341,6 +347,9 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateService( service ) {
+        if( !service || !service.data || !service.data.complianceRules ) {
+            return;
+        }
         var results = evaluate( service.data.complianceRules );
         var numRules = service.data.complianceRules.length;
         var numPassed = results.passed.length;
@@ -372,7 +381,10 @@ ComplianceEvaluationService = new function() {
 
         services.map( ( s ) => {
             let result = evaluateService( s );
-            if ( result.passed ) {
+            if( !result ) {
+                // do nothing
+            }
+            else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
