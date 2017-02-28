@@ -1,9 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-<<<<<<< HEAD
-import { Requests, RequestPanel } from '/modules/models/Requests';
-=======
-import { Requests, RequestActions } from '/modules/models/Requests';
->>>>>>> bca7d4a511b7c0c9d44724e2de4937379620b2aa
+import { Requests, RequestPanel, RequestActions } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
