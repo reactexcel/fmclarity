@@ -43,17 +43,8 @@ const Select = React.createClass( {
 
 	componentDidUpdate(){
 		if(this.state.open == true){
-			if(this.state.keyPress != true){
 				$( ".searchInput" ).focus();
 			}
-			//if(this.state.keyPress == true){
-				//$( ".searchInput" ).blur();
-				//let id = $('a.dropdown-menu-item').eq(0)[0].id
-				//console.log(id)
-				//$('li#'+id).eq(0).addClass('onFocus')
-				//$('a#'+id).focus()
-			//}
-		}
 	},
 
 	componentDidMount(){
@@ -232,7 +223,8 @@ const Select = React.createClass( {
 									})
 								}}
 								onKeyDown={(e)=>{
-
+									if(e.keyCode == 40){
+									}
 								}}
 								onChange={ (e) => {
 									this.setState({
@@ -253,14 +245,18 @@ const Select = React.createClass( {
 		        	if( !item ) {
 		        		return null;
 		        	}
-					let tab = idx + 1;
 		        	return (
 			    	<li  key = { idx+'-'+(item._id || item.name) }
 						id={idx+'-'+(item._id || item.name)}
 			    		className = "dropdown-menu-item"
 			    		onClick = { () => {
 							this.handleChange( item )
-						} }>
+						} }
+						onKeyDown={(e)=>{
+						}}
+						style={{'color':'black'}}
+						>
+
 			    		<ListTile item = { item } />
 
 			    	</li>
