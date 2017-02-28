@@ -3,12 +3,13 @@
     .service-list-tile
     {
         padding: 5px;
+        min-height: 42px;
 
         border-bottom: 1px solid #ddd;
         background-color: #eee;
         .contact-card-line-1
         {
-            font-size: 15px;
+            /*font-size: 15px;*/
         }
         .facility-thumbnail
         {
@@ -47,10 +48,16 @@
     display: none;
 }
 
-.service-list-header:hover
+.service-list-header
 {
-    .service-list-header-icon
-    {
-        display: block;
+
+    position:relative;
+    /*padding-left: 40px;*/
+
+    &:hover {
+        .service-list-header-icon
+        {
+            display: block;
+        }        
     }
 }

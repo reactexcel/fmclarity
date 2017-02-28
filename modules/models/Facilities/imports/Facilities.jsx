@@ -497,6 +497,35 @@ Facilities.actions({
             Facilities.update({ _id: facility._id }, { $set: { "servicesRequired": servicesRequired } });
         }
     },
+    updateComplianceRule: {
+        authentication: true,
+        helper: (facility, rulePosition, updatedRule, serviceName, servicePosition, subservicePosition ) => {
+            let services = facility.servicesRequired;
+            if( updatedRule.document ){
+                updatedRule.docType = updatedRule.document.type;
+                if ( updatedRule.document.name ) {
+                    updatedRule.docName = updatedRule.document.name;
+                }
+                var query = JSON.stringify(updatedRule.document.query);
+                updatedRule.document.query = query;
+            }
+            if ( subservicePosition ) {
+                services[ servicePosition ]
+                    .children[ subservicePosition ].data
+                        .complianceRules[ rulePosition ] = updatedRule;
+            } else {
+                services[ servicePosition ].data
+                    .complianceRules[ rulePosition ] = updatedRule;
+            }
+            Facilities.update({
+                 _id: facility._id
+            }, {
+                $set: {
+                    "servicesRequired": services
+                }
+            });
+        }
+    },
 
     updateRealEstateAgency: {
         authentication: true,

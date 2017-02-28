@@ -223,7 +223,8 @@ const Select = React.createClass( {
 									})
 								}}
 								onKeyDown={(e)=>{
-
+									if(e.keyCode == 40){
+									}
 								}}
 								onChange={ (e) => {
 									this.setState({
@@ -245,12 +246,15 @@ const Select = React.createClass( {
 		        		return null;
 		        	}
 		        	return (
-			    	<li key = { idx+'-'+(item._id || item.name) }
+			    	<li  key = { idx+'-'+(item._id || item.name) }
 						id={idx+'-'+(item._id || item.name)}
 			    		className = "dropdown-menu-item"
 			    		onClick = { () => {
 							this.handleChange( item )
-						} }>
+						} }
+						onKeyDown={(e)=>{
+						}}
+						>
 
 			    		<ListTile item = { item } />
 
