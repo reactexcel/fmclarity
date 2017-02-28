@@ -229,7 +229,7 @@ ComplianceEvaluationService = new function() {
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.edit.bind(establishedRequest).run();
+                        RequestActions.view.bind(establishedRequest).run();
                     }
                 } )
             }
