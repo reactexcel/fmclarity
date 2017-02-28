@@ -72,6 +72,10 @@ export default ComplianceViewDetail = React.createClass( {
             }
         } );
     },
+    updateRule( rulePosition, updatedRule, serviceName, servicePosition, subservicePosition ) {
+        let facility = this.data.facility;
+        facility.updateComplianceRule( rulePosition, updatedRule, serviceName, servicePosition, subservicePosition );
+    },
 
     render() {
         var facility = this.data.facility;
@@ -137,6 +141,7 @@ export default ComplianceViewDetail = React.createClass( {
                                     onClick={( event) => {
                                         this.setCoverImage( event, service );
                                     }}
+                                    onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx )}
                                     removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                                     />
                             </div>
@@ -167,6 +172,7 @@ export default ComplianceViewDetail = React.createClass( {
                                                 onClick={( event) => {
                                                     this.setCoverImage( event, service );
                                                 }}
+                                                onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx, idy )}
                                                 removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                                                 />
                                         </div>
