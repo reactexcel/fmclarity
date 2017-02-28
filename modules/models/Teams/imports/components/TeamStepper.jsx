@@ -41,7 +41,7 @@ const TeamStepper = React.createClass( {
         }
 
         //getting value of item from state instead of props
-        if ( this.state.item ) {
+        if ( this.state.item && this.state.item._id ) {
             viewingTeam = Teams.findOne( this.state.item._id );
             if(viewingTeam.type == "contractor"){
                 Teams.schema.email.required=false;
@@ -206,9 +206,6 @@ const TeamStepper = React.createClass( {
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
-        if(viewingTeam.type == "contractor"){
-            Teams.schema.email.required=false;
-        }
 
         if ( !viewingTeam ) {
             return (
@@ -222,6 +219,11 @@ const TeamStepper = React.createClass( {
                 </form>
             )
         }
+
+        if(viewingTeam.type == "contractor"){
+            Teams.schema.email.required=false;
+        }
+        
         /*
         else if ( !viewingTeam.canSave() )
         {

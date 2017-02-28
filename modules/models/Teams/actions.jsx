@@ -138,15 +138,13 @@ const createRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
 
-                    if ( newRequest != 'Preventative' && hasSupplier ) {
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
 
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
 
                         if( baseBuilding ) {
-
-                            console.log( 'bb' );
 
                             if( role == 'property manager' ) {
                                 method = 'Issues.issue';
