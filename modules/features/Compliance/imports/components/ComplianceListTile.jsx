@@ -102,7 +102,10 @@ export default ComplianceListTile = React.createClass( {
             results.passed?
               <span style={{color:"green"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
-                {message.detail?": "+message.detail:""}
+                {message.detail?
+                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                      {message.detail}
+                  </span></span>:null}
               </span>
             :
               <span style={{color:"red"}}>
