@@ -52,20 +52,31 @@ ComplianceEvaluationService = new function() {
         //can pass in facility and service for more efficient calculation
         "Document exists": function( rule, facility, service ) {
             //  console.log({rule});
-            var docCount = null, docs = null, docName = null, docCurser = null,
+            var docCount = null,
+                docs = null,
+                docName = null,
+                docCurser = null,
                 tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                query = rule.document &&rule.document.query ?
-                        JSON.parse( rule.document.query ) : {
-                            "facility._id": facility["_id"],
-                            $and: [
-                                { type: rule.docType },
-                                { name: { $regex: rule.docName || "", $options: "i" } }
-                            ]
-                        };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                query = {};
+
+            if ( rule.document && rule.document.query ) {
+                query = JSON.parse( rule.document.query );
+            } else {
+                query[ 'facility._id' ] = facility._id;
+                //if the rule has an (optional) name included
+                if ( rule.docName && rule.docName.length ) {
+                    query[ '$and' ] = [
+                        { type: rule.docType },
+                        { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                } else {
+                    query[ 'type' ] = rule.docType;
+                }
+            }
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -76,7 +87,7 @@ ComplianceEvaluationService = new function() {
             docCurser = query && Documents.find( query );
             docCount = docCurser.count();
             docs = docCurser.fetch();
-            if( docs && docs.length ) {
+            if ( docs && docs.length ) {
                 let doc = docs[ docCount - 1 ];
                 docName = doc.name;
             }
@@ -129,19 +140,20 @@ ComplianceEvaluationService = new function() {
             // if( !rule || !rule.document ) {
             //     return;
             // }
-            var doc = null, yesterday, tomorrow, today,
+            var doc = null,
+                yesterday, tomorrow, today,
                 query = rule.document && rule.document.query ?
-                    JSON.parse( rule.document.query ) : {
-                        "facility._id": facility["_id"],
-                        $and: [
-                            { type: rule.docType },
-                            { name: { $regex: rule.docName || "", $options: "i" } }
-                        ]
-                    };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                JSON.parse( rule.document.query ) : {
+                    "facility._id": facility[ "_id" ],
+                    $and: [
+                        { type: rule.docType },
+                        { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                };
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -161,7 +173,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: ( doc.name? ( doc.name + " " ) : "" )
+                        detail: ( doc.name ? ( doc.name + " " ) : "" )
                     },
                     resolve: function() {
                         let currentDocument = doc;
@@ -229,7 +241,7 @@ ComplianceEvaluationService = new function() {
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind(establishedRequest).run();
+                        RequestActions.view.bind( establishedRequest ).run();
                     }
                 } )
             }
@@ -242,7 +254,7 @@ ComplianceEvaluationService = new function() {
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let newRequest = Requests.create({
+                    let newRequest = Requests.create( {
                         facility: {
                             _id: facility._id,
                             name: facility.name
@@ -254,9 +266,9 @@ ComplianceEvaluationService = new function() {
                         name: rule.event,
                         frequency: rule.frequency,
                         service: rule.service
-                    });
+                    } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind(team, null, newRequest).run();
+                    TeamActions.createRequest.bind( team, null, newRequest ).run();
                 }
             } )
         },
@@ -275,9 +287,9 @@ ComplianceEvaluationService = new function() {
 
             if ( event ) {
                 let nextDate = event.getNextDate();
-                    previousDate = event.getPreviousDate();
-                    nextRequest = event.findCloneAt( nextDate );
-                    previousRequest = event.findCloneAt( previousDate );
+                previousDate = event.getPreviousDate();
+                nextRequest = event.findCloneAt( nextDate );
+                previousRequest = event.findCloneAt( previousDate );
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
@@ -303,20 +315,20 @@ ComplianceEvaluationService = new function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let request = Requests.findOne( {
-                            "facility._id": facility._id,
-                            type: 'Preventative',
-                            status:"PMP",
-                            service: rule.service,
-                            name: rule.event
-                        } );
+                        "facility._id": facility._id,
+                        type: 'Preventative',
+                        status: "PMP",
+                        service: rule.service,
+                        name: rule.event
+                    } );
                     // If PPM event exists.
-                    if( request ){
+                    if ( request ) {
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
                             content: <RequestPanel item = { request } />
                         } );
-                    } else if( !request ) { // If no PPM event exists.
-                        let newRequest = Requests.create({
+                    } else if ( !request ) { // If no PPM event exists.
+                        let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
                                 name: facility.name
@@ -328,20 +340,20 @@ ComplianceEvaluationService = new function() {
                             name: rule.event,
                             frequency: rule.frequency,
                             service: rule.service
-                        });
+                        } );
                         TeamActions.createRequest.bind( team, null, newRequest ).run();
                     }
-                //    Meteor.call( 'Issues.save', newRequest );
+                    //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
-        "Compliance level": function( rule, facility, service ){
+        "Compliance level": function( rule, facility, service ) {
 
         },
     }
 
     function evaluateRule( rule, facility, service ) {
-        if( !rule ) {
+        if ( !rule ) {
             return;
         }
         if ( !facility && rule.facility ) {
@@ -369,10 +381,9 @@ ComplianceEvaluationService = new function() {
         }
         rules.map( ( r ) => {
             var result = evaluateRule( r );
-            if( !result ) {
+            if ( !result ) {
                 // do nothing
-            }
-            else if ( result.passed ) {
+            } else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
@@ -382,7 +393,7 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateService( service ) {
-        if( !service || !service.data || !service.data.complianceRules ) {
+        if ( !service || !service.data || !service.data.complianceRules ) {
             return;
         }
         var results = evaluate( service.data.complianceRules );
@@ -416,15 +427,14 @@ ComplianceEvaluationService = new function() {
 
         services.map( ( s ) => {
             let result = evaluateService( s );
-            if( !result ) {
+            if ( !result ) {
                 // do nothing
-            }
-            else if ( result.passed ) {
+            } else if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
             }
-            if( s.data && s.data.complianceRules ) {
+            if ( s.data && s.data.complianceRules ) {
                 rules = rules.concat( s.data.complianceRules );
             }
         } )
