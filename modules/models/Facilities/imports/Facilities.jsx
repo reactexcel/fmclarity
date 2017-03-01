@@ -477,12 +477,14 @@ Facilities.actions( {
                 group = user.getSelectedFacility();
             user._id = newMember._id;
             role = user.getRole( facility );
+            threshold = user.getThreshold( facility );
             Facilities.update( { _id: facility._id }, {
                 $push: {
                     members: {
                         _id: newMember._id,
                         name: newMember.profile.name,
                         role: newMember.role || role || "staff",
+                        threshold: newMember.threshold || threshold || "",
                     }
                 }
             } )

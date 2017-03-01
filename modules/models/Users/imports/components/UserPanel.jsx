@@ -83,6 +83,7 @@ class UserPanel extends React.Component {
 			availableServices = contact.getAvailableServices();
 		}
 
+		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
@@ -95,8 +96,8 @@ class UserPanel extends React.Component {
 							<span>{this.props.role}<br/></span>
 						: null }
 
-						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && profile.requestIssueThreshold) ? 
-							<span><b>WO Issue Threshold</b> {profile.requestIssueThreshold}<br/></span>
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation) ? 
+							<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
 							 : null}
 
 						{ profile.email ?
