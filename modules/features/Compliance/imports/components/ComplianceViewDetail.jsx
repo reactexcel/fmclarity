@@ -83,7 +83,7 @@ export default ComplianceViewDetail = React.createClass( {
         
         let thumb = "img/services/Building Works.jpg",
             services = facility.servicesRequired;
-
+        /*
         if ( services.length && !this.state.coverImageName ) {
             // var i = Math.floor( Math.random() * services.length );
             // thumb = "img/services/" + services[ i ].name + ".jpg";
@@ -91,7 +91,7 @@ export default ComplianceViewDetail = React.createClass( {
         } else {
           thumb = "img/services/" + this.state.coverImageName + ".jpg";
         }
-
+        */
         var results = ComplianceEvaluationService.evaluateServices( services );
 
         return (
@@ -145,14 +145,14 @@ export default ComplianceViewDetail = React.createClass( {
                                     />
                             </div>
                             <span className="service-list-header-icon">
-                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"2px"}}>
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"0px"}}>
                                     <button className="btn btn-flat" id={idx} onClick={( event ) => {
                                         this.deleteRules(service.name)
                                     }}>
                                         <i className={`fa fa-times`} aria-hidden="true"/>
                                     </button>
                                 </span>
-                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"20px",top:"2px"}}>
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"0px"}}>
                                     <button className="btn btn-flat" id={idx} onClick={( event ) => {
                                         this.handelCollaps(idx)
                                     }}>
@@ -178,7 +178,7 @@ export default ComplianceViewDetail = React.createClass( {
                                                 />
                                         </div>
                                         <span className="service-list-header-icon">
-                                            <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"2px"}}>
+                                            <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"0px"}}>
                                                 <button className="btn btn-flat" id={idy} onClick={( event ) => {
                                                     this.handelCollaps(idx+"-"+idy)
                                                 }}>
