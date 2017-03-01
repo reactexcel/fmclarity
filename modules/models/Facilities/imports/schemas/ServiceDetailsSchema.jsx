@@ -101,9 +101,29 @@ export default ServiceDetailsSchema =  {
         size: 12,
         input: Select,
         options(item){
-            return{
-                items: Session.getSelectedFacility().getSuppliers(),
+            let facility = Session.getSelectedFacility();
+            return {
+                items: facility.getSuppliers(),
                 view: ContactCard,
+                addNew: {
+                    //Add new supplier to request and selected facility.
+                    show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                    label: "Create New",
+                    onAddNewItem: ( callback ) => {
+                        import { TeamStepper } from '/modules/models/Teams';
+                        Modal.show( {
+                            content: <TeamStepper item = { supplier }
+                                facility = { facility }
+                                onChange = {
+                                    ( supplier ) => {
+                                        facility.addSupplier( supplier );
+                                        callback( supplier );
+                                    }
+                                }
+                            />
+                        } )
+                    }
+                },
                 afterChange(item){
                     item.defaultContact = [];
                 }
