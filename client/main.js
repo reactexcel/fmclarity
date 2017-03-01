@@ -88,6 +88,7 @@ Actions.addAccessRule( {
     action: [
         'create team',
         'migrate schema',
+        'send email digests',
         'send supplier reminders',
     ],
     role: [ 'fmc support' ],
@@ -367,7 +368,7 @@ Actions.addAccessRule( {
 				/* 	Allow action if status is new and only for 
 					roles specified below
 				*/
-
+                import { Facilities } from '/modules/models/Facilities';
 				let facility = Facilities.findOne( request.facility._id ),
 				facilityRole = facility.getMemberRole( user ),
 				requestRole = request.getMemberRole( user );
@@ -511,6 +512,7 @@ UserMenuActions = Actions.clone( [
     'edit team',
     'create team',
     'migrate schema',
+    'send email digests',
     'logout'
 ] );
 
