@@ -18,35 +18,12 @@ ComplianceEvaluationService = new function() {
     }
 
 
-    var docList1 = [
-            "Audit",
-            "Contract",
-            "Inspection",
-            "Invoice",
-            "MSDS",
-            "Plan",
-            "Assessment",
-            "Confirmation",
-            "Certificate",
-            "Log",
-            "Management Plan",
-            "Procedure",
-            "Quote",
-            "Register",
-            "Registration",
-            "Service Report",
-            "SWMS",
-        ],
-        docList2 = [
-            'Bank Guarantee',
-            'Contract',
-            'Emergency Management',
-            'Insurance',
-            'Lease',
-            'Quote',
-            'Register',
-            'Registration'
-        ];
+    var docList1 = [  "Audit", "Contract", "Inspection", "Invoice", "MSDS", "Plan",
+            "Assessment", "Confirmation", "Certificate", "Log", "Management Plan",
+            "Procedure", "Quote", "Register", "Registration", "Service Report",
+            "SWMS", ],
+        docList2 = [ 'Bank Guarantee', 'Contract', 'Emergency Management', 'Insurance',
+            'Lease', 'Quote', 'Register', 'Registration' ];
 
     var evaluators = {
         //can pass in facility and service for more efficient calculation
@@ -278,11 +255,50 @@ ComplianceEvaluationService = new function() {
                     previousDate = event.getPreviousDate();
                     nextRequest = event.findCloneAt( nextDate );
                     previousRequest = event.findCloneAt( previousDate );
+                    nextDateString = null,
+                    frequency = event.frequency || {},
+                    previousDateString = null;
+
+                if( nextDate ) {
+                    nextDateString = moment( nextDate ).format('ddd Do MMM');
+                }
+                if( previousDate ) {
+                    previousDateString = moment( previousDate ).format('ddd Do MMM');
+                }
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: `Last completed ${moment( previousDate ).format( 'ddd Do MMM YY' )} ➡️️ Next due date is ${moment( nextDate ).format( 'ddd Do MMM YY' )}`
+                        //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                        detail: function(){
+                            return (
+                                <span style={{position:"absolute", bottom: "13%"}}>
+                                    <span className = "issue-summary-col" style = {{width:"25%"}}>
+                                        due every {`${frequency.number||''} ${frequency.unit||''}`}
+                                    </span>
+                                    <span className = "issue-summary-col" style = {{width:"32%"}}>
+                                        {!( previousDateString && previousRequest) ?
+                                            <span>
+                                                <span>previous <b>{ previousDateString }</b> </span>
+                                                { previousRequest ?
+                                                    <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                                : null }
+                                            </span>
+                                        : null }
+                                    </span>
+                                    <span className = "issue-summary-col" style = {{width:"35%"}}>
+                                        { nextDateString && nextRequest ?
+                                            <span>
+                                                <span>next due <b>{ nextDateString }</b> </span>
+                                                { nextRequest ?
+                                                    <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                                                : null }
+                                            </span>
+                                        : null }
+                                    </span>
+                                </span>
+                            );
+                        }
                     },
                     data: event,
                     resolve: function() {

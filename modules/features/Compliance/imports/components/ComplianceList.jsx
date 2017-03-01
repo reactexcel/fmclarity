@@ -53,9 +53,9 @@ ComplianceGroup = React.createClass({
             <div>
                 {rules&&rules.length?rules.map((r,idx)=>{
                     return (
-                        <div className="grid-item service-list-item" key={idx} style={{height:"48px",paddingTop:"5px"}}
+                        <div className="grid-item service-list-item" key={idx} style={{height:"55px",paddingTop:"5px"}}
 													onClick={this.props.onClick?this.props.onClick:null} >
-                            <ComplianceListTile item={r} onUpdate={ ( updatedRule ) => this.props.onUpdate( idx, updatedRule ) }/> 	
+                            <ComplianceListTile item={r} onUpdate={ ( updatedRule ) => this.props.onUpdate( idx, updatedRule ) }/>
 							<span className="service-list-item-icon">
 								<button className="btn btn-flat" onClick={ () => this.props.removeComplianceRule(idx)}> &times; </button>
 							</span>

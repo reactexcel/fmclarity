@@ -42,8 +42,8 @@ const PMPListTile = React.createClass( {
 
         return <div className = { "issue-summary" }>
             <div className = "issue-summary-col" style = { {float:"right",width:"25%",padding:"0px"} }>
-                <ContactCard item = { supplier }/> 
-            </div>          
+                <ContactCard item = { supplier }/>
+            </div>
             <div className = "issue-summary-col" style = { {width:"20%"} } onClick = { () => { RequestActions.view.run( request ) } }>
                 { request.name }
             </div>
@@ -51,25 +51,25 @@ const PMPListTile = React.createClass( {
                 due every {`${frequency.number||''} ${frequency.unit||''}`}
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { previousDateString ? 
+                { previousDateString && previousRequest ?
                     <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                         <span>previous <b>{ previousDateString }</b> </span>
-                        { previousRequest ? 
+                        { previousRequest ?
                             <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
                         : null }
-                    </span> 
+                    </span>
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { nextDateString ? 
+                { nextDateString && nextRequest ? 
                     <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                         <span>next due <b>{ nextDateString }</b> </span>
-                        { nextRequest ? 
+                        { nextRequest ?
                             <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
                         : null }
-                    </span> 
+                    </span>
                 : null }
-            </div>            
+            </div>
         </div>
     }
 
