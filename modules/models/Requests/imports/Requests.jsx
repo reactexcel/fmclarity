@@ -146,7 +146,7 @@ Requests.methods( {
                     } else {
                         supplierContacts = supplier.getMembers( { role: 'manager' } );
                     }
-                }                
+                }
             }
             if ( supplierContacts && supplierContacts.length ) {
                 request.dangerouslyReplaceMembers( supplierContacts, {
@@ -298,11 +298,30 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'fortnights',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
@@ -318,11 +337,30 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'fortnights',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {

@@ -25,7 +25,8 @@ function register( collection, opts ) {
         auth = {
             add: authentication,
             remove: authentication,
-            setRole: authentication
+            setRole: authentication,
+            setThreshold: authentication
         }
     } else {
         auth = {
@@ -36,6 +37,9 @@ function register( collection, opts ) {
                 return false;
             },
             setRole: authentication.setRole || function() {
+                return false;
+            },
+            setThreshold: authentication.setThreshold || function() {
                 return false;
             }
         }
@@ -104,6 +108,11 @@ function register( collection, opts ) {
         method: setMemberRole( collection, fieldName )
     }
 
+    methods[ 'set' + fn + 'Threshold' ] = {
+        authentication: auth.setThreshold,
+        method: setMemberThreshold( collection, fieldName )
+    }
+
     methods[ 'dangerouslyReplace' + fn + 's' ] = {
         authentication: true,
         method: replaceMembers( collection, fieldName )
@@ -118,6 +127,7 @@ function register( collection, opts ) {
     }
 
     helpers[ 'get' + fn + 'Role' ] = getMemberRole( membersCollection, fieldName );
+    helpers[ 'get' + fn + 'Threshold' ] = getMemberThreshold( membersCollection, fieldName );
     helpers[ 'get' + fn + 'Relation' ] = getMemberRelation( membersCollection, fieldName );
     helpers[ 'has' + fn ] = hasMember( membersCollection, fieldName );
     helpers[ 'dangerouslyAddMember' ] = addMember( collection, fieldName );
@@ -171,6 +181,7 @@ function addMember( collection, fieldName ) {
             members = [ members ];
         }
         var role = options.role ? options.role : "staff";
+        var threshold = options.threshold ? options.threshold : "10";
 
         if ( !_.isArray( item[ fieldName ] ) ) {
             collection.collection.update( item._id, {
@@ -187,7 +198,8 @@ function addMember( collection, fieldName ) {
                     [ fieldName ]: {
                         _id: member._id,
                         role: role,
-                        name: member.profile ? member.profile.name : member.name
+                        name: member.profile ? member.profile.name : member.name,
+                        threshold: threshold
                             //profile:obj.getProfile?obj.getProfile():obj
                     }
                 }
@@ -237,6 +249,20 @@ function setMemberRole( collection, fieldName ) {
     }
 }
 
+function setMemberThreshold( collection, fieldName ) {
+    return function( team, user, threshold ) {
+        var query = {},
+            action = {};
+        query[ '_id' ] = team._id;
+        query[ fieldName + '._id' ] = user._id;
+
+        action[ '$set' ] = {};
+        action[ '$set' ][ fieldName + '.$.threshold' ] = threshold;
+
+        collection.update( query, action );
+    }
+}
+
 function getMembers( item, { collection = Meteor.users, fieldName = "members", filter } ) {
     let ids = [],
         names = [],
@@ -244,7 +270,13 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
     if ( members ) {
         members.map( ( m ) => {
-            if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
+            if ( 
+                !filter || 
+                !m.role || 
+                filter.role == m.role || 
+                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
+                ( filter.role.$ne && filter.role.$ne != m.role )
+            ) {
                 if ( !m ) {
                     console.log( { 'Found an empty member in the array': members } );
                 } else if ( m._id ) {
@@ -322,6 +354,16 @@ function getMemberRole( collection, fieldName ) {
         var relation = group.getMemberRelation( member );
         if ( relation ) {
             return relation.role;
+        }
+    }
+}
+
+function getMemberThreshold( collection, fieldName ) {
+    return function( member ) {
+        var group = this;
+        var relation = group.getMemberRelation( member );
+        if ( relation ) {
+            return relation.threshold;
         }
     }
 }

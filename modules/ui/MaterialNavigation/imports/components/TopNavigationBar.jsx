@@ -1,20 +1,21 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Notifications, NotificationList } from '/modules/models/Notifications';
 
 import UserProfileMenu from './UserProfileMenu.jsx';
 import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
 
 export default function TopNavigationBar( props ) {
 
+    import { NotificationList } from '/modules/models/Messages';
+
     setTimeout( () => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {
-            if ( props.onNotificationsViewed ) {
+            if ( props.onMessagesViewed ) {
                 Meteor.defer(
                     function() {
-                        props.onNotificationsViewed();
+                        props.onMessagesViewed();
                     }
                 )
             }
@@ -83,14 +84,15 @@ class DesktopNotificationPopUp extends React.Component {
         let user = props.user,
             notifications = null;
         if ( user ) {
-            notifications = Notifications.findAll( { 'recipient._id': user._id, wasShown: false } );
+            import { Messages } from '/modules/models/Messages';
+            notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
             if ( !this.showPopUp ) {
                 let component = this;
                 if ( notifications.length ) {
-                    component.showPopUp = Meteor.apply( 'Notifications.setAllShown', [ notifications ], { returnStubValue: true } );
+                    component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ notifications ], { returnStubValue: true } );
                 }
             } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
-                this.props.showNotifications( notifications );
+                this.props.showMessages( notifications );
             }
         }
     }

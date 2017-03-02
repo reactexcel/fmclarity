@@ -3,12 +3,13 @@
     .service-list-tile
     {
         padding: 5px;
+        min-height: 42px;
 
         border-bottom: 1px solid #ddd;
         background-color: #eee;
         .contact-card-line-1
         {
-            font-size: 15px;
+            /*font-size: 15px;*/
         }
         .facility-thumbnail
         {
@@ -27,4 +28,46 @@
 .resolution-link:hover
 {
     text-decoration: underline;
+}
+
+.service-list-item-icon
+{
+    display: none;
+}
+
+.service-list-item:hover
+{
+    background-color: #E3E3E3;
+    .service-list-item-icon
+    {
+        display: block;
+    }
+}
+.service-list-header-icon
+{
+    display: none;
+}
+
+.service-list-header
+{
+
+    position:relative;
+
+    .service-list-tile {
+        font-weight: bold;
+    }
+
+    .service-list-header {
+        .service-list-tile {
+            font-weight: normal;
+        }
+    }
+    /*padding-left: 40px;*/
+
+    &:hover {
+        .service-list-header-icon
+        {
+            display: block;
+        }        
+    }
 }

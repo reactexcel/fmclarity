@@ -105,7 +105,10 @@ class Model {
     registerMixins( mixins ) {
         mixins.map( ( mixin ) => {
             //console.log( mixin );
-            if ( _.isArray( mixin ) ) {
+            if( !mixin ) {
+
+            }
+            else if ( _.isArray( mixin ) ) {
                 let [ module, options ] = mixin;
                 if ( module ) {
                     module.register( this, options );

@@ -77,6 +77,7 @@ const UserProfileSchema = {
 			return role === "tenant";
 		},
 	},
+	/*
 	requestIssueThreshold: {
 		label: "Enter work order threshold for Managers",
 		description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
@@ -93,6 +94,7 @@ const UserProfileSchema = {
 			return role === "portfolio manager" && _.contains(['manager', 'caretaker'], Itemrole );
 		},
 	},
+	*/
 
 
 

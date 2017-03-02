@@ -210,7 +210,14 @@ const RequestSchema = {
                 return {
                     items: facility ? facility.areas : null
                 }
-            }
+            },
+            defaultValue: (request ) => {
+                let user = Meteor.user(), val=null;
+                if ( user.profile.tenancy && _.contains( [ "tenant", 'resident' ], user.getRole() ) ) {
+                    val = user.profile.tenancy;
+                }
+                return val;
+            },
         },
 
         area: {
@@ -357,11 +364,11 @@ const RequestSchema = {
                 }
                 return true;
             },
-            options: ( item ) => {
+            options: ( request ) => {
                 return {
-                    items: item.service ? item.service.children : null,
-                    afterChange: ( item ) => {
-                        if ( item == null ) {
+                    items: request.service ? request.service.children : null,
+                    afterChange: ( request ) => {
+                        if ( request == null ) {
                             return;
                         }
                         if ( request.subservice && request.subservice.data ) {
@@ -766,7 +773,7 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.status == 'New' && request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
                     ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
                 )
             },
@@ -990,6 +997,9 @@ const RequestSchema = {
                             default:
 
                         }
+                        period = props.item.frequency.number > 1?
+                            ( period || props.item.frequency.period ) + "s":
+                            ( period || props.item.frequency.period );
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1003,10 +1013,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeat ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeat ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
                                         </div>
                                     )
                                 )

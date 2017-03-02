@@ -45,7 +45,7 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
             members: 1,
             operatingTimes: 1,
             'owner._id': 1,
-            'ownert.name': 1,
+            'owner.name': 1,
             lease: 1,
             levels: 1,
             description: 1,
@@ -54,6 +54,7 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
             size: 1,
             attachments: 1,
             realEstateAgency: 1,
+            billingDetails: 1,
         }
     } );
     return facilitiesCursor;
@@ -92,6 +93,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             attachments: 1,
             'assignee._id': 1,
             'assignee.name': 1,
+            closeDetails: 1,
             code: 1,
             costThreshold: 1,
             createdAt: 1,

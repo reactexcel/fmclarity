@@ -150,12 +150,14 @@ Teams.methods( {
     addPersonnel: {
         authentication: true,
         method: ( team, newMember ) => {
+            var threshold = team.type=='fm' && newMember.threshold ? newMember.threshold : null;
             Teams.update( { _id: team._id }, {
                 $push: {
                     members: {
                         _id: newMember._id,
                         name: newMember.profile.name,
                         role: newMember.role || "staff",
+                        threshold: threshold,
                     }
                 }
             } )
@@ -295,6 +297,8 @@ function inviteMember( team, email, ext ) {
             _id: user._id
         }, {
             role: ext.role || user.getRole()
+        },{
+            threshold: ext.threshold || user.getThreshold()
         } );
         ext.callback ? ext.callback( user, found ) : "";
         return {
@@ -319,6 +323,8 @@ function inviteMember( team, email, ext ) {
                     _id: user._id
                 }, {
                     role: ext.role
+                },{
+                    threshold: ext.threshold || user.getThreshold()
                 } );
                 return {
                     user: user,

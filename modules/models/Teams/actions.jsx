@@ -105,8 +105,12 @@ const createRequest = new Action( {
     verb: "created a work order",
     icon: 'fa fa-plus',
     // action should return restult and that gets used in the notification
-    action: ( team, callback ) => {
+    action: ( team, callback, options ) => {
         let item = { team };
+        if ( options ) {
+            options.team = team;
+            item = options
+        }
         newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
@@ -134,7 +138,7 @@ const createRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
 
-                    if ( newRequest != 'Preventative' && hasSupplier ) {
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
 
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
@@ -142,23 +146,25 @@ const createRequest = new Action( {
 
                         if( baseBuilding ) {
 
-                            console.log( 'bb' );
-
                             if( role == 'property manager' ) {
                                 method = 'Issues.issue';
                             }
                         }
                         else if( !baseBuilding ) {
 
+                            relation =team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
+
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                                 method = 'Issues.issue';
                             }
 
-                            else if( _.contains( [ 'manager', 'caretaker' ], role ) ) {
+                            else if( _.contains( [ 'manager', 'caretaker' ], role ) && relation.threshold && relation.threshold >=1 ) {
 
                                 console.log( 'non bb manager or caretaker' );
 
                                 method = 'Issues.issue';
+                                var newThreshold = parseInt(relation.threshold) - 1;
+                                
                                 if( team.defaultCostThreshold ) {
 
                                     // strips out commas
@@ -177,7 +183,7 @@ const createRequest = new Action( {
                                     let costThreshold = parseInt( team.defaultCostThreshold ),
                                         cost = parseInt( costString );
 
-                                    console.log( { 
+                                    console.log( {
                                         role,
                                         costThreshold,
                                         cost
@@ -187,6 +193,13 @@ const createRequest = new Action( {
                                         method = 'Issues.create';
                                     }
                                 }
+                                if( parseInt(relation.threshold) < 1 ) {
+                                        method = 'Issues.create';
+                                    }
+                                if( method == 'Issues.issue' ) {
+                                    console.log('new threshold='+newThreshold.toString());
+                                        team.setMemberThreshold( owner, newThreshold.toString() );
+                                    }
                             }
                         }
                     }

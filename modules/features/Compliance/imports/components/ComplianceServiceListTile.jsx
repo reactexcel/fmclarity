@@ -31,9 +31,11 @@ export default ServiceListTile = React.createClass( {
 		var data = this.data;
 		return (
 			<div className="service-list-tile" onClick={this.props.onClick?this.props.onClick:null}>
+				{/*
 				<div className="facility-thumbnail">
 					<div style={{width:"37px",height:"37px",backgroundImage:"url('"+data.thumb+"')",backgroundSize:"cover"}}/>
 				 </div>
+				*/}
 				 <div className="facility-info contact-card contact-card-2line">
 					<span className="contact-card-line-1">
 						<span>{data.service.name}</span>

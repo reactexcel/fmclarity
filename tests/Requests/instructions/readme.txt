@@ -6,8 +6,9 @@ Pre-requisites before runnin Selenium Tests:
 	from https://addons.mozilla.org/en-US/firefox/addon/flow-control/
 
 Test files for upload:
-* Make sure the following files exist and placed in the paths shown below.
-  They will be used to test file uploads.
+* Make sure the following files included in the included selenium_test_files 
+subdirectory are copied in the paths shown below. They will be used to test 
+file uploads.
 
 C:\selenium_test_files\selenium_test_report.txt
 C:\selenium_test_files\selenium_test_invoice.pdf
