@@ -80,7 +80,7 @@ export default ComplianceViewDetail = React.createClass( {
         var facility = this.data.facility;
         if ( !facility )
             return <div/>
-        
+
         let thumb = "img/services/Building Works.jpg",
             services = facility.servicesRequired;
         /*
@@ -134,7 +134,9 @@ export default ComplianceViewDetail = React.createClass( {
                             <ServiceListTile item={service}
                                 onClick={( event) => {
                                     this.setCoverImage( event, service );
-                                }}/>
+                                }}
+                                isService={ true }
+                                />
                             <div id={idx} className={"serviceTabHeader"} >
                                 <ComplianceGroup item={service}
                                     onClick={( event) => {
@@ -143,6 +145,39 @@ export default ComplianceViewDetail = React.createClass( {
                                     onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx )}
                                     removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                                     />
+                                <div>
+                                    { service.children && service.children.map( ( subservice, idy) => {
+                                        return ( !subservice || !subservice.data || !subservice.data.complianceRules || !subservice.data.complianceRules.length ) ? <div  key={idy}/>
+                                    : <div key={idx+'-'+subservice.name} className="subservice-list-header">
+                                                {/*<span>{subservice.name}</span>*/}
+                                                <ServiceListTile item={subservice}
+                                                    onClick={( event) => {
+                                                        this.setCoverImage( event, service );
+                                                    }}
+                                                    isService={ false }
+                                                    />
+                                                <div id={idx+"-"+idy} className={"serviceTabHeader"} >
+                                                    <ComplianceGroup item={subservice}
+                                                        onClick={( event) => {
+                                                            this.setCoverImage( event, service );
+                                                        }}
+                                                        onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx, idy )}
+                                                        removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                                        />
+                                                </div>
+                                                <span className="subservice-list-header-icon">
+                                                    <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"-3px"}}>
+                                                        <button className="btn btn-flat" style={{height: "23px"}} id={idy} onClick={( event ) => {
+                                                            this.handelCollaps(idx+"-"+idy)
+                                                        }}>
+                                                            <i className={`fa fa-expand`} aria-hidden="true"/>
+                                                        </button>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        })
+                                    }
+                                </div>
                             </div>
                             <span className="service-list-header-icon">
                                 <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"0px"}}>
@@ -160,34 +195,7 @@ export default ComplianceViewDetail = React.createClass( {
                                     </button>
                                 </span>
                             </span>
-                            { service.children && service.children.map( ( subservice, idy) => {
-                                return ( !subservice || !subservice.data || !subservice.data.complianceRules || !subservice.data.complianceRules.length ) ? <div  key={idy}/>
-                                : <div key={idx+'-'+subservice.name} className="service-list-header">
-                                        {/*<span>{subservice.name}</span>*/}
-                                        <ServiceListTile item={subservice}
-                                            onClick={( event) => {
-                                                this.setCoverImage( event, service );
-                                            }}/>
-                                        <div id={idx+"-"+idy} className={"serviceTabHeader"} >
-                                            <ComplianceGroup item={subservice}
-                                                onClick={( event) => {
-                                                    this.setCoverImage( event, service );
-                                                }}
-                                                onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx, idy )}
-                                                removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
-                                                />
-                                        </div>
-                                        <span className="service-list-header-icon">
-                                            <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"0px"}}>
-                                                <button className="btn btn-flat" id={idy} onClick={( event ) => {
-                                                    this.handelCollaps(idx+"-"+idy)
-                                                }}>
-                                                    <i className={`fa fa-expand`} aria-hidden="true"/>
-                                                </button>
-                                            </span>
-                                        </span>
-                                    </div>
-                            })}
+
                         </div>
                     }
                 )
