@@ -180,16 +180,19 @@ const TeamStepper = React.createClass( {
     checkName( event ) {
         event.preventDefault();
         var inputName = this.refs.invitation.value;
+        console.log(inputName,"111111111")
         let query = {
             name: {
                 $regex: inputName,
                 $options: 'i'
             }
         };
+        console.log(this.state.teamType,"this.state.teamType")
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
+        console.log(searchTeams,"searchTeams")
         if ( searchTeams.length > 0 ) {
             this.setState( { foundTeams: true } );
 
@@ -223,7 +226,7 @@ const TeamStepper = React.createClass( {
         if(viewingTeam.type == "contractor"){
             Teams.schema.email.required=false;
         }
-        
+
         /*
         else if ( !viewingTeam.canSave() )
         {
@@ -265,9 +268,9 @@ const TeamStepper = React.createClass( {
                     }
                   }
                   onFinish = { () => {
-                      if(this.props.onFinish){
-                        this.props.onFinish( viewingTeam )
-                      }
+                        if(this.props.onFinish){
+                            this.props.onFinish( viewingTeam )
+                        }
                     }
                   }
                   tabs={[
@@ -281,7 +284,7 @@ const TeamStepper = React.createClass( {
                                             form = { ["name","type","abn","email","phone","phone2","website","address"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
-                                            onChange =  { ( newItem ) => { 
+                                            onChange =  { ( newItem ) => {
                                                 console.log(newItem);
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;

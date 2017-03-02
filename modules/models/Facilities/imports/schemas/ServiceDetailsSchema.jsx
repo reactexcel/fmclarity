@@ -116,7 +116,9 @@ export default ServiceDetailsSchema =  {
                                 facility = { facility }
                                 onChange = {
                                     ( supplier ) => {
+                                        let facility = Session.getSelectedFacility();
                                         facility.addSupplier( supplier );
+                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
                                         callback( supplier );
                                     }
                                 }
@@ -133,7 +135,7 @@ export default ServiceDetailsSchema =  {
     defaultContact:{
         label: "Default supplier contact",
         type: 'array',
-        required: true,
+        required: false,
         size: 12,
         input(props){
             // props.onChange = ( item ) => {
