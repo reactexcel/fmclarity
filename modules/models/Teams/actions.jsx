@@ -152,15 +152,19 @@ const createRequest = new Action( {
                         }
                         else if( !baseBuilding ) {
 
+                            relation =team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
+
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                                 method = 'Issues.issue';
                             }
 
-                            else if( _.contains( [ 'manager', 'caretaker' ], role ) ) {
+                            else if( _.contains( [ 'manager', 'caretaker' ], role ) && relation.threshold && relation.threshold >=1 ) {
 
                                 console.log( 'non bb manager or caretaker' );
 
                                 method = 'Issues.issue';
+                                var newThreshold = parseInt(relation.threshold) - 1;
+                                
                                 if( team.defaultCostThreshold ) {
 
                                     // strips out commas
@@ -189,6 +193,13 @@ const createRequest = new Action( {
                                         method = 'Issues.create';
                                     }
                                 }
+                                if( parseInt(relation.threshold) < 1 ) {
+                                        method = 'Issues.create';
+                                    }
+                                if( method == 'Issues.issue' ) {
+                                    console.log('new threshold='+newThreshold.toString());
+                                        team.setMemberThreshold( owner, newThreshold.toString() );
+                                    }
                             }
                         }
                     }
