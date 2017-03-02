@@ -370,10 +370,11 @@ Actions.addAccessRule( {
 				*/
                 import { Facilities } from '/modules/models/Facilities';
 				let facility = Facilities.findOne( request.facility._id ),
-				facilityRole = facility.getMemberRole( user ),
-				requestRole = request.getMemberRole( user );
-				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || 		facilityRole == 'property manager' ) {
-				return true;
+				    facilityRole = facility.getMemberRole( user ),
+				    requestRole = request.getMemberRole( user );
+
+				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
+				    return true;
 				}
 			}
 		},
@@ -508,13 +509,6 @@ Actions.addAccessRule( {
     rule: { alert: true }
 } )
 */
-UserMenuActions = Actions.clone( [
-    'edit team',
-    'create team',
-    'migrate schema',
-    'send email digests',
-    'logout'
-] );
 
 UserPanelActions = Actions.clone( [
     'edit member',
@@ -535,6 +529,7 @@ UserMenuActions = Actions.clone( [
     'create team',
     'migrate schema',
     'send supplier reminders',
+    'send email digests',
     'logout'
 ] );
 
