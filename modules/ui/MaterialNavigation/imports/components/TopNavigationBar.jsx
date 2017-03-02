@@ -1,12 +1,13 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Messages, NotificationList } from '/modules/models/Messages';
 
 import UserProfileMenu from './UserProfileMenu.jsx';
 import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
 
 export default function TopNavigationBar( props ) {
+
+    import { NotificationList } from '/modules/models/Messages';
 
     setTimeout( () => {
 
@@ -83,6 +84,7 @@ class DesktopNotificationPopUp extends React.Component {
         let user = props.user,
             notifications = null;
         if ( user ) {
+            import { Messages } from '/modules/models/Messages';
             notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
             if ( !this.showPopUp ) {
                 let component = this;
