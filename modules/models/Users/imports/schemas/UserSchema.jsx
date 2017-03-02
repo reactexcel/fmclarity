@@ -79,8 +79,8 @@ const UserProfileSchema = {
 	},
 	/*
 	requestIssueThreshold: {
-		label: "WO Issue Threshold",
-		description: "Number of Work Orders user can issue to suppliers",
+		label: "Enter work order threshold for Managers",
+		description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
 		input: Text,
 		optional: true,
 		type: "string",
