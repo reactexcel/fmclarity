@@ -83,7 +83,7 @@ class DesktopNotificationPopUp extends React.Component {
         let user = props.user,
             notifications = null;
         if ( user ) {
-            notifications = Messages.findAll( { 'inbox.query._id': user._id, wasShown: false } );
+            notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
             if ( !this.showPopUp ) {
                 let component = this;
                 if ( notifications.length ) {
