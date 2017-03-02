@@ -289,7 +289,7 @@ ComplianceEvaluationService = new function() {
                                         due every {`${frequency.number||''} ${frequency.unit||''}`}
                                     </span>
                                     <span className = "issue-summary-col" style = {{width:"32%"}}>
-                                        {!( previousDateString && previousRequest) ?
+                                        {( previousDateString && previousRequest) ?
                                             <span>
                                                 <span>previous <b>{ previousDateString }</b> </span>
                                                 { previousRequest ?
