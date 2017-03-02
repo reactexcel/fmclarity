@@ -1,4 +1,5 @@
 export default DocTypes = [
+    "Image",
     "Audit",
     "Bank Guarantee",
     "Budget",
