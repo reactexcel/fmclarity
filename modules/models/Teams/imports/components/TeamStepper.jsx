@@ -180,19 +180,16 @@ const TeamStepper = React.createClass( {
     checkName( event ) {
         event.preventDefault();
         var inputName = this.refs.invitation.value;
-        console.log(inputName,"111111111")
         let query = {
             name: {
                 $regex: inputName,
                 $options: 'i'
             }
         };
-        console.log(this.state.teamType,"this.state.teamType")
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
-        console.log(searchTeams,"searchTeams")
         if ( searchTeams.length > 0 ) {
             this.setState( { foundTeams: true } );
 
@@ -285,7 +282,6 @@ const TeamStepper = React.createClass( {
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             onChange =  { ( newItem ) => {
-                                                console.log(newItem);
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;
                                                 }
