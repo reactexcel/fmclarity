@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
-import { Notifications } from '/modules/models/Notifications';
+import { Messages } from '/modules/models/Messages';
 import NotificationsPage from '../components/NotificationsPage.jsx';
 
 /**

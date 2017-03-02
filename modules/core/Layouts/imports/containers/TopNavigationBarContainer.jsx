@@ -64,7 +64,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
         unreadCount = Messages.find( { 'inboxId.query._id': user._id, read: false } ).count();
 
         //		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
-        //	if ( unshownNotifications.length ) {
+        //	if ( unshownMessages.length ) {
         //	chime.play();
         //		showNotifications( unshownNotifications );
         //		}
@@ -76,14 +76,14 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
                 body: notification.getBody(),
                 icon: "icon-64x64.ico"
             } );
-            Meteor.call( 'Notifications.setShown', notification );
+            Meteor.call( 'Messages.setShown', notification );
         } )
     }
 
     function onNotificationsViewed() {
         let user = Meteor.user();
         if ( user ) {
-            Meteor.call( 'Notifications.markAsRead', { user } );
+            Meteor.call( 'Messages.markAsRead', { user } );
         }
     }
 
