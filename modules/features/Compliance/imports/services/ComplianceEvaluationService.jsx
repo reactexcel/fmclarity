@@ -32,8 +32,9 @@ ComplianceEvaluationService = new function() {
             "Management Plan",
             "Procedure",
             "Quote",
-            "Register",
             "Registration",
+            "Licence",
+            "Report",
             "Service Report",
             "SWMS",
         ],
@@ -111,6 +112,16 @@ ComplianceEvaluationService = new function() {
                             type: rule.docType,
                             serviceType: rule.service,
                         } );
+                        if (rule.docSubType) {
+                            if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                            else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                            else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                            else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                            else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                            else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                            else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                            else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                        }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )
@@ -179,6 +190,16 @@ ComplianceEvaluationService = new function() {
                         type: rule.docType,
                         serviceType: rule.service,
                     } );
+                    if (rule.docSubType) {
+                        if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                        else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                        else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                        else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                        else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                        else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                        else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                        else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                    }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )

@@ -63,11 +63,14 @@ export default ComplianceListTile = React.createClass( {
         if (rule.docSubType) {
             if ( rule.docType == "Insurance" ) rule.document.insuranceType = rule.docSubType;
             else if ( rule.docType == "Validation Report" ) rule.document.reportType = rule.docSubType;
-            else if ( _.contains(['Bunding', 'Manifest', 'Signage', 'Spill bins'], rule.docType) )
-                rule.document.confirmationType = rule.docSubType;
-            else if ( _.contains(serviceDocType, rule.docType) )
-                rule.document.serviceType = rule.docSubType;
+            else if ( rule.docType == "Confirmation") rule.document.confirmationType = rule.docSubType;
+            else if ( rule.docType == "Log") rule.document.logType = rule.docSubType;
+            else if ( rule.docType == "Certificate") rule.document.certificateType  = rule.docSubType;
+            else if ( rule.docType == "Register") rule.document.registerType  = rule.docSubType;
+            else if ( rule.docType == "Registration") rule.document.registrationType  = rule.docSubType;
+            else if ( rule.docType == "Procedure") rule.document.procedureType  = rule.docSubType;
         }
+        if ( _.contains(serviceDocType, rule.docType) ) rule.document.serviceType = rule.service.name;
     }
     Modal.show( {
       content: <AutoForm
