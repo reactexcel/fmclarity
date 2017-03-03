@@ -8,44 +8,20 @@ import { Users } from '/modules/models/Users';
 import moment from 'moment';
 
 
-function getMessagesThisHour() {
-
-	import { Messages } from '/modules/models/Messages';
-
-	let oneHourAgo = moment().subtract( 1, 'day' );
-
-	console.log( oneHourAgo.toDate() );
-
-	let messages = Messages.findAll( { 
-		'inboxId.query._id': Meteor.user()._id,
-		createdAt: {
-			$gte: oneHourAgo.toDate()
-		}
-	} );
-
-	return messages;
-}
-
-function bundleMessages( messages ) {
-	if( !_.isArray( messages ) ) {
-		throw new Meteor.Error( 'Messages should not be an array' );
-	}
-	let bundledMessages = _.groupBy( messages, 'verb' );
-	console.log( bundledMessages );
-	return bundledMessages;
-}
-
-function sendEmail() {
-
-}
 
 const sendEmailDigests = new Action( { 
 	name: 'send email digests',
 	label: 'Send email digests',
 	icon: 'fa fa-exclamation',
 	action: () => {
-		let messages = getMessagesThisHour();
-		let bundledMessages = bundleMessages( messages );
+		import { EmailDigestView } from '/modules/core/Email';
+		let user = Meteor.user();
+		let messageBody = DocMessages.render( EmailDigestView, { user } );
+		console.log( messageBody );
+		Meteor.call( 'Messages.sendEmail', user, {
+			subject: 'Testing the digest',
+			emailBody: messageBody
+		} )
 	}
 } )
 

@@ -269,6 +269,9 @@ Actions.addAccessRule( {
                     let costThreshold = parseInt( team.defaultCostThreshold ),
                         cost = parseInt( costString );
 
+
+                    console.log( { original:team.defaultCostThreshold, costThreshold, cost } );
+
                     if( cost <= costThreshold ) {
                         return true;
                     }
@@ -322,7 +325,7 @@ Actions.addAccessRule( {
                 }
             }
             else {
-                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
                     return true;
                 }
                 else if ( team.type == 'contractor' && teamRole == 'manager' ) {
@@ -364,7 +367,7 @@ Actions.addAccessRule( {
 				/* Allow action for this role regardless of requests status */
 				return true;
 			}
-			else if ( request.status == 'New' ) {    
+			else if ( request.status == 'New' || request.type == 'Preventative' ) {    
 				/* 	Allow action if status is new and only for 
 					roles specified below
 				*/
