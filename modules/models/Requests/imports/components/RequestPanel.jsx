@@ -257,7 +257,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
+                { request.priority != "PMP" && teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
@@ -280,7 +280,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                             user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
                                         )
                                 })}
-                                         
+
                             </ul>
                         </td>
                     </tr> : null }
