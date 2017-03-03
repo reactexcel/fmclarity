@@ -72,8 +72,8 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     function showNotifications( notifications ) {
         notifications.map( ( notification ) => {
-            notify.createNotification( notification.getSubject(), {
-                body: notification.getBody(),
+            notify.createNotification( notification.subject, {
+                body: notification.body,
                 icon: "icon-64x64.ico"
             } );
             Meteor.call( 'Messages.setShown', notification );
