@@ -100,7 +100,7 @@ export default ComplianceListTile = React.createClass( {
         <div className="issue-summary-col" style={{width:"27%"}}>
           {info}
         </div>
-        <div className="issue-summary-col" style={{width:"47%"}}>
+        <div className="issue-summary-col" style={{width:"43%"}}>
           {
             results.passed?
               <span style={{color:"green"}}>
