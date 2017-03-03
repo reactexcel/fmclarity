@@ -62,6 +62,16 @@ const Teams = new Model( {
     ]
 } );
 
+Teams.collection.allow( {
+    update: () => {
+        return true;
+    },
+    insert: () =>{
+        return true;
+    }
+} )
+
+
 
 //Teams.collection._ensureIndex( { 'members._id': 1 } );
 //Teams.collection._ensureIndex( { 'owner._id': 1 } );
