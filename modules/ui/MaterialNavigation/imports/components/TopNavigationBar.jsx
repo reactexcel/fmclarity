@@ -89,7 +89,7 @@ class DesktopNotificationPopUp extends React.Component {
             notifications = this.props.notifications ? this.props.notifications : null;
             if ( !this.showPopUp ) {
                 let component = this;
-                if ( notifications.length ) {
+                if ( notifications && notifications.length ) {
                     component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ notifications ], { returnStubValue: true } );
                 }
             } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.

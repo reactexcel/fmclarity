@@ -78,6 +78,7 @@ Actions.addAccessRule( {
     action: [
         'edit user',
         'login as user',
+        'send email digests',
         'logout'
     ],
     role: [ '*' ],
@@ -88,7 +89,6 @@ Actions.addAccessRule( {
     action: [
         'create team',
         'migrate schema',
-        'send email digests',
         'send supplier reminders',
     ],
     role: [ 'fmc support' ],
