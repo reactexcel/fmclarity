@@ -93,7 +93,7 @@ const TeamPanel = React.createClass( {
                 });
             }
 
-            insuranceDocs = Documents.find( { '_id': { $in: docIds } } ).fetch();
+            insuranceDocs = Documents.find( { $or: [{ type: "Insurance", "team._id": team._id }, { _id: { $in: docIds } } ] } ).fetch();
 
         }
         return {
@@ -113,7 +113,7 @@ const TeamPanel = React.createClass( {
 
     render() {
         let { team, availableServices, insuranceDocs } = this.data;
-
+        
         if ( !team ) {
             return <div/>
         }
@@ -156,7 +156,7 @@ const TeamPanel = React.createClass( {
 					{ team.phone ? <span><b>Phone</b> { team.phone }<br/></span> :null }
 					{ team.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { team.phone2 }<br/></span> :null }
 					{ insuranceDocs.length && team.type=="contractor" ? insuranceDocs.map( (doc, idx) => {
-                        return <span key = { doc._id }><b>Insurance Expiry</b> { moment( doc.expiryDate ).format( 'DD/MM/YYYY' ) }</span>
+                        return <span key = { doc._id }><b>{doc.insuranceType} insurance expiry:</b> { moment( doc.expiryDate ).format( 'DD/MM/YYYY' ) }<br/></span>
                     }) :null }
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
 
