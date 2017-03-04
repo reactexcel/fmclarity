@@ -131,7 +131,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 					{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
 				</div>
 				<div style={{width:"30%", float:"left"}}>
-					<div className="services-editor-col services-editor-col-supplier" style={{width:"100%"}}>
+					<div className="services-editor-col services-editor-col-supplier" style={{width:"100%",cursor: "default"}}>
 						{supplier?
 							<ContactCard item={supplier}/>
 							:
