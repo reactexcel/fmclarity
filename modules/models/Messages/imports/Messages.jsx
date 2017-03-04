@@ -73,6 +73,70 @@ Messages.methods( {
 	}
 } )
 
+Messages.actions( {
+	markAsRead: {
+		authentication: true,
+		method: function( { user } ) {
+			//console.log( user );
+			if ( user ) {
+				Messages.update( { 'inboxId.query._id': user._id }, { $set: { read: true } }, { multi: true } );
+			}
+		}
+	},
+	setShown: {
+		authentication: true,
+		method: function( notification ) {
+			//console.log( notification );
+			Messages.update( notification._id, { $set: { wasShown: true } } );
+		}
+	},
+	//Mark all the notification as shown
+	setAllShown: {
+		authentication: true,
+		method: function( notifications ) {
+			let show = false;
+			_.map( notifications, ( n ) => {
+				Messages.update( n._id, { $set: { wasShown: true } } );
+				show = true;
+			});
+			return show;
+		}
+	},
+
+	// notifications.authenticatedHelpers
+
+	getBody: {
+		authentication: true,
+		helper: () => {
+			return ''
+		}
+	},
+
+	getSubject: {
+		authentication: true,
+		helper: ( { actor, action, object } ) => {
+			let actorName = actor.profile.name,
+				actionName = action.name,
+				actionVerb = action.verb,
+				targetName = "Unknown";
+
+			if ( object ) {
+				target = object[ 0 ];
+			}
+
+			if ( target ) {
+				if ( target.profile ) {
+					targetName = target.profile.name;
+				} else {
+					targetName = target.name;
+				}
+			}
+			return `${actorName} ${actionVerb} ${targetName}`;
+		}
+	}
+} )
+
+
 if ( Meteor.isServer ) {
 	Messages.collection._ensureIndex( { 'team._id': 1 } );
 	Messages.collection._ensureIndex( { 'facility._id': 1 } );

@@ -78,6 +78,7 @@ Actions.addAccessRule( {
     action: [
         'edit user',
         'login as user',
+        'send email digests',
         'logout'
     ],
     role: [ '*' ],
@@ -253,7 +254,7 @@ Actions.addAccessRule( {
                 }
             }
             else {
-                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' )) {
                     return true;
                 }
                 else if ( team.type == 'contractor' && teamRole == 'manager' ) {
@@ -267,6 +268,9 @@ Actions.addAccessRule( {
 
                     let costThreshold = parseInt( team.defaultCostThreshold ),
                         cost = parseInt( costString );
+
+
+                    console.log( { original:team.defaultCostThreshold, costThreshold, cost } );
 
                     if( cost <= costThreshold ) {
                         return true;
@@ -321,7 +325,7 @@ Actions.addAccessRule( {
                 }
             }
             else {
-                if( team.type == 'fm' && teamRole == 'portfolio manager' ) {
+                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
                     return true;
                 }
                 else if ( team.type == 'contractor' && teamRole == 'manager' ) {
@@ -353,11 +357,34 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'New' },
+    condition: 
+		( request ) => {
+			let user = Meteor.user(),
+			team = request.getTeam(),
+			teamRole = team.getMemberRole( user );
+
+			if ( teamRole == 'fmc support' ) {
+				/* Allow action for this role regardless of requests status */
+				return true;
+			}
+			else if ( request.status == 'New' || request.type == 'Preventative' ) {    
+				/* 	Allow action if status is new and only for 
+					roles specified below
+				*/
+                import { Facilities } from '/modules/models/Facilities';
+				let facility = Facilities.findOne( request.facility._id ),
+				    facilityRole = facility.getMemberRole( user ),
+				    requestRole = request.getMemberRole( user );
+
+				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
+				    return true;
+				}
+			}
+		},
     action: [
         'delete request',
     ],
-    role: [ 'team fmc support', 'team portfolio manager', 'facility manager', 'facility property manager', 'owner' ],
+    role: [ '*' ],
     rule: { alert: true }
 } )
 
@@ -485,12 +512,6 @@ Actions.addAccessRule( {
     rule: { alert: true }
 } )
 */
-UserMenuActions = Actions.clone( [
-    'edit team',
-    'create team',
-    'migrate schema',
-    'logout'
-] );
 
 UserPanelActions = Actions.clone( [
     'edit member',
@@ -511,6 +532,7 @@ UserMenuActions = Actions.clone( [
     'create team',
     'migrate schema',
     'send supplier reminders',
+    'send email digests',
     'logout'
 ] );
 

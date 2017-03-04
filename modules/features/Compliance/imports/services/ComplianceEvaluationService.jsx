@@ -25,10 +25,16 @@ ComplianceEvaluationService = new function() {
             "Invoice",
             "MSDS",
             "Plan",
+            "Assessment",
+            "Confirmation",
+            "Certificate",
+            "Log",
+            "Management Plan",
             "Procedure",
             "Quote",
-            "Register",
             "Registration",
+            "Licence",
+            "Report",
             "Service Report",
             "SWMS",
         ],
@@ -49,14 +55,19 @@ ComplianceEvaluationService = new function() {
             //  console.log({rule});
             var docCount = null, docs = null, docName = null, docCurser = null,
                 tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
-                query = rule.document && rule.document.query ?
+                query = rule.document &&rule.document.query ?
                         JSON.parse( rule.document.query ) : {
                             "facility._id": facility["_id"],
                             $and: [
                                 { type: rule.docType },
-                                { name: { $regex: rule.docName, $options: "i" } }
+                                { name: { $regex: rule.docName || "", $options: "i" } }
                             ]
                         };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
@@ -101,6 +112,16 @@ ComplianceEvaluationService = new function() {
                             type: rule.docType,
                             serviceType: rule.service,
                         } );
+                        if (rule.docSubType) {
+                            if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                            else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                            else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                            else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                            else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                            else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                            else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                            else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                        }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )
@@ -118,9 +139,14 @@ ComplianceEvaluationService = new function() {
                         "facility._id": facility["_id"],
                         $and: [
                             { type: rule.docType },
-                            { name: { $regex: rule.docName, $options: "i" } }
+                            { name: { $regex: rule.docName || "", $options: "i" } }
                         ]
                     };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
             }
@@ -164,6 +190,16 @@ ComplianceEvaluationService = new function() {
                         type: rule.docType,
                         serviceType: rule.service,
                     } );
+                    if (rule.docSubType) {
+                        if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                        else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                        else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                        else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                        else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                        else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                        else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                        else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                    }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )
@@ -284,7 +320,10 @@ ComplianceEvaluationService = new function() {
                     // } );
                 }
             } )
-        }
+        },
+        "Compliance level": function( rule, facility, service ){
+
+        },
     }
 
     function evaluateRule( rule, facility, service ) {

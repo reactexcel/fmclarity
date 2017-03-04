@@ -22,28 +22,28 @@ export default RequestFrequencySchema = {
 	    size: 6,
 	    options: {
 	        items: [
-	            { name: 'Daily', val: "daily" },
-	            { name: 'Weekly', val: "weekly" },
-	            { name: 'Fortnightly', val: "fortnightly" },
-	            { name: 'Monthly', val: "monthly" },
-	            { name: 'Quarterly', val: "quarterly" },
-	            { name: 'Annually', val: "annually" },
+	            { name: 'Daily', val: "days" },
+	            { name: 'Weekly', val: "weeks" },
+	            { name: 'Fortnightly', val: "fortnights" },
+	            { name: 'Monthly', val: "months" },
+	            { name: 'Quarterly', val: "quarters" },
+	            { name: 'Annually', val: "years" },
 	            { name: 'Custom', val: "custom" },
 	        ],
 			afterChange( item ){
-				item.number = "";
+				item.number = 1;
+				item.repeats = 10;
 				item.period = "";
 				item.endDate = "";
 			}
 	    },
 	},
 
-	number: {
+	number: { 
 	    label: "Repeats every...",
 	    description: "The number of days, weeks, months etc.",
 	    input: Text,
-	    type: "string",
-	    defaultValue: 6,
+	    type: "number",
 	    size: 6,
 	    options: {
 	        afterChange( item ) {
@@ -57,7 +57,7 @@ export default RequestFrequencySchema = {
 		label: "Period",
 		description: "The unit (days, weeks, months etc) of the repeats",
 		input(props){
-			props.item.period = props.value?props.value:"monthly";
+			props.item.period = props.value?props.value:(props.item.unit === "custom"?"monthly":"");
  			return(
 				<Select
 					placeholder={props.placeholder}
@@ -72,12 +72,12 @@ export default RequestFrequencySchema = {
 		size: 6,
 		options: {
 			items: [
-				{ name: 'Daily', val: "daily" },
-				{ name: 'Weekly', val: "weekly" },
-				{ name: 'Fortnightly', val: "fortnightly" },
-				{ name: 'Monthly', val: "monthly" },
-				{ name: 'Quarterly', val: "quarterly" },
-				{ name: 'Annually', val: "annually" },
+				{ name: 'Day', val: "days" },
+	            { name: 'Week', val: "weeks" },
+	            { name: 'Fortnight', val: "fortnights" },
+	            { name: 'Month', val: "months" },
+	            { name: 'Quarter', val: "quarters" },
+	            { name: 'Year', val: "years" },
 			],
 			afterChange: item => { period = item.period; },
 		},

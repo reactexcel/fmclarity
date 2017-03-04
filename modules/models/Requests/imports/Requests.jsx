@@ -44,20 +44,6 @@ const Requests = new Model( {
     ]
 } )
 
-if ( Meteor.isServer ) {
-    Meteor.publish( 'Requests', () => {
-        return Requests.find();
-    } );
-
-    Meteor.publish( 'Requests: Closed', () => {
-        return Requests.find( { status: 'Closed' } );
-    } );
-
-    Requests.collection._ensureIndex( { 'team._id': 1 } );
-    Requests.collection._ensureIndex( { 'owner._id': 1 } );
-    Requests.collection._ensureIndex( { 'members._id': 1 } );
-}
-
 Requests.save.before( ( request ) => {
 
     if ( request.type == "Preventative" ) {
@@ -298,11 +284,30 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'fortnights',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
@@ -318,11 +323,30 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'fortnights',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {

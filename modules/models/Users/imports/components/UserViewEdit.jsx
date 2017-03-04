@@ -8,6 +8,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import UserViewRelationEdit from './UserViewRelationEdit.jsx';
+import UserThresholdEdit from './UserThresholdEdit.jsx';
 
 import { Users, UserProfileForm } from '/modules/models/Users';
 import { Teams } from '/modules/models/Teams';
@@ -21,6 +22,7 @@ export default UserViewEdit = React.createClass( {
 			member = this.props.member,
 			team = this.props.team,
 			group = null,
+			threshold = null,
 			relation = null;
 
 		if ( this.props.group ) {
@@ -30,6 +32,9 @@ export default UserViewEdit = React.createClass( {
 			group = collection.findOne( this.props.group._id );
 			if ( group ) {
 				relation = group.getMemberRelation( member );
+				if(relation) {
+					threshold = relation.threshold;
+				}
 				//if(relation) {
 				//	role = relation.role;
 				//}
@@ -41,6 +46,7 @@ export default UserViewEdit = React.createClass( {
 			group: group || Session.getSelectedTeam(),
 			relation: relation,
 			role: role,
+			threshold: threshold,
 		}
 	},
 
@@ -146,10 +152,10 @@ export default UserViewEdit = React.createClass( {
 	},
 
 	render() {
-		let { user, team, group } 	= this.data,
+		let { user, team, group, role } 	= this.data,
 			views 					= Meteor.user(),
-			profile 				= null,
-			role            = null;
+			profile 				= null;
+			// role            = null;
 
 		if ( user ) {
 			profile = user.profile;
@@ -197,8 +203,13 @@ export default UserViewEdit = React.createClass( {
 				   	</div>
 
 		    		{ team ?
+		    			<div>
 	    			<div className = "col-sm-12">
 	    				<UserViewRelationEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
+	    			</div>
+	    			{( _.contains(['portfolio manager'], Meteor.user().getRole()) && _.contains(['manager','caretaker'], role)) ? <div className = "col-sm-12">
+	    				    				<UserThresholdEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
+	    				    			</div>: null}
 	    			</div>
 		    		: null }
 
