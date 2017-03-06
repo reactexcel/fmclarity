@@ -1,5 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-import { Requests } from '/modules/models/Requests';
+import { Requests, RequestActions } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -54,7 +54,7 @@ ComplianceEvaluationService = new function() {
         "Document exists": function( rule, facility, service ) {
             //  console.log({rule});
             var docCount = null, docs = null, docName = null, docCurser = null,
-                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate(),
                 query = rule.document &&rule.document.query ?
                         JSON.parse( rule.document.query ) : {
                             "facility._id": facility["_id"],
@@ -152,8 +152,8 @@ ComplianceEvaluationService = new function() {
             }
             if ( _.contains( docList2, rule.docType ) ) {
                 //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
-                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
-                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY", "MM-DD-YYYY" ) ).toDate();
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate();
                 today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
                 query.$and.push( { expiryDate: today } );
             }
@@ -225,62 +225,20 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
-            var numEvents = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } ).count();
+            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var numEvents = requestCurser.count();
+            var requests = requestCurser.fetch();
             if ( numEvents ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
-                    }
-                } )
-            }
-            return _.extend( {}, defaultResult, {
-                passed: false,
-                message: {
-                    summary: "failed",
-                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                },
-                resolve: function() {
-                    let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
-                    let newRequest = Requests.create({
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
-                        team: team,
-                        type: 'Preventative',
-                        priority: 'Scheduled',
-                        status: 'PMP',
-                        service: rule.service
-                    });
-                    Meteor.call( 'Issues.save', newRequest );
-                }
-            } )
-        },
-        "PPM event completed": function( rule, facility, service ) {
-            var event;
-            if ( rule.event ) {
-                //event = Requests.findOne(rule.event._id);
-                event = Requests.findOne( {
-                    'facility._id': rule.facility._id,
-                    name: rule.event
-                } );
-            }
-
-            if ( event ) {
-                let nextDate = event.getNextDate();
-                    previousDate = event.getPreviousDate();
-                    nextRequest = event.findCloneAt( nextDate );
-                    previousRequest = event.findCloneAt( previousDate );
-                return _.extend( {}, defaultResult, {
-                    passed: true,
-                    message: {
-                        summary: "passed",
-                        detail: `Last completed ${moment( previousDate ).format( 'ddd Do MMM YY' )} ➡️️ Next due date is ${moment( nextDate ).format( 'ddd Do MMM YY' )}`
                     },
-                    data: event
+                    resolve: function() {
+                        let establishedRequest = requests[ numEvents - 1 ];
+                        RequestActions.view.bind(establishedRequest).run();
+                    }
                 } )
             }
             return _.extend( {}, defaultResult, {
@@ -305,19 +263,122 @@ ComplianceEvaluationService = new function() {
                         frequency: rule.frequency,
                         service: rule.service
                     });
-                    Meteor.call( 'Issues.save', newRequest );
-                    // Meteor.call( 'Issues.save', {
-                    //     facility: {
-                    //         _id: facility._id,
-                    //         name: facility.name
-                    //     },
-                    //     type: 'Preventative',
-                    //     priority: 'Scheduled',
-                    //     status: 'PMP',
-                    //     name: rule.event,
-                    //     frequency: rule.frequency,
-                    //     service: rule.service
-                    // } );
+                    //Meteor.call( 'Issues.save', newRequest );
+                    TeamActions.createRequest.bind(team, null, newRequest).run();
+                }
+            } )
+        },
+        "PPM event completed": function( rule, facility, service ) {
+            var event;
+            if ( rule.event ) {
+                //event = Requests.findOne(rule.event._id);
+                event = Requests.findOne( {
+                    'facility._id': rule.facility._id,
+                    name: rule.event,
+                    status: "Issued",
+                    type: "Ad-Hoc",
+                    priority: "PMP"
+                } );
+            }
+
+            if ( event ) {
+                let nextDate = event.getNextDate();
+                   previousDate = event.getPreviousDate();
+                   nextRequest = event.findCloneAt( nextDate );
+                   previousRequest = event.findCloneAt( previousDate );
+                   nextDateString = null,
+                   frequency = event.frequency || {},
+                   previousDateString = null;
+
+               if( nextDate ) {
+                   nextDateString = moment( nextDate ).format('ddd Do MMM');
+               }
+               if( previousDate ) {
+                   previousDateString = moment( previousDate ).format('ddd Do MMM');
+               }
+               return _.extend( {}, defaultResult, {
+                   passed: true,
+                   message: {
+                       summary: "passed",
+                       //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                       detail: function(){
+                           return (
+                               <span style={{position:"absolute", bottom: "13%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"25%"}}>
+                                       due every {`${frequency.number||''} ${frequency.unit||''}`}
+                                   </span>
+                                   <span className = "issue-summary-col" style = {{width:"32%"}}>
+                                       {!!( previousDateString && previousRequest) ?
+                                           <span>
+                                               <span>previous <b>{ previousDateString }</b> </span>
+                                               { previousRequest ?
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                               : null }
+                                           </span>
+                                       : null }
+                                   </span>
+                                   <span className = "issue-summary-col" style = {{width:"35%"}}>
+                                       { nextDateString && nextRequest ?
+                                           <span>
+                                               <span>next due <b>{ nextDateString }</b> </span>
+                                               { nextRequest ?
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                                               : null }
+                                           </span>
+                                       : null }
+                                   </span>
+                               </span>
+                           );
+                       }
+                   },
+                   data: event,
+                    resolve: function() {
+                        Modal.show( {
+                            id: `viewRequest-${event._id}`,
+                            content: <RequestPanel item = { event } />
+                        } );
+                    }
+                } )
+            }
+            return _.extend( {}, defaultResult, {
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
+                },
+                resolve: function() {
+                    let team = Session.getSelectedTeam();
+                    console.log( 'attempting to resolve' );
+                    let request = Requests.findOne( {
+                            "facility._id": facility._id,
+                            type: 'Preventative',
+                            status:"PMP",
+                            service: rule.service,
+                            name: rule.event
+                        } );
+                    // If PPM event exists.
+                    if( request ){
+                        Modal.show( {
+                            id: `viewRequest-${request._id}`,
+                            content: <RequestPanel item = { request } />
+                        } );
+                    } else if( !request ) { // If no PPM event exists.
+                        let newRequest = Requests.create({
+                            facility: {
+                                _id: facility._id,
+                                name: facility.name
+                            },
+                            team: team,
+                            type: 'Preventative',
+                            priority: 'Scheduled',
+                            status: 'PMP',
+                            name: rule.event,
+                            frequency: rule.frequency,
+                            service: rule.service
+                        });
+                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    }
+                //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
