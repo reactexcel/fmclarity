@@ -297,7 +297,10 @@ Requests.methods( {
                         "annually": 'years',
                     };
                 if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
@@ -306,7 +309,12 @@ Requests.methods( {
                     } else {
                         unit  = request.frequency.unit;
                     }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
 
@@ -329,14 +337,17 @@ Requests.methods( {
                     repeats = parseInt( request.frequency.repeats ),
                     freq = {
                         "daily": 'days',
-                        "fortnightly": 'fortnights',
+                        "fortnightly": 'weeks',
                         "weekly": 'weeks',
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
                 if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
@@ -345,7 +356,12 @@ Requests.methods( {
                     } else {
                         unit  = request.frequency.unit;
                     }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
 
