@@ -28,7 +28,7 @@ export default EmailDigestRow = React.createClass( {
         return (
             <div>
 	            <a href = {url}><i>{ message.getTargetName() }</i> { facility?<span>at { facility.getName() }</span>:null }</a>
-	            { message.body ? <blockquote>{ message.body }</blockquote> : null }
+	            { false&&message.body ? <blockquote>{ message.body }</blockquote> : null }
             </div>
         )
     }

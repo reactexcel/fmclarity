@@ -86,6 +86,7 @@ class DesktopNotificationPopUp extends React.Component {
         if ( user ) {
             import { Messages } from '/modules/models/Messages';
             // notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
+            console.log( 'calling desktop notification' );
             notifications = this.props.notifications ? this.props.notifications : null;
             if ( !this.showPopUp ) {
                 let component = this;

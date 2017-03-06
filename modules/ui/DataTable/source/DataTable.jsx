@@ -152,9 +152,6 @@ export default DataTable = React.createClass( {
 								if( _.indexOf( row._item.unreadRecipents, user._id ) > -1){
 									unread = true;
 									unreadRows.push(row);
-								}else if( _.indexOf( row._item.unreadRecipents, facility._id ) > -1){
-									unread = true;
-									unreadRows.push(row);
 								}
 							}
 							if (!unread) {

@@ -334,7 +334,7 @@ function inviteMember( team, email, ext ) {
                 }, {
                     role: ext.role
                 },{
-                    threshold: ext.threshold || user.getThreshold()
+                    threshold: ext.threshold || 0 // perhaps should be team default threshold
                 } );
                 return {
                     user: user,

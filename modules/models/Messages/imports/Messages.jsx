@@ -86,7 +86,6 @@ Messages.actions( {
 	setShown: {
 		authentication: true,
 		method: function( notification ) {
-			//console.log( notification );
 			Messages.update( notification._id, { $set: { wasShown: true } } );
 		}
 	},
