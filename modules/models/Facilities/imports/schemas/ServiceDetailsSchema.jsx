@@ -104,7 +104,9 @@ export default ServiceDetailsSchema =  {
             let facility = Session.getSelectedFacility();
             return {
                 items: facility.getSuppliers(),
-                view: ContactCard,
+                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
+                                        <ContactCard {...props} />
+                                    </div>,
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -180,6 +182,7 @@ export default ServiceDetailsSchema =  {
     								borderRadius: '5px',
 									margin: '5px',
 									borderLeft: '4px solid aquamarine',
+                                    cursor: "default",
 								}}>
 								<span onClick={() => {
 										let id = sc._id;
