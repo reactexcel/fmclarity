@@ -275,7 +275,7 @@ ComplianceEvaluationService = new function() {
                 event = Requests.findOne( {
                     'facility._id': rule.facility._id,
                     name: rule.event,
-                    status: "Issued",
+                    status: "Complete",
                     type: "Ad-Hoc",
                     priority: "PMP"
                 } );
@@ -383,7 +383,51 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "Compliance level": function( rule, facility, service ){
+            let createdAt = { $lte: new Date(), $gte: moment().subtract(1, "years").toDate() };
+            var docCount = null, totalDocs = null, docName = null, docCurser = null,
+                query = rule.document &&rule.document.query ?
+                        JSON.parse( rule.document.query ) : {
+                            "facility._id": facility["_id"],
+                            $and: [
+                                { type: rule.docType },
+                                { name: { $regex: rule.docName || "", $options: "i" } }
+                            ]
+                        };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
+            if ( _.contains( docList1, rule.docType ) ) {
+                query.$and.push( { 'serviceType.name': rule.service.name } );
+            }
+            totalDocs = query && Documents.find( query ).count();
+            if ( query && !query.createdAt ) {
+                query.createdAt = createdAt;
+            }
+            docCount = query && Documents.find( query ).count();
 
+            let perComplete = ( ( docCount / totalDocs ) * 100 )
+
+            console.log({docCount, totalDocs, query, perComplete, name:rule.service.name });
+
+            if ( perComplete >= 50 ) {
+                return _.extend( {}, defaultResult, {
+                    passed: true,
+                    message: {
+                        summary: "passed",
+                        detail: perComplete + "% " + "completed."
+                    },
+                } )
+            }
+
+            return _.extend( {}, defaultResult, {
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail:  totalDocs?perComplete:0 + "% " + ( docName ? ( docName + " " ) : "" ) + "completed."
+                },
+            } )
         },
     }
 
