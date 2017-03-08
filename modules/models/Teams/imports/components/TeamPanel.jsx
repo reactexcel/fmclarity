@@ -156,7 +156,7 @@ const TeamPanel = React.createClass( {
 					{ team.phone ? <span><b>Phone</b> { team.phone }<br/></span> :null }
 					{ team.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { team.phone2 }<br/></span> :null }
 					{ insuranceDocs.length && team.type=="contractor" ? insuranceDocs.map( (doc, idx) => {
-                        return <span key = { doc._id }><b>{doc.insuranceType ? doc.insuranceType : null} insurance expiry:</b> { moment( doc.expiryDate ).format( 'DD/MM/YYYY' ) }<br/></span>
+                        return <span key = { doc._id }><b>{doc.insuranceType ? toTitleCase(doc.insuranceType) : null} Insurance Expiry:</b> { moment( doc.expiryDate ).format( 'DD/MM/YYYY' ) }<br/></span>
                     }) :null }
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
 
