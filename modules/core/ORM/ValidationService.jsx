@@ -2,9 +2,11 @@ import { isValidABN, isValidACN, isValidABNorACN } from "abnacn-validator";
 export default ValidationService = {
 	validator
 };
-
+let curDoc = null, curSchema=null;
 function validator( schema ) {
 	return function( doc ) {
+		curDoc = doc;
+		curSchema = schema;
 		let errors = [];
 		validate( doc, schema, errors );
 
@@ -108,10 +110,60 @@ function checkBoolean( rule, value, key, errors ) {
 	}
 }
 
+function resolveObjectValue(obj, path){
+    path = path.split('.');
+    var current = obj;
+    while(path.length) {
+        if(typeof current !== 'object') return undefined;
+        current = current[path.shift()];
+    }
+    return current;
+}
+
 function checkString( rule, value, key, errors ) {
 	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
+	if (rule.unique) {
+		// console.log(rule.unique.collection);
+		var comparedField = rule.unique.field;
+		var identifier = rule.unique.identifier;
+		rule.unique.collection.fetch().map(function(data, idx){
+			var curCollectionValue = resolveObjectValue(data, comparedField);
+			var docId = resolveObjectValue(curDoc, identifier);
+			if (data._id !=docId && curCollectionValue==value) {
+				errors.push( { name: key, type: "This value already exists. Please try another." } );
+			}
+			// console.log(docId);
+			// if (data._id==curDoc[identifier]) {
+			// 	console.log(data._id);
+			// }
+		});
+		
+	}
+	// if ( rule.unique ) {
+	// 	// console.log(rule);
+	// 	var comparedField = rule.unique.field;
+	// 	var collection = rule.unique.collection;
+	// 	console.log(rule.singleonly);
+	// 	var query = {};
+	// 	query[comparedField] = value;
+	// 	//console.log(curDoc);
+	// 	//console.log(curSchema);
+	// 	var exists = false;
+	// 	var users = Meteor.users.find({'profile.email': value}).fetch();
+	// 	users.map(function(user,  idx) {
+	// 		// body...
+	// 		if(user._id!=curDoc.profile._id){
+	// 			exists=true;
+	// 		}
+	// 	});
+	// 	console.log(users);
+	// 	if (exists) {
+	// 		errors.push( { name: key, type: "This value already exists" } );
+	// 	}
+		
+	// }
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
 	}
