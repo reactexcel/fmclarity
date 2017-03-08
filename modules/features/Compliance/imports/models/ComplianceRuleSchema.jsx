@@ -108,7 +108,7 @@ export default ComplianceRuleSchema = {
                 item.document.query = JSON.parse(item.document.query);
             }
         },
-        condition: [ "Document exists", "Document is current" ],
+        condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
         label: "PMP event name",

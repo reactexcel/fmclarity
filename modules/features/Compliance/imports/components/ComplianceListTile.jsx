@@ -43,6 +43,10 @@ export default ComplianceListTile = React.createClass( {
         name = rule.type;
         info = rule.event.name?rule.event.name:rule.event;
         break;
+      case "Compliance level":
+        name = rule.type;
+        info = "" + rule.docName;
+        break;
     }
     results = ComplianceEvaluationService.evaluateRule( rule ) || {};
     message = results.message || {};
