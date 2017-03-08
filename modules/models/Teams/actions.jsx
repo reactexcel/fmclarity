@@ -152,15 +152,13 @@ const createRequest = new Action( {
                         }
                         else if( !baseBuilding ) {
 
-                            relation =team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
+                            relation = team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
 
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                                 method = 'Issues.issue';
                             }
 
                             else if( _.contains( [ 'manager', 'caretaker' ], role ) && relation.threshold && relation.threshold >=1 ) {
-
-                                console.log( 'non bb manager or caretaker' );
 
                                 method = 'Issues.issue';
                                 var newThreshold = parseInt(relation.threshold) - 1;
@@ -178,16 +176,8 @@ const createRequest = new Action( {
                                         costString = costString.replace(',','')
                                     }
 
-                                    console.log( costString );
-
                                     let costThreshold = parseInt( team.defaultCostThreshold ),
                                         cost = parseInt( costString );
-
-                                    console.log( {
-                                        role,
-                                        costThreshold,
-                                        cost
-                                    } );
 
                                     if( cost > costThreshold ) {
                                         method = 'Issues.create';
@@ -195,11 +185,10 @@ const createRequest = new Action( {
                                 }
                                 if( parseInt(relation.threshold) < 1 ) {
                                         method = 'Issues.create';
-                                    }
+                                }
                                 if( method == 'Issues.issue' ) {
-                                    console.log('new threshold='+newThreshold.toString());
-                                        team.setMemberThreshold( owner, newThreshold.toString() );
-                                    }
+                                    team.setMemberThreshold( owner, newThreshold.toString() );
+                                }
                             }
                         }
                     }

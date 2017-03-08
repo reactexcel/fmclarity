@@ -22,11 +22,20 @@ Meteor.startup( function() {
     SyncedCron.add( {
         name: 'Issue PPM Request',
         schedule: function( parser ) {
-            //return parser.text('every 5 secs');
             return parser.text( "at 09:00 am" );
         },
         job: CronJobs.issuePPMRequest,
     } );
+
+    /*
+    SyncedCron.add( {
+        name: 'Send Email Digests',
+        schedule: function( parser ) {
+            return parser.text('every 5 mins');
+        },
+        job: CronJobs.sendEmailDigests,
+    } );
+    */
 
     SyncedCron.start();
 } );
