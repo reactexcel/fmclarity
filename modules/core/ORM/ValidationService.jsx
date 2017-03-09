@@ -120,50 +120,29 @@ function resolveObjectValue(obj, path){
     return current;
 }
 
+function checkUniqueKey(rule, value, key, errors){
+	var comparedField = rule.unique.field ? rule.unique.field : null;
+		var identifier = rule.unique.identifier ? rule.unique.identifier : null;
+		if(rule.unique.collection){
+			rule.unique.collection.fetch().map(function(data, idx){
+					var curCollectionValue = resolveObjectValue(data, comparedField);
+					var docId = resolveObjectValue(curDoc, identifier);
+					if (data._id !=docId && curCollectionValue==value) {
+						errors.push( { name: key, type: "This value already exists. Please try another." } );
+					}
+					
+				});
+		}
+}
+
 function checkString( rule, value, key, errors ) {
 	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if (rule.unique) {
-		// console.log(rule.unique.collection);
-		var comparedField = rule.unique.field;
-		var identifier = rule.unique.identifier;
-		rule.unique.collection.fetch().map(function(data, idx){
-			var curCollectionValue = resolveObjectValue(data, comparedField);
-			var docId = resolveObjectValue(curDoc, identifier);
-			if (data._id !=docId && curCollectionValue==value) {
-				errors.push( { name: key, type: "This value already exists. Please try another." } );
-			}
-			// console.log(docId);
-			// if (data._id==curDoc[identifier]) {
-			// 	console.log(data._id);
-			// }
-		});
-		
+		checkUniqueKey(rule, value, key, errors);	
 	}
-	// if ( rule.unique ) {
-	// 	// console.log(rule);
-	// 	var comparedField = rule.unique.field;
-	// 	var collection = rule.unique.collection;
-	// 	console.log(rule.singleonly);
-	// 	var query = {};
-	// 	query[comparedField] = value;
-	// 	//console.log(curDoc);
-	// 	//console.log(curSchema);
-	// 	var exists = false;
-	// 	var users = Meteor.users.find({'profile.email': value}).fetch();
-	// 	users.map(function(user,  idx) {
-	// 		// body...
-	// 		if(user._id!=curDoc.profile._id){
-	// 			exists=true;
-	// 		}
-	// 	});
-	// 	console.log(users);
-	// 	if (exists) {
-	// 		errors.push( { name: key, type: "This value already exists" } );
-	// 	}
-		
-	// }
+	
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
 	}
@@ -174,6 +153,9 @@ function checkNumber( rule, value, key, errors ) {
 	value = parseInt( value );
 	if ( !_.isNumber( value ) || isNaN( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a number" } );
+	}
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
 	}
 }
 
@@ -204,6 +186,9 @@ function checkABN( rule, value, key, errors ) {
 	}
 	if ( !isValidABN( value ) && value != '') {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
+	}
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
 	}
 }
 
@@ -242,6 +227,10 @@ function checkPhoneNumber( rule, value, key, errors ) {
 		 ) {
 			errors.push( { name: key, type: "Invalid type: please check the length of the number." } );
 		}
+	}
+
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
 	}
 
 
