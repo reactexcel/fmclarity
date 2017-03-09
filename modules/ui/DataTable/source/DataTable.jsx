@@ -112,9 +112,9 @@ export default DataTable = React.createClass( {
 
 		return (
 			<div className="data-grid">
-				{/*<div className = "data-grid-title-row">
+				{this.props.includeActionMenu ? <div className = "data-grid-title-row">
 					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>*/}
+				</div>:null}
 				<div ref="printable">
 				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">

@@ -256,7 +256,7 @@ const RequestsStatusReport = React.createClass( {
 
 				</div>
 				<div className = "ibox">
-					<DataTable items={data} fields={fields}/>
+					<DataTable items={data} fields={fields} includeActionMenu={true}/>
 				</div>
 			</div>
 		)
