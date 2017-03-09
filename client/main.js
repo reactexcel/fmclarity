@@ -537,7 +537,7 @@ UserMenuActions = Actions.clone( [
     'create team',
     'migrate schema',
     'send supplier reminders',
-    'send email digests',
+    //'send email digests',
     'logout'
 ] );
 
