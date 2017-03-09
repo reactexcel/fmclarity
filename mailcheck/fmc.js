@@ -13,24 +13,6 @@ function parseUsefulLines(str){
 	return usefulLines;
 }
 
-
-function decode_special_chars(str){
-	/* 
-		Restore original whitespaces by replacing underscores.
-		The encoding with underscore was necessary to transmit
-		the text in a REST API call.
-	*/
-	
-	return str.replace(/_/g,' ')
-			.replace(/LSqrBrkt/g,'[')
-			.replace(/RSqrBrkt/g,']')
-			.replace(/\r/g,'')
-			.replace(/\n/g,'')
-			.replace(/HashTag/g,'#')
-			.replace(/DblQt/g,'"');
-	
-}
-
 function clean_string(str){
 	/* 
 		Remove html formatting and symbols
@@ -161,6 +143,7 @@ function imapInit(startText,assertText,endText){
 						console.log('Found: %s',assertText);
 					}else if(foundCount>1){
 						console.log('Found %d instances of: %s',foundCount,assertText);
+						
 					}else{
 						console.log('Not Found: %s',assertText);
 								
@@ -213,22 +196,23 @@ server.route({
 
 
 server.route({
-    method: 'GET',
-    //path:'/mailcheck/{assertText}', 
-	//example curl http://localhost:8000/mailcheck/The_following_requests_have_been_created:/work_order_HashTag1233_DblQtSELENIUM_TEST_-_Aircon_not_workingDblQt/The_following_requests
-	path:'/mailcheck/{startText}/{assertText}/{endText}', 
-    handler: function (request, reply) {
-		//console.log(decode_special_chars(request.params.assertText));
-		
-		imapInit(	decode_special_chars(request.params.startText),
-					decode_special_chars(request.params.assertText),
-					decode_special_chars(request.params.endText)
-				);
-		imap.connect();
-		
-		
-        return reply('mailcheck initated.');
-    }
+    method: 'POST',
+	path:'/mailcheck', 
+	//Example curl command: curl  -i -H "Content-Type: application/json"  -X POST -d '{"startText":"The following requests have been created:","assertText":"work order #1233 \"SELENIUM TEST - Aircon not working\"" ,"endText":"The following requests"}' http://localhost:8000/mailcheck
+	
+    
+	config:{
+		handler: function (request, reply) {
+			imapInit(	request.payload.startText,	request.payload.assertText,	request.payload.endText	);
+			imap.connect();
+			
+			return reply('mailcheck initated.');
+		},
+		payload:{
+            output: 'data',
+            parse:true
+        }
+	}
 });
 
 
