@@ -18,9 +18,8 @@ export default Stepper = React.createClass( {
         } );
     },
 
-    selectNext() {
+    selectNext(evt,done) {
         var idx = parseInt( this.state.active );
-
         if( this.props.submitForm && idx == 0){
           let self  = this;
           self.props.submitForm( ( err ) => {
@@ -34,13 +33,20 @@ export default Stepper = React.createClass( {
           this.selectTab( idx + 1 );
         }
 
+        if(done == true) {
+            Modal.hide();
+            if ( this.props.onFinish ){
+                this.props.onFinish();
+            }
+        }
+
         if ( this.state.active >= this.props.tabs.length - 1 ) {
             Modal.hide();
             /**
             * Open new created facility.
             **/
             if ( this.props.onFinish ){
-              this.props.onFinish();
+                this.props.onFinish();
             }
         }
     },
@@ -88,7 +94,7 @@ export default Stepper = React.createClass( {
                                                 </button>
 
                                                 {idx<(tabs.length-1)?<button
-                                                    onClick     = { selectNext }
+                                                    onClick     = { (evt)=>{selectNext(evt,true)} }
                                                     type        = "button"
                                                     className   = "btn btn-primary"
                                                     style       = {{'float':'right'}}
