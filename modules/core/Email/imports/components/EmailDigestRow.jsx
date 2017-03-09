@@ -38,7 +38,7 @@ export default EmailDigestRow = React.createClass( {
         return (
             <div>
 	            <a href = {url}>
-                    <b>{ moment(message.createdAt).format('hh:mm a') } - </b>
+                    { /*<b>{ moment(message.createdAt).format('hh:mm a') } - </b>*/ }
                     { owner ? <span>{ owner.getName() } { message.verb }&nbsp;</span> : null }
                     <i>{ message.getTargetName() }&nbsp;</i>
                     { facility ? <span>at { facility.getName() }&nbsp;</span> : null }
