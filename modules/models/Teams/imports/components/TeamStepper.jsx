@@ -223,7 +223,7 @@ const TeamStepper = React.createClass( {
         if(viewingTeam.type == "contractor"){
             Teams.schema.email.required=false;
         }
-        
+
         /*
         else if ( !viewingTeam.canSave() )
         {
@@ -265,9 +265,9 @@ const TeamStepper = React.createClass( {
                     }
                   }
                   onFinish = { () => {
-                      if(this.props.onFinish){
-                        this.props.onFinish( viewingTeam )
-                      }
+                        if(this.props.onFinish){
+                            this.props.onFinish( viewingTeam )
+                        }
                     }
                   }
                   tabs={[
@@ -281,8 +281,7 @@ const TeamStepper = React.createClass( {
                                             form = { ["name","type","abn","email","phone","phone2","website","address"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
-                                            onChange =  { ( newItem ) => { 
-                                                console.log(newItem);
+                                            onChange =  { ( newItem ) => {
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;
                                                 }

@@ -8,7 +8,7 @@ import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Users } from '/modules/models/Users';
+import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
@@ -67,6 +67,23 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
+    function showUserModal( selectedUser ) {
+            
+            Modal.show( {
+                content: <UserPanel
+                    item    = { selectedUser }
+                    team    = { Session.get( 'selectedTeam' ) }
+                    group   = { facility }/>
+            } )
+        
+    }
+
+    function showMoreUsers() {
+        $('.seen-by-list li:hidden').slice(0, 2).show();
+        if ($('.seen-by-list li').length == $('.seen-by-list li:visible').length) {
+            $('#view-more ').hide();
+        }
+    }
 
     if ( !request ) {
         return <div/>
@@ -116,6 +133,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
 
     } ) : null;
+    request.readBy=_.uniq(request.readBy, '_id'); 
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -257,7 +275,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
+                { request.priority != "PMP" && teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
@@ -268,20 +286,18 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <tr>
                         <td></td>
                         <td>
-                            <i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
                             <ul className="seen-by-list">
-                                {request.readBy.length > 2 ?
-                                    <li>
-                                        <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
-                                        <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
-                                        var user = Meteor.users.findOne(u._id);
-                                        if (u._id==Meteor.userId()) {user=null;}
-                                        return (
-                                            user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
-                                        )
+                            <li ><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by({request.readBy.length} others)</span></li>
+                                {request.readBy.map(function(u, idx){
+                                    var user = Meteor.users.findOne(u._id);
+                                    if (u._id==Meteor.userId()) {user=null;}
+                                    return (
+                                        user ? <li key={u._id}><a href="#" onClick={()=>{showUserModal( user );}} title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                    )
                                 })}
-                                         
-                            </ul>
+
+                            </ul><span id="view-more" onClick={()=>{showMoreUsers( );}}>view more</span>
+                            
                         </td>
                     </tr> : null }
                 </tbody>

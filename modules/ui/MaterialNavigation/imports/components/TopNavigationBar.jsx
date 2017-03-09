@@ -80,16 +80,37 @@ class DesktopNotificationPopUp extends React.Component {
         this.showPopUp = false;
     }
 
+    /*
+    shouldComponentUpdate( nextProps ) {
+
+        console.log( {
+            props: this.props,
+            nextProps: nextProps
+        } );
+
+        if ( !this.props.notifications ) {
+            return true;
+        }
+        else if ( !nextProps.notifications || ( nextProps.notifications.length <= this.props.notifications.length ) ) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    */
+    
     componentWillReceiveProps( props ) {
         let user = props.user,
             notifications = null;
         if ( user ) {
             import { Messages } from '/modules/models/Messages';
             // notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
+            //console.log( 'calling desktop notification' );
             notifications = this.props.notifications ? this.props.notifications : null;
             if ( !this.showPopUp ) {
                 let component = this;
-                if ( notifications.length ) {
+                if ( notifications && notifications.length ) {
                     component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ notifications ], { returnStubValue: true } );
                 }
             } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.

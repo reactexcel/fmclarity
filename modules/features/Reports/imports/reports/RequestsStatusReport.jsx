@@ -70,23 +70,23 @@ const RequestsStatusReport = React.createClass( {
 
 	fields: {
 		//Priority: "priority",
-		Priority: ( item ) => {
-			let color = "#4d4d4d";
-			if ( item.priority == "Critical") {
-				color = "#ff1a1a";
-			} else if ( item.priority == "Urgent" ) {
-				color = "#ff471a";
-			} else if ( item.priority == "Scheduled" ) {
-				color = "#3399ff";
-			} else if ( item.priority == "Standard" ) {
-				color = "#00ccff";
-			} else if ( item.priority == "Closed" ) {
-				color = "#33cc33";
-			}
-			return {
-				val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
-			}
-		},
+		// Priority: ( item ) => {
+		// 	let color = "#4d4d4d";
+		// 	if ( item.priority == "Critical") {
+		// 		color = "#ff1a1a";
+		// 	} else if ( item.priority == "Urgent" ) {
+		// 		color = "#ff471a";
+		// 	} else if ( item.priority == "Scheduled" ) {
+		// 		color = "#3399ff";
+		// 	} else if ( item.priority == "Standard" ) {
+		// 		color = "#00ccff";
+		// 	} else if ( item.priority == "Closed" ) {
+		// 		color = "#33cc33";
+		// 	}
+		// 	return {
+		// 		val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
+		// 	}
+		// },
 		//Status: "status",
 		Status:  ( item ) => {
 			let color = "#4d4d4d";
@@ -123,12 +123,12 @@ const RequestsStatusReport = React.createClass( {
 		},
 		Service: ( item ) => {
 			if ( item.service ) {
-				return { val: item.service.name + ( item.subservice ? ( " - " + item.subservice.name ) : "" ) };
+				return { val: item.service.name + ( item.subservice && item.subservice.name ? ( " - " + item.subservice.name ) : "" ) };
 			}
 		},
 		Location: ( item ) => {
 			if ( item.level ) {
-				return { val: item.level.name + ( item.area ? ( " - " + item.area.name ) : "" ) };
+				return { val: item.level.name + ( item.area && item.area.name ? ( " - " + item.area.name ) : "" ) };
 			}
 		},
 		Completed: "closeDetails.completionDate",
@@ -180,7 +180,7 @@ const RequestsStatusReport = React.createClass( {
 
 		let { team, showFacilityName } = this.data, { facility, service } = this.state;
 		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
-		
+
 		return (
 			<div>
 				<div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
@@ -196,16 +196,23 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Team"
 								value       = { team }
 								items       = { Meteor.user().getTeams() }
-								onChange    = { ( team ) => { Session.selectTeam( team ) } }
+								onChange    = { ( team ) => {
+									Session.selectTeam( team )
+									this.setState( {
+										facility: null,
+										service: null,
+										showFacilityName: true
+									} )
+								} }
 							/>
 
 						</div>
-						<div className="col-md-4">
-
+						<div className="col-md-3">
+							{console.log(team,team.getFacilities() )}
 							<Select
 								placeholder = "Facility"
 								value       = { facility }
-								items       = { team ? team.facilities : null }
+								items       = { team ? team.getFacilities() : null }
 								onChange    = { ( facility ) => {
 									this.setState( {
 										facility: facility,
@@ -214,12 +221,12 @@ const RequestsStatusReport = React.createClass( {
 							/>
 
 						</div>
-						<div className="col-md-4">
+						<div className="col-md-3">
 
 							<Select
 								placeholder = "Service"
 								value       = { this.state.service }
-								items       = { this.state.facility ? this.state.facility.services : null }
+								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
 								onChange    = { ( service ) => { this.setState( { service } ) } }
 							/>
 
@@ -249,7 +256,7 @@ const RequestsStatusReport = React.createClass( {
 
 				</div>
 				<div className = "ibox">
-					<DataTable items={data} fields={fields}/>
+					<DataTable items={data} fields={fields} includeActionMenu={true}/>
 				</div>
 			</div>
 		)

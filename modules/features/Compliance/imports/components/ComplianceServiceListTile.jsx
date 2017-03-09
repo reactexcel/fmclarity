@@ -12,11 +12,22 @@ export default ServiceListTile = React.createClass( {
 			numFailed = 0,
 			percPassed = 0;
 		service = this.props.item;
-		if ( service ) {
-			thumb = "img/services/" + service.name + ".jpg";
+		let { isService } = this.props;
+		if ( service  && isService ) {
+			let complianceRules = null;
 			if ( service.data && service.data.complianceRules ) {
-				numRules = service.data.complianceRules.length;
-				results = ComplianceEvaluationService.evaluate( service.data.complianceRules );
+				complianceRules = service.data.complianceRules;
+				if( service.children ) {
+					service.children.map( ( subservice, idx ) => {
+						if( subservice.data && subservice.data.complianceRules )
+							complianceRules = complianceRules.concat( subservice.data.complianceRules );
+					})
+				}
+			}
+			thumb = "img/services/" + service.name + ".jpg";
+			if ( complianceRules ) {
+				numRules = complianceRules.length;
+				results = ComplianceEvaluationService.evaluate( complianceRules );
 				if ( results ) {
 					numPassed = results.passed.length;
 					numFailed = results.failed.length;
@@ -24,7 +35,7 @@ export default ServiceListTile = React.createClass( {
 				}
 			}
 		}
-		return { service, thumb, numRules, numPassed, numFailed, percPassed }
+		return { service, thumb, numRules, numPassed, numFailed, percPassed, isService }
 	},
 
 	render() {
@@ -41,7 +52,7 @@ export default ServiceListTile = React.createClass( {
 						<span>{data.service.name}</span>
 					</span>
 					<br/>
-					<span className="contact-card-line-2">
+					{data.isService?<span className="contact-card-line-2">
 						{
 						data.numRules?
 							<span>
@@ -52,7 +63,7 @@ export default ServiceListTile = React.createClass( {
 						:
 							null
 						}
-            		</span>
+            		</span>:null}
 			    </div>
 			</div>
 		)

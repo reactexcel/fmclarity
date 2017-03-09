@@ -44,20 +44,6 @@ const Requests = new Model( {
     ]
 } )
 
-if ( Meteor.isServer ) {
-    Meteor.publish( 'Requests', () => {
-        return Requests.find();
-    } );
-
-    Meteor.publish( 'Requests: Closed', () => {
-        return Requests.find( { status: 'Closed' } );
-    } );
-
-    Requests.collection._ensureIndex( { 'team._id': 1 } );
-    Requests.collection._ensureIndex( { 'owner._id': 1 } );
-    Requests.collection._ensureIndex( { 'members._id': 1 } );
-}
-
 Requests.save.before( ( request ) => {
 
     if ( request.type == "Preventative" ) {
@@ -215,6 +201,7 @@ Requests.methods( {
                 newRequest.distributeMessage( {
                     message: {
                         verb: "created",
+                        read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
                         body: newRequest.description
                     }
@@ -311,7 +298,10 @@ Requests.methods( {
                         "annually": 'years',
                     };
                 if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
@@ -320,7 +310,12 @@ Requests.methods( {
                     } else {
                         unit  = request.frequency.unit;
                     }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
 
@@ -343,14 +338,17 @@ Requests.methods( {
                     repeats = parseInt( request.frequency.repeats ),
                     freq = {
                         "daily": 'days',
-                        "fortnightly": 'fortnights',
+                        "fortnightly": 'weeks',
                         "weekly": 'weeks',
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
                 if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
@@ -359,7 +357,12 @@ Requests.methods( {
                     } else {
                         unit  = request.frequency.unit;
                     }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
 
@@ -603,7 +606,7 @@ function actionIssue( request ) {
         issuedAt: new Date(),
         code: code,
         members: getMembersDefaultValue( request )
-    } );
+    });
 
 
     request = Requests.findOne( request._id );
@@ -620,19 +623,21 @@ function actionIssue( request ) {
         } );
 
         var team = request.getTeam();
-        request.distributeMessage( {
+        request.distributeMessage({
             recipientRoles: [ "supplier manager" ],
             suppressOriginalPost: true,
             message: {
                 verb: "issued",
                 subject: "New work request from " + " " + team.getName(),
+                read: false,
+                digest: false,
                 emailBody: function( recipient ) {
                     var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
             }
-        } );
+        });
 
         return request;
     }
@@ -783,16 +788,18 @@ function actionComplete( request ) {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
-                target: newRequest.getInboxId()
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true
             }
         } );
 
         newRequest.distributeMessage( {
             message: {
-                verb: "raised follow up to",
+                verb: "created",
                 subject: closer.getName() + " requested a follow up to " + request.getName(),
                 body: newRequest.description,
-                target: request.getInboxId()
+                target: request.getInboxId(),
             }
         } );
 

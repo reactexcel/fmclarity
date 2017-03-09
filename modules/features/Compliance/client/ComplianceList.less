@@ -3,7 +3,7 @@
     .service-list-tile
     {
         padding: 5px;
-        min-height: 42px;
+        min-height: 30px;
 
         border-bottom: 1px solid #ddd;
         background-color: #eee;
@@ -68,6 +68,26 @@
         .service-list-header-icon
         {
             display: block;
-        }        
+        }
+    }
+}
+
+.subservice-list-header-icon
+{
+    display: none;
+}
+
+.subservice-list-header
+{
+
+    position:relative;
+    .service-list-tile {
+        font-weight: normal;
+    }
+    &:hover {
+        .subservice-list-header-icon
+        {
+            display: block;
+        }
     }
 }

@@ -39,7 +39,7 @@ export default RequestFrequencySchema = {
 	    },
 	},
 
-	number: { 
+	number: {
 	    label: "Repeats every...",
 	    description: "The number of days, weeks, months etc.",
 	    input: Text,
@@ -67,7 +67,7 @@ export default RequestFrequencySchema = {
 		        	onChange={ item => props.onChange(item) } />
 			)
 		},
-		defaultValue: "monthly",
+		defaultValue: "months",
 		type: "string",
 		size: 6,
 		options: {
