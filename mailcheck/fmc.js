@@ -1,5 +1,9 @@
 
 
+
+
+
+
 function parseUsefulLines(str){
 	
 	var startPosition=str.indexOf("MIME-Version: 1.0");
@@ -10,6 +14,43 @@ function parseUsefulLines(str){
 }
 
 
+function decode_special_chars(str){
+	/* 
+		Restore original whitespaces by replacing underscores.
+		The encoding with underscore was necessary to transmit
+		the text in a REST API call.
+	*/
+	
+	return str.replace(/_/g,' ')
+			.replace(/LSqrBrkt/g,'[')
+			.replace(/RSqrBrkt/g,']')
+			.replace(/\r/g,'')
+			.replace(/\n/g,'')
+			.replace(/HashTag/g,'#')
+			.replace(/DblQt/g,'"');
+	
+}
+
+function clean_string(str){
+	/* 
+		Remove html formatting and symbols
+	*/
+	
+	var cleaned = str.replace(/\&quot;/g,'"')
+					.replace(/[=\n\r]/g, '')
+					.replace(/<div>/g, '|')
+					.replace(/<\/div>/g, '|')
+					.replace(/<br>/g, '|')
+					.replace(/<br\/>/g, '|')
+				;
+
+	//make all spaces  single space	- this is considered faster over regex replace	
+	while (cleaned.indexOf("  ") !== -1) {
+		cleaned = cleaned.replace(/  /g, " ");
+	}			
+	
+	return cleaned;
+}
 
 
 //==========================
@@ -32,16 +73,24 @@ function openInbox(cb) {
   imap.openBox('INBOX', true, cb);  //imap.openBox(MAILBOX,readonly,var)
 }
 
-function imapInit(){
+function imapInit(startText,assertText,endText){
 	imap = new Imap(mailConfig);
 	imap.once('ready', function() {
 	var fs = require('fs'), fileStream;
-
+	var foundCount=0;
+	/*
+	console.log('startText  - '+startText);
+	console.log('assertText - '+assertText);
+	console.log('endText    - '+endText);
+	return;
+	*/
+	
 		openInbox(function(err, box) {
 			
 		  if (err) throw err;
 		  var today=new Date();
-		  imap.search([ 'UNSEEN', ['SINCE', today] ], function(err, results) {
+		  //imap.search([ 'UNSEEN', ['SINCE', today] ], function(err, results) {
+		  imap.search([ 'UNSEEN', ['ON', 'March 06, 2017'] ], function(err, results) {
 
 			if (err) throw err;
 			try{
@@ -50,7 +99,7 @@ function imapInit(){
 				
 				f.on('message', function(msg, seqno) {
 					var filename='msg-' + seqno + '-body.txt';
-					console.log('Message #%d', seqno);
+					//console.log('Checking message #%d', seqno);
 					var prefix = '(#' + seqno + ') ';
 				  
 					msg.on('body', function(stream, info) {
@@ -59,26 +108,29 @@ function imapInit(){
 							buffer += chunk.toString('utf8');
 						});
 						stream.once('end', function() {
-							//console.log(prefix + 'Parsed header: %s', inspect(Imap.parseHeader(buffer)));
-							//var rawText=inspect(Imap.parse(buffer));
-							//console.log(buffer);
+						
+							var cleaned1 = clean_string(buffer);
+							var cleaned2 = cleaned1.substring(cleaned1.indexOf(startText)+startText.length) ;
+							var cleaned = cleaned2.substring(
+												0,
+												cleaned2.indexOf(endText)
+											) ;
 							
-							if( buffer.indexOf('SELENIUM TEST') >0 ){
-								var usefulLines = parseUsefulLines(buffer);
-								usefulLines.replace("  ", " ");
-								//console.log(usefulLines);
+							var lines = cleaned.split('|');
 							
-							
-								var lines = usefulLines.split("\n");
-								
-								for (i=0 ; i<lines.length ; i++){
-									console.log(i+'-'+lines[i]);
+							for (i=0 ; i<lines.length ; i++){
+								console.log(i+'-'+lines[i]);
+
+								if( lines[i].indexOf(assertText) >=0 ){
+									//check if assertText is found in line element
+									foundCount++;
 								}
-								
-								
-								var subject=lines[4];
-								var recipient=lines[12];
+							
 							}
+							
+							
+							
+						
 						});
 					});
 				  
@@ -95,15 +147,24 @@ function imapInit(){
 				  });
 				  */
 				  msg.once('end', function() {
-					console.log(prefix + 'Finished');
+					//console.log(prefix + 'Finished');
 				  });
 				});
 				f.once('error', function(err) {
 				  console.log('Fetch error: ' + err);
 				});
 				f.once('end', function() {
-				  console.log('Done fetching all messages!');
-				  imap.end();
+					console.log('Done fetching all messages!');
+					imap.end();
+				  
+					if(foundCount==1){
+						console.log('Found: %s',assertText);
+					}else if(foundCount>1){
+						console.log('Found %d instances of: %s',foundCount,assertText);
+					}else{
+						console.log('Not Found: %s',assertText);
+								
+					}				  
 				});
 				
 			}catch(err){
@@ -153,16 +214,19 @@ server.route({
 
 server.route({
     method: 'GET',
-    path:'/mailcheck/{recipient}/{subject}/{assertText}', 
+    //path:'/mailcheck/{assertText}', 
+	//example curl http://localhost:8000/mailcheck/The_following_requests_have_been_created:/work_order_HashTag1233_DblQtSELENIUM_TEST_-_Aircon_not_workingDblQt/The_following_requests
+	path:'/mailcheck/{startText}/{assertText}/{endText}', 
     handler: function (request, reply) {
-		imapInit();
+		//console.log(decode_special_chars(request.params.assertText));
+		
+		imapInit(	decode_special_chars(request.params.startText),
+					decode_special_chars(request.params.assertText),
+					decode_special_chars(request.params.endText)
+				);
 		imap.connect();
 		
 		
-		
-		console.log(request.params.recipient);
-		console.log(request.params.subject);
-		console.log(request.params.assertText);
         return reply('mailcheck initated.');
     }
 });
