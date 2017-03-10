@@ -790,16 +790,20 @@ function actionComplete( request ) {
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
                 target: newRequest.getInboxId(),
                 digest: false,
-                read: true
+                read: true,
+                /*alert: false*/
             }
         } );
 
         newRequest.distributeMessage( {
             message: {
-                verb: "created",
+                verb: "requested a follow up to",
                 subject: closer.getName() + " requested a follow up to " + request.getName(),
                 body: newRequest.description,
                 target: request.getInboxId(),
+                digest: false,
+                read: true,
+                /*alert: false*/
             }
         } );
 
