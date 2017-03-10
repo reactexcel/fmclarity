@@ -291,10 +291,10 @@ ComplianceEvaluationService = new function() {
                    previousDateString = null;
 
                if( nextDate ) {
-                   nextDateString = moment( nextDate ).format('ddd Do MMM');
+                   nextDateString = moment( nextDate ).format('DD/MM/YY');
                }
                if( previousDate ) {
-                   previousDateString = moment( previousDate ).format('ddd Do MMM');
+                   previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
                return _.extend( {}, defaultResult, {
                    passed: true,
@@ -303,26 +303,23 @@ ComplianceEvaluationService = new function() {
                        //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
                        detail: function(){
                            return (
-                               <span style={{position:"absolute", bottom: "13%"}}>
-                                   <span className = "issue-summary-col" style = {{width:"25%"}}>
-                                       due every {`${frequency.number||''} ${frequency.unit||''}`}
-                                   </span>
-                                   <span className = "issue-summary-col" style = {{width:"32%"}}>
-                                       {!!( previousDateString && previousRequest) ?
+                               <span style={{position:"absolute", bottom: "15%", width: "37%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       {( previousDateString && previousRequest) ?
                                            <span>
-                                               <span>previous <b>{ previousDateString }</b> </span>
+                                               <span>Last <b>{ previousDateString }</b> </span>
                                                { previousRequest ?
-                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
                                                : null }
                                            </span>
                                        : null }
                                    </span>
-                                   <span className = "issue-summary-col" style = {{width:"35%"}}>
-                                       { nextDateString && nextRequest ?
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       { (nextDateString && nextRequest) ?
                                            <span>
-                                               <span>next due <b>{ nextDateString }</b> </span>
+                                               <span>Next <b>{ nextDateString }</b> </span>
                                                { nextRequest ?
-                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
                                                : null }
                                            </span>
                                        : null }
