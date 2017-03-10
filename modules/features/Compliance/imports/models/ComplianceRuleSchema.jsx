@@ -108,7 +108,7 @@ export default ComplianceRuleSchema = {
                 item.document.query = JSON.parse(item.document.query);
             }
         },
-        condition: [ "Document exists", "Document is current" ],
+        condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
         label: "PMP event name",
@@ -116,11 +116,14 @@ export default ComplianceRuleSchema = {
         condition: [ "PPM event completed", "PPM schedule established" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
+            let query = {
+                 "facility._id": item.facility._id,
+                 type: "Preventative",
+             };
+            if ( item.service ) query[ "service.name" ] = item.service.name;
+            if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
             return {
-                items: _.pluck(Requests.findAll( {
-                     "facility._id": item.facility._id,
-                       type: "Preventative"
-                    }, {
+                items: _.pluck(Requests.findAll( query , {
                         fields: {
                              name: true
                          }
@@ -150,22 +153,24 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
+            let status = lastWO.length && lastWO[lastWO.length - 1].status;
             return (
                 lastWO.length ? ( <div>
-            <span>
-              <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(lastWO[0]).run()
-                 }
-               }> Previous work order link </a>
-            </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{lastWO[lastWO.length - 1].status}</strong></span>
-          </div> ) : null
+                    <span>
+                        <a className="link" href={"javascript:void(0);"} onClick={() => {
+                                RequestActions.view.bind(lastWO[lastWO.length - 1]).run()
+                            }}>
+                            Previous work order link
+                        </a>
+                    </span>
+                    <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
+                </div> ) : null
             );
         },
         condition: item => item.event
@@ -175,21 +180,22 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
+            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[0]).run()
+                   RequestActions.view.bind(nextWO[nextWO.length > 1 ? nextWO.length - 2: 0]).run()
                  }
                }> Next work order link </a>
             </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{nextWO[nextWO.length - 2].status}</strong></span>
+            <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
           </div> ) : null
             );
         },
@@ -205,7 +211,7 @@ export default ComplianceRuleSchema = {
         size: 12,
         input( props ){
             let period
-            if( props.item.frequency.period && props.item.frequency.number ){
+            if( props.item.frequency.period ){
                 switch (props.item.frequency.period) {
                     case "daily":
                         period = "day"
@@ -228,6 +234,9 @@ export default ComplianceRuleSchema = {
                     default:
 
                 }
+                period = props.item.frequency.number > 1?
+                    ( period || props.item.frequency.period ) + "s":
+                    ( period || props.item.frequency.period );
             }
             return (
                 <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -241,16 +250,17 @@ export default ComplianceRuleSchema = {
                             </div>:(
                                 props.item.frequency.period && props.item.frequency.endDate?
                                 <div>
-                                    {props.item.frequency.endDate?`Repeat ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                    {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                 </div>:
                                 <div>
-                                    {props.item.frequency.unit?`Repeat ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
                                 </div>
                             )
                         )
                     }
                 </div>
             );
-        }
-    },
+        },
+        condition: "PPM event completed",
+    }
 }

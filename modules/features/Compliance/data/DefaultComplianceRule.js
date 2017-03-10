@@ -1,166 +1,12 @@
 export default DefaultComplianceRule = {
-	"Fire Protection": [{
+    /*"Fire Protection": [{
 		"service":{
 			name:"Fire Protection"
 		},
 		"type": "Document exists",
 		"docType": "Service Report",
 		"docName": "FPS Service Report"
-	}, /*{
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Sprinklers Annual"
 	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Sprinklers 5 yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Sprinklers 10 yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Sprinklers 25 yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Sprinklers 30 yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Pumpset annual test"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Pumpset 5 yearly servicet"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Pumpset 10 yearly service"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Hydrants yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Hydrants 5 yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Hydrant valves Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Water storage tanks Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Water storage tanks Ten yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Fire detection and alarm systems Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Fire detection and alarm systems Five yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Special hazard systems - smoke alarms Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Special hazard systems - smoke alarms Ten yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Lay flat hose Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Hose reels Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Extinguishers Annual"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Extinguishers Five yearly"
-	}, {
-		"service":{
-			name:"Fire Protection"
-		},
-		"type": "Document exists",
-		docType: "",
-		"docName": "Extinguishers Annual condition report"
-	}, */{
 		"service":{
 			name:"Fire Protection"
 		},
@@ -987,7 +833,7 @@ export default DefaultComplianceRule = {
 		"service":{
 			name:"Electrical Services"
 		},
-		"type": "Documents exist",
+		"type": "Document exists",
 		"docType":"SWMS",
 			"docName": "Risk assessment exists"
 	}, {
@@ -1339,63 +1185,63 @@ export default DefaultComplianceRule = {
 		   "docType":"Service Report",
 		   "docName":"12 months' Plumbing service reports exist"
 	   }, ],
-
-	"Lifts & Escalators": [ {
-			"service":{
-				name:"Lifts & Escalators"
-			},
-			"type": "Document is current",
-			"docType": "Contract",
-			"docName": "Lifts & Escalators contract is current"
-		}, {
-			"service":{
- 			   name:"Lifts & Escalators"
- 		   },
-		   "type": "Document exists",
-		   "docType": "Procedure",
-		   "docName": "PPM schedule has been established"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document exists",
-		   "docType": "Report",
-		   "docName": "Service reports on file"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Lift hazard and risk assessment completed (frequency? Ask lift consultants)"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document exists",
-		   "docType": "Registration",
-		   "docName": "Lift registration renewal date"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document exists",
-		   "docType": "Audit",
-		   "docName": "Lift audit conducted"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Egress Contract"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "PPM schedule established",
-		   "event": "PPM schedule has been established"
-	   }, {
+*/
+    "Lifts & Escalators": [ {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document is current",
+            "docType": "Contract",
+            "docName": "Lifts & Escalators contract is current"
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "Procedure",
+            "docName": "PPM schedule has been established"
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "Report",
+            "docName": "Service reports on file"
+        }, /*{
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "",
+            "docName": "Lift hazard and risk assessment completed (frequency? Ask lift consultants)"
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "Registration",
+            "docName": "Lift registration renewal date"
+        }, */{
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "Audit",
+            "docName": "Lift audit conducted"
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document is current",
+            "docType": "Contract",
+            "docName": "Egress Contract"
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "PPM schedule established",
+            "event": "PPM schedule has been established"
+        }, {
 		   "service":{
 			   name:"Lifts & Escalators"
 		   },
@@ -1403,611 +1249,612 @@ export default DefaultComplianceRule = {
 		   "docType":"Service Report",
 		   "docName": "12 months' Lifts & Escalators service reports exist"
 	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "PPM event completed",
-		   "event": "Annual Lift/escalator audit",
-		   "frequency":{
-			   "number":"1",
-			   "unit":"years",
-			   "repeats":"1"
-		   }
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Documents exist",
-		   "docType":"Audit",
-		   "docName": "Lift/escalator audit"
-	   }, {
-		   "service":{
-			   name:"Lifts & Escalators"
-		   },
-		   "type": "Document is current",
-		   "docType":"Registration",
-		   "docName": "Lift registration renewal date"
-	   } ],
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "PPM event completed",
+            "event": "Annual Lift/escalator audit",
+            "frequency": {
+                "number": "1",
+                "unit": "years",
+                "repeats": "1"
+            }
+        }, {
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document exists",
+            "docType": "Audit",
+            "docName": "Lift/escalator audit"
+        }, /*{
+            "service": {
+                name: "Lifts & Escalators"
+            },
+            "type": "Document is current",
+            "docType": "Registration",
+            "docName": "Lift registration renewal date"
+        }*/
+    ],
+    /*
+    	"Essential Safety Measures": [ {
+    			"service":{
+    				name:"Essential Safety Measures"
+    			},
+    			"type": "Document is current",
+    			"docType":"Contract",
+    			"event": "Essential Safety Measures contract is current"
+    		}, {
+     		   "service":{
+     			   name:"Essential Safety Measures"
+     		   },
+     		   "type": "Document is current",
+     		   "docType":"Report",
+     		   "event": "Annual essential safety measures report (AESMR)*"
+     	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "type": "Document exists",
+    		   "docType":"Certificate",
+    		   "event": "Maintenance determination/occupancy permit on file"
+    	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Audit",
+    		   "docName": "Review and audit"
+    	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "type": "PPM schedule established",
+    		   "event": "Review and audit"
+    	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "type": "PPM schedule established",
+    		   "event": "PPM schedule has been established"
+    	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "type": "PPM event completed",
+    		   "event": "Essential Safety Measures Annual review and audit",
+    		   "frequency":{
+    			   "number":"1",
+    			   "unit":"years",
+    			   "repeats":"1"
+    		   }
+    	   }, {
+    		   "service":{
+    			   name:"Essential Safety Measures"
+    		   },
+    		   "subservice":{
+    			   name:"Egress"
+    		   },
+    		   "type": "Document is current",
+    		   "docType":"Contract",
+    		   "event": "Essential Safety Measures contract is current"
+    	   } ],
 
-	"Essential Safety Measures": [ {
-			"service":{
-				name:"Essential Safety Measures"
-			},
-			"type": "Document is current",
-			"docType":"Contract",
-			"event": "Essential Safety Measures contract is current"
-		}, {
- 		   "service":{
- 			   name:"Essential Safety Measures"
- 		   },
- 		   "type": "Document is current",
- 		   "docType":"Report",
- 		   "event": "Annual essential safety measures report (AESMR)*"
- 	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "type": "Documents exist",
-		   "docType":"Certificate",
-		   "event": "Maintenance determination/occupancy permit on file"
-	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "type": "Document exists",
-		   "docType": "Audit",
-		   "docName": "Review and audit"
-	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "type": "PPM schedule established",
-		   "event": "Review and audit"
-	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "type": "PPM schedule established",
-		   "event": "PPM schedule has been established"
-	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "type": "PPM event completed",
-		   "event": "Essential Safety Measures Annual review and audit",
-		   "frequency":{
-			   "number":"1",
-			   "unit":"years",
-			   "repeats":"1"
-		   }
-	   }, {
-		   "service":{
-			   name:"Essential Safety Measures"
-		   },
-		   "subservice":{
-			   name:"Egress"
-		   },
-		   "type": "Document is current",
-		   "docType":"Contract",
-		   "event": "Essential Safety Measures contract is current"
-	   } ],
+    	"Emergency Management Procedures": [ {
+    			"service":{
+    				name:"Emergency Management Procedures"
+    			},
+    			"type": "Document is current",
+    			"docType": "Contract",
+    			"docName": "Emergency Management Procedures contract is current"
+    		}, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Procedure",
+    		   "docName": "Emergency Response Procedures prepared"
+    	   	}, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Plan",
+    		   "docName": "Evacuation diagrams installed"
+    	   	}, {
+    			"service":{
+    			  	name:"Emergency Management Procedures"
+    		  	},
+    		   	"type": "Document exists",
+    		   	"docType": "",
+    		   	"docName": "Emergency evacuation training exercise"
+    	   	}, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Log",
+    		   "docSubType":"Warden training",
+    		   "docName": "Warden training log"
+    	   	}, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Log",
+    		   "docSubType":"Chief Warden training",
+    		   "docName": "Chief warden training log"
+    	   	}, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Register",
+    		   "docName": "Emergency Planning Committee (EPC) meeting"
+    	   }, {
+    		   "service":{
+    			   name:"Emergency Management Procedures"
+    		   },
+    		   "type": "PPM event completed",
+    		   "event": "Annual emergency evacuation training exercise",
+    		   "frequency":{
+    			   "number":"1",
+    			   "unit":"years",
+    			   "repeats":"1"
+    		   }
+    	   	}],
 
-	"Emergency Management Procedures": [ {
-			"service":{
-				name:"Emergency Management Procedures"
-			},
-			"type": "Document is current",
-			"docType": "Contract",
-			"docName": "Emergency Management Procedures contract is current"
-		}, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "Document is current",
-		   "docType": "Procedure",
-		   "docName": "Emergency Response Procedures prepared"
-	   	}, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "Documents exist",
-		   "docType": "Plan",
-		   "docName": "Evacuation diagrams installed"
-	   	}, {
-			"service":{
-			  	name:"Emergency Management Procedures"
-		  	},
-		   	"type": "Document exists",
-		   	"docType": "",
-		   	"docName": "Emergency evacuation training exercise"
-	   	}, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "Document is current",
-		   "docType": "Log",
-		   "docSubType":"Warden training",
-		   "docName": "Warden training log"
-	   	}, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "Document is current",
-		   "docType": "Log",
-		   "docSubType":"Chief Warden training",
-		   "docName": "Chief warden training log"
-	   	}, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "Document is current",
-		   "docType": "Register",
-		   "docName": "Emergency Planning Committee (EPC) meeting"
-	   }, {
-		   "service":{
-			   name:"Emergency Management Procedures"
-		   },
-		   "type": "PPM event completed",
-		   "event": "Annual emergency evacuation training exercise",
-		   "frequency":{
-			   "number":"1",
-			   "unit":"years",
-			   "repeats":"1"
-		   }
-	   	}],
+    	"Asbestos & Hazardous Materials": [ {
+    			"service":{
+    				name:"Asbestos & Hazardous Materials"
+    			},
+    		   "type": "Document exists",
+    		   "docType": "Register",
+    		   "docName": "Asbestos/Haz mat register audit"
+    	   }, {
+    		   "service":{
+    			   name:"Asbestos & Hazardous Materials"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Register",
+    		   "docName": "Asbestos/Haz mat register included in induction"
+    	   }, {
+    		   "service":{
+    			   name:"Asbestos & Hazardous Materials"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Asbestos/Haz Mat Management Management plan prepared"
+    	   }, {
+    		   "service":{
+    			   name:"Asbestos & Hazardous Materials"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Occupant notification process complete"
+    	   } ],
 
-	"Asbestos & Hazardous Materials": [ {
-			"service":{
-				name:"Asbestos & Hazardous Materials"
-			},
-		   "type": "Document exists",
-		   "docType": "Register",
-		   "docName": "Asbestos/Haz mat register audit"
-	   }, {
-		   "service":{
-			   name:"Asbestos & Hazardous Materials"
-		   },
-		   "type": "Document exists",
-		   "docType": "Register",
-		   "docName": "Asbestos/Haz mat register included in induction"
-	   }, {
-		   "service":{
-			   name:"Asbestos & Hazardous Materials"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Asbestos/Haz Mat Management Management plan prepared"
-	   }, {
-		   "service":{
-			   name:"Asbestos & Hazardous Materials"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Occupant notification process complete"
-	   } ],
+    	"Confined Spaces": [ {
+    			"service":{
+    				name:"Confined Spaces"
+    			},
+    		   "type": "Document exists",
+    		   "docType": "Register",
+    		   "docName": "Confined Spaces register available"
+    	   }, {
+    		   "service":{
+    			   name:"Confined Spaces"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Confined Spaces identified and signposted"
+    	   }, {
+    		   "service":{
+    			   name:"Confined Spaces"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Permit entry procedures in place"
+    	   } ],
 
-	"Confined Spaces": [ {
-			"service":{
-				name:"Confined Spaces"
-			},
-		   "type": "Document exists",
-		   "docType": "Register",
-		   "docName": "Confined Spaces register available"
-	   }, {
-		   "service":{
-			   name:"Confined Spaces"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Confined Spaces identified and signposted"
-	   }, {
-		   "service":{
-			   name:"Confined Spaces"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Permit entry procedures in place"
-	   } ],
+    	"Indoor Air Quality (IAQ)": [ {
+    			"service":{
+    				name:"Indoor Air Quality (IAQ)"
+    			},
+    		   "type": "Document is current",
+    		   "docType": "",
+    		   "docName": "Annual IAQ test"
+    	   } ],
 
-	"Indoor Air Quality (IAQ)": [ {
-			"service":{
-				name:"Indoor Air Quality (IAQ)"
-			},
-		   "type": "Document is current",
-		   "docType": "",
-		   "docName": "Annual IAQ test"
-	   } ],
+    	"Structrual/Roof Safety": [ {
+    			"service":{
+    				name:"Structrual/Roof Safety"
+    			},
+    		   "type": "Document is current",
+    		   "docType": "Contract",
+    		   "docName": "Anchor Point contract"
+    	   }, {
+    		   "service":{
+    			   name:"Structrual/Roof Safety"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Height safety assessment completed"
+    	   }, {
+    		   "service":{
+    			   name:"Structrual/Roof Safety"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Height safety recommendations completed"
+    	   }, {
+    		   "service":{
+    			   name:"Structrual/Roof Safety"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Audit",
+    		   "docName": "Façade audit/inspection"
+    	   } ],
 
-	"Structrual/Roof Safety": [ {
-			"service":{
-				name:"Structrual/Roof Safety"
-			},
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Anchor Point contract"
-	   }, {
-		   "service":{
-			   name:"Structrual/Roof Safety"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Height safety assessment completed"
-	   }, {
-		   "service":{
-			   name:"Structrual/Roof Safety"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Height safety recommendations completed"
-	   }, {
-		   "service":{
-			   name:"Structrual/Roof Safety"
-		   },
-		   "type": "Document exists",
-		   "docType": "Audit",
-		   "docName": "Façade audit/inspection"
-	   } ],
+    	"Building Maintenance Unit": [ {
+    		   "service":{
+    			   name:"Building Maintenance Unit"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Contract",
+    		   "docName": "Building Maintenance Unit Contract is current"
+    	   }, {
+       		   "service":{
+       			   name:"Building Maintenance Unit"
+       		   },
+       		   "type": "PPM schedule established",
+       		   "event": "Building Maintenance Unit PPM exists"
+       	   }, {
+    		   "service":{
+    			  name:"Building Maintenance Unit"
+    		  },
+    		   "type": "PPM schedule established",
+    		   "event": "PPM schedule has been established"
+    	   }, {
+    		   "service":{
+       			   name:"Building Maintenance Unit"
+       		   },
+    		   "type": "Document is current",
+    		   "docType": "Registration",
+    		   "docName": "BMU registration renewal"
+    	   }, {
+    		   "service":{
+       			   name:"Building Maintenance Unit"
+       		   },
+    		   "type": "Document is current",
+    		   "docType": "Assessment",
+    		   "docName": "BMU risk assessment has been conducted"
+    	   }, {
+    		   "service":{
+       			   name:"Building Maintenance Unit"
+       		   },
+    		   "type": "PPM event completed",
+    		   "event": "Major maintenance routine"
+    	   }, {
+    		   "service":{
+       			   name:"Building Maintenance Unit"
+       		   },
+    		   "type": "Document is current",
+    		   "docType": "Registration",
+    		   "docName": "BMU registration"
+    	   } ],
 
-	"Building Maintenance Unit": [ {
-		   "service":{
-			   name:"Building Maintenance Unit"
-		   },
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Building Maintenance Unit Contract is current"
-	   }, {
-   		   "service":{
-   			   name:"Building Maintenance Unit"
-   		   },
-   		   "type": "PPM schedule established",
-   		   "event": "Building Maintenance Unit PPM exists"
-   	   }, {
-		   "service":{
-			  name:"Building Maintenance Unit"
-		  },
-		   "type": "PPM schedule established",
-		   "event": "PPM schedule has been established"
-	   }, {
-		   "service":{
-   			   name:"Building Maintenance Unit"
-   		   },
-		   "type": "Document is current",
-		   "docType": "Registration",
-		   "docName": "BMU registration renewal"
-	   }, {
-		   "service":{
-   			   name:"Building Maintenance Unit"
-   		   },
-		   "type": "Document is current",
-		   "docType": "Assessment",
-		   "docName": "BMU risk assessment has been conducted"
-	   }, {
-		   "service":{
-   			   name:"Building Maintenance Unit"
-   		   },
-		   "type": "PPM event completed",
-		   "event": "Major maintenance routine"
-	   }, {
-		   "service":{
-   			   name:"Building Maintenance Unit"
-   		   },
-		   "type": "Document is current",
-		   "docType": "Registration",
-		   "docName": "BMU registration"
-	   } ],
+    	"Dangerous Goods & Hazardous Substances": [ {
+    			"service":{
+    				name:"Dangerous Goods & Hazardous Substances"
+    			},
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Register of dangerous goods on file"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "MSDS",
+    		   "docName": "MSDS available for all products"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Placarding & HAZCHEM signage is present"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Dangerous goods manifest established and accessible"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Dangerous goods license"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Dangerous goods risk review"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Emergency spill bins in place"
+    	   }, {
+    		   "service":{
+    			   name:"Dangerous Goods & Hazardous Substances"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Service Report",
+    		   "docName": "Liquid substances are bunded to requirements"
+    	   } ],
 
-	"Dangerous Goods & Hazardous Substances": [ {
-			"service":{
-				name:"Dangerous Goods & Hazardous Substances"
-			},
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Register of dangerous goods on file"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "MSDS",
-		   "docName": "MSDS available for all products"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Placarding & HAZCHEM signage is present"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Dangerous goods manifest established and accessible"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Dangerous goods license"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Dangerous goods risk review"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Emergency spill bins in place"
-	   }, {
-		   "service":{
-			   name:"Dangerous Goods & Hazardous Substances"
-		   },
-		   "type": "Document exists",
-		   "docType": "Service Report",
-		   "docName": "Liquid substances are bunded to requirements"
-	   } ],
+    	"Underground Petroleum Storage Systems (UPSS)": [ {
+    			"service":{
+    				name:"Underground Petroleum Storage Systems (UPSS)"
+    			},
+    		   "type": "Document is current",
+    		   "docType": "Contract",
+    		   "docName": "Underground Petroleum Storage Systems (UPSS) Contract is current"
+    	   }, {
+    		   "service":{
+    			   name:"Underground Petroleum Storage Systems (UPSS)"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Management Plan",
+    		   "docName": "Environmental management plan prepared"
+    	   }, {
+    		   "service":{
+    			   name:"Underground Petroleum Storage Systems (UPSS)"
+    		   },
+    		   "subservice":{
+    			   name:"Leak detection"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Report",
+    		   "docSubType":"Validation Report",
+    		   "docName": "Leak detection system installed"
+    	   }, {
+    		   "service":{
+    			   name:"Underground Petroleum Storage Systems (UPSS)"
+    		   },
+    		   "subservice":{
+    			   name:"Leak detection"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Log",
+    		   "docName": "Leak detection log data, incl SIRA, on file"
+    	   }, {
+    		   	"service":{
+    			   	name:"Underground Petroleum Storage Systems (UPSS)"
+    		   	},
+    		   	"subservice":{
+    			    name:"Groundwater monitoring"
+    		   	},
+    		   	"type": "Document is current",
+    		   	"docType": "Report",
+    			"docSubType":"Validation Report",
+    		   	"docName": "Groundwater monitoring installed"
+    	   }, {
+    		   "service":{
+    			   name:"Underground Petroleum Storage Systems (UPSS)"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Report",
+    		   "docSubType":"Validation Report",
+    		   "docName": "Decommissioning/validation test reports on file"
+    	   } ],
 
-	"Underground Petroleum Storage Systems (UPSS)": [ {
-			"service":{
-				name:"Underground Petroleum Storage Systems (UPSS)"
-			},
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Underground Petroleum Storage Systems (UPSS) Contract is current"
-	   }, {
-		   "service":{
-			   name:"Underground Petroleum Storage Systems (UPSS)"
-		   },
-		   "type": "Document is current",
-		   "docType": "Management Plan",
-		   "docName": "Environmental management plan prepared"
-	   }, {
-		   "service":{
-			   name:"Underground Petroleum Storage Systems (UPSS)"
-		   },
-		   "subservice":{
-			   name:"Leak detection"
-		   },
-		   "type": "Document is current",
-		   "docType": "Report",
-		   "docSubType":"Validation Report",
-		   "docName": "Leak detection system installed"
-	   }, {
-		   "service":{
-			   name:"Underground Petroleum Storage Systems (UPSS)"
-		   },
-		   "subservice":{
-			   name:"Leak detection"
-		   },
-		   "type": "Document is current",
-		   "docType": "Log",
-		   "docName": "Leak detection log data, incl SIRA, on file"
-	   }, {
-		   	"service":{
-			   	name:"Underground Petroleum Storage Systems (UPSS)"
-		   	},
-		   	"subservice":{
-			    name:"Groundwater monitoring"
-		   	},
-		   	"type": "Document is current",
-		   	"docType": "Report",
-			"docSubType":"Validation Report",
-		   	"docName": "Groundwater monitoring installed"
-	   }, {
-		   "service":{
-			   name:"Underground Petroleum Storage Systems (UPSS)"
-		   },
-		   "type": "Document is current",
-		   "docType": "Report",
-		   "docSubType":"Validation Report",
-		   "docName": "Decommissioning/validation test reports on file"
-	   } ],
+    	"Radio Frequency Radiation (RFR)": [ {
+    			"service":{
+    				name:"Radio Frequency Radiation (RFR)"
+    			},
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Risk assessment on file"
+    	   }, {
+    		   "service":{
+    			   name:"Radio Frequency Radiation (RFR)"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Procedure",
+    		   "docName": "Restricted access procedures in place"
+    	   }, {
+    		   "service":{
+    			   name:"Radio Frequency Radiation (RFR)"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Contract",
+    		   "docName": "Risk Review contract"
+    	   } ],
 
-	"Radio Frequency Radiation (RFR)": [ {
-			"service":{
-				name:"Radio Frequency Radiation (RFR)"
-			},
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Risk assessment on file"
-	   }, {
-		   "service":{
-			   name:"Radio Frequency Radiation (RFR)"
-		   },
-		   "type": "Document exists",
-		   "docType": "Procedure",
-		   "docName": "Restricted access procedures in place"
-	   }, {
-		   "service":{
-			   name:"Radio Frequency Radiation (RFR)"
-		   },
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Risk Review contract"
-	   } ],
-
-	"Environmental Risk Management": [ {
-			"service":{
-				name:"Environmental Risk Management"
-			},
-		   "type": "Document exists",
-		   "docType": "",
-		   "docName": "Trade waste agreements in place"
-	   }, {
-		   "service":{
-			   name:"Environmental Risk Management"
-		   },
-		   "type": "Document exists",
-		   "docType": "Register",
-		   "docName": "Hazardous waste register"
-	   }, {
-		   "service":{
-			   name:"Environmental Risk Management"
-		   },
-		   "type": "Document exists",
-		   "docType": "Audit",
-		   "docName": "Hazardous waste removal certificates on file"
-	   }, {
-		   "service":{
-			   name:"Environmental Risk Management"
-		   },
-		   "type": "Document is current",
-		   "docType": "Contract",
-		   "docName": "Grease trap disposal contract"
-	   }, ],
-
-
-	"OHS": [ {
-		"service":{
-			name:"OHS"
-		},
-		"type": "Document is current",
-		"docType": "Contract",
-		"docName": "Risk audit contract"
-	}, {
-		"service":{
-			name:"OHS"
-		},
-		"type": "Document exists",
-		"docType": "Procedure",
-		"docName": "Critical Environment procedures in place"
-	}, {
-		"service":{
-			name:"OHS"
-		},
-		"type": "Document exists",
-		"docType": "Audit",
-		"docName": "Last audit"
-	}, {
-		"service":{
-			name:"OHS"
-		},
-		"type": "Document exists",
-		"docType": "Audit",
-		"docName": "Compliant audit"
-	}, {
-		"service":{
-			name:"OHS"
-		},
-		"type": "Document exists",
-		"docType": "",
-		"docName": "Slip Test"
-	} ],
-
-	"Critical Environment": [ {
-		"service":{
-			name:"Critical Environment"
-		},
-		"type": "Document exists",
-		"docType": "",
-		"docName": "Equipment schedule"
-	}, {
-		"service":{
-			name:"Critical Environment"
-		},
-		"type": "Document exists",
-		"docType": "Procedure",
-		"docName": "Critical Environment procedures in place"
-	} ],
+    	"Environmental Risk Management": [ {
+    			"service":{
+    				name:"Environmental Risk Management"
+    			},
+    		   "type": "Document exists",
+    		   "docType": "",
+    		   "docName": "Trade waste agreements in place"
+    	   }, {
+    		   "service":{
+    			   name:"Environmental Risk Management"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Register",
+    		   "docName": "Hazardous waste register"
+    	   }, {
+    		   "service":{
+    			   name:"Environmental Risk Management"
+    		   },
+    		   "type": "Document exists",
+    		   "docType": "Audit",
+    		   "docName": "Hazardous waste removal certificates on file"
+    	   }, {
+    		   "service":{
+    			   name:"Environmental Risk Management"
+    		   },
+    		   "type": "Document is current",
+    		   "docType": "Contract",
+    		   "docName": "Grease trap disposal contract"
+    	   }, ],
 
 
-	"Security": [ {
-		"service":{
-			name:"Security"
-		},
-		"type": "Document is current",
-		"docType": "Contract",
-		"docName": "Security contract is current"
-	}, {
-		"service":{
-			name:"Security"
-		},
-		"type": "Document exists",
-		"docType": "Register",
-		"docSubType":"Incident register",
-		"docName": "Incident register in place"
-	} ],
+    	"OHS": [ {
+    		"service":{
+    			name:"OHS"
+    		},
+    		"type": "Document is current",
+    		"docType": "Contract",
+    		"docName": "Risk audit contract"
+    	}, {
+    		"service":{
+    			name:"OHS"
+    		},
+    		"type": "Document exists",
+    		"docType": "Procedure",
+    		"docName": "Critical Environment procedures in place"
+    	}, {
+    		"service":{
+    			name:"OHS"
+    		},
+    		"type": "Document exists",
+    		"docType": "Audit",
+    		"docName": "Last audit"
+    	}, {
+    		"service":{
+    			name:"OHS"
+    		},
+    		"type": "Document exists",
+    		"docType": "Audit",
+    		"docName": "Compliant audit"
+    	}, {
+    		"service":{
+    			name:"OHS"
+    		},
+    		"type": "Document exists",
+    		"docType": "",
+    		"docName": "Slip Test"
+    	} ],
 
-	"Cleaning": [ {
-		"service":{
-			name:"Cleaning"
-		},
-		"type": "Document is current",
-		"docType": "Contract",
-		"docName": "Cleaning contract is current"
-	}, {
-		"service":{
-			name:"Cleaning"
-		},
-		"subservice":{
-			name:"Waste removal"
-		},
-		"type": "Document is current",
-		"docType": "Contract",
-		"docName": "Cleaning contract is current"
-	}, {
-		"service":{
-			name:"Cleaning"
-		},
-		"type": "Document is current",
-		"docType": "Registration",
-		"docSubType":"Testing & Tagging certificate",
-		"docName": "Cleaning Test and Tag certificate current"
-	} ],
+    	"Critical Environment": [ {
+    		"service":{
+    			name:"Critical Environment"
+    		},
+    		"type": "Document exists",
+    		"docType": "",
+    		"docName": "Equipment schedule"
+    	}, {
+    		"service":{
+    			name:"Critical Environment"
+    		},
+    		"type": "Document exists",
+    		"docType": "Procedure",
+    		"docName": "Critical Environment procedures in place"
+    	} ],
 
-	"House Rules": [ {
-		"service":{
-			name:"House Rules"
-		},
-		"type": "Document exists",
-		"docType": "House Rules",
-		"docName": "Tenant receipt of House Rules"
-	} ],
 
-	"Contractor Management": [ {
-		"service":{
-			name:"Contractor Management"
-		},
-		"type": "Document is current",
-		"docType": "Contract",
-		"docName": "Contractor management and induction system in place"
-	}, {
-		"service":{
-			name:"Contractor Management"
-		},
-		"type": "Document exists",
-		"docType": "Procedure",
-		"docName": "Restricted access procedures"
-	}, {
-		"service":{
-			name:"Contractor Management"
-		},
-		"type": "Document exists",
-		"docType": "Registration",
-		"docName": "Contracts register operational"
-	} ],
+    	"Security": [ {
+    		"service":{
+    			name:"Security"
+    		},
+    		"type": "Document is current",
+    		"docType": "Contract",
+    		"docName": "Security contract is current"
+    	}, {
+    		"service":{
+    			name:"Security"
+    		},
+    		"type": "Document exists",
+    		"docType": "Register",
+    		"docSubType":"Incident register",
+    		"docName": "Incident register in place"
+    	} ],
 
-	"HVAC": [ {
-		"service":{
-			name:"HVAC"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"HVAC contract is current"
-	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"type":"PPM schedule established",
-		"event":"HVAC PPM exists"
-	}, {
+    	"Cleaning": [ {
+    		"service":{
+    			name:"Cleaning"
+    		},
+    		"type": "Document is current",
+    		"docType": "Contract",
+    		"docName": "Cleaning contract is current"
+    	}, {
+    		"service":{
+    			name:"Cleaning"
+    		},
+    		"subservice":{
+    			name:"Waste removal"
+    		},
+    		"type": "Document is current",
+    		"docType": "Contract",
+    		"docName": "Cleaning contract is current"
+    	}, {
+    		"service":{
+    			name:"Cleaning"
+    		},
+    		"type": "Document is current",
+    		"docType": "Registration",
+    		"docSubType":"Testing & Tagging certificate",
+    		"docName": "Cleaning Test and Tag certificate current"
+    	} ],
+
+    	"House Rules": [ {
+    		"service":{
+    			name:"House Rules"
+    		},
+    		"type": "Document exists",
+    		"docType": "House Rules",
+    		"docName": "Tenant receipt of House Rules"
+    	} ],
+
+    	"Contractor Management": [ {
+    		"service":{
+    			name:"Contractor Management"
+    		},
+    		"type": "Document is current",
+    		"docType": "Contract",
+    		"docName": "Contractor management and induction system in place"
+    	}, {
+    		"service":{
+    			name:"Contractor Management"
+    		},
+    		"type": "Document exists",
+    		"docType": "Procedure",
+    		"docName": "Restricted access procedures"
+    	}, {
+    		"service":{
+    			name:"Contractor Management"
+    		},
+    		"type": "Document exists",
+    		"docType": "Registration",
+    		"docName": "Contracts register operational"
+    	} ],
+    */
+    "HVAC": [ {
+            "service": {
+                name: "HVAC"
+            },
+            "type": "Document is current",
+            "docType": "Contract",
+            "docName": "HVAC contract is current"
+        }, {
+            "service": {
+                name: "HVAC"
+            },
+            "type": "PPM schedule established",
+            "event": "HVAC PPM exists"
+        }, {
 		"service":{
 			name:"HVAC"
 		},
@@ -2015,605 +1862,615 @@ export default DefaultComplianceRule = {
 		"docType":"Service Report",
 		"docName":"12 months' HVAC service reports exist"
 	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"type":"Documents exist",
-		"docType":"SWMS",
-		"docName":"Risk assessment exists"
-	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"type":"PPM event completed",
-		"event":"HVAC Full function fire test",
-		"frequency": {
-			"number":"1",
-			"unit":"years",
-			"repeats":"1"
-		}
-	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"subservice":{
-			name:"Chillers"
-		},
-		"type":"Document is current",
-		"docType":"Registration",
-		"docName":"Plant registraton renewal (Chiller)"
-	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"subservice":{
-			name:"Pressure Vessels"
-		},
-		"type":"Document is current",
-		"docType":"Registration",
-		"docName":"Plant registraton renewal (Pressure vessels)"
-	}, {
-		"service":{
-			name:"HVAC"
-		},
-		"subservice":{
-			name:"Kitchen Exhausts"
-		},
-		"type":"PPM event completed",
-		"event":"HVAC Kitchen Exhausts Annual maintenance",
-		"frequency": {
-			"number":"1",
-			"unit":"years",
-			"repeats":"1"
-		}
-	}],
+            "service": {
+                name: "HVAC"
+            },
+            "type": "Document exists",
+            "docType": "SWMS",
+            "docName": "Risk assessment exists"
+        }, {
+            "service": {
+                name: "HVAC"
+            },
+            "type": "PPM event completed",
+            "event": "HVAC Full function fire test",
+            "frequency": {
+                "number": "1",
+                "unit": "years",
+                "repeats": "1"
+            }
+        }, /*{
+            "service": {
+                name: "HVAC"
+            },
+            "subservice": {
+                name: "Chillers"
+            },
+            "type": "Document is current",
+            "docType": "Registration",
+            "docName": "Plant registraton renewal (Chiller)"
+        }, {
+            "service": {
+                name: "HVAC"
+            },
+            "subservice": {
+                name: "Pressure Vessels"
+            },
+            "type": "Document is current",
+            "docType": "Registration",
+            "docName": "Plant registraton renewal (Pressure vessels)"
+        }, */{
+            "service": {
+                name: "HVAC"
+            },
+            "subservice": {
+                name: "Kitchen Exhausts"
+            },
+            "type": "PPM event completed",
+            "event": "HVAC Kitchen Exhausts Annual maintenance",
+            "frequency": {
+                "number": "1",
+                "unit": "years",
+                "repeats": "1"
+            }
+        }
+    ],
+    /*
+    	"Cooling Tower Systems & Water Treatment":[{
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Treatment"
+    		},
+    		"type":"Document is current",
+    		"docType":"Contract",
+    		"docName":"Cooling Tower Systems & Water Treatment contract is current"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Treatment"
+    		},
+    		"type":"PPM schedule established",
+    		"event":"PPM schedule has been established"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Treatment"
+    		},
+    		"type":"Compliance level",
+    		"docType":"Service Report",
+    		"docName":"12 months' Cooling Tower Systems & Water Treatment service reports exist"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"type":"Document is current",
+    		"docType":"Registration",
+    		"docName":"Cooling tower registration expiry date"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Testing"
+    		},
+    		"type":"Document is current",
+    		"docType":"Contract",
+    		"docName":"Cooling Tower Systems & Water Treatment contract is current"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Testing"
+    		},
+    		"type":"PPM schedule established",
+    		"event":"PPM schedule has been established"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"Water Testing"
+    		},
+    		"type":"Compliance level",
+    		"docType":"Service Report",
+    		"docName":"12 months' Cooling Tower Systems & Water Treatment service reports exist"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"RMP"
+    		},
+    		"type":"Document is current",
+    		"docType":"Management Plan",
+    		"docName":"Risk Management Plan (RMP)"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"RMP"
+    		},
+    		"type":"Document is current",
+    		"docType":"Assessment",
+    		"docName":"RMP Review"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"RMP"
+    		},
+    		"type":"Document is current",
+    		"docType":"Confirmation",
+    		"docName":"RMP review compliant"
+    	}, {
+    		"service":{
+    			name:"Cooling Tower Systems & Water Treatment"
+    		},
+    		"subservice":{
+    			name:"RMP"
+    		},
+    		"type":"Document is current",
+    		"docType":"Audit",
+    		"docName":"RMP Audit"
+    	}],
 
-	"Cooling Tower Systems & Water Treatment":[{
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Treatment"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"Cooling Tower Systems & Water Treatment contract is current"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Treatment"
-		},
-		"type":"PPM schedule established",
-		"event":"PPM schedule has been established"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Treatment"
-		},
-		"type":"Compliance level",
-		"docType":"Service Report",
-		"docName":"12 months' Cooling Tower Systems & Water Treatment service reports exist"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"type":"Document is current",
-		"docType":"Registration",
-		"docName":"Cooling tower registration expiry date"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Testing"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"Cooling Tower Systems & Water Treatment contract is current"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Testing"
-		},
-		"type":"PPM schedule established",
-		"event":"PPM schedule has been established"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"Water Testing"
-		},
-		"type":"Compliance level",
-		"docType":"Service Report",
-		"docName":"12 months' Cooling Tower Systems & Water Treatment service reports exist"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"RMP"
-		},
-		"type":"Document is current",
-		"docType":"Management Plan",
-		"docName":"Risk Management Plan (RMP)"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"RMP"
-		},
-		"type":"Document is current",
-		"docType":"Assessment",
-		"docName":"RMP Review"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"RMP"
-		},
-		"type":"Document is current",
-		"docType":"Confirmation",
-		"docName":"RMP review compliant"
-	}, {
-		"service":{
-			name:"Cooling Tower Systems & Water Treatment"
-		},
-		"subservice":{
-			name:"RMP"
-		},
-		"type":"Document is current",
-		"docType":"Audit",
-		"docName":"RMP Audit"
-	}],
-
-	"Utilities": [{
-		"service":{
-			name:"Utilities"
-		},
-		"subservice":{
-			name:"Energy Management"
-		},
-		"type":"Document is current",
-		"docType":"Certificate",
-		"docName":"Building Energy Efficiency Certificate"
-	}, {
-		"service":{
-			name:"Utilities"
-		},
-		"subservice":{
-			name:"Energy Management"
-		},
-		"type":"Compliance level",
-		"docType":"Invoice",
-		"docName":"12 months' Utilities invoices exist"
-	}],
-
-	"WHS & Risk Management":[{
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Property risk"
-		},
-		"type":"Documents exist",
-		"docType":"Certificate",
-		"docSubType":"Certificate of Occupancy",
-		"docName":"Cert of Occupancy/Final Inspection/ESM determination"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Property risk"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"WHS & Risk Management Property risk contract is current"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Property risk"
-		},
-		"type":"Document is current",
-		"docType":"Audit",
-		"docName":"Last audit"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Property risk"
-		},
-		"type":"Document is current",
-		"docType":"Audit",
-		"docName":"Last audit"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Property risk"
-		},
-		"type":"Document is current",
-		"docType":"Confirmation",
-		"docName":"Compliant audit"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Slip test"
-		},
-		"type":"Document is current",
-		"docType":"Report",
-		"docName":"Slip Test"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Slip test"
-		},
-		"type":"Document is current",
-		"docType":"Confirmation",
-		"docName":"Slip test compliance"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Asbestos & Hazardous Materials"
-		},
-		"type":"Document is current",
-		"docType":"Audit",
-		"docName":"Asbestos/Haz mat register audit"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Asbestos & Hazardous Materials"
-		},
-		"type":"Documents exist",
-		"docType":"Register",
-		"docName":"Asbestos/Haz mat register included in induction"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Asbestos & Hazardous Materials"
-		},
-		"type":"Documents exist",
-		"docType":"Management Plan",
-		"docName":"Asbestos/Haz Mat Management Management plan prepared"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Asbestos & Hazardous Materials"
-		},
-		"type":"Documents exist",
-		"docType":"Procedure",
-		"docName":"Occupant notification process complete"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Confined Spaces"
-		},
-		"type":"Documents exist",
-		"docType":"Register",
-		"docName":"Confined Spaces register available"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Confined Spaces"
-		},
-		"type":"Documents exist",
-		"docType":"Confirmation",
-		"docName":"Confined Spaces identified and signposted"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Confined Spaces"
-		},
-		"type":"Documents exist",
-		"docType":"Procedure",
-		"docName":"Permit entry procedures in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Indoor Air Quality"
-		},
-		"type":"Document is current",
-		"docType":"Report",
-		"docName":"Annual IAQ test"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Documents exist",
-		"docType":"Register",
-		"docName":"Dangerous goods register"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Document is current",
-		"docType":"MSDS",
-		"docName":"MSDS available"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Documents exist",
-		"docType":"Confirmation",
-		"docSubType":"Signage",
-		"docName":"Signage in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Documents exist",
-		"docType":"Confirmation",
-		"docSubType":"Manifest",
-		"docName":"Dangerous goods manifest in-situ"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Document is current",
-		"docType":"Licence",
-		"docName":"Dangerous goods license"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Document is current",
-		"docType":"Assessment",
-		"docName":"Dangerous goods risk review"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Documents exist",
-		"docType":"Confirmation",
-		"docSubType":"Spill bins",
-		"docName":"Emergency spill bins in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Dangerous Goods & Hazardous Substances"
-		},
-		"type":"Documents exist",
-		"docType":"Confirmation",
-		"docSubType":"Bunding",
-		"docName":"Liquid substances are bunded to requirements"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Radio Frequency Radiation"
-		},
-		"type":"Documents exist",
-		"docType":"Assessment",
-		"docName":"Risk assessment on file"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Radio Frequency Radiation"
-		},
-		"type":"Documents exist",
-		"docType":"Procedure",
-		"docName":"Restricted access procedures in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Radio Frequency Radiation"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"WHS & Risk Management contract is current"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Trade Waste"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"Trade waste agreements in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Hazardous Waste"
-		},
-		"type":"Documents exist",
-		"docType":"Register",
-		"docName":"Hazardous waste register"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Hazardous Waste"
-		},
-		"type":"Documents exist",
-		"docType":"Certificate",
-		"docName":"Hazardous waste removal certificates on file"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Grease trap disposal"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"WHS & Risk Management contract is current"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Critical Environment"
-		},
-		"type":"Documents exist",
-		"docType":"Audit",
-		"docName":"Critical Environment audit completed"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Critical Environment"
-		},
-		"type":"Documents exist",
-		"docType":"Register",
-		"docName":"Equipment schedule"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Critical Environment"
-		},
-		"type":"Documents exist",
-		"docType":"Procedure",
-		"docName":"Critical Environment procedures in place"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"House Rules"
-		},
-		"type":"Compliance level",
-		"docType":"Confirmation",
-		"docName":"Tenant(s) confirmation of House Rules"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Contractor Management"
-		},
-		"type":"Compliance level",
-		"docType":"Induction",
-		"docName":"All contractors are inducted"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Contractor Management"
-		},
-		"type":"Documents exist",
-		"docType":"Procedure",
-		"docSubType":"Restricted access",
-		"docName":"Restricted access procedures"
-	}, {
-		"service":{
-			name:"WHS & Risk Management"
-		},
-		"subservice":{
-			name:"Contractor Management"
-		},
-		"type":"Compliance level",
-		"docType":"Contract",
-		"docName":"Contracts  <50% complete"
-	}],
-
-	"High Access":[{
-		"service":{
-			name:"High Access"
-		},
-		"subservice":{
-			name:"Anchor points"
-		},
-		"type":"Document is current",
-		"docType":"Contract",
-		"docName":"High Access contract is current"
-	}, {
-		"service":{
-			name:"High Access"
-		},
-		"subservice":{
-			name:"Height safety"
-		},
-		"type":"Documents exist",
-		"docType":"Report",
-		"docName":"Height safety assessment"
-	}, {
-		"service":{
-			name:"High Access"
-		},
-		"subservice":{
-			name:"Height safety"
-		},
-		"type":"Documents exist",
-		"docType":"Service Report",
-		"docName":"Height safety recommendations completed"
-	}, {
-		"service":{
-			name:"High Access"
-		},
-		"subservice":{
-			name:"Façade"
-		},
-		"type":"Document is current",
-		"docType":"Audit",
-		"docName":"Façade audit/inspection"
-	}]
+    	"Utilities": [{
+    		"service":{
+    			name:"Utilities"
+    		},
+    		"subservice":{
+    			name:"Energy Management"
+    		},
+    		"type":"Document is current",
+    		"docType":"Certificate",
+    		"docName":"Building Energy Efficiency Certificate"
+    	}, {
+    		"service":{
+    			name:"Utilities"
+    		},
+    		"subservice":{
+    			name:"Energy Management"
+    		},
+    		"type":"Compliance level",
+    		"docType":"Invoice",
+    		"docName":"12 months' Utilities invoices exist"
+    	}],
+    */
+    "WHS & Risk Management": [ {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "type": "Document exists",
+        "docType": "Certificate",
+        "docSubType": "Certificate of Occupancy",
+        "docName": "Cert of Occupancy/Final Inspection/ESM determination"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Property risk"
+        },
+        "type": "Document exists",
+        "docType": "Certificate",
+        "docSubType": "Certificate of Occupancy",
+        "docName": "Cert of Occupancy/Final Inspection/ESM determination"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Property risk"
+        },
+        "type": "Document is current",
+        "docType": "Contract",
+        "docName": "WHS & Risk Management Property risk contract is current"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Property risk"
+        },
+        "type": "Document is current",
+        "docType": "Audit",
+        "docName": "Last audit"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Property risk"
+        },
+        "type": "Document is current",
+        "docType": "Audit",
+        "docName": "Last audit"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Property risk"
+        },
+        "type": "Document is current",
+        "docType": "Confirmation",
+        "docName": "Compliant audit"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Slip test"
+        },
+        "type": "Document is current",
+        "docType": "Report",
+        "docName": "Slip Test"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Slip test"
+        },
+        "type": "Document is current",
+        "docType": "Confirmation",
+        "docName": "Slip test compliance"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Asbestos & Hazardous Materials"
+        },
+        "type": "Document is current",
+        "docType": "Audit",
+        "docName": "Asbestos/Haz mat register audit"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Asbestos & Hazardous Materials"
+        },
+        "type": "Document exists",
+        "docType": "Register",
+        "docName": "Asbestos/Haz mat register included in induction"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Asbestos & Hazardous Materials"
+        },
+        "type": "Document exists",
+        "docType": "Management Plan",
+        "docName": "Asbestos/Haz Mat Management Management plan prepared"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Asbestos & Hazardous Materials"
+        },
+        "type": "Document exists",
+        "docType": "Procedure",
+        "docName": "Occupant notification process complete"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Confined Spaces"
+        },
+        "type": "Document exists",
+        "docType": "Register",
+        "docName": "Confined Spaces register available"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Confined Spaces"
+        },
+        "type": "Document exists",
+        "docType": "Confirmation",
+        "docName": "Confined Spaces identified and signposted"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Confined Spaces"
+        },
+        "type": "Document exists",
+        "docType": "Procedure",
+        "docName": "Permit entry procedures in place"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Indoor Air Quality"
+        },
+        "type": "Document is current",
+        "docType": "Report",
+        "docName": "Annual IAQ test"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document exists",
+        "docType": "Register",
+        "docName": "Dangerous goods register"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document is current",
+        "docType": "MSDS",
+        "docName": "MSDS available"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document exists",
+        "docType": "Confirmation",
+        "docSubType": "Signage",
+        "docName": "Signage in place"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document exists",
+        "docType": "Confirmation",
+        "docSubType": "Manifest",
+        "docName": "Dangerous goods manifest in-situ"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document is current",
+        "docType": "Licence",
+        "docName": "Dangerous goods license"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document is current",
+        "docType": "Assessment",
+        "docName": "Dangerous goods risk review"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document exists",
+        "docType": "Confirmation",
+        "docSubType": "Spill bins",
+        "docName": "Emergency spill bins in place"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Dangerous Goods & Hazardous Substances"
+        },
+        "type": "Document exists",
+        "docType": "Confirmation",
+        "docSubType": "Bunding",
+        "docName": "Liquid substances are bunded to requirements"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Radio Frequency Radiation"
+        },
+        "type": "Document exists",
+        "docType": "Assessment",
+        "docName": "Risk assessment on file"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Radio Frequency Radiation"
+        },
+        "type": "Document exists",
+        "docType": "Procedure",
+        "docName": "Restricted access procedures in place"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Radio Frequency Radiation"
+        },
+        "type": "Document is current",
+        "docType": "Contract",
+        "docName": "WHS & Risk Management contract is current"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Trade Waste"
+        },
+        "type": "Document is current",
+        "docType": "Contract",
+        "docName": "Trade waste agreements in place"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Hazardous Waste"
+        },
+        "type": "Document exists",
+        "docType": "Register",
+        "docName": "Hazardous waste register"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Hazardous Waste"
+        },
+        "type": "Document exists",
+        "docType": "Certificate",
+        "docName": "Hazardous waste removal certificates on file"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Grease trap disposal"
+        },
+        "type": "Document is current",
+        "docType": "Contract",
+        "docName": "WHS & Risk Management contract is current"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Critical Environment"
+        },
+        "type": "Document exists",
+        "docType": "Audit",
+        "docName": "Critical Environment audit completed"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Critical Environment"
+        },
+        "type": "Document exists",
+        "docType": "Register",
+        "docName": "Equipment schedule"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Critical Environment"
+        },
+        "type": "Document exists",
+        "docType": "Procedure",
+        "docName": "Critical Environment procedures in place"
+    }, /*{
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "House Rules"
+        },
+        "type": "Compliance level",
+        "docType": "Confirmation",
+        "docName": "Tenant(s) confirmation of House Rules"
+    }, {
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Contractor Management"
+        },
+        "type": "Compliance level",
+        "docType": "Induction",
+        "docName": "All contractors are inducted"
+    }, */{
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Contractor Management"
+        },
+        "type": "Document exists",
+        "docType": "Procedure",
+        "docSubType": "Restricted access",
+        "docName": "Restricted access procedures"
+    }, /*{
+        "service": {
+            name: "WHS & Risk Management"
+        },
+        "subservice": {
+            name: "Contractor Management"
+        },
+        "type": "Compliance level",
+        "docType": "Contract",
+        "docName": "Contracts  <50% complete"
+    }*/ ],
+    /*
+    	"High Access":[{
+    		"service":{
+    			name:"High Access"
+    		},
+    		"subservice":{
+    			name:"Anchor points"
+    		},
+    		"type":"Document is current",
+    		"docType":"Contract",
+    		"docName":"High Access contract is current"
+    	}, {
+    		"service":{
+    			name:"High Access"
+    		},
+    		"subservice":{
+    			name:"Height safety"
+    		},
+    		"type":"Document exists",
+    		"docType":"Report",
+    		"docName":"Height safety assessment"
+    	}, {
+    		"service":{
+    			name:"High Access"
+    		},
+    		"subservice":{
+    			name:"Height safety"
+    		},
+    		"type":"Document exists",
+    		"docType":"Service Report",
+    		"docName":"Height safety recommendations completed"
+    	}, {
+    		"service":{
+    			name:"High Access"
+    		},
+    		"subservice":{
+    			name:"Façade"
+    		},
+    		"type":"Document is current",
+    		"docType":"Audit",
+    		"docName":"Façade audit/inspection"
+    	}]
+    	*/
 };

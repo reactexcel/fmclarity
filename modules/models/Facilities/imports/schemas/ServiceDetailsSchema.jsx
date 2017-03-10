@@ -101,9 +101,33 @@ export default ServiceDetailsSchema =  {
         size: 12,
         input: Select,
         options(item){
-            return{
-                items: Session.getSelectedFacility().getSuppliers(),
-                view: ContactCard,
+            let facility = Session.getSelectedFacility();
+            return {
+                items: facility.getSuppliers(),
+                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
+                                        <ContactCard {...props} />
+                                    </div>,
+                addNew: {
+                    //Add new supplier to request and selected facility.
+                    show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                    label: "Create New",
+                    onAddNewItem: ( callback ) => {
+                        import { TeamStepper } from '/modules/models/Teams';
+                        Modal.show( {
+                            content: <TeamStepper
+                                facility = { facility }
+                                onChange = {
+                                    ( supplier ) => {
+                                        let facility = Session.getSelectedFacility();
+                                        facility.addSupplier( supplier );
+                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
+                                        callback( supplier );
+                                    }
+                                }
+                            />
+                        } )
+                    }
+                },
                 afterChange(item){
                     item.defaultContact = [];
                 }
@@ -113,7 +137,7 @@ export default ServiceDetailsSchema =  {
     defaultContact:{
         label: "Default supplier contact",
         type: 'array',
-        required: true,
+        required: false,
         size: 12,
         input(props){
             // props.onChange = ( item ) => {
@@ -158,6 +182,7 @@ export default ServiceDetailsSchema =  {
     								borderRadius: '5px',
 									margin: '5px',
 									borderLeft: '4px solid aquamarine',
+                                    cursor: "default",
 								}}>
 								<span onClick={() => {
 										let id = sc._id;

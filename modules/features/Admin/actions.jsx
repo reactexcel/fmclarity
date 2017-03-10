@@ -5,6 +5,26 @@ import { Facilities } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 
+import moment from 'moment';
+
+
+
+const sendEmailDigests = new Action( { 
+	name: 'send email digests',
+	label: 'Send email digests',
+	icon: 'fa fa-exclamation',
+	action: () => {
+		import { EmailDigestView } from '/modules/core/Email';
+		let user = Meteor.user();
+		let messageBody = DocMessages.render( EmailDigestView, { user } );
+		console.log( messageBody );
+		Meteor.call( 'Messages.sendEmail', user, {
+			subject: 'Testing the digest',
+			emailBody: messageBody
+		} )
+	}
+} )
+
 const migrate = new Action( {
     name: 'migrate schema',
     label: "Migrate Schema to v0.17",
@@ -62,5 +82,6 @@ const migrate = new Action( {
 export {
 
 	migrate,
+	sendEmailDigests
 
 }

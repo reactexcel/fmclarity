@@ -112,9 +112,9 @@ export default DataTable = React.createClass( {
 
 		return (
 			<div className="data-grid">
-				{/*<div className = "data-grid-title-row">
+				{this.props.includeActionMenu ? <div className = "data-grid-title-row">
 					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>*/}
+				</div>:null}
 				<div ref="printable">
 				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">
@@ -150,9 +150,6 @@ export default DataTable = React.createClass( {
 							let unread = false;
 							if( row._item.unreadRecipents ){
 								if( _.indexOf( row._item.unreadRecipents, user._id ) > -1){
-									unread = true;
-									unreadRows.push(row);
-								}else if( _.indexOf( row._item.unreadRecipents, facility._id ) > -1){
 									unread = true;
 									unreadRows.push(row);
 								}
