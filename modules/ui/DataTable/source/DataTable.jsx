@@ -65,6 +65,9 @@ export default DataTable = React.createClass( {
 
 	componentWillMount() {
 		this.update( this.props );
+		if (this.props.setDataSet) {
+			this.props.setDataSet(this.state.dataset);
+		}
 	},
 
 	componentWillReceiveProps( props ) {
@@ -112,9 +115,9 @@ export default DataTable = React.createClass( {
 
 		return (
 			<div className="data-grid">
-				{this.props.includeActionMenu ? <div className = "data-grid-title-row">
-					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>:null}
+				<div className = "data-grid-title-row">
+					{/*<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />*/}
+				</div>
 				<div ref="printable">
 				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">
