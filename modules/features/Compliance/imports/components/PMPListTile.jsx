@@ -61,7 +61,7 @@ const PMPListTile = React.createClass( {
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { nextDateString && nextRequest ? 
+                { nextDateString && nextRequest ?
                     <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                         <span>next due <b>{ nextDateString }</b> </span>
                         { nextRequest ?

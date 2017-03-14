@@ -1241,16 +1241,14 @@ export default DefaultComplianceRule = {
             },
             "type": "PPM schedule established",
             "event": "PPM schedule has been established"
-        },
-        /*{
+        }, {
 		   "service":{
 			   name:"Lifts & Escalators"
 		   },
 		   "type": "Compliance level",
 		   "docType":"Service Report",
 		   "docName": "12 months' Lifts & Escalators service reports exist"
-	   }, */
-        {
+	   }, {
             "service": {
                 name: "Lifts & Escalators"
             },
@@ -1856,16 +1854,14 @@ export default DefaultComplianceRule = {
             },
             "type": "PPM schedule established",
             "event": "HVAC PPM exists"
-        },
-        /*{
+        }, {
 		"service":{
 			name:"HVAC"
 		},
 		"type":"Compliance level",
 		"docType":"Service Report",
 		"docName":"12 months' HVAC service reports exist"
-	}, */
-        {
+	}, {
             "service": {
                 name: "HVAC"
             },

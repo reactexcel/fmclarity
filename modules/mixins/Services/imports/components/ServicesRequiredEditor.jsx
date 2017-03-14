@@ -207,7 +207,11 @@ const ServicesRequiredEditor = React.createClass( {
 				<ul id="sortable">
 				{services?services.map( (service,idx) => {
 
-					let expanded = this.state.expanded[service.name],
+					if( !service ) {
+						return <li></li>;
+					}
+
+					let expanded = this.state.expanded[ service.name ],
 						size = services.length,
 						key = size+'-'+idx;
 

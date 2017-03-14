@@ -114,16 +114,16 @@ Actions.addAccessRule( {
     action: [
         'create team request',
     ],
-    role: [ 
-        'staff', 
-        'fmc support', 
-        'portfolio manager', 
-        'manager', 
-        'owner', 
-        'property manager', 
-        'caretaker', 
-        'tenant', 
-        'resident' 
+    role: [
+        'staff',
+        'fmc support',
+        'portfolio manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker',
+        'tenant',
+        'resident'
     ],
 } )
 
@@ -241,38 +241,35 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
 
-        if( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
+        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
                 teamRole = team.getMemberRole( user ),
                 facilityRole = facility.getMemberRole( user );
 
-            if( request.service && request.service.data && request.service.data.baseBuilding ) {
-                if( facilityRole == 'property manager') {
+            if ( request.service && request.service.data && request.service.data.baseBuilding ) {
+                if ( facilityRole == 'property manager' ) {
                     return true;
                 }
-            }
-            else {
-                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' )) {
+            } else {
+                if ( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
                     return true;
-                }
-                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
-                    return true;                    
-                }
-                else if( facilityRole == 'manager' ) {
+                } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;
+                } else if ( facilityRole == 'manager' ) {
                     let costString = request.costThreshold;
-                    if( _.isString( costString ) ) {
-                        costString = costString.replace(',','')
+                    if ( _.isString( costString ) ) {
+                        costString = costString.replace( ',', '' )
                     }
 
                     let costThreshold = parseInt( team.defaultCostThreshold ),
                         cost = parseInt( costString );
 
 
-                    console.log( { original:team.defaultCostThreshold, costThreshold, cost } );
+                    console.log( { original: team.defaultCostThreshold, costThreshold, cost } );
 
-                    if( cost <= costThreshold ) {
+                    if ( cost <= costThreshold ) {
                         return true;
                     }
                 }
@@ -284,14 +281,14 @@ Actions.addAccessRule( {
     action: [
         'edit request',
     ],
-    role: [ '*'/*'team portfolio manager', 'facility property manager', 'facility manager', 'team fmc support', 'property manager'*/ ],
+    role: [ '*' /*'team portfolio manager', 'facility property manager', 'facility manager', 'team fmc support', 'property manager'*/ ],
     rule: { alert: true }
 } )
 
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative' ) {
+        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
             import { Requests } from '/modules/models/Requests';
             request = Requests.collection._transform( request );
             let nextRequest = request.getNextRequest();
@@ -311,36 +308,41 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
         //console.log( request );
-        if( request.status == 'New' && request.supplier && request.supplier._id ) {
+        if ( request.status == 'New' && request.supplier && request.supplier._id ) {
             // this in own function - DRY!
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
-                teamRole = team.getMemberRole( user ),
-                facilityRole = facility.getMemberRole( user );
+                teamRole = null,
+                facilityRole = null;
 
-            if( request.service && request.service.data && request.service.data.baseBuilding ) {
-                if( facilityRole == 'property manager') {
-                    return true;
-                }
+            if ( team ) {
+                teamRole = team.getMemberRole( user );
             }
-            else {
-                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
+
+            if ( facility ) {
+                facilityRole = facility.getMemberRole( user );
+            }
+
+            if ( request.service && request.service.data && request.service.data.baseBuilding ) {
+                if ( facilityRole == 'property manager' ) {
                     return true;
                 }
-                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
-                    return true;                    
-                }
-                else if( facilityRole == 'manager' ) {
+            } else {
+                if ( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
+                    return true;
+                } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;
+                } else if ( facilityRole == 'manager' ) {
                     let costString = request.costThreshold;
-                    if( _.isString( costString ) ) {
-                        costString = costString.replace(',','')
+                    if ( _.isString( costString ) ) {
+                        costString = costString.replace( ',', '' )
                     }
 
                     let costThreshold = parseInt( team.defaultCostThreshold ),
                         cost = parseInt( costString );
 
-                    if( cost <= costThreshold ) {
+                    if ( cost <= costThreshold ) {
                         return true;
                     }
                 }
@@ -352,35 +354,38 @@ Actions.addAccessRule( {
         'issue request',
         'reject request',
     ],
-    role: [ '*'/*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
+    role: [ '*' /*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
     rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
-    condition: 
-		( request ) => {
-			let user = Meteor.user(),
-			team = request.getTeam(),
-			teamRole = team.getMemberRole( user );
+    condition:
+        ( request ) => {
+            let user = Meteor.user(),
+                team = request.getTeam(),
+                teamRole = team.getMemberRole( user );
 
-			if ( teamRole == 'fmc support' ) {
-				/* Allow action for this role regardless of requests status */
-				return true;
-			}
-			else if ( request.status == 'New' || request.type == 'Preventative' ) {    
-				/* 	Allow action if status is new and only for 
-					roles specified below
-				*/
+            if ( teamRole == 'fmc support' ) {
+                /* Allow action for this role regardless of requests status */
+                return true;
+            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+                /*  Allow action if status is new and only for 
+                    roles specified below
+                */
                 import { Facilities } from '/modules/models/Facilities';
-				let facility = Facilities.findOne( request.facility._id ),
-				    facilityRole = facility.getMemberRole( user ),
-				    requestRole = request.getMemberRole( user );
+                let requestRole = request.getMemberRole( user ),
+                    facility = Facilities.findOne( request.facility._id ),
+                    facilityRole = null;
 
-				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
-				    return true;
-				}
-			}
-		},
+                if ( facility ) {
+                    facilityRole = facility.getMemberRole( user );
+                }
+
+                if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
+                    return true;
+                }
+            }
+        },
     action: [
         'delete request',
     ],
@@ -532,7 +537,7 @@ UserMenuActions = Actions.clone( [
     'create team',
     'migrate schema',
     'send supplier reminders',
-    'send email digests',
+    //'send email digests',
     'logout'
 ] );
 
