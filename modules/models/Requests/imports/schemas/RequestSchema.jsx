@@ -87,6 +87,7 @@ const RequestSchema = {
             options: () => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
+                    user = Meteor.user();
                     teamType = null;
 
                 if ( team ) {
@@ -97,7 +98,21 @@ const RequestSchema = {
                     return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident' ], role ) ) {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Tenancy' ] };
+                        return { 
+                            items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
+                            afterChange: ( request ) => {
+                                // prefill area with tenant/resident address
+                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                    request.area= user.apartment ? user.apartment : null;
+                                    request.level= user.level ? user.level : null;
+                                }
+                                else{
+                                    request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;
+                                }
+                                    
+                                }
+                             };
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
                     }
