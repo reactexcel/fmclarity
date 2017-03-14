@@ -36,7 +36,7 @@ const CronJobs = {
                 else {
                     let messageBody = DocMessages.render( EmailDigestView, { user, messages } );
                     Meteor.call( 'Messages.sendEmail', user, {
-                        subject: 'Testing the digest',
+                        subject: 'FM Clarity Updates',
                         emailBody: messageBody
                     } );
                 }
