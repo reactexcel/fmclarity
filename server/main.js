@@ -30,7 +30,7 @@ Meteor.startup( function() {
     SyncedCron.add( {
         name: 'Send Email Digests',
         schedule: function( parser ) {
-            return parser.text('every 5 mins');
+            return parser.text('every 1 hour');
         },
         job: CronJobs.sendEmailDigests,
     } );

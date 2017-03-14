@@ -288,7 +288,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative' ) {
+        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
             import { Requests } from '/modules/models/Requests';
             request = Requests.collection._transform( request );
             let nextRequest = request.getNextRequest();
