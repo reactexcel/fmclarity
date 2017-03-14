@@ -281,22 +281,24 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     <td>{formatDate(request.eta)}</td>
                 </tr> : null }
 
-                { request.readBy ?
-                request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null :
+                { request.readBy && request.readBy.length ?
+                request.readBy.length == 1 && request.readBy[0]._id==Meteor.userId() ? null :
                     <tr>
                         <td></td>
                         <td>
                             <ul className="seen-by-list">
-                            <li ><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by({request.readBy.length} others)</span></li>
+                            <li ><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by </span></li>
                                 {request.readBy.map(function(u, idx){
                                     var user = Meteor.users.findOne(u._id);
-                                    if (u._id==Meteor.userId()) {user=null;}
+                                    if (u._id == Meteor.userId()) {
+                                        user = null;
+                                    }
                                     return (
                                         user ? <li key={u._id}><a href="#" onClick={()=>{showUserModal( user );}} title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
                                     )
                                 })}
 
-                            </ul><span id="view-more" onClick={()=>{showMoreUsers( );}}>view more</span>
+                            </ul>
                             
                         </td>
                     </tr> : null }
