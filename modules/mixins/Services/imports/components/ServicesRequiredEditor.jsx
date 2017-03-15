@@ -208,7 +208,7 @@ const ServicesRequiredEditor = React.createClass( {
 				{services?services.map( (service,idx) => {
 
 					if( !service ) {
-						return <li></li>;
+						return <li key = {idx}></li>;
 					}
 
 					let expanded = this.state.expanded[ service.name ],
