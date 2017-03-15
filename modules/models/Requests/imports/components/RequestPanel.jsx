@@ -316,7 +316,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
-                    recipientRoles: [ "team manager", "facility manager" ],
+                    recipientRoles: [ 'team manager', 'facility manager', 'supplier manager', 'assignee' ],
                     message: {
                         verb: "uploaded a file to",
                         subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
