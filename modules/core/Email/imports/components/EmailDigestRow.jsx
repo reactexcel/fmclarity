@@ -22,12 +22,12 @@ export default EmailDigestRow = React.createClass( {
         }
 
         if ( message ) {
-            owner = message.getOwner();
+            if ( message.owner && message.owner._id ) {
+                owner = Users.findOne( message.owner._id );
+            }
             target = message.getTarget();
-            if ( target && target.getFacility ) {
-                //I have a concern that this could be blocked by RBAC
-                //if the user sending the email does not have access
-                facility = target.getFacility();
+            if ( target && target.facility && target.facility._id ) {
+                facility = Facilities.findOne( target.facility._id );
             }
         }
         return { message, facility, owner }

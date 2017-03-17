@@ -304,8 +304,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     </tr> : null }
                 </tbody>
             </table>
-
-            { Meteor.user().getRole()=='staff' && request.status!= 'New' ? null :
+            
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
@@ -335,7 +334,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 />
                 }
             ]} />
-            }
 
         </div>
     )

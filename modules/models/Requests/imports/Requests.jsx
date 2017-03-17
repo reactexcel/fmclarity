@@ -36,15 +36,53 @@ const Requests = new Model( {
                     return "work order #" + this.code + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
-                    if ( message && message.verb == 'commented on' ) {
-                        if ( this.service.data.baseBuilding == true ) {
-                            return this.getMembers( { role: { $nin: [ 'staff', 'tenant', 'resident', 'facility manager', 'portfolio manager' ] } } );
-                        } else {
-                            return this.getMembers( { role: { $nin: [ 'staff', 'tenant', 'resident' ] } } );
-                        }
-                    } else {
-                        return this.getMembers();
+                    let members = this.getMembers(),
+                        newMembers = [];
+
+                    //console.log({ request: this, message });
+
+                    if ( message && message.verb == 'commented on' && this.status != 'New' ) {
+
+                        //console.log( 'scenario 1' );
+
+                        members.map( ( member ) => {
+                            let roles = Roles.getRoles( this ),
+                                memberRoles = roles.actors[ member._id ];
+
+                            //console.log( memberRoles );
+
+                            if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
+                                //remove everyone who isn't pm
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    if( role == 'property manager' ) {
+                                        newMembers.push( member );
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                //remove staff, tenant and resident
+                                let rejectMember = false;
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    //console.log( role );
+                                    if( _.contains( [ 'facility staff', 'facility tenant', 'facility resident' ], role ) ) {
+                                        rejectMember = true;
+                                        break;
+                                    }
+                                }
+                                if( !rejectMember ) {
+                                    newMembers.push( member );
+                                }
+                            }
+                        } );
                     }
+                    else {
+                        newMembers = members;
+                    }
+                    //console.log( newMembers );
+                    return newMembers;
                 }
             }
         } ],
