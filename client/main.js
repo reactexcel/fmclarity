@@ -238,7 +238,17 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( item ) => {
-        return item.status == 'New' && item.supplier && item.supplier._id;
+        let team = Session.getSelectedTeam(),
+            teamcostThreshold = team.defaultCostThreshold,
+            workOrderValue = item.costThreshold,
+            userRole = Meteor.user().getRole(),
+            canIssue = true,
+            belowThreshold = parseInt(workOrderValue) <= parseInt(teamcostThreshold);
+        
+        if(!belowThreshold && userRole!='portfolio manager'){
+            canIssue = false;
+        }
+        return item.status == 'New' && item.supplier && item.supplier._id && canIssue;
     },
     action: [
         'issue request',
