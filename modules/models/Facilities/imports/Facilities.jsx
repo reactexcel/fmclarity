@@ -462,8 +462,21 @@ Facilities.actions( {
     addSupplier: {
         authentication: true,
         method: function( facility, supplier ) {
+            //console.log("addSupplier");
             if ( supplier && supplier._id ) {
-                Facilities.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
+                Facilities.update(
+                    {
+                        "_id": facility._id
+                    }, {
+                        $push: {
+                            suppliers: {
+                                _id: supplier._id,
+                                 name: supplier.name
+                            }
+                         }
+                     }
+                 );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },

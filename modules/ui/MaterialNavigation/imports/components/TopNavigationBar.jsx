@@ -62,7 +62,7 @@ export default function TopNavigationBar( props ) {
                             </div>
                         </span>
                         <NotificationList items = { notifications }/>
-                        <DesktopNotificationPopUp { ...props } />
+                        <DesktopNotificationPopUp items = { notifications } showNotifications = { props.showNotifications } />
                     </div>
                     <div className="searchbox">
                     {/*<FMInstantSearchBox/>*/}
@@ -80,21 +80,35 @@ class DesktopNotificationPopUp extends React.Component {
         this.showPopUp = false;
     }
 
-    componentWillReceiveProps( props ) {
-        let user = props.user,
-            notifications = null;
-        if ( user ) {
-            import { Messages } from '/modules/models/Messages';
-            // notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
-            notifications = this.props.notifications ? this.props.notifications : null;
-            if ( !this.showPopUp ) {
-                let component = this;
-                if ( notifications && notifications.length ) {
-                    component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ notifications ], { returnStubValue: true } );
-                }
-            } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
-                this.props.showNotifications( notifications );
+    /*
+    shouldComponentUpdate( nextProps ) {
+
+        console.log( {
+            props: this.props,
+            nextProps: nextProps
+        } );
+
+        if ( !this.props.notifications ) {
+            return true;
+        }
+        else if ( !nextProps.notifications || ( nextProps.notifications.length <= this.props.notifications.length ) ) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    */
+    
+    componentWillReceiveProps( { items } ) {
+        import { Messages } from '/modules/models/Messages';
+        if ( !this.showPopUp ) {
+            let component = this;
+            if ( items && items.length ) {
+                component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ items ], { returnStubValue: true } );
             }
+        } else if ( this.showPopUp && items.length ) { // when new notification arrived after loggin.
+            this.props.showNotifications( items );
         }
     }
 

@@ -30,7 +30,7 @@ export default function RequestsTable( { requests, filter, columns } ) {
             return {
                 originalVal: item.priority,
                 val: (<span title = { item.priority } style = { { fontSize:"20px", position:"relative", top:"3px" } } >
-                    <i className = {`fa fa-circle priority-${item.priority}`}></i>
+                    { item.status == 'Complete' ? null : <i className = {`fa fa-circle priority-${item.priority}`}></i> }
                 </span>)
             }
         },

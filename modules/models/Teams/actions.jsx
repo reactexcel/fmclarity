@@ -143,8 +143,11 @@ const createRequest = new Action( {
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-                        if( baseBuilding ) {
-
+                        if( !team ) {
+                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+                            return;
+                        }
+                        else if( baseBuilding ) {
                             /*if( role == 'property manager' ) {
                                 method = 'Issues.issue';
                             }*/
@@ -154,45 +157,34 @@ const createRequest = new Action( {
                         }
                         else if( !baseBuilding ) {
 
-                            relation =team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
-
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
                                 method = 'Issues.create';
                             }
+                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
 
-                            else if( _.contains( [ 'manager', 'caretaker' ], role ) && relation.threshold && relation.threshold >=1 ) {
+                                method = 'Issues.create';
+                                let relation = team.getMemberRelation( owner ),
+                                    costString = newRequest.costThreshold,
+                                    costThreshold = null;
 
-                                console.log( 'non bb manager or caretaker' );
-                                //method = 'Issues.issue';
-                                var newThreshold = parseInt(relation.threshold) - 1;
+                                // strips out commas
+                                //  this is a hack due to an inadequete implementation of number formatting
+                                //  needs a refactor
+                                if( _.isString( costString ) ) {
+                                    costString = costString.replace(',','')
+                                }
 
-                                if( team.defaultCostThreshold ) {
+                                let cost = parseInt( costString );
 
-                                    // strips out commas
-                                    //  this is a hack due to an inadequete implementation of number formatting
-                                    //  needs a refactor
-                                    let costString = newRequest.costThreshold;
+                                if( relation.threshold ) {
+                                    costThreshold = parseInt( relation.threshold );
+                                }
+                                else if( team.defaultCostThreshold ) {
+                                    costThreshold = parseInt( team.defaultCostThreshold );
+                                }
 
-                                    console.log( costString );
-
-                                    if( _.isString( costString ) ) {
-                                        costString = costString.replace(',','')
-                                    }
-
-                                    console.log( costString );
-
-                                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                                        cost = parseInt( costString );
-
-                                    console.log( {
-                                        role,
-                                        costThreshold,
-                                        cost
-                                    } );
-
-                                    if( cost > costThreshold ) {
-                                        method = 'Issues.create';
-                                    }
+                                if( cost > costThreshold ) {
+                                    method = 'Issues.create';
                                 }
                                 if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
