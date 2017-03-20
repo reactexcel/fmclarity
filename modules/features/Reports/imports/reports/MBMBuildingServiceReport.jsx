@@ -57,7 +57,7 @@ const MBMBuildingServiceReport = React.createClass( {
 				$gte: moment().subtract(i, "months").startOf("month").toDate(),
 				$lte: moment().subtract(i, "months").endOf("month").toDate( )
 			};
-            queries.push( Object.assign({},query) );
+            queries.unshift( Object.assign({},query) );
             let requestCursor = Requests.find( query )
             set.unshift( requestCursor.count() );
             labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
