@@ -25,6 +25,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -268,7 +269,13 @@ const RequestSchema = {
             description: "The category of work required",
             size: 6,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            onServiceChange = props.changeSubmitText
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
@@ -323,6 +330,9 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
+                                if( request.supplier && onServiceChange ) {
+                                    onServiceChange( request.supplier );
+                                }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
                                 } else if ( defaultSupplier.type == 'fm' ) {
@@ -707,7 +717,13 @@ const RequestSchema = {
                 }
                 return team;
             },
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.changeSubmitText(value);
+                            props.onChange(value);
+                        }}/>
+            } ,
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
