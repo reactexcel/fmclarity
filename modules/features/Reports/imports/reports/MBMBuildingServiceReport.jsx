@@ -6,8 +6,8 @@ import { Requests } from '/modules/models/Requests';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
-
-
+import { TextArea } from '/modules/ui/MaterialInputs';
+import { DataTable } from '/modules/ui/DataTable';
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
 }
@@ -200,24 +200,10 @@ const SingleServiceRequest = React.createClass( {
 
 	getInitialState() {
 		return ( {
-			expandall: false
+			expandall: false,
+			comment: ""
 		} )
 	},
-
-	printChart(){
-		var component = this;
-		component.setState( {
-			expandall: true
-		} );
-
-		setTimeout(function(){
-			window.print();
-			component.setState( {
-				expandall: false
-			} );
-		},200);
-	},
-
 	getChartConfiguration() {
 		return {
 			barData: {
@@ -281,18 +267,73 @@ const SingleServiceRequest = React.createClass( {
 		this.updateChart();
 	},
 
+	setDataSet(newdata){
+		this.setState({
+			dataset:newdata,
+		});
+	},
+	// fields:{
+	// 	"Event Name": "name",
+	//
+	// },
+	// getData(){
+	// 	let facility = Session.getSelectedFacility();
+	// 	let data = Requests.findAll( {
+	// 		'facility._id': facility._id,
+	// 		"service.name": this.props.serviceName,
+	// 		status: "Complete",
+	// 		type: "Ad-Hoc",
+	// 		priority: "PMP",
+	// 		"closeDetails.completionDate":{
+	// 			$gte: new moment().startOf("month").toDate(),
+	// 			$lte: new moment().endOf("month").toDate()
+	// 		}
+	// 	} );
+	// 	console.log(data,  this.props.serviceName);
+	// 	return data;
+	// },
+
 	render() {
 		return (
-			<div>
-			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-			    <i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+			<div style={ { marginTop: "50px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
 					<div>
 						<canvas id={"bar-chart-" + this.props.id}></canvas>
+					</div>
+				</div>
+				{/* <div className="data-table">
+					<DataTable items={this.getData()} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+				</div> */}
+				<div style={ { marginTop: "5px", marginBottom: "25px" } }>
+					<div className="comment-header">
+						<h4>Comments</h4>
+						<span style={{float: "right"}}>
+							<button className="btn btn-flat" onClick={() => {
+									let edited = this.state.showEditor;
+									this.setState({
+										showEditor: !this.state.showEditor
+									}, () => {
+										if ( edited ){
+											console.log("edited");
+										}
+									})
+								}}>
+								{!this.state.showEditor?
+									<i className="fa fa-pencil-square-o" aria-hidden="true"></i>:
+										<i className="fa fa-floppy-o" aria-hidden="true"></i>}
+										</button>
+									</span>
+					</div>
+					<div className="comment-body">
+						{this.state.showEditor?
+							<TextArea
+								value={this.state.comment}
+								onChange={( value ) => {this.setState({ comment: value })}}
+								/>:
+							<pre style={{fontFamily: "inherit"}}>{this.state.comment}</pre>}
 					</div>
 				</div>
 			</div>
