@@ -4,7 +4,6 @@
  */
 
 import { Roles } from '/modules/mixins/Roles';
-//import { Notifications } from '/modules/models/Notifications';
 
 /**
  * An ActionGroup holds a collection of actions.
@@ -192,7 +191,7 @@ class ActionGroup {
 
 	handleAlerts( notificationRules, action, args, result ) {
 		//let user = Meteor.user();
-		//Meteor.call( 'Notifications.sendAll', notificationRules, user, action, args, result );
+		//Meteor.call( 'Messages.sendAll', notificationRules, user, action, args, result );
 	}
 
 	/**

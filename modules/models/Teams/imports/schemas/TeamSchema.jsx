@@ -1,7 +1,6 @@
-import { AddressSchema } from '/modules/models/Facilities';
 import { DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select, ABN, Phone } from '/modules/ui/MaterialInputs';
-import { Facilities } from '/modules/models/Facilities';
+import { Facilities, AddressSchema } from '/modules/models/Facilities';
 import { ServiceDefaults } from '/modules/mixins/Services';
 
 //import { Facilities } from '/modules/models/Facilities';
@@ -60,11 +59,11 @@ export default TeamSchema = {
     },
 
     email: {
-        type: "string",
+        label: "Email",
         description: "The primary email contact for this team",
+        type: "string",
         input: Text,
         required: true,
-        label: "Email",
         //regEx:        ORM.RegEx.Email,
     },
 
@@ -92,9 +91,54 @@ export default TeamSchema = {
     },
 
     address: {
-        label: "Address",
-        description: "Location of primary office",
-        subschema: AddressSchema,
+        type: "object",
+        condition: "contractor",
+        subschema: {
+
+                streetNumber: {
+                    input: Text,
+                    label: "Number",
+                    type: "string",
+                    size: 3
+                },
+                streetName: {
+                    input: Text,
+                    type: "string",
+                    label: "Street name",
+                    size: 6
+                },
+                city: {
+                    input: Text,
+                    label: "City",
+                    size: 6,
+                    type: "string",
+                },
+                state: {
+                    label: "State",
+                    size: 3,
+                    input: Select,
+                    type: "string",
+                    options: {
+                        items: [
+                            "ACT",
+                            "NSW",
+                            "SA",
+                            "TAS",
+                            "NT",
+                            "QLD",
+                            "VIC",
+                            "WA"
+                        ]
+                    }
+                },
+                postcode: {
+                    input: Text,
+                    label: "Postcode",
+                    type: "string",
+                    size: 3
+                }
+            }
+
     },
 
     thumb: {

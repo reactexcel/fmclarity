@@ -16,7 +16,7 @@ class ServicesRequestsView extends React.Component {
 		let { requests, labels, expandall } = props;
 		//Convert requests from object to Array.
 		
-			if ( !_.isArray( requests ) ){
+			if ( requests ){
 				let keys = Object.keys( requests );
 				let newRequestsArray = [];
 				_.forEach( keys, ( key ) => {

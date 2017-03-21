@@ -16,7 +16,7 @@ export default CreateRequestForm = [
 	'supplier',
 
 	'supplierContact',
-	
+
 	'assignee',
 
 	'priority',
@@ -32,5 +32,7 @@ export default CreateRequestForm = [
 
 	'description',
 
-	'attachments'
+	'attachments',
+	'footer'
+
 ];

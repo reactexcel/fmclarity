@@ -6,6 +6,7 @@ import { LayoutMain, LayoutWide } from '/modules/core/Layouts';
 import TeamPageProfileContainer from './imports/containers/TeamPageProfileContainer.jsx';
 import TeamPageSuppliersContainer from './imports/containers/TeamPageSuppliersContainer.jsx';
 import TeamsPageIndexContainer from './imports/containers/TeamsPageIndexContainer.jsx';
+import TeamGlobalSupplierPageContainer from './imports/containers/TeamGlobalSupplierPageContainer.jsx';
 
 import { Route } from '/modules/core/Actions';
 import { AccessGroups } from '/modules/core/Authentication';
@@ -30,6 +31,18 @@ AccessGroups.loggedIn.add( {
 	action() {
 		mount( LayoutMain, {
 			content: <TeamPageSuppliersContainer />
+		} );
+	}
+} );
+
+AccessGroups.loggedIn.add( {
+	name: 'global suppliers',
+	path: '/global-suppliers',
+	label: "Global Suppliers",
+	icon: 'fa fa-group',
+	action() {
+		mount( LayoutMain, {
+			content: <TeamGlobalSupplierPageContainer />
 		} );
 	}
 } );

@@ -81,9 +81,6 @@ Roles = new class {
 			actors: {}
 		}
 
-		//console.log( item );
-		// okay so this autojoin works reasonably well but we should perhaps only do it with teams, members, suppliers, owners and assignees
-		//  that is to say not with facilities
 		let { owner, team, supplier, facility, facilities, members, assignee } = item;
 
 		if ( owner != null ) {
@@ -128,7 +125,7 @@ Roles = new class {
 			facility = Facilities.findOne( facility._id );
 			if ( facility && facility.members && facility.members.length ) {
 				facility.members.map( ( member ) => {
-					this.addRole( results, member, `facility ${member.role} (${facility.name})` );
+					this.addRole( results, member, `facility ${member.role}`/*` (${facility.name})`*/ );
 				} )
 			}
 		}

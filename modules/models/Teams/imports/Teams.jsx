@@ -62,6 +62,16 @@ const Teams = new Model( {
     ]
 } );
 
+Teams.collection.allow( {
+    update: () => {
+        return true;
+    },
+    insert: () =>{
+        return true;
+    }
+} )
+
+
 
 //Teams.collection._ensureIndex( { 'members._id': 1 } );
 //Teams.collection._ensureIndex( { 'owner._id': 1 } );
@@ -150,12 +160,14 @@ Teams.methods( {
     addPersonnel: {
         authentication: true,
         method: ( team, newMember ) => {
+            var threshold = team.type=='fm' && newMember.threshold ? newMember.threshold : null;
             Teams.update( { _id: team._id }, {
                 $push: {
                     members: {
                         _id: newMember._id,
                         name: newMember.profile.name,
                         role: newMember.role || "staff",
+                        threshold: threshold,
                     }
                 }
             } )
@@ -295,6 +307,8 @@ function inviteMember( team, email, ext ) {
             _id: user._id
         }, {
             role: ext.role || user.getRole()
+        },{
+            threshold: ext.threshold || user.getThreshold()
         } );
         ext.callback ? ext.callback( user, found ) : "";
         return {
@@ -319,6 +333,8 @@ function inviteMember( team, email, ext ) {
                     _id: user._id
                 }, {
                     role: ext.role
+                },{
+                    threshold: ext.threshold || 0 // perhaps should be team default threshold
                 } );
                 return {
                     user: user,

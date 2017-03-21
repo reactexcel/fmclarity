@@ -3,7 +3,7 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import ReportsNavWidget from './imports/reports/ReportsNavWidget.jsx';
-import { ReportsIndexRoute, ReportRoute, ReportPrintRoute, DashboardRoute } from './imports/routes.js';
+import { ReportsIndexRoute, ReportRoute, ReportPrintRoute, DashboardRoute } from './imports/routes.jsx';
 import PageDashboardContainer from './imports/containers/PageDashboardContainer.jsx';
 
 /**

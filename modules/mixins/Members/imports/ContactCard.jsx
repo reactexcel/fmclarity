@@ -12,7 +12,7 @@ export default function ContactCard( props ) {
 		view = null,
 		role = null;
 
-	if ( contact.getProfile ) {
+	if ( contact && contact.getProfile ) {
 		profile = contact.getProfile();
 	}
 

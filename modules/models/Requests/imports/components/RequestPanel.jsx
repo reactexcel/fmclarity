@@ -3,17 +3,16 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Inbox } from '/modules/models/Messages';
 import { AutoForm } from '/modules/core/AutoForm';
-import { FacilityDetails } from '/modules/models/Facilities';
+import { AddressLink, BillingDetails } from '/modules/models/Facilities';
 import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Users } from '/modules/models/Users';
+import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
-import { Facilities } from '/modules/models/Facilities';
 
 import moment from 'moment';
 
@@ -28,28 +27,22 @@ export default RequestPanel = React.createClass( {
             previousRequest = null,
             nextDate = null,
             previousDate = null,
-            owner = null,
-            assignee = null,
+            contact = null,
             facility = null,
-            caretaker = null;
-
+            owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+                facility = request.getFacility();
+                //console.log( facility );
+                if( facility ) {
+                    let fms = facility.getMembers({role:'manager'});
+                    contact = fms[0];
+                }
                 supplier = request.getSupplier();
-
-                if( request.assignee && request.assignee._id ) {
-                    assignee = Users.findOne( request.assignee._id );                    
-                }
-
-                facility = Facilities.findOne( { _id: request.facility._id } );
-                if ( facility ) {
-                    caretaker = facility ? facility.getMembers( { 'role': 'caretaker' } ) : null;
-                }
-
                 if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
@@ -58,17 +51,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { 
-            request, 
-            nextDate, 
-            previousDate, 
-            nextRequest, 
-            previousRequest, 
-            owner, 
-            caretaker,
-            assignee,
-            facility
-        }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner }
     },
 
     render() {
@@ -77,19 +60,29 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { 
-    request, 
-    nextDate, 
-    previousDate, 
-    nextRequest, 
-    previousRequest, 
-    owner, 
-    caretaker,
-    assignee,
-    facility } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner } ) => {
+
+    //console.log( facility );
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
+    }
+    function showUserModal( selectedUser ) {
+            
+            Modal.show( {
+                content: <UserPanel
+                    item    = { selectedUser }
+                    team    = { Session.get( 'selectedTeam' ) }
+                    group   = { facility }/>
+            } )
+        
+    }
+
+    function showMoreUsers() {
+        $('.seen-by-list li:hidden').slice(0, 2).show();
+        if ($('.seen-by-list li').length == $('.seen-by-list li:visible').length) {
+            $('#view-more ').hide();
+        }
     }
 
     if ( !request ) {
@@ -97,6 +90,7 @@ const RequestPanelInner = ( {
     }
     let teamType = Session.get( 'selectedTeam' ).type,
         title = "",
+        billingOrderNumber = "",
         nextDateString = null,
         previousDateString = null;
 
@@ -114,7 +108,7 @@ const RequestPanelInner = ( {
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
         } else if ( teamType == 'fm' ) {
-            if ( request.service && request.service.data && request.service.data.serviceDetails && request.service.data.serviceDetails.purchaseOrder ) {
+            if ( request.service && request.service.data && request.service.data.purchaseOrder ) {
                 title = "Purchase Order";
             } else {
                 title = "Work Order";
@@ -124,6 +118,7 @@ const RequestPanelInner = ( {
         }
         if ( request.code ) {
             title += ` # ${request.code}`
+            billingOrderNumber += ` WO# ${request.code}`
         } else {
             title = "New " + title;
         }
@@ -138,6 +133,7 @@ const RequestPanelInner = ( {
         }
 
     } ) : null;
+    request.readBy=_.uniq(request.readBy, '_id'); 
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -154,12 +150,15 @@ const RequestPanelInner = ( {
                                 "Client: "+ request.team.name
                             }
                         </h2>
+                        <AddressLink item = { facility.address }/>
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType=="fm" ? supplier : ( caretaker && caretaker.length ? caretaker[0] : owner ) }/>
+                        <ContactDetails item = { teamType=="fm" ? supplier : contact }/>
 
-                        <FacilityDetails item = { facility }/>
+                        <BillingDetails item = { facility }/>
+
+                        { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
                     </div>
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
 
@@ -276,128 +275,67 @@ const RequestPanelInner = ( {
                 </tr>
                 : null }
 
-                {request.description ?
-                <tr>
-                    <th>Description</th>
-                    <td>{request.description}</td>
-                </tr>:null}
-
-                { assignee ?
-                <tr>
-                    <th>Assignee</th>
-                    <td>{assignee.getName()}</td>
-                </tr> : null }
-
-                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
+                { request.priority != "PMP" && teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
                 </tr> : null }
 
-                { request.readBy ?
+                { request.readBy && request.readBy.length ?
+                request.readBy.length == 1 && request.readBy[0]._id==Meteor.userId() ? null :
+                    <tr>
+                        <td></td>
+                        <td>
+                            <ul className="seen-by-list">
+                            <li ><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by </span></li>
+                                {request.readBy.map(function(u, idx){
+                                    var user = Meteor.users.findOne(u._id);
+                                    if (u._id == Meteor.userId()) {
+                                        user = null;
+                                    }
+                                    return (
+                                        user ? <li key={u._id}><a href="#" onClick={()=>{showUserModal( user );}} title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                    )
+                                })}
 
-                    request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null 
-                    :
-                        <tr>
-                            <td></td>
-                            <td>
-                                <i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
-                                <ul className="seen-by-list">
-                                    { request.readBy.length > 2 ?
-
-                                        <li>
-
-                                            <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>
-                                            { Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name }
-                                            </a>
-
-                                            <span> and </span>
-
-                                            <a href="" title={viewers.join()}>
-                                                {request.readBy.length - 1} others
-                                            </a>
-
-                                        </li> 
-
-                                    : request.unreadRecipents.length=="0" ? 
-
-                                        <a href="">everyone</a> 
-
-                                    : request.readBy.map( function (u, idx) {
-
-                                        let user = Meteor.users.findOne(u._id);
-
-                                        if (u._id==Meteor.userId()) {
-                                            user=null;
-                                        }
-
-                                        return (
-                                            user ? 
-                                                <li key={u._id}>
-                                                    <a href="" title={formatDate(u.readAt)}>
-                                                        { user.profile ? user.profile.name : user.name}
-                                                    </a>
-                                                </li>
-                                            : null
-                                        )
-                                    })}
-
-                                </ul>
-                            </td>
-                        </tr>
-                : null }
-
+                            </ul>
+                            
+                        </td>
+                    </tr> : null }
                 </tbody>
             </table>
 
+            { Meteor.user().getRole()=='staff' && request.status!= 'New' ? null :
             <Tabs tabs={[
-
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
-                    content:
-
-                        <Inbox 
-                            for         = { request } 
-                            truncate    = { true }
-                        />
+                    content:    <Inbox for = { request } truncate = { true }/>
                 },{
-
                     hide:       !_.contains( [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ], Meteor.user().getRole()),
                     tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
-                    content:    
+                    content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
-                        <AutoForm 
-                            model       = { Requests } 
-                            item        = { request } 
-                            form        = { ['attachments'] }  
-                            afterSubmit = { 
-                                ( request ) => {
-                                    request.distributeMessage( {
-                                        recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
-                                        message: {
-                                            verb: "uploaded a file to",
-                                            subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
-                                            body: request.description
-                                        }
-                                    } );
-                                    request.markAsUnread();
-                                }
-                            }
-                        />
+                request.distributeMessage( {
+                    recipientRoles: [ "team manager", "facility manager" ],
+                    message: {
+                        verb: "uploaded a file to",
+                        subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
+                        body: request.description
+                    }
+                } );
+                        request.markAsUnread();
+                    } }  />
                 },{
-
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     hide:       (teamType == 'contractor'),
-                    content:    
-
-                        <ContactList
-                            hideMenu    = { Meteor.user().getRole() == 'staff' }
-                            group       = { request }
-                            readOnly    = { true }
-                        />
-
+                    content:    <ContactList
+                                    hideMenu    = { _.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) }
+                                    group       = { request }
+                                    readOnly    = { true }
+                                />
                 }
             ]} />
+            }
 
         </div>
     )

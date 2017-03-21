@@ -9,9 +9,10 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
 import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
-import '/modules/models/Documents/imports/schemas/DocumentSearchSchema'
+import ComplianceDocumentSearchSchema from './ComplianceDocumentSearchSchema.jsx';
 
 import React from 'react';
+import moment from 'moment';
 
 var number = null;
 export default ComplianceRuleSchema = {
@@ -59,39 +60,20 @@ export default ComplianceRuleSchema = {
                 "Document is current",
                 "PPM schedule established",
                 "PPM event completed",
+                "Compliance level",
             ],
             afterChange( item ) {
-                console.log( { item } );
+                //console.log( { item } );
 
             }
         }
     },
-    document:{
-        type: "object",
-        subschema: DocumentSearchSchema,
-        options(item) {
-            if ( !item.document ) {
-                item.document = {
-                    "query": {
-                        $and:[
-                            { "facility._id": item.facility._id }
-                        ],
-                    },
-                    hideFacilityField: true,
-                }
-            } else if ( item.document && item.document.query && typeof item.document.query === "string") {
-                item.document.query = JSON.parse(item.document.query);
-            }
-        },
-        condition: [ "Document exists", "Document is current" ],
-    },
-
     service: {
         label: 'Service',
         type: Object,
         input: Select,
         label: "Service",
-        condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
+        //condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
                 return {
@@ -106,7 +88,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Sub-Service",
-        condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
         options: function( item ) {
             if ( item.service ) {
                 return {
@@ -116,15 +98,37 @@ export default ComplianceRuleSchema = {
             }
         }
     },
-
+    document:{
+        type: "object",
+        subschema: ComplianceDocumentSearchSchema,
+        options(item){
+            if ( !item.document ) {
+                item.document = { };
+            } else if ( item.document && item.document.query && typeof item.document.query === "string") {
+                item.document.query = JSON.parse(item.document.query);
+            }
+        },
+        condition: [ "Document exists", "Document is current", "Compliance level" ],
+    },
     event: {
         label: "PMP event name",
         input: Select,
         condition: [ "PPM event completed", "PPM schedule established" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
+            let query = {
+                 "facility._id": item.facility._id,
+                 type: "Preventative",
+             };
+            if ( item.service ) query[ "service.name" ] = item.service.name;
+            if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
             return {
-                items: Requests.findAll( { "facility._id": item.facility._id, status: "PMP", type: "Preventative" } ),
+                items: _.pluck(Requests.findAll( query , {
+                        fields: {
+                             name: true
+                         }
+                     }
+                 ), "name"),
                 addNew: {
                     show: true,
                     label: "Add New",
@@ -149,22 +153,24 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
+            let status = lastWO.length && lastWO[lastWO.length - 1].status;
             return (
                 lastWO.length ? ( <div>
-            <span>
-              <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(lastWO[0]).run()
-                 }
-               }> Previous work order link </a>
-            </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{lastWO[lastWO.length - 1].status}</strong></span>
-          </div> ) : null
+                    <span>
+                        <a className="link" href={"javascript:void(0);"} onClick={() => {
+                                RequestActions.view.bind(lastWO[lastWO.length - 1]).run()
+                            }}>
+                            Previous work order link
+                        </a>
+                    </span>
+                    <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
+                </div> ) : null
             );
         },
         condition: item => item.event
@@ -174,119 +180,87 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event.name );
+            item.event && ( query.name = item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
+            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[0]).run()
+                   RequestActions.view.bind(nextWO[nextWO.length > 1 ? nextWO.length - 2: 0]).run()
                  }
                }> Next work order link </a>
             </span>
-            <span style={{marginLeft:"5px"}}>status: <strong>{nextWO[nextWO.length - 2].status}</strong></span>
+            <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
           </div> ) : null
             );
         },
         condition: item => item.event
     },
     frequency: {
+        type: "object",
         condition: "PPM event completed",
-        subschema: {
-            number: {
-                label: "Frequency (number)",
-                description: "The number of days, weeks, months etc between repeats",
-                input: Text,
-                type: "number",
-                defaultValue: 6,
-                size: 6,
-                options: {
-                    afterChange( item ) {
-                        number = item.number;
-                    }
+        subschema: RequestFrequencySchema,
+
+    },
+    footer:{
+        size: 12,
+        input( props ){
+            let period
+            if( props.item.frequency.period ){
+                switch (props.item.frequency.period) {
+                    case "daily":
+                        period = "day"
+                        break;
+                    case "fortnightly":
+                        period = "fortnight"
+                        break;
+                    case "weekly":
+                        period = "week"
+                        break;
+                    case "monthly":
+                        period = "month"
+                        break;
+                    case "quarterly":
+                        period = "quarter"
+                        break;
+                    case "annually":
+                        period = "year"
+                        break;
+                    default:
+
                 }
-            },
-            unit: {
-                label: "Frequency (unit)",
-                description: "The unit (days, weeks, months etc) of the repeats",
-                input( props ) {
-                    return (
-                        <Select
-                  placeholder={props.placeholder}
-                  item={props.item}
-                  items={props.items}
-                  value={props.value?(props.value==="custom"?"Custom":"Repeat "+props.value+" until stopped"):""}
-                  onChange={ item => props.onChange(item) }
-                />
-                    );
-                },
-                defaultValue: "months",
-                type: "string",
-                size: 6,
-                options: {
-                    items: [
-                        { name: 'Daily', val: "daily" },
-                        { name: 'Weekly', val: "Weekly" },
-                        { name: 'Fortnightly', val: "fortnightly" },
-                        { name: 'Monthly', val: "monthly" },
-                        { name: 'Quarterly', val: "quarterly" },
-                        { name: 'Annually', val: "annually" },
-                        { name: 'Custom', val: "custom" },
-                    ]
-                },
-                condition: item => item.number.length,
-            },
-
-            period: {
-                label: "Period",
-                description: "The unit (days, weeks, months etc) of the repeats",
-                input( props ) {
-                    return (
-                        <Select
-                  placeholder={props.placeholder}
-                  item={props.item}
-                  items={props.items}
-                  value={props.value?"Repeat every "+ (number||"")+" "+props.value:""}
-                  onChange={ item => props.onChange(item) }
-                />
-                    );
-                },
-                defaultValue: "months",
-                type: "string",
-                size: 6,
-                options: {
-                    items: [
-                        { name: 'Daily', val: "daily" },
-                        { name: 'Weekly', val: "Weekly" },
-                        { name: 'Fortnightly', val: "fortnightly" },
-                        { name: 'Monthly', val: "monthly" },
-                        { name: 'Quarterly', val: "quarterly" },
-                        { name: 'Annually', val: "annually" },
-                    ]
-                },
-                condition: item => item.unit === "custom",
-            },
-            repeats: {
-                label: "Repeats",
-                description: "The number of times this item should happen",
-                input: Text,
-                type: "number",
-                defaultValue: 6,
-                size: 6,
-                condition: item => item.number.length && item.unit === "custom",
-            },
-
-            endDate: {
-                label: 'End date',
-                size: 6,
-                input: DateInput,
-                condition: item => item.unit === "custom"
+                period = props.item.frequency.number > 1?
+                    ( period || props.item.frequency.period ) + "s":
+                    ( period || props.item.frequency.period );
             }
-        }
+            return (
+                <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
+                    {props.item.frequency.number && props.item.frequency.period && props.item.frequency.endDate?
+                        <div>
+                            {`Repeats every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
+                        </div>:(
+                            props.item.frequency.number && props.item.frequency.period ?
+                            <div>
+                                {`Repeats every ${props.item.frequency.number} ${period} until stopped`}
+                            </div>:(
+                                props.item.frequency.period && props.item.frequency.endDate?
+                                <div>
+                                    {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                </div>:
+                                <div>
+                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                </div>
+                            )
+                        )
+                    }
+                </div>
+            );
+        },
+        condition: "PPM event completed",
     }
-
 }

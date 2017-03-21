@@ -60,7 +60,6 @@ const DocViewEdit = React.createClass( {
         if ( !item._id ) {
             Documents.save.call( item )
                 .then( ( item ) => {
-                    console.log( item );
                     if ( self.props.team ) {
                         item.team = {
                             _id: this.props.team._id,
@@ -78,7 +77,8 @@ const DocViewEdit = React.createClass( {
                                 message: {
                                     verb: "created",
                                     subject: "A new document has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                                    body: newItem.description
+                                    body: newItem.description,
+                                    digest: false
                                 }
                             } );
                         }
