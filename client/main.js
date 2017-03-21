@@ -267,9 +267,12 @@ Actions.addAccessRule( {
                         cost = parseInt( costString );
 
 
-                    console.log( { original: team.defaultCostThreshold, costThreshold, cost } );
+                    console.log( { original: team.defaultCostThreshold, costThreshold, cost, request } );
 
                     if ( cost <= costThreshold ) {
+                        return true;
+                    }
+                    else if (cost > costThreshold && request.owner && request.owner._id == Meteor.userId()) { 
                         return true;
                     }
                 }
