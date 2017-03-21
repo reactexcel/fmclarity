@@ -272,28 +272,35 @@ const SingleServiceRequest = React.createClass( {
 			dataset:newdata,
 		});
 	},
-	// fields:{
-	// 	"Event Name": "name",
-	//
-	// },
-	// getData(){
-	// 	let facility = Session.getSelectedFacility();
-	// 	let data = Requests.findAll( {
-	// 		'facility._id': facility._id,
-	// 		"service.name": this.props.serviceName,
-	// 		status: "Complete",
-	// 		type: "Ad-Hoc",
-	// 		priority: "PMP",
-	// 		"closeDetails.completionDate":{
-	// 			$gte: new moment().startOf("month").toDate(),
-	// 			$lte: new moment().endOf("month").toDate()
-	// 		}
-	// 	} );
-	// 	console.log(data,  this.props.serviceName);
-	// 	return data;
-	// },
+	fields:{
+		"Event Name": "name",
+		"Completed At": ( item ) => {
+			if( item && item.closeDetails && item.closeDetails.completionDate ){
+				return {
+					val: moment( item.closeDetails.completionDate ).format("DD-MMM-YY")
+				}
+			}
+		}
+	},
+	getData(){
+		let facility = Session.getSelectedFacility();
+		let data = Requests.findAll( {
+			'facility._id': facility._id,
+			"service.name": this.props.serviceName,
+			status: "Complete",
+			type: "Ad-Hoc",
+			priority: "PMP",
+			"closeDetails.completionDate":{
+				$gte: new moment().startOf("month").toDate(),
+				$lte: new moment().endOf("month").toDate()
+			}
+		} );
+		console.log(data,  this.props.serviceName);
+		return data;
+	},
 
 	render() {
+		let data = this.getData();
 		return (
 			<div style={ { marginTop: "50px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
@@ -304,9 +311,11 @@ const SingleServiceRequest = React.createClass( {
 						<canvas id={"bar-chart-" + this.props.id}></canvas>
 					</div>
 				</div>
-				{/* <div className="data-table">
-					<DataTable items={this.getData()} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
-				</div> */}
+				<div className="data-table">
+					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
+						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					</div>
+				</div>
 				<div style={ { marginTop: "5px", marginBottom: "25px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
