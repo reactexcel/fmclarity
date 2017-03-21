@@ -36,8 +36,7 @@ const Select = React.createClass( {
 
 	getInitialState() {
 		return {
-			open: false,
-			searchedValue:''
+			open: false
 	  	}
 	},
 
@@ -100,7 +99,6 @@ const Select = React.createClass( {
 			clearOption,
 			addNew = false, //should be false initialy
 		} = this.props;
-
 		let ListTile = view,
 			invalid = false,
 			disabled = this.props.disabled,
@@ -113,22 +111,6 @@ const Select = React.createClass( {
 				readOnly = true;
 			}
 			items = [];
-		}
-		if(this.state.searchedValue != '' && this.state.searchedValue != "null"){
-			let value = this.state.searchedValue
-			let searchedValue = []
-			_.forEach(items, function(itm, i) {
-				if(_.isObject(itm)){
-					if((itm.name.toLowerCase().indexOf(value.toLowerCase()) != -1)){
-						searchedValue.push(itm)
-					}
-				}else{
-					if((itm.toLowerCase().indexOf(value.toLowerCase()) != -1)){
-						searchedValue.push(itm)
-					}
-				}
-			})
-			items = searchedValue
 		}
 
 		if ( errors != null && errors.length > 0 ) {
@@ -179,9 +161,55 @@ const Select = React.createClass( {
 				onFocus = { () => {
 					this.setOpen( true );
 				} }
+				onBlur={(e)=>{
+					this.setOpen( false );
+				}}
 				onKeyDown={(e)=>{
-					if(e.keyCode==9){
-						$('ul#open > li').removeClass('onFocus')
+					let list = document.getElementById('open')
+					let targetList = $('ul#open > li.onFocus').position()
+					if(targetList != undefined){
+						list.scrollTop = (targetList.top - $('ul#open > li:first').position().top);
+					}
+
+
+					let key = e.keyCode
+					let $selected = $('ul#open > li').filter('.onFocus')
+					if(key == 13){
+						if($selected.length){
+							$selected.click();
+						}
+					}
+					if(key == 40){
+						e.preventDefault();
+						if(!$selected.length){
+							$('ul#open > li').eq(0).addClass('onFocus')
+						}
+						else if( $selected.is(':last-child') ){
+							return;
+						}else{
+							if($($selected.next()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.next().addClass('onFocus')
+							}
+						}
+					}
+					if(key == 38){
+						e.preventDefault();
+						if(!$selected.length){
+							return;
+						}
+						else if( $selected.is(':last-child') ){
+							$('ul#open > li').removeClass('onFocus')
+							$selected.prev().addClass('onFocus')
+						}else{
+							if($($selected.prev()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.prev().addClass('onFocus')
+							}
+						}
+					}
+					if(key==9){
+						//$('ul#open > li').removeClass('onFocus')
 						this.setOpen( false )
 					}
 				}}>
@@ -213,60 +241,6 @@ const Select = React.createClass( {
 		        	    <li><div className = "helper-text">{ description }</div></li>
 					</div>
 		        	:null}
-					<li>
-						<div className = "helper-text">
-							<input
-								onFocus={()=>{
-								}}
-								onBlur={(e)=>{
-									this.setState({
-										open:false
-									})
-								}}
-								onKeyDown={(e)=>{
-									let key = e.keyCode
-									let $selected = $('ul#open > li').filter('.onFocus')
-									if(key == 13){
-										if($selected.length){
-											$selected.click();
-										}
-									}
-									if(key == 40){
-										if(!$selected.length){
-											$('ul#open > li').eq(1).addClass('onFocus')
-										}
-										else if( $selected.is(':last-child') ){
-											return;
-										}else{
-											$('ul#open > li').removeClass('onFocus')
-											$selected.next().addClass('onFocus')
-										}
-									}
-									if(key == 38){
-										if(!$selected.length){
-											return;
-										}
-										else if( $selected.is(':last-child') ){
-											$('ul#open > li').removeClass('onFocus')
-											$selected.prev().addClass('onFocus')
-										}else{
-											$('ul#open > li').removeClass('onFocus')
-											$selected.prev().addClass('onFocus')
-										}
-									}
-								}}
-								onChange={ (e) => {
-									this.setState({
-										searchedValue:e.target.value
-									})
-                        		} }
-								className="searchInput"
-								ref="search"
-								id="searchInput"
-								placeholder="Search"
-							/>
-						</div>
-					</li>
 
 
 		        	{items.map( ( item, idx ) => {
@@ -274,10 +248,14 @@ const Select = React.createClass( {
 		        	if( !item ) {
 		        		return null;
 		        	}
+					var isFoucs = ''
+					if(item === value){
+						isFoucs = ' onFocus'
+					}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
 						id={idx+'-'+(item._id || item.name)}
-			    		className = "dropdown-menu-item"
+			    		className = {"dropdown-menu-item"+isFoucs}
 			    		onClick = { () => {
 							this.handleChange( item )
 						} }
@@ -291,7 +269,8 @@ const Select = React.createClass( {
 				     )
 		        	/********************************************/
 			        })}
-							{ addNew && addNew.show? <li className = "dropdown-menu-item">
+							{ addNew && addNew.show? <div>
+								<li className = "dropdown-menu-item">
 								<div
 									className	= "contact-list-item"
 									onClick		= { () => {
@@ -311,7 +290,9 @@ const Select = React.createClass( {
 										</span>
 
 									</div>
-								</li> : null}
+									</li>
+									</div>
+								 : null}
 	            </ul>
 
 			</div>
