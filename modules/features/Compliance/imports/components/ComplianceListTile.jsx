@@ -43,6 +43,10 @@ export default ComplianceListTile = React.createClass( {
         name = rule.type;
         info = rule.event.name?rule.event.name:rule.event;
         break;
+      case "Compliance level":
+        name = rule.type;
+        info = "" + rule.docName;
+        break;
     }
     results = ComplianceEvaluationService.evaluateRule( rule ) || {};
     message = results.message || {};
@@ -63,11 +67,14 @@ export default ComplianceListTile = React.createClass( {
         if (rule.docSubType) {
             if ( rule.docType == "Insurance" ) rule.document.insuranceType = rule.docSubType;
             else if ( rule.docType == "Validation Report" ) rule.document.reportType = rule.docSubType;
-            else if ( _.contains(['Bunding', 'Manifest', 'Signage', 'Spill bins'], rule.docType) )
-                rule.document.confirmationType = rule.docSubType;
-            else if ( _.contains(serviceDocType, rule.docType) )
-                rule.document.serviceType = rule.docSubType;
+            else if ( rule.docType == "Confirmation") rule.document.confirmationType = rule.docSubType;
+            else if ( rule.docType == "Log") rule.document.logType = rule.docSubType;
+            else if ( rule.docType == "Certificate") rule.document.certificateType  = rule.docSubType;
+            else if ( rule.docType == "Register") rule.document.registerType  = rule.docSubType;
+            else if ( rule.docType == "Registration") rule.document.registrationType  = rule.docSubType;
+            else if ( rule.docType == "Procedure") rule.document.procedureType  = rule.docSubType;
         }
+        if ( _.contains(serviceDocType, rule.docType) ) rule.document.serviceType = rule.service.name;
     }
     Modal.show( {
       content: <AutoForm
@@ -94,17 +101,17 @@ export default ComplianceListTile = React.createClass( {
         <div className="issue-summary-col" style={{width:"23%"}}>
           <span onClick={()=>{this.showModal(rule)}}>{name}</span>
         </div>
-        <div className="issue-summary-col" style={{width:"30%"}}>
+        <div className="issue-summary-col" style={{width:"27%"}}>
           {info}
         </div>
-        <div className="issue-summary-col" style={{width:"40%"}}>
+        <div className="issue-summary-col" style={{width:"43%"}}>
           {
             results.passed?
               <span style={{color:"green"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
                 {message.detail?
                     <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
-                      {message.detail}
+                      { _.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
               </span>
             :
@@ -113,7 +120,7 @@ export default ComplianceListTile = React.createClass( {
                 {
                     message.detail?
                       <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
-                        {message.detail}
+                        { _.isString(message.detail)?message.detail:message.detail()}
                       </span></span>
                     :null
                 }

@@ -6,7 +6,6 @@ import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
 import { TeamActions } from '/modules/models/Teams';
-//import { Notifications } from '/modules/models/Notifications';
 
 /**
  * @class 			TopNavigationBarContainer
@@ -65,7 +64,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
         unreadCount = Messages.find( { 'inboxId.query._id': user._id, read: false } ).count();
 
         //		let unshownNotifications = _.filter( notifications, ( n ) => { return !n.wasShown } );
-        //	if ( unshownNotifications.length ) {
+        //	if ( unshownMessages.length ) {
         //	chime.play();
         //		showNotifications( unshownNotifications );
         //		}
@@ -73,18 +72,22 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     function showNotifications( notifications ) {
         notifications.map( ( notification ) => {
-            notify.createNotification( notification.getSubject(), {
-                body: notification.getBody(),
+            if( notification.wasShown || notification.inboxId.query._id == Meteor.user()._id ) {
+                return;
+            }
+            notify.createNotification( notification.subject, {
+                body: notification.body,
                 icon: "icon-64x64.ico"
             } );
-            Meteor.call( 'Notifications.setShown', notification );
+            Meteor.call( 'Messages.setShown', notification );
         } )
     }
 
-    function onNotificationsViewed() {
+    function onMessagesViewed() {
+        console.log( 'marking notifications as viewed' );
         let user = Meteor.user();
         if ( user ) {
-            Meteor.call( 'Notifications.markAsRead', { user } );
+            Meteor.call( 'Messages.markAsRead', { user } );
         }
     }
 
@@ -94,7 +97,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
         teams,
         notifications,
         unreadCount,
-        onNotificationsViewed,
+        onMessagesViewed,
         showNotifications,
     }
 

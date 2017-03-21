@@ -32,8 +32,9 @@ ComplianceEvaluationService = new function() {
             "Management Plan",
             "Procedure",
             "Quote",
-            "Register",
             "Registration",
+            "Licence",
+            "Report",
             "Service Report",
             "SWMS",
         ],
@@ -53,7 +54,7 @@ ComplianceEvaluationService = new function() {
         "Document exists": function( rule, facility, service ) {
             //  console.log({rule});
             var docCount = null, docs = null, docName = null, docCurser = null,
-                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate(),
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate(),
                 query = rule.document &&rule.document.query ?
                         JSON.parse( rule.document.query ) : {
                             "facility._id": facility["_id"],
@@ -89,13 +90,6 @@ ComplianceEvaluationService = new function() {
                         summary: "passed",
                         detail: docCount + " " + ( docName ? ( docName + " " ) : "" ) + "documents exists."
                     },
-                    resolve: function() {
-                        //Select the last document
-                        let existDocuent = docs[ docCount - 1 ]
-                        Modal.show( {
-                            content: <DocViewEdit item = { existDocuent } model={Facilities} />
-                        } )
-                    }
                 } )
             }
 
@@ -118,6 +112,16 @@ ComplianceEvaluationService = new function() {
                             type: rule.docType,
                             serviceType: rule.service,
                         } );
+                        if (rule.docSubType) {
+                            if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                            else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                            else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                            else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                            else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                            else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                            else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                            else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                        }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )
@@ -148,8 +152,8 @@ ComplianceEvaluationService = new function() {
             }
             if ( _.contains( docList2, rule.docType ) ) {
                 //format of timestamp should be as Jan 01 2017 00:00:00 GMT (IST).
-                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
-                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ) ).toDate();
+                yesterday = moment( moment().subtract( 1, "days" ).format( "MM-DD-YYYY", "MM-DD-YYYY" ) ).toDate();
+                tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate();
                 today = Object.assign( {}, { $gt: yesterday, $lt: tomorrow } );
                 query.$and.push( { expiryDate: today } );
             }
@@ -162,12 +166,6 @@ ComplianceEvaluationService = new function() {
                     message: {
                         summary: "passed",
                         detail: ( doc.name? ( doc.name + " " ) : "" )
-                    },
-                    resolve: function() {
-                        let currentDocument = doc;
-                        Modal.show( {
-                            content: <DocViewEdit item = { currentDocument } model={Facilities} />
-                        } )
                     }
                 } )
             }
@@ -192,6 +190,16 @@ ComplianceEvaluationService = new function() {
                         type: rule.docType,
                         serviceType: rule.service,
                     } );
+                    if (rule.docSubType) {
+                        if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                        else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                        else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
+                        else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
+                        else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
+                        else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
+                        else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
+                        else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                    }
                     Modal.show( {
                         content: <DocViewEdit item = { newDocument } model={Facilities} />
                     } )
@@ -229,7 +237,7 @@ ComplianceEvaluationService = new function() {
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.edit.bind(establishedRequest).run();
+                        RequestActions.view.bind(establishedRequest).run();
                     }
                 } )
             }
@@ -267,7 +275,7 @@ ComplianceEvaluationService = new function() {
                 event = Requests.findOne( {
                     'facility._id': rule.facility._id,
                     name: rule.event,
-                    status: "Issued",
+                    status: "Complete",
                     type: "Ad-Hoc",
                     priority: "PMP"
                 } );
@@ -275,16 +283,55 @@ ComplianceEvaluationService = new function() {
 
             if ( event ) {
                 let nextDate = event.getNextDate();
-                    previousDate = event.getPreviousDate();
-                    nextRequest = event.findCloneAt( nextDate );
-                    previousRequest = event.findCloneAt( previousDate );
-                return _.extend( {}, defaultResult, {
-                    passed: true,
-                    message: {
-                        summary: "passed",
-                        detail: `Last completed ${moment( previousDate ).format( 'ddd Do MMM YY' )} ➡️️ Next due date is ${moment( nextDate ).format( 'ddd Do MMM YY' )}`
-                    },
-                    data: event,
+                   previousDate = event.getPreviousDate();
+                   nextRequest = event.findCloneAt( nextDate );
+                   previousRequest = event.findCloneAt( previousDate );
+                   nextDateString = null,
+                   frequency = event.frequency || {},
+                   previousDateString = null;
+
+               if( nextDate ) {
+                   nextDateString = moment( nextDate ).format('ddd Do MMM');
+               }
+               if( previousDate ) {
+                   previousDateString = moment( previousDate ).format('ddd Do MMM');
+               }
+               return _.extend( {}, defaultResult, {
+                   passed: true,
+                   message: {
+                       summary: "passed",
+                       //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                       detail: function(){
+                           return (
+                               <span style={{position:"absolute", bottom: "13%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"25%"}}>
+                                       due every {`${frequency.number||''} ${frequency.unit||''}`}
+                                   </span>
+                                   <span className = "issue-summary-col" style = {{width:"32%"}}>
+                                       {!!( previousDateString && previousRequest) ?
+                                           <span>
+                                               <span>previous <b>{ previousDateString }</b> </span>
+                                               { previousRequest ?
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                               : null }
+                                           </span>
+                                       : null }
+                                   </span>
+                                   <span className = "issue-summary-col" style = {{width:"35%"}}>
+                                       { nextDateString && nextRequest ?
+                                           <span>
+                                               <span>next due <b>{ nextDateString }</b> </span>
+                                               { nextRequest ?
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
+                                               : null }
+                                           </span>
+                                       : null }
+                                   </span>
+                               </span>
+                           );
+                       }
+                   },
+                   data: event,
                     resolve: function() {
                         Modal.show( {
                             id: `viewRequest-${event._id}`,
@@ -336,14 +383,55 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "Compliance level": function( rule, facility, service ){
+            let createdAt = { $lte: new Date(), $gte: moment().subtract(1, "years").toDate() };
+            var docCount = null, totalDocs = null, docName = null, docCurser = null,
+                query = rule.document &&rule.document.query ?
+                        JSON.parse( rule.document.query ) : {
+                            "facility._id": facility["_id"],
+                            $and: [
+                                { type: rule.docType },
+                                { name: { $regex: rule.docName || "", $options: "i" } }
+                            ]
+                        };
+            if( !rule.document && rule.docSubType ){
+                query.$and.push({
+                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
+                });
+            }
+            if ( _.contains( docList1, rule.docType ) ) {
+                query.$and.push( { 'serviceType.name': rule.service.name } );
+            }
+            totalDocs = query && Documents.find( query ).count();
+            if ( query && !query.createdAt ) {
+                query.createdAt = createdAt;
+            }
+            docCount = query && Documents.find( query ).count();
 
+            let perComplete = ( ( docCount / totalDocs ) * 100 )
+
+            console.log({docCount, totalDocs, query, perComplete, name:rule.service.name });
+
+            if ( perComplete >= 50 ) {
+                return _.extend( {}, defaultResult, {
+                    passed: true,
+                    message: {
+                        summary: "passed",
+                        detail: perComplete + "% " + "completed."
+                    },
+                } )
+            }
+
+            return _.extend( {}, defaultResult, {
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail:  totalDocs?perComplete:0 + "% " + ( docName ? ( docName + " " ) : "" ) + "completed."
+                },
+            } )
         },
     }
 
     function evaluateRule( rule, facility, service ) {
-        if( !rule ) {
-            return;
-        }
         if ( !facility && rule.facility ) {
             facility = Facilities.findOne( rule.facility._id );
         }
@@ -369,10 +457,7 @@ ComplianceEvaluationService = new function() {
         }
         rules.map( ( r ) => {
             var result = evaluateRule( r );
-            if( !result ) {
-                // do nothing
-            }
-            else if ( result.passed ) {
+            if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
@@ -382,9 +467,6 @@ ComplianceEvaluationService = new function() {
     }
 
     function evaluateService( service ) {
-        if( !service || !service.data || !service.data.complianceRules ) {
-            return;
-        }
         var results = evaluate( service.data.complianceRules );
         var numRules = service.data.complianceRules.length;
         var numPassed = results.passed.length;
@@ -416,17 +498,12 @@ ComplianceEvaluationService = new function() {
 
         services.map( ( s ) => {
             let result = evaluateService( s );
-            if( !result ) {
-                // do nothing
-            }
-            else if ( result.passed ) {
+            if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
             }
-            if( s.data && s.data.complianceRules ) {
-                rules = rules.concat( s.data.complianceRules );
-            }
+            rules = rules.concat( s.data.complianceRules );
         } )
 
         overall = evaluate( rules );

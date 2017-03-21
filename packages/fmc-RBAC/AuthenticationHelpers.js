@@ -15,6 +15,19 @@ AuthHelpers = {
             }
         }
     },
+    owningTeamMember: function( role, user, item ) {
+        import { Teams } from '/modules/models/Teams';
+        //an owner is either a user-owner or a manager of the owning team
+        if ( item && item.owner ) {
+            if ( item.owner.type == "team" ) {
+                var team = Teams.findOne( item.owner._id );
+                var role = RBAC.getRole( user, team );
+                return AuthHelpers.manager( role, user, team );
+            } else {
+                return item.owner._id == user._id;
+            }
+        }
+    },
     dev: function( role, user ) {
         return user.role == "dev";
     },
@@ -25,7 +38,7 @@ AuthHelpers = {
         return ( role == "fmc support" || role == "portfolio manager" || role == "caretaker" ) || ( team && ( team.type == "contractor" && role == "manager" ) );
     },
     managerOrOwner: function( role, user, team ) {
-        return AuthHelpers.manager( role, user ) || AuthHelpers.owner( role, user, team )
+        return AuthHelpers.manager( role, user ) || AuthHelpers.owningTeamMember( role, user, team )
     },
     adminManagerOrOwner: function( role, user, team ) {
         return AuthHelpers.adminManager( role, user, team ) || AuthHelpers.owner( role, user, team )

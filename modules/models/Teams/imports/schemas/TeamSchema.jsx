@@ -59,11 +59,11 @@ export default TeamSchema = {
     },
 
     email: {
-        type: "string",
+        label: "Email",
         description: "The primary email contact for this team",
+        type: "string",
         input: Text,
         required: true,
-        label: "Email",
         //regEx:        ORM.RegEx.Email,
     },
 
