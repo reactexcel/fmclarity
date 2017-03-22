@@ -41,8 +41,9 @@ export default class RequestsPageIndex extends Component {
 		Perf.start();
 	}
 
-	componentDidUpdate() {
+	componentDidMount() {
 	    Perf.stop();
+	    console.log('output requests page load time');
 	    Perf.printInclusive();
 	    // Perf.printWasted();
 	}
