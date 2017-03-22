@@ -55,7 +55,7 @@ Meteor.methods({
 
         var subject, html, address, to, email, devMsg;
 
-        var expiry = moment( new Date() ).add( { days: 3 } ).toDate();
+        var expiry = moment( new Date() ).add( { days: 13 } ).toDate();
         var token = LoginService.generateLoginToken( user, expiry );
         var element = React.createElement(EmailMessageView,{user:user,item:message, token: token});
 
