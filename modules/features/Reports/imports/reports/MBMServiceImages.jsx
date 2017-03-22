@@ -27,11 +27,11 @@ const MBMServiceImages = React.createClass( {
                 //     $gte: moment().startOf("month").toDate(),
                 //     $lte: moment().endOf("month").toDate()
                 // };
-                q['dueDate'] = {
-                    $gte: moment().startOf("month").toDate(),
-                    //$lte: moment().endOf("month").toDate()
-                };
-                q['status'] = 'New';
+                 q['dueDate'] = {
+                     $gte: moment().startOf("month").toDate(),
+                     $lte: moment().endOf("month").toDate()
+                 };
+                q['status'] = {$in:['Completed', "Issued", "Closed"]};
                 for (var i in services) {
                     q['service.name'] = services[i].name;
                     let requests = Requests.findAll(q);
