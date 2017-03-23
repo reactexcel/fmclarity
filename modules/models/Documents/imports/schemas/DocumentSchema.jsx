@@ -704,6 +704,7 @@ export default DocumentSchema = {
 				"manager",
 				"resident",
 				"caretaker",
+				"property manager",
 			];
 			props.value = props.value || [];
 			return(
