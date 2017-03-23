@@ -167,7 +167,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             otherwise show client details for supplier user */}
                         <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
 
-                        <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency : facility }/>
+                        <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
                         { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
                     </div>
