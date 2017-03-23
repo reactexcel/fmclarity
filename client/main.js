@@ -326,8 +326,8 @@ Actions.addAccessRule( {
                         costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
+                    let costThreshold = parseFloat( team.defaultCostThreshold ),
+                        cost = parseFloat( costString );
 
                     if ( cost <= costThreshold ) {
                         return true;
