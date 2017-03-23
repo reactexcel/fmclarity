@@ -35,8 +35,54 @@ const Requests = new Model( {
                 getInboxName() {
                     return "work order #" + this.code + ' "' + this.getName() + '"';
                 },
-                getWatchers() {
-                    return this.getMembers();
+                getWatchers( message ) {
+                    let members = this.getMembers(),
+                        newMembers = [];
+
+                    //console.log({ request: this, message });
+
+                    if ( message && message.verb == 'commented on' && this.status != 'New' ) {
+
+                        //console.log( 'scenario 1' );
+
+                        members.map( ( member ) => {
+                            let roles = Roles.getRoles( this ),
+                                memberRoles = roles.actors[ member._id ];
+
+                            //console.log( memberRoles );
+
+                            if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
+                                //remove everyone who isn't pm
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    if( role == 'property manager' ) {
+                                        newMembers.push( member );
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                //remove staff, tenant and resident
+                                let rejectMember = false;
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    //console.log( role );
+                                    if( _.contains( [ 'facility staff', 'facility tenant', 'facility resident' ], role ) ) {
+                                        rejectMember = true;
+                                        break;
+                                    }
+                                }
+                                if( !rejectMember ) {
+                                    newMembers.push( member );
+                                }
+                            }
+                        } );
+                    }
+                    else {
+                        newMembers = members;
+                    }
+                    //console.log( newMembers );
+                    return newMembers;
                 }
             }
         } ],
@@ -121,10 +167,9 @@ Requests.methods( {
         authentication: true,
         helper: function( request ) {
             let supplierContacts = null;
-            if( request.supplierContacts && request.supplierContacts.length ) {
+            if ( request.supplierContacts && request.supplierContacts.length ) {
                 supplierContacts = request.supplierContacts;
-            }
-            else {
+            } else {
                 let supplier = request.getSupplier();
                 if ( supplier ) {
                     if ( supplier.type == 'fm' ) {
@@ -141,6 +186,21 @@ Requests.methods( {
             }
         }
     },
+
+    getMessages: {
+        authentication: true,
+        helper: ( request ) => {
+            let user = Meteor.user();
+            let messages = Messages.findAll( {
+                $and: [
+                    { 'inboxId.query._id': user._id },
+                    { 'target.query._id': request._id }
+                ],
+            }, { sort: { createdAt: 1 } } );
+            return messages;
+        }
+    },
+
 
     /* just seems to be a simple calculated field - in schema??, location.toString(), address.toString() */
     getLocationString: {
@@ -297,24 +357,24 @@ Requests.methods( {
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
-                if ( request.frequency.unit == "custom" ){
-                    unit = request.frequency.period ;
-                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                if ( request.frequency.unit == "custom" ) {
+                    unit = request.frequency.period;
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
-                        unit  = freq[ request.frequency.unit ];
+                        unit = freq[ request.frequency.unit ];
                         repeats = parseInt( request.frequency.number )
                     } else {
-                        unit  = request.frequency.unit;
+                        unit = request.frequency.unit;
                     }
-                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                 }
-                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
@@ -344,24 +404,24 @@ Requests.methods( {
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
-                if ( request.frequency.unit == "custom" ){
-                    unit = request.frequency.period ;
-                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                if ( request.frequency.unit == "custom" ) {
+                    unit = request.frequency.period;
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
-                        unit  = freq[ request.frequency.unit ];
+                        unit = freq[ request.frequency.unit ];
                         repeats = parseInt( request.frequency.number )
                     } else {
-                        unit  = request.frequency.unit;
+                        unit = request.frequency.unit;
                     }
-                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                 }
-                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
                 for ( var i = 0; i < repeats; i++ ) {
@@ -606,7 +666,7 @@ function actionIssue( request ) {
         issuedAt: new Date(),
         code: code,
         members: getMembersDefaultValue( request )
-    });
+    } );
 
 
     request = Requests.findOne( request._id );
@@ -623,7 +683,7 @@ function actionIssue( request ) {
         } );
 
         var team = request.getTeam();
-        request.distributeMessage({
+        request.distributeMessage( {
             recipientRoles: [ "supplier manager" ],
             suppressOriginalPost: true,
             message: {
@@ -637,7 +697,7 @@ function actionIssue( request ) {
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
             }
-        });
+        } );
 
         return request;
     }

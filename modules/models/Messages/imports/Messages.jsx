@@ -175,6 +175,11 @@ if ( Meteor.isServer ) {
 		if ( !_.isArray( ids ) ) {
 			ids = [ ids ];
 		}
-		return Messages.find( { 'inboxId.query._id': { $in: ids } }, { sort: { createdAt: -1 }, limit: 100 } );
+		return Messages.find( { 
+			$and: [
+				{ 'inboxId.query._id': this.userId },
+				{ 'target.query._id': { $in: ids } }
+			]
+		}, { sort: { createdAt: -1 }, limit: 100 } );
 	} );
 }
