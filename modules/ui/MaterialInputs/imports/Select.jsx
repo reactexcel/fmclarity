@@ -162,6 +162,10 @@ const Select = React.createClass( {
 					this.setOpen( true );
 				} }
 				onBlur={(e)=>{
+					let $selected = $('ul#open > li').filter('.onFocus')
+					if($selected.length){
+						$selected.click();
+					}
 					this.setOpen( false );
 				}}
 				onKeyDown={(e)=>{
@@ -170,8 +174,6 @@ const Select = React.createClass( {
 					if(targetList != undefined){
 						list.scrollTop = (targetList.top - $('ul#open > li:first').position().top);
 					}
-
-
 					let key = e.keyCode
 					let $selected = $('ul#open > li').filter('.onFocus')
 					if(key == 13){
@@ -210,6 +212,9 @@ const Select = React.createClass( {
 					}
 					if(key==9){
 						//$('ul#open > li').removeClass('onFocus')
+						if($selected.length){
+							$selected.click();
+						}
 						this.setOpen( false )
 					}
 				}}>
