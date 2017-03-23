@@ -258,7 +258,23 @@ Actions.addAccessRule( {
                 } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
                     return true;
                 } else if ( facilityRole == 'manager' ) {
-                    return true;
+                    let costString = request.costThreshold;
+                    if ( _.isString( costString ) ) {
+                        costString = costString.replace( ',', '' )
+                    }
+
+                    let costThreshold = parseInt( team.defaultCostThreshold ),
+                        cost = parseInt( costString );
+
+
+                    console.log( { original: team.defaultCostThreshold, costThreshold, cost, request } );
+
+                    if ( cost <= costThreshold ) {
+                        return true;
+                    }
+                    else if (cost > costThreshold && request.owner && request.owner._id == Meteor.userId()) { 
+                        return true;
+                    }
                 }
             }
         }
