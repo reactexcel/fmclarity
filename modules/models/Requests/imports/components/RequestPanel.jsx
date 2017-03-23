@@ -29,7 +29,9 @@ export default RequestPanel = React.createClass( {
             previousDate = null,
             contact = null,
             facility = null,
+            realEstateAgency = null,
             owner = null;
+
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
@@ -37,11 +39,13 @@ export default RequestPanel = React.createClass( {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
-                //console.log( facility );
+
                 if( facility ) {
-                    let fms = facility.getMembers({role:'manager'});
-                    contact = fms[0];
+                    realEstateAgency = facility.getRealEstateAgency();
+                    console.log( realEstateAgency );
                 }
+
+                contact = request.getContact();
                 supplier = request.getSupplier();
                 if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
@@ -51,7 +55,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
     },
 
     render() {
@@ -60,7 +64,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
 
     //console.log( facility );
 
@@ -92,7 +96,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         title = "",
         billingOrderNumber = "",
         nextDateString = null,
-        previousDateString = null;
+        previousDateString = null,
+        requestIsBaseBuilding = false,
+        requestIsPurchaseOrder = false;
+
+    if( request.service && request.service.data ) {
+        requestIsBaseBuilding = request.service.data.baseBuilding;
+        requestIsPurchaseOrder = request.service.data.purchaseOrder;
+    }
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
@@ -108,7 +119,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
         } else if ( teamType == 'fm' ) {
-            if ( request.service && request.service.data && request.service.data.purchaseOrder ) {
+            if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
                 title = "Work Order";
@@ -154,11 +165,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType=="fm" ? supplier : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
 
-                        <BillingDetails item = { facility }/>
+                        <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency : facility }/>
 
-                        { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
+                        { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
                     </div>
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
 

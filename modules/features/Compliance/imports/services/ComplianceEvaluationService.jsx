@@ -416,7 +416,7 @@ ComplianceEvaluationService = new function() {
 
             let perComplete = ( ( docCount / totalDocs ) * 100 )
 
-            console.log( { docCount, totalDocs, query, perComplete, name: rule.service.name } );
+            //console.log( { docCount, totalDocs, query, perComplete, name: rule.service.name } );
 
             if ( perComplete >= 50 ) {
                 return _.extend( {}, defaultResult, {

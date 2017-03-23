@@ -276,6 +276,27 @@ Requests.methods( {
         method: actionIssue
     },
 
+    getContact: {
+        authentication: true,
+        helper: ( request ) => {
+            let facility = request.getFacility();
+            if( facility ) {
+                // if the request is base building the contact should be the property manager, not the facility manager
+                let teamType = Session.get( 'selectedTeam' ).type,
+                    requestIsBaseBuilding = ( request && request.service && request.service.data && request.service.data.baseBuilding ),
+                    role = 'manager';
+
+                if( teamType != 'fm' && requestIsBaseBuilding ) {
+                    role = 'property manager';
+                }
+                let fms = facility.getMembers( { role } );
+                if( fms && fms.length ) {
+                    return fms[0];
+                }
+            }
+        }
+    },
+
     complete: {
         authentication: true,
         method: actionComplete

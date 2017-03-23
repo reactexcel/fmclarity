@@ -108,6 +108,16 @@ Facilities.actions( {
             return areas;
         }
     },
+    getRealEstateAgency: {
+        authentication: true,
+        helper: ( facility ) => {
+            let realEstateAgency = null;
+            if( facility.realEstateAgency && facility.realEstateAgency._id ) {
+                import { Teams } from '/modules/models/Teams';
+                return Teams.findOne( facility.realEstateAgency._id );
+            }
+        }
+    },
     setAreas: {
         authentication: AuthHelpers.managerOfRelatedTeam,
         method: function( facility, areas ) {
