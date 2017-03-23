@@ -258,20 +258,7 @@ Actions.addAccessRule( {
                 } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
                     return true;
                 } else if ( facilityRole == 'manager' ) {
-                    let costString = request.costThreshold;
-                    if ( _.isString( costString ) ) {
-                        costString = costString.replace( ',', '' )
-                    }
-
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
-
-
-                    console.log( { original: team.defaultCostThreshold, costThreshold, cost } );
-
-                    if ( cost <= costThreshold ) {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -339,8 +326,8 @@ Actions.addAccessRule( {
                         costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
+                    let costThreshold = parseFloat( team.defaultCostThreshold ),
+                        cost = parseFloat( costString );
 
                     if ( cost <= costThreshold ) {
                         return true;
