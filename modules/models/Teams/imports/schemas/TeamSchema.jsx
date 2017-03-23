@@ -160,8 +160,8 @@ export default TeamSchema = {
     },
 
     defaultCostThreshold: {
-        label: "Threshold value for work orders",
-        description: "Maximum value set for the value of a work order",
+        label: "Enter work order threshold for Managers",
+        description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
         type: "number",
         input: Text,
         defaultValue: 1000,
