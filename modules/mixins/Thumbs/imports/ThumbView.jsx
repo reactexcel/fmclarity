@@ -6,7 +6,6 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import CircularProgress from 'material-ui/CircularProgress';
-import { Files } from '/modules/models/Files';
 
 /**
  * @class 			ThumbView
@@ -23,7 +22,7 @@ const ThumbView = React.createClass( {
 	},
 
 	getMeteorData() {
-
+	    import { Files } from '/modules/models/Files';
 		var query, file, url, extension, icon;
 		query = this.props.item;
 		file = Files.findOne( query ) || Files.findOne( this.state.query );
@@ -43,6 +42,7 @@ const ThumbView = React.createClass( {
 	},
 
 	handleChange( event ) {
+		import { Files } from '/modules/models/Files';
 		var component = this;
 		FS.Utility.eachFile( event, function( file ) {
 			var newFile = new FS.File( file );
@@ -120,8 +120,7 @@ const ThumbView = React.createClass( {
 						</div>
 					}
 				</div>
-			    {this.data.file?
-					<div className="close-button" onClick={this.deleteFile}>&times;</div>
+			    {this.data.file?((this.props.readOnly && this.props.readOnly == true)?null:<div className="close-button" onClick={this.deleteFile}>&times;</div>)
 				:null}
 			</div>
 		)

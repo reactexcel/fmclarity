@@ -7,6 +7,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Teams } from '/modules/models/Teams';
+import { Documents } from '/modules/models/Documents';
 
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
@@ -61,6 +62,7 @@ const TeamPanel = React.createClass( {
     getMeteorData() {
         let team = null,
             services = null,
+            docIds = [],
             insuranceDocs = null;
 
         if ( this.props.item && this.props.item._id ) {
@@ -69,6 +71,7 @@ const TeamPanel = React.createClass( {
 
         if ( team ) {
             Meteor.subscribe( 'Inbox: Messages', team._id );
+            Meteor.subscribe( 'Documents', team._id );
             if ( team.getAvailableServices ) {
                 services = team.getAvailableServices();
             }
@@ -81,6 +84,16 @@ const TeamPanel = React.createClass( {
             	type: "Insurance"
             } );
             */
+            if (team.documents) {
+                team.documents.map(function(doc, idx){
+                    if (doc.type=="Insurance") {
+                       docIds.push(doc._id); 
+                    }
+                    
+                });
+            }
+
+            insuranceDocs = Documents.find( { $or: [{ type: "Insurance", "team._id": team._id }, { _id: { $in: docIds } } ] } ).fetch();
 
         }
         return {
@@ -100,7 +113,6 @@ const TeamPanel = React.createClass( {
 
     render() {
         let { team, availableServices, insuranceDocs } = this.data;
-
 
         if ( !team ) {
             return <div/>
@@ -143,10 +155,13 @@ const TeamPanel = React.createClass( {
 					<b>Email</b> { team.email }<br/>
 					{ team.phone ? <span><b>Phone</b> { team.phone }<br/></span> :null }
 					{ team.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { team.phone2 }<br/></span> :null }
-					{ insuranceExpiry ? <span><b>Insurance Expiry</b> { insuranceExpiry }</span> :null }
+					{ insuranceDocs.length && team.type=="contractor" ? insuranceDocs.map( (doc, idx) => {
+                        return <span key = { doc._id }><b>{doc.insuranceType ? toTitleCase(doc.insuranceType) : null} Insurance Expiry:</b> { moment( doc.expiryDate ).format( 'DD/MM/YYYY' ) }<br/></span>
+                    }) :null }
 					<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
 
-					{/*this should def be own component*/availableServices && availableServices.length?
+					{/*this should def be own component*/}
+                    {availableServices && availableServices.length?
 
 					availableServices.map( (service,index) => {
 						return <span key = { service.name }>{ index?' | ':'' }{ service.name }</span>

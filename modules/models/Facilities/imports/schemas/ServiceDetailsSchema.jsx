@@ -101,9 +101,33 @@ export default ServiceDetailsSchema =  {
         size: 12,
         input: Select,
         options(item){
-            return{
-                items: Session.getSelectedFacility().getSuppliers(),
-                view: ContactCard,
+            let facility = Session.getSelectedFacility();
+            return {
+                items: facility.getSuppliers(),
+                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
+                                        <ContactCard {...props} />
+                                    </div>,
+                addNew: {
+                    //Add new supplier to request and selected facility.
+                    show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                    label: "Create New",
+                    onAddNewItem: ( callback ) => {
+                        import { TeamStepper } from '/modules/models/Teams';
+                        Modal.show( {
+                            content: <TeamStepper
+                                facility = { facility }
+                                onChange = {
+                                    ( supplier ) => {
+                                        let facility = Session.getSelectedFacility();
+                                        facility.addSupplier( supplier );
+                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
+                                        callback( supplier );
+                                    }
+                                }
+                            />
+                        } )
+                    }
+                },
                 afterChange(item){
                     item.defaultContact = [];
                 }
@@ -113,6 +137,7 @@ export default ServiceDetailsSchema =  {
     defaultContact:{
         label: "Default supplier contact",
         type: 'array',
+        required: false,
         size: 12,
         input(props){
             // props.onChange = ( item ) => {
@@ -130,6 +155,7 @@ export default ServiceDetailsSchema =  {
                         item = {props.item}
                         items = {props.items}
                         view = {props.view}
+                        errors = {props.errors}
                         model = {props.model}
                         onChange ={ ( contact ) => {
                             if ( !_.find( props.item.defaultContact, m => m._id === contact._id) ) {
@@ -156,6 +182,7 @@ export default ServiceDetailsSchema =  {
     								borderRadius: '5px',
 									margin: '5px',
 									borderLeft: '4px solid aquamarine',
+                                    cursor: "default",
 								}}>
 								<span onClick={() => {
 										let id = sc._id;
@@ -177,10 +204,16 @@ export default ServiceDetailsSchema =  {
             )
         },
         options( item ){
-            var memberIds = _.pluck( item.supplier?item.supplier.members:[], "_id");
-            var members = Users.findAll( { _id: { $in: memberIds } } );
+            let members = [];
+            if( item.supplier && item.supplier._id ) {
+                import { Teams } from '/modules/models/Teams';
+                let supplier = Teams.findOne( item.supplier._id );
+                if( supplier ) {
+                    members = supplier.getMembers();
+                }
+            }
             return {
-                items: members.length?members:null,
+                items: members,
                 view: ContactCard
             }
         }

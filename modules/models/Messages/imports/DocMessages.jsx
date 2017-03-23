@@ -116,7 +116,8 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
             _id: user._id,
             name: user.getName()
         }
-        //add message/notification to original sending object
+
+    //add message/notification to original sending object
     if ( !suppressOriginalPost ) {
         sendMessage( message, obj );
     }
@@ -175,28 +176,6 @@ function getRecipientListFromRoles( obj, roles ) {
     return recipients;
 }
 
-function sendMessageToMembers( obj, message, role ) {
-    var team, facility, recipients = [];
-    //if we are sending the message to the team
-    if ( role == "team" && obj.team != null ) {
-        recipients.push( obj.team );
-    }
-    //else if we are sending it to facility
-    else if ( role == "facility" && obj.facility != null ) {
-        recipients.push( obj.facility );
-    }
-    //else if we are sending it to the member with "role"
-    else if ( obj.getMembers ) {
-        recipients = obj.getMembers( {
-            role: role
-        } )
-    }
-    recipients.map( function( r ) {
-        //console.log(r);
-        sendMessage( message, r );
-    } )
-}
-
 function recipientIsCreator( message, recipient ) {
     return recipient._id && message.owner._id && recipient._id == message.owner._id
 }
@@ -216,7 +195,7 @@ function sendMessage( message, recipient ) {
     }
 
     //make copy of original message using our own personal inboxId
-    var msgCopy = _.extend( {}, message, {
+    var msgCopy = _.extend( { read: true, digest: true }, message, {
         inboxId: recipient.getInboxId(),
         emailBody: emailBody
     } );
@@ -295,7 +274,7 @@ function markAsUnread( recipientRoles ) {
     if ( recipientRoles ) {
         recipients = getRecipientListFromRoles( this, recipientRoles );
     } else {
-        recipients = getRecipients( this.getWatchers(), [] );
+        recipients = this.getWatchers();
     }
     import { Requests } from '/modules/models/Requests';
     recipients = _.uniq( recipients, false, function( i ) {

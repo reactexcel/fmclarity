@@ -8,7 +8,7 @@ import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Tabs } from '/modules/ui/Tabs';
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Users } from '/modules/models/Users';
+import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
@@ -27,6 +27,8 @@ export default RequestPanel = React.createClass( {
             previousRequest = null,
             nextDate = null,
             previousDate = null,
+            contact = null,
+            facility = null,
             owner = null;
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
@@ -34,6 +36,12 @@ export default RequestPanel = React.createClass( {
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
+                facility = request.getFacility();
+                //console.log( facility );
+                if( facility ) {
+                    let fms = facility.getMembers({role:'manager'});
+                    contact = fms[0];
+                }
                 supplier = request.getSupplier();
                 if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
@@ -43,7 +51,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner }
     },
 
     render() {
@@ -52,10 +60,29 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner } ) => {
+
+    //console.log( facility );
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
+    }
+    function showUserModal( selectedUser ) {
+            
+            Modal.show( {
+                content: <UserPanel
+                    item    = { selectedUser }
+                    team    = { Session.get( 'selectedTeam' ) }
+                    group   = { facility }/>
+            } )
+        
+    }
+
+    function showMoreUsers() {
+        $('.seen-by-list li:hidden').slice(0, 2).show();
+        if ($('.seen-by-list li').length == $('.seen-by-list li:visible').length) {
+            $('#view-more ').hide();
+        }
     }
 
     if ( !request ) {
@@ -106,6 +133,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
 
     } ) : null;
+    request.readBy=_.uniq(request.readBy, '_id'); 
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -122,13 +150,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 "Client: "+ request.team.name
                             }
                         </h2>
-                        <AddressLink item = { request.facility.address }/>
+                        <AddressLink item = { facility.address }/>
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType=="fm" ? supplier : owner }/>
+                        <ContactDetails item = { teamType=="fm" ? supplier : contact }/>
 
-                        <BillingDetails item = { request.facility }/>
+                        <BillingDetails item = { facility }/>
 
                         { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
                     </div>
@@ -247,36 +275,37 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
+                { request.priority != "PMP" && teamType=='fm' && request.eta && Meteor.user().getRole() != 'staff' ?
                 <tr>
                     <th>ETA</th>
                     <td>{formatDate(request.eta)}</td>
                 </tr> : null }
 
-                { request.readBy ?
-                request.readBy.length==1 && request.readBy[0]._id==Meteor.userId() ? null :
+                { request.readBy && request.readBy.length ?
+                request.readBy.length == 1 && request.readBy[0]._id==Meteor.userId() ? null :
                     <tr>
-                                     <td></td>
-                                     <td><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by</span>
-                                                         <ul className="seen-by-list">
-                                                         {request.readBy.length > 2 ?
-                                                             <li>
-                                                             <a href="" title={formatDate(request.readBy[request.readBy.length-1].readAt)}>{Meteor.users.findOne(request.readBy[request.readBy.length-1]._id).profile.name}</a>
-                                                             <span> and </span><a href="" title={viewers.join()}>{request.readBy.length - 1} others</a></li> : request.unreadRecipents.length=="0" ? <a href="">everyone</a> : request.readBy.map(function(u, idx){
-                                                             var user = Meteor.users.findOne(u._id);
-                                                             if (u._id==Meteor.userId()) {user=null;}
-                                                             return (
-                                                                 user ? <li key={u._id}><a href="" title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
-                                                                 )
-                                                         })}
-                                     
-                                                         </ul>
-                                                         </td>
-                                 </tr> : null }
+                        <td></td>
+                        <td>
+                            <ul className="seen-by-list">
+                            <li ><i className="fa fa-check"></i>&nbsp;&nbsp;<span>Seen by </span></li>
+                                {request.readBy.map(function(u, idx){
+                                    var user = Meteor.users.findOne(u._id);
+                                    if (u._id == Meteor.userId()) {
+                                        user = null;
+                                    }
+                                    return (
+                                        user ? <li key={u._id}><a href="#" onClick={()=>{showUserModal( user );}} title={formatDate(u.readAt)}>{ user.profile ? user.profile.name : user.name}</a></li>: null
+                                    )
+                                })}
 
+                            </ul>
+                            
+                        </td>
+                    </tr> : null }
                 </tbody>
             </table>
 
+            { Meteor.user().getRole()=='staff' && request.status!= 'New' ? null :
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
@@ -287,7 +316,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
-                    recipientRoles: [ "team", "team manager", "facility", "facility manager" ],
+                    recipientRoles: [ "team manager", "facility manager" ],
                     message: {
                         verb: "uploaded a file to",
                         subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -300,12 +329,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     tab:        <span id="contacts-tab"><span>Contacts</span></span>,
                     hide:       (teamType == 'contractor'),
                     content:    <ContactList
-                                    hideMenu    = { Meteor.user().getRole() == 'staff' }
+                                    hideMenu    = { _.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) }
                                     group       = { request }
                                     readOnly    = { true }
                                 />
                 }
             ]} />
+            }
 
         </div>
     )

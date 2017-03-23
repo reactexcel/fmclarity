@@ -17,6 +17,7 @@ import { ContactDetails, ContactList } from '/modules/mixins/Members';
 import { Facilities, FacilityActions, PropertyManagerDetails, BillingAddressDetails } from '/modules/models/Facilities';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import FacilityStepper from './FacilityStepper.jsx';
+import { Modal } from '/modules/ui/Modal';
 
 /**
  * @class 			FacilityPanel
@@ -47,6 +48,25 @@ function FacilityPanel( { item } ) {
     if ( contact ) {
         contact = contact[ 0 ];
     }
+    loadAddressForm = function(facility){
+    	Modal.show( {
+			content: <AutoForm
+				        model = { Facilities }
+				        item = { facility }
+				        title = "Facility Address"
+				        form = {
+				          [ 'address' ] }
+				        onSubmit = {
+				          ( facility ) => {
+				            Facilities.save.call( facility );
+				            Modal.hide();
+				          }
+				        }
+
+			  		 />
+		} )
+	    
+	  }
 
     return (
         <DropFileContainer model={Facilities}>
@@ -76,7 +96,7 @@ function FacilityPanel( { item } ) {
 									<h2 style = { { marginTop: "20px" }}> { facility.name } </h2>
 
 									{ facility.address ?
-									<b>{facility.getAddress()}</b>
+									<b onClick   = { () => { loadAddressForm( facility )  } } className="edit-link">{facility.getAddress()}</b>
 									: null }
 
 								</div>
@@ -103,7 +123,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'tenant', 'resident' ] } } } defaultRole = "tenant" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'tenant', 'resident' ] } } } defaultRole = {facility.type == "Residential" ? "resident" : "tenant"} team = { facility.team }/>
 					},{
 						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,

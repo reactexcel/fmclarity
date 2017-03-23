@@ -89,12 +89,14 @@ const Select = React.createClass( {
 			invalid = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
+			hidden = false,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
 				disabled = true;
 				readOnly = true;
+				hidden = true;
 			}
 			items = [];
 		}
@@ -116,7 +118,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"}>
+				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?" hidden":"")}>
 
 					<span className = { classes.join(' ') }>
 						{ used?

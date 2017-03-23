@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
@@ -20,17 +20,17 @@ import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currenc
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
-
+import moment from 'moment';
 /**
- * @memberOf 		module:models/Requests
+ * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
 
 const RequestSchema = {
 
-        //$schema: 				"http://json-schema.org/draft-04/schema#",
-        //title:       			"Request",
-        //description: 			"A work request",
+        //$schema:              "http://json-schema.org/draft-04/schema#",
+        //title:                "Request",
+        //description:          "A work request",
 
         //properties:
         //{
@@ -51,7 +51,7 @@ const RequestSchema = {
             label: "Summary",
             type: "string",
             required: true,
-            maxLength: 45,
+            maxLength: 90,
             input: Text,
             description: "A brief, descriptive, title for the work request"
         },
@@ -87,6 +87,7 @@ const RequestSchema = {
             options: () => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
+                    user = Meteor.user();
                     teamType = null;
 
                 if ( team ) {
@@ -96,8 +97,22 @@ const RequestSchema = {
                 if ( teamType == 'contractor' ) {
                     return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
                 } else {
-                    if ( _.contains( [ "staff", 'resident' ], role ) ) {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Tenancy' ] };
+                    if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
+                        return { 
+                            items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
+                            afterChange: ( request ) => {
+                                // prefill area with tenant/resident address
+                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                    request.area= user.apartment ? user.apartment : null;
+                                    request.level= user.level ? user.level : null;
+                                }
+                                else{
+                                    request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;
+                                }
+                                    
+                                }
+                             };
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
                     }
@@ -167,9 +182,9 @@ const RequestSchema = {
             readonly: true,
             defaultValue: "Draft",
             /*() => {
-            			let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
-            			return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
-            		},*/
+                        let role = Meteor.apply( 'User.getRole', [], { returnStubValue: true } );
+                        return _.indexOf( [ "portfolio manager", "manager" ], role ) > -1 ? "New" : "Draft";
+                    },*/
 
             options: {
                 items: [
@@ -210,7 +225,14 @@ const RequestSchema = {
                 return {
                     items: facility ? facility.areas : null
                 }
-            }
+            },
+            defaultValue: (request ) => {
+                let user = Meteor.user(), val=null;
+                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
+                    val = user.profile.tenancy;
+                }
+                return val;
+            },
         },
 
         area: {
@@ -290,7 +312,7 @@ const RequestSchema = {
 
                 if ( teamType == 'fm' && item.facility && item.facility._id ) {
                     let facility = Facilities.findOne( item.facility._id );
-                    if( facility ) {
+                    if ( facility ) {
                         items = facility.servicesRequired;
                     }
                 } else if ( teamType == 'contractor' && team.getAvailableServices ) {
@@ -305,25 +327,24 @@ const RequestSchema = {
                             return;
                         }
                         if ( request.service.data ) {
-                            let supplier = request.service.data.supplier;
-                            let defaultSupplier;
+                            let supplier = request.service.data.supplier,
+                                defaultSupplier = null;
+
                             if ( supplier ) {
                                 if ( supplier._id ) {
                                     defaultSupplier = Teams.findOne( supplier._id );
-                                    if ( !defaultSupplier && supplier.name ) {
-                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                    }
-                                } else if ( supplier.name ) {
+                                }
+                                if ( !defaultSupplier && supplier.name ) {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
-                                // let members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
-                                // if ( request.service.data.defaultContact ) {
-                                //     members.push( request.service.data.defaultContact );
-                                // }
-                                // request.members = members;
-                                request.members = _.union(request.members,request.service.data.defaultContact);
-                                console.log({member: request.member});
+                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                    request.supplierContacts = request.service.data.defaultContact;
+                                } else if ( defaultSupplier.type == 'fm' ) {
+                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                } else {
+                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                }
                             } else {
                                 request.supplier = null;
                                 request.subservice = null;
@@ -358,33 +379,34 @@ const RequestSchema = {
                 }
                 return true;
             },
-            options: ( item ) => {
+            options: ( request ) => {
                 return {
-                    items: item.service ? item.service.children : null,
-                    afterChange: ( item ) => {
-                        if ( item == null ) {
+                    items: request.service ? request.service.children : null,
+                    afterChange: ( request ) => {
+                        if ( request == null ) {
                             return;
                         }
-                        if ( item.subservice.data ) {
-                            let supplier = item.subservice.data.supplier;
-                            let defaultSupplier;
+                        if ( request.subservice && request.subservice.data ) {
+                            let supplier = request.subservice.data.supplier,
+                                defaultSupplier = null;
+
                             if ( supplier ) {
                                 if ( supplier._id ) {
                                     defaultSupplier = Teams.findOne( supplier._id );
-                                    if ( !defaultSupplier && supplier.name ) {
-                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                    }
-                                } else if ( supplier.name ) {
+                                }
+                                if ( !defaultSupplier && supplier.name ) {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
-                                item.supplier = defaultSupplier;
-                                let members = ( _.filter( item.members, m => m.role !== defaultContactRole ) );
-                                if ( item.subservice.data ) {
-                                    members.push( item.subservice.data.defaultContact );
+                                request.supplier = defaultSupplier;
+                                if ( request.subservice.data.defaultContact && request.subservice.data.defaultContact.length ) {
+                                    request.supplierContacts = request.subservice.data.defaultContact;
+                                } else if ( supplier.type == 'fm' ) {
+                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                } else {
+                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
                                 }
-                                item.members = members;
                             } else {
-                                item.supplier = null;
+                                request.supplier = null;
                             }
                         }
                     }
@@ -528,7 +550,7 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ "staff", 'resident' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) ) {
                     return false;
                 }
                 return true;
@@ -634,7 +656,7 @@ const RequestSchema = {
                     },
                     addNew: {
                         //Add new facility to current selectedTeam.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
@@ -677,6 +699,7 @@ const RequestSchema = {
                 source: Teams,
             },
             condition: ( request ) => {
+
                 let selectedTeam = Session.get( 'selectedTeam' );
                 teamType = null;
                 if ( selectedTeam ) {
@@ -684,9 +707,8 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
-                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
-                    : false
+                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             defaultValue: ( item ) => {
@@ -713,9 +735,10 @@ const RequestSchema = {
                 return {
                     items: facility && facility.getSuppliers ? facility.getSuppliers() : null,
                     view: ContactCard,
+                    readOnly: item.status == 'Issued',
                     addNew: {
                         //Add new supplier to request and selected facility.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { TeamStepper } from '/modules/models/Teams';
@@ -732,11 +755,25 @@ const RequestSchema = {
                             } )
                         }
                     },
-                    afterChange: ( item ) => {
-
+                    afterChange: ( request, supplier ) => {
+                        //console.log( supplier );
+                        if( !supplier ) {
+                            request.supplierContacts = [];
+                        }
+                        else if ( supplier.type == 'fm' ) {
+                            request.supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
+                        } else {
+                            request.supplierContacts = supplier.getMembers( { role: 'manager' } );
+                        }
                     }
                 }
             },
+        },
+
+        supplierContacts: {
+            label: "Supplier contacts",
+            type: 'array',
+            size: 12
         },
 
         supplierContact: {
@@ -751,63 +788,68 @@ const RequestSchema = {
                 }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ? 
-                        ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) 
-                    : false
+                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             input( props ) {
+                if ( !props.item.supplierContacts ) {
+                    props.item.supplierContacts = [];
+                }
                 // this should be in it's own component
                 return (
                         <div className="row">
-					<div className="col-xs-12">
-						<Select
-							placeholder 	= "Supplier contact"
-							items 			= {props.items}
-							Model 			= {props.Model}
-							view 			= {props.view}
-							item 			= {props.item}
-							onChange 		= { ( val ) => {
-				                if ( !_.find( props.item.members, m => m._id === val._id) ) {
-				                	props.item.members.push( {
-				                    	_id: val._id,
-				                    	name: val.name || val.profile.name,
-				                    	role: defaultContactRole,
-				                    	email: val.profile.email,
-				                  	} );
-				                	props.onChange( "" );
-				                }
-							} }
-						/>
-					</div>
-					<div className="col-xs-12">
-						{_.map( (_.filter( props.item.members, m => m.role==defaultContactRole )) , ( sc, i ) => (
-							<div className="col-sm-5" key={i}
-								style={{
-									backgroundColor: 'aliceblue',
-    								padding: '5px',
-    								border: '1px solid transparent',
-    								borderRadius: '5px',
-									margin: '5px',
-									borderLeft: '4px solid aquamarine',
-								}}>
-								<span onClick={() => {
-										let id = sc._id;
-										let newValue =	_.filter( props.item.members,  v => v._id !== id );
-										props.item.members = newValue;
-										props.onChange( "" );
-									}}
-									style={{
-										float: 'right',
-										cursor: 'pointer',
-										fontSize: '14px',
-										fontWeight: 'bold',
-										marginRight: '0px',
-										marginTop: '-6px',
-									}} title="Remove tag">&times;</span>
-								<ContactCard item={sc} team={props.team} group={props.group} />
-							</div>))}
-					</div> </div>)
+                    <div className="col-xs-12">
+                        <Select
+                            placeholder     = "Supplier contact"
+                            items           = {props.items}
+                            Model           = {props.Model}
+                            view            = {props.view}
+                            item            = {props.item}
+                            onChange        = { ( val ) => {
+                                let memberExists = props.item.supplierContacts.find( ( contact ) => {
+                                    return contact._id === val._id;
+                                } );
+                                if ( !memberExists) {
+                                    props.item.supplierContacts.push( {
+                                        _id: val._id,
+                                        name: val.name || val.profile.name,
+                                        role: defaultContactRole,
+                                        email: val.profile.email,
+                                    } );
+                                    props.onChange( "" );
+                                }
+                            } }
+                        />
+                    </div>
+                    <div className="col-xs-12">
+                        {_.map( props.item.supplierContacts, ( sc, i ) => (
+                            <div className="col-sm-5" key={i}
+                                style={{
+                                    backgroundColor: 'aliceblue',
+                                    padding: '5px',
+                                    border: '1px solid transparent',
+                                    borderRadius: '5px',
+                                    margin: '5px',
+                                    borderLeft: '4px solid aquamarine',
+                                }}>
+                                <span onClick={() => {
+                                        let id = sc._id,
+                                            newValue =  _.filter( props.item.supplierContacts,  v => v._id !== id );
+                                        props.item.supplierContacts = newValue;
+                                        props.onChange( "" );
+                                    }}
+                                    style={{
+                                        float: 'right',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        marginRight: '0px',
+                                        marginTop: '-6px',
+                                    }} title="Remove tag">&times;</span>
+                                <ContactCard item={sc} team={props.team} group={props.group} />
+                            </div>))}
+                    </div> </div>)
                     },
                     options( item ) {
                         let supplier = null,
@@ -822,6 +864,7 @@ const RequestSchema = {
                             members = Users.findAll( { _id: { $in: ids } } );
                         }
                         return {
+                            readOnly: item.status == 'Issued',
                             items: members,
                             view: ContactCard
                         }
@@ -833,7 +876,7 @@ const RequestSchema = {
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
                     let role = Meteor.user().getRole();
-                    if ( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident" ) {
+                    if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
                         return false;
                     }
                     let team = Session.getSelectedTeam();
@@ -942,7 +985,62 @@ const RequestSchema = {
                 }
             },
 
+            footer: {
+                size: 12,
+                input( props ) {
+                    let period
+                    if ( props.item.frequency.period ) {
+                        switch ( props.item.frequency.period ) {
+                            case "daily":
+                                period = "day"
+                                break;
+                            case "fortnightly":
+                                period = "fortnight"
+                                break;
+                            case "weekly":
+                                period = "week"
+                                break;
+                            case "monthly":
+                                period = "month"
+                                break;
+                            case "quarterly":
+                                period = "quarter"
+                                break;
+                            case "annually":
+                                period = "year"
+                                break;
+                            default:
 
+                        }
+                        period = props.item.frequency.number > 1?
+                            ( period || props.item.frequency.period ) + "s":
+                            ( period || props.item.frequency.period );
+                    }
+                    return (
+                        <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
+                            {props.item.frequency.number && props.item.frequency.period && props.item.frequency.endDate?
+                                <div>
+                                    {`Repeats every ${props.item.frequency.number} ${period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`}
+                                </div>:(
+                                    props.item.frequency.number && props.item.frequency.period ?
+                                    <div>
+                                        {`Repeats every ${props.item.frequency.number} ${period} until stopped`}
+                                    </div>:(
+                                        props.item.frequency.period && props.item.frequency.endDate?
+                                        <div>
+                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                        </div>:
+                                        <div>
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                        </div>
+                                    )
+                                )
+                            }
+                        </div>
+                    );
+                },
+                condition: "Preventative",
+            }
 
         }
 
@@ -966,6 +1064,7 @@ const RequestSchema = {
             let members = [ {
                 _id: owner._id,
                 name: owner.profile.name,
+                email: owner.profile.email,
                 role: "owner"
             } ];
 
@@ -973,6 +1072,7 @@ const RequestSchema = {
                 members.push( {
                     _id: m._id,
                     name: m.profile.name,
+                    email: m.profile.email,
                     role: "team manager"
                 } )
             } );
@@ -987,6 +1087,7 @@ const RequestSchema = {
                     members.push( {
                         _id: m._id,
                         name: m.profile.name,
+                        email: m.profile.email,
                         role: "facility manager"
                     } )
                 } );

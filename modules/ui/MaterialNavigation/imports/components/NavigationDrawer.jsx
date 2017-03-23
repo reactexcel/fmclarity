@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import { Modal } from '/modules/ui/Modal';
 
 /**
  * @class 			NavigationDrawer
@@ -21,7 +22,8 @@ class NavigationDrawer extends React.Component {
 	selectRoute( route ) {
 		this.setState( {
 			selectedRouteName: route.name
-		} )
+		} );
+		Modal.hide();
 		route.run();
 	}
 	toggleDeviceView(  ) {

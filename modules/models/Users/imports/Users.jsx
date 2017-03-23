@@ -27,8 +27,7 @@ const Users = new Model( {
     collection: Meteor.users,
     mixins: [
         Owners,
-        DocMessages,
-        [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
+        DocMessages, [ Thumbs, { repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png" } ]
     ]
 } )
 
@@ -42,6 +41,7 @@ if ( Meteor.isServer ) {
     Meteor.publish( 'Users', () => {
         return Users.find();
     } );
+    Users.collection._ensureIndex( { 'profile.email': 1 }, { unique: false } );
 }
 
 /** Added method create user is added **/
@@ -92,6 +92,24 @@ Users.actions( {
             }
         },
     },
+    getThreshold: {
+        authentication: true,
+        helper: function( user, group ) {
+            if ( Meteor.isClient && !group ) {
+                // causes problems when evaluated server side
+                group = user.getSelectedTeam();
+            }
+            if ( !group || !group.members || !group.members.length ) {
+                return null;
+            }
+            for ( var i in group.members ) {
+                var currentMember = group.members[ i ];
+                if ( currentMember && user && currentMember._id == user._id ) {
+                    return currentMember.threshold;
+                }
+            }
+        },
+    },
     //this to by updated to save/retrieve from database
     //thereby making persistent
     getSelectedTeam: {
@@ -126,12 +144,18 @@ Users.actions( {
     getRequests: {
         authentication: true,
         //subscription:???
+
+        // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
 
-            let query = [
-                { 'members._id': user._id }
-            ]
-            
+            let query = [ {
+                'members._id': user._id
+            } ]
+
+            if ( user.role == 'admin' ) {
+                query = [ { _id: { $ne: null } } ]
+            }
+
             //if filter passed to function then add that to the query
             if ( filter ) {
                 query.push( filter );
@@ -217,6 +241,9 @@ Meteor.methods( {
     },
     'User.getRole': () => {
         return Meteor.user().getRole();
+    },
+    'User.getThreshold': () => {
+        return Meteor.user().getThreshold();
     },
 } )
 

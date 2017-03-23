@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="selenium.base" href="http://52.62.112.58:3000/" />
+<link rel="selenium.base" href="http://52.62.112.58:3000//" />
 <title>Requests-LoginAsStaff-Leonie_Roberts</title>
 </head>
 <body>
@@ -27,43 +27,46 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>css=.menu-item-portfolio&gt;a</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>css=.menu-item-suppliers&gt;a</td>
+	<td>css=.menu-item-portfolio&gt;a</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=.contact-card-2line-text:contains('O.P Industries (Melbourne) Pty Ltd');</td>
+	<td>xpath=//div[ @class='thumbnail-overlay' and contains(./h3,'370 Docklands Dve')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.contact-card-2line-text:contains('O.P Industries (Melbourne) Pty Ltd');</td>
+	<td>xpath=//div[ @class='thumbnail-overlay' and contains(./h3,'370 Docklands Dve')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=.tab:contains('Personnel')</td>
+	<td>xpath=//div[ @class='tab' and contains(./span,'Personnel')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.tab:contains('Personnel')</td>
+	<td>xpath=//div[ @class='tab' and contains(./span,'Personnel')]</td>
 	<td></td>
 </tr>
+<!--
+Click first instance of property manager in personnel tab of Docklands' settings.
+-->
 <tr>
 	<td>waitForElementPresent</td>
-	<td>css=.contact-card-line-1:contains('Michelle Cooper')</td>
+	<td>xpath=//div[ @class='contact-card contact-card-2line' and contains(./span/span[2],'property manager') ][1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=.contact-card-line-1:contains('Michelle Cooper')</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=div.business-card &gt; div.noprint &gt; a.dropdown-toggle.tools-icon</td>
+	<td>xpath=//div[ @class='contact-card contact-card-2line' and contains(./span/span[2],'property manager') ][1]</td>
 	<td></td>
 </tr>
 <tr>

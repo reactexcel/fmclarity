@@ -9,7 +9,7 @@ import ComplianceActions from '../../actions.jsx';
 export default ComplianceViewDetail = React.createClass( {
 
     mixins: [ ReactMeteorData ],
-
+    currentSetviceTabToShow:0,
     getMeteorData() {
         var data = {};
         data.facility = Session.getSelectedFacility();
@@ -38,7 +38,6 @@ export default ComplianceViewDetail = React.createClass( {
     },
     loadDefaultRules() {
 		let facility = Session.getSelectedFacility();
-		let servicesRequired = facility && facility.servicesRequired;
 		if( facility ) {
 			Meteor.call("Facilities.setupCompliance", facility, DefaultComplianceRule )
 		}
@@ -51,16 +50,40 @@ export default ComplianceViewDetail = React.createClass( {
         })
       }
     },
+    removeComplianceRule(servicePosition, rulePosition, serviceName ) {
+        let facility = this.data.facility;
+        facility.removeComplianceRule(servicePosition, rulePosition, serviceName);
+    },
+    componentDidUpdate(){
+        this.handelCollaps( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
+    },
+    handelCollaps(  idx ) {
+        $("div.serviceTabHeader").each( function() {
+            if ( idx == null ) {
+                // if ( $(this).attr("id") == 0 ) {
+                //     $(this).show();
+                // } else{
+                //     $(this).hide();
+                // }
+            } else if ( idx != null && $(this).attr("id") == idx ) {
+                $(this).slideToggle();
+                this.currentSetviceTabToShow = idx;
+            }
+        } );
+    },
+    updateRule( rulePosition, updatedRule, serviceName, servicePosition, subservicePosition ) {
+        let facility = this.data.facility;
+        facility.updateComplianceRule( rulePosition, updatedRule, serviceName, servicePosition, subservicePosition );
+    },
 
     render() {
         var facility = this.data.facility;
         if ( !facility )
             return <div/>
-        var thumb, services;
 
-        services = _.filter( facility.servicesRequired, ( svc ) => {
-            return svc.data && svc.data.complianceRules && svc.data.complianceRules.length } );
-        thumb = "img/services/Building Works.jpg";
+        let thumb = "img/services/Building Works.jpg",
+            services = facility.servicesRequired;
+        /*
         if ( services.length && !this.state.coverImageName ) {
             // var i = Math.floor( Math.random() * services.length );
             // thumb = "img/services/" + services[ i ].name + ".jpg";
@@ -68,7 +91,7 @@ export default ComplianceViewDetail = React.createClass( {
         } else {
           thumb = "img/services/" + this.state.coverImageName + ".jpg";
         }
-
+        */
         var results = ComplianceEvaluationService.evaluateServices( services );
 
         return (
@@ -104,20 +127,79 @@ export default ComplianceViewDetail = React.createClass( {
                     </div>
                 </div>
 
-                {services.map((service,idx)=>{
-                    return <div key={idx+'-'+service.name} style={{position:"relative"}}>
-                        <ServiceListTile item={service}
-                          onClick={( event) => {
-                            this.setCoverImage( event, service );
-                          }}/>
-                        <ComplianceGroup item={service}
-                          onClick={( event) => {
-                            this.setCoverImage( event, service );
-                          }}/>
-                        <i style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"5px",top:"5px"}} className="fa fa-trash" onClick={()=>{this.deleteRules(service.name)}}/>
-                    </div>
-                })}
+                {services.map( (service, idx) => {
 
+                    return ( !service || !service.data || !service.data.complianceRules || !service.data.complianceRules.length ) ? <div key={idx}/>
+                    :<div key={idx+'-'+service.name} className="service-list-header">
+                            <ServiceListTile item={service}
+                                onClick={( event) => {
+                                    this.setCoverImage( event, service );
+                                }}
+                                isService={ true }
+                                />
+                            <div id={idx} className={"serviceTabHeader"} >
+                                <ComplianceGroup item={service}
+                                    onClick={( event) => {
+                                        this.setCoverImage( event, service );
+                                    }}
+                                    onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx )}
+                                    removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                    />
+                                <div>
+                                    { service.children && service.children.map( ( subservice, idy) => {
+                                        return ( !subservice || !subservice.data || !subservice.data.complianceRules || !subservice.data.complianceRules.length ) ? <div  key={idy}/>
+                                    : <div key={idx+'-'+subservice.name} className="subservice-list-header">
+                                                {/*<span>{subservice.name}</span>*/}
+                                                <ServiceListTile item={subservice}
+                                                    onClick={( event) => {
+                                                        this.setCoverImage( event, service );
+                                                    }}
+                                                    isService={ false }
+                                                    />
+                                                <div id={idx+"-"+idy} className={"serviceTabHeader"} >
+                                                    <ComplianceGroup item={subservice}
+                                                        onClick={( event) => {
+                                                            this.setCoverImage( event, service );
+                                                        }}
+                                                        onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx, idy )}
+                                                        removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                                        />
+                                                </div>
+                                                <span className="subservice-list-header-icon">
+                                                    <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"-3px"}}>
+                                                        <button className="btn btn-flat" style={{height: "23px"}} id={idy} onClick={( event ) => {
+                                                            this.handelCollaps(idx+"-"+idy)
+                                                        }}>
+                                                            <i className={`fa fa-expand`} aria-hidden="true"/>
+                                                        </button>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        })
+                                    }
+                                </div>
+                            </div>
+                            <span className="service-list-header-icon">
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"0px"}}>
+                                    <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                        this.deleteRules(service.name)
+                                    }}>
+                                        <i className={`fa fa-times`} aria-hidden="true"/>
+                                    </button>
+                                </span>
+                                <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"0px"}}>
+                                    <button className="btn btn-flat" id={idx} onClick={( event ) => {
+                                        this.handelCollaps(idx)
+                                    }}>
+                                        <i className={`fa fa-expand`} aria-hidden="true"/>
+                                    </button>
+                                </span>
+                            </span>
+
+                        </div>
+                    }
+                )
+            }
             </div>
         )
     }

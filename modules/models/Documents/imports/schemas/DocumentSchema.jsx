@@ -51,6 +51,11 @@ export default DocumentSchema = {
 				"Invoice",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",
@@ -201,6 +206,11 @@ export default DocumentSchema = {
 				"Invoice",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",
@@ -283,6 +293,122 @@ export default DocumentSchema = {
 		condition: function( item ) {
 			return [
 				"Insurance",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	reportType: {
+		input: Select,
+		label: "Report type",
+		optional: true,
+		options: {
+			items:[
+				'Validation Report',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Report",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	confirmationType: {
+		input: Select,
+		label: "Confirmation type",
+		optional: true,
+		options: {
+			items:[
+				'Bunding',
+				'Manifest',
+				'Signage',
+				'Spill bins',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Confirmation",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	logType:{
+		input: Select,
+		label: "Log type",
+		optional: true,
+		options: {
+			items:[
+				'Warden training',
+				'Chief Warden training',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Log",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	certificateType:{
+		input: Select,
+		label: "Certificate type",
+		optional: true,
+		options: {
+			items:[
+				'Certificate of Occupancy',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Certificate",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	registerType:{
+		input: Select,
+		label: "Register type",
+		optional: true,
+		options: {
+			items:[
+				'Incident register',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Register",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	registrationType:{
+		input: Select,
+		label: "Registration type",
+		optional: true,
+		options: {
+			items:[
+				'Testing & Tagging certificate',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Registration",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	procedureType:{
+		input: Select,
+		label: "Procedure type",
+		optional: true,
+		options: {
+			items:[
+				'Restricted access',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Procedure",
 			].indexOf( item.type ) > -1;
 		},
 	},
@@ -435,6 +561,11 @@ export default DocumentSchema = {
 				"Lease",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",

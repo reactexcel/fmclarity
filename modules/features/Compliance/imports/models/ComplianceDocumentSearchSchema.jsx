@@ -48,6 +48,115 @@ export default ComplianceDocumentSearchSchema = {
 			].indexOf( item.type ) > -1;
 		},
 	},
+    reportType: {
+		input: Select,
+		label: "Report type",
+		optional: true,
+		options: {
+			items:[
+				'Validation Report',
+			],
+            afterChange( item ) {
+                createQuery(item, item.insuranceType, "reportType" )
+            }
+		},
+		size: 6,
+		condition: "Report",
+	},
+	confirmationType: {
+		input: Select,
+		label: "Confirmation type",
+		optional: true,
+		options: {
+			items:[
+				'Bunding',
+				'Manifest',
+				'Signage',
+				'Spill bins',
+			],
+            afterChange( item ) {
+                createQuery(item, item.insuranceType, "confirmationType" )
+            }
+		},
+		size: 6,
+		condition: "Confirmation",
+	},
+    logType:{
+		input: Select,
+		label: "Log type",
+		optional: true,
+		options: {
+			items:[
+				'Warden training',
+				'Chief Warden training',
+			],
+            afterChange( item ) {
+                createQuery(item, item.logType, "logType" )
+            }
+		},
+		size: 6,
+		condition: "Log",
+	},
+	certificateType:{
+		input: Select,
+		label: "Certificate type",
+		optional: true,
+		options: {
+			items:[
+				'Certificate of Occupancy',
+			],
+            afterChange( item ) {
+                createQuery(item, item.certificateType, "certificateType" )
+            }
+		},
+		size: 6,
+		condition: "Certificate",
+	},
+	registerType:{
+		input: Select,
+		label: "Register type",
+		optional: true,
+		options: {
+			items:[
+				'Incident register',
+			],
+            afterChange( item ) {
+                createQuery(item, item.registerType, "registerType" )
+            }
+		},
+		size: 6,
+		condition: "Register",
+	},
+	registrationType:{
+		input: Select,
+		label: "Registration type",
+		optional: true,
+		options: {
+			items:[
+				'Testing & Tagging certificate',
+			],
+            afterChange( item ) {
+                createQuery(item, item.registrationType, "registrationType" )
+            }
+		},
+		size: 6,
+		condition: "Registration",
+	},
+	procedureType:{
+		input: Select,
+		label: "Procedure type",
+		optional: true,
+		options: {
+			items:[
+				'Restricted access',
+			],
+            afterChange( item ) {
+                createQuery(item, item.procedureType, "procedureType" )
+            }
+		},
+		size: 6,
+		condition: "Procedure",
+	},
     serviceType: {
         input: Select,
         label: "Service type",

@@ -20,8 +20,8 @@ const create = new Action( {
         let team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -34,8 +34,8 @@ const edit = new Action( {
         let { roles, actors } = Roles.getRoles( team );
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamStepper item = { team } />
-			</DropFileContainer>
+                <TeamStepper item = { team } />
+            </DropFileContainer>
         } )
     }
 } )
@@ -47,7 +47,7 @@ const view = new Action( {
     action: ( team ) => {
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-				<TeamPanel item = { team } />
+                <TeamPanel item = { team } />
             </DropFileContainer>
         } )
     }
@@ -83,19 +83,21 @@ const createFacility = new Action( {
             let clientsOfSupplier = team.getClientsOfSupplier();
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<CreateSupplierFacility clients={clientsOfSupplier} />
-				</DropFileContainer>
+                    <CreateSupplierFacility clients={clientsOfSupplier} />
+                </DropFileContainer>
             } )
         } else {
             Modal.show( {
                 content: <DropFileContainer model={Facilities}>
-					<FacilityStepperContainer params = { { item } } />
-				</DropFileContainer>
+                    <FacilityStepperContainer params = { { item } } />
+                </DropFileContainer>
             } )
         }
     }
 } )
 
+// now that we are evaluating people based on their role in the request then we can perhaps actually
+// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -103,8 +105,12 @@ const createRequest = new Action( {
     verb: "created a work order",
     icon: 'fa fa-plus',
     // action should return restult and that gets used in the notification
-    action: ( team, callback ) => {
+    action: ( team, callback, options ) => {
         let item = { team };
+        if ( options ) {
+            options.team = team;
+            item = options
+        }
         newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
@@ -116,31 +122,76 @@ const createRequest = new Action( {
                 ( newRequest ) => {
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-								<RequestPanel item = { newRequest }/>
-							</DropFileContainer>
+                                <RequestPanel item = { newRequest }/>
+                            </DropFileContainer>
                     } );
-                    let team = Teams.findOne( newRequest.team._id ),
-                        role = Meteor.user().getRole( team );
-
 
                     let owner = Meteor.user();
+
                     newRequest.owner = {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
-                    if ( newRequest.type == 'Preventative' ) {
-                        Meteor.call( 'Issues.create', newRequest );
-                        //RequestActions.clone.run( newRequest );
-                    } else if ( _.contains( [ 'portfolio manager', 'fmc support' ], role ) && newRequest.supplier && newRequest.supplier._id ) {
-                        Meteor.call( 'Issues.issue', newRequest );
-                    } else if ( _.contains( [ 'manager', 'caretaker' ], role ) && ( team.defaultCostThreshold && newRequest.costThreshold <= team.defaultCostThreshold ) ) {
-                        Meteor.call( 'Issues.issue', newRequest );
-                    } else {
-                        Meteor.call( 'Issues.create', newRequest );
+                    // this is a big of a mess - for starters it would be better placed in the create method
+                    //  and then perhaps in its own function "canAutoIssue( request )"
+                    let hasSupplier = newRequest.supplier && newRequest.supplier._id,
+                        method = 'Issues.create';
+
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
+
+                        let team = Teams.findOne( newRequest.team._id ),
+                            role = Meteor.user().getRole( team ),
+                            baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
+
+                        if( !team ) {
+                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+                            return;
+                        }
+                        else if( baseBuilding ) {
+
+                            if( role == 'property manager' ) {
+                                method = 'Issues.issue';
+                            }
+                        }
+                        else if( !baseBuilding ) {
+
+                            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                                method = 'Issues.issue';
+                            }
+                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
+
+                                method = 'Issues.issue';
+                                let relation = team.getMemberRelation( owner ),
+                                    costString = newRequest.costThreshold,
+                                    costThreshold = null;
+
+                                // strips out commas
+                                //  this is a hack due to an inadequete implementation of number formatting
+                                //  needs a refactor
+                                if( _.isString( costString ) ) {
+                                    costString = costString.replace(',','')
+                                }
+
+                                let cost = parseInt( costString );
+
+                                if( relation.threshold ) {
+                                    costThreshold = parseInt( relation.threshold );
+                                }                                
+                                else if( team.defaultCostThreshold ) {
+                                    costThreshold = parseInt( team.defaultCostThreshold );
+                                }
+
+                                if( cost > costThreshold ) {
+                                    method = 'Issues.create';
+                                }
+
+                            }
+                        }
                     }
 
-                    let request = Requests.collection._transform( newRequest );
+                    Meteor.call( method, newRequest );
+                    let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     //callback( newRequest );
                 }

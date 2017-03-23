@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import { Model } from '/modules/core/ORM';
@@ -23,7 +23,7 @@ import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 import moment from 'moment';
 
 /**
- * @memberOf 		module:models/Requests
+ * @memberOf        module:models/Requests
  */
 const Requests = new Model( {
     schema: RequestSchema,
@@ -44,22 +44,8 @@ const Requests = new Model( {
     ]
 } )
 
-if ( Meteor.isServer ) {
-    Meteor.publish( 'Requests', () => {
-        return Requests.find();
-    } );
-
-    Meteor.publish( 'Requests: Closed', () => {
-        return Requests.find( { status: 'Closed' } );
-    } );
-
-    Requests.collection._ensureIndex( { 'team._id': 1 } );
-    Requests.collection._ensureIndex( { 'owner._id': 1 } );
-    Requests.collection._ensureIndex( { 'members._id': 1 } );
-}
-
 Requests.save.before( ( request ) => {
-    
+
     if ( request.type == "Preventative" ) {
         request.status = "PMP";
         request.priority = "PMP";
@@ -72,17 +58,17 @@ Requests.save.before( ( request ) => {
         request.costThreshold = 0;
     }
 
-    if (request.supplier) {
-        request.supplier={
-            _id:request.supplier._id,
+    if ( request.supplier ) {
+        request.supplier = {
+            _id: request.supplier._id,
             name: request.supplier.name
-        };        
+        };
     }
-    if (request.team) {
+    if ( request.team ) {
         request.team = {
-            _id:request.team._id,
+            _id: request.team._id,
             name: request.team.name
-        };        
+        };
     }
 } );
 
@@ -134,18 +120,22 @@ Requests.methods( {
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
-            let supplier = request.getSupplier(),
-                supplierManagers = null;
-            if ( supplier ) {
-                if ( supplier.type == 'fm' ) {
-                    supplierManagers = supplier.getMembers( { role: 'portfolio manager' } );
-                } else {
-                    supplierManagers = supplier.getMembers( { role: 'manager' } );
+            let supplierContacts = null;
+            if( request.supplierContacts && request.supplierContacts.length ) {
+                supplierContacts = request.supplierContacts;
+            }
+            else {
+                let supplier = request.getSupplier();
+                if ( supplier ) {
+                    if ( supplier.type == 'fm' ) {
+                        supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
+                    } else {
+                        supplierContacts = supplier.getMembers( { role: 'manager' } );
+                    }
                 }
             }
-
-            if ( supplierManagers ) {
-                request.dangerouslyReplaceMembers( supplierManagers, {
+            if ( supplierContacts && supplierContacts.length ) {
+                request.dangerouslyReplaceMembers( supplierContacts, {
                     role: "supplier manager"
                 } );
             }
@@ -211,6 +201,7 @@ Requests.methods( {
                 newRequest.distributeMessage( {
                     message: {
                         verb: "created",
+                        read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
                         body: newRequest.description
                     }
@@ -294,11 +285,38 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'fortnights',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
@@ -314,11 +332,38 @@ Requests.methods( {
         authentication: true,
         helper: ( request ) => {
             if ( request.frequency ) {
-                let dueDate = moment( request.dueDate ),
+                let period = {},
+                    unit = null,
+                    dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
-                    period = {};
-
-                period[ request.frequency.unit ] = parseInt( request.frequency.number );
+                    freq = {
+                        "daily": 'days',
+                        "fortnightly": 'weeks',
+                        "weekly": 'weeks',
+                        "monthly": 'months',
+                        "quarterly": 'quarterly',
+                        "annually": 'years',
+                    };
+                if ( request.frequency.unit == "custom" ){
+                    unit = request.frequency.period ;
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
+                    repeats = parseInt( request.frequency.number );
+                } else {
+                    if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
+                        unit  = freq[ request.frequency.unit ];
+                        repeats = parseInt( request.frequency.number )
+                    } else {
+                        unit  = request.frequency.unit;
+                    }
+                    if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights")
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
+                }
+                if( request.frequency.unit == "fortnightly" || request.frequency.unit =="fortnights") {
+                    period[ unit ] *= 2;
+                }
                 for ( var i = 0; i < repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
@@ -455,7 +500,7 @@ Requests.methods( {
 
     markRecipentAsRead: {
         authentication: true,
-        helper: function( request ) {
+        method: function( request ) {
             let user = Meteor.user();
             if ( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ) {
                 Requests.update( { _id: request._id }, {
@@ -542,58 +587,26 @@ function setAssignee( request, assignee ) {
 function actionIssue( request ) {
 
     let code = null,
-    userId = Meteor.user( ), 
-    user = Users.findOne( userId._id );
-    if ( request && request.team && !request.code ) {
-        team = Teams.findOne( {
-            _id: request.team._id
-        } );
-        code = team.getNextWOCode();
-        
-        
-        if (user.profile.requestIssueThreshold ) {
-            if (user.profile.requestIssueThreshold>0) {
-                Meteor.call( 'Issues.save', request, {
-                    status: "Issued",
-                    issuedAt: new Date(),
-                    code: code,
-                    members: getMembersDefaultValue( request )
-                } );
-                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
-                Users.save.call( user );
-            }
-            
-        }
-        else{
-            Meteor.call( 'Issues.save', request, {
-                status: "Issued",
-                issuedAt: new Date(),
-                code: code,
-                members: getMembersDefaultValue( request )
+        userId = Meteor.user(),
+        user = Users.findOne( userId._id );
+
+    if ( request ) {
+        if ( request.code ) {
+            code = request.code;
+        } else if ( request.team ) {
+            let team = Teams.findOne( {
+                _id: request.team._id
             } );
-        }
-    } else {
-        
-        if (user.profile.requestIssueThreshold ) {
-            if (user.profile.requestIssueThreshold>0) {
-                Meteor.call( 'Issues.save', request, {
-                    status: "Issued",
-                    issuedAt: new Date(),
-                    members: getMembersDefaultValue( request )
-                } );
-                user.profile.requestIssueThreshold = user.profile.requestIssueThreshold - 1;
-                Users.save.call( user );
-            }
-            
-        }
-        else{
-            Meteor.call( 'Issues.save', request, {
-                status: "Issued",
-                issuedAt: new Date(),
-                members: getMembersDefaultValue( request )
-            } );
+            code = team.getNextWOCode();
         }
     }
+
+    Meteor.call( 'Issues.save', request, {
+        status: "Issued",
+        issuedAt: new Date(),
+        code: code,
+        members: getMembersDefaultValue( request )
+    });
 
 
     request = Requests.findOne( request._id );
@@ -610,19 +623,21 @@ function actionIssue( request ) {
         } );
 
         var team = request.getTeam();
-        request.distributeMessage( {
+        request.distributeMessage({
             recipientRoles: [ "supplier manager" ],
             suppressOriginalPost: true,
             message: {
                 verb: "issued",
                 subject: "New work request from " + " " + team.getName(),
+                read: false,
+                digest: false,
                 emailBody: function( recipient ) {
                     var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
             }
-        } );
+        });
 
         return request;
     }
@@ -685,16 +700,15 @@ function getMembersDefaultValue( item ) {
 
                 let role = member.getRole( facility );
 
-                if( role == 'property manager' ) {
-                    if( item.service.data && item.service.data.baseBuilding ) {
+                if ( role == 'property manager' ) {
+                    if ( item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
                             role: 'property manager'
                         } )
                     }
-                }
-                else {
+                } else {
                     members.push( {
                         _id: member._id,
                         name: member.profile.name,
@@ -774,16 +788,22 @@ function actionComplete( request ) {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
-                target: newRequest.getInboxId()
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true,
+                /*alert: false*/
             }
         } );
 
         newRequest.distributeMessage( {
             message: {
-                verb: "raised follow up to",
+                verb: "requested a follow up to",
                 subject: closer.getName() + " requested a follow up to " + request.getName(),
                 body: newRequest.description,
-                target: request.getInboxId()
+                target: request.getInboxId(),
+                digest: false,
+                read: true,
+                /*alert: false*/
             }
         } );
 
