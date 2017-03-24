@@ -33,6 +33,7 @@ export default CreateRequestForm = [
 	'description',
 
 	'attachments',
-	'footer'
+	'footer',
+	'occupancy'
 
 ];
