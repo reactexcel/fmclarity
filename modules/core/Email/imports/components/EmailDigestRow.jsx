@@ -45,7 +45,7 @@ export default EmailDigestRow = React.createClass( {
                     <i>{ message.getTargetName() }&nbsp;</i>
                     { facility ? <span>at { facility.getName() }&nbsp;</span> : null }
                 </a>
-                { message.body ? <blockquote>{ message.body }</blockquote> : null }
+                { ( message.verb == 'commented on' && message.body ) ? <blockquote>{ message.body }</blockquote> : null }
             </div>
         )
     }

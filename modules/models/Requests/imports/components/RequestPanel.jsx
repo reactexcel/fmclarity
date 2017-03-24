@@ -158,7 +158,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 ?
                                 "Supplier: "+ request.supplier.name
                                 :
-                                "Client: "+ request.team.name
+                                "Client: "+ ( requestIsBaseBuilding && realEstateAgency ? realEstateAgency.name : request.team.name )
                             }
                         </h2>
                         <AddressLink item = { facility.address }/>
@@ -242,7 +242,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { teamType=='fm' && request.service && request.type != 'Booking' ?
                 <tr>
                     <th>Service</th>
-                    <td>{request.getServiceString()}</td>
+                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
                 </tr>
                 : null
                 }
