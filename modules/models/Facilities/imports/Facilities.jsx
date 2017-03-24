@@ -398,7 +398,9 @@ Facilities.actions( {
             let ids = [],
                 names = [],
                 suppliers = null;
-
+            let facilitySuppliers = _.uniq(facility.suppliers, s => s._id);
+                ids = _.pluck(facilitySuppliers, "_id");
+                names = _.pluck(facilitySuppliers, "name");
             if ( _.isArray( facility.servicesRequired ) ) {
                 _.map( facility.servicesRequired, ( s ) => {
                         let supplier = null;
