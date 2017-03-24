@@ -55,7 +55,7 @@ const Requests = new Model( {
                                 //remove everyone who isn't pm
                                 for( let i in memberRoles ) {
                                     let role = memberRoles[ i ];
-                                    if( role == 'property manager' ) {
+                                    if( _.contains( [ 'property manager', 'supplier manager', 'assignee' ], role ) ) {
                                         newMembers.push( member );
                                         break;
                                     }
@@ -190,13 +190,25 @@ Requests.methods( {
     getMessages: {
         authentication: true,
         helper: ( request ) => {
-            let user = Meteor.user();
-            let messages = Messages.findAll( {
-                $and: [
-                    { 'inboxId.query._id': user._id },
-                    { 'target.query._id': request._id }
-                ],
-            }, { sort: { createdAt: 1 } } );
+            let user = Meteor.user(),
+                team = Session.getSelectedTeam(),
+                query = null;
+
+            if( team.type == 'contractor' ) {
+                query = {
+                    'inboxId.query._id': request._id
+                }
+            }
+            else {
+                query = {
+                    $and: [
+                        { 'inboxId.query._id': user._id },
+                        { 'target.query._id': request._id }
+                    ]
+                }                
+            }
+
+            let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
             return messages;
         }
     },
