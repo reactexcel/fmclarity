@@ -98,7 +98,7 @@ const RequestSchema = {
                     return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        return { 
+                        return {
                             items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
@@ -110,7 +110,7 @@ const RequestSchema = {
                                     request.area = request.area ? request.area : null;
                                     request.level = request.level ? request.level : null;
                                 }
-                                    
+
                                 }
                              };
                     } else {
@@ -222,8 +222,19 @@ const RequestSchema = {
                 if ( item.facility ) {
                     facility = Facilities.findOne( item.facility._id );
                 }
+                let areas = []
+                if(item.type == "Booking"){
+                    let allArea = facility ? facility.areas : []
+                    allArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            areas.push(area)
+                        }
+                    })
+                } else {
+                    areas = facility ? facility.areas : null
+                }
                 return {
-                    items: facility ? facility.areas : null
+                    items: areas
                 }
             },
             defaultValue: (request ) => {
@@ -249,8 +260,19 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.area );
             },
             options: ( item ) => {
+                let subAreas = [];
+                if(item.type == "Booking"){
+                    let allSubArea = item.level ? item.level.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    })
+                } else {
+                    subAreas = item.level ? item.level.children : null
+                }
                 return {
-                    items: item.level ? item.level.children : null
+                    items: subAreas
                 }
             }
         },
@@ -270,8 +292,19 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
+                let subAreas =[];
+                if(item.type == 'Booking'){
+                    let allSubArea = item.area && item.area.children ? item.area.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    })
+                } else {
+                    subAreas = item.area ? item.area.children : null
+                }
                 return {
-                    items: item.area ? item.area.children : null
+                    items: subAreas
                 }
             }
         },
