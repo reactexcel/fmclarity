@@ -119,7 +119,6 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 		let form = this.form;
 		let { keys, schema } = form;
-
 		return keys.map( ( key ) => {
 
 			if ( !schema[ key ] ) {
@@ -164,7 +163,6 @@ class AutoForm extends React.Component {
 							errors 		= { errors }
 
 							hideSubmit 	= { true }
-
 							// since we are calling this recursively we need to update the parent state with the changes from the child
 							onChange 	= { ( newState ) => {
 												let item = this.state.item,
@@ -186,7 +184,6 @@ class AutoForm extends React.Component {
 			// otherwise determine the type of input to create and make it,
 			//  passing on the fields options as params
 			else {
-
 				if ( _.isObject( input ) ) {
 					Input = input;
 				}
@@ -210,7 +207,9 @@ class AutoForm extends React.Component {
 
 							fieldName 	= { key }
 							value 		= { item[ key ] }
-							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
+							onChange	= { ( update, modifiers ) => {
+								form.updateField( key, update, modifiers )
+							} }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
@@ -231,7 +230,6 @@ class AutoForm extends React.Component {
 	render() {
 
 		//console.log( 'rendering form' );
-
 		return (
 			<div className="autoform row">
 
