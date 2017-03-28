@@ -5,6 +5,8 @@
 
 import React from "react";
 
+import moment from 'moment';
+
 import DocViewEdit from './DocViewEdit.jsx';
 
 import { DocActions } from '/modules/models/Documents';
@@ -68,20 +70,29 @@ export default function DocIcon( props ) {
     }
     if ( item == null ) {
         return (
+        <div>
             <div className = "doc-icon" onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 			<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 		</div>
+        <table className="doc-icon pull-right" style={{fontStyle:"italic"}}>
+            <tr>
+                <td><div style={{height:"18px",width:"18px",background:"#ffffcc"}}></div></td>
+                <td style = {{ color: "rgb(153, 153, 153)" }}>Expires within 2 weeks</td>
+            </tr>
+        </table>
+        </div>
         )
     }
     let color = "#000";
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
+    let docAlmostExpires = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
-		<div className = "doc-icon" onClick={handleClick}>
+		<div className={"doc-icon " + (docAlmostExpires ? 'expired-doc' : '')} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
