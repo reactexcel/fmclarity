@@ -84,7 +84,6 @@ const Select = React.createClass( {
 			clearOption,
 			addNew = false, //should be false initialy
 		} = this.props;
-
 		let ListTile = view,
 			invalid = false,
 			disabled = this.props.disabled,

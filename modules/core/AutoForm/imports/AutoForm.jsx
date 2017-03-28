@@ -32,7 +32,7 @@ class AutoForm extends React.Component {
 
 		this.state = {
 			item: this.form.item,
-			errors: this.form.errors || {}
+			errors: this.form.errors || {},
 		}
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
@@ -214,7 +214,10 @@ class AutoForm extends React.Component {
 							placeholder	= { placeholder }
 							description	= { description }
 							maxLength 	= { maxLength }
-
+							changeSubmitText={(value)=> {
+								let val = value==null?"Save":"Issue"
+								this.setState({submitText: val})
+							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
 
@@ -247,7 +250,9 @@ class AutoForm extends React.Component {
 						className 	= "btn btn-flat btn-primary"
 						onClick 	= { ( ) => { this.submit() } }
 					>
-						{this.props.submitText?this.props.submitText:'Submit'}
+
+						{this.state.submitText?this.state.submitText:
+						    (this.props.submitText?this.props.submitText:'Submit')}
 					</button>
 				</div>
 
