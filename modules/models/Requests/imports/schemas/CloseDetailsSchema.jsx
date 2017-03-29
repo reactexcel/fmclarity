@@ -5,7 +5,10 @@ export default CloseDetailsSchema = {
     attendanceDate: {
         label: "Attendance date and time",
         input: DateTime,
-        size: 6
+        size: 6,
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
+        },
     },
 
     completionDate: {
@@ -15,9 +18,20 @@ export default CloseDetailsSchema = {
         required: true,
         defaultValue: () => {
             return new Date();
-        }
+        },
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
+        },
     },
 
+    comment:{
+        label: "Comment",
+        input: TextArea,
+        required: true,
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == true;
+        },
+    },
     /*
     serviceReport: {
       label:"Service report",
@@ -28,15 +42,30 @@ export default CloseDetailsSchema = {
     serviceReport: {
         label: "Service report",
         input: FileField,
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
+        },
     },
 
     invoice: {
         label: "Invoice",
         input: FileField,
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
+        },
     },
 
     furtherWorkRequired: {
         label: "Further work required",
+        type: "boolean",
+        input: Switch,
+        condition( item ) {
+            return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
+        },
+    },
+
+    jobCancelled: {
+        label: "Job Cancelled",
         type: "boolean",
         input: Switch
     },
@@ -46,7 +75,7 @@ export default CloseDetailsSchema = {
         input: TextArea,
         required: true,
         condition( item ) {
-            return item.furtherWorkRequired == true;
+            return item.furtherWorkRequired == true && (item.jobCancelled == undefined ? false : item.jobCancelled) == false;
         },
     },
 
@@ -57,7 +86,7 @@ export default CloseDetailsSchema = {
             items: [ "Scheduled", "Standard", "Urgent", "Critical" ]
         },
         condition( item ) {
-            return item.furtherWorkRequired == true;
+            return item.furtherWorkRequired == true && (item.jobCancelled == undefined ? false : item.jobCancelled) == false;
         },
     },
 
@@ -66,7 +95,7 @@ export default CloseDetailsSchema = {
         input: FileField,
         optional: true,
         condition( item ) {
-            return item.furtherWorkRequired == true;
+            return item.furtherWorkRequired == true && (item.jobCancelled == undefined ? false : item.jobCancelled) == false;
         },
     },
 
@@ -75,7 +104,7 @@ export default CloseDetailsSchema = {
         input: Currency,
         optional: true,
         condition( item ) {
-            return item.furtherWorkRequired == true;
+            return item.furtherWorkRequired == true && (item.jobCancelled == undefined ? false : item.jobCancelled) == false;
         },
     }
 }

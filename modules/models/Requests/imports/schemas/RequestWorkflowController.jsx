@@ -576,7 +576,6 @@ function actionBeforeComplete( request ) {
 }
 
 function actionComplete( request ) {
-
 	Requests.save.call( request, {
 		status: 'Complete',
 		closeDetails: request.closeDetails
@@ -739,7 +738,7 @@ Requests.methods({
 			 AuthHelpers.managerOfRelatedTeam(role,user,request)||
 			 AuthHelpers.memberOfSuppliersTeam(role,user,request)
 		  )
-		)  
+		)
 	 }
   },
   close:{
