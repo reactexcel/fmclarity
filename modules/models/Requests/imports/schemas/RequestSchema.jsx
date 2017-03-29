@@ -99,7 +99,7 @@ const RequestSchema = {
                     return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        return { 
+                        return {
                             items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
@@ -111,7 +111,7 @@ const RequestSchema = {
                                     request.area = request.area ? request.area : null;
                                     request.level = request.level ? request.level : null;
                                 }
-                                    
+
                                 }
                              };
                     } else {

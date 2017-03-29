@@ -205,9 +205,6 @@ const Select = React.createClass( {
 				} }
 				onBlur={(e)=>{
 					let $selected = $('ul#open > li').filter('.onFocus')
-					if($selected.length){
-						$selected.click();
-					}
 					this.setOpen( false );
 				}}
 				onKeyDown={(e)=>{
