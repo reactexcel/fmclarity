@@ -96,7 +96,7 @@ const RequestSchema = {
                 }
 
                 if ( teamType == 'contractor' ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
+                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         return { 
@@ -115,7 +115,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
                     }
                 }
             }
