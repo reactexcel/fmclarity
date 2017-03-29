@@ -302,7 +302,7 @@ const SingleServiceRequest = React.createClass( {
 	render() {
 		let data = this.getData();
 		return (
-			<div style={ { marginTop: "50px", marginBottom: "10px", borderTop:"2px solid"  } }>
+			<div style={ { marginTop: "55px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
@@ -316,7 +316,7 @@ const SingleServiceRequest = React.createClass( {
 						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 					</div>
 				</div>
-				<div style={ { marginTop: "5px", marginBottom: "25px" } }>
+				<div style={ { marginTop: "5px", marginBottom: "-15px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
@@ -332,9 +332,10 @@ const SingleServiceRequest = React.createClass( {
 								}}>
 								{!this.state.showEditor?
 									<i className="fa fa-pencil-square-o" aria-hidden="true"></i>:
-										<i className="fa fa-floppy-o" aria-hidden="true"></i>}
-										</button>
-									</span>
+									<i className="fa fa-floppy-o" aria-hidden="true"></i>
+								}
+							</button>
+						</span>
 					</div>
 					<div className="comment-body">
 						{this.state.showEditor?
@@ -342,7 +343,9 @@ const SingleServiceRequest = React.createClass( {
 								value={this.state.comment}
 								onChange={( value ) => {this.setState({ comment: value })}}
 								/>:
-							<pre style={{fontFamily: "inherit"}}>{this.state.comment}</pre>}
+							<div>
+								<p style={{fontFamily: "inherit"}}>{this.state.comment}</p>
+							</div>}
 					</div>
 				</div>
 			</div>
