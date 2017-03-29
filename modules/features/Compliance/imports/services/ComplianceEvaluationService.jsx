@@ -58,18 +58,18 @@ ComplianceEvaluationService = new function() {
                 docName = null,
                 docCurser = null,
                 tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate(),
-                query = rule.document &&rule.document.query ?
-                        JSON.parse( rule.document.query ) : {
-                            "facility._id": facility["_id"],
-                            $and: [
-                                { type: rule.docType },
-                                // { name: { $regex: rule.docName || "", $options: "i" } }
-                            ]
-                        };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                query = rule.document && rule.document.query ?
+                JSON.parse( rule.document.query ) : {
+                    "facility._id": facility[ "_id" ],
+                    $and: [
+                        { type: rule.docType },
+                //        { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                };
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -139,17 +139,17 @@ ComplianceEvaluationService = new function() {
             var doc = null,
                 yesterday, tomorrow, today,
                 query = rule.document && rule.document.query ?
-                    JSON.parse( rule.document.query ) : {
-                        "facility._id": facility["_id"],
-                        $and: [
-                            { type: rule.docType },
-                            // { name: { $regex: rule.docName || "", $options: "i" } }
-                        ]
-                    };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                JSON.parse( rule.document.query ) : {
+                    "facility._id": facility[ "_id" ],
+                    $and: [
+                        { type: rule.docType },
+                    //    { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                };
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -294,40 +294,37 @@ ComplianceEvaluationService = new function() {
                     frequency = event.frequency || {},
                     previousDateString = null;
 
-                if ( nextDate ) {
-                    nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
-                }
-                if ( previousDate ) {
-                    previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
-                }
-                return _.extend( {}, defaultResult, {
-                    passed: true,
-                    message: {
-                        summary: "passed",
-                        //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
-                        detail: function() {
-                            return (
-                                <span style={{position:"absolute", bottom: "13%"}}>
-                                   <span className = "issue-summary-col" style = {{width:"25%"}}>
-                                       due every {`${frequency.number||''} ${frequency.unit||''}`}
-                                   </span>
-                                   <span className = "issue-summary-col" style = {{width:"32%"}}>
-                                       {!!( previousDateString && previousRequest) ?
+               if( nextDate ) {
+                   nextDateString = moment( nextDate ).format('DD/MM/YY');
+               }
+               if( previousDate ) {
+                   previousDateString = moment( previousDate ).format('DD/MM/YY');
+               }
+               return _.extend( {}, defaultResult, {
+                   passed: true,
+                   message: {
+                       summary: "passed",
+                       //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                       detail: function(){
+                           return (
+                               <span style={{position:"absolute", bottom: "30%", width: "37%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       {( previousDateString && previousRequest) ?
                                            <span>
-                                               <span>previous <b>{ previousDateString }</b> </span>
+                                               <span>Last <b>{ previousDateString }</b> </span>
                                                { previousRequest ?
-                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
                                                : null }
                                            </span>
-                                       : null }
+                                       : <span>Last N/A</span> }
                                    </span>
-                                   <span className = "issue-summary-col" style = {{width:"35%"}}>
-                                       { nextDateString && nextRequest ?
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       { (nextDateString && nextRequest) ?
                                            <span>
-                                               <span>next due <b>{ nextDateString }</b> </span>
+                                               <span>Next <b>{ nextDateString }</b> </span>
                                                { nextRequest ?
-                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
-                                               : null }
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
+                                               : <span>Next N/A</span> }
                                            </span>
                                        : null }
                                    </span>
@@ -500,9 +497,9 @@ ComplianceEvaluationService = new function() {
     /**
      * @function    evaluateServices
      * @param       {object} services
-     * 
+     *
      * Evaluates the rules embedded in the provided service object
-     *     
+     *
      */
     function evaluateServices( services ) {
         let rules = [],
