@@ -114,7 +114,7 @@ export default ServiceDetailsSchema =  {
                     onAddNewItem: ( callback ) => {
                         import { TeamStepper } from '/modules/models/Teams';
                         Modal.show( {
-                            content: <TeamStepper item = { supplier }
+                            content: <TeamStepper
                                 facility = { facility }
                                 onChange = {
                                     ( supplier ) => {

@@ -169,17 +169,18 @@
     .seen-by-list li:after {
         content: ", ";
     }
-    .seen-by-list li:last-child:after {
+    .seen-by-list li:last-child:after, .seen-by-list li:first-child:after {
     content: "";
     }
 
 
     .seen-by-list li a {  padding: 5px;  }
 
+    /*
     .seen-by-list li:nth-child(n+3) {
     display:none;
     }
-    
+    */
     #view-more {
         cursor: pointer;
         color: #f00;

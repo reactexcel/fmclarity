@@ -118,6 +118,7 @@ const createRequest = new Action( {
             model = { Requests }
             form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
+            submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
                     Modal.replace( {
@@ -136,70 +137,66 @@ const createRequest = new Action( {
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.create';
-
+                        method = 'Issues.issue';
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
-
+                        method = 'Issues.create';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-
-                        if( baseBuilding ) {
-
-                            if( role == 'property manager' ) {
+                        if( !team ) {
+                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+                            return;
+                        }
+                        else if( baseBuilding ) {
+                            /*if( role == 'property manager' ) {
                                 method = 'Issues.issue';
+                            }*/
+                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
+                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {
 
-                            relation =team ? team.getMemberRelation( owner ) : Session.getSelectedTeam().getMemberRelation( owner );
-
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.issue';
+                                method = 'Issues.create';
                             }
+                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
 
-                            else if( _.contains( [ 'manager', 'caretaker' ], role ) && relation.threshold && relation.threshold >=1 ) {
+                                method = 'Issues.create';
+                                let relation = team.getMemberRelation( owner ),
+                                    costString = newRequest.costThreshold,
+                                    costThreshold = null;
 
-                                console.log( 'non bb manager or caretaker' );
+                                // strips out commas
+                                //  this is a hack due to an inadequete implementation of number formatting
+                                //  needs a refactor
+                                if( _.isString( costString ) ) {
+                                    costString = costString.replace(',','')
+                                }
 
-                                method = 'Issues.issue';
-                                var newThreshold = parseInt(relation.threshold) - 1;
-                                
-                                if( team.defaultCostThreshold ) {
+                                let cost = parseInt( costString );
 
-                                    // strips out commas
-                                    //  this is a hack due to an inadequete implementation of number formatting
-                                    //  needs a refactor
-                                    let costString = newRequest.costThreshold;
+                                if( relation.threshold ) {
+                                    costThreshold = parseInt( relation.threshold );
+                                }
+                                else if( team.defaultCostThreshold ) {
+                                    costThreshold = parseInt( team.defaultCostThreshold );
+                                }
 
-                                    console.log( costString );
-
-                                    if( _.isString( costString ) ) {
-                                        costString = costString.replace(',','')
-                                    }
-
-                                    console.log( costString );
-
-                                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                                        cost = parseInt( costString );
-
-                                    console.log( {
-                                        role,
-                                        costThreshold,
-                                        cost
-                                    } );
-
-                                    if( cost > costThreshold ) {
-                                        method = 'Issues.create';
-                                    }
+                                if( cost > costThreshold ) {
+                                    method = 'Issues.create';
                                 }
                                 if( parseInt(relation.threshold) < 1 ) {
-                                        method = 'Issues.create';
-                                    }
+                                    method = 'Issues.create';
+                                }
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
-                                        team.setMemberThreshold( owner, newThreshold.toString() );
-                                    }
+                                    team.setMemberThreshold( owner, newThreshold.toString() );
+                                }
+                            }
+
+                            else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){
+                                method == 'Issues.issue'
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import Perf from 'react-addons-perf';
 
 import DataSet from './DataSet.jsx';
 import { download, print } from './DataSetActions.jsx';
@@ -64,7 +65,17 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
+		Perf.start();
 		this.update( this.props );
+		if (this.props.setDataSet) {
+			this.props.setDataSet(this.state.dataset);
+		}
+	},
+
+	componentDidMount() {
+	    Perf.stop();
+	    console.log('output datatable load time');
+	    Perf.printInclusive();
 	},
 
 	componentWillReceiveProps( props ) {
@@ -112,9 +123,9 @@ export default DataTable = React.createClass( {
 
 		return (
 			<div className="data-grid">
-				{/*<div className = "data-grid-title-row">
-					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>*/}
+				<div className = "data-grid-title-row">
+					{/*<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />*/}
+				</div>
 				<div ref="printable">
 				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">

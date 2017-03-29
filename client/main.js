@@ -2,6 +2,10 @@ import { DocHead } from 'meteor/kadira:dochead';
 
 import { Actions } from '/modules/core/Actions';
 
+import { Modal } from '/modules/ui/Modal';
+
+import React from 'react';
+
 //console.log( { Actions, Routes } );
 function loadExternalScripts() {
 
@@ -36,26 +40,43 @@ function sortableApiScript() {
     document.body.appendChild( link );
 }
 
-function loadBrowerCompatibilityScript() {
-    window.$buoop = {
-        vs: {
-            i: 10,
-            f: -4,
-            o: -4,
-            s: 8,
-            c: -4
-        },
-        api: 4,
-        text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
-        test: false //change this to true to show message onscreen for testing purposes
-    };
-    $( window ).bind( 'load', function() {
-        const script = document.createElement( "script" );
-        script.src = "https://browser-update.org/update.min.js";
-        script.type = "text/javascript";
-        script.async = true;
-        document.body.appendChild( script );
-    } );
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+function loadBrowerCompatibilityScript(  ){
+    
+	window.$buoop = {
+		vs:{
+			i:10,
+			f:-4,
+			o:-4,
+			s:8,
+			c:-4
+		},
+		api:4,
+		text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
+		test:false //change this to true to show message onscreen for testing purposes
+	};
+		$(window).bind('load', function() {
+
+           if (isIE () == 9) { //quick fix to show popup for ie9
+             Modal.show( {
+            content: <div style={{padding:"10px"}}>
+            <h3>Warning: Incompatible Browser Detected</h3>
+            <p>Your Internet Explorer 9 browser is out of date. It has known security flaws and may not display all features of this and other websites. <a href='https://www.microsoft.com/en-us/download/internet-explorer.aspx' target='_blank' className='btn btn-primary'>Update your browser now</a></p></div>
+             } );
+            }
+            else{
+            const script = document.createElement("script");
+            script.src = "http://browser-update.org/update.min.js";
+            script.type = "text/javascript";
+            script.async = true;
+            document.body.appendChild(script);
+            }
+		    
+		});
 }
 loadExternalScripts();
 
@@ -114,16 +135,16 @@ Actions.addAccessRule( {
     action: [
         'create team request',
     ],
-    role: [ 
-        'staff', 
-        'fmc support', 
-        'portfolio manager', 
-        'manager', 
-        'owner', 
-        'property manager', 
-        'caretaker', 
-        'tenant', 
-        'resident' 
+    role: [
+        'staff',
+        'fmc support',
+        'portfolio manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker',
+        'tenant',
+        'resident'
     ],
 } )
 
@@ -132,7 +153,7 @@ Actions.addAccessRule( {
         let user = Meteor.user(),
             role = team.getMemberRole( user );
 
-        return team.type == 'contractor' || role == 'portfolio manager' || role == 'fmc support';
+        return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
         'edit team',
@@ -241,40 +262,24 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
 
-        if( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
+        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
                 teamRole = team.getMemberRole( user ),
                 facilityRole = facility.getMemberRole( user );
 
-            if( request.service && request.service.data && request.service.data.baseBuilding ) {
-                if( facilityRole == 'property manager') {
+            if ( request.service && request.service.data && request.service.data.baseBuilding ) {
+                if ( facilityRole == 'property manager' ) {
                     return true;
                 }
-            }
-            else {
-                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' )) {
+            } else {
+                if ( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
                     return true;
-                }
-                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
-                    return true;                    
-                }
-                else if( facilityRole == 'manager' ) {
-                    let costString = request.costThreshold;
-                    if( _.isString( costString ) ) {
-                        costString = costString.replace(',','')
-                    }
-
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
-
-
-                    console.log( { original:team.defaultCostThreshold, costThreshold, cost } );
-
-                    if( cost <= costThreshold ) {
-                        return true;
-                    }
+                } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;
+                } else if ( facilityRole == 'manager' ) {
+                    return true;
                 }
             }
         }
@@ -284,14 +289,14 @@ Actions.addAccessRule( {
     action: [
         'edit request',
     ],
-    role: [ '*'/*'team portfolio manager', 'facility property manager', 'facility manager', 'team fmc support', 'property manager'*/ ],
+    role: [ '*' /*'team portfolio manager', 'facility property manager', 'facility manager', 'team fmc support', 'property manager'*/ ],
     rule: { alert: true }
 } )
 
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative' ) {
+        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
             import { Requests } from '/modules/models/Requests';
             request = Requests.collection._transform( request );
             let nextRequest = request.getNextRequest();
@@ -311,36 +316,41 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
         //console.log( request );
-        if( request.status == 'New' && request.supplier && request.supplier._id ) {
+        if ( request.status == 'New' && request.supplier && request.supplier._id ) {
             // this in own function - DRY!
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
-                teamRole = team.getMemberRole( user ),
-                facilityRole = facility.getMemberRole( user );
+                teamRole = null,
+                facilityRole = null;
 
-            if( request.service && request.service.data && request.service.data.baseBuilding ) {
-                if( facilityRole == 'property manager') {
-                    return true;
-                }
+            if ( team ) {
+                teamRole = team.getMemberRole( user );
             }
-            else {
-                if( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
+
+            if ( facility ) {
+                facilityRole = facility.getMemberRole( user );
+            }
+
+            if ( request.service && request.service.data && request.service.data.baseBuilding ) {
+                if ( facilityRole == 'property manager' ) {
                     return true;
                 }
-                else if ( team.type == 'contractor' && teamRole == 'manager' ) {
-                    return true;                    
-                }
-                else if( facilityRole == 'manager' ) {
+            } else {
+                if ( team.type == 'fm' && ( teamRole == 'portfolio manager' || teamRole == 'fmc support' ) ) {
+                    return true;
+                } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
+                    return true;
+                } else if ( facilityRole == 'manager' ) {
                     let costString = request.costThreshold;
-                    if( _.isString( costString ) ) {
-                        costString = costString.replace(',','')
+                    if ( _.isString( costString ) ) {
+                        costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
+                    let costThreshold = parseFloat( team.defaultCostThreshold ),
+                        cost = parseFloat( costString );
 
-                    if( cost <= costThreshold ) {
+                    if ( cost <= costThreshold ) {
                         return true;
                     }
                 }
@@ -352,35 +362,38 @@ Actions.addAccessRule( {
         'issue request',
         'reject request',
     ],
-    role: [ '*'/*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
+    role: [ '*' /*'team portfolio manager', 'team fmc support', 'facility manager', 'facility property manager'*/ ],
     rule: { alert: true }
 } )
 
 Actions.addAccessRule( {
-    condition: 
-		( request ) => {
-			let user = Meteor.user(),
-			team = request.getTeam(),
-			teamRole = team.getMemberRole( user );
+    condition:
+        ( request ) => {
+            let user = Meteor.user(),
+                team = request.getTeam(),
+                teamRole = team.getMemberRole( user );
 
-			if ( teamRole == 'fmc support' ) {
-				/* Allow action for this role regardless of requests status */
-				return true;
-			}
-			else if ( request.status == 'New' || request.type == 'Preventative' ) {    
-				/* 	Allow action if status is new and only for 
-					roles specified below
-				*/
+            if ( teamRole == 'fmc support' ) {
+                /* Allow action for this role regardless of requests status */
+                return true;
+            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+                /*  Allow action if status is new and only for 
+                    roles specified below
+                */
                 import { Facilities } from '/modules/models/Facilities';
-				let facility = Facilities.findOne( request.facility._id ),
-				    facilityRole = facility.getMemberRole( user ),
-				    requestRole = request.getMemberRole( user );
+                let requestRole = request.getMemberRole( user ),
+                    facility = Facilities.findOne( request.facility._id ),
+                    facilityRole = null;
 
-				if( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
-				    return true;
-				}
-			}
-		},
+                if ( facility ) {
+                    facilityRole = facility.getMemberRole( user );
+                }
+
+                if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
+                    return true;
+                }
+            }
+        },
     action: [
         'delete request',
     ],
@@ -532,7 +545,7 @@ UserMenuActions = Actions.clone( [
     'create team',
     'migrate schema',
     'send supplier reminders',
-    'send email digests',
+    //'send email digests',
     'logout'
 ] );
 

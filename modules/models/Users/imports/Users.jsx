@@ -41,6 +41,7 @@ if ( Meteor.isServer ) {
     Meteor.publish( 'Users', () => {
         return Users.find();
     } );
+    Users.collection._ensureIndex( { 'profile.email': 1 }, { unique: false } );
 }
 
 /** Added method create user is added **/
