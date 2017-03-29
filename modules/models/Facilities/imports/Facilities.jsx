@@ -108,6 +108,16 @@ Facilities.actions( {
             return areas;
         }
     },
+    getRealEstateAgency: {
+        authentication: true,
+        helper: ( facility ) => {
+            let realEstateAgency = null;
+            if( facility.realEstateAgency && facility.realEstateAgency._id ) {
+                import { Teams } from '/modules/models/Teams';
+                return Teams.findOne( facility.realEstateAgency._id );
+            }
+        }
+    },
     setAreas: {
         authentication: AuthHelpers.managerOfRelatedTeam,
         method: function( facility, areas ) {
@@ -138,7 +148,8 @@ Facilities.actions( {
     getMessages: {
         authentication: true,
         helper: ( facility ) => {
-            let requests = Meteor.user().getRequests( { 'facility._id': facility._id } ),
+            let user = Meteor.user(),
+                requests = user.getRequests( { 'facility._id': facility._id } ),
                 messages = null,
                 requestIds = [];
 
@@ -151,7 +162,12 @@ Facilities.actions( {
             }
 
             if ( requestIds ) {
-                messages = Messages.findAll( { 'inboxId.query._id': { $in: requestIds } }, { sort: { createdAt: 1 } } );
+                messages = Messages.findAll( {
+                    $and: [
+                        { 'inboxId.query._id': user._id },
+                        { 'target.query._id': { $in: requestIds } }
+                    ],
+                }, { sort: { createdAt: 1 } } );
             }
             return messages;
         }
@@ -464,18 +480,16 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
-                Facilities.update(
-                    {
-                        "_id": facility._id
-                    }, {
-                        $push: {
-                            suppliers: {
-                                _id: supplier._id,
-                                 name: supplier.name
-                            }
-                         }
-                     }
-                 );
+                Facilities.update( {
+                    "_id": facility._id
+                }, {
+                    $push: {
+                        suppliers: {
+                            _id: supplier._id,
+                            name: supplier.name
+                        }
+                    }
+                } );
                 //console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }

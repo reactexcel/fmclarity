@@ -128,7 +128,7 @@ function distributeMessage( { recipientRoles, message, suppressOriginalPost } ) 
     if ( recipientRoles ) {
         recipients = getRecipientListFromRoles( obj, recipientRoles );
     } else {
-        recipients = this.getWatchers();
+        recipients = this.getWatchers( message );
         recipients = flattenRecipients( recipients );
     }
 
