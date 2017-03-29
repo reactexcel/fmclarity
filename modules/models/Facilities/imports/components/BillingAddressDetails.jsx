@@ -26,28 +26,13 @@ export default class BillingAddressDetails extends React.Component {
   }
 
   loadAddressForm(facility){
-    Modal.show( {
-      content: <AutoForm
-      model = { Facilities }
-      item = { facility }
-      title = "Facility Billing Address Form"
-      form = {
-        [ 'billingDetails' ] }
-      onSubmit = {
-        ( facility ) => {
-          Facilities.save.call( facility );
-          Modal.hide();
-        }
-      }
-
-      />
-    } )
+    $('#billingForm').toggle('display');
   }
 
   render() {
     let { facility } = this.state;
     let billingAddress = facility.billingDetails;
-    
+
     return (
       <div className="row">
         <div className="col-sm-12">
@@ -68,7 +53,7 @@ export default class BillingAddressDetails extends React.Component {
               <span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
                 <i className = "fa fa-refresh"></i>
               </span>
-                  <span className = "active-link" style = {{ fontStyle:"italic" }} >
+                  <span className = "active-link bill-address" style = {{ fontStyle:"italic" }} >
                     Change billing address
                   </span>
               </div>
@@ -82,12 +67,28 @@ export default class BillingAddressDetails extends React.Component {
               <span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
                 <i className = "fa fa-plus"></i>
               </span>
-                  <span className = "active-link" style = {{ fontStyle:"italic" }} >
+                  <span className = "active-link bill-address" style = {{ fontStyle:"italic" }} >
                     Add billing address
                   </span>
               </div>
             </div>
         }
+          <div id="billingForm" style={ {display:"none", paddingLeft: "20px", paddingTop: "20px", paddingRight: "20px"} }>
+                <AutoForm
+                      model = { Facilities }
+                      item = { facility }
+                      title = "Facility Billing Address Form"
+                      form = {
+                        [ 'billingDetails' ] }
+                      onSubmit = {
+                        ( facility ) => {
+                          Facilities.save.call( facility );
+                          this.loadAddressForm( facility )
+                        }
+                      }
+
+                />
+          </div>
         </div>
       </div>
     );

@@ -11,6 +11,7 @@ import { RequestFilter } from '/modules/models/Requests';
 
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
+import Perf from 'react-addons-perf';
 
 /**
  * @class 			RequestsPageIndex
@@ -36,6 +37,17 @@ export default class RequestsPageIndex extends Component {
 		} )
 	}
 
+	componentWillMount() {
+		Perf.start();
+	}
+
+	componentDidMount() {
+	    Perf.stop();
+	    console.log('output requests page load time');
+	    Perf.printInclusive();
+	    // Perf.printWasted();
+	}
+
 	render() {
 		let { team, facility, facilities, requests, selectedRequest, selectedStatus } = this.props;
 		let user = Meteor.user();
@@ -53,10 +65,10 @@ export default class RequestsPageIndex extends Component {
 					<div className="col-xs-3">
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
-					<div className="col-xs-offset-3 col-xs-3">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete' ] } selectedItem = { selectedStatus } />
+					<div className="col-xs-offset-3 col-xs-3 desktop-only">
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close' ] } selectedItem = { selectedStatus } />
 					</div>
-					{ user.getRole && user.getRole() == 'fmc support' ?
+					{ /*user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >
 							<Switch
 								value={ this.state.active}
@@ -72,7 +84,7 @@ export default class RequestsPageIndex extends Component {
 								Show Overdue Work Order only
 							</Switch>
 						</div> : null
-					}
+					*/ }
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">

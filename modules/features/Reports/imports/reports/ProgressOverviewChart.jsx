@@ -8,30 +8,56 @@ import moment from 'moment';
 
 export default ProgressOverviewChart = React.createClass( {
 
+        startComputation() {
+
+            this.computation = Tracker.autorun( () => {
+
+                let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
+                    endDate = moment().endOf( 'month' ),
+                    period = { number: 3, unit: 'month' };
+
+                var facilityQuery = Session.get( 'selectedFacility' );
+                var teamQuery = Session.get( 'selectedTeam' );
+                this.updateStats( { startDate, endDate, period, facilityQuery, teamQuery } );
+            } );
+
+        },
+
         componentDidMount() {
 
             let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
                 endDate = moment().endOf( 'month' ),
                 period = { number: 3, unit: 'month' };
 
+            this._mounted = true;
+
             this.setState( {
                 title: startDate.format( "[since] MMMM YYYY" )
             } );
 
-            this.updateStats( { startDate, endDate, period } );
+            setTimeout( () => { this.startComputation() }, 0 );
         },
 
-        updateStats( { startDate, endDate, period } ) {
+        componentWillUnmount() {
+            this._mounted = false;
+            if ( this.computation ) {
+                this.computation.stop();
+            }
+        },
+
+        updateStats( { startDate, endDate, period, facilityQuery, teamQuery } ) {
+
+            //console.log( 'updating stats' );
 
             Meteor.call( 'getProgressOverviewStats', {
                 startDate: startDate.toDate(),
                 endDate: endDate.toDate(),
                 period: period,
-                facilityQuery: Session.get( 'selectedFacility' ),
-                teamQuery: Session.get( 'selectedTeam' )
+                facilityQuery: facilityQuery || Session.get( 'selectedFacility' ),
+                teamQuery: teamQuery || Session.get( 'selectedTeam' )
             }, ( error, results ) => {
-                console.log( { error, results } );
-                if ( !error ) {
+                //console.log( { error, results } );
+                if ( !error && this._mounted ) {
                     this.setState( {
                         results
                     } )
@@ -55,7 +81,7 @@ export default ProgressOverviewChart = React.createClass( {
             var component = this;
             return [ {
                 label: ( "Day" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().startOf( 'day' ),
                         endDate = moment().endOf( 'day' ),
@@ -65,25 +91,25 @@ export default ProgressOverviewChart = React.createClass( {
                         title: startDate.format( "[for] dddd Do MMMM" )
                     } );
 
-                    this.updateStats( { startDate, endDate, period } );                    
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "Week" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().startOf( 'week' ),
                         endDate = moment().endOf( 'week' ),
                         period = { number: 1, unit: 'week' };
 
-                    this.setState( { 
-                        title : startDate.format( "[for week starting] Do MMMM" )
+                    this.setState( {
+                        title: startDate.format( "[for week starting] Do MMMM" )
                     } );
 
                     this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "Month" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().startOf( 'month' ),
                         endDate = moment().endOf( 'month' ),
@@ -97,7 +123,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "3 Months" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
                         endDate = moment().endOf( 'month' ),
@@ -112,14 +138,14 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "6 Months" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().subtract( 5, 'months' ).startOf( 'month' ),
                         endDate = moment().endOf( 'month' ),
                         period = { number: 6, unit: 'month' };
 
                     component.setState( {
-                        title: startDate.format( "[for 6 months since] MMMM YYYY" )                        
+                        title: startDate.format( "[for 6 months since] MMMM YYYY" )
                     } );
 
                     this.updateStats( { startDate, endDate, period } );
@@ -127,7 +153,7 @@ export default ProgressOverviewChart = React.createClass( {
                 }
             }, {
                 label: ( "Year" ),
-                run:() => {
+                run: () => {
 
                     let startDate = moment().startOf( 'year' ),
                         endDate = moment().endOf( 'year' ),

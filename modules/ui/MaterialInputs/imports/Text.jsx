@@ -9,8 +9,7 @@ import React from "react";
  * @memberOf 		module:ui/MaterialInputs
  */
 const Text = React.createClass( {
-    handleChange() {
-        let newValue = this.refs.input.value;
+    handleChange(newValue) {
         if ( this.props.onChange ) {
             this.props.onChange( newValue );
         }
@@ -41,7 +40,7 @@ const Text = React.createClass( {
         }
         // format number and delimit 0's only input to single 0 eg 0000 to 0
         var fieldName = this.props.fieldName ? this.props.fieldName : "";
-        var fieldType = this.props.model.schema[ fieldName ].type ? this.props.model.schema[ fieldName ].type : null;
+        var fieldType = this.props.model && this.props.model.schema[ fieldName ] && this.props.model.schema[ fieldName ].type ? this.props.model.schema[ fieldName ].type : null;
         if ( fieldType && fieldType == "number" && new RegExp( "^[0\s]+$" ).test( event.target.value.replace( /\D+/g, "" ) ) ) {
 
             this.refs.input.value = "0";
@@ -50,7 +49,10 @@ const Text = React.createClass( {
     },
 
     componentDidMount() {
-        this.handleChange = _.debounce( this.handleChange, 200 );
+        this.handleChange = _.debounce( this.handleChange, 3000 );
+        setTimeout( () => {
+            $( this.refs.input ).elastic();
+        }, 800 );
     },
 
     componentWillReceiveProps( newProps ) {
@@ -81,7 +83,7 @@ const Text = React.createClass( {
       			ref 			= "input"
       			type 			= "text"
       			defaultValue	= { value }
-      			onChange 		= { this.handleChange }
+      			onChange 		= { ( event ) => { this.handleChange( event.target.value ) } }
       			onSelect		= { this.handleSelect }
       			maxLength		= { this.props.maxLength }
       			onBlur			= { this.handleOnBlur }

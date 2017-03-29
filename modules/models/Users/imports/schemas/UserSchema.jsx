@@ -53,6 +53,11 @@ const UserProfileSchema = {
 		input: Text,
 		required: true,
 		type: "string",
+		unique: {
+			collection: Meteor.users.find({},{ _id: 1, "profile.email": 1 }),
+			field: "profile.email",
+			identifier: "profile._id"
+		},
 	},
 	phone: {
 		label: "Phone number",
@@ -77,9 +82,10 @@ const UserProfileSchema = {
 			return role === "tenant";
 		},
 	},
+	/*
 	requestIssueThreshold: {
-		label: "WO Issue Threshold",
-		description: "Number of Work Orders user can issue to suppliers",
+		label: "Enter work order threshold for Managers",
+		description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
 		input: Text,
 		optional: true,
 		type: "number",
@@ -93,6 +99,7 @@ const UserProfileSchema = {
 			return role === "portfolio manager" && _.contains(['manager', 'caretaker'], Itemrole );
 		},
 	},
+	*/
 
 
 

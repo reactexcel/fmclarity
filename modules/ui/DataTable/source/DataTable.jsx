@@ -1,10 +1,15 @@
 import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import Perf from 'react-addons-perf';
 
 import DataSet from './DataSet.jsx';
 import { download, print } from './DataSetActions.jsx';
 import { Menu } from '/modules/ui/MaterialNavigation';
+
+import SearchInput, {createFilter} from 'react-search-input';
+
+
 
 export default DataTable = React.createClass( {
 
@@ -16,6 +21,7 @@ export default DataTable = React.createClass( {
 			cols: dataset.getCols(),
 			sortCol: this.props.sortByColumn ? this.props.sortByColumn : null,
 			sortDir: this.props.sortDirection ? this.props.sortDirection : "none",
+			searchTerm: '',
 		}
 	},
 
@@ -59,7 +65,17 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
+		Perf.start();
 		this.update( this.props );
+		if (this.props.setDataSet) {
+			this.props.setDataSet(this.state.dataset);
+		}
+	},
+
+	componentDidMount() {
+	    Perf.stop();
+	    console.log('output datatable load time');
+	    Perf.printInclusive();
 	},
 
 	componentWillReceiveProps( props ) {
@@ -83,10 +99,16 @@ export default DataTable = React.createClass( {
 			rows: rows
 		} )
 	},
+	searchUpdated (term) {
+    this.setState({searchTerm: term})
+  	},
 
 	render() {
 		let { dataset, sortCol, sortDir, cols, rows } = this.state;
 		let { fields, children } = this.props;
+		const KEYS_TO_FILTERS = ["Prty.val", "Status.val", "Facility.val", "WO#.val", "Issue.val", "Amount.val", "Issued.val", "Due.val", "Supplier.val"];
+	    
+
 
 		let user = Meteor.user(),
 			facility = Session.getSelectedFacility() || {};
@@ -94,17 +116,18 @@ export default DataTable = React.createClass( {
 		if ( !cols || !rows ) {
 			return <div/>
 		}
-
+		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
 		//console.log( rows );
 		var unreadRows=[];
 		var readRows =[];
 
 		return (
 			<div className="data-grid">
-				{/*<div className = "data-grid-title-row">
-					<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />
-				</div>*/}
+				<div className = "data-grid-title-row">
+					{/*<Menu items = { [ download(dataset), print(dataset, this.refs.printable) ] } />*/}
+				</div>
 				<div ref="printable">
+				{/*<SearchInput className="search-input" onChange={this.searchUpdated} placeholder="Filter requests"/>*/}
 				<table className="table">
 
 					<thead>
@@ -134,13 +157,10 @@ export default DataTable = React.createClass( {
 					</thead>
 
 					<tbody>
-						{ rows.map( (row,rowIdx) => {
+						{ filteredRows.map( (row,rowIdx) => {
 							let unread = false;
 							if( row._item.unreadRecipents ){
 								if( _.indexOf( row._item.unreadRecipents, user._id ) > -1){
-									unread = true;
-									unreadRows.push(row);
-								}else if( _.indexOf( row._item.unreadRecipents, facility._id ) > -1){
 									unread = true;
 									unreadRows.push(row);
 								}

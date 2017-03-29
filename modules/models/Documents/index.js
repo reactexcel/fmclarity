@@ -9,6 +9,7 @@ import Documents 		from './imports/Documents.jsx';
 import DocAttachments 	from './imports/DocAttachments.jsx';
 import DocTypes 		from './imports/schemas/DocTypes.jsx';
 import DocForm 			from './imports/schemas/DocForm.jsx';
+import DocumentSearchSchema 		from './imports/schemas/DocumentSearchSchema.jsx';
 import DocActions 		from './actions.jsx';
 
 /**
@@ -21,5 +22,6 @@ export {
 	DocTypes,
 	DocActions,
 	DocForm,
-	DocViewEdit
+	DocViewEdit,
+	DocumentSearchSchema
 }

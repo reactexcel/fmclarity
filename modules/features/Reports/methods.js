@@ -7,12 +7,20 @@ Meteor.methods( {
 
         this.unblock();
 
-        let baseQuery = {},
+        let baseQuery = {
+            'team._id': teamQuery._id
+        },
             queries = {
                 New: { thisPeriod: 0, lastPeriod: 0 },
                 Issued: { thisPeriod: 0, lastPeriod: 0 },
                 Complete: { thisPeriod: 0, lastPeriod: 0 },
             };
+
+        let dateFields = {
+            New: 'createdAt',
+            Issued: 'issuedAt',
+            Complete: 'closeDetails.completionDate'
+        }
 
         if ( startDate ) {
             startDate = moment( startDate );
@@ -29,15 +37,13 @@ Meteor.methods( {
             let lastEndDate = endDate.clone().subtract( period.number, period.unit + 's' );
             for ( let status in queries ) {
                 let qThisMonth = _.extend( {}, baseQuery, {
-                    status: status,
-                    createdAt: {
+                    [  dateFields[ status ]  ] : {
                         $gte: startDate.toDate(),
                         $lte: endDate.toDate()
                     }
                 } );
                 let qLastMonth = _.extend( {}, baseQuery, {
-                    status: status,
-                    createdAt: {
+                    [ dateFields[ status ]  ] : {
                         $gte: lastStartDate.toDate(),
                         $lte: lastEndDate.toDate()
                     }
@@ -138,7 +144,7 @@ Meteor.methods( {
             facility: facilityQuery,
             labels: labels,
             set: set, //costs//counts
-            //buckets: buckets,
+            buckets: buckets,
             //ready: handle.ready()
         }
     }

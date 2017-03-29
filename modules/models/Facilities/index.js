@@ -5,6 +5,8 @@
 import Facilities from './imports/Facilities.jsx';
 import AddressSchema from './imports/schemas/AddressSchema.jsx';
 import BillingAddressSchema from './imports/schemas/AddressSchema.jsx';
+import ServiceDetailsSchema from './imports/schemas/ServiceDetailsSchema.jsx';
+import AreaDetailsSchema from './imports/schemas/AreaDetailsSchema.jsx';
 
 import FacilityFilter from './imports/components/FacilityFilter.jsx';
 import FacilityStepper from './imports/components/FacilityStepper.jsx';
@@ -14,6 +16,8 @@ import FacilityListTile from './imports/components/FacilityListTile.jsx';
 import CreateSupplierFacility from './imports/components/CreateSupplierFacility.jsx';
 import PropertyManagerDetails from './imports/components/PropertyManagerDetails.jsx';
 import BillingAddressDetails from './imports/components/BillingAddressDetails.jsx';
+import BillingDetails from './imports/components/BillingDetails.jsx';
+import AddressLink from './imports/components/AddressLink.jsx';
 
 import FacilityActions from './actions.jsx'
 
@@ -23,8 +27,12 @@ import FacilityActions from './actions.jsx'
 export {
 	Facilities,
 	AddressSchema,
+	AddressLink,
 	BillingAddressSchema,
+	ServiceDetailsSchema,
+	AreaDetailsSchema,
 	BillingAddressDetails,
+	BillingDetails,
 	FacilityFilter,
 	FacilityDetails,
 	FacilityStepper,
