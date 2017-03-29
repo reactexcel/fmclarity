@@ -130,7 +130,7 @@ export default MessageView = React.createClass( {
 
                         <div className="message-footer">
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
-                            {message.verb=='completed' ? 
+                            {message.verb=='completed' ?
                             <div>
                             <small className="text-muted pull-right">Attended - {moment(message.getTarget().closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
                             <small className="text-muted pull-right">Completed - {moment(message.getTarget().closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')}</small>
@@ -157,7 +157,7 @@ export default MessageView = React.createClass( {
                         onKeyDown={this.handleKeyPress}
                     >
                     </textarea>
-                
+
                 </div>
             </div> )
         }

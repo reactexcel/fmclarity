@@ -35,7 +35,18 @@ const PlainCard = React.createClass( {
 const Select = React.createClass( {
 
 	getInitialState() {
-		return { open: false }
+		return {
+			open: false
+	  	}
+	},
+
+	componentDidUpdate(){
+		if(this.state.open == true){
+			$( ".searchInput" ).focus();
+		}
+	},
+
+	componentDidMount(){
 	},
 
 	handleChange( newItem ) {
@@ -44,9 +55,9 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			//console.log( val );
 			this.props.onChange( val );
 		}
+		this.setOpen( false );
 		this.refs.input.blur();
 	},
 
@@ -70,8 +81,12 @@ const Select = React.createClass( {
 	},
 
 	setOpen( val ) {
-		this.setState( { open: val } );
+		this.setState( {
+			open: val,
+		 } );
 	},
+
+
 
 	render() {
 		let {
@@ -84,19 +99,16 @@ const Select = React.createClass( {
 			clearOption,
 			addNew = false, //should be false initialy
 		} = this.props;
-
 		let ListTile = view,
 			invalid = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
-			hidden = false,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
 				disabled = true;
 				readOnly = true;
-				hidden = true;
 			}
 			items = [];
 		}
@@ -118,7 +130,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?" hidden":"")}>
+				<div className = {"md-input md-select readonly disabled dropdown"}>
 
 					<span className = { classes.join(' ') }>
 						{ used?
@@ -142,11 +154,70 @@ const Select = React.createClass( {
 
 		return (
 			<div
+				id = "mainDiv"
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
-				onFocus = { () => { this.setOpen( true ) } }
-				onBlur = { () => { this.setOpen( false ) } }>
+				onFocus = { () => {
+					this.setOpen( true );
+				} }
+				onBlur={(e)=>{
+					let $selected = $('ul#open > li').filter('.onFocus')
+					if($selected.length){
+						$selected.click();
+					}
+					this.setOpen( false );
+				}}
+				onKeyDown={(e)=>{
+					let list = document.getElementById('open')
+					let targetList = $('ul#open > li.onFocus').position()
+					if(targetList != undefined){
+						list.scrollTop = (targetList.top - $('ul#open > li:first').position().top);
+					}
+					let key = e.keyCode
+					let $selected = $('ul#open > li').filter('.onFocus')
+					if(key == 13){
+						if($selected.length){
+							$selected.click();
+						}
+					}
+					if(key == 40){
+						e.preventDefault();
+						if(!$selected.length){
+							$('ul#open > li').eq(0).addClass('onFocus')
+						}
+						else if( $selected.is(':last-child') ){
+							return;
+						}else{
+							if($($selected.next()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.next().addClass('onFocus')
+							}
+						}
+					}
+					if(key == 38){
+						e.preventDefault();
+						if(!$selected.length){
+							return;
+						}
+						else if( $selected.is(':last-child') ){
+							$('ul#open > li').removeClass('onFocus')
+							$selected.prev().addClass('onFocus')
+						}else{
+							if($($selected.prev()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.prev().addClass('onFocus')
+							}
+						}
+					}
+					if(key==9){
+						//$('ul#open > li').removeClass('onFocus')
+						if($selected.length){
+							$selected.click();
+						}
+						this.setOpen( false )
+					}
+				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
 
@@ -168,29 +239,43 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-
-				<ul className = "dropdown-menu">
+				<ul id={this.state.open == true ? "open":"closed"} className = "dropdown-menu">
 
 		        	{description?
-		        	<li><div className = "helper-text">{ description }</div></li>
+					<div>
+		        	    <li><div className = "helper-text">{ description }</div></li>
+					</div>
 		        	:null}
+
 
 		        	{items.map( ( item, idx ) => {
 		        	/********************************************/
 		        	if( !item ) {
 		        		return null;
 		        	}
+					var isFoucs = ''
+					if(item === value){
+						isFoucs = ' onFocus'
+					}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
-			    		className = "dropdown-menu-item"
-			    		onClick = { () => { this.handleChange( item ) } }>
+						id={idx+'-'+(item._id || item.name)}
+			    		className = {"dropdown-menu-item"+isFoucs}
+			    		onClick = { () => {
+							this.handleChange( item )
+						} }
+						onKeyDown={(e)=>{
+
+						}}>
 
 			    		<ListTile item = { item } />
 
-			    	</li> )
+			    	</li>
+				     )
 		        	/********************************************/
 			        })}
-							{ addNew && addNew.show? <li className = "dropdown-menu-item">
+							{ addNew && addNew.show? <div>
+								<li className = "dropdown-menu-item">
 								<div
 									className	= "contact-list-item"
 									onClick		= { () => {
@@ -198,7 +283,7 @@ const Select = React.createClass( {
 											addNew.onAddNewItem( this.handleChange );
 										}
 									} }
-									style 		= { { paddingLeft:"24px" } }
+									style = { { paddingLeft:"24px" } }
 								>
 
 										<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
@@ -210,7 +295,9 @@ const Select = React.createClass( {
 										</span>
 
 									</div>
-								</li> : null}
+									</li>
+									</div>
+								 : null}
 	            </ul>
 
 			</div>
