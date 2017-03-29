@@ -16,15 +16,18 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		contextFilter = {},
 		selectedRequest = null,
 		includeComplete = false;
-
 	if ( selectedStatus == 'New' ) {
-		statusFilter = { "status": 'New' };		
+		statusFilter = { "status": 'New' };
 	}
 	else if ( selectedStatus == 'Issued' ) {
-		statusFilter = { "status": 'Issued' };		
+		statusFilter = { "status": 'Issued' };
 	}
 	else if ( selectedStatus == 'Complete' ) {
 		statusFilter = { "status": 'Complete' };
+		includeComplete = true;
+	}
+	else if ( selectedStatus == 'Close' ) {
+		statusFilter = { "status": 'Close' };
 		includeComplete = true;
 	}
 	else {

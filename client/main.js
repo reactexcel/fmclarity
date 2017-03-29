@@ -2,6 +2,10 @@ import { DocHead } from 'meteor/kadira:dochead';
 
 import { Actions } from '/modules/core/Actions';
 
+import { Modal } from '/modules/ui/Modal';
+
+import React from 'react';
+
 //console.log( { Actions, Routes } );
 function loadExternalScripts() {
 
@@ -36,26 +40,43 @@ function sortableApiScript() {
     document.body.appendChild( link );
 }
 
-function loadBrowerCompatibilityScript() {
-    window.$buoop = {
-        vs: {
-            i: 10,
-            f: -4,
-            o: -4,
-            s: 8,
-            c: -4
-        },
-        api: 4,
-        text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
-        test: false //change this to true to show message onscreen for testing purposes
-    };
-    $( window ).bind( 'load', function() {
-        const script = document.createElement( "script" );
-        script.src = "https://browser-update.org/update.min.js";
-        script.type = "text/javascript";
-        script.async = true;
-        document.body.appendChild( script );
-    } );
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+function loadBrowerCompatibilityScript(  ){
+    
+	window.$buoop = {
+		vs:{
+			i:10,
+			f:-4,
+			o:-4,
+			s:8,
+			c:-4
+		},
+		api:4,
+		text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
+		test:false //change this to true to show message onscreen for testing purposes
+	};
+		$(window).bind('load', function() {
+
+           if (isIE () == 9) { //quick fix to show popup for ie9
+             Modal.show( {
+            content: <div style={{padding:"10px"}}>
+            <h3>Warning: Incompatible Browser Detected</h3>
+            <p>Your Internet Explorer 9 browser is out of date. It has known security flaws and may not display all features of this and other websites. <a href='https://www.microsoft.com/en-us/download/internet-explorer.aspx' target='_blank' className='btn btn-primary'>Update your browser now</a></p></div>
+             } );
+            }
+            else{
+            const script = document.createElement("script");
+            script.src = "http://browser-update.org/update.min.js";
+            script.type = "text/javascript";
+            script.async = true;
+            document.body.appendChild(script);
+            }
+		    
+		});
 }
 loadExternalScripts();
 

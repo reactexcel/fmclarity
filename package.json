@@ -29,7 +29,9 @@
     "react-search-input": "^0.10.4",
     "react-tap-event-plugin": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "react-addons-perf": "^15.3.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://mrleokeith@bitbucket.org/mrleokeith/fm-clarity.git"

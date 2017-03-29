@@ -118,6 +118,7 @@ const createRequest = new Action( {
             model = { Requests }
             form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
+            submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
                     Modal.replace( {
@@ -136,32 +137,32 @@ const createRequest = new Action( {
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.create';
-
+                        method = 'Issues.issue';
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
-
+                        method = 'Issues.create';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-
                         if( !team ) {
                             throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
                             return;
                         }
                         else if( baseBuilding ) {
-
-                            if( role == 'property manager' ) {
+                            /*if( role == 'property manager' ) {
                                 method = 'Issues.issue';
+                            }*/
+                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
+                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {
 
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.issue';
+                                method = 'Issues.create';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
 
-                                method = 'Issues.issue';
+                                method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     costThreshold = null;
@@ -177,7 +178,7 @@ const createRequest = new Action( {
 
                                 if( relation.threshold ) {
                                     costThreshold = parseInt( relation.threshold );
-                                }                                
+                                }
                                 else if( team.defaultCostThreshold ) {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }
@@ -185,7 +186,17 @@ const createRequest = new Action( {
                                 if( cost > costThreshold ) {
                                     method = 'Issues.create';
                                 }
+                                if( parseInt(relation.threshold) < 1 ) {
+                                    method = 'Issues.create';
+                                }
+                                if( method == 'Issues.issue' ) {
+                                    console.log('new threshold='+newThreshold.toString());
+                                    team.setMemberThreshold( owner, newThreshold.toString() );
+                                }
+                            }
 
+                            else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){
+                                method == 'Issues.issue'
                             }
                         }
                     }
