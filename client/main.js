@@ -128,6 +128,15 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+    action: [
+        'create document update request',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
             role = team.getMemberRole( user );
