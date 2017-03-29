@@ -25,6 +25,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -87,6 +88,7 @@ const RequestSchema = {
             options: () => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
+                    user = Meteor.user();
                     teamType = null;
 
                 if ( team ) {
@@ -96,8 +98,22 @@ const RequestSchema = {
                 if ( teamType == 'contractor' ) {
                     return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
                 } else {
-                    if ( _.contains( [ "staff", 'resident' ], role ) ) {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Tenancy' ] };
+                    if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
+                        return { 
+                            items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
+                            afterChange: ( request ) => {
+                                // prefill area with tenant/resident address
+                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                    request.area= user.apartment ? user.apartment : null;
+                                    request.level= user.level ? user.level : null;
+                                }
+                                else{
+                                    request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;
+                                }
+                                    
+                                }
+                             };
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
                     }
@@ -213,7 +229,7 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ "tenant", 'resident' ], user.getRole() ) ) {
+                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
                 }
                 return val;
@@ -268,7 +284,13 @@ const RequestSchema = {
             description: "The category of work required",
             size: 6,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            onServiceChange = props.changeSubmitText
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
@@ -323,6 +345,9 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
+                                if( request.supplier && onServiceChange ) {
+                                    onServiceChange( request.supplier );
+                                }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
                                 } else if ( defaultSupplier.type == 'fm' ) {
@@ -535,7 +560,7 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ "staff", 'resident' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) ) {
                     return false;
                 }
                 return true;
@@ -636,12 +661,11 @@ const RequestSchema = {
                         request.service = null;
                         request.subservice = null;
                         request.supplier = null;
-                        //request.members = getMembersDefaultValue( request );
                         request.members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
                     },
                     addNew: {
                         //Add new facility to current selectedTeam.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
@@ -693,7 +717,7 @@ const RequestSchema = {
                 //do not show for booking, contractors, staff or resident
                 return (
                     ( request.type != 'Booking' && teamType != 'contractor' ) ?
-                    ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
+                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             defaultValue: ( item ) => {
@@ -707,7 +731,13 @@ const RequestSchema = {
                 }
                 return team;
             },
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.changeSubmitText(value);
+                            props.onChange(value);
+                        }}/>
+            } ,
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
@@ -723,7 +753,7 @@ const RequestSchema = {
                     readOnly: item.status == 'Issued',
                     addNew: {
                         //Add new supplier to request and selected facility.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { TeamStepper } from '/modules/models/Teams';
@@ -774,7 +804,7 @@ const RequestSchema = {
                 //do not show for booking, contractors, staff or resident
                 return (
                     ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
-                    ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
+                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             input( props ) {
@@ -861,7 +891,7 @@ const RequestSchema = {
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
                     let role = Meteor.user().getRole();
-                    if ( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident" ) {
+                    if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
                         return false;
                     }
                     let team = Session.getSelectedTeam();
@@ -923,7 +953,6 @@ const RequestSchema = {
             members: {
                 label: "Contacts",
                 description: "Stakeholders for this work request",
-                defaultValue: getMembersDefaultValue
             },
 
             documents: {
@@ -1029,57 +1058,6 @@ const RequestSchema = {
 
         }
 
-        /*
-         *
-         *
-         *
-         */
-        function getMembersDefaultValue( item ) {
-
-            if ( item.team == null ) {
-                return;
-            }
-
-            let owner = Meteor.user(),
-                team = Teams.findOne( item.team._id ),
-                teamMembers = team.getMembers( {
-                    role: "portfolio manager"
-                } );
-
-            let members = [ {
-                _id: owner._id,
-                name: owner.profile.name,
-                email: owner.profile.email,
-                role: "owner"
-            } ];
-
-            teamMembers.map( ( m ) => {
-                members.push( {
-                    _id: m._id,
-                    name: m.profile.name,
-                    email: m.profile.email,
-                    role: "team manager"
-                } )
-            } );
-
-            if ( item.facility && item.facility._id ) {
-                let facility = Facilities.findOne( item.facility._id ),
-                    facilityMembers = facility.getMembers( {
-                        role: "manager"
-                    } );
-
-                facilityMembers.map( ( m ) => {
-                    members.push( {
-                        _id: m._id,
-                        name: m.profile.name,
-                        email: m.profile.email,
-                        role: "facility manager"
-                    } )
-                } );
-            }
-
-            return members;
-        }
 
         function getTimeframe( _id, priority ) {
             //let team = this.getTeam();

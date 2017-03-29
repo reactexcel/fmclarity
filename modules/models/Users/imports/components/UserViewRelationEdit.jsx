@@ -34,8 +34,6 @@ export default UserViewRelationEdit = React.createClass( {
 		let relation = group.getMemberRelation( member );
 		let userRole = Meteor.user().getRole();
 
-		console.log( userRole );
-
 		if( userRole == 'caretaker' ) {
 			roles = [
 				"staff",

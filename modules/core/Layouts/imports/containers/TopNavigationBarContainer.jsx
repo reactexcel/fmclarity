@@ -72,7 +72,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     function showNotifications( notifications ) {
         notifications.map( ( notification ) => {
-            if( notification.wasShown/* || notification.inboxId.query._id == Meteor.user()._id*/ ) {
+            if( notification.wasShown || notification.inboxId.query._id == Meteor.user()._id ) {
                 return;
             }
             notify.createNotification( notification.subject, {

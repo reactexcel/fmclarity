@@ -6,7 +6,7 @@ function getMessagesThisHour( user ) {
 
     import { Messages } from '/modules/models/Messages';
 
-    let oneHourAgo = moment().subtract( 5, 'minutes' );
+    let oneHourAgo = moment().subtract( 1, 'hour' );
 
     let messages = Messages.findAll( {
         'inboxId.query._id': user._id,
@@ -36,7 +36,7 @@ const CronJobs = {
                 else {
                     let messageBody = DocMessages.render( EmailDigestView, { user, messages } );
                     Meteor.call( 'Messages.sendEmail', user, {
-                        subject: 'Testing the digest',
+                        subject: 'FM Clarity Updates',
                         emailBody: messageBody
                     } );
                 }

@@ -8,6 +8,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { DataTable } from '/modules/ui/DataTable';
+import { download, print } from '/modules/ui/DataTable/source/DataSetActions.jsx';
 import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
 
@@ -29,6 +30,7 @@ const RequestsStatusReport = React.createClass( {
 			startDate: null,
 			endDate: null,
 			showFacilityName: true,
+			dataset:null,
 		}
 	},
 
@@ -167,8 +169,10 @@ const RequestsStatusReport = React.createClass( {
 			}
 		}
 	},
-	printChart() {
-            window.print();
+    setDataSet(newdata){
+    	this.setState({
+    		dataset:newdata,
+    	});
     },
 
 	render() {
@@ -186,9 +190,9 @@ const RequestsStatusReport = React.createClass( {
 				<div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
 
 					<h2>Status Report</h2>
-					<button className="btn btn-flat pull-right noprint"  onClick={this.printChart}>
-	                	<i className="fa fa-print" aria-hidden="true"></i>
-	                </button>
+	                {this.state.dataset ? <div>
+					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable) ] } />
+				</div>:null}
 					<div className="row">
 						<div className="col-md-4">
 
@@ -255,8 +259,8 @@ const RequestsStatusReport = React.createClass( {
 					</div>
 
 				</div>
-				<div className = "ibox">
-					<DataTable items={data} fields={fields} includeActionMenu={true}/>
+				<div className = "ibox" ref="printable">
+					<DataTable items={data} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)
