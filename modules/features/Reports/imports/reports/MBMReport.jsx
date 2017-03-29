@@ -43,14 +43,15 @@ const RequestsStatusReport = React.createClass( {
             let dayEnd = moment().endOf('day').toDate();
 			team = user.getSelectedTeam();
 			service = this.state.service;
-            let docs = [];
+            let docs = { };
 			if ( team ) {
                 facility = Session.getSelectedFacility();
 				if ( facility ) {
-                    let services = facility.servicesRequired;
+                    let services = _.filter(facility.servicesRequired, s => ( s !== null ) );
                     data.services = services;
                     for (var i in services) {
-                        rule.push(_.filter( DefaultComplianceRule[ services[i].name ], rule => rule.docType == "Contract" ));
+						if( services[i] != null )
+                        	rule.push(_.filter( DefaultComplianceRule[ services[i].name ], rule => rule.docType == "Contract" ));
                     }
                 }
                 let rules = _.flatten(rule, true);
@@ -72,9 +73,10 @@ const RequestsStatusReport = React.createClass( {
                     }
                 }
                 for (var i in data.services) {
-                    data.services[i].doc = docs[ data.services[i].name]
+					if (data.services[i] !== null)
+                    	data.services[i].doc = docs[ data.services[i].name]
                 }
-                //console.log({docs,"services":data.services});
+                console.log({docs,"services":data.services});
 			}
 		}
 		return {

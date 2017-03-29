@@ -25,6 +25,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -283,7 +284,13 @@ const RequestSchema = {
             description: "The category of work required",
             size: 6,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            onServiceChange = props.changeSubmitText
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
@@ -338,6 +345,9 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
+                                if( request.supplier && onServiceChange ) {
+                                    onServiceChange( request.supplier );
+                                }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
                                 } else if ( defaultSupplier.type == 'fm' ) {
@@ -651,7 +661,6 @@ const RequestSchema = {
                         request.service = null;
                         request.subservice = null;
                         request.supplier = null;
-                        //request.members = getMembersDefaultValue( request );
                         request.members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
                     },
                     addNew: {
@@ -722,7 +731,13 @@ const RequestSchema = {
                 }
                 return team;
             },
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.changeSubmitText(value);
+                            props.onChange(value);
+                        }}/>
+            } ,
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
@@ -938,7 +953,6 @@ const RequestSchema = {
             members: {
                 label: "Contacts",
                 description: "Stakeholders for this work request",
-                defaultValue: getMembersDefaultValue
             },
 
             documents: {
@@ -1044,57 +1058,6 @@ const RequestSchema = {
 
         }
 
-        /*
-         *
-         *
-         *
-         */
-        function getMembersDefaultValue( item ) {
-
-            if ( item.team == null ) {
-                return;
-            }
-
-            let owner = Meteor.user(),
-                team = Teams.findOne( item.team._id ),
-                teamMembers = team.getMembers( {
-                    role: "portfolio manager"
-                } );
-
-            let members = [ {
-                _id: owner._id,
-                name: owner.profile.name,
-                email: owner.profile.email,
-                role: "owner"
-            } ];
-
-            teamMembers.map( ( m ) => {
-                members.push( {
-                    _id: m._id,
-                    name: m.profile.name,
-                    email: m.profile.email,
-                    role: "team manager"
-                } )
-            } );
-
-            if ( item.facility && item.facility._id ) {
-                let facility = Facilities.findOne( item.facility._id ),
-                    facilityMembers = facility.getMembers( {
-                        role: "manager"
-                    } );
-
-                facilityMembers.map( ( m ) => {
-                    members.push( {
-                        _id: m._id,
-                        name: m.profile.name,
-                        email: m.profile.email,
-                        role: "facility manager"
-                    } )
-                } );
-            }
-
-            return members;
-        }
 
         function getTimeframe( _id, priority ) {
             //let team = this.getTeam();
