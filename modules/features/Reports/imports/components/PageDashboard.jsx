@@ -3,6 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 import React from 'react';
+import Perf from 'react-addons-perf';
 
 import { Calendar } from '/modules/ui/Calendar';
 import { InboxWidget } from '/modules/models/Messages';
@@ -21,8 +22,12 @@ function PageDashboard( props ) {
 	let canGetMessages = false;
 	let { team, facilities, facility, requests } = props;
 	if( !team ) {
+		Perf.start();
 		return <div/>
 	}
+	Perf.stop();
+    console.log('output dashboard load time');
+    Perf.printInclusive();
 	return (
 		<div className="dashboard-page animated fadeIn">
 			<FacilityFilter items = { facilities } selectedItem = { facility }/>
