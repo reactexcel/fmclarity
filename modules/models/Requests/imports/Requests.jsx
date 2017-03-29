@@ -819,6 +819,9 @@ function getMembersDefaultValue( item ) {
 function actionComplete( request ) {
 
     if ( request.closeDetails ) {
+        if( request.closeDetails.jobCancelled == true ){
+            request.closeDetails.furtherQuoteValue = 0;
+        }
         if ( request.closeDetails.attachments ) {
             request.closeDetails.attachments.map( function( a ) {
                 request.attachments.push( a );
@@ -836,7 +839,7 @@ function actionComplete( request ) {
     }
 
     Meteor.call( 'Issues.save', request, {
-        status: 'Complete'
+        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
     } );
     request = Requests.findOne( request._id );
 
@@ -906,11 +909,19 @@ function actionComplete( request ) {
         }
 
 
+    } else if( request.closeDetails.jobCancelled == true ){
+        request.distributeMessage( {
+            message: {
+                verb: 'closed',
+                body: "JOB CANCELLED: "+request.closeDetails.comment,
+                subject: "Work order #" + request.code + " has been closed"
+            }
+        } );
     } else {
 
         request.distributeMessage( {
             message: {
-                verb: "completed",
+                verb: 'completed',
                 subject: "Work order #" + request.code + " has been completed"
             }
         } );
