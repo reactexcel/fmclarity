@@ -135,7 +135,11 @@ const Phone = React.createClass( {
 		if (($.inArray(e.target.value.substr(0, 2), landlines) === -1) && e.target.value.length== 10){
 			e.target.value="("+e.target.value.substr(0,2)+") "+e.target.value.substr(2,4)+" "+e.target.value.substr(6,4);
 		}
-		
+		// format number and delimit 0's only as inpu eg 0000 etc
+		var curval = e.target.value.replace(/\D+/g, "");
+		if (new RegExp("^[0\s]+$").test(curval)) {
+			e.target.value="0";
+		}
 
 	},
 

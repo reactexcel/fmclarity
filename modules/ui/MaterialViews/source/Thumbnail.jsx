@@ -10,10 +10,16 @@ import React from 'react';
  */
 function Thumbnail( props ) {
 //	console.log( props );
-	let style = _.extend( {
-		backgroundImage: "url('" + props.item.thumbUrl + "')",
-		backgroundSize: "cover"
-	}, props.style )
+
+	let { item } = props,
+		thumbUrl = null,
+		style = props.style || {};
+
+	if( item.getThumbUrl ) {
+		thumbUrl = item.getThumbUrl();
+		style['backgroundImage'] = "url('" + thumbUrl + "')";
+		style['backgroundSize'] = "cover";
+	}
 
 	return (
 		<div className="facility-thumbnail" style = { style }>

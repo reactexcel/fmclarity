@@ -65,8 +65,15 @@ const DateTime = React.createClass( {
 		} )
 		this.props.onChange( null );
 	},
+	 disablePrevDates(startDate) {
+		  const startSeconds = Date.parse(startDate);
+		  return (date) => {
+		    return Date.parse(date) < startSeconds && this.props.fieldName=="dueDate";
+		  }
+		},
 
 	render() {
+		const startDate = new Date();
 		//this.props.value[ this.props.fieldName ] = this.state.value;
 		return (
 			<div>
@@ -76,6 +83,7 @@ const DateTime = React.createClass( {
 					onSelect 	= { this.handleSelect }
 					onClear 	= { this.handleClear }
 					errors 		= { this.props.errors }
+					datepicker  = { true }
 				/>
 
 				{/* The Material-ui date pickers don't match our styling so we hide them */}
@@ -87,9 +95,11 @@ const DateTime = React.createClass( {
 						className 			= { "date-input" }
 						floatingLabelText	= { this.props.placeholder }
 						style 				= { {fontSize:"13px"} }
-						mode 				= "landscape"
+						mode 				= {$(window).width()>450?"landscape":"portrait"}
 						onChange 			= { this.handleDateChange }
 						formatDate 			= { ( date ) => { return moment(date).format("D-MMM-YY HH:mm") } }
+						autoOk			={$(window).width()<450}
+                  		shouldDisableDate={this.disablePrevDates(startDate)}
 					/>
 
 					<TimePicker

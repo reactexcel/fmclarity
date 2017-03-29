@@ -3,15 +3,21 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Messages } from '/modules/models/Messages';
 
+import moment from 'moment';
+
 const EmailMessageView = React.createClass({
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var query, message, user, owner, target, facility;
+        var query, message, user, owner, target, facility, secret, expiry;
         query = this.props.item;
 
         user = Meteor.users.findOne(this.props.user._id);
+        if(this.props.token) {
+            secret = this.props.token.token;
+            expiry = this.props.token.expiry;
+        }
         message = Messages.findOne(query);
         if(message) {
             owner = message.getOwner();
@@ -27,7 +33,9 @@ const EmailMessageView = React.createClass({
             owner:owner,
             inbox:this.props.inbox,
             message:message,
-            facility:facility
+            facility:facility,
+            secret:secret,
+            expiry:expiry
         }
     },
 
@@ -38,6 +46,16 @@ const EmailMessageView = React.createClass({
         var user = this.data.user;
         var userName = (user.profile&&user.profile.firstName)?user.profile.firstName:user.getName()
         var createdAt = message.createdAt;
+        var secret = this.data.secret;
+        var url;
+
+        if(secret) {
+                url = Meteor.absoluteUrl('u/'+ secret + '/' + message.getEncodedAbsoluteTargetUrl() );
+            }
+            else {
+                url = message.getAbsoluteTargetUrl();
+            }
+            var expiry = this.data.expiry?moment(this.data.expiry).fromNow():null;
         return(
             <div>
                 <p>Hi {userName},</p>
@@ -49,7 +67,8 @@ const EmailMessageView = React.createClass({
 
                 {message.body?<blockquote>{message.body}</blockquote>:null}
 
-                <p>Click <a href={message.getAbsoluteTargetUrl()}>here</a> to reply to the work order.</p>
+                <p>Click <a href={url}>here</a> to reply to the work order.</p>
+                {expiry?<span>This link will expire {expiry}</span>:null}.
                 {owner.profile.phone?<p>If the matter is urgent, {owner.getName()} can be contacted on {owner.profile.phone}.</p>:null}
             </div>
         )

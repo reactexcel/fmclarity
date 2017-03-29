@@ -20,7 +20,7 @@ function ServicesRequestsViewRow( props ) {
 
 	return (
 		<div>
-			<div className="services-editor-col services-editor-col-service">
+			<div className="services-list-col services-editor-col-service">
 
 				{ clickExpand ?
 

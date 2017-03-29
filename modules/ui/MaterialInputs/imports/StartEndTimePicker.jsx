@@ -65,6 +65,7 @@ const StartEndTimePicker = React.createClass( {
 					onSelect 	= { this.handleSelect }
 					onClear 	= { this.handleClear }
 					errors 		= { this.props.errors }
+					datepicker  = { true }
 				/>
 
 				<div style={{display:"none"}}>

@@ -16,9 +16,8 @@ export default function RequestFilter( { items, selectedItem, onChange } ) {
             <Select
                 value       = { selectedItem }
                 items       = { items }
-                onChange    = 
+                onChange    =
                     { ( item ) => {
-                        console.log( item );
                         Session.set( 'selectedStatus', item );
                     } }
             />

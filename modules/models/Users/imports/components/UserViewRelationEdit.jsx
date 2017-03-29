@@ -6,6 +6,8 @@
 import React from "react";
 import { Select } from '/modules/ui/MaterialInputs';
 
+import { Users } from '/modules/models/Users';
+
 // so this should perhaps be included in the docmembers package??
 export default UserViewRelationEdit = React.createClass( {
 
@@ -14,6 +16,13 @@ export default UserViewRelationEdit = React.createClass( {
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole( member, role );
+		if ( !_.contains([ "portfolio manager" ], role) ) {
+			Users.update( { _id: member._id}, { $set: { role: role } } );
+			this.props.team.setMemberRole( member, role );
+			if (this.props.onChange) {
+				this.props.onChange();
+			}
+		}
 	},
 
 	render() {
@@ -25,8 +34,6 @@ export default UserViewRelationEdit = React.createClass( {
 		let relation = group.getMemberRelation( member );
 		let userRole = Meteor.user().getRole();
 
-		console.log( userRole );
-
 		if( userRole == 'caretaker' ) {
 			roles = [
 				"staff",
@@ -35,11 +42,12 @@ export default UserViewRelationEdit = React.createClass( {
 				"property manager",
 			]
 		} else if ( userRole == "manager") {
-			roles = [ "staff", "manager"]
+			roles = [ "staff", "manager", "support" ]
 		} else {
 			roles = [
 				"staff",
 				"tenant",
+				"support",
 				"manager",
 				"resident",
 				"caretaker",

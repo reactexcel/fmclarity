@@ -51,6 +51,11 @@ export default DocumentSchema = {
 				"Invoice",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",
@@ -68,20 +73,6 @@ export default DocumentSchema = {
 		description: "The site for this job",
 		type: "object",
 		size: 12,
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return Facilities.findOne( item.facility._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.facility && item.facility._id ) {
-					return _.pick( item.facility, '_id', 'name' );
-				}
-			}
-			*/
-		},
 		input: Select,
 		defaultValue: ( item ) =>{
 				return Session.getSelectedFacility();
@@ -102,20 +93,6 @@ export default DocumentSchema = {
 		optional: true,
 		description: "Document is related to request",
 		type: "object",
-		relation: {
-			/*
-			join: ( item ) => {
-				if( item.request && item.request._id ) {
-					return Requests.findOne( item.request._id );
-				}
-			},
-			unjoin: ( item ) => {
-				if( item.request && item.request._id ) {
-					return _.pick( item.request, '_id', 'name' );
-				}
-			}
-			*/
-		},
 
 		options: ( item ) => {
 			if ( item.facility ) {
@@ -216,9 +193,10 @@ export default DocumentSchema = {
 
 	},
 	serviceType: {
-		input: Text,
+		input: Select,
 		label: "Service type",
 		optional: true,
+		type: "object",
 		size: 6,
 		condition: function( item ) {
 			return [
@@ -228,6 +206,11 @@ export default DocumentSchema = {
 				"Invoice",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",
@@ -236,7 +219,27 @@ export default DocumentSchema = {
 				"SWMS",
 			].indexOf( item.type ) > -1;
 		},
+		options: function( item ) {
+			let selectedTeam = Session.getSelectedTeam(),
+				teamType = null,
+				items = null;
+			if ( selectedTeam ) {
+				teamType = selectedTeam.type;
+			}
+
+			if ( teamType == 'fm' && item.facility ) {
+				items = item.facility.servicesRequired;
+			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
+				items = team.getAvailableServices();
+			}
+
+
+			return {
+				items: items
+			}
+		}
 	},
+	/*
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -261,9 +264,10 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 	},
+	*/
 	issuer: {
 		input: Text,
-		label: "Issuer",
+		label: "Insurer",
 		optional: true,
 		size: 6,
 		condition: function( item ) {
@@ -274,13 +278,137 @@ export default DocumentSchema = {
 		},
 	},
 	insuranceType: {
-		input: Text,
+		input: Select,
 		label: "Insurance type",
 		optional: true,
+		options: {
+			items:[
+				'Public Liablity',
+				'Professional Indemnity',
+				'Worker\'s Compensation',
+				'Other',
+			],
+		},
 		size: 6,
 		condition: function( item ) {
 			return [
 				"Insurance",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	reportType: {
+		input: Select,
+		label: "Report type",
+		optional: true,
+		options: {
+			items:[
+				'Validation Report',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Report",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	confirmationType: {
+		input: Select,
+		label: "Confirmation type",
+		optional: true,
+		options: {
+			items:[
+				'Bunding',
+				'Manifest',
+				'Signage',
+				'Spill bins',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Confirmation",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	logType:{
+		input: Select,
+		label: "Log type",
+		optional: true,
+		options: {
+			items:[
+				'Warden training',
+				'Chief Warden training',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Log",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	certificateType:{
+		input: Select,
+		label: "Certificate type",
+		optional: true,
+		options: {
+			items:[
+				'Certificate of Occupancy',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Certificate",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	registerType:{
+		input: Select,
+		label: "Register type",
+		optional: true,
+		options: {
+			items:[
+				'Incident register',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Register",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	registrationType:{
+		input: Select,
+		label: "Registration type",
+		optional: true,
+		options: {
+			items:[
+				'Testing & Tagging certificate',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Registration",
+			].indexOf( item.type ) > -1;
+		},
+	},
+	procedureType:{
+		input: Select,
+		label: "Procedure type",
+		optional: true,
+		options: {
+			items:[
+				'Restricted access',
+			],
+		},
+		size: 6,
+		condition: function( item ) {
+			return [
+				"Procedure",
 			].indexOf( item.type ) > -1;
 		},
 	},
@@ -433,6 +561,11 @@ export default DocumentSchema = {
 				"Lease",
 				"MSDS",
 				"Plan",
+				"Management Plan",
+				"Assessment",
+			    "Confirmation",
+			    "Certificate",
+			    "Log",
 				"Procedure",
 				"Quote",
 				"Register",
@@ -550,7 +683,7 @@ export default DocumentSchema = {
 		label: "Area (m2)"
 	},
 	private: {
-		label: "Private documrent",
+		label: "Private document",
 		description: "Turn switch on/off to make document public/private",
 		input: Switch,
 		defaultValue: () => false,
@@ -596,7 +729,7 @@ export default DocumentSchema = {
 											paddingTop: '4px',
 	    								paddingBottom: '4px',
 	    								paddingLeft: '15px',
-	    								backgroundColor: '#bcaab1',
+	    								backgroundColor: 'aliceblue',
 	    								fontSize: '13px',
 	    								fontWeight: '400',
 											marginLeft: '5px',

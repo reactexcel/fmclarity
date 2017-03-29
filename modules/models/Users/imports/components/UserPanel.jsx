@@ -63,10 +63,15 @@ class UserPanel extends React.Component {
 		let profile = null,
 			availableServices = null,
 			contact = this.state.item,
+			thumbUrl = null,
 			hideMenu = this.props.hideMenu;
 
 		if ( !contact ) {
 			return <div/>
+		}
+
+		if( contact.getThumbUrl ) {
+			thumbUrl = contact.getThumbUrl();
 		}
 
 		let roles = Roles.getUserRoles( contact );
@@ -78,18 +83,22 @@ class UserPanel extends React.Component {
 			availableServices = contact.getAvailableServices();
 		}
 
+		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
-				    <img alt = "image" src = { contact.getThumbUrl() } />
+				    <img alt = "image" src = { thumbUrl } />
 				 </div>
 				 <div className = "contact-info">
 				 	<div>
 						<h2>{ contact.getName() }</h2>
-
-						{ this.props.role ?
-							<span>{this.props.role}<br/></span>
+						{ relation&&relation.role ?
+							<span>{ relation.role }<br/></span>
 						: null }
+
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.threshold) ? 
+							<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
+							 : null}
 
 						{ profile.email ?
 							<span><b>Email</b> {profile.email}<br/></span>
@@ -103,7 +112,7 @@ class UserPanel extends React.Component {
 							<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>
 						: null }
 
-						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
+						<div style = { {margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"} }></div>
 
 						{ !roles ? null : roles.map( ( role, idx ) => {
 							return (

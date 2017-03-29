@@ -15,24 +15,27 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		statusFilter = null,
 		contextFilter = {},
 		selectedRequest = null,
-		includeClosed = false;
-
+		includeComplete = false;
 	if ( selectedStatus == 'New' ) {
-		statusFilter = { "status": 'New' };		
+		statusFilter = { "status": 'New' };
 	}
 	else if ( selectedStatus == 'Issued' ) {
-		statusFilter = { "status": 'Issued' };		
+		statusFilter = { "status": 'Issued' };
 	}
-	else if ( selectedStatus == 'Closed' ) {
-		statusFilter = { "status": { $in: [ 'Closed', 'Complete' ] } };
-		includeClosed = true;
+	else if ( selectedStatus == 'Complete' ) {
+		statusFilter = { "status": 'Complete' };
+		includeComplete = true;
+	}
+	else if ( selectedStatus == 'Close' ) {
+		statusFilter = { "status": 'Close' };
+		includeComplete = true;
 	}
 	else {
 		selectedStatus = 'Open';
 		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
 	}
 
-	Meteor.subscribe( 'User: Facilities, Requests', includeClosed );
+	Meteor.subscribe( 'User: Requests, Facilities', { includeComplete } );
 
 
 	if ( selectedRequestId ) {

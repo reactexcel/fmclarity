@@ -6,163 +6,177 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 
 import moment from 'moment';
 
-
 export default ProgressOverviewChart = React.createClass( {
 
-        mixins: [ ReactMeteorData ],
+        startComputation() {
 
-        getMeteorData() {
+            this.computation = Tracker.autorun( () => {
 
-            var baseQuery = {};
-            var queries = {
-                New: {},
-                Issued: {},
-                Closed: {},
-            };
+                let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
+                    endDate = moment().endOf( 'month' ),
+                    period = { number: 3, unit: 'month' };
 
-            var facility = Session.get( 'selectedFacility' );
-            if ( facility ) {
-                baseQuery[ "facility._id" ] = facility._id;
-            }
+                var facilityQuery = Session.get( 'selectedFacility' );
+                var teamQuery = Session.get( 'selectedTeam' );
+                this.updateStats( { startDate, endDate, period, facilityQuery, teamQuery } );
+            } );
 
-            var team = Session.get( 'selectedTeam' );
-            //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-            if ( team ) {
-                baseQuery[ "team._id" ] = team._id;
+        },
 
-                var period = this.state.period;
-                var startDate = this.state.startDate;
-                var endDate = this.state.endDate;
-                var lastStartDate = startDate.clone().subtract( period.number, period.unit + 's' );
-                var lastEndDate = endDate.clone().subtract( period.number, period.unit + 's' );
+        componentDidMount() {
 
-                for ( var status in queries ) {
-                    var qThisMonth = _.extend( {}, baseQuery, {
-                        status: status,
-                        createdAt: {
-                            $gte: startDate.toDate(),
-                            $lte: endDate.toDate()
-                        }
-                    } );
-                    var qLastMonth = _.extend( {}, baseQuery, {
-                        status: status,
-                        createdAt: {
-                            $gte: lastStartDate.toDate(),
-                            $lte: lastEndDate.toDate()
-                        }
-                    } );
-                    queries[ status ].thisPeriod = Requests.find( qThisMonth ).count();
-                    queries[ status ].lastPeriod = Requests.find( qLastMonth ).count();
-                }
-            }
+            let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
+                endDate = moment().endOf( 'month' ),
+                period = { number: 3, unit: 'month' };
 
-            return {
-                results: queries
+            this._mounted = true;
+
+            this.setState( {
+                title: startDate.format( "[since] MMMM YYYY" )
+            } );
+
+            setTimeout( () => { this.startComputation() }, 0 );
+        },
+
+        componentWillUnmount() {
+            this._mounted = false;
+            if ( this.computation ) {
+                this.computation.stop();
             }
         },
 
-        getInitialState() {
-            var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
-            var title = startDate.format( "[since] MMMM YYYY" )
-            return ( {
-                startDate: startDate,
-                endDate: moment().endOf( 'month' ),
-                title: title,
-                period: { number: 3, unit: 'month' }
+        updateStats( { startDate, endDate, period, facilityQuery, teamQuery } ) {
+
+            //console.log( 'updating stats' );
+
+            Meteor.call( 'getProgressOverviewStats', {
+                startDate: startDate.toDate(),
+                endDate: endDate.toDate(),
+                period: period,
+                facilityQuery: facilityQuery || Session.get( 'selectedFacility' ),
+                teamQuery: teamQuery || Session.get( 'selectedTeam' )
+            }, ( error, results ) => {
+                //console.log( { error, results } );
+                if ( !error && this._mounted ) {
+                    this.setState( {
+                        results
+                    } )
+                }
             } )
+        },
+
+        getInitialState() {
+            let startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
+            return {
+                title: startDate.format( "[since] MMMM YYYY" ),
+                results: {
+                    New: { thisPeriod: 0, lastPeriod: 0 },
+                    Issued: { thisPeriod: 0, lastPeriod: 0 },
+                    Complete: { thisPeriod: 0, lastPeriod: 0 }
+                }
+            };
         },
 
         getMenu() {
             var component = this;
             return [ {
                 label: ( "Day" ),
-                run() {
-                    var startDate = moment().startOf( 'day' );
-                    var endDate = moment().endOf( 'day' );
-                    var title = startDate.format( "[for] dddd Do MMMM" )
-                    component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 1, unit: 'day' }
-                    } )
+                run: () => {
+
+                    let startDate = moment().startOf( 'day' ),
+                        endDate = moment().endOf( 'day' ),
+                        period = { number: 1, unit: 'day' };
+
+                    this.setState( {
+                        title: startDate.format( "[for] dddd Do MMMM" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "Week" ),
-                run() {
-                    var startDate = moment().startOf( 'week' );
-                    var endDate = moment().endOf( 'week' );
-                    var title = startDate.format( "[for week starting] Do MMMM" )
-                    component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 1, unit: 'week' }
-                    } )
+                run: () => {
+
+                    let startDate = moment().startOf( 'week' ),
+                        endDate = moment().endOf( 'week' ),
+                        period = { number: 1, unit: 'week' };
+
+                    this.setState( {
+                        title: startDate.format( "[for week starting] Do MMMM" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "Month" ),
-                run() {
-                    var startDate = moment().startOf( 'month' );
-                    var endDate = moment().endOf( 'month' );
-                    var title = startDate.format( "[for] MMMM YYYY" )
+                run: () => {
+
+                    let startDate = moment().startOf( 'month' ),
+                        endDate = moment().endOf( 'month' ),
+                        period = { number: 1, unit: 'month' };
+
                     component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 1, unit: 'month' }
-                    } )
+                        title: startDate.format( "[for] MMMM YYYY" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
                 }
             }, {
                 label: ( "3 Months" ),
-                run() {
-                    var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
-                    var endDate = moment().endOf( 'month' );
-                    var title = startDate.format( "[for 3 months since] MMMM YYYY" )
+                run: () => {
+
+                    let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
+                        endDate = moment().endOf( 'month' ),
+                        period = { number: 3, unit: 'month' };
+
                     component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 3, unit: 'month' }
-                    } )
+                        title: startDate.format( "[for 3 months since] MMMM YYYY" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
+
                 }
             }, {
                 label: ( "6 Months" ),
-                run() {
-                    var startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
-                    var endDate = moment().endOf( 'month' );
-                    var title = startDate.format( "[for 6 months since] MMMM YYYY" )
+                run: () => {
+
+                    let startDate = moment().subtract( 5, 'months' ).startOf( 'month' ),
+                        endDate = moment().endOf( 'month' ),
+                        period = { number: 6, unit: 'month' };
+
                     component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 6, unit: 'month' }
-                    } )
+                        title: startDate.format( "[for 6 months since] MMMM YYYY" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
+
                 }
             }, {
                 label: ( "Year" ),
-                run() {
-                    var startDate = moment().startOf( 'year' );
-                    var endDate = moment().endOf( 'year' );
-                    var title = startDate.format( "[for] YYYY" )
+                run: () => {
+
+                    let startDate = moment().startOf( 'year' ),
+                        endDate = moment().endOf( 'year' ),
+                        period = { number: 1, unit: 'year' }
+
                     component.setState( {
-                        startDate: startDate,
-                        endDate: endDate,
-                        title: title,
-                        period: { number: 1, unit: 'year' }
-                    } )
+                        title: startDate.format( "[for] YYYY" )
+                    } );
+
+                    this.updateStats( { startDate, endDate, period } );
+
                 }
             } ];
         },
 
         render() {
-            var results = this.data.results;
+            var results = this.state.results;
             var facility = Session.get( 'selectedFacility' );
             return (
                 <div>
                 <Menu items={this.getMenu()} />
                 <div className="ibox-title">
-                    <h2>Overview {this.state.title} {facility?" for "+facility.name:" for all facilities"}</h2>
+                    <h2>Overview {this.state.title} {facility&&facility.name?" for "+facility.name:" for all facilities"}</h2>
                 </div>
                 <div className="ibox-content" style={{padding:"0px 20px 30px 20px"}}>
                     <div style={{textAlign:"center",clear:"both"}}>
@@ -180,8 +194,8 @@ export default ProgressOverviewChart = React.createClass( {
                             />
                             <ProgressArc 
                                 title="Closed Requests" 
-                                thisPeriod = {results['Closed'].thisPeriod}
-                                lastPeriod = {results['Closed'].lastPeriod}
+                                thisPeriod = {results['Complete'].thisPeriod}
+                                lastPeriod = {results['Complete'].lastPeriod}
                                 color="#333333"
                             />
                         {/*

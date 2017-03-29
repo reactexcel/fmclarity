@@ -14,9 +14,10 @@ import { AreasEditor } from '/modules/mixins/Areas';
 import { RequestsTable } from '/modules/models/Requests';
 import { ServicesRequiredEditor } from '/modules/mixins/Services';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
-import { Facilities, FacilityActions, PropertyManagerDetails } from '/modules/models/Facilities';
+import { Facilities, FacilityActions, PropertyManagerDetails, BillingAddressDetails } from '/modules/models/Facilities';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import FacilityStepper from './FacilityStepper.jsx';
+import { Modal } from '/modules/ui/Modal';
 
 /**
  * @class 			FacilityPanel
@@ -24,29 +25,59 @@ import FacilityStepper from './FacilityStepper.jsx';
  */
 function FacilityPanel( { item } ) {
 
-	let facility = item,
-		teamType = Session.get('selectedTeam').type,
-		role = Meteor.user().getRole(),
-		menuItems = [];
-	let actionNames = Object.keys( FacilityMenuActions.actions ),
-		validActions = Actions.filter( actionNames, facility );
+    let facility = item,
+        teamType = Session.get( 'selectedTeam' ).type,
+        role = Meteor.user().getRole(),
+        thumbUrl = null,
+        menuItems = [];
 
+    let actionNames = Object.keys( FacilityMenuActions.actions ),
+        validActions = Actions.filter( actionNames, facility );
 
-	for( actionName in validActions ) {
-		let action = validActions[ actionName ];
-		menuItems.push( action.bind( facility ) );
-	}
+    if ( facility.getThumbUrl ) {
+        thumbUrl = facility.getThumbUrl();
+    }
 
-	return (
-		<DropFileContainer model={Facilities}>
+    for ( actionName in validActions ) {
+        let action = validActions[ actionName ];
+        menuItems.push( action.bind( facility ) );
+    }
+    let caretaker = facility.getMembers( { 'role': "caretaker" } ),
+        contact = facility.getMembers( { 'role': "manager" } );
+
+    if ( contact ) {
+        contact = contact[ 0 ];
+    }
+    loadAddressForm = function(facility){
+    	Modal.show( {
+			content: <AutoForm
+				        model = { Facilities }
+				        item = { facility }
+				        title = "Facility Address"
+				        form = {
+				          [ 'address' ] }
+				        onSubmit = {
+				          ( facility ) => {
+				            Facilities.save.call( facility );
+				            Modal.hide();
+				          }
+				        }
+
+			  		 />
+		} )
+	    
+	  }
+
+    return (
+        <DropFileContainer model={Facilities}>
 		<div>
 			<div className="facility-card">
 
 				{/* standfirst, banner??? */}
 				<div className="contact-thumbnail">
 
-					{ facility.thumbUrl ?
-					<div className = "cover-image" style = { {backgroundImage:"url('"+facility.thumbUrl+"')"} }></div>
+					{ thumbUrl ?
+					<div className = "cover-image" style = { {backgroundImage:"url('"+thumbUrl+"')"} }></div>
 					: null }
 
 					<div className="title-overlay">
@@ -54,7 +85,7 @@ function FacilityPanel( { item } ) {
 							<div className="col-md-4">
 								<div
 									className = "facility-title"
-									style = { {borderBottom:facility.contact?"1px solid #fff":"none"} }>
+									style = { {borderBottom:contact || (caretaker && caretaker.length) ?"1px solid #fff":"none"} }>
 
 									<div style = { { fontSize:"20px", color:"#fff", cursor: "pointer" } }>
 										<i className = "fa fa-arrow-left" onClick = { () => {
@@ -65,11 +96,11 @@ function FacilityPanel( { item } ) {
 									<h2 style = { { marginTop: "20px" }}> { facility.name } </h2>
 
 									{ facility.address ?
-									<b>{facility.getAddress()}</b>
+									<b onClick   = { () => { loadAddressForm( facility )  } } className="edit-link">{facility.getAddress()}</b>
 									: null }
 
 								</div>
-								<ContactDetails item = { facility.contact }/>
+								<ContactDetails item = { caretaker && caretaker.length ? caretaker[0] : contact }/>
 							</div>
 						</div>
 					</div>
@@ -88,11 +119,11 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: ["staff","manager","caretaker"] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: ["tenant","resident"] } } } defaultRole = "resident" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'tenant', 'resident' ] } } } defaultRole = {facility.type == "Residential" ? "resident" : "tenant"} team = { facility.team }/>
 					},{
 						hide:       !facility.canSetAreas(),
 						tab:        <span id="areas-tab">Areas</span>,
@@ -110,9 +141,12 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="requests-tab">Requests</span>,
 						content:    <RequestsTable filter = { {"facility._id":facility._id} }/>
 					},{
-						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support"], Meteor.user().getRole()),
-						tab:        <span id="requests-tab">Lease</span>,
-						content:    <PropertyManagerDetails facility={facility} />
+						hide:     	teamType !='fm' || !_.contains(["portfolio manager", "fmc support" ], Meteor.user().getRole()),
+						tab:        <span id="requests-tab">Config</span>,
+						content:    <div>
+										<BillingAddressDetails facility={facility} />
+										<PropertyManagerDetails facility={facility} />
+									</div>
 					}
 				] } />
 			</div>
@@ -121,7 +155,7 @@ function FacilityPanel( { item } ) {
 
 		</div>
 		</DropFileContainer>
-	)
+    )
 }
 
 export default FacilityPanel;

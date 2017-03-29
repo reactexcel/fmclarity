@@ -12,9 +12,6 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 
-
-	Meteor.subscribe( 'User: Facilities, Requests' );
-
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		facilities = null,
@@ -26,7 +23,7 @@ const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 
 	if ( facility ) {
 		services = _.filter( facility.servicesRequired, ( service ) => {
-			return service.data && service.data.complianceRules && service.data.complianceRules.length
+			return ( service && service.data && service.data.complianceRules && service.data.complianceRules.length )
 		} );
 	}
 

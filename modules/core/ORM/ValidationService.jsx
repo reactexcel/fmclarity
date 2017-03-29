@@ -2,9 +2,11 @@ import { isValidABN, isValidACN, isValidABNorACN } from "abnacn-validator";
 export default ValidationService = {
 	validator
 };
-
+let curDoc = null, curSchema=null;
 function validator( schema ) {
 	return function( doc ) {
+		curDoc = doc;
+		curSchema = schema;
 		let errors = [];
 		validate( doc, schema, errors );
 
@@ -108,10 +110,39 @@ function checkBoolean( rule, value, key, errors ) {
 	}
 }
 
+function resolveObjectValue(obj, path){
+    path = path.split('.');
+    var current = obj;
+    while(path.length) {
+        if(typeof current !== 'object') return undefined;
+        current = current[path.shift()];
+    }
+    return current;
+}
+
+function checkUniqueKey(rule, value, key, errors){
+	var comparedField = rule.unique.field ? rule.unique.field : null;
+		var identifier = rule.unique.identifier ? rule.unique.identifier : null;
+		if(rule.unique.collection){
+			rule.unique.collection.fetch().map(function(data, idx){
+					var curCollectionValue = resolveObjectValue(data, comparedField);
+					var docId = resolveObjectValue(curDoc, identifier);
+					if (data._id !=docId && curCollectionValue==value) {
+						errors.push( { name: key, type: "This value already exists. Please try another." } );
+					}
+					
+				});
+		}
+}
+
 function checkString( rule, value, key, errors ) {
 	if ( rule.required && value == '' ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
+	}
+	
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
 	}
@@ -122,6 +153,9 @@ function checkNumber( rule, value, key, errors ) {
 	value = parseInt( value );
 	if ( !_.isNumber( value ) || isNaN( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a number" } );
+	}
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
 	}
 }
 
@@ -153,6 +187,9 @@ function checkABN( rule, value, key, errors ) {
 	if ( !isValidABN( value ) && value != '') {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
 	}
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
+	}
 }
 
 function checkPhoneNumber( rule, value, key, errors ) {
@@ -181,17 +218,21 @@ function checkPhoneNumber( rule, value, key, errors ) {
 		if (($.inArray(valueString.substr(0, 2), landlines) === -1) && ($.inArray(valueString.substr(0, 4), acceptted_first_four_values) === -1) && ($.inArray(valueString.substr(0, 2), acceptted_first_two_values) === -1) ) {
 			errors.push( { name: key, type: "Format should match:{(0[2|3|7|8]) xxxx xxxx, 04yy yxx xxx, 1300 xxx xxx, 13 xx xx, 1800 xxx xxx}" } );
 		}
-		if ((($.inArray(valueString.substr(0, 2), landlines) !== -1) && valueString.length != 10) || 
-			(($.inArray(valueString.substr(0, 4), acceptted_first_four_values) !== -1) && valueString.length != 10) || 
-			(valueString.substr(0, 2) == '04' && valueString.length != 10) || 
-			(valueString.length == 6 && valueString.substr(0, 2) != '13') || 
-			(valueString.substr(0, 4) == '1300' && valueString.length > 6 && valueString.length != 10) || 
+		if ((($.inArray(valueString.substr(0, 2), landlines) !== -1) && valueString.length != 10) ||
+			(($.inArray(valueString.substr(0, 4), acceptted_first_four_values) !== -1) && valueString.length != 10) ||
+			(valueString.substr(0, 2) == '04' && valueString.length != 10) ||
+			(valueString.length == 6 && valueString.substr(0, 2) != '13') ||
+			(valueString.substr(0, 4) == '1300' && valueString.length > 6 && valueString.length != 10) ||
 			((valueString.length != 6 && valueString.length !=10) && valueString.substr(0, 2) == '13')
 		 ) {
 			errors.push( { name: key, type: "Invalid type: please check the length of the number." } );
 		}
 	}
-	
+
+	if (rule.unique) {
+		checkUniqueKey(rule, value, key, errors);	
+	}
+
 
 }
 

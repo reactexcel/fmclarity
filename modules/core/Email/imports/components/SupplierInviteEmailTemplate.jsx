@@ -5,37 +5,41 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import moment from 'moment';
 
-const SupplierInviteEmailTemplate = React.createClass({
+const SupplierInviteEmailTemplate = React.createClass( {
 
-    mixins: [ReactMeteorData],
+    mixins: [ ReactMeteorData ],
 
     getMeteorData() {
         import { Teams } from '/modules/models/Teams';
         import { Users } from '/modules/models/Users';
-        var team, user, secret, expiry;
-        if (this.props.team)
-            team = Teams.findOne(this.props.team._id);
-        if (this.props.user)
-            user = Users.findOne(this.props.user._id);
-        if (this.props.token) {
+
+        let { team, inviter, user, token } = this.props;
+        secret = null,
+            expiry = null;
+
+        if ( team && team._id ) {
+            team = Teams.findOne( team._id );
+        }
+        if ( inviter && inviter._id ) {
+            inviter = Teams.findOne( inviter._id );
+        }
+        if ( user && user._id ) {
+            user = Users.findOne( user._id );
+        }
+        if ( token ) {
             secret = this.props.token.token;
             expiry = this.props.token.expiry;
         }
-        return {
-            team: team,
-            user: user,
-            secret: secret,
-            expiry: expiry
-        }
+
+        return { team, inviter, user, secret, expiry }
     },
 
     render() {
-        var team = this.data.team;
-        var user = this.data.user;
-        var secret = this.data.secret;
-        var expiry = this.data.expiry ? moment(this.data.expiry).fromNow() : null;
-        var url = Meteor.absoluteUrl('enroll-account/' + secret, { rootUrl: "https://app.fmclarity.com" });
-        var userName = (user.profile && user.profile.firstName) ? user.profile.firstName : user.getName();
+        let { team, inviter, user, secret } = this.data,
+            expiry = this.data.expiry ? moment( this.data.expiry ).fromNow() : null,
+            url = Meteor.absoluteUrl( 'enroll-account/' + secret ),
+            userName = ( user.profile && user.profile.firstName ) ? user.profile.firstName : user.getName();
+
         return (
             <div style={{padding:"30px", backgroundColor:"#f5f5f5"}}>
                 <div style={{
@@ -50,10 +54,10 @@ const SupplierInviteEmailTemplate = React.createClass({
                       Hi {userName},
                     </p>
                     <p style={{textAlign: "justify"}}>
-                      You’ve been invited to use FM Clarity by <strong>{team.name}</strong> so welcome aboard.
+                      You’ve been invited to use FM Clarity by <strong>{inviter.name}</strong> so welcome aboard.
                     </p>
                     <p style={{textAlign: "justify"}}>
-                      {team.name} use FM Clarity for their facility management processes, including work orders
+                      {inviter.name} use FM Clarity for their facility management processes, including work orders
                       and building compliance. There is no cost for you and your team to use this service.
                     </p>
                     <p style={{textAlign: "justify"}}>
@@ -61,7 +65,7 @@ const SupplierInviteEmailTemplate = React.createClass({
                     </p>
                     <p style={{textAlign: "justify"}}>
                       FM Clarity however is not just used to issue work orders but is also used by FMs to <strong>search for </strong>
-                      <strong>new suppliers</strong>, just like your company. Think of it like a LinkedIn for suppliers.. and it won’t cost
+                      <strong>new suppliers</strong>, just like your company. Think of it like a LinkedIn for suppliers... and it won’t cost
                       you a thing.
                     </p>
                     <p style={{textAlign: "justify"}}>
@@ -87,10 +91,9 @@ const SupplierInviteEmailTemplate = React.createClass({
                       <strong>Cheers from the team at FM Clarity</strong><br/>
                       <a href="https://www..fmclarity.com" style={{textDecoration: "none"}}>fmclarity.com</a>
                     </p>
-                </div>
-            </div>
+                </div> </div>
         );
     }
-});
+} );
 
 export default SupplierInviteEmailTemplate;

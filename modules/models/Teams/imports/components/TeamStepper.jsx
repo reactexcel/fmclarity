@@ -34,27 +34,31 @@ const TeamStepper = React.createClass( {
             viewingTeam = null,
             group = null;
 
-        if( this.state.team ) {
+        if ( this.state.team ) {
             viewersTeam = Teams.findOne( this.state.team._id );
-        }
-        else {
+        } else {
             viewersTeam = Session.getSelectedTeam();
         }
 
         //getting value of item from state instead of props
-        if( this.state.item ) {
+        if ( this.state.item && this.state.item._id ) {
             viewingTeam = Teams.findOne( this.state.item._id );
-            if( !viewingTeam && this.state.searchName ) {
-              let query = {
-                  name: {
-                      $regex: this.state.searchName,
-                      $options: 'i'
-                  },
-              };
-              if(this.state.teamType){
-                query.type = this.state.teamType
-              }
-              viewingTeam = Teams.findOne( query );
+            /*
+            if(viewingTeam.type == "contractor"){
+                Teams.schema.email.required=false;
+            }
+            */
+            if ( !viewingTeam && this.state.searchName ) {
+                let query = {
+                    name: {
+                        $regex: this.state.searchName,
+                        $options: 'i'
+                    },
+                };
+                if ( this.state.teamType ) {
+                    query.type = this.state.teamType
+                }
+                viewingTeam = Teams.findOne( query );
             }
         }
 
@@ -125,32 +129,30 @@ const TeamStepper = React.createClass( {
         var searchName = supplier.name ? supplier.name : input.value;
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
-        }
-        else {
-          //this.setState( { searchName: searchName} );
-          this.setState({searchName: searchName}, () => {
-            input.value = '';
-            let supplierId = supplier._id || Random.id();
-            viewersTeam.inviteSupplier( searchName, supplierId, ( invitee ) => {
-                invitee = Teams.collection._transform( invitee );
+        } else {
+            //this.setState( { searchName: searchName} );
+            this.setState( { searchName: searchName }, () => {
+                input.value = '';
+                let supplierId = supplier._id || Random.id();
+                viewersTeam.inviteSupplier( searchName, supplierId, ( invitee ) => {
+                    invitee = Teams.collection._transform( invitee );
 
-                /*if ( group && group.addSupplier ) {
-                    group.addSupplier( invitee );
-                }*/
-                this.setItem( invitee );
-                if ( this.props.onChange ) {
-                    this.props.onChange( invitee );
-                }
+                    /*if ( group && group.addSupplier ) {
+                        group.addSupplier( invitee );
+                    }*/
+                    this.setItem( invitee );
+                    if ( this.props.onChange ) {
+                        this.props.onChange( invitee );
+                    }
 
-                if ( !invitee.email ) {
-                    this.setState( { shouldShowMessage: true } );
-                }
-                else {
-                    Modal.hide();
-                }
+                    if ( !invitee.email ) {
+                        this.setState( { shouldShowMessage: true } );
+                    } else {
+                        Modal.hide();
+                    }
 
-            }, null );
-            });
+                }, null );
+            } );
 
         }
     },
@@ -165,46 +167,47 @@ const TeamStepper = React.createClass( {
     },
     submitFormCallback: null,
     submitFormCallbackForWorkOrder: null,
-    onNext( callback ){
-      this.submitFormCallback = callback;
+    onNext( callback ) {
+        this.submitFormCallback = callback;
     },
-    onNextWorkOrder( callback ){
-      this.submitFormCallbackForWorkOrder = callback;
+    onNextWorkOrder( callback ) {
+        this.submitFormCallbackForWorkOrder = callback;
     },
-    handleTeamChange(team){
+    handleTeamChange( team ) {
 
-      this.handleInvite(team);
+        this.handleInvite( team );
 
     },
 
-    checkName(event){
-      event.preventDefault();
-      var inputName = this.refs.invitation.value;
-      let query = {
-        name: {
-          $regex: inputName,
-          $options: 'i'
+    checkName( event ) {
+        event.preventDefault();
+        var inputName = this.refs.invitation.value;
+        let query = {
+            name: {
+                $regex: inputName,
+                $options: 'i'
+            }
+        };
+        if ( this.state.teamType ) {
+            query.type = this.state.teamType
         }
-      };
-      if(this.state.teamType){
-        query.type = this.state.teamType
-      }
-      searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
-      if (searchTeams.length>0) {
-        this.setState( { foundTeams: true} );
+        searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
+        if ( searchTeams.length > 0 ) {
+            this.setState( { foundTeams: true } );
 
-      }
-      else{
-        this.setState( { foundTeams: false} );
-        this.handleInvite();
+        } else {
+            this.setState( { foundTeams: false } );
+            this.handleInvite();
 
-      }
+        }
     },
 
     render() {
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
+        var teamType = this.state.teamType;
+        var component = this;
 
         if ( !viewingTeam ) {
             return (
@@ -218,6 +221,13 @@ const TeamStepper = React.createClass( {
                 </form>
             )
         }
+
+        /*
+        if(viewingTeam.type == "contractor"){
+            Teams.schema.email.required=false;
+        }
+        */
+
         /*
         else if ( !viewingTeam.canSave() )
         {
@@ -259,9 +269,9 @@ const TeamStepper = React.createClass( {
                     }
                   }
                   onFinish = { () => {
-                      if(this.props.onFinish){
-                        this.props.onFinish( viewingTeam )
-                      }
+                        if(this.props.onFinish){
+                            this.props.onFinish( viewingTeam )
+                        }
                     }
                   }
                   tabs={[
@@ -272,23 +282,33 @@ const TeamStepper = React.createClass( {
                                         <AutoForm
                                             model = { Teams }
                                             item = { viewingTeam }
-                                            form = { ["name","type","abn","email","phone","phone2","website"] }
+                                            form = { ["name","type","abn","email","phone","phone2","website","address"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
+                                            onChange =  { ( newItem ) => {
+                                                /*
+                                                if(newItem.item.type == "contractor"){
+                                                    Teams.schema.email.required=false;
+                                                }
+                                                */
+                                                }
+                                            }
                                             submitFormOnStepperNext = { true }
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
-                                                if ( team.email && team.inviteMember && !team.members) {
+                                                if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
                                                       role: role ? role : "manager",
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
                                                         name: team.name
-                                                      },
-                                                      flag: true,
+                                                      }
                                                     }
                                                    );
+                                                   if (role == "property manager") {
+                                                       this.props.onChange && this.props.onChange( item );
+                                                   }
                                                 }
                                               }
                                             }
@@ -299,7 +319,7 @@ const TeamStepper = React.createClass( {
                                         <AutoForm
                                             model = { Teams }
                                             item = { viewingTeam }
-                                            form = { ["defaultWorkOrderValue","description"] }
+                                            form = { ["defaultWorkOrderValue", "defaultCostThreshold", "description"] }
                                             onNext = { this.onNextWorkOrder }
                                             hideSubmit = { true }
                                             submitFormOnStepperNext = { true }
@@ -313,7 +333,7 @@ const TeamStepper = React.createClass( {
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
                         tab:        <span id = "members-tab">Members</span>,
-                        content:    <ContactList group = { viewingTeam } team = { viewingTeam }/>,
+                        content:    <ContactList group = { viewingTeam } filter = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager'] } } } defaultRole = "staff" team = { viewingTeam }/>,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:        <span id = "services-provided-tab">Services provided</span>,
