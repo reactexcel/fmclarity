@@ -1,7 +1,12 @@
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
+<<<<<<< HEAD
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
+=======
+import MBMReport from './reports/MBMReport.jsx';
+import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
+>>>>>>> develop
 
 const Reports = {
 	dict: {},
@@ -38,6 +43,18 @@ Reports.register( {
 	id: "mbm-service-image",
 	name: "MBM Service Image",
 	content: MBMServiceImages
+} )
+
+Reports.register( {
+	id: "mbm-report-contract",
+	name: "MBM Report (Service Contract)",
+	content: MBMReport
+} )
+
+Reports.register( {
+	id: "mbm-report-request",
+	name: "MBM Report (Building Service Requests)",
+	content: MBMBuildingServiceReport
 } )
 
 export default Reports;
