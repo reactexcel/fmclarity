@@ -1,12 +1,9 @@
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
-<<<<<<< HEAD
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
-=======
 import MBMReport from './reports/MBMReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
->>>>>>> develop
 
 const Reports = {
 	dict: {},
