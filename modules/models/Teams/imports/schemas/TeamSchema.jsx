@@ -92,52 +92,52 @@ export default TeamSchema = {
 
     address: {
         type: "object",
-        condition: "contractor",
+        label: "Address",
+        condition: [ "contractor", "real estate" ],
         subschema: {
-
-                streetNumber: {
-                    input: Text,
-                    label: "Number",
-                    type: "string",
-                    size: 3
-                },
-                streetName: {
-                    input: Text,
-                    type: "string",
-                    label: "Street name",
-                    size: 6
-                },
-                city: {
-                    input: Text,
-                    label: "City",
-                    size: 6,
-                    type: "string",
-                },
-                state: {
-                    label: "State",
-                    size: 3,
-                    input: Select,
-                    type: "string",
-                    options: {
-                        items: [
-                            "ACT",
-                            "NSW",
-                            "SA",
-                            "TAS",
-                            "NT",
-                            "QLD",
-                            "VIC",
-                            "WA"
-                        ]
-                    }
-                },
-                postcode: {
-                    input: Text,
-                    label: "Postcode",
-                    type: "string",
-                    size: 3
+            streetNumber: {
+                input: Text,
+                label: "Number",
+                type: "string",
+                size: 3
+            },
+            streetName: {
+                input: Text,
+                type: "string",
+                label: "Street name",
+                size: 6
+            },
+            city: {
+                input: Text,
+                label: "City",
+                size: 6,
+                type: "string",
+            },
+            state: {
+                label: "State",
+                size: 3,
+                input: Select,
+                type: "string",
+                options: {
+                    items: [
+                        "ACT",
+                        "NSW",
+                        "SA",
+                        "TAS",
+                        "NT",
+                        "QLD",
+                        "VIC",
+                        "WA"
+                    ]
                 }
+            },
+            postcode: {
+                input: Text,
+                label: "Postcode",
+                type: "string",
+                size: 3
             }
+        }
 
     },
 

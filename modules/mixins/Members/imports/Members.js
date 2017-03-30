@@ -275,6 +275,7 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
                 !m.role || 
                 filter.role == m.role || 
                 ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
+                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) || 
                 ( filter.role.$ne && filter.role.$ne != m.role )
             ) {
                 if ( !m ) {
@@ -303,35 +304,7 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
 function getMembersGenerator( collection, fieldName ) {
     return function( item, filter ) {
-        let ids = [],
-            names = [],
-            members = item[ fieldName ];
-
-        if ( members ) {
-            members.map( ( m ) => {
-                if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
-                    if ( !m ) {
-                        console.log( { 'Found an empty member in the array': members } );
-                    } else if ( m._id ) {
-                        ids.push( m._id );
-                    } else if ( m.name ) {
-                        names.push( m.name );
-                    }
-                }
-            } )
-        }
-
-        //console.log( {fieldName, name:collection._name, ids} );
-
-        return collection.find( {
-                $or: [
-                    { _id: { $in: ids } },
-                    { name: { $in: names } }
-                ]
-            }, {
-                sort: { name: 1, _id: 1 }
-            } )
-            .fetch();
+        return getMembers( item, { collection, fieldName, filter } );
     }
 }
 
