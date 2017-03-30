@@ -523,6 +523,42 @@ const RequestSchema = {
             input: Switch
         },
 
+        occupancy: {
+            label: "Base Building",
+            description: "Specify occupancy type",
+            defaultValue: ( item ) => {
+                return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            input(props){
+                let value = false,
+                    team = Session.get( 'selectedTeam' );
+                if (!props.value && team.type == 'contractor') {
+                    value = true;
+                }
+                else if (props.value) {
+                    value = props.value;
+                }
+
+                return(
+                    <div className="row">
+                    <div className="col-xs-12">
+                    <Switch
+                        value = { value }
+                        placeholder = "Base Building"
+                        labelInactive = "Tenant"
+                        onChange = { ( val ) =>{
+                            props.item.occupancy = val;
+                            props.item.service.data.baseBuilding = val;
+                            props.item.service.data.tenancy = !val;
+                        } 
+                    }
+                    />
+                    </div>
+                    </div>
+                    )
+            }
+        },
+
         costThreshold: {
             label: "Value",
             type: "number",
