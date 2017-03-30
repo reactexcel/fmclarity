@@ -326,10 +326,12 @@ Actions.addAccessRule( {
 
             if ( team ) {
                 teamRole = team.getMemberRole( user );
+                teamThresholdValue = team.getMemberThresholdValue( user );
             }
 
             if ( facility ) {
                 facilityRole = facility.getMemberRole( user );
+                facilityThresholdValue = facility.getMemberThresholdValue( user );
             }
 
             if ( request.service && request.service.data && request.service.data.baseBuilding ) {
@@ -347,9 +349,8 @@ Actions.addAccessRule( {
                         costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseFloat( team.defaultCostThreshold ),
+                    let costThreshold = parseFloat( facilityThresholdValue ),
                         cost = parseFloat( costString );
-
                     if ( cost <= costThreshold ) {
                         return true;
                     }

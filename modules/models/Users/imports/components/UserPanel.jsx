@@ -100,6 +100,10 @@ class UserPanel extends React.Component {
 							<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
 							 : null}
 
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue) ? 
+							<span><b>WO Issue Threshold Value</b> {relation.issueThresholdValue}<br/></span>
+							 : null}
+
 						{ profile.email ?
 							<span><b>Email</b> {profile.email}<br/></span>
 						: null }

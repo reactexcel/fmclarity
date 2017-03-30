@@ -208,7 +208,7 @@ export default UserViewEdit = React.createClass( {
 	    				<UserViewRelationEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 	    			</div>
 	    			{
-	    				_.contains( ['portfolio manager', 'fmc support'] ) ? 
+	    				_.contains( ['portfolio manager', 'fmc support'], Meteor.user().getRole() ) ? 
 	    					<div className = "col-sm-12">
 	    						<UserThresholdEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 							</div>

@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { Select } from '/modules/ui/MaterialInputs';
+import { Select, Text } from '/modules/ui/MaterialInputs';
 
 import { Users } from '/modules/models/Users';
 
@@ -23,6 +23,13 @@ export default UserViewRelationEdit = React.createClass( {
 				this.props.onChange();
 			}
 		}
+	},
+
+	handleThresholdValueChange( threshold ) {
+		var member, group;
+		member = this.props.member;
+		group = this.props.group;
+		group.setMemberThresholdValue( member, threshold );
 	},
 
 	render() {
@@ -60,15 +67,25 @@ export default UserViewRelationEdit = React.createClass( {
 		}
 
 		if ( relation ) {
-			let role = relation.role;
+			let role = relation.role,
+			threshold = relation.issueThresholdValue ? relation.issueThresholdValue : "";
 
 			return (
+				<div>
 				<Select
 					items 			= { roles }
 					value			= { role }
 					onChange		= { this.handleRoleChange }
 					placeholder 	= "Role"
 				/>
+
+				{_.contains(['portfolio manager','fmc support'], userRole) && role=='manager'? 
+				<Text
+					value			= { threshold }
+					onChange		= { this.handleThresholdValueChange }
+					placeholder 	= "WO threshold Value"
+				/>: null}
+				</div>
 			)
 
 		}
