@@ -300,6 +300,7 @@ const complete = new Action( {
             }
             onSubmit = {
                 ( request ) => {
+                    console.log("onSubmit")
                     Modal.hide();
                     Meteor.call( 'Issues.complete', request );
                     callback( request );

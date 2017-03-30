@@ -1,5 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-import { Requests, RequestActions } from '/modules/models/Requests';
+import { Requests, RequestPanel, RequestActions } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -63,7 +63,7 @@ ComplianceEvaluationService = new function() {
                     "facility._id": facility[ "_id" ],
                     $and: [
                         { type: rule.docType },
-                        { name: { $regex: rule.docName || "", $options: "i" } }
+                        // { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
             if ( !rule.document && rule.docSubType ) {
@@ -143,7 +143,7 @@ ComplianceEvaluationService = new function() {
                     "facility._id": facility[ "_id" ],
                     $and: [
                         { type: rule.docType },
-                        { name: { $regex: rule.docName || "", $options: "i" } }
+                        // { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
             if ( !rule.document && rule.docSubType ) {
@@ -500,9 +500,9 @@ ComplianceEvaluationService = new function() {
     /**
      * @function    evaluateServices
      * @param       {object} services
-     * 
+     *
      * Evaluates the rules embedded in the provided service object
-     *     
+     *
      */
     function evaluateServices( services ) {
         let rules = [],

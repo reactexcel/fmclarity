@@ -16,6 +16,8 @@ import { TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
+import Perf from 'react-addons-perf';
+
 export default RequestPanel = React.createClass( {
 
     mixins: [ ReactMeteorData ],
@@ -56,6 +58,24 @@ export default RequestPanel = React.createClass( {
             }
         }
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+    },
+
+    componentWillMount() {
+        Perf.start();
+    },
+
+    componentDidMount() {
+        Perf.stop();
+        console.log('Outputing mount load time analysis for request panel...');
+        Perf.printInclusive();
+        // Perf.printWasted();
+    },
+
+    componentDidUpdate() {
+        Perf.stop();
+        console.log('Outputing update load time analysis for request panel...');
+        Perf.printInclusive();
+        // Perf.printWasted();
     },
 
     render() {
