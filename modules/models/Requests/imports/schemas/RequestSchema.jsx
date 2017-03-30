@@ -262,12 +262,12 @@ const RequestSchema = {
             options: ( item ) => {
                 let subAreas = [];
                 if(item.type == "Booking"){
-                    let allSubArea = item.level ? item.level.children : []
+                    let allSubArea = item.level && item.level.children ? item.level.children : [];
                     allSubArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
                             subAreas.push(area)
                         }
-                    })
+                    } )
                 } else {
                     subAreas = item.level ? item.level.children : null
                 }
