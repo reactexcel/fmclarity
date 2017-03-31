@@ -122,6 +122,23 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
+            { docAlmostExpires  ?
+                <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                <button
+                    type        = "button"
+                    className   = "btn btn-flat"
+                    title="Create update document request"
+                    onClick={
+                        ( event ) => {
+                            event.stopPropagation();
+                                runaction( DocActions.createUpdateRequest.bind( item ) );
+                                props.onChange();
+                            
+                        }
+                    }>
+                    <span>&#43;</span>
+                </button>
+            </span> : null }
 		</div>:null}
 	</div>
     )
