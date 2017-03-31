@@ -676,17 +676,14 @@ function setAssignee( request, assignee ) {
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
     if ( request ) {
-                let owner = null;
-                if ( request.owner ) {
-                    owner = request.getOwner();
-                }
+                    user = Meteor.user();
                 
                 request.distributeMessage( {
                     recipientRoles: [ "assignee" ],
                     message: {
                         verb: "assigned",
                         read: false,
-                        subject: "A new work order has been assigned to you" + ( owner ? ` by ${owner.getName()}` : '' ),
+                        subject: "A new work order has been assigned to you" + ( user ? ` by ${user.getName()}` : '' ),
                         body: request.description
                     }
                 } );
