@@ -16,11 +16,11 @@ const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: () => {
-        let team = Teams.create();
+    action: (team, showFilter) => {
+        team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } />
+                <TeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }

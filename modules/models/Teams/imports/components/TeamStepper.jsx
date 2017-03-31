@@ -5,7 +5,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Teams } from '/modules/models/Teams';
+import { Teams, SearchSuppliersWithinNetwork } from '/modules/models/Teams';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import { ContactList } from '/modules/mixins/Members';
 import { ContactCard } from '/modules/mixins/Members';
@@ -208,8 +208,14 @@ const TeamStepper = React.createClass( {
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
-
+        var showFilter = this.props.showFilter;
+        console.log({showFilter});
         if ( !viewingTeam ) {
+            if (showFilter == true) {
+                return (
+                    <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} />
+                )
+            }
             return (
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">

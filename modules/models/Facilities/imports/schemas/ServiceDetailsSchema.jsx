@@ -101,6 +101,7 @@ export default ServiceDetailsSchema =  {
         size: 12,
         input: Select,
         options(item){
+            console.log(item);
             let facility = Session.getSelectedFacility();
             return {
                 items: facility.getSuppliers(),
@@ -116,6 +117,7 @@ export default ServiceDetailsSchema =  {
                         Modal.show( {
                             content: <TeamStepper
                                 facility = { facility }
+                                showFilter={true}
                                 onChange = {
                                     ( supplier ) => {
                                         let facility = Session.getSelectedFacility();
