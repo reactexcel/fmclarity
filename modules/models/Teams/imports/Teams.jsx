@@ -476,6 +476,7 @@ Teams.helpers( {
         var facilities = Facilities.findAll( {
             $or: [
                 { 'team._id': this._id },
+                { 'realEstateAgency._id': this._id },
                 { _id: { $in: facilityIds } }
             ]
         }, {

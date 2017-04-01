@@ -130,7 +130,7 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         //nb: this check can be removed when we have a dedicated supplier manager role
-        return team.type == 'fm';
+        return _.contains( [ 'fm', 'real estate' ], team.type );
     },
     action: [
         'create team request',
