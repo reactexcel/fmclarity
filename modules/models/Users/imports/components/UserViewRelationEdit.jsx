@@ -83,7 +83,7 @@ export default UserViewRelationEdit = React.createClass( {
 				<Text
 					value			= { threshold }
 					onChange		= { this.handleThresholdValueChange }
-					placeholder 	= "WO threshold Value"
+					placeholder 	= "Threshold WO Value for managers"
 				/>: null}
 				</div>
 			)
