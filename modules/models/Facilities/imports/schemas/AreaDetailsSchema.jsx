@@ -93,16 +93,15 @@ export default AreaDetailsSchema = {
              let weekDays = [ "Mon", "Tue", "Wed", "Thu", "Fri" ]
              let weekEnds = [ "Sun", "Sat", ];
              let selected = props.value || {
-                  'M-F': {select:false,time:""},
-                  "Sun": {select:false,time:""},
-                  "Mon": {select:false,time:""},
-                    "Tue": {select:false,time:""},
-                    "Wed": {select:false,time:""},
-                    "Thu": {select:false,time:""},
-                    "Fri": {select:false,time:""},
-                    "Sat": {select:false,time:""}
+                    'M-F': {select:false,time:"", startTime:"", endTime:""},
+                    "Sun": {select:false,time:"", startTime:"", endTime:""},
+                    "Mon": {select:false,time:"", startTime:"", endTime:""},
+                    "Tue": {select:false,time:"", startTime:"", endTime:""},
+                    "Wed": {select:false,time:"", startTime:"", endTime:""},
+                    "Thu": {select:false,time:"", startTime:"", endTime:""},
+                    "Fri": {select:false,time:"", startTime:"", endTime:""},
+                    "Sat": {select:false,time:"", startTime:"", endTime:""}
              };
-             console.log(selected);
              return (
                  <div className="row" style={{ margin: "20px"}}>
                      {days.map( ( d, id )=>{
@@ -128,6 +127,8 @@ export default AreaDetailsSchema = {
                                             selected[d].select = !selected[d].select;
                                             if(!selected[d].select){
                                                 selected[d].time = "";
+                                                selected[d].startTime = "";
+                                                selected[d].endTime = "";
                                             }
                                             for ( let i in weekDays ){
                                                 let day = weekDays[i];
@@ -135,6 +136,8 @@ export default AreaDetailsSchema = {
                                                     selected[day].select = selected[d].select;
                                                     if(!selected[day].select){
                                                         selected[day].time = "";
+                                                        selected[day].startTime = "";
+                                                        selected[day].endTime = "";
                                                     }
                                                 }
                                             }
@@ -142,11 +145,15 @@ export default AreaDetailsSchema = {
                                             if( selected['M-F'].select ) {
                                                 selected['M-F'].select = false;
                                                 selected['M-F'].time = "";
+                                                selected['M-F'].startTime = "";
+                                                selected['M-F'].endTime = "";
                                             }
                                             if ( selected[d] != null ) {
                                                 selected[d].select = !selected[d].select;
                                                 if(!selected[d].select){
                                                     selected[d].time = "";
+                                                    selected[d].startTime = "";
+                                                    selected[d].endTime = "";
                                                 }
                                             }
                                         }
@@ -158,20 +165,26 @@ export default AreaDetailsSchema = {
                             </div>
                             <div className="col-sm-10">
                                 <StartEndTimePicker onChange={
-                                        ( time ) => {
+                                        ( time, startTime, endTime ) => {
                                             if ( d == 'M-F' ) {
                                                 selected[d].select = true;
                                                 selected[d].time = time;
+                                                selected[d].startTime = startTime;
+                                                selected[d].endTime = endTime;
                                                 for ( let i in weekDays ){
                                                     let day = weekDays[i];
                                                     if ( selected[ day ] != null ) {
                                                         selected[day].select = selected[d].select;
                                                         selected[day].time = selected[d].time;
+                                                        selected[day].startTime = startTime;
+                                                        selected[day].endTime = endTime;
                                                     }
                                                 }
                                             } else {
                                                 selected[d].select = true;
                                                 selected[d].time = time;
+                                                selected[d].startTime = startTime;
+                                                selected[d].endTime = endTime;
                                             }
                                             props.onChange(selected);
                                         }

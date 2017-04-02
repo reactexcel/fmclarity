@@ -8,6 +8,7 @@ export default CreateRequestForm = [
 	'level',
 	'area',
 	'identifier',
+	'bookingPeriod',
 
 	'name',
 
@@ -34,6 +35,6 @@ export default CreateRequestForm = [
 
 	'attachments',
 	'footer',
-	'occupancy'
+	'occupancy',
 
 ];

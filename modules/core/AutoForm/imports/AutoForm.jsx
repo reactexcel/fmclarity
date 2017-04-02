@@ -124,11 +124,9 @@ class AutoForm extends React.Component {
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-
 			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
 				placeholder = label,
 				Input = null;
-
 			// Create default value for this field
 			//  I feel like this should be done when initialising the form
 			//  also

@@ -26,7 +26,6 @@ function PageDashboard( props ) {
 		return <div/>
 	}
 	Perf.stop();
-    console.log('output dashboard load time');
     Perf.printInclusive();
 	return (
 		<div className="dashboard-page animated fadeIn">
