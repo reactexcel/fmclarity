@@ -677,27 +677,6 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
-function performIssueAction(request){
-        let code = null;
-    if ( request && request.team && !request.code ) {
-        team = Teams.findOne( {
-            _id: request.team._id
-        } );
-        code = team.getNextWOCode();
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            code: code,
-            members: getMembersDefaultValue( request )
-        } );
-    } else {
-        Meteor.call( 'Issues.save', request, {
-            status: "Issued",
-            issuedAt: new Date(),
-            members: getMembersDefaultValue( request )
-        } );
-    }
-}
 
 function actionIssue( request ) {
 
@@ -758,52 +737,6 @@ function actionIssue( request ) {
     }
 }
 
-function actionIssue( request ) {
-
-    let user = Users.findOne( Meteor.user()._id );
-        
-    if (user.profile.requestIssueThreshold) {
-        console.log('user has Threshold set');
-        if ( user.profile.requestIssueThreshold > 0 ) {
-            console.log('performing WO issue');
-            var action = performIssueAction(request);
-            var newthreshold = user.profile.requestIssueThreshold == '1' ? '0' : user.profile.requestIssueThreshold-1; 
-            user.profile.requestIssueThreshold = newthreshold;
-            Users.save.call( user );
-            request = Requests.findOne( request._id );
-            return request;
-        }
-        else{
-            console.log('Error: Threshold limit reached for issuing WO');
-                let code = null;
-            if ( request && request.team && !request.code ) {
-                team = Teams.findOne( {
-                    _id: request.team._id
-                } );
-                code = team.getNextWOCode();
-                Meteor.call( 'Issues.save', request, {
-                    status: "New",
-                    code: code,
-                    members: getMembersDefaultValue( request )
-                } );
-            } else {
-                Meteor.call( 'Issues.save', request, {
-                    status: "New",
-                    members: getMembersDefaultValue( request )
-                } );
-            }
-            request = Requests.findOne( request._id );
-            if (request) {
-                return request;
-            }
-            
-        }
-    }
-    else{
-        return performIssueAction(request);
-    }
-    
-}
 
 /*
  *
