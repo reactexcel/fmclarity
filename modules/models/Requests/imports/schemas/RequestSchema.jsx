@@ -225,9 +225,28 @@ const RequestSchema = {
                 let areas = []
                 if(item.type == "Booking"){
                     let allArea = facility ? facility.areas : []
+                    //console.log(allArea,"allArea")
                     allArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
-                            areas.push(area)
+                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                areas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        areas.push(area)
+                                    }
+                                } else if(area2.children && area2.children.length > 0){
+                                    area2.children.map(( area3, idx3) => {
+                                        if(area3.data && area3.data.areaDetails  && area3.data.areaDetails.type == "Bookable"){
+                                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                                areas.push(area)
+                                            }
+                                        }
+                                    })
+                                }
+                            })
                         }
                     })
                 } else {
@@ -263,9 +282,20 @@ const RequestSchema = {
                 let subAreas = [];
                 if(item.type == "Booking"){
                     let allSubArea = item.level ? item.level.children : []
+                    console.log(allSubArea,"allSubArea")
                     allSubArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
-                            subAreas.push(area)
+                            if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                subAreas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        subAreas.push(area)
+                                    }
+                                }
+                            })
                         }
                     })
                 } else {
