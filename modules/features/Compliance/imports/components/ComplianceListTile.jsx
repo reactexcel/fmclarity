@@ -48,12 +48,19 @@ export default ComplianceListTile = React.createClass( {
         info = "" + rule.docName;
         break;
     }
-    results = ComplianceEvaluationService.evaluateRule( rule ) || {};
+    results = this.props.results || {}//ComplianceEvaluationService.evaluateRule( rule ) || {};
     message = results.message || {};
 
     return { rule, name, info, results, message }
   },
-
+  updateList(newState){
+      let component = this;
+      setTimeout( () => {
+          if (component.props.onChange) {
+              component.props.onChange();
+          }
+      },0);
+  },
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
     if ( rule.document && rule.document.query ){
@@ -110,7 +117,7 @@ export default ComplianceListTile = React.createClass( {
               <span style={{color:"green"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
                 {message.detail?
-                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule, this.updateList)}}>
                       { _.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
               </span>
@@ -119,7 +126,7 @@ export default ComplianceListTile = React.createClass( {
                 <b><i className="fa fa-exclamation-triangle"/> {message.summary||"failed"}</b>
                 {
                     message.detail?
-                      <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                      <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule, this.updateList)}}>
                         { _.isString(message.detail)?message.detail:message.detail()}
                       </span></span>
                     :null

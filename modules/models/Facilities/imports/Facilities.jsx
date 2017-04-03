@@ -528,12 +528,16 @@ Facilities.actions( {
     },
     removeComplianceRule: {
         authentication: true,
-        helper: ( facility, servicePosition, rulePosition, serviceName ) => {
+        helper: ( facility, servicePosition, rulePosition, serviceName, subservicePosition ) => {
             let servicesRequired = facility.servicesRequired;
-            _.map( servicesRequired, ( svc, i ) => {
-                if ( svc.name == serviceName ) servicePosition = i
-            } );
-            servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            // _.map( servicesRequired, ( svc, i ) => {
+            //     if ( svc.name == serviceName ) servicePosition = i
+            // } );
+            if ( subservicePosition != null ) {
+                servicesRequired[ servicePosition ].children[ subservicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            } else {
+                servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            }
             Facilities.update( { _id: facility._id }, { $set: { "servicesRequired": servicesRequired } } );
         }
     },

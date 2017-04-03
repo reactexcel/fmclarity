@@ -63,7 +63,7 @@ ComplianceEvaluationService = new function() {
                     "facility._id": facility[ "_id" ],
                     $and: [
                         { type: rule.docType },
-                //        { name: { $regex: rule.docName || "", $options: "i" } }
+                        { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
             if ( !rule.document && rule.docSubType ) {
@@ -102,7 +102,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
-                resolve: function() {
+                resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
                         _id = team._id,
@@ -126,7 +126,13 @@ ComplianceEvaluationService = new function() {
                         else if ( rule.docType == "Procedure" ) rnewDocument.procedureType = rule.docSubType;
                     }
                     Modal.show( {
-                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                        content: <DocViewEdit
+                                    item = { newDocument }
+                                    model={Facilities}
+                                    onChange={ ( doc ) => {
+                                        callback({});
+                                    }}
+                                />
                     } )
                 }
             } )
@@ -143,7 +149,7 @@ ComplianceEvaluationService = new function() {
                     "facility._id": facility[ "_id" ],
                     $and: [
                         { type: rule.docType },
-                    //    { name: { $regex: rule.docName || "", $options: "i" } }
+                        { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
             if ( !rule.document && rule.docSubType ) {
@@ -180,7 +186,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
-                resolve: function() {
+                resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
                         _id = team._id,
@@ -205,7 +211,13 @@ ComplianceEvaluationService = new function() {
                         else if ( rule.docType == "Procedure" ) rnewDocument.procedureType = rule.docSubType;
                     }
                     Modal.show( {
-                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                        content: <DocViewEdit
+                            item = { newDocument }
+                            model={Facilities}
+                            onChange={ ( doc ) => {
+                                callback({});
+                            }}
+                        />
                     } )
                 }
             } )
@@ -451,47 +463,92 @@ ComplianceEvaluationService = new function() {
         }
     }
 
-    function evaluate( rules ) {
+    function evaluate( rules, facility ) {
         var results = {
-            passed: [],
-            failed: []
+            passed: 0,
+            failed: 0,
+            all:[]
         };
         if ( !_.isArray( rules ) ) {
             rules = [ rules ];
         }
         rules.map( ( r ) => {
-            var result = evaluateRule( r );
+            var result = evaluateRule( r, facility );
             if ( result.passed ) {
-                results.passed.push( result );
+                //results.passed.push( result );
+                results.passed++;
             } else {
-                results.failed.push( result );
+                //results.failed.push( result );
+                results.failed++;
             }
+            results.all.push( result );
         } )
+        //console.log({results}, "evaluate");
         return results;
     }
 
-    function evaluateService( service ) {
+    function evaluateService( service, facility ) {
         if ( !service || !service.data || !service.data.complianceRules ) {
             return null;
         }
-
+        var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
-        var numRules = service.data.complianceRules.length;
-        var numPassed = results.passed.length;
-        var numFailed = results.failed.length;
-        var percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
-        var passed = false;
-        if ( percPassed == 100 ) {
-            passed = true;
+        if ( service.children ) {
+            var numSubservices = 0;
+            var totalPassed = 0;
+            var totalFailed = 0;
+            var subservice = _.map(service.children, ( subservice, idx) => {
+                var subResult = evaluateService( subservice, facility );
+                numSubservices += subResult.numRules;
+                totalPassed += subResult.numPassed;
+                totalFailed += subResult.numFailed;
+                return subResult;
+            });
+            numRules = service.data.complianceRules.length + numSubservices;
+            numPassed = results.passed + totalPassed;
+            numFailed = results.failed + totalFailed;
+            percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
+            passed = false;
+            if ( percPassed == 100 ) {
+                passed = true;
+            }
+            return {
+                name: service.name,
+                passed,
+                percentPassed: percPassed,
+                numPassed,
+                numFailed,
+                numRules,
+                results,
+                subservice
+            }
+        } else {
+            numRules = service.data.complianceRules.length;
+            numPassed = results.passed;
+            numFailed = results.failed;
+            percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
+            passed = false;
+            if ( percPassed == 100 ) {
+                passed = true;
+            }
+            return {
+                name: service.name,
+                passed,
+                percentPassed: percPassed,
+                numPassed,
+                numFailed,
+                numRules,
+                results,
+            }
         }
-        return {
-            name: service.name,
-            passed,
-            percentPassed: percPassed,
-            numPassed,
-            numFailed,
-            results
-        }
+        // return {
+        //     name: service.name,
+        //     passed,
+        //     percentPassed: percPassed,
+        //     numPassed,
+        //     numFailed,
+        //     results
+        // }
     }
 
     /**
@@ -508,46 +565,52 @@ ComplianceEvaluationService = new function() {
             nulRules = 0,
             numPassed = 0,
             numFailed = 0,
+            numRules = 0,
             percPassed = 100,
             passed = false;
-
-        services.map( ( service ) => {
+            overallServiceresults = [];
+            facility = Session.getSelectedFacility();
+            //console.log(facility,"facility");
+        overallServiceresults = services.map( ( service, idx ) => {
 
             // if the service has no data don't include in calculations
             if( !service || !service.data || !service.data.complianceRules ) {
                 return null;
             }
-
-            let result = evaluateService( service );
+            let result = evaluateService( service, facility );
 
             if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
             }
-
-            rules = rules.concat( service.data.complianceRules );
+            //console.log(result, idx);
+            //rules = rules.concat( service.data.complianceRules );
+            numRules += result.numRules;
+            numPassed += result.numPassed;
+            numFailed += result.numFailed;
+            return result;
         } )
 
-        overall = evaluate( rules );
-        numRules = rules.length;
-        numPassed = overall.passed.length;
-        numFailed = overall.failed.length;
-
+        //overall = evaluate( rules );
+        // numRules = rules.length;
+        // numPassed = overall.passed.length;
+        // numFailed = overall.failed.length;
+        //console.log({numRules, numPassed, numFailed});
         if ( numRules ) {
             percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
         }
         if ( percPassed == 100 ) {
             passed = true;
         }
-
         return {
             passed,
             percentRulesPassed: percPassed,
             numRulesPassed: numPassed,
             numRulesFailed: numFailed,
             servicesPassed: results.passed.length,
-            servicesFailed: results.failed.length
+            servicesFailed: results.failed.length,
+            overallServiceresults,
         }
 
     }
