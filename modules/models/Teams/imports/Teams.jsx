@@ -71,6 +71,14 @@ Teams.collection.allow( {
     }
 } )
 
+Teams.isFacilityTeam = ( team ) => {
+    return _.contains( [ 'fm', 'real estate' ], team.type );
+}
+
+Teams.isServiceTeam = ( team ) => {
+    return team.type == 'contractor';
+}
+
 
 
 //Teams.collection._ensureIndex( { 'members._id': 1 } );

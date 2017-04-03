@@ -402,6 +402,43 @@ Facilities.actions( {
             } );
         }
     },
+
+    addTenant: {
+        authentication: AuthHelpers.managerOfRelatedTeam,
+        method: function( facility, team ) {
+            if ( team && team._id ) {
+                Facilities.update( facility._id, {
+                    $push: {
+                        tenants: {
+                            _id: team._id,
+                            name: team.name
+                        }
+                    }
+                } );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
+            }
+        }
+    },
+
+    getTenants: {
+        authentication: true,
+        helper: ( facility ) => {
+            import { Teams } from '/modules/models/Teams';
+            if( !facility.tenants ) {
+                // no tenants to return
+                return;
+            }
+            let tenantIds = _.pluck( facility.tenants, '_id' );
+            console.log( tenantIds );
+            return Teams.findAll( { _id: { $in: tenantIds } } );
+        }
+    },
+
+
+    /////////////////////////////////////////
+    // Provide through the services mixin??
+    /////////////////////////////////////////
+
     /**
      * Returns an array of supplier documents
      */
@@ -479,14 +516,12 @@ Facilities.actions( {
         authentication: true,
         method: function( facility, supplier ) {
             //console.log("addSupplier");
-            if ( supplier && supplier._id ) {
-                Facilities.update( {
-                    "_id": facility._id
-                }, {
+            if ( team && team._id ) {
+                Facilities.update( facility._id, {
                     $push: {
                         suppliers: {
-                            _id: supplier._id,
-                            name: supplier.name
+                            _id: team._id,
+                            name: team.name
                         }
                     }
                 } );
@@ -494,6 +529,9 @@ Facilities.actions( {
             }
         }
     },
+
+
+
     /**
      *  Add personnel to facility
      **/
@@ -603,10 +641,6 @@ Facilities.actions( {
     },
 
     addPMP: {
-        authentication: AuthHelpers.managerOfRelatedTeam,
-    },
-
-    addTenant: {
         authentication: AuthHelpers.managerOfRelatedTeam,
     },
 
