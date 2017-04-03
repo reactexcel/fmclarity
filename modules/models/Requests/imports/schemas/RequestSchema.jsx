@@ -25,6 +25,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -95,7 +96,7 @@ const RequestSchema = {
                 }
 
                 if ( teamType == 'contractor' ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
+                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         return {
@@ -114,7 +115,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
                     }
                 }
             }
@@ -225,7 +226,6 @@ const RequestSchema = {
                 let areas = []
                 if(item.type == "Booking"){
                     let allArea = facility ? facility.areas : []
-                    //console.log(allArea,"allArea")
                     allArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
                             if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
@@ -282,7 +282,6 @@ const RequestSchema = {
                 let subAreas = [];
                 if(item.type == "Booking"){
                     let allSubArea = item.level ? item.level.children : []
-                    console.log(allSubArea,"allSubArea")
                     allSubArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
                             if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
@@ -297,7 +296,7 @@ const RequestSchema = {
                                 }
                             })
                         }
-                    })
+                    } )
                 } else {
                     subAreas = item.level ? item.level.children : null
                 }
@@ -346,7 +345,13 @@ const RequestSchema = {
             description: "The category of work required",
             size: 6,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            onServiceChange = props.changeSubmitText
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
@@ -401,6 +406,9 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
+                                if( request.supplier && onServiceChange ) {
+                                    onServiceChange( request.supplier );
+                                }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
                                 } else if ( defaultSupplier.type == 'fm' ) {
@@ -574,6 +582,42 @@ const RequestSchema = {
             label: "Completion confirmation required",
             description: "Is manager confirmation required before the job can be closed?",
             input: Switch
+        },
+
+        occupancy: {
+            label: "Base Building",
+            description: "Specify occupancy type",
+            defaultValue: ( item ) => {
+                return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            input(props){
+                let value = false,
+                    team = Session.get( 'selectedTeam' );
+                if (!props.value && team.type == 'contractor') {
+                    value = true;
+                }
+                else if (props.value) {
+                    value = props.value;
+                }
+
+                return(
+                    <div className="row">
+                    <div className="col-xs-12">
+                    <Switch
+                        value = { value }
+                        placeholder = "Base Building"
+                        labelInactive = "Tenant"
+                        onChange = { ( val ) =>{
+                            props.item.occupancy = val;
+                            props.item.service.data.baseBuilding = val;
+                            props.item.service.data.tenancy = !val;
+                        }
+                    }
+                    />
+                    </div>
+                    </div>
+                    )
+            }
         },
 
         costThreshold: {
@@ -784,7 +828,13 @@ const RequestSchema = {
                 }
                 return team;
             },
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.changeSubmitText(value);
+                            props.onChange(value);
+                        }}/>
+            } ,
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
