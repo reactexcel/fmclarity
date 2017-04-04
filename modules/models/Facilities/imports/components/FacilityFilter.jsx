@@ -17,20 +17,21 @@ import FacilityListTile from './FacilityListTile.jsx';
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 function FacilityFilter( props ) {
+	console.log(props.items.length);
 	return (
 		<div style = { { position:"absolute", zIndex:1300 } }>
-		<NavListDropDown
-			{ ...props }
-			ListTile = { FacilityListTile }
-			startOpen = { false }
-			onChange = { ( facility ) => {
-				if( props.onChange ) {
-					props.onChange();
-				}
-				Session.set( "selectedFacility", facility );
-			} }
-			multiple = { true }
-		/>
+		{props.items && props.items.length > 1 ? <NavListDropDown
+					{ ...props }
+					ListTile = { FacilityListTile }
+					startOpen = { false }
+					onChange = { ( facility ) => {
+						if( props.onChange ) {
+							props.onChange();
+						}
+						Session.set( "selectedFacility", facility );
+					} }
+					multiple = { true }
+				/> : null}
 		</div>
 	)
 }

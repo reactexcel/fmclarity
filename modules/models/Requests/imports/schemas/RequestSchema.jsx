@@ -96,10 +96,10 @@ const RequestSchema = {
                 }
 
                 if ( teamType == 'contractor' ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
+                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        return { 
+                        return {
                             items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
@@ -111,11 +111,11 @@ const RequestSchema = {
                                     request.area = request.area ? request.area : null;
                                     request.level = request.level ? request.level : null;
                                 }
-                                    
+
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
                     }
                 }
             }
@@ -223,8 +223,19 @@ const RequestSchema = {
                 if ( item.facility ) {
                     facility = Facilities.findOne( item.facility._id );
                 }
+                let areas = []
+                if(item.type == "Booking"){
+                    let allArea = facility ? facility.areas : []
+                    allArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            areas.push(area)
+                        }
+                    })
+                } else {
+                    areas = facility ? facility.areas : null
+                }
                 return {
-                    items: facility ? facility.areas : null
+                    items: areas
                 }
             },
             defaultValue: (request ) => {
@@ -250,8 +261,19 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.area );
             },
             options: ( item ) => {
+                let subAreas = [];
+                if(item.type == "Booking"){
+                    let allSubArea = item.level && item.level.children ? item.level.children : [];
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    } )
+                } else {
+                    subAreas = item.level ? item.level.children : null
+                }
                 return {
-                    items: item.level ? item.level.children : null
+                    items: subAreas
                 }
             }
         },
@@ -271,8 +293,19 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
+                let subAreas =[];
+                if(item.type == 'Booking'){
+                    let allSubArea = item.area && item.area.children ? item.area.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    })
+                } else {
+                    subAreas = item.area ? item.area.children : null
+                }
                 return {
-                    items: item.area ? item.area.children : null
+                    items: subAreas
                 }
             }
         },
@@ -521,6 +554,42 @@ const RequestSchema = {
             label: "Completion confirmation required",
             description: "Is manager confirmation required before the job can be closed?",
             input: Switch
+        },
+
+        occupancy: {
+            label: "Base Building",
+            description: "Specify occupancy type",
+            defaultValue: ( item ) => {
+                return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            input(props){
+                let value = false,
+                    team = Session.get( 'selectedTeam' );
+                if (!props.value && team.type == 'contractor') {
+                    value = true;
+                }
+                else if (props.value) {
+                    value = props.value;
+                }
+
+                return(
+                    <div className="row">
+                    <div className="col-xs-12">
+                    <Switch
+                        value = { value }
+                        placeholder = "Base Building"
+                        labelInactive = "Tenant"
+                        onChange = { ( val ) =>{
+                            props.item.occupancy = val;
+                            props.item.service.data.baseBuilding = val;
+                            props.item.service.data.tenancy = !val;
+                        } 
+                    }
+                    />
+                    </div>
+                    </div>
+                    )
+            }
         },
 
         costThreshold: {
