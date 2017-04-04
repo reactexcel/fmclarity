@@ -295,7 +295,7 @@ const SingleServiceRequest = React.createClass( {
 				$lte: new moment().endOf("month").toDate()
 			}
 		} );
-		console.log(data,  this.props.serviceName);
+		// console.log(data,  this.props.serviceName);
 		return data;
 	},
 
@@ -322,11 +322,13 @@ const SingleServiceRequest = React.createClass( {
 						<span style={{float: "right"}}>
 							<button className="btn btn-flat" onClick={() => {
 									let edited = this.state.showEditor;
+									let component = this;
 									this.setState({
 										showEditor: !this.state.showEditor
 									}, () => {
-										if ( edited ){
-											console.log("edited");
+										if ( !edited ){
+											console.log("edited", component );
+											$(component.refs.textarea.refs.input).focus();
 										}
 									})
 								}}>
@@ -340,6 +342,7 @@ const SingleServiceRequest = React.createClass( {
 					<div className="comment-body">
 						{this.state.showEditor?
 							<TextArea
+								ref="textarea"
 								value={this.state.comment}
 								onChange={( value ) => {this.setState({ comment: value })}}
 								/>:
