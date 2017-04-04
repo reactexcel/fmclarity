@@ -12,6 +12,7 @@ ComplianceEvaluationService = new function() {
         message: {
             summary: "failed"
         },
+        loader: false,
         resolve() {
             alert( 'No resolution available' );
         }
@@ -66,6 +67,12 @@ ComplianceEvaluationService = new function() {
                         { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
+
+            //----- Solution for "370 Docklands Dve"
+            while(_.isString(query)) {
+                query = JSON.parse( query );
+            }
+            //------
             if ( !rule.document && rule.docSubType ) {
                 query.$and.push( {
                     [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
@@ -102,6 +109,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
+                loader: true,
                 resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
@@ -152,6 +160,11 @@ ComplianceEvaluationService = new function() {
                         { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
+            //----- Solution for "370 Docklands Dve"
+            while(_.isString(query)) {
+                query = JSON.parse( query );
+            }
+            //-----
             if ( !rule.document && rule.docSubType ) {
                 query.$and.push( {
                     [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
@@ -186,6 +199,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
+                loader: true,
                 resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
@@ -263,6 +277,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
+                loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
@@ -359,6 +374,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
+                loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
