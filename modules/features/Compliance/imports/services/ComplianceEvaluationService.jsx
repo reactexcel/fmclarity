@@ -327,6 +327,7 @@ ComplianceEvaluationService = new function() {
                if( previousDate ) {
                    previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
+               console.log({previousDateString, nextDateString});
                return _.extend( {}, defaultResult, {
                    passed: true,
                    message: {
@@ -334,7 +335,7 @@ ComplianceEvaluationService = new function() {
                        //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
                        detail: function(){
                            return (
-                               <span style={{position:"absolute", bottom: "30%", width: "37%"}}>
+                               <span style={{position:"absolute", bottom: "15%", width: "37%"}}>
                                    <span className = "issue-summary-col" style = {{width:"45%"}}>
                                        {( previousDateString && previousRequest) ?
                                            <span>
