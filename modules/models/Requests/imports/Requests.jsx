@@ -172,7 +172,7 @@ Requests.methods( {
             } else {
                 let supplier = request.getSupplier();
                 if ( supplier ) {
-                    if ( supplier.type == 'fm' ) {
+                    if ( Teams.isFacilityTeam( supplier ) ) {
                         supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                     } else {
                         supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -194,7 +194,7 @@ Requests.methods( {
                 team = Session.getSelectedTeam(),
                 query = null;
 
-            if( team.type == 'contractor' ) {
+            if( Teams.isServiceTeam( team ) ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
@@ -294,11 +294,11 @@ Requests.methods( {
             let facility = request.getFacility();
             if( facility ) {
                 // if the request is base building the contact should be the property manager, not the facility manager
-                let teamType = Session.get( 'selectedTeam' ).type,
+                let team = Session.get( 'selectedTeam' ).type,
                     requestIsBaseBuilding = ( request && request.service && request.service.data && request.service.data.baseBuilding ),
                     role = 'manager';
 
-                if( teamType != 'fm' && requestIsBaseBuilding ) {
+                if( Teams.isFacilityTeam( team ) && requestIsBaseBuilding ) {
                     role = 'property manager';
                 }
                 let fms = facility.getMembers( { role } );

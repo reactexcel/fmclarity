@@ -71,6 +71,14 @@ Teams.collection.allow( {
     }
 } )
 
+Teams.isFacilityTeam = ( team ) => {
+    return _.contains( [ 'fm', 'real estate' ], team.type );
+}
+
+Teams.isServiceTeam = ( team ) => {
+    return team.type == 'contractor';
+}
+
 
 
 //Teams.collection._ensureIndex( { 'members._id': 1 } );
@@ -476,6 +484,7 @@ Teams.helpers( {
         var facilities = Facilities.findAll( {
             $or: [
                 { 'team._id': this._id },
+                { 'realEstateAgency._id': this._id },
                 { _id: { $in: facilityIds } }
             ]
         }, {

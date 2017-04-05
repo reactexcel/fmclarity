@@ -116,7 +116,7 @@ const createRequest = new Action( {
             content: <AutoForm
             title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
-            form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
+            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
             onSubmit = {
