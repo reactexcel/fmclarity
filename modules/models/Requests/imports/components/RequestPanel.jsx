@@ -312,7 +312,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     hide:       !_.contains( [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ], Meteor.user().getRole()),
-                    tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
+                    tab:        <span id="documents-tab" className="no-print"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
@@ -326,7 +326,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         request.markAsUnread();
                     } }  />
                 },{
-                    tab:        <span id="contacts-tab"><span>Contacts</span></span>,
+                    tab:        <span id="contacts-tab" className="no-print"><span>Contacts</span></span>,
                     hide:       (teamType == 'contractor'),
                     content:    <ContactList
                                     hideMenu    = { _.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) }
