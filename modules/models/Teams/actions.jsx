@@ -148,11 +148,8 @@ const createRequest = new Action( {
                             return;
                         }
                         else if( baseBuilding ) {
-                            /*if( role == 'property manager' ) {
+                            if( role == 'property manager' ) {
                                 method = 'Issues.issue';
-                            }*/
-                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
-                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {

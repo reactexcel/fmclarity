@@ -725,7 +725,7 @@ function actionIssue( request ) {
                 read: false,
                 digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 13 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
