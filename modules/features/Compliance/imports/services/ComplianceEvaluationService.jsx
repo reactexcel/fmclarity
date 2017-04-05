@@ -412,53 +412,129 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "Compliance level": function( rule, facility, service ) {
-            let createdAt = { $lte: new Date(), $gte: moment().subtract( 1, "years" ).toDate() };
-            var docCount = null,
-                totalDocs = null,
-                docName = null,
-                docCurser = null,
-                query = rule.document && rule.document.query ?
-                JSON.parse( rule.document.query ) : {
-                    "facility._id": facility[ "_id" ],
-                    $and: [
-                        { type: rule.docType },
-                        { name: { $regex: rule.docName || "", $options: "i" } }
-                    ]
-                };
-            if ( !rule.document && rule.docSubType ) {
-                query.$and.push( {
-                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
-                } );
-            }
-            if ( _.contains( docList1, rule.docType ) ) {
-                query.$and.push( { 'serviceType.name': rule.service.name } );
-            }
-            totalDocs = query && Documents.find( query ).count();
-            if ( query && !query.createdAt ) {
-                query.createdAt = createdAt;
-            }
-            docCount = query && Documents.find( query ).count();
+        "Compliance level": function( rule, facility, service ){
+            let query = {
+                "facility._id": rule.facility._id,
+                "service.name": rule.service.name,
+                "priority": "PMP",
+                "status": "Complete",
+            },
+            count = 0;
+            if ( rule.docType == "Service Report"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.serviceReport && request.closeDetails.serviceReport._id){
+                            count++;
+                        }
+                    }
 
-            let perComplete = ( ( docCount / totalDocs ) * 100 )
-
-            //console.log( { docCount, totalDocs, query, perComplete, name: rule.service.name } );
-
-            if ( perComplete >= 50 ) {
+                }
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 service reports"
+                        },
+                    } )
+                }
                 return _.extend( {}, defaultResult, {
-                    passed: true,
+                    passed: false,
                     message: {
-                        summary: "passed",
-                        detail: perComplete + "% " + "completed."
+                        summary: "failed",
+                        detail: count + " out of 12 service reports"
                     },
                 } )
             }
+            if ( rule.docType == "Invoice"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // console.log(request, "Invoice", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
+                            count++;
+                        }
+                    }
 
+                }
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 Invoice"
+                        },
+                    } )
+                }
+                return _.extend( {}, defaultResult, {
+                    passed: false,
+                    message: {
+                        summary: "failed",
+                        detail: count + " out of 12 Invoice"
+                    },
+                } )
+            }
+            facility = Facilities.findOne({_id: rule.facility._id});
+            if (facility) {
+                let suppliers = facility.getSuppliers();
+                count = 0;
+                _.forEach(suppliers, (supplier) =>{
+                    query = {
+                        $or:[
+                            {"team._id": supplier._id},
+                            {"facility._id": facility._id}
+                        ],
+                        "type": rule.docType,
+                    }
+                    if ( _.contains( docList2, rule.docType ) ) {
+                        query["expiryDate"] = { $gte: moment().startOf("days").toDate() };
+                    }
+                    if( !rule.document && rule.docSubType ){
+                        query[`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`] = rule.docSubType
+                    }
+                    if ( _.contains( docList1, rule.docType ) ) {
+                        query['serviceType.name'] = rule.service.name ;
+                    }
+                    let doc = Documents.findOne( query );
+                    if (doc) {
+                        count++;
+                    }
+                })
+                let per= ( ( count / suppliers.length ) * 100 );
+                //console.log({per},suppliers.length);
+                if ( per >= 50) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: per + "% completed"
+                        },
+                    } )
+                } else {
+                    return _.extend( {}, defaultResult, {
+                        passed: false,
+                        message: {
+                            summary: "failed",
+                            detail: per + "% completed"
+                        },
+                    } )
+                }
+            }
             return _.extend( {}, defaultResult, {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail: totalDocs ? perComplete : 0 + "% " + ( docName ? ( docName + " " ) : "" ) + "completed."
+                    detail:   ""
                 },
             } )
         },
