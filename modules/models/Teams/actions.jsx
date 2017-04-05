@@ -116,7 +116,7 @@ const createRequest = new Action( {
             content: <AutoForm
             title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
-            form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
+            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
             onSubmit = {
@@ -148,11 +148,8 @@ const createRequest = new Action( {
                             return;
                         }
                         else if( baseBuilding ) {
-                            /*if( role == 'property manager' ) {
+                            if( role == 'property manager' ) {
                                 method = 'Issues.issue';
-                            }*/
-                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
-                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {

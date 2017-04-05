@@ -74,12 +74,8 @@ const RequestSchema = {
             type: "string",
             required: true,
             defaultValue: () => {
-                let team = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
-                if ( teamType == 'contractor' ) {
+                let team = Session.get( 'selectedTeam' );
+                if ( Teams.isServiceTeam( team ) ) {
                     return 'Tenancy';
                 }
                 return "Ad-hoc";
@@ -89,13 +85,8 @@ const RequestSchema = {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
-                    teamType = null;
 
-                if ( team ) {
-                    teamType = team.type;
-                }
-
-                if ( teamType == 'contractor' ) {
+                if ( Teams.isServiceTeam( team ) ) {
                     return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
@@ -211,12 +202,8 @@ const RequestSchema = {
             input: Select,
             required: true,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.level );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
                 let facility = null;
@@ -253,12 +240,8 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.area );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.area );
             },
             options: ( item ) => {
                 let subAreas = [];
@@ -285,12 +268,8 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.identifier );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
                 let subAreas =[];
@@ -327,35 +306,29 @@ const RequestSchema = {
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
-                    teamType = null,
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
             },
             options: ( item ) => {
                 let selectedTeam = Session.getSelectedTeam(),
-                    teamType = null,
                     items = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
 
-                if ( teamType == 'fm' && item.facility && item.facility._id ) {
+                if ( Teams.isFacilityTeam( selectedTeam ) && item.facility && item.facility._id ) {
                     let facility = Facilities.findOne( item.facility._id );
                     if ( facility ) {
                         items = facility.servicesRequired;
                     }
-                } else if ( teamType == 'contractor' && team.getAvailableServices ) {
+                } else if ( Teams.isServiceTeam( selectedTeam ) && team.getAvailableServices ) {
                     items = team.getAvailableServices();
                 }
 
@@ -363,7 +336,7 @@ const RequestSchema = {
                 return {
                     items: items,
                     afterChange: ( request ) => {
-                        if ( request == null || teamType == 'contractor' ) {
+                        if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
                         if ( request.service.data ) {
@@ -383,7 +356,7 @@ const RequestSchema = {
                                 }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( defaultSupplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -405,19 +378,16 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( request ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null,
+                let team = Session.getSelectedTeam();
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
-
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
@@ -443,7 +413,7 @@ const RequestSchema = {
                                 request.supplier = defaultSupplier;
                                 if ( request.subservice.data.defaultContact && request.subservice.data.defaultContact.length ) {
                                     request.supplierContacts = request.subservice.data.defaultContact;
-                                } else if ( supplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( supplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -565,7 +535,7 @@ const RequestSchema = {
             input(props){
                 let value = false,
                     team = Session.get( 'selectedTeam' );
-                if (!props.value && team.type == 'contractor') {
+                if (!props.value && Teams.isServiceTeam( team ) ) {
                     value = true;
                 }
                 else if (props.value) {
@@ -667,26 +637,17 @@ const RequestSchema = {
             type: "object",
             input: Select,
             options: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
+                let team = Session.getSelectedTeam();
                 return {
-                    items: teamType == 'contractor' ? team.getClients() : null,
+                    items: Teams.isServiceTeam( team ) ? team.getClients() : null,
                     view: ContactCard
                 }
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
+                let team = Session.getSelectedTeam();
+                if ( Teams.isFacilityTeam( team ) ) {
+                    return team;
                 }
-                if ( teamType == 'contractor' ) {
-                    return null;
-                }
-                return team;
             }
         },
 
@@ -779,24 +740,16 @@ const RequestSchema = {
             condition: ( request ) => {
 
                 let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( request.type != 'Booking' && Teams.isServiceTeam( selectedTeam ) ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
-                if ( teamType == 'fm' ) {
-                    return null;
+                let team = Session.getSelectedTeam();
+                if( Teams.isServiceTeam( team ) ) {
+                    return team;
                 }
                 return team;
             },
@@ -844,7 +797,7 @@ const RequestSchema = {
                         if( !supplier ) {
                             request.supplierContacts = [];
                         }
-                        else if ( supplier.type == 'fm' ) {
+                        else if ( Teams.isFacilityTeam( supplier ) ) {
                             request.supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                         } else {
                             request.supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -866,13 +819,13 @@ const RequestSchema = {
             size: 12,
             condition: ( request ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( 
+                        request.status != 'Issued' && 
+                        request.type != 'Booking' && 
+                        Teams.isServiceTeam( selectedTeam )
+                    ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },

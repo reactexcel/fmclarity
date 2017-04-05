@@ -13,6 +13,9 @@ export default ServiceListTile = React.createClass( {
 			percPassed = 0;
 		service = this.props.item;
 		let { isService, results } = this.props;
+		if (results == null) {
+			results = {};
+		}
 		// if ( service  && isService ) {
 		// 	let complianceRules = null;
 		// 	if ( service.data && service.data.complianceRules ) {
