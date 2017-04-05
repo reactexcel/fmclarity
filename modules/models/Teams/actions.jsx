@@ -183,13 +183,13 @@ const createRequest = new Action( {
                                 if( cost > costThreshold ) {
                                     method = 'Issues.create';
                                 }
-                                if( parseInt(relation.threshold) < 1 ) {
+                                /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
                                     team.setMemberThreshold( owner, newThreshold.toString() );
-                                }
+                                }*/
                             }
 
                             else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){

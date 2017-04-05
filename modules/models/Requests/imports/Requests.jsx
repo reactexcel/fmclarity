@@ -677,6 +677,7 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
+
 function actionIssue( request ) {
 
     let code = null,
@@ -735,6 +736,7 @@ function actionIssue( request ) {
         return request;
     }
 }
+
 
 /*
  *

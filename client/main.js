@@ -331,7 +331,8 @@ Actions.addAccessRule( {
                 team = request.getTeam(),
                 facility = request.getFacility(),
                 teamRole = null,
-                facilityRole = null;
+                facilityRole = null,
+                facilityMemberThresholdValue = null;
 
             if ( team ) {
                 teamRole = team.getMemberRole( user );
@@ -339,6 +340,7 @@ Actions.addAccessRule( {
 
             if ( facility ) {
                 facilityRole = facility.getMemberRole( user );
+                facilityMemberThresholdValue = facility.getMemberThresholdValue( user );
             }
 
             if ( request.service && request.service.data && request.service.data.baseBuilding ) {
@@ -350,16 +352,24 @@ Actions.addAccessRule( {
                     return true;
                 } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
                     return true;
-                } else if ( facilityRole == 'manager' ) {
+                } else if ( facilityRole == 'manager' || teamRole == 'manager' ) {
                     let costString = request.costThreshold;
                     if ( _.isString( costString ) ) {
                         costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseFloat( team.defaultCostThreshold ),
-                        cost = parseFloat( costString );
-
-                    if ( cost <= costThreshold ) {
+                    let memberCostThreshold = parseFloat( facilityMemberThresholdValue ),
+                        cost = parseFloat( costString ),
+                        teamThresholdValue = user.getTeam().defaultCostThreshold;
+                        console.log({
+                            "team Threshold Value =" : teamThresholdValue ? teamThresholdValue : "not found", //1500
+                            "facility Member Threshold Value =" : facilityMemberThresholdValue ? facilityMemberThresholdValue : "not found",//200
+                            "request cost =" : cost ? cost : "not found", //500
+                        });
+                    if ( cost <= memberCostThreshold ) {
+                        return true;
+                    }
+                    else if (!memberCostThreshold && (teamThresholdValue && cost <= teamThresholdValue) ) {
                         return true;
                     }
                 }
