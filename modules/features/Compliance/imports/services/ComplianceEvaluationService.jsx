@@ -131,7 +131,7 @@ ComplianceEvaluationService = new function() {
                         else if ( rule.docType == "Certificate" ) newDocument.certificateType = rule.docSubType;
                         else if ( rule.docType == "Register" ) newDocument.registerType = rule.docSubType;
                         else if ( rule.docType == "Registration" ) newDocument.registrationType = rule.docSubType;
-                        else if ( rule.docType == "Procedure" ) rnewDocument.procedureType = rule.docSubType;
+                        else if ( rule.docType == "Procedure" ) newDocument.procedureType = rule.docSubType;
                     }
                     Modal.show( {
                         content: <DocViewEdit
