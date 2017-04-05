@@ -636,15 +636,21 @@ const RequestSchema = {
         },
 
         bookingPeriod: {
-            type: "date",
+            type: "object",
             label: "Booking period",
             description: "Select the booking period",
             input: (props) => {
-                return <CalendarPeriod {...props} />
+                return  <CalendarPeriod
+                            onChangeValue={(value)=>{
+                                props.onChange(value);
+                            }}
+                            {...props}
+                        />
             },
+
             size: 12,
             required: true,
-            defaultValue: getDefaultDueDate,
+            defaultValue: {},
             condition: (request)=>{
                 if(request.type == "Booking" && request.level && request.level.name){
                     return true;

@@ -4,6 +4,12 @@ import moment from 'moment'
 
 const WeeklyCalendar = React.createClass( {
 
+	getInitialState() {
+		return {
+			value:null
+		}
+	},
+
 	_onTimeSlotAllotment(event, delta, revertFunc){
 		let bookedEvent = this.events.events;
 		let bookingStartTime = event.start._d
@@ -36,6 +42,9 @@ const WeeklyCalendar = React.createClass( {
 		}
 		return ableToBook;
 	},
+	componentWillUnmount(){
+		this.props.setValue(this.state.value);
+	},
 
     componentDidMount() {
 		var date = new Date();
@@ -45,30 +54,23 @@ const WeeklyCalendar = React.createClass( {
 		var self = this;
         var businessHours = this.props.businessHours;
 		self.events = {
-            events: [{
-				id:1,
-      			title: 'Already Booked',
-      			start: new Date(y, m, d, 4, 0),
-      			end: new Date(y, m, d, 6, 0),
-      			allDay: false,
-      			editable:false,
-				color:"#ef6c00",
-				overlap:false,
-    		},{
-				id:1,
-      			title: 'Already Booked',
-      			start: new Date(2017, 3, 3, 1, 0),
-      			end: new Date(2017, 3, 3, 3, 0),
-      			allDay: false,
-      			editable:false,
-				color:"#ef6c00",
-				overlap:false,
-    		}]
+            events: []
         };
         let calendarEvents = self.events.events;
+		if( !_.isEmpty(this.props.calendarValue)){
+			calendarEvents.push({
+				id:0,
+				title: 'Your Booking',
+				start: moment(this.props.calendarValue.startTime),
+				end: moment(this.props.calendarValue.endTime),
+				allDay: false,
+				editable:true,
+				overlap:false,
+    		})
+		}
         businessHours.map( ( slot ) => {
             calendarEvents.push({
-      			start: '01:00',
+      			start: '00:00',
       			end: slot.start,
                 tooltip:"Time Slot not available",
       			allDay: false,
@@ -77,19 +79,22 @@ const WeeklyCalendar = React.createClass( {
                 dow: slot.dow,
                 type:'unAvailable'
     		})
-            calendarEvents.push({
-      			start: slot.end,
-      			end: '24:59',
-                tooltip:"Time Slot not available",
-      			allDay: false,
-      			editable:false,
-				color:"#E0E0E0",
-                dow: slot.dow,
-                type:'unAvailable'
-    		})
+			if(slot.showSecondEvent == true){
+				calendarEvents.push({
+	      			start: slot.end,
+	      			end: '24:00',
+	                tooltip:"Time Slot not available",
+	      			allDay: false,
+	      			editable:false,
+					color:"#E0E0E0",
+	                dow: slot.dow,
+	                type:'unAvailable'
+	    		})
+			}
         })
+		calendarEvents = calendarEvents.concat(this.props.previousBookingEvents)
         $("#bookingCalendar").fullCalendar( {
-			height:500,
+			height:400,
 			defaultView:'agendaWeek',
 			editable: true,
 			droppable: true,
@@ -101,7 +106,35 @@ const WeeklyCalendar = React.createClass( {
                 center: 'title,today',
                 right: 'next'
             },
-			events: calendarEvents,
+			/*header: {
+      			left: 'prev,next today prevYear nextYear',
+      			center: 'title',
+      			right: 'agendaWeek,month,agendaDay'
+    		},*/
+		    events: calendarEvents,
+			/*events:[{
+				title: 'sunday',
+                allDay: false,
+                start:"01:00",
+                end:"24:00",
+				editable:false,
+                dow: [0]
+			},{
+				title: 'sunday',
+                allDay: false,
+                start:"24:00",
+                end:"24:59",
+				editable:false,
+                dow: [6]
+			}],*/
+			/*events:[{
+				title: 'sunday',
+                allDay: false,
+                start:"00:00",
+                end:"24:00",
+				editable:false,
+                dow: [0]
+			}],*/
 			select: function(start, end, ev) {
 				let startTime = start._d
 				let endTime = end._d
@@ -124,35 +157,59 @@ const WeeklyCalendar = React.createClass( {
 					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
 					$( "#bookingCalendar" ).fullCalendar( 'addEventSource', [newEvent] );
 					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+					self.setState({
+						value:{
+							startTime:startTime,
+							endTime:endTime,
+						}
+					})
 				}
-				//let events = self.events.events.concat(newEvent);
-				//$( "#calendar" ).fullCalendar( 'removeEventSource', events );
-		        //$( "#calendar" ).fullCalendar( 'addEventSource', events );
-				//$('#calendar').fullCalendar('addEvent',)
-				//$('#calendar').fullCalendar('updateEvent', events)
-				//$('#calendar').fullCalendar('renderEvents', events ,true)
     		},
     		eventClick: function(event) {
-				let start = event.start._d
-				let end = event.end._d
-				start = moment(start).subtract({hours:5,minutes:30})
-				end = moment(end).subtract({hours:5,minutes:30})
+				//let start = event.start._d
+				//let end = event.end._d
+				//start = moment(start).subtract({hours:5,minutes:30})
+				//end = moment(end).subtract({hours:5,minutes:30})
     		},
     		eventDrop: function (event, delta, revertFunc) {
 				let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 				if(value == false){
 					revertFunc();
+				} else {
+					let startTime = event.start._d
+					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					let endTime = event.end._d
+						endTime = moment(endTime).subtract({hours:5,minutes:30})
+					self.setState({
+						value:{
+							startTime:startTime,
+							endTime:endTime,
+						}
+					})
 				}
     		},
 			eventResize: function(event, delta, revertFunc) {
       			let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 				if(value == false){
 					revertFunc();
+				} else {
+					let startTime = event.start._d
+					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					let endTime = event.end._d
+						endTime = moment(endTime).subtract({hours:5,minutes:30})
+					self.setState({
+						value:{
+							startTime:startTime,
+							endTime:endTime,
+						}
+					})
 				}
     		},
             eventAfterRender: function(event, element, view) {
                 if(event.type == 'unAvailable'){
-                    $(element).css('width','100%');
+                    $(element).css('width','105%');
+					$(element).css('left','-2px');
+					//$(element).css('right','-3px');
                 }
             },
             eventMouseover: function(data, event, view){
