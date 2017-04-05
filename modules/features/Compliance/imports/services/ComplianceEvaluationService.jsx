@@ -374,7 +374,7 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
-                loader: true,
+                loader: false,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
