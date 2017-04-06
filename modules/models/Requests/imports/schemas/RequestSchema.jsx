@@ -91,8 +91,9 @@ const RequestSchema = {
                     return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
                         return {
-                            items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
+                            items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy" ], request.type )) {
