@@ -559,7 +559,7 @@ const RequestSchema = {
                             props.item.occupancy = val;
                             props.item.service.data.baseBuilding = val;
                             props.item.service.data.tenancy = !val;
-                        } 
+                        }
                     }
                     />
                     </div>
@@ -827,9 +827,9 @@ const RequestSchema = {
                 let selectedTeam = Session.get( 'selectedTeam' );
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( 
-                        request.status != 'Issued' && 
-                        request.type != 'Booking' && 
+                    (
+                        request.status != 'Issued' &&
+                        request.type != 'Booking' &&
                         Teams.isServiceTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
