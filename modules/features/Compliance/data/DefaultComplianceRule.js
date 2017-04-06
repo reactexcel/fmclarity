@@ -1842,7 +1842,7 @@ export default DefaultComplianceRule = {
     	} ],
     */
     "HVAC": [ {
-            "service": {
+        "service": {
                 name: "HVAC"
             },
             "type": "Document is current",
@@ -1855,13 +1855,13 @@ export default DefaultComplianceRule = {
             "type": "PPM schedule established",
             "event": "HVAC PPM exists"
         }, {
-		"service":{
-			name:"HVAC"
-		},
-		"type":"Compliance level",
-		"docType":"Service Report",
-		"docName":"12 months' HVAC service reports exist"
-	}, {
+		    "service":{
+			    name:"HVAC"
+		    },
+		    "type":"Compliance level",
+		    "docType":"Service Report",
+		    "docName":"12 months' HVAC service reports exist"
+	    }, {
             "service": {
                 name: "HVAC"
             },
@@ -2022,7 +2022,7 @@ export default DefaultComplianceRule = {
     		"docType":"Audit",
     		"docName":"RMP Audit"
     	}],
-
+*/
     	"Utilities": [{
     		"service":{
     			name:"Utilities"
@@ -2044,7 +2044,7 @@ export default DefaultComplianceRule = {
     		"docType":"Invoice",
     		"docName":"12 months' Utilities invoices exist"
     	}],
-    */
+    
     "WHS & Risk Management": [ {
         "service": {
             name: "WHS & Risk Management"

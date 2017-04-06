@@ -1,5 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-import { Requests, RequestActions } from '/modules/models/Requests';
+import { Requests, RequestPanel, RequestActions } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -12,6 +12,7 @@ ComplianceEvaluationService = new function() {
         message: {
             summary: "failed"
         },
+        loader: false,
         resolve() {
             alert( 'No resolution available' );
         }
@@ -53,20 +54,29 @@ ComplianceEvaluationService = new function() {
         //can pass in facility and service for more efficient calculation
         "Document exists": function( rule, facility, service ) {
             //  console.log({rule});
-            var docCount = null, docs = null, docName = null, docCurser = null,
+            var docCount = null,
+                docs = null,
+                docName = null,
+                docCurser = null,
                 tomorrow = moment( moment().add( 1, "days" ).format( "MM-DD-YYYY" ), "MM-DD-YYYY" ).toDate(),
-                query = rule.document &&rule.document.query ?
-                        JSON.parse( rule.document.query ) : {
-                            "facility._id": facility["_id"],
-                            $and: [
-                                { type: rule.docType },
-                                { name: { $regex: rule.docName || "", $options: "i" } }
-                            ]
-                        };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                query = rule.document && rule.document.query ?
+                JSON.parse( rule.document.query ) : {
+                    "facility._id": facility[ "_id" ],
+                    $and: [
+                        { type: rule.docType },
+                        { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                };
+
+            //----- Solution for "370 Docklands Dve"
+            while(_.isString(query)) {
+                query = JSON.parse( query );
+            }
+            //------
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -77,7 +87,7 @@ ComplianceEvaluationService = new function() {
             docCurser = query && Documents.find( query );
             docCount = docCurser.count();
             docs = docCurser.fetch();
-            if( docs && docs.length ) {
+            if ( docs && docs.length ) {
                 let doc = docs[ docCount - 1 ];
                 docName = doc.name;
             }
@@ -99,7 +109,8 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
-                resolve: function() {
+                loader: true,
+                resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
                         _id = team._id,
@@ -112,18 +123,24 @@ ComplianceEvaluationService = new function() {
                             type: rule.docType,
                             serviceType: rule.service,
                         } );
-                        if (rule.docSubType) {
-                            if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
-                            else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
-                            else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
-                            else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
-                            else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
-                            else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
-                            else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
-                            else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
-                        }
+                    if ( rule.docSubType ) {
+                        if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
+                        else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
+                        else if ( rule.docType == "Confirmation" ) newDocument.confirmationType = rule.docSubType;
+                        else if ( rule.docType == "Log" ) newDocument.logType = rule.docSubType;
+                        else if ( rule.docType == "Certificate" ) newDocument.certificateType = rule.docSubType;
+                        else if ( rule.docType == "Register" ) newDocument.registerType = rule.docSubType;
+                        else if ( rule.docType == "Registration" ) newDocument.registrationType = rule.docSubType;
+                        else if ( rule.docType == "Procedure" ) newDocument.procedureType = rule.docSubType;
+                    }
                     Modal.show( {
-                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                        content: <DocViewEdit
+                                    item = { newDocument }
+                                    model={Facilities}
+                                    onChange={ ( doc ) => {
+                                        callback({});
+                                    }}
+                                />
                     } )
                 }
             } )
@@ -133,19 +150,25 @@ ComplianceEvaluationService = new function() {
             // if( !rule || !rule.document ) {
             //     return;
             // }
-            var doc = null, yesterday, tomorrow, today,
+            var doc = null,
+                yesterday, tomorrow, today,
                 query = rule.document && rule.document.query ?
-                    JSON.parse( rule.document.query ) : {
-                        "facility._id": facility["_id"],
-                        $and: [
-                            { type: rule.docType },
-                            { name: { $regex: rule.docName || "", $options: "i" } }
-                        ]
-                    };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
+                JSON.parse( rule.document.query ) : {
+                    "facility._id": facility[ "_id" ],
+                    $and: [
+                        { type: rule.docType },
+                        { name: { $regex: rule.docName || "", $options: "i" } }
+                    ]
+                };
+            //----- Solution for "370 Docklands Dve"
+            while(_.isString(query)) {
+                query = JSON.parse( query );
+            }
+            //-----
+            if ( !rule.document && rule.docSubType ) {
+                query.$and.push( {
+                    [ `${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type` ]: rule.docSubType
+                } );
             }
             if ( _.contains( docList1, rule.docType ) ) {
                 query.$and.push( { 'serviceType.name': rule.service.name } );
@@ -165,7 +188,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: ( doc.name? ( doc.name + " " ) : "" )
+                        detail: ( doc.name ? ( doc.name + " " ) : "" )
                     }
                 } )
             }
@@ -176,7 +199,8 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Create document"
                 },
-                resolve: function() {
+                loader: true,
+                resolve: function(r, callback) {
                     let type = "team",
                         team = Session.getSelectedFacility(),
                         _id = team._id,
@@ -190,18 +214,24 @@ ComplianceEvaluationService = new function() {
                         type: rule.docType,
                         serviceType: rule.service,
                     } );
-                    if (rule.docSubType) {
+                    if ( rule.docSubType ) {
                         if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
                         else if ( rule.docType == "Validation Report" ) newDocument.reportType = rule.docSubType;
-                        else if ( rule.docType == "Confirmation") newDocument.confirmationType = rule.docSubType;
-                        else if ( rule.docType == "Log") newDocument.logType = rule.docSubType;
-                        else if ( rule.docType == "Certificate") newDocument.certificateType  = rule.docSubType;
-                        else if ( rule.docType == "Register") newDocument.registerType  = rule.docSubType;
-                        else if ( rule.docType == "Registration") newDocument.registrationType  = rule.docSubType;
-                        else if ( rule.docType == "Procedure") rnewDocument.procedureType  = rule.docSubType;
+                        else if ( rule.docType == "Confirmation" ) newDocument.confirmationType = rule.docSubType;
+                        else if ( rule.docType == "Log" ) newDocument.logType = rule.docSubType;
+                        else if ( rule.docType == "Certificate" ) newDocument.certificateType = rule.docSubType;
+                        else if ( rule.docType == "Register" ) newDocument.registerType = rule.docSubType;
+                        else if ( rule.docType == "Registration" ) newDocument.registrationType = rule.docSubType;
+                        else if ( rule.docType == "Procedure" ) rnewDocument.procedureType = rule.docSubType;
                     }
                     Modal.show( {
-                        content: <DocViewEdit item = { newDocument } model={Facilities} />
+                        content: <DocViewEdit
+                            item = { newDocument }
+                            model={Facilities}
+                            onChange={ ( doc ) => {
+                                callback({});
+                            }}
+                        />
                     } )
                 }
             } )
@@ -237,7 +267,7 @@ ComplianceEvaluationService = new function() {
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind(establishedRequest).run();
+                        RequestActions.view.bind( establishedRequest ).run();
                     }
                 } )
             }
@@ -247,10 +277,11 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
+                loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let newRequest = Requests.create({
+                    let newRequest = Requests.create( {
                         facility: {
                             _id: facility._id,
                             name: facility.name
@@ -262,9 +293,9 @@ ComplianceEvaluationService = new function() {
                         name: rule.event,
                         frequency: rule.frequency,
                         service: rule.service
-                    });
+                    } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind(team, null, newRequest).run();
+                    TeamActions.createRequest.bind( team, null, newRequest ).run();
                 }
             } )
         },
@@ -283,19 +314,20 @@ ComplianceEvaluationService = new function() {
 
             if ( event ) {
                 let nextDate = event.getNextDate();
-                   previousDate = event.getPreviousDate();
-                   nextRequest = event.findCloneAt( nextDate );
-                   previousRequest = event.findCloneAt( previousDate );
-                   nextDateString = null,
-                   frequency = event.frequency || {},
-                   previousDateString = null;
+                previousDate = event.getPreviousDate();
+                nextRequest = event.findCloneAt( nextDate );
+                previousRequest = event.findCloneAt( previousDate );
+                nextDateString = null,
+                    frequency = event.frequency || {},
+                    previousDateString = null;
 
                if( nextDate ) {
-                   nextDateString = moment( nextDate ).format('ddd Do MMM');
+                   nextDateString = moment( nextDate ).format('DD/MM/YY');
                }
                if( previousDate ) {
-                   previousDateString = moment( previousDate ).format('ddd Do MMM');
+                   previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
+               console.log({previousDateString, nextDateString});
                return _.extend( {}, defaultResult, {
                    passed: true,
                    message: {
@@ -303,35 +335,32 @@ ComplianceEvaluationService = new function() {
                        //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
                        detail: function(){
                            return (
-                               <span style={{position:"absolute", bottom: "13%"}}>
-                                   <span className = "issue-summary-col" style = {{width:"25%"}}>
-                                       due every {`${frequency.number||''} ${frequency.unit||''}`}
-                                   </span>
-                                   <span className = "issue-summary-col" style = {{width:"32%"}}>
-                                       {!!( previousDateString && previousRequest) ?
+                               <span style={{position:"absolute", bottom: "15%", width: "37%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       {( previousDateString && previousRequest) ?
                                            <span>
-                                               <span>previous <b>{ previousDateString }</b> </span>
+                                               <span>Last <b>{ previousDateString }</b> </span>
                                                { previousRequest ?
-                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { previousRequest.getTimeliness() }</span>
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
                                                : null }
                                            </span>
-                                       : null }
+                                       : <span>Last N/A</span> }
                                    </span>
-                                   <span className = "issue-summary-col" style = {{width:"35%"}}>
-                                       { nextDateString && nextRequest ?
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       { (nextDateString && nextRequest) ?
                                            <span>
-                                               <span>next due <b>{ nextDateString }</b> </span>
+                                               <span>Next <b>{ nextDateString }</b> </span>
                                                { nextRequest ?
-                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
-                                               : null }
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
+                                               : <span>Next N/A</span> }
                                            </span>
                                        : null }
                                    </span>
                                </span>
-                           );
-                       }
-                   },
-                   data: event,
+                            );
+                        }
+                    },
+                    data: event,
                     resolve: function() {
                         Modal.show( {
                             id: `viewRequest-${event._id}`,
@@ -346,24 +375,25 @@ ComplianceEvaluationService = new function() {
                     summary: "failed",
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
+                loader: false,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let request = Requests.findOne( {
-                            "facility._id": facility._id,
-                            type: 'Preventative',
-                            status:"PMP",
-                            service: rule.service,
-                            name: rule.event
-                        } );
+                        "facility._id": facility._id,
+                        type: 'Preventative',
+                        status: "PMP",
+                        service: rule.service,
+                        name: rule.event
+                    } );
                     // If PPM event exists.
-                    if( request ){
+                    if ( request ) {
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
                             content: <RequestPanel item = { request } />
                         } );
-                    } else if( !request ) { // If no PPM event exists.
-                        let newRequest = Requests.create({
+                    } else if ( !request ) { // If no PPM event exists.
+                        let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
                                 name: facility.name
@@ -375,57 +405,136 @@ ComplianceEvaluationService = new function() {
                             name: rule.event,
                             frequency: rule.frequency,
                             service: rule.service
-                        });
+                        } );
                         TeamActions.createRequest.bind( team, null, newRequest ).run();
                     }
-                //    Meteor.call( 'Issues.save', newRequest );
+                    //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
         "Compliance level": function( rule, facility, service ){
-            let createdAt = { $lte: new Date(), $gte: moment().subtract(1, "years").toDate() };
-            var docCount = null, totalDocs = null, docName = null, docCurser = null,
-                query = rule.document &&rule.document.query ?
-                        JSON.parse( rule.document.query ) : {
-                            "facility._id": facility["_id"],
-                            $and: [
-                                { type: rule.docType },
-                                { name: { $regex: rule.docName || "", $options: "i" } }
-                            ]
-                        };
-            if( !rule.document && rule.docSubType ){
-                query.$and.push({
-                    [`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`]: rule.docSubType
-                });
-            }
-            if ( _.contains( docList1, rule.docType ) ) {
-                query.$and.push( { 'serviceType.name': rule.service.name } );
-            }
-            totalDocs = query && Documents.find( query ).count();
-            if ( query && !query.createdAt ) {
-                query.createdAt = createdAt;
-            }
-            docCount = query && Documents.find( query ).count();
+            let query = {
+                "facility._id": rule.facility._id,
+                "service.name": rule.service.name,
+                "priority": "PMP",
+                "status": "Complete",
+            },
+            count = 0;
+            if ( rule.docType == "Service Report"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.serviceReport && request.closeDetails.serviceReport._id){
+                            count++;
+                        }
+                    }
 
-            let perComplete = ( ( docCount / totalDocs ) * 100 )
-
-            console.log({docCount, totalDocs, query, perComplete, name:rule.service.name });
-
-            if ( perComplete >= 50 ) {
+                }
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 service reports"
+                        },
+                    } )
+                }
                 return _.extend( {}, defaultResult, {
-                    passed: true,
+                    passed: false,
                     message: {
-                        summary: "passed",
-                        detail: perComplete + "% " + "completed."
+                        summary: "failed",
+                        detail: count + " out of 12 service reports"
                     },
                 } )
             }
+            if ( rule.docType == "Invoice"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // console.log(request, "Invoice", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
+                            count++;
+                        }
+                    }
 
+                }
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 Invoice"
+                        },
+                    } )
+                }
+                return _.extend( {}, defaultResult, {
+                    passed: false,
+                    message: {
+                        summary: "failed",
+                        detail: count + " out of 12 Invoice"
+                    },
+                } )
+            }
+            facility = Facilities.findOne({_id: rule.facility._id});
+            if (facility) {
+                let suppliers = facility.getSuppliers();
+                count = 0;
+                _.forEach(suppliers, (supplier) =>{
+                    query = {
+                        $or:[
+                            {"team._id": supplier._id},
+                            {"facility._id": facility._id}
+                        ],
+                        "type": rule.docType,
+                    }
+                    if ( _.contains( docList2, rule.docType ) ) {
+                        query["expiryDate"] = { $gte: moment().startOf("days").toDate() };
+                    }
+                    if( !rule.document && rule.docSubType ){
+                        query[`${rule.docType.charAt(0).toLowerCase()+rule.docType.slice(1)}Type`] = rule.docSubType
+                    }
+                    if ( _.contains( docList1, rule.docType ) ) {
+                        query['serviceType.name'] = rule.service.name ;
+                    }
+                    let doc = Documents.findOne( query );
+                    if (doc) {
+                        count++;
+                    }
+                })
+                let per= ( ( count / suppliers.length ) * 100 );
+                //console.log({per},suppliers.length);
+                if ( per >= 50) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: per + "% completed"
+                        },
+                    } )
+                } else {
+                    return _.extend( {}, defaultResult, {
+                        passed: false,
+                        message: {
+                            summary: "failed",
+                            detail: per + "% completed"
+                        },
+                    } )
+                }
+            }
             return _.extend( {}, defaultResult, {
                 passed: false,
                 message: {
                     summary: "failed",
-                    detail:  totalDocs?perComplete:0 + "% " + ( docName ? ( docName + " " ) : "" ) + "completed."
+                    detail:   ""
                 },
             } )
         },
@@ -447,86 +556,155 @@ ComplianceEvaluationService = new function() {
         }
     }
 
-    function evaluate( rules ) {
+    function evaluate( rules, facility ) {
         var results = {
-            passed: [],
-            failed: []
+            passed: 0,
+            failed: 0,
+            all:[]
         };
         if ( !_.isArray( rules ) ) {
             rules = [ rules ];
         }
         rules.map( ( r ) => {
-            var result = evaluateRule( r );
+            var result = evaluateRule( r, facility );
             if ( result.passed ) {
-                results.passed.push( result );
+                //results.passed.push( result );
+                results.passed++;
             } else {
-                results.failed.push( result );
+                //results.failed.push( result );
+                results.failed++;
             }
+            results.all.push( result );
         } )
+        //console.log({results}, "evaluate");
         return results;
     }
 
-    function evaluateService( service ) {
+    function evaluateService( service, facility ) {
+        if ( !service || !service.data || !service.data.complianceRules ) {
+            return null;
+        }
+        var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
-        var numRules = service.data.complianceRules.length;
-        var numPassed = results.passed.length;
-        var numFailed = results.failed.length;
-        var percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
-        var passed = false;
-        if ( percPassed == 100 ) {
-            passed = true;
+        if ( service.children ) {
+            var numSubservices = 0;
+            var totalPassed = 0;
+            var totalFailed = 0;
+            var subservice = _.map(service.children, ( subservice, idx) => {
+                var subResult = evaluateService( subservice, facility );
+                numSubservices += subResult.numRules;
+                totalPassed += subResult.numPassed;
+                totalFailed += subResult.numFailed;
+                return subResult;
+            });
+            numRules = service.data.complianceRules.length + numSubservices;
+            numPassed = results.passed + totalPassed;
+            numFailed = results.failed + totalFailed;
+            percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
+            passed = false;
+            if ( percPassed == 100 ) {
+                passed = true;
+            }
+            return {
+                name: service.name,
+                passed,
+                percentPassed: percPassed,
+                numPassed,
+                numFailed,
+                numRules,
+                results,
+                subservice
+            }
+        } else {
+            numRules = service.data.complianceRules.length;
+            numPassed = results.passed;
+            numFailed = results.failed;
+            percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
+            passed = false;
+            if ( percPassed == 100 ) {
+                passed = true;
+            }
+            return {
+                name: service.name,
+                passed,
+                percentPassed: percPassed,
+                numPassed,
+                numFailed,
+                numRules,
+                results,
+            }
         }
-        return {
-            name: service.name,
-            passed,
-            percentPassed: percPassed,
-            numPassed,
-            numFailed,
-            results
-        }
+        // return {
+        //     name: service.name,
+        //     passed,
+        //     percentPassed: percPassed,
+        //     numPassed,
+        //     numFailed,
+        //     results
+        // }
     }
 
+    /**
+     * @function    evaluateServices
+     * @param       {object} services
+     *
+     * Evaluates the rules embedded in the provided service object
+     *
+     */
     function evaluateServices( services ) {
-        var rules = [];
-        results = { passed: [], failed: [] },
+        let rules = [],
+            results = { passed: [], failed: [] },
             overall = {},
             nulRules = 0,
             numPassed = 0,
             numFailed = 0,
+            numRules = 0,
             percPassed = 100,
             passed = false;
+            overallServiceresults = [];
+            facility = Session.getSelectedFacility();
+            //console.log(facility,"facility");
+        overallServiceresults = services.map( ( service, idx ) => {
 
-        services.map( ( s ) => {
-            let result = evaluateService( s );
+            // if the service has no data don't include in calculations
+            if( !service || !service.data || !service.data.complianceRules ) {
+                return null;
+            }
+            let result = evaluateService( service, facility );
+
             if ( result.passed ) {
                 results.passed.push( result );
             } else {
                 results.failed.push( result );
             }
-            rules = rules.concat( s.data.complianceRules );
+            //console.log(result, idx);
+            //rules = rules.concat( service.data.complianceRules );
+            numRules += result.numRules;
+            numPassed += result.numPassed;
+            numFailed += result.numFailed;
+            return result;
         } )
 
-        overall = evaluate( rules );
-        numRules = rules.length;
-        numPassed = overall.passed.length;
-        numFailed = overall.failed.length;
-
+        //overall = evaluate( rules );
+        // numRules = rules.length;
+        // numPassed = overall.passed.length;
+        // numFailed = overall.failed.length;
+        //console.log({numRules, numPassed, numFailed});
         if ( numRules ) {
             percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
         }
         if ( percPassed == 100 ) {
             passed = true;
         }
-
         return {
             passed,
             percentRulesPassed: percPassed,
             numRulesPassed: numPassed,
             numRulesFailed: numFailed,
             servicesPassed: results.passed.length,
-            servicesFailed: results.failed.length
+            servicesFailed: results.failed.length,
+            overallServiceresults,
         }
-
 
     }
 

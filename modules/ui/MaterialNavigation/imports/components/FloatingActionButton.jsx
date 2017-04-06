@@ -11,7 +11,14 @@ export default class FloatingActionButton extends React.Component {
 
     render() {
         let { actions, team } = this.props;
-
+        let user = Meteor.user();
+        if (user) {
+            if ( user.getRole() !== "fmc support" ) {
+                actions = _.filter(actions, ( action ) => {
+                    return action !== 'create team';
+                }  )
+            }
+        }
         return (
             <div className="fab-panel noprint" id="fab">
 			 { actions.map( ( actionName, idx ) => {

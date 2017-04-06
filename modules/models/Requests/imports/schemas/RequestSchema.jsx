@@ -72,14 +72,11 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
+            size: 6,
             required: true,
             defaultValue: () => {
-                let team = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
-                if ( teamType == 'contractor' ) {
+                let team = Session.get( 'selectedTeam' );
+                if ( Teams.isServiceTeam( team ) ) {
                     return 'Tenancy';
                 }
                 return "Ad-hoc";
@@ -89,17 +86,12 @@ const RequestSchema = {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
-                    teamType = null;
 
-                if ( team ) {
-                    teamType = team.type;
-                }
-
-                if ( teamType == 'contractor' ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
+                if ( Teams.isServiceTeam( team ) ) {
+                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        return { 
+                        return {
                             items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
@@ -111,11 +103,11 @@ const RequestSchema = {
                                     request.area = request.area ? request.area : null;
                                     request.level = request.level ? request.level : null;
                                 }
-                                    
+
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
                     }
                 }
             }
@@ -211,20 +203,27 @@ const RequestSchema = {
             input: Select,
             required: true,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.level );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
                 let facility = null;
                 if ( item.facility ) {
                     facility = Facilities.findOne( item.facility._id );
                 }
+                let areas = []
+                if(item.type == "Booking"){
+                    let allArea = facility ? facility.areas : []
+                    allArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            areas.push(area)
+                        }
+                    })
+                } else {
+                    areas = facility ? facility.areas : null
+                }
                 return {
-                    items: facility ? facility.areas : null
+                    items: areas
                 }
             },
             defaultValue: (request ) => {
@@ -242,16 +241,23 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.area );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.area );
             },
             options: ( item ) => {
+                let subAreas = [];
+                if(item.type == "Booking"){
+                    let allSubArea = item.level && item.level.children ? item.level.children : [];
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    } )
+                } else {
+                    subAreas = item.level ? item.level.children : null
+                }
                 return {
-                    items: item.level ? item.level.children : null
+                    items: subAreas
                 }
             }
         },
@@ -263,16 +269,23 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.identifier );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
+                let subAreas =[];
+                if(item.type == 'Booking'){
+                    let allSubArea = item.area && item.area.children ? item.area.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    })
+                } else {
+                    subAreas = item.area ? item.area.children : null
+                }
                 return {
-                    items: item.area ? item.area.children : null
+                    items: subAreas
                 }
             }
         },
@@ -294,35 +307,29 @@ const RequestSchema = {
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
-                    teamType = null,
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
             },
             options: ( item ) => {
                 let selectedTeam = Session.getSelectedTeam(),
-                    teamType = null,
                     items = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
 
-                if ( teamType == 'fm' && item.facility && item.facility._id ) {
+                if ( Teams.isFacilityTeam( selectedTeam ) && item.facility && item.facility._id ) {
                     let facility = Facilities.findOne( item.facility._id );
                     if ( facility ) {
                         items = facility.servicesRequired;
                     }
-                } else if ( teamType == 'contractor' && team.getAvailableServices ) {
+                } else if ( Teams.isServiceTeam( selectedTeam ) && team.getAvailableServices ) {
                     items = team.getAvailableServices();
                 }
 
@@ -330,7 +337,7 @@ const RequestSchema = {
                 return {
                     items: items,
                     afterChange: ( request ) => {
-                        if ( request == null || teamType == 'contractor' ) {
+                        if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
                         if ( request.service.data ) {
@@ -350,7 +357,7 @@ const RequestSchema = {
                                 }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( defaultSupplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -372,19 +379,16 @@ const RequestSchema = {
             type: "object",
             input: Select,
             condition: ( request ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null,
+                let team = Session.getSelectedTeam();
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
-
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
@@ -410,7 +414,7 @@ const RequestSchema = {
                                 request.supplier = defaultSupplier;
                                 if ( request.subservice.data.defaultContact && request.subservice.data.defaultContact.length ) {
                                     request.supplierContacts = request.subservice.data.defaultContact;
-                                } else if ( supplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( supplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -523,6 +527,47 @@ const RequestSchema = {
             input: Switch
         },
 
+        occupancy: {
+            label: "Base Building",
+            description: "Specify occupancy type",
+            size: 6,
+            defaultValue: ( item ) => {
+                return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            condition: ( item ) => {
+                return _.contains(['Ad-hoc', 'Defect'], item.type);
+            },
+            input(props){
+                let value = false,
+                    team = Session.get( 'selectedTeam' );
+                if (!props.value && Teams.isServiceTeam( team ) ) {
+                    value = true;
+                }
+                else if (props.value) {
+                    value = props.value;
+                }
+
+                return(
+                    <div className="row">
+                    <div className="col-xs-12">
+                    <br/><br/>
+                    <Switch
+                        value = { value }
+                        placeholder = "Base Building"
+                        labelInactive = "Tenant"
+                        onChange = { ( val ) =>{
+                            props.item.occupancy = val;
+                            props.item.service.data.baseBuilding = val;
+                            props.item.service.data.tenancy = !val;
+                        } 
+                    }
+                    />
+                    </div>
+                    </div>
+                    )
+            }
+        },
+
         costThreshold: {
             label: "Value",
             type: "number",
@@ -598,26 +643,17 @@ const RequestSchema = {
             type: "object",
             input: Select,
             options: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
+                let team = Session.getSelectedTeam();
                 return {
-                    items: teamType == 'contractor' ? team.getClients() : null,
+                    items: Teams.isServiceTeam( team ) ? team.getClients() : null,
                     view: ContactCard
                 }
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
+                let team = Session.getSelectedTeam();
+                if ( Teams.isFacilityTeam( team ) ) {
+                    return team;
                 }
-                if ( teamType == 'contractor' ) {
-                    return null;
-                }
-                return team;
             }
         },
 
@@ -661,7 +697,6 @@ const RequestSchema = {
                         request.service = null;
                         request.subservice = null;
                         request.supplier = null;
-                        //request.members = getMembersDefaultValue( request );
                         request.members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
                     },
                     addNew: {
@@ -711,24 +746,16 @@ const RequestSchema = {
             condition: ( request ) => {
 
                 let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( request.type != 'Booking' && Teams.isServiceTeam( selectedTeam ) ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
-                if ( teamType == 'fm' ) {
-                    return null;
+                let team = Session.getSelectedTeam();
+                if( Teams.isServiceTeam( team ) ) {
+                    return team;
                 }
                 return team;
             },
@@ -776,7 +803,7 @@ const RequestSchema = {
                         if( !supplier ) {
                             request.supplierContacts = [];
                         }
-                        else if ( supplier.type == 'fm' ) {
+                        else if ( Teams.isFacilityTeam( supplier ) ) {
                             request.supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                         } else {
                             request.supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -798,13 +825,13 @@ const RequestSchema = {
             size: 12,
             condition: ( request ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
+                    ( 
+                        request.status != 'Issued' && 
+                        request.type != 'Booking' && 
+                        Teams.isServiceTeam( selectedTeam )
+                    ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
@@ -954,7 +981,6 @@ const RequestSchema = {
             members: {
                 label: "Contacts",
                 description: "Stakeholders for this work request",
-                defaultValue: getMembersDefaultValue
             },
 
             documents: {
@@ -1060,57 +1086,6 @@ const RequestSchema = {
 
         }
 
-        /*
-         *
-         *
-         *
-         */
-        function getMembersDefaultValue( item ) {
-
-            if ( item.team == null ) {
-                return;
-            }
-
-            let owner = Meteor.user(),
-                team = Teams.findOne( item.team._id ),
-                teamMembers = team.getMembers( {
-                    role: "portfolio manager"
-                } );
-
-            let members = [ {
-                _id: owner._id,
-                name: owner.profile.name,
-                email: owner.profile.email,
-                role: "owner"
-            } ];
-
-            teamMembers.map( ( m ) => {
-                members.push( {
-                    _id: m._id,
-                    name: m.profile.name,
-                    email: m.profile.email,
-                    role: "team manager"
-                } )
-            } );
-
-            if ( item.facility && item.facility._id ) {
-                let facility = Facilities.findOne( item.facility._id ),
-                    facilityMembers = facility.getMembers( {
-                        role: "manager"
-                    } );
-
-                facilityMembers.map( ( m ) => {
-                    members.push( {
-                        _id: m._id,
-                        name: m.profile.name,
-                        email: m.profile.email,
-                        role: "facility manager"
-                    } )
-                } );
-            }
-
-            return members;
-        }
 
         function getTimeframe( _id, priority ) {
             //let team = this.getTeam();

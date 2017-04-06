@@ -16,11 +16,15 @@ const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: () => {
-        let team = Teams.create();
+    action: ( team, callback ) => {
+        team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } />
+                <TeamStepper item = { team } onChange={( invitee ) => {
+                    if (callback){
+                        callback( _.pick(invitee, "name", "type", "_id" ) );
+                    }
+                }}/>;
             </DropFileContainer>
         } )
     }
@@ -116,7 +120,7 @@ const createRequest = new Action( {
             content: <AutoForm
             title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
-            form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
+            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
             onSubmit = {
@@ -148,11 +152,8 @@ const createRequest = new Action( {
                             return;
                         }
                         else if( baseBuilding ) {
-                            /*if( role == 'property manager' ) {
+                            if( role == 'property manager' ) {
                                 method = 'Issues.issue';
-                            }*/
-                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
-                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {
@@ -185,7 +186,7 @@ const createRequest = new Action( {
                                 if( cost > costThreshold ) {
                                     method = 'Issues.create';
                                 }
-                                if( parseInt(relation.threshold) < 1 ) {
+                                /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
                                 if(newRequest.haveToIssue == true){
@@ -194,7 +195,7 @@ const createRequest = new Action( {
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
                                     team.setMemberThreshold( owner, newThreshold.toString() );
-                                }
+                                }*/
                             }
 
                             else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){

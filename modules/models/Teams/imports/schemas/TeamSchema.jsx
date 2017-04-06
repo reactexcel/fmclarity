@@ -92,52 +92,52 @@ export default TeamSchema = {
 
     address: {
         type: "object",
-        condition: "contractor",
+        label: "Address",
+        condition: [ "contractor", "real estate" ],
         subschema: {
-
-                streetNumber: {
-                    input: Text,
-                    label: "Number",
-                    type: "string",
-                    size: 3
-                },
-                streetName: {
-                    input: Text,
-                    type: "string",
-                    label: "Street name",
-                    size: 6
-                },
-                city: {
-                    input: Text,
-                    label: "City",
-                    size: 6,
-                    type: "string",
-                },
-                state: {
-                    label: "State",
-                    size: 3,
-                    input: Select,
-                    type: "string",
-                    options: {
-                        items: [
-                            "ACT",
-                            "NSW",
-                            "SA",
-                            "TAS",
-                            "NT",
-                            "QLD",
-                            "VIC",
-                            "WA"
-                        ]
-                    }
-                },
-                postcode: {
-                    input: Text,
-                    label: "Postcode",
-                    type: "string",
-                    size: 3
+            streetNumber: {
+                input: Text,
+                label: "Number",
+                type: "string",
+                size: 3
+            },
+            streetName: {
+                input: Text,
+                type: "string",
+                label: "Street name",
+                size: 6
+            },
+            city: {
+                input: Text,
+                label: "City",
+                size: 6,
+                type: "string",
+            },
+            state: {
+                label: "State",
+                size: 3,
+                input: Select,
+                type: "string",
+                options: {
+                    items: [
+                        "ACT",
+                        "NSW",
+                        "SA",
+                        "TAS",
+                        "NT",
+                        "QLD",
+                        "VIC",
+                        "WA"
+                    ]
                 }
+            },
+            postcode: {
+                input: Text,
+                label: "Postcode",
+                type: "string",
+                size: 3
             }
+        }
 
     },
 
@@ -160,8 +160,8 @@ export default TeamSchema = {
     },
 
     defaultCostThreshold: {
-        label: "Threshold value for work orders",
-        description: "Maximum value set for the value of a work order",
+        label: "Enter work order threshold value for Managers",
+        description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
         type: "number",
         input: Text,
         defaultValue: 1000,

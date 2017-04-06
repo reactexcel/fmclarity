@@ -26,7 +26,8 @@ function register( collection, opts ) {
             add: authentication,
             remove: authentication,
             setRole: authentication,
-            setThreshold: authentication
+            setThreshold: authentication,
+            setThresholdValue: authentication
         }
     } else {
         auth = {
@@ -40,6 +41,9 @@ function register( collection, opts ) {
                 return false;
             },
             setThreshold: authentication.setThreshold || function() {
+                return false;
+            },
+            setThresholdValue: authentication.setThresholdValue || function() {
                 return false;
             }
         }
@@ -113,6 +117,12 @@ function register( collection, opts ) {
         method: setMemberThreshold( collection, fieldName )
     }
 
+    methods[ 'set' + fn + 'ThresholdValue' ] = {
+		//cannot change own role
+		authentication: auth.setThresholdValue,
+		method: setMemberThresholdValue( collection, fieldName )
+	}
+
     methods[ 'dangerouslyReplace' + fn + 's' ] = {
         authentication: true,
         method: replaceMembers( collection, fieldName )
@@ -128,6 +138,7 @@ function register( collection, opts ) {
 
     helpers[ 'get' + fn + 'Role' ] = getMemberRole( membersCollection, fieldName );
     helpers[ 'get' + fn + 'Threshold' ] = getMemberThreshold( membersCollection, fieldName );
+    helpers[ 'get' + fn + 'ThresholdValue' ] = getMemberThresholdValue( membersCollection, fieldName );
     helpers[ 'get' + fn + 'Relation' ] = getMemberRelation( membersCollection, fieldName );
     helpers[ 'has' + fn ] = hasMember( membersCollection, fieldName );
     helpers[ 'dangerouslyAddMember' ] = addMember( collection, fieldName );
@@ -166,7 +177,8 @@ function replaceMembers( collection, fieldName ) {
                     [ fieldName ]: {
                         _id: member._id,
                         role: role,
-                        name: member.profile ? member.profile.name : member.name
+                        name: member.profile ? member.profile.name : member.name,
+                        issueThresholdValue: options.issueThresholdValue ? options.issueThresholdValue : "500"
                     }
                 }
             } );
@@ -199,7 +211,8 @@ function addMember( collection, fieldName ) {
                         _id: member._id,
                         role: role,
                         name: member.profile ? member.profile.name : member.name,
-                        threshold: threshold
+                        threshold: threshold,
+                        issueThresholdValue: options.issueThresholdValue ? options.issueThresholdValue : "500"
                             //profile:obj.getProfile?obj.getProfile():obj
                     }
                 }
@@ -263,6 +276,20 @@ function setMemberThreshold( collection, fieldName ) {
     }
 }
 
+function setMemberThresholdValue( collection, fieldName ) {
+	return function( team, user, threshold ) {
+		var query = {},
+			action = {};
+		query[ '_id' ] = team._id;
+		query[ fieldName + '._id' ] = user._id;
+
+		action[ '$set' ] = {};
+		action[ '$set' ][ fieldName + '.$.issueThresholdValue' ] = threshold;
+
+		collection.update( query, action );
+	}
+}
+
 function getMembers( item, { collection = Meteor.users, fieldName = "members", filter } ) {
     let ids = [],
         names = [],
@@ -275,6 +302,7 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
                 !m.role || 
                 filter.role == m.role || 
                 ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
+                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) || 
                 ( filter.role.$ne && filter.role.$ne != m.role )
             ) {
                 if ( !m ) {
@@ -303,35 +331,7 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
 function getMembersGenerator( collection, fieldName ) {
     return function( item, filter ) {
-        let ids = [],
-            names = [],
-            members = item[ fieldName ];
-
-        if ( members ) {
-            members.map( ( m ) => {
-                if ( !filter || !m.role || filter.role == m.role || ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ) {
-                    if ( !m ) {
-                        console.log( { 'Found an empty member in the array': members } );
-                    } else if ( m._id ) {
-                        ids.push( m._id );
-                    } else if ( m.name ) {
-                        names.push( m.name );
-                    }
-                }
-            } )
-        }
-
-        //console.log( {fieldName, name:collection._name, ids} );
-
-        return collection.find( {
-                $or: [
-                    { _id: { $in: ids } },
-                    { name: { $in: names } }
-                ]
-            }, {
-                sort: { name: 1, _id: 1 }
-            } )
-            .fetch();
+        return getMembers( item, { collection, fieldName, filter } );
     }
 }
 
@@ -366,6 +366,16 @@ function getMemberThreshold( collection, fieldName ) {
             return relation.threshold;
         }
     }
+}
+
+function getMemberThresholdValue( collection, fieldName ) {
+	return function( member ) {
+		var group = this;
+		var relation = group.getMemberRelation( member );
+		if ( relation ) {
+			return relation.issueThresholdValue;
+		}
+	}
 }
 
 //console.log( Members );

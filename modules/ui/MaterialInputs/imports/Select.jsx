@@ -35,7 +35,18 @@ const PlainCard = React.createClass( {
 const Select = React.createClass( {
 
 	getInitialState() {
-		return { open: false }
+		return {
+			open: false
+	  	}
+	},
+
+	componentDidUpdate(){
+		if(this.state.open == true){
+			$( ".searchInput" ).focus();
+		}
+	},
+
+	componentDidMount(){
 	},
 
 	handleChange( newItem ) {
@@ -44,9 +55,9 @@ const Select = React.createClass( {
 			if( newItem && newItem.val) {
 				val = newItem.val;
 			}
-			//console.log( val );
 			this.props.onChange( val );
 		}
+		this.setOpen( false );
 		this.refs.input.blur();
 	},
 
@@ -70,7 +81,43 @@ const Select = React.createClass( {
 	},
 
 	setOpen( val ) {
-		this.setState( { open: val } );
+		this.setState( {
+			open: val,
+		 } );
+	},
+
+	sortString(ary, fullNumbers) {
+	  	var re = fullNumbers ? /[\d\.\-]+|\D+/g : /\d+|\D+/g;
+	  	for (var i=ary.length;i--;)
+	    	ary[i] = [ary[i]].concat((ary[i]+"").match(re).map(function(s){
+	      		return isNaN(s) ? [s,false,s] : [s*1,true,s];
+	    	}));
+	  	ary.sort(function(a,b){
+	    	var al = a.length, bl=b.length, e=al>bl?al:bl;
+	    	for (var i=1;i<e;++i) {
+	      		if (i>=al) return -1; else if (i>=bl) return 1;
+	      		else if (a[i][0]!==b[i][0])
+	        	return (a[i][1]&&b[i][1]) ?
+	               (a[i][0]-b[i][0]) :
+	               (a[i][2]<b[i][2]) ? -1 : 1;
+	    	}
+	    	return 0;
+	  	});
+	  	for (var i=ary.length;i--;) ary[i] = ary[i][0];
+	  	return ary;
+  	},
+
+ 	sortObject(arr) {
+ 		let sortedList = arr.sort( (a, b) => {
+			if( a && a.name && b && b.name ) {
+	 			var textA = a.name.toUpperCase();
+    			var textB = b.name.toUpperCase();
+    			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+			} else {
+				return 0;
+			}
+		});
+ 		return sortedList
 	},
 
 	render() {
@@ -88,17 +135,25 @@ const Select = React.createClass( {
 			invalid = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
-			hidden = false,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
 				disabled = true;
 				readOnly = true;
-				hidden = true;
 			}
 			items = [];
 		}
+		let sortedItems = []
+		if(typeof items[0] == 'string'){
+			sortedItems = this.sortString(items)
+		} else if(typeof items[0] == 'object') {
+			sortedItems = this.sortObject(items)
+		} else {
+			sortedItems = items
+		}
+
+
 
 		if ( errors != null && errors.length > 0 ) {
 			invalid = true;
@@ -117,7 +172,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?" hidden":"")}>
+				<div className = {"md-input md-select readonly disabled dropdown"}>
 
 					<span className = { classes.join(' ') }>
 						{ used?
@@ -141,11 +196,67 @@ const Select = React.createClass( {
 
 		return (
 			<div
+				id = "mainDiv"
 				ref = "input"
 				className = {"md-input md-select dropdown selectHeight" +( this.state.open ? " open" : "" )}
 				tabIndex = "0"
-				onFocus = { () => { this.setOpen( true ) } }
-				onBlur = { () => { this.setOpen( false ) } }>
+				onFocus = { () => {
+					this.setOpen( true );
+				} }
+				onBlur={(e)=>{
+					let $selected = $('ul#open > li').filter('.onFocus')
+					this.setOpen( false );
+				}}
+				onKeyDown={(e)=>{
+					let list = document.getElementById('open')
+					let targetList = $('ul#open > li.onFocus').position()
+					if(targetList != undefined){
+						list.scrollTop = (targetList.top - $('ul#open > li:first').position().top);
+					}
+					let key = e.keyCode
+					let $selected = $('ul#open > li').filter('.onFocus')
+					if(key == 13){
+						if($selected.length){
+							$selected.click();
+						}
+					}
+					if(key == 40){
+						e.preventDefault();
+						if(!$selected.length){
+							$('ul#open > li').eq(0).addClass('onFocus')
+						}
+						else if( $selected.is(':last-child') ){
+							return;
+						}else{
+							if($($selected.next()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.next().addClass('onFocus')
+							}
+						}
+					}
+					if(key == 38){
+						e.preventDefault();
+						if(!$selected.length){
+							return;
+						}
+						else if( $selected.is(':last-child') ){
+							$('ul#open > li').removeClass('onFocus')
+							$selected.prev().addClass('onFocus')
+						}else{
+							if($($selected.prev()[0]).is("li")){
+								$('ul#open > li').removeClass('onFocus')
+								$selected.prev().addClass('onFocus')
+							}
+						}
+					}
+					if(key==9){
+						//$('ul#open > li').removeClass('onFocus')
+						if($selected.length){
+							$selected.click();
+						}
+						this.setOpen( false )
+					}
+				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
 
@@ -167,29 +278,42 @@ const Select = React.createClass( {
 				{errors?
 				<div className = "helper-text">{ errors[0] }</div>
 				:null}
-
-				<ul className = "dropdown-menu">
+				<ul id={this.state.open == true ? "open":"closed"} className = "dropdown-menu">
 
 		        	{description?
-		        	<li><div className = "helper-text">{ description }</div></li>
+					<div>
+		        	    <li><div className = "helper-text">{ description }</div></li>
+					</div>
 		        	:null}
 
-		        	{items.map( ( item, idx ) => {
+		        	{sortedItems.map( ( item, idx ) => {
 		        	/********************************************/
 		        	if( !item ) {
 		        		return null;
 		        	}
+					var isFoucs = ''
+					if(item === value){
+						isFoucs = ' onFocus'
+					}
 		        	return (
 			    	<li key = { idx+'-'+(item._id || item.name) }
-			    		className = "dropdown-menu-item"
-			    		onClick = { () => { this.handleChange( item ) } }>
+						id={idx+'-'+(item._id || item.name)}
+			    		className = {"dropdown-menu-item"+isFoucs}
+			    		onClick = { () => {
+							this.handleChange( item )
+						} }
+						onKeyDown={(e)=>{
+
+						}}>
 
 			    		<ListTile item = { item } />
 
-			    	</li> )
+			    	</li>
+				     )
 		        	/********************************************/
 			        })}
-							{ addNew && addNew.show? <li className = "dropdown-menu-item">
+							{ addNew && addNew.show? <div>
+								<li className = "dropdown-menu-item">
 								<div
 									className	= "contact-list-item"
 									onClick		= { () => {
@@ -197,7 +321,7 @@ const Select = React.createClass( {
 											addNew.onAddNewItem( this.handleChange );
 										}
 									} }
-									style 		= { { paddingLeft:"24px" } }
+									style = { { paddingLeft:"24px" } }
 								>
 
 										<span style = { {display:"inline-block",minWidth:"18px",paddingRight:"24px"} }>
@@ -209,7 +333,9 @@ const Select = React.createClass( {
 										</span>
 
 									</div>
-								</li> : null}
+									</li>
+									</div>
+								 : null}
 	            </ul>
 
 			</div>

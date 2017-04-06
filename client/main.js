@@ -2,6 +2,10 @@ import { DocHead } from 'meteor/kadira:dochead';
 
 import { Actions } from '/modules/core/Actions';
 
+import { Modal } from '/modules/ui/Modal';
+
+import React from 'react';
+
 //console.log( { Actions, Routes } );
 function loadExternalScripts() {
 
@@ -36,26 +40,43 @@ function sortableApiScript() {
     document.body.appendChild( link );
 }
 
-function loadBrowerCompatibilityScript() {
-    window.$buoop = {
-        vs: {
-            i: 10,
-            f: -4,
-            o: -4,
-            s: 8,
-            c: -4
-        },
-        api: 4,
-        text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
-        test: false //change this to true to show message onscreen for testing purposes
-    };
-    $( window ).bind( 'load', function() {
-        const script = document.createElement( "script" );
-        script.src = "https://browser-update.org/update.min.js";
-        script.type = "text/javascript";
-        script.async = true;
-        document.body.appendChild( script );
-    } );
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+function loadBrowerCompatibilityScript(  ){
+    
+	window.$buoop = {
+		vs:{
+			i:10,
+			f:-4,
+			o:-4,
+			s:8,
+			c:-4
+		},
+		api:4,
+		text: "Your browser (%s) is out of date. It has known security flaws and may not display all features of this and other websites. <a%s>Update your browser now</a>",
+		test:false //change this to true to show message onscreen for testing purposes
+	};
+		$(window).bind('load', function() {
+
+           if (isIE () == 9) { //quick fix to show popup for ie9
+             Modal.show( {
+            content: <div style={{padding:"10px"}}>
+            <h3>Warning: Incompatible Browser Detected</h3>
+            <p>Your Internet Explorer 9 browser is out of date. It has known security flaws and may not display all features of this and other websites. <a href='https://www.microsoft.com/en-us/download/internet-explorer.aspx' target='_blank' className='btn btn-primary'>Update your browser now</a></p></div>
+             } );
+            }
+            else{
+            const script = document.createElement("script");
+            script.src = "http://browser-update.org/update.min.js";
+            script.type = "text/javascript";
+            script.async = true;
+            document.body.appendChild(script);
+            }
+		    
+		});
 }
 loadExternalScripts();
 
@@ -109,7 +130,7 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         //nb: this check can be removed when we have a dedicated supplier manager role
-        return team.type == 'fm';
+        return _.contains( [ 'fm', 'real estate' ], team.type );
     },
     action: [
         'create team request',
@@ -128,11 +149,20 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+    action: [
+        'create document update request',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
             role = team.getMemberRole( user );
 
-        return team.type == 'contractor' || role == 'portfolio manager' || role == 'fmc support';
+        return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
         'edit team',
@@ -161,7 +191,7 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         //nb: this check can be removed when we have a dedicated supplier manager role
-        return team.type == 'fm';
+        return _.contains( [ 'fm', 'real estate' ], team.type );
     },
     action: [
         'create team facility',
@@ -258,20 +288,7 @@ Actions.addAccessRule( {
                 } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
                     return true;
                 } else if ( facilityRole == 'manager' ) {
-                    let costString = request.costThreshold;
-                    if ( _.isString( costString ) ) {
-                        costString = costString.replace( ',', '' )
-                    }
-
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
-
-
-                    console.log( { original: team.defaultCostThreshold, costThreshold, cost } );
-
-                    if ( cost <= costThreshold ) {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -314,7 +331,8 @@ Actions.addAccessRule( {
                 team = request.getTeam(),
                 facility = request.getFacility(),
                 teamRole = null,
-                facilityRole = null;
+                facilityRole = null,
+                facilityMemberThresholdValue = null;
 
             if ( team ) {
                 teamRole = team.getMemberRole( user );
@@ -322,6 +340,7 @@ Actions.addAccessRule( {
 
             if ( facility ) {
                 facilityRole = facility.getMemberRole( user );
+                facilityMemberThresholdValue = facility.getMemberThresholdValue( user );
             }
 
             if ( request.service && request.service.data && request.service.data.baseBuilding ) {
@@ -333,16 +352,24 @@ Actions.addAccessRule( {
                     return true;
                 } else if ( team.type == 'contractor' && teamRole == 'manager' ) {
                     return true;
-                } else if ( facilityRole == 'manager' ) {
+                } else if ( facilityRole == 'manager' || teamRole == 'manager' ) {
                     let costString = request.costThreshold;
                     if ( _.isString( costString ) ) {
                         costString = costString.replace( ',', '' )
                     }
 
-                    let costThreshold = parseInt( team.defaultCostThreshold ),
-                        cost = parseInt( costString );
-
-                    if ( cost <= costThreshold ) {
+                    let memberCostThreshold = parseFloat( facilityMemberThresholdValue ),
+                        cost = parseFloat( costString ),
+                        teamThresholdValue = user.getTeam().defaultCostThreshold;
+                        console.log({
+                            "team Threshold Value =" : teamThresholdValue ? teamThresholdValue : "not found", //1500
+                            "facility Member Threshold Value =" : facilityMemberThresholdValue ? facilityMemberThresholdValue : "not found",//200
+                            "request cost =" : cost ? cost : "not found", //500
+                        });
+                    if ( cost <= memberCostThreshold ) {
+                        return true;
+                    }
+                    else if (!memberCostThreshold && (teamThresholdValue && cost <= teamThresholdValue) ) {
                         return true;
                     }
                 }
@@ -369,7 +396,7 @@ Actions.addAccessRule( {
                 /* Allow action for this role regardless of requests status */
                 return true;
             } else if ( request.status == 'New' || request.type == 'Preventative' ) {
-                /*  Allow action if status is new and only for 
+                /*  Allow action if status is new and only for
                     roles specified below
                 */
                 import { Facilities } from '/modules/models/Facilities';

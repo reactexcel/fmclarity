@@ -16,6 +16,8 @@ import { TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
+import Perf from 'react-addons-perf';
+
 export default RequestPanel = React.createClass( {
 
     mixins: [ ReactMeteorData ],
@@ -29,7 +31,9 @@ export default RequestPanel = React.createClass( {
             previousDate = null,
             contact = null,
             facility = null,
+            realEstateAgency = null,
             owner = null;
+
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
 
@@ -37,11 +41,13 @@ export default RequestPanel = React.createClass( {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
-                //console.log( facility );
+
                 if( facility ) {
-                    let fms = facility.getMembers({role:'manager'});
-                    contact = fms[0];
+                    realEstateAgency = facility.getRealEstateAgency();
+                    console.log( realEstateAgency );
                 }
+
+                contact = request.getContact();
                 supplier = request.getSupplier();
                 if ( request.type == 'Preventative' ) {
                     nextDate = request.getNextDate();
@@ -51,7 +57,25 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner }
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+    },
+
+    componentWillMount() {
+        Perf.start();
+    },
+
+    componentDidMount() {
+        Perf.stop();
+        console.log('Outputing mount load time analysis for request panel...');
+        Perf.printInclusive();
+        // Perf.printWasted();
+    },
+
+    componentDidUpdate() {
+        Perf.stop();
+        console.log('Outputing update load time analysis for request panel...');
+        Perf.printInclusive();
+        // Perf.printWasted();
     },
 
     render() {
@@ -60,7 +84,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, owner } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
 
     //console.log( facility );
 
@@ -92,7 +116,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         title = "",
         billingOrderNumber = "",
         nextDateString = null,
-        previousDateString = null;
+        previousDateString = null,
+        requestIsBaseBuilding = false,
+        requestIsPurchaseOrder = false;
+
+    if( request.service && request.service.data ) {
+        requestIsBaseBuilding = request.service.data.baseBuilding;
+        requestIsPurchaseOrder = request.service.data.purchaseOrder;
+    }
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
@@ -108,7 +139,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
         } else if ( teamType == 'fm' ) {
-            if ( request.service && request.service.data && request.service.data.purchaseOrder ) {
+            if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
                 title = "Work Order";
@@ -147,18 +178,18 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 ?
                                 "Supplier: "+ request.supplier.name
                                 :
-                                "Client: "+ request.team.name
+                                "Client: "+ ( requestIsBaseBuilding && realEstateAgency ? realEstateAgency.name : request.team.name )
                             }
                         </h2>
                         <AddressLink item = { facility.address }/>
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType=="fm" ? supplier : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
 
-                        <BillingDetails item = { facility }/>
+                        <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
-                        { teamType=="contractor" ? <span>{billingOrderNumber}</span> : null }
+                        { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
                     </div>
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
 
@@ -202,7 +233,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
               <div className="row">
                 <div className="col-md-1">
                   <div>
-                    <button onClick={()=>{window.print(  );}} className="btn btn-flat">
+                    <button onClick={()=>{FlowRouter.go( url );}} className="btn btn-flat">
                       <i className="fa fa-print" aria-hidden="true"></i>
                     </button>
                   </div>
@@ -231,7 +262,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { teamType=='fm' && request.service && request.type != 'Booking' ?
                 <tr>
                     <th>Service</th>
-                    <td>{request.getServiceString()}</td>
+                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
                 </tr>
                 : null
                 }
@@ -304,19 +335,18 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     </tr> : null }
                 </tbody>
             </table>
-
-            { Meteor.user().getRole()=='staff' && request.status!= 'New' ? null :
+            
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
                 },{
                     hide:       !_.contains( [ 'fmc support', 'portfolio manager', 'manager', 'property manager' ], Meteor.user().getRole()),
-                    tab:        <span id="documents-tab"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
+                    tab:        <span id="documents-tab" className="no-print"><span>Files</span>&nbsp;{ request.attachments?<span className="label">{ request.attachments.length }</span>:null}</span>,
                     content:    <AutoForm model = { Requests } item = { request } form = { ['attachments'] }  afterSubmit={ ( request ) => {
 
                 request.distributeMessage( {
-                    recipientRoles: [ "team manager", "facility manager" ],
+                    recipientRoles: [ 'team manager', 'facility manager', 'supplier manager', 'assignee' ],
                     message: {
                         verb: "uploaded a file to",
                         subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
@@ -326,7 +356,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         request.markAsUnread();
                     } }  />
                 },{
-                    tab:        <span id="contacts-tab"><span>Contacts</span></span>,
+                    tab:        <span id="contacts-tab" className="no-print"><span>Contacts</span></span>,
                     hide:       (teamType == 'contractor'),
                     content:    <ContactList
                                     hideMenu    = { _.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) }
@@ -335,7 +365,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 />
                 }
             ]} />
-            }
 
         </div>
     )
