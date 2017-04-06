@@ -16,11 +16,15 @@ const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: () => {
-        let team = Teams.create();
+    action: ( team, callback ) => {
+        team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } />
+                <TeamStepper item = { team } onChange={( invitee ) => {
+                    if (callback){
+                        callback( _.pick(invitee, "name", "type", "_id" ) );
+                    }
+                }}/>;
             </DropFileContainer>
         } )
     }
