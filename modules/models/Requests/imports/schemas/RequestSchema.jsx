@@ -72,6 +72,7 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
+            size: 6,
             required: true,
             defaultValue: () => {
                 let team = Session.get( 'selectedTeam' );
@@ -529,8 +530,12 @@ const RequestSchema = {
         occupancy: {
             label: "Base Building",
             description: "Specify occupancy type",
+            size: 6,
             defaultValue: ( item ) => {
                 return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            condition: ( item ) => {
+                return _.contains(['Ad-hoc', 'Defect'], item.type);
             },
             input(props){
                 let value = false,
@@ -545,6 +550,7 @@ const RequestSchema = {
                 return(
                     <div className="row">
                     <div className="col-xs-12">
+                    <br/><br/>
                     <Switch
                         value = { value }
                         placeholder = "Base Building"
