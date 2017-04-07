@@ -47,7 +47,7 @@ export default function TopNavigationBar( props ) {
                     <img className="fm-logo" src="/img/logo-white.svg"/>
                 </div>
                 <div className="icon-region-2">
-                    <div className="searchbox hidden-xs">
+                    <div className="searchbox hidden-xs" >
                         <FMInstantSearchBox mobileView={false}/>
                     </div>
                     <div id="alerts-icon" style={{float:"right"}} className="hidden-xs hidden-sm dropdown right-dropdown">
@@ -62,7 +62,7 @@ export default function TopNavigationBar( props ) {
                         <NotificationList items = { notifications }/>
                         <DesktopNotificationPopUp items = { notifications } showNotifications = { props.showNotifications } />
                     </div>
-                    <div id="search-icon" style={{float:"right"}} className="hidden-xl hidden-lg hidden-md hidden-sm">
+                    <div id="search-icon" style={{float:"right",marginTop:'2px'}} className="hidden-xl hidden-lg hidden-md hidden-sm">
                         <i className="fa fa-search" onClick={(e)=>{
                             if($("#search-icon").hasClass("open")){
                                 $("#search-icon").removeClass("open")
@@ -72,7 +72,7 @@ export default function TopNavigationBar( props ) {
                             }
                         }} ></i>
                         <div className="search">
-                            <FMInstantSearchBox mobileView={true} blur={()=>{$("#search-icon").removeClass("open")}}/>
+                            <FMInstantSearchBox mobileView={true} />
                         </div>
                     </div>
                     <div style={{float:"right"}}>

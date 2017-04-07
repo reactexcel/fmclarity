@@ -8,7 +8,6 @@ export default class DropFileContainer extends React.Component {
   }
   componentDidMount(){
     $("#drop-box").mouseout(( event ) => {
-      console.log("ASDSADASDSA");
       $("#drop").css("display", "hide");
     })
   }
