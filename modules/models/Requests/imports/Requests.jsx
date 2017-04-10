@@ -205,7 +205,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -410,7 +410,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -457,7 +457,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();

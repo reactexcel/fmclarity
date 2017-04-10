@@ -130,7 +130,7 @@ export default ComplianceListTile = React.createClass( {
                     <LinearProgress mode="indeterminate" color='#0152b5'/>
                 </div>:
             (results.passed?
-              <span style={{color:"green"}}>
+              <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
                 {message.detail?
                     <span>: <span
@@ -145,9 +145,9 @@ export default ComplianceListTile = React.createClass( {
                         }}>
                       { _.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
-              </span>
+              </div>
             :
-              <span style={{color:"red"}}>
+              <div style={{color:"red", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-exclamation-triangle"/> {message.summary||"failed"}</b>
                 {
                     message.detail?
@@ -165,7 +165,7 @@ export default ComplianceListTile = React.createClass( {
                       </span></span>
                     :null
                 }
-              </span>)
+            </div>)
           }
         </div>
       </div>
