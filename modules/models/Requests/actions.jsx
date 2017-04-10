@@ -175,7 +175,7 @@ const accept = new Action( {
             model = { Requests }
             item = { request }
             form = {
-                [ 'eta', 'assignee', 'acceptComment' ]
+                ['eta','assignee','acceptComment']
             }
             onSubmit = {
                 ( request ) => {
