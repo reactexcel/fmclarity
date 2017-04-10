@@ -938,7 +938,8 @@ const RequestSchema = {
                 type: "object",
                 options: ( request ) => {
                     request = Requests.collection._transform( request );
-                    let supplier = request.getSupplier(),
+                    //let supplier = request.getSupplier(),
+                    let supplier = Session.getSelectedTeam(),
                         members = Teams.getMembers( supplier );
                     return {
                         items: members,
