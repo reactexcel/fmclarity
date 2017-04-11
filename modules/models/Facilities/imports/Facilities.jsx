@@ -398,6 +398,7 @@ Facilities.actions( {
                     type: doc.type,
                     description: doc.description,
                     private: doc.private,
+                    owner: doc.owner
                 }
             } );
         }
