@@ -91,8 +91,9 @@ const RequestSchema = {
                     return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
                         return {
-                            items: [ 'Ad-hoc', 'Booking', 'Tenancy' ],
+                            items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy" ], request.type )) {
@@ -559,7 +560,7 @@ const RequestSchema = {
                             props.item.occupancy = val;
                             props.item.service.data.baseBuilding = val;
                             props.item.service.data.tenancy = !val;
-                        } 
+                        }
                     }
                     />
                     </div>
@@ -827,9 +828,9 @@ const RequestSchema = {
                 let selectedTeam = Session.get( 'selectedTeam' );
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( 
-                        request.status != 'Issued' && 
-                        request.type != 'Booking' && 
+                    (
+                        request.status != 'Issued' &&
+                        request.type != 'Booking' &&
                         Teams.isServiceTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
@@ -919,11 +920,18 @@ const RequestSchema = {
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
                     let role = Meteor.user().getRole();
-                    if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
+                    /*if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
+                        console.log("1111")
+                        return false;
+                    }*/
+                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
                         return false;
                     }
                     let team = Session.getSelectedTeam();
                     if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+                        return true;
+                    }
+                    if(_.contains( [ "portfolio manager", 'manager'], role )){
                         return true;
                     }
                 },
@@ -931,7 +939,8 @@ const RequestSchema = {
                 type: "object",
                 options: ( request ) => {
                     request = Requests.collection._transform( request );
-                    let supplier = request.getSupplier(),
+                    //let supplier = request.getSupplier(),
+                    let supplier = Session.getSelectedTeam(),
                         members = Teams.getMembers( supplier );
                     return {
                         items: members,
