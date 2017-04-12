@@ -5,6 +5,8 @@ import DocViewEdit from './imports/components/DocViewEdit.jsx';
 
 import { Action } from '/modules/core/Actions';
 import { Documents } from '/modules/models/Documents';
+import { TeamActions } from '/modules/models/Teams';
+import { Requests } from '/modules/models/Requests';
 
 function create( doc ) {
 	return {
@@ -57,9 +59,26 @@ const makePrivate = new Action( {
 	}
 } )
 
+const createUpdateRequest = new Action( {
+	name: "create document update request",
+	label: "Create document update request",
+	type: 'request',
+	action: ( doc ) => {
+		 team = Session.getSelectedTeam();
+		let newRequest = Requests.create( {
+                    team: team,
+                    type: 'Reminder',
+                    priority: 'Urgent',
+                    name: "Update "+doc.name+' ('+doc.type+' document)'
+                } );
+		TeamActions.createRequest.bind( team, null, newRequest ).run();
+	}
+})
+
 export {
 	create,
 	edit,
 	destroy,
-	makePrivate
+	makePrivate,
+	createUpdateRequest
 }

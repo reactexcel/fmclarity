@@ -88,7 +88,7 @@ const UserProfileSchema = {
 		description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
 		input: Text,
 		optional: true,
-		type: "string",
+		type: "number",
 		condition: ( item ) => {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 				relation = group.getMemberRelation( item );

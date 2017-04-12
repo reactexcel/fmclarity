@@ -54,12 +54,24 @@ AuthHelpers = {
     },
     managerOfRelatedTeam: function( role, user, item ) {
         import { Teams } from '/modules/models/Teams';
-        if ( !item.team || !item.team._id ) {
-            return false;
+        let owningTeam = null,
+            owningTeamRole = null,
+            realEstateAgency = null,
+            realEstateAgencyRole = null;
+
+        if ( item.team && item.team._id ) {
+            owningTeam = Teams.findOne( item.team._id );
+            if ( owningTeam ) {
+                owningTeamRole = owningTeam.getMemberRole( user );
+            }
         }
-        var team = Teams.findOne( item.team._id );
-        var role = RBAC.getRole( user, team );
-        return AuthHelpers.manager( role, user );
+        if( item.realEstateAgency && item.realEstateAgency._id ) {
+            realEstateAgency = Teams.findOne( item.realEstateAgency._id );
+            if ( realEstateAgency ) {
+                realEstateAgencyRole = realEstateAgency.getMemberRole( user );
+            }
+        }
+        return AuthHelpers.manager( owningTeamRole, user ) || AuthHelpers.manager( realEstateAgencyRole, user );
     },
     memberOfRelatedTeam: function( role, user, item ) {
         import { Teams } from '/modules/models/Teams';

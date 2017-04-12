@@ -120,7 +120,6 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
-
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
@@ -194,7 +193,6 @@ class AutoForm extends React.Component {
 				}
 
 				if ( Input == null ) {
-					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
