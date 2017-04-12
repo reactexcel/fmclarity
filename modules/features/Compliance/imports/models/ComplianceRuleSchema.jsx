@@ -108,7 +108,7 @@ export default ComplianceRuleSchema = {
                 item.document.query = JSON.parse(item.document.query);
             }
         },
-        condition: [ "Document exists", "Document is current" ],
+        condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
         label: "PMP event name",
@@ -116,11 +116,14 @@ export default ComplianceRuleSchema = {
         condition: [ "PPM event completed", "PPM schedule established" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
+            let query = {
+                 "facility._id": item.facility._id,
+                 type: "Preventative",
+             };
+            if ( item.service ) query[ "service.name" ] = item.service.name;
+            if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
             return {
-                items: _.pluck(Requests.findAll( {
-                     "facility._id": item.facility._id,
-                       type: "Preventative"
-                    }, {
+                items: _.pluck(Requests.findAll( query , {
                         fields: {
                              name: true
                          }

@@ -42,8 +42,8 @@ export default UserThresholdEdit = React.createClass( {
 				<Text
 					value			= { threshold }
 					onChange		= { this.handleThresholdChange }
-					placeholder 	= "Enter work order threshold for Managers"
-					description		= "Managers can issue work orders up to this amount, above require Portfolio Manager approval"
+					placeholder 	= "Work Order Issue Threshold"
+					description		= "Managers can issue up to this number of work orders, above goes to New state"
 				/>
 			)
 

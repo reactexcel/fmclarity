@@ -5,7 +5,7 @@
     font-size: 20px;
 
     position: fixed;
-    z-index: 1400;
+    z-index: 4500;
     top: 0;
     right: 0;
     left: 0;
@@ -43,19 +43,41 @@
     }
     .icon-region-2
     {
-        display: inline-block;
+        display: flex;
         float: right;
 
         color: @brand-fg;
         #alerts-icon
         {
-            padding-right: 40px;
+            padding-right: 20px;
+        }
+        #search-icon
+        {
+            padding-right: 20px;
         }
         .searchbox{
-            position: absolute;
+            //position: absolute;
             top: 20px;
             left: 75%;
-            margin-left: -80px;
+            margin-left: -40px;
+        }
+        .open > .search{
+            display: block;
+        }
+        #search-icon > .fa-search{
+            cursor: pointer;
+            float:right;
+        }
+        .search{
+            display: none;
+            width:270px;
+            z-index: 1400;
+            color: black;
+            background-color: #ffffff;
+            box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
+            margin-top: 39px;
+            margin-right: -54px;
+            padding: 10px;
         }
     }
 }

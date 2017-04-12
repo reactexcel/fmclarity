@@ -31,7 +31,7 @@ const PMPListTile = React.createClass( {
             nextDateString = null,
             frequency = request.frequency || {},
             previousDateString = null;
-
+        console.log(frequency);
         if( nextDate ) {
             nextDateString = moment( nextDate ).format('ddd Do MMM');
         }
@@ -48,7 +48,7 @@ const PMPListTile = React.createClass( {
                 { request.name }
             </div>
             <div className = "issue-summary-col" style = {{width:"10%"}}>
-                due every {`${frequency.number||''} ${frequency.unit||''}`}
+                due every {`${frequency.number||''} ${frequency.unit=="custom"?frequency.period:frequency.unit||''}`}
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
                 { previousDateString && previousRequest ?
@@ -61,7 +61,7 @@ const PMPListTile = React.createClass( {
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { nextDateString && nextRequest ? 
+                { nextDateString && nextRequest ?
                     <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                         <span>next due <b>{ nextDateString }</b> </span>
                         { nextRequest ?

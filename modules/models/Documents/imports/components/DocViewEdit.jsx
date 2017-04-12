@@ -77,13 +77,15 @@ const DocViewEdit = React.createClass( {
                                 message: {
                                     verb: "created",
                                     subject: "A new document has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                                    body: newItem.description
+                                    body: newItem.description,
+                                    digest: false
                                 }
                             } );
                         }
 
+                    } else {
+                        this.handleChangeCallback( null, item );
                     }
-
 
                 } );
             //	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );

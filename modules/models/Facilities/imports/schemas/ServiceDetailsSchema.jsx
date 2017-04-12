@@ -2,49 +2,49 @@ import React from 'react';
 import moment from 'moment';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker} from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker } from '/modules/ui/MaterialInputs';
 
-export default ServiceDetailsSchema =  {
-    baseBuilding:{
+export default ServiceDetailsSchema = {
+    baseBuilding: {
         label: "Base Building",
         type: 'boolean',
-        size:6,
+        size: 6,
         input: Switch,
-        options:{
-            afterChange(item){
+        options: {
+            afterChange( item ) {
                 item.tenant = !item.baseBuilding;
             }
         }
     },
-    tenant:{
+    tenant: {
         label: "Tenancy",
         type: "boolean",
-        size:6,
+        size: 6,
         input: Switch,
-        options:{
-            afterChange(item){
+        options: {
+            afterChange( item ) {
                 item.baseBuilding = !item.tenant;
             }
         }
     },
-    glAccount:{
+    glAccount: {
         label: "GL Account",
         type: "string",
         input: Select,
-        options( item ){
+        options( item ) {
             return {
-                items:[ "Not applicable" ],
+                items: [ "Not applicable" ],
             }
         },
-        condition(itm){
+        condition( itm ) {
             item = itm
             return true;
         }
     },
     cfy: {
         size: 1,
-        input( props ){
-            let month = parseInt(moment().format("M"));
+        input( props ) {
+            let month = parseInt( moment().format( "M" ) );
             return (
                 <div style={item.glAccount !== "Not applicable"?{}:{ paddingTop: "3px", marginTop:'100%' }}>
                     <span style={{paddingLeft:"0px"}}>FY{props.cfy?props.cfy:( month > 6 ? parseInt(moment().format("YY"))+1 :moment().format("YY") )}</span>
@@ -52,59 +52,61 @@ export default ServiceDetailsSchema =  {
             )
         }
     },
-    budget:{
-        label:"Enter budget",
+    budget: {
+        label: "Enter budget",
         size: 11,
-        input( props ){
-            return(
-                item.glAccount == "Not applicable"?
-                    <Currency { ...props }/>:
+        input( props ) {
+            return (
+                item.glAccount == "Not applicable" ?
+                <Currency { ...props }/> :
                 <div style={{marginLeft:"-7px"}}>
                     Budget: <span>${props.value!=""?props.value:0 }</span>
                 </div>
             )
         }
     },
-    workOrder:{
+    workOrder: {
         label: "WO#",
         type: "boolean",
         size: 6,
         input: Switch,
-        options:{
-            afterChange(item){
+        options: {
+            afterChange( item ) {
                 item.purchaseOrder = !item.workOrder;
             }
         }
     },
-    purchaseOrder:{
+    purchaseOrder: {
         label: "PO#",
         type: 'boolean',
         size: 6,
         input: Switch,
-        options:{
-            afterChange(item){
+        options: {
+            afterChange( item ) {
                 item.workOrder = !item.purchaseOrder
             }
         }
     },
-    assetTrackig:{
+    assetTrackig: {
         label: "Asset tracking",
         type: 'boolean',
         size: 6,
         input: Switch,
-        condition(item){
+        condition( item ) {
             return item.purchaseOrder;
         }
     },
-    supplier:{
+    supplier: {
         label: "Default supplier",
         size: 12,
         input: Select,
-        options(item){
+        options( item ) {
             let facility = Session.getSelectedFacility();
             return {
                 items: facility.getSuppliers(),
-                view: ContactCard,
+                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
+                                        <ContactCard {...props} />
+                                    </div>,
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -112,32 +114,32 @@ export default ServiceDetailsSchema =  {
                     onAddNewItem: ( callback ) => {
                         import { TeamStepper } from '/modules/models/Teams';
                         Modal.show( {
-                            content: <TeamStepper item = { supplier }
-                                facility = { facility }
-                                onChange = {
-                                    ( supplier ) => {
-                                        let facility = Session.getSelectedFacility();
-                                        facility.addSupplier( supplier );
-                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
-                                        callback( supplier );
-                                    }
+                            content: <TeamStepper
+                            facility = { facility }
+                            onChange = {
+                                ( supplier ) => {
+                                    let facility = Session.getSelectedFacility();
+                                    facility.addSupplier( supplier );
+                                    //Meteor.call("Facilities.addSupplier", facility, supplier );
+                                    callback( supplier );
                                 }
+                            }
                             />
                         } )
                     }
                 },
-                afterChange(item){
+                afterChange( item ) {
                     item.defaultContact = [];
                 }
             }
         }
     },
-    defaultContact:{
+    defaultContact: {
         label: "Default supplier contact",
         type: 'array',
         required: false,
         size: 12,
-        input(props){
+        input( props ) {
             // props.onChange = ( item ) => {
             //     props.onChange({
             //         _id: item._id,
@@ -146,7 +148,7 @@ export default ServiceDetailsSchema =  {
             //         email: item.email || item.profile.email,
             //     });
             // }
-           return (
+            return (
                 <div className="col-sx-12">
                     <Select
                         placeholder = {"Default supplier contact"}
@@ -172,40 +174,40 @@ export default ServiceDetailsSchema =  {
                     }/>
                     <div>
                         {_.map( props.item.defaultContact, ( sc, i ) => (
-							<div className="col-sm-5" key={i}
-								style={{
-									backgroundColor: 'aliceblue',
-    								padding: '5px',
-    								border: '1px solid transparent',
-    								borderRadius: '5px',
-									margin: '5px',
-									borderLeft: '4px solid aquamarine',
-								}}>
-								<span onClick={() => {
-										let id = sc._id;
-										let newValue =	_.filter( props.item.defaultContact,  v => v._id !== id );
+                            <div className="col-sm-5" key={i}
+                                style={{
+                                    backgroundColor: 'aliceblue',
+                                    padding: '5px',
+                                    border: '1px solid transparent',
+                                    borderRadius: '5px',
+                                    margin: '5px',
+                                    borderLeft: '4px solid aquamarine',
+                                    cursor: "default",
+                                }}>
+                                <span onClick={() => {
+                                        let id = sc._id;
+                                        let newValue =  _.filter( props.item.defaultContact,  v => v._id !== id );
                                         props.onChange( newValue );
-									}}
-									style={{
-										float: 'right',
-										cursor: 'pointer',
-										fontSize: '14px',
-										fontWeight: 'bold',
-										marginRight: '0px',
-										marginTop: '-6px',
-									}} title="Remove tag">&times;</span>
-								<ContactCard item={sc}/>
-							</div>))}
-                    </div>
-                </div>
+                                    }}
+                                    style={{
+                                        float: 'right',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        fontWeight: 'bold',
+                                        marginRight: '0px',
+                                        marginTop: '-6px',
+                                    }} title="Remove tag">&times;</span>
+                                <ContactCard item={sc}/>
+                            </div>))}
+                    </div> < /div>
             )
         },
-        options( item ){
+        options( item ) {
             let members = [];
-            if( item.supplier && item.supplier._id ) {
+            if ( item.supplier && item.supplier._id ) {
                 import { Teams } from '/modules/models/Teams';
                 let supplier = Teams.findOne( item.supplier._id );
-                if( supplier ) {
+                if ( supplier ) {
                     members = supplier.getMembers();
                 }
             }

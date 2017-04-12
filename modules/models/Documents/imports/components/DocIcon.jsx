@@ -5,6 +5,8 @@
 
 import React from "react";
 
+import moment from 'moment';
+
 import DocViewEdit from './DocViewEdit.jsx';
 
 import { DocActions } from '/modules/models/Documents';
@@ -68,20 +70,24 @@ export default function DocIcon( props ) {
     }
     if ( item == null ) {
         return (
+        <div>
             <div className = "doc-icon" onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
 			<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 		</div>
+        </div>
         )
     }
     let color = "#000";
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
+    let docAlmostExpires = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
+    let docExpired = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 0;
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
-		<div className = "doc-icon" onClick={handleClick}>
+		<div className={"doc-icon " + (docAlmostExpires ? 'expiring-doc' : '') + (docExpired ? 'expired-doc' : '')} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
@@ -111,6 +117,23 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
+            { docAlmostExpires  ?
+                <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                <button
+                    type        = "button"
+                    className   = "btn btn-flat"
+                    title="Create update document request"
+                    onClick={
+                        ( event ) => {
+                            event.stopPropagation();
+                                runaction( DocActions.createUpdateRequest.bind( item ) );
+                                props.onChange();
+                            
+                        }
+                    }>
+                    <span>&#43;</span>
+                </button>
+            </span> : null }
 		</div>:null}
 	</div>
     )

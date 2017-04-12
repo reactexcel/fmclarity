@@ -22,7 +22,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 			<a className="dropdown-toggle tools-icon" data-toggle="dropdown" href="#">
 				<i className={`fa fa-${icon}`}></i>
 			</a>
-			<ul className="dropdown-menu">
+			<ul className="dropdown-menu" style = {{zIndex:"1499"}}>
 	    		{ items.map( ( item, idx ) => {
 	    			if( item != null ) {
 		    			return (

@@ -47,10 +47,8 @@ export default function TopNavigationBar( props ) {
                     <img className="fm-logo" src="/img/logo-white.svg"/>
                 </div>
                 <div className="icon-region-2">
-                    <div style={{float:"right"}}>
-                        <UserProfileMenu { ...props }>
-                            <span className="topnav-icon"><i className="fa fa-cog"></i></span>
-                        </UserProfileMenu>
+                    <div className="searchbox hidden-xs">
+                        <FMInstantSearchBox mobileView={false}/>
                     </div>
                     <div id="alerts-icon" style={{float:"right"}} className="hidden-xs hidden-sm dropdown right-dropdown">
                         <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
@@ -62,10 +60,25 @@ export default function TopNavigationBar( props ) {
                             </div>
                         </span>
                         <NotificationList items = { notifications }/>
-                        <DesktopNotificationPopUp { ...props } />
+                        <DesktopNotificationPopUp items = { notifications } showNotifications = { props.showNotifications } />
                     </div>
-                    <div className="searchbox">
-                    {/*<FMInstantSearchBox/>*/}
+                    <div id="search-icon" style={{float:"right"}} className="hidden-xl hidden-lg hidden-md hidden-sm">
+                        <i className="fa fa-search" onClick={(e)=>{
+                            if($("#search-icon").hasClass("open")){
+                                $("#search-icon").removeClass("open")
+                            }else{
+                                $("#search-icon").addClass("open")
+                                $('#searchInput1').focus()
+                            }
+                        }} ></i>
+                        <div className="search">
+                            <FMInstantSearchBox mobileView={true} blur={()=>{$("#search-icon").removeClass("open")}}/>
+                        </div>
+                    </div>
+                    <div style={{float:"right"}}>
+                        <UserProfileMenu { ...props }>
+                            <span className="topnav-icon"><i className="fa fa-cog"></i></span>
+                        </UserProfileMenu>
                     </div>
                 </div>
             </nav>
@@ -80,21 +93,35 @@ class DesktopNotificationPopUp extends React.Component {
         this.showPopUp = false;
     }
 
-    componentWillReceiveProps( props ) {
-        let user = props.user,
-            notifications = null;
-        if ( user ) {
-            import { Messages } from '/modules/models/Messages';
-            // notifications = Messages.findAll( { 'inboxId.query._id': user._id, wasShown: false } );
-            notifications = this.props.notifications ? this.props.notifications : null;
-            if ( !this.showPopUp ) {
-                let component = this;
-                if ( notifications && notifications.length ) {
-                    component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ notifications ], { returnStubValue: true } );
-                }
-            } else if ( this.showPopUp && notifications.length ) { // when new notification arrived after loggin.
-                this.props.showNotifications( notifications );
+    /*
+    shouldComponentUpdate( nextProps ) {
+
+        console.log( {
+            props: this.props,
+            nextProps: nextProps
+        } );
+
+        if ( !this.props.notifications ) {
+            return true;
+        }
+        else if ( !nextProps.notifications || ( nextProps.notifications.length <= this.props.notifications.length ) ) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    */
+
+    componentWillReceiveProps( { items } ) {
+        import { Messages } from '/modules/models/Messages';
+        if ( !this.showPopUp ) {
+            let component = this;
+            if ( items && items.length ) {
+                component.showPopUp = Meteor.apply( 'Messages.setAllShown', [ items ], { returnStubValue: true } );
             }
+        } else if ( this.showPopUp && items.length ) { // when new notification arrived after loggin.
+            this.props.showNotifications( items );
         }
     }
 

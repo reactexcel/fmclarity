@@ -28,12 +28,11 @@ export default class PropertyManagerDetails extends React.Component {
 
   render() {
     let { facility, allow } = this.state;
-    let realEstateAgency = facility.realEstateAgency,
+    let realEstateAgency = facility.getRealEstateAgency(),
       propertyManagers = [],
       team = Session.getSelectedTeam();
     if ( realEstateAgency ) {
-      realEstateAgency = Teams.findOne( { _id: realEstateAgency._id } );
-      propertyManagers = realEstateAgency.getMembers({role: "property manager"});
+      propertyManagers = realEstateAgency.getMembers( { role: "property manager" } );
     }
     return (
       <div className="row">

@@ -62,6 +62,24 @@ const Teams = new Model( {
     ]
 } );
 
+Teams.collection.allow( {
+    update: () => {
+        return true;
+    },
+    insert: () =>{
+        return true;
+    }
+} )
+
+Teams.isFacilityTeam = ( team ) => {
+    return _.contains( [ 'fm', 'real estate' ], team.type );
+}
+
+Teams.isServiceTeam = ( team ) => {
+    return team.type == 'contractor';
+}
+
+
 
 //Teams.collection._ensureIndex( { 'members._id': 1 } );
 //Teams.collection._ensureIndex( { 'owner._id': 1 } );
@@ -324,7 +342,7 @@ function inviteMember( team, email, ext ) {
                 }, {
                     role: ext.role
                 },{
-                    threshold: ext.threshold || user.getThreshold()
+                    threshold: ext.threshold || 0 // perhaps should be team default threshold
                 } );
                 return {
                     user: user,
@@ -466,6 +484,7 @@ Teams.helpers( {
         var facilities = Facilities.findAll( {
             $or: [
                 { 'team._id': this._id },
+                { 'realEstateAgency._id': this._id },
                 { _id: { $in: facilityIds } }
             ]
         }, {

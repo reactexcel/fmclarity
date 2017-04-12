@@ -72,6 +72,9 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     function showNotifications( notifications ) {
         notifications.map( ( notification ) => {
+            if( notification.wasShown || notification.inboxId.query._id == Meteor.user()._id ) {
+                return;
+            }
             notify.createNotification( notification.subject, {
                 body: notification.body,
                 icon: "icon-64x64.ico"
@@ -80,20 +83,20 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
         } )
     }
 
-    function onNotificationsViewed() {
+    function onMessagesViewed() {
+        console.log( 'marking notifications as viewed' );
         let user = Meteor.user();
         if ( user ) {
             Meteor.call( 'Messages.markAsRead', { user } );
         }
     }
-
     return {
         user,
         team,
         teams,
         notifications,
         unreadCount,
-        onNotificationsViewed,
+        onMessagesViewed,
         showNotifications,
     }
 

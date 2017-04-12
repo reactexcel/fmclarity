@@ -108,6 +108,16 @@ Facilities.actions( {
             return areas;
         }
     },
+    getRealEstateAgency: {
+        authentication: true,
+        helper: ( facility ) => {
+            let realEstateAgency = null;
+            if( facility.realEstateAgency && facility.realEstateAgency._id ) {
+                import { Teams } from '/modules/models/Teams';
+                return Teams.findOne( facility.realEstateAgency._id );
+            }
+        }
+    },
     setAreas: {
         authentication: AuthHelpers.managerOfRelatedTeam,
         method: function( facility, areas ) {
@@ -138,7 +148,8 @@ Facilities.actions( {
     getMessages: {
         authentication: true,
         helper: ( facility ) => {
-            let requests = Meteor.user().getRequests( { 'facility._id': facility._id } ),
+            let user = Meteor.user(),
+                requests = user.getRequests( { 'facility._id': facility._id } ),
                 messages = null,
                 requestIds = [];
 
@@ -151,7 +162,12 @@ Facilities.actions( {
             }
 
             if ( requestIds ) {
-                messages = Messages.findAll( { 'inboxId.query._id': { $in: requestIds } }, { sort: { createdAt: 1 } } );
+                messages = Messages.findAll( {
+                    $and: [
+                        { 'inboxId.query._id': user._id },
+                        { 'target.query._id': { $in: requestIds } }
+                    ],
+                }, { sort: { createdAt: 1 } } );
             }
             return messages;
         }
@@ -386,6 +402,43 @@ Facilities.actions( {
             } );
         }
     },
+
+    addTenant: {
+        authentication: AuthHelpers.managerOfRelatedTeam,
+        method: function( facility, team ) {
+            if ( team && team._id ) {
+                Facilities.update( facility._id, {
+                    $push: {
+                        tenants: {
+                            _id: team._id,
+                            name: team.name
+                        }
+                    }
+                } );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
+            }
+        }
+    },
+
+    getTenants: {
+        authentication: true,
+        helper: ( facility ) => {
+            import { Teams } from '/modules/models/Teams';
+            if( !facility.tenants ) {
+                // no tenants to return
+                return;
+            }
+            let tenantIds = _.pluck( facility.tenants, '_id' );
+            console.log( tenantIds );
+            return Teams.findAll( { _id: { $in: tenantIds } } );
+        }
+    },
+
+
+    /////////////////////////////////////////
+    // Provide through the services mixin??
+    /////////////////////////////////////////
+
     /**
      * Returns an array of supplier documents
      */
@@ -398,7 +451,9 @@ Facilities.actions( {
             let ids = [],
                 names = [],
                 suppliers = null;
-
+            let facilitySuppliers = _.uniq(facility.suppliers, s => s._id);
+                ids = _.pluck(facilitySuppliers, "_id");
+                names = _.pluck(facilitySuppliers, "name");
             if ( _.isArray( facility.servicesRequired ) ) {
                 _.map( facility.servicesRequired, ( s ) => {
                         let supplier = null;
@@ -462,11 +517,23 @@ Facilities.actions( {
     addSupplier: {
         authentication: true,
         method: function( facility, supplier ) {
+            //console.log("addSupplier");
             if ( supplier && supplier._id ) {
-                Facilities.update( facility._id, { suppliers: { $push: _.pick( supplier, '_id', 'name' ) } } );
+                Facilities.update( facility._id, {
+                    $push: {
+                        suppliers: {
+                            _id: supplier._id,
+                            name: supplier.name
+                        }
+                    }
+                } );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },
+
+
+
     /**
      *  Add personnel to facility
      **/
@@ -501,12 +568,16 @@ Facilities.actions( {
     },
     removeComplianceRule: {
         authentication: true,
-        helper: ( facility, servicePosition, rulePosition, serviceName ) => {
+        helper: ( facility, servicePosition, rulePosition, serviceName, subservicePosition ) => {
             let servicesRequired = facility.servicesRequired;
-            _.map( servicesRequired, ( svc, i ) => {
-                if ( svc.name == serviceName ) servicePosition = i
-            } );
-            servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            // _.map( servicesRequired, ( svc, i ) => {
+            //     if ( svc.name == serviceName ) servicePosition = i
+            // } );
+            if ( subservicePosition != null ) {
+                servicesRequired[ servicePosition ].children[ subservicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            } else {
+                servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            }
             Facilities.update( { _id: facility._id }, { $set: { "servicesRequired": servicesRequired } } );
         }
     },
@@ -576,10 +647,6 @@ Facilities.actions( {
     },
 
     addPMP: {
-        authentication: AuthHelpers.managerOfRelatedTeam,
-    },
-
-    addTenant: {
         authentication: AuthHelpers.managerOfRelatedTeam,
     },
 

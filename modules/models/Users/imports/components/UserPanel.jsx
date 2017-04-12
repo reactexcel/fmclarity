@@ -92,12 +92,16 @@ class UserPanel extends React.Component {
 				 <div className = "contact-info">
 				 	<div>
 						<h2>{ contact.getName() }</h2>
-						{ this.props.role ?
-							<span>{this.props.role}<br/></span>
+						{ relation&&relation.role ?
+							<span>{ relation.role }<br/></span>
 						: null }
 
-						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation.threshold) ? 
-							<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
+						{/*{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.threshold) ? 
+													<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
+													 : null}*/}
+
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue) ? 
+							<span><b>WO Issue Threshold Value</b> {relation.issueThresholdValue}<br/></span>
 							 : null}
 
 						{ profile.email ?
@@ -112,7 +116,7 @@ class UserPanel extends React.Component {
 							<span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> {profile.phone2}<br/></span>
 						: null }
 
-						<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
+						<div style = { {margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"} }></div>
 
 						{ !roles ? null : roles.map( ( role, idx ) => {
 							return (

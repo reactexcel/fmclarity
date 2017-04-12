@@ -69,7 +69,6 @@ const edit = new Action( {
                         }
                     }
                     request.distributeMessage( {
-                        recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier", "supplier manager" ],
                         message: {
                             verb: "edited",
                             subject: `Work order ${request.code} has been edited`,
@@ -106,7 +105,6 @@ const deleteFunction = new Action( {
         Modal.hide();
         request = Requests.collection._transform( request );
         request.distributeMessage( {
-            recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
             message: {
                 verb: "deleted",
                 subject: `Work order ${request.code} has been deleted`,
@@ -136,7 +134,6 @@ const cancel = new Action( {
                     Modal.hide();
                     request = Requests.collection._transform( request );
                     request.distributeMessage( {
-                        recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
                         message: {
                             verb: "cancelled",
                             subject: `Work order ${request.code} has been cancelled`,
@@ -178,7 +175,7 @@ const accept = new Action( {
             model = { Requests }
             item = { request }
             form = {
-                [ 'eta', 'assignee', 'acceptComment' ]
+                ['eta','assignee','acceptComment']
             }
             onSubmit = {
                 ( request ) => {
@@ -229,7 +226,6 @@ const reject = new Action( {
                     Modal.hide();
                     request = Requests.collection._transform( request );
                     request.distributeMessage( {
-                        recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
                         message: {
                             verb: "rejected",
                             subject: `Work order ${request.code} has been rejected`,
@@ -304,6 +300,7 @@ const complete = new Action( {
             }
             onSubmit = {
                 ( request ) => {
+                    console.log("onSubmit")
                     Modal.hide();
                     Meteor.call( 'Issues.complete', request );
                     callback( request );
@@ -334,7 +331,6 @@ const close = new Action( {
                     Requests.update( request._id, { $set: { status: 'Closed' } } );
                     request = Requests.collection._transform( request );
                     request.distributeMessage( {
-                        recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
                         message: {
                             verb: "closed",
                             subject: `Work order ${request.code} has been closed`,
@@ -369,7 +365,6 @@ const reopen = new Action( {
                     Modal.hide();
                     request = Requests.collection._transform( request );
                     request.distributeMessage( {
-                        recipientRoles: [ "team", "team manager", "facility", "facility manager", "supplier" ],
                         message: {
                             verb: "reopened",
                             subject: `Work order ${request.code} has been reopened`,

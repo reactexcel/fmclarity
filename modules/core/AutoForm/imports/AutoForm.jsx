@@ -32,7 +32,7 @@ class AutoForm extends React.Component {
 
 		this.state = {
 			item: this.form.item,
-			errors: this.form.errors || {}
+			errors: this.form.errors || {},
 		}
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
@@ -119,9 +119,7 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 		let form = this.form;
 		let { keys, schema } = form;
-
 		return keys.map( ( key ) => {
-
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
@@ -164,7 +162,6 @@ class AutoForm extends React.Component {
 							errors 		= { errors }
 
 							hideSubmit 	= { true }
-
 							// since we are calling this recursively we need to update the parent state with the changes from the child
 							onChange 	= { ( newState ) => {
 												let item = this.state.item,
@@ -186,7 +183,6 @@ class AutoForm extends React.Component {
 			// otherwise determine the type of input to create and make it,
 			//  passing on the fields options as params
 			else {
-
 				if ( _.isObject( input ) ) {
 					Input = input;
 				}
@@ -199,7 +195,6 @@ class AutoForm extends React.Component {
 				}
 
 				if ( Input == null ) {
-					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
@@ -210,12 +205,17 @@ class AutoForm extends React.Component {
 
 							fieldName 	= { key }
 							value 		= { item[ key ] }
-							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
+							onChange	= { ( update, modifiers ) => {
+								form.updateField( key, update, modifiers )
+							} }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
 							maxLength 	= { maxLength }
-
+							changeSubmitText={(value)=> {
+								let val = value==null?"Save":"Issue"
+								this.setState({submitText: val})
+							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
 
@@ -231,7 +231,6 @@ class AutoForm extends React.Component {
 	render() {
 
 		//console.log( 'rendering form' );
-
 		return (
 			<div className="autoform row">
 
@@ -249,7 +248,9 @@ class AutoForm extends React.Component {
 						className 	= "btn btn-flat btn-primary"
 						onClick 	= { ( ) => { this.submit() } }
 					>
-						{this.props.submitText?this.props.submitText:'Submit'}
+
+						{this.state.submitText?this.state.submitText:
+						    (this.props.submitText?this.props.submitText:'Submit')}
 					</button>
 				</div>
 
