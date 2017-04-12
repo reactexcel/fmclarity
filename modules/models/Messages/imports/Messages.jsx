@@ -149,7 +149,7 @@ if ( Meteor.isServer ) {
 	} );
 
 	Meteor.publish( "User: Messages", function() {
-		
+
 		import { Requests } from '/modules/models/Requests';
 
 		let messagesCursor = Messages.find( { 'inboxId.query._id': this.userId }, { sort: { createdAt: -1 }, limit: 50 } ),

@@ -77,7 +77,6 @@ export default MessageView = React.createClass( {
 
     performLinkAction( message ) {
         let target = message.getTarget();
-        console.log( target );
         Actions.run('view request', target );
     },
 
@@ -116,7 +115,12 @@ export default MessageView = React.createClass( {
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                             message.verb?
-                                <span>{message.verb} <b><a onClick = { () => { this.performLinkAction( message ) }}>{message.getTargetName()}</a></b></span>
+                                <span>{message.verb} <b><a onClick = {() => {
+                                        this.performLinkAction( message )
+                                    }}
+                                    >
+                                        {message.getTargetName()}
+                                    </a></b></span>
                             :
                                 <span>{message.subject}</span>
                             }
@@ -130,7 +134,7 @@ export default MessageView = React.createClass( {
 
                         <div className="message-footer">
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
-                            {message.verb=='completed' ? 
+                            {message.verb=='completed' ?
                             <div>
                             <small className="text-muted pull-right">Attended - {moment(message.getTarget().closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
                             <small className="text-muted pull-right">Completed - {moment(message.getTarget().closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')}</small>
@@ -157,7 +161,7 @@ export default MessageView = React.createClass( {
                         onKeyDown={this.handleKeyPress}
                     >
                     </textarea>
-                
+
                 </div>
             </div> )
         }
