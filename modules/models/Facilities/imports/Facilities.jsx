@@ -518,12 +518,12 @@ Facilities.actions( {
         authentication: true,
         method: function( facility, supplier ) {
             //console.log("addSupplier");
-            if ( team && team._id ) {
+            if ( supplier && supplier._id ) {
                 Facilities.update( facility._id, {
                     $push: {
                         suppliers: {
-                            _id: team._id,
-                            name: team.name
+                            _id: supplier._id,
+                            name: supplier.name
                         }
                     }
                 } );
