@@ -27,8 +27,14 @@ AccessGroups.exposed.add( {
 	path: '/enroll-account/:token',
 	action( params, queryParams ) {
 		var token = params.token;
-		Accounts.resetPassword( token, 'fm1q2w3e' );
-		FlowRouter.go( '/change-password' );
+		Accounts.resetPassword( token, 'fm1q2w3e', ( error ) => {
+			if( error ) {
+				console.log( error );
+			}
+			else {
+				FlowRouter.go( '/change-password' );
+			}
+		} );
 	}
 } );
 
