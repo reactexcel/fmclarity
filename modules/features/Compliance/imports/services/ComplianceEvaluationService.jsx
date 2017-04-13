@@ -93,13 +93,34 @@ ComplianceEvaluationService = new function() {
             }
             //   console.log({count: docCount});
             //   console.log(query);
-            if ( docCount ) {
+            if ( docCount ) {                
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
                         detail: docCount + " " + ( docName ? ( docName + " " ) : "" ) + "documents exists."
                     },
+                    resolve: function(r, callback ){
+                        console.log('checking ---ONE ONE --debug--------')
+                        let docForModal = false;
+                        if( typeof doc != 'undefined' ){
+                            docForModal = doc;
+                        }else if( docs.length > 0 ){
+                            docForModal = docs[0];
+                        }
+                        if( docForModal != false ){
+                             Modal.show( {
+                                content: <DocViewEdit
+                                    item = { docForModal }
+                                    onChange={ ( docForModal ) => {
+                                        callback({});
+                                    }}
+                                />
+                            })
+                        }
+                        
+                        
+                    }
                 } )
             }
 
@@ -189,6 +210,16 @@ ComplianceEvaluationService = new function() {
                     message: {
                         summary: "passed",
                         detail: ( doc.name ? ( doc.name + " " ) : "" )
+                    },
+                    resolve: function(r, callback ){
+                        Modal.show( {
+                            content: <DocViewEdit
+                                item = { doc }
+                                onChange={ ( doc ) => {
+                                    callback({});
+                                }}
+                            />
+                        })
                     }
                 } )
             }
