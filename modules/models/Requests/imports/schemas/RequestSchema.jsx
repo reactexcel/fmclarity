@@ -54,12 +54,24 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
-            description: "A brief, descriptive, title for the work request"
+            description: (item)=>{
+                let workRequest = "work request";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type + " details"
+                }
+                return "A brief, descriptive, title for the " + workRequest;
+            }
         },
 
         code: {
             label: "Code",
-            description: "The unique code for this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The unique code for this"+ workRequest +"request";
+            },
             type: "number",
             input: Text,
             defaultValue: getJobCode,
@@ -116,7 +128,13 @@ const RequestSchema = {
 
         priority: {
             label: "Priority",
-            description: "The urgency of the requested work",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The urgency of the "+ workRequest +" request";
+            },
             type: "string",
             defaultValue: "Standard",
             required: true,
@@ -295,7 +313,13 @@ const RequestSchema = {
 
         service: {
             label: "Service",
-            description: "The category of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The category of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
             input:( props ) => {
@@ -375,7 +399,13 @@ const RequestSchema = {
 
         subservice: {
             label: "Subservice",
-            description: "The subcategory of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The subcategory of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
             input: Select,
@@ -442,7 +472,13 @@ const RequestSchema = {
 
         issueComment: {
             label: "Comment",
-            description: "Comment about the issuing of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the issuing of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: true,
@@ -450,7 +486,13 @@ const RequestSchema = {
 
         acceptComment: {
             label: "Comment",
-            description: "Comment about the acceptance of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the acceptance of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: false,
@@ -640,7 +682,13 @@ const RequestSchema = {
 
         team: {
             label: "Client",
-            description: "The team who created this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The team who created this"+ workRequest +"request";
+            },
             type: "object",
             input: Select,
             options: ( item ) => {
@@ -928,7 +976,6 @@ const RequestSchema = {
                 condition: ( request ) => {
                     let role = Meteor.user().getRole();
                     /*if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        console.log("1111")
                         return false;
                     }*/
                     if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
@@ -1005,7 +1052,13 @@ const RequestSchema = {
 
             members: {
                 label: "Contacts",
-                description: "Stakeholders for this work request",
+                description: (item)=>{
+                    let workRequest = "work";
+                    if(!_.isEmpty(item.type)){
+                        workRequest = item.type
+                    }
+                    return "Stakeholders for this"+ workRequest +"request";
+                },
             },
 
             documents: {
