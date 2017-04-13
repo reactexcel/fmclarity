@@ -49,7 +49,7 @@ const Text = React.createClass( {
     },
 
     componentDidMount() {
-        this.handleChange = _.debounce( this.handleChange, 3000 );
+        this.handleChange = _.debounce( this.handleChange, 1000 );
         setTimeout( () => {
             $( this.refs.input ).elastic();
         }, 800 );
