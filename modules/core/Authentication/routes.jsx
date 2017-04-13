@@ -10,6 +10,7 @@ import PageLostPassword from './imports/components/PageLostPassword.jsx';
 import PageChangePassword from './imports/components/PageChangePassword.jsx';
 import LoginService from './imports/LoginService.js';
 import Page403 from './imports/components/Page403.jsx';
+import PageInviteFailed from './imports/components/PageInviteFailed.jsx';
 
 AccessGroups.exposed.add( {
 	name: 'login',
@@ -28,9 +29,10 @@ AccessGroups.exposed.add( {
 	path: '/enroll-account/:token',
 	action( params, queryParams ) {
 		var token = params.token;
-		Accounts.resetPassword( token, 'fm1q2w3e', ( error ) => {
-			if( error ) {
-				console.log( error );
+		Accounts.resetPassword( token, 'fm1q2w3e', ( err ) => {
+			if( err ) {
+				console.log( err );
+				mount( LayoutBlank, { content: <PageInviteFailed/> } );
 			}
 			else {
 				FlowRouter.go( '/change-password' );
@@ -62,8 +64,15 @@ AccessGroups.exposed.add( {
 	path: '/reset-password/:token',
 	action( params, queryParams ) {
 		var token = params.token;
-		Session.set( 'redirectAfterLogin', '/change-password' );
-		Accounts.resetPassword( token, 'fm1q2w3e' );
+		Accounts.resetPassword( token, 'fm1q2w3e', ( err ) => {
+			if( err ) {
+				console.log( err );
+				mount( LayoutBlank, { content: <PageInviteFailed /> } );
+			}
+			else {
+				FlowRouter.go( '/change-password' );
+			}
+		} );
 	}
 } );
 
@@ -78,7 +87,7 @@ AccessGroups.exposed.add( {
 			console.log( 'Did it!' );
 			if ( err ) {
 				console.log( err );
-				FlowRouter.go( '/403' );
+				mount( LayoutBlank, { content: <Page403 /> } );
 			} else {
 				FlowRouter.go( '/' + redirect );
 			}
@@ -112,8 +121,6 @@ AccessGroups.exposed.add( {
 	name: 'access-denied',
 	path: '/403',
 	action() {
-		mount( LayoutBlank, {
-			content: <Page403 />
-		} );
+		mount( LayoutBlank, { content: <Page403 /> } );
 	}
 } );

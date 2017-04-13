@@ -73,9 +73,11 @@ export default DataTable = React.createClass( {
 	},
 
 	componentDidMount() {
+		/*
 	    Perf.stop();
 	    console.log('output datatable load time');
 	    Perf.printInclusive();
+	    */
 	},
 
 	componentWillReceiveProps( props ) {
