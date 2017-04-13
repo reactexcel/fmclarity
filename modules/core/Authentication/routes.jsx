@@ -9,6 +9,7 @@ import PageRegister from './imports/components/PageRegister.jsx';
 import PageLostPassword from './imports/components/PageLostPassword.jsx';
 import PageChangePassword from './imports/components/PageChangePassword.jsx';
 import LoginService from './imports/LoginService.js';
+import Page403 from './imports/components/Page403.jsx';
 
 AccessGroups.exposed.add( {
 	name: 'login',
@@ -103,6 +104,16 @@ AccessGroups.loggedIn.add( {
 	action() {
 		mount( LayoutBlank, {
 			content: <PageChangePassword />
+		} );
+	}
+} );
+
+AccessGroups.exposed.add( {
+	name: 'access-denied',
+	path: '/403',
+	action() {
+		mount( LayoutBlank, {
+			content: <Page403 />
 		} );
 	}
 } );
