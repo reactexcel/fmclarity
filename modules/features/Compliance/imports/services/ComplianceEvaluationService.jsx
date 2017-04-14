@@ -237,7 +237,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -280,7 +279,6 @@ ComplianceEvaluationService = new function() {
                 loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
                         facility: {
                             _id: facility._id,
@@ -288,8 +286,8 @@ ComplianceEvaluationService = new function() {
                         },
                         team: team,
                         type: 'Preventative',
-                        priority: 'Scheduled',
-                        status: 'PMP',
+                        priority: 'PPM',
+                        status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
                         service: rule.service
@@ -382,7 +380,7 @@ ComplianceEvaluationService = new function() {
                     let request = Requests.findOne( {
                         "facility._id": facility._id,
                         type: 'Preventative',
-                        status: "PMP",
+                        status: "PPM",
                         service: rule.service,
                         name: rule.event
                     } );
@@ -400,8 +398,8 @@ ComplianceEvaluationService = new function() {
                             },
                             team: team,
                             type: 'Preventative',
-                            priority: 'Scheduled',
-                            status: 'PMP',
+                            priority: 'PPM',
+                            status: 'PPM',
                             name: rule.event,
                             frequency: rule.frequency,
                             service: rule.service

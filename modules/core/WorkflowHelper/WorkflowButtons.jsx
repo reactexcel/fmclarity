@@ -35,8 +35,6 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
                     classes.push('disabled');
                 }
 
-                //console.log(actions);
-
                 return (
 
                 <button

@@ -141,9 +141,9 @@ const createRequest = new Action( {
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.issue';
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
                         method = 'Issues.create';
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -159,10 +159,9 @@ const createRequest = new Action( {
                         else if( !baseBuilding ) {
 
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.create';
+                                method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-
                                 method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
@@ -201,7 +200,6 @@ const createRequest = new Action( {
                             }
                         }
                     }
-
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
@@ -359,7 +357,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();

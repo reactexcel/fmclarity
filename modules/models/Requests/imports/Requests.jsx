@@ -91,10 +91,9 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
     if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
@@ -205,7 +204,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -241,7 +240,7 @@ Requests.methods( {
             }
 
             if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -473,7 +472,7 @@ Requests.methods( {
         helper: ( request, dueDate ) => {
             return Requests.findOne( {
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -501,7 +500,7 @@ Requests.methods( {
             if ( nextDate ) {
                 nextRequest = Requests.findOne( {
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -518,7 +517,7 @@ Requests.methods( {
             if ( previousDate ) {
                 previousRequest = Requests.findOne( {
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -679,7 +678,6 @@ function setAssignee( request, assignee ) {
 
 
 function actionIssue( request ) {
-
     let code = null,
         userId = Meteor.user(),
         user = Users.findOne( userId._id );
