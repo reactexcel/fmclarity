@@ -33,9 +33,37 @@ const AreasEditor = React.createClass( {
         }
     },
 
+    sortAreas(arr) {
+        let sortedList = arr.sort( (a, b) => {
+            if( a && a.name && b && b.name ) {
+                var textA = a.name.toUpperCase();
+                var textB = b.name.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            } else {
+                return 0;
+            }
+        });
+        return sortedList
+    },
+
     render() {
+        let areas = this.data.areas;
+            areas = _.without(areas,null);
+            areas = this.sortAreas(areas);
+        areas.map((a1,i)=>{
+            if(!_.isEmpty(areas[i].children)){
+                areas[i].children = _.without(areas[i].children,null)
+                areas[i].children = this.sortAreas(areas[i].children)
+                areas[i].children.map((a2,j)=>{
+                    if(!_.isEmpty(areas[i].children[j].children)){
+                        areas[i].children[j].children = _.without(areas[i].children[j].children,null)
+                        areas[i].children[j].children = this.sortAreas(areas[i].children[j].children)
+                    }
+                })
+            }
+        })
         return (
-            <FacilityAreasEditorInner facility = { this.data.facility } areas = { this.data.areas }/>
+            <FacilityAreasEditorInner facility = { this.data.facility } areas = { areas }/>
         )
     }
 } )
@@ -143,7 +171,7 @@ FacilityAreasEditorInner = React.createClass( {
       _component = this
     },
     componentDidMount() {
-      $("#sortableLevel, #sortableArea, #sortableSubarea").sortable({
+      /*$("#sortableLevel, #sortableArea, #sortableSubarea").sortable({
         stop: function(event, ui) {
           let selected = ui.item.attr("id").split("-"),
             heightOfSelectedElement = ui.item.height(),// Height of the selected element i.e. <LI>.
@@ -179,7 +207,7 @@ FacilityAreasEditorInner = React.createClass( {
       $( "#sortable" ).disableSelection();
       $( '.areas-selector .slimscroll' ).slimScroll( {
           height: '504px'
-      } );
+      } );*/
       this.save = _.debounce( this.save, 1000 );
     },
 
@@ -216,9 +244,12 @@ FacilityAreasEditorInner = React.createClass( {
         var component = this;
         var facility = this.state.facility;
         var selection = this.state.selection;
+
         var areas = selection[ 0 ].children || [];
         var editable = !facility || facility.canSetAreas();
+
         var selectedArea = selection[ 1 ] || {};
+
         var selectedSubArea = selection[ 2 ] || {};
         _component = this;
         _areas = areas;
@@ -229,19 +260,14 @@ FacilityAreasEditorInner = React.createClass( {
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Level</div>
                     <div className="slimscroll">
-                      <ul id="sortableLevel">
+                      <ul>
                         {
                             areas.map(function(a,idx){
                               a.data = a.data?a.data:{};
                                 return (
                                   <li key={idx} id={"area-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==a.name?" active":"")}>
                                     <div className="row">
-                                      <div className="col-xs-1">
-                                        <span className="reorder">
-                                          <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
-                                        </span>
-                                      </div>
-                                      <div className="col-xs-11">
+                                      <div className="col-xs-12">
                                         <div className={"areas-selector-row"+(selectedArea.name==a.name?" active":"")}>
                                             <input
                                                 id={"area-"+idx}
@@ -292,19 +318,14 @@ FacilityAreasEditorInner = React.createClass( {
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Area</div>
                     <div className="slimscroll">
-                        <ul id="sortableArea">
+                        <ul>
                           {
                               selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
                                 b.data = b.data?b.data:{};
                                   return (
                                     <li key={idx} id={"subarea-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedSubArea.name==b.name?" active":"")}>
                                       <div className="row">
-                                        <div className="col-xs-1">
-                                          <span className="reorder">
-                                            <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
-                                          </span>
-                                        </div>
-                                        <div className="col-xs-11">
+                                        <div className="col-xs-12">
                                           <div key={idx} className={"areas-selector-row"+(selectedSubArea.name==b.name?" active":"")}>
                                             <input
                                               id={"subarea-"+idx}
@@ -356,19 +377,14 @@ FacilityAreasEditorInner = React.createClass( {
                 <div className="areas-selector-col">
                     <div className="areas-selector-row areas-selector-row-header">Subarea</div>
                     <div className="slimscroll">
-                      <ul id="sortableSubarea">
+                      <ul>
                         {
                             selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
                               c.data = c.data?c.data:{};
                               return (
                                 <li key={idx} id={"identity-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==c.name?" active":"")}>
                                   <div className="row">
-                                    <div className="col-xs-1">
-                                      <span className="reorder">
-                                        <i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
-                                      </span>
-                                    </div>
-                                    <div className="col-xs-11">
+                                    <div className="col-xs-12">
                                       <div key={idx} className={"areas-selector-row"+(selectedArea.name==c.name?" active":"")}>
                                         <input
                                           id={"identity-"+idx}
