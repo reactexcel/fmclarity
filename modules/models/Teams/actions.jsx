@@ -125,6 +125,11 @@ const createRequest = new Action( {
             submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
+
+                    if(newRequest.type == "Booking"){
+                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                    }
+
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest }/>
@@ -201,7 +206,6 @@ const createRequest = new Action( {
                             }
                         }
                     }
-
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();

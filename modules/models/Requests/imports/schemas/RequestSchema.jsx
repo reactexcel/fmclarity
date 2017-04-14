@@ -15,8 +15,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
-
+import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -610,6 +609,31 @@ const RequestSchema = {
                     return false;
                 }
                 return true;
+            }
+        },
+
+        bookingPeriod: {
+            type: "object",
+            label: "Booking period",
+            description: "Select the booking period",
+            input: (props) => {
+                return  <CalendarPeriod
+                            onChangeValue={(value)=>{
+                                props.onChange(value);
+                            }}
+                            {...props}
+                        />
+            },
+
+            size: 12,
+            required: true,
+            defaultValue: {},
+            condition: (request)=>{
+                if(request.type == "Booking" && request.level && request.level.name){
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
 

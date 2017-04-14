@@ -12,5 +12,5 @@ import { CalendarRoute } from './routes.jsx';
 export {
 	Calendar,
 	PageCalendar,
-	CalendarRoute
+	CalendarRoute,
 }
