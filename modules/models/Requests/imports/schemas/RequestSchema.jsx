@@ -838,7 +838,7 @@ const RequestSchema = {
                     (
                         request.status != 'Issued' &&
                         request.type != 'Booking' &&
-                        Teams.isServiceTeam( selectedTeam )
+                        Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
