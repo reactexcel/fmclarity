@@ -205,7 +205,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -275,7 +275,7 @@ Requests.methods( {
                         verb: "created",
                         read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: newRequest.description
+                        //body: newRequest.description
                     }
                 } );
             }

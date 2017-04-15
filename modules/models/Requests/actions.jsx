@@ -64,7 +64,7 @@ const edit = new Action( {
                         if ( request[ key ] != oldRequest[ key ] ) {
                             let oldValue = key == 'costThreshold' ? "$" + oldRequest[ key ] : oldRequest[ key ],
                                 newValue = key == 'costThreshold' ? "$" + request[ key ] : request[ key ];
-                            key = key == 'costThreshold' ? 'value' : key;
+                            key = key == 'costThreshold' ? 'value' : (key == 'description' ? 'comment' : key);
                             notificationBody += `-> ${key.toUpperCase()}: changed from "${oldValue}" to "${newValue}".\n`;
                         }
                     }

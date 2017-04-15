@@ -57,6 +57,7 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
+        
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
     },
 
@@ -92,14 +93,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
     function showUserModal( selectedUser ) {
-            
+
             Modal.show( {
                 content: <UserPanel
                     item    = { selectedUser }
                     team    = { Session.get( 'selectedTeam' ) }
                     group   = { facility }/>
             } )
-        
+
     }
 
     function showMoreUsers() {
@@ -164,7 +165,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
 
     } ) : null;
-    request.readBy=_.uniq(request.readBy, '_id'); 
+    request.readBy=_.uniq(request.readBy, '_id');
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -330,12 +331,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 })}
 
                             </ul>
-                            
+
                         </td>
                     </tr> : null }
                 </tbody>
             </table>
-            
+
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
