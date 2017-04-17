@@ -72,7 +72,7 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
-            size: 6,
+            size: 12,
             required: true,
             defaultValue: () => {
                 let team = Session.get( 'selectedTeam' );
@@ -531,7 +531,7 @@ const RequestSchema = {
         occupancy: {
             label: "Base Building",
             description: "Specify occupancy type",
-            size: 6,
+            size: 12,
             defaultValue: ( item ) => {
                 return item.service && item.service.data && item.service.data.baseBuilding;
             },
@@ -778,9 +778,9 @@ const RequestSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
-                    if( facility ) {
+                    /*if( facility ) {
                         console.log( facility.getSuppliers() );
-                    }
+                    }*/
                 }
 
                 return {

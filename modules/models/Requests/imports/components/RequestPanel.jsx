@@ -44,7 +44,7 @@ export default RequestPanel = React.createClass( {
 
                 if( facility ) {
                     realEstateAgency = facility.getRealEstateAgency();
-                    console.log( realEstateAgency );
+                    //console.log( realEstateAgency );
                 }
 
                 contact = request.getContact();
@@ -61,20 +61,20 @@ export default RequestPanel = React.createClass( {
     },
 
     componentWillMount() {
-        Perf.start();
+        //Perf.start();
     },
 
     componentDidMount() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing mount load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
     componentDidUpdate() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing update load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
