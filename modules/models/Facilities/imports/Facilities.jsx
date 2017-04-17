@@ -713,18 +713,20 @@ function invitePropertyManager( team, email, ext ) {
 }
 
 function sendMemberInvite( facility, recipient, team ) {
-    console.log( recipient );
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
+    if( Meteor.isServer ) {
+        console.log( recipient );
+        let body = ReactDOMServer.renderToStaticMarkup(
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
         } )
-    );
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+    }
 }
 
 function clearComplianceRules( facility ) {

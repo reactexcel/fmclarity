@@ -42,9 +42,17 @@ Meteor.methods( {
 		}
 	},
 	'LoginService.insertPasswordResetToken': function( userId, tokenRecord ) {
+		console.log( { userId, tokenRecord } );
 		Meteor.users.update( userId, {
 			$set: {
 				"services.password.reset": tokenRecord
+			}
+		}, null, ( error, numAffected ) => {
+			if( error ) {
+				console.log( error );
+			}
+			else {
+				console.log( { numAffected } );
 			}
 		} );
 	},
