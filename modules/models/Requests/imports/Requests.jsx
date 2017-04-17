@@ -192,7 +192,7 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
-                userRole = team.getRole( user ),
+                userRole = team.getMemberRole( user ),
                 query = null;
 
             if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
