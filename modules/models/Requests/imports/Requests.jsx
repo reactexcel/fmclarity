@@ -192,9 +192,10 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
+                userRole = team.getRole( user ),
                 query = null;
 
-            if( Teams.isServiceTeam( team ) ) {
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
