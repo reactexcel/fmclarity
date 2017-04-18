@@ -133,12 +133,14 @@ const Select = React.createClass( {
 		} = this.props;
 		let ListTile = view,
 			invalid = false,
+			hidden = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
+				hidden = true;
 				disabled = true;
 				readOnly = true;
 			}
@@ -172,7 +174,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"}>
+				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?' hidden':'')}>
 
 					<span className = { classes.join(' ') }>
 						{ used?

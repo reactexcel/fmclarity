@@ -4,7 +4,6 @@
  */
  
 import React from "react";
-import Users from '/modules/models/Users';
 import LoginService from '../LoginService.js';
 
 /**
@@ -46,14 +45,15 @@ const PageLostPassword = React.createClass( {
                 <img width="300px" src="/img/logo-horizontal-blue.svg"/>
             </div>
             <div style={{marginTop:"30%"}}>
-            <h2>Forgotten Password</h2>
-                <p>Please enter your email address to reset your password.</p>
+            	<h2>Invitation expired</h2>
+            	<p>Whoops! It looks like you have clicked on an expired invitation link.</p>
+                <p>Check your email to see if you have more recent invitation -<br/>or enter your email address below to receive a new link.</p>
 
                 <form className="m-t" role="form" onSubmit={this.handleSubmit}>
                     <div className="form-group">
                         <input ref="email" type="email" className="form-control" placeholder="Email address" required=""/>
                     </div>
-                    <button type="submit" className="btn btn-primary block full-width m-b">Reset Password</button>
+                    <button type="submit" className="btn btn-primary block full-width m-b">Send New Link</button>
                 </form>
                 <div>
                     <small>Already have an account? <a href={FlowRouter.path('login')}>Log in</a></small>

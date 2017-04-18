@@ -257,6 +257,9 @@ Meteor.methods( {
             Accounts.sendEnrollmentEmail( userId );
         }
     },
+    'User.checkExists': function( query ) {
+        return Users.find( query ).count();
+    },
     'User.getRole': () => {
         return Meteor.user().getRole();
     },

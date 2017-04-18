@@ -53,11 +53,13 @@ const UserProfileSchema = {
 		input: Text,
 		required: true,
 		type: "string",
+		/*
 		unique: {
 			collection: Meteor.users.find({},{ _id: 1, "profile.email": 1 }),
 			field: "profile.email",
 			identifier: "profile._id"
 		},
+		*/
 	},
 	phone: {
 		label: "Phone number",

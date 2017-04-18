@@ -582,12 +582,12 @@ Facilities.actions( {
         authentication: true,
         method: function( facility, supplier ) {
             //console.log("addSupplier");
-            if ( team && team._id ) {
+            if ( supplier && supplier._id ) {
                 Facilities.update( facility._id, {
                     $push: {
                         suppliers: {
-                            _id: team._id,
-                            name: team.name
+                            _id: supplier._id,
+                            name: supplier.name
                         }
                     }
                 } );
@@ -777,18 +777,20 @@ function invitePropertyManager( team, email, ext ) {
 }
 
 function sendMemberInvite( facility, recipient, team ) {
-    console.log( recipient );
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
+    if( Meteor.isServer ) {
+        console.log( recipient );
+        let body = ReactDOMServer.renderToStaticMarkup(
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
         } )
-    );
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+    }
 }
 
 function clearComplianceRules( facility ) {
