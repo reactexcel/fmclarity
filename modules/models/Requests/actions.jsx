@@ -52,22 +52,44 @@ const edit = new Action( {
                 ( request ) => {
                     // this should really be in a Request action called 'update' or something
                     // that's where the create and issue code is located
+
+                    // if we have a request description use it to add a comment to the request
+                    //  then delete it so it doesn't save
+                    let comment = request.description;
+                    request.description = null;
+
                     request.costThreshold = request.costThreshold == '' ? 0 : request.costThreshold;
+
                     Requests.save.call( request );
+
                     Modal.hide();
                     request = Requests.collection._transform( request );
+
                     let notificationBody = "",
-                        keys = [ 'costThreshold', 'priority', 'description', 'type', 'name', ];
+                        keys = [ 'costThreshold', 'priority', 'type', 'name' ];
+
                     for ( let i in keys ) {
                         let key = keys[ i ];
 
                         if ( request[ key ] != oldRequest[ key ] ) {
+
                             let oldValue = key == 'costThreshold' ? "$" + oldRequest[ key ] : oldRequest[ key ],
                                 newValue = key == 'costThreshold' ? "$" + request[ key ] : request[ key ];
-                            key = key == 'costThreshold' ? 'value' : (key == 'description' ? 'comment' : key);
+
+                            if( key == 'costThreshold' ) {
+                                key = 'value';
+                            }
                             notificationBody += `-> ${key.toUpperCase()}: changed from "${oldValue}" to "${newValue}".\n`;
                         }
                     }
+
+                    if( notificationBody.length ) {
+                        notificationBody += "\n";
+                    }
+                    if( comment ) {
+                        notificationBody += comment;
+                    }
+
                     request.distributeMessage( {
                         message: {
                             verb: "edited",

@@ -236,7 +236,10 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New';
+            let status = 'New',
+                description = request.description;
+
+            request.description = null;
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
@@ -276,7 +279,7 @@ Requests.methods( {
                         verb: "created",
                         read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        //body: newRequest.description
+                        body: description
                     }
                 } );
             }
@@ -683,7 +686,10 @@ function actionIssue( request ) {
 
     let code = null,
         userId = Meteor.user(),
+        description = request.description,
         user = Users.findOne( userId._id );
+
+    request.description = null;
 
     if ( request ) {
         if ( request.code ) {
@@ -714,6 +720,7 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
+                body: description
             }
         } );
 
