@@ -192,9 +192,10 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
                 query = null;
 
-            if( Teams.isServiceTeam( team ) ) {
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
@@ -726,7 +727,7 @@ function actionIssue( request ) {
                 read: false,
                 digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 13 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
@@ -942,7 +943,7 @@ function actionSendReminder( requests ) {
             message: {
                 subject: "Overdue Work order #" + request.code + " reminder",
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 4 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }

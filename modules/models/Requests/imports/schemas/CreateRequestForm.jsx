@@ -1,7 +1,7 @@
 export default CreateRequestForm = [
 	/*'team',*/
 	'type',
-	'occupancy',
+	/* 'occupancy', */
 
 	'facility',
 
