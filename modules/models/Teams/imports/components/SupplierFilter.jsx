@@ -2,6 +2,7 @@ import React from 'react';
 import { Teams, TeamStepper } from '/modules/models/Teams';
 import { Facilities } from '/modules/models/Facilities';
 import { Text, Select } from '/modules/ui/MaterialInputs';
+import ReactDOM from 'react-dom'
 
 export default class SupplierFilter extends React.Component {
     constructor(props) {
@@ -24,6 +25,15 @@ export default class SupplierFilter extends React.Component {
             team: props.team,
             facility: facility,
             services: facility && facility.servicesRequired || [],
+        });
+    }
+
+    componentDidMount(){
+        $(document).bind('click', function () {
+            /*if($('#filter-box').css('display') == 'block'){
+                $('#filter-box').css('display','none')
+                $('#arrow-icon').css('display','none')
+            }*/
         });
     }
     search(){
@@ -54,8 +64,21 @@ export default class SupplierFilter extends React.Component {
         }
     }
     render() {
+        let totalSupplierFound = this.props.suppliers?this.props.suppliers.length:0
+        let showTotalCountClass = totalSupplierFound > 0 ? 'col-lg-6' : 'col-lg-12'
         return (
-            <div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
+            <div>
+            <button onClick={()=>{
+                if($('#filter-box').css('display') == 'none'){
+                    $('#filter-box').css('display','block')
+                    $('#arrow-icon').css('display','block')
+                } else {
+                    $('#filter-box').css('display','none')
+                    $('#arrow-icon').css('display','none')
+                }
+            }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-search" style={{'marginRight':'5px'}}></i>Find Supplier</button>
+            <div id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','marginLeft':'40px','borderBottom':'15px solid #E8EAF6','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','marginTop':'-10px'}}></div>
+            <div id="filter-box" style = { {'backgroundColor':'#E8EAF6','position':'absolute','width':'100%','display':'none','zIndex':'1000','paddingTop':"5px",paddingBottom:'0px',paddingLeft:'10px',paddingRight:'0px','boxShadow':'2px 11px 8px 1px rgba(0, 0, 0, 0.14), 2px 5px 13px 1px rgba(0, 0, 0, 0.2), 4px 5px 16px 0px rgba(0, 0, 0, 0.12)'} } className = "ibox search-box report-details">
                 <h2>Supplier Filter</h2>
                 <div className="row" style={{marginLeft:"0px"}}>
                     <div className="col-lg-4">
@@ -102,8 +125,11 @@ export default class SupplierFilter extends React.Component {
                             } }/>
                     </div>
                 </div>
-                {this.state.selectedService?<div className="row">
-                    <div className="col-lg-12">
+                {this.state.selectedService?<div className="row" style={{backgroundColor:'#C5CAE9',marginTop:'20px'}}>
+                        {totalSupplierFound > 0 ? <div className="col-lg-6" style={{paddingTop:'15px'}}>
+                                <span style={{backgroundColor:'#9FA8DA',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Found suppliers: '+totalSupplierFound}</span>
+                            </div>:null}
+                    <div className={showTotalCountClass}>
                         <button
                             className="btn btn-flat btn-primary"
                             style={{float:'right'}}
@@ -114,6 +140,7 @@ export default class SupplierFilter extends React.Component {
                         </button>
                     </div>
                 </div>:''}
+            </div>
             </div>
         );
       }
