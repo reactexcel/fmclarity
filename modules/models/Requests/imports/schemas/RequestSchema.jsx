@@ -71,7 +71,7 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
-            size: 6,
+            size: 12,
             required: true,
             defaultValue: () => {
                 let team = Session.get( 'selectedTeam' );
@@ -530,7 +530,7 @@ const RequestSchema = {
         occupancy: {
             label: "Base Building",
             description: "Specify occupancy type",
-            size: 6,
+            size: 12,
             defaultValue: ( item ) => {
                 return item.service && item.service.data && item.service.data.baseBuilding;
             },
@@ -770,26 +770,30 @@ const RequestSchema = {
             },
             condition: ( request ) => {
 
-                let selectedTeam = Session.get( 'selectedTeam' );
+                let team = Session.getSelectedTeam();
                 //do not show for booking, contractors, staff or resident
-                return (
-                    ( request.type != 'Booking' && Teams.isServiceTeam( selectedTeam ) ) ?
-                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
-                )
+                if( request.type != 'Booking' ) {
+                    if( Teams.isFacilityTeam( team ) ) {
+                        if( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
-                return team;
             },
             input:( props ) => {
                 return <Select {...props}
-                        onChange={( value ) => {
-                            props.changeSubmitText(value);
-                            props.onChange(value);
-                        }}/>
+                    onChange={( value ) => {
+                        props.changeSubmitText(value);
+                        props.onChange(value);
+                    }}/>
             } ,
             options: ( item ) => {
                 let facility = null,
@@ -798,6 +802,9 @@ const RequestSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
+                    /*if( facility ) {
+                        console.log( facility.getSuppliers() );
+                    }*/
                 }
 
                 return {
@@ -855,7 +862,7 @@ const RequestSchema = {
                     (
                         request.status != 'Issued' &&
                         request.type != 'Booking' &&
-                        Teams.isServiceTeam( selectedTeam )
+                        Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
@@ -963,9 +970,17 @@ const RequestSchema = {
                 type: "object",
                 options: ( request ) => {
                     request = Requests.collection._transform( request );
-                    //let supplier = request.getSupplier(),
-                    let supplier = Session.getSelectedTeam(),
-                        members = Teams.getMembers( supplier );
+
+                    let members = null,
+                        supplier = null;
+
+                    if( request.supplier && request.supplier._id ) {
+                        let supplier = Teams.findOne( request.supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers();
+                        }
+                    }
+
                     return {
                         items: members,
                         view: ContactCard,
@@ -975,10 +990,11 @@ const RequestSchema = {
                             label: "Add New",
                             onAddNewItem: ( callback ) => {
                                 import { Users, UserViewEdit } from '/modules/models/Users';
-                                let team = Session.getSelectedTeam();
-                                Modal.show( {
-                                    content: <UserViewEdit group={ team } team={ team } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
-                                } )
+                                if( supplier ) {
+                                    Modal.show( {
+                                        content: <UserViewEdit group={ supplier } team={ supplier } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
+                                    } )
+                                }
                             }
                         },
                         afterChange: ( item ) => {

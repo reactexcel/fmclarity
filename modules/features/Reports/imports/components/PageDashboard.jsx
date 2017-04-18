@@ -22,11 +22,13 @@ function PageDashboard( props ) {
 	let canGetMessages = false;
 	let { team, facilities, facility, requests } = props;
 	if( !team ) {
-		Perf.start();
+		/*Perf.start();*/
 		return <div/>
 	}
+	/*
 	Perf.stop();
     Perf.printInclusive();
+    */
 	return (
 		<div className="dashboard-page animated fadeIn">
 			<FacilityFilter items = { facilities } selectedItem = { facility }/>
