@@ -394,7 +394,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   beforeSubmit={
                                                     ( item ) => {
                                                       component.save();
-                                                      Model.hide();
+                                                      Modal.hide();
                                                     }
                                                   }
                                                   />

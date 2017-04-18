@@ -208,7 +208,13 @@ const RequestSchema = {
             label: "Location - Area",
             size: 4,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.area = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' ),
@@ -269,7 +275,13 @@ const RequestSchema = {
             label: "Sub-area",
             size: 4,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.identifier = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
@@ -281,7 +293,7 @@ const RequestSchema = {
             options: ( item ) => {
                 let subAreas = [];
                 if(item.type == "Booking"){
-                    let allSubArea = item.level ? item.level.children : []
+                    let allSubArea = item.level && item.level.children ? item.level.children : []
                     allSubArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
                             if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
@@ -868,7 +880,6 @@ const RequestSchema = {
                         }
                     },
                     afterChange: ( request, supplier ) => {
-                        //console.log( supplier );
                         if( !supplier ) {
                             request.supplierContacts = [];
                         }
