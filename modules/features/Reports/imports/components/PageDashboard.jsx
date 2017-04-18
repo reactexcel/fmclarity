@@ -27,7 +27,6 @@ function PageDashboard( props ) {
 	}
 	/*
 	Perf.stop();
-    console.log('output dashboard load time');
     Perf.printInclusive();
     */
 	return (
