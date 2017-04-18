@@ -66,6 +66,7 @@ const WeeklyCalendar = React.createClass( {
 				allDay: false,
 				editable:true,
 				overlap:false,
+				tooltip: 'Your Booking'
     		})
 		}
         businessHours.map( ( slot ) => {
@@ -139,9 +140,9 @@ const WeeklyCalendar = React.createClass( {
 				let startTime = start._d
 				let endTime = end._d
 				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
-				if(timeDiff>1800000){
+				/*if(timeDiff>1800000){
         			$("#bookingCalendar").fullCalendar('unselect');
-      			} else {
+      			} else {*/
 					startTime = moment(startTime).subtract({hours:5,minutes:30})
 					endTime = moment(endTime).subtract({hours:5,minutes:30})
 					let newEvent = {
@@ -152,6 +153,7 @@ const WeeklyCalendar = React.createClass( {
 		      			allDay: false,
 		      			editable:true,
 						overlap:false,
+						tooltip: 'Your Booking'
 					}
 					$('#bookingCalendar').fullCalendar('removeEvents',0);
 					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
@@ -163,7 +165,7 @@ const WeeklyCalendar = React.createClass( {
 							endTime:endTime,
 						}
 					})
-				}
+				//}
     		},
     		eventClick: function(event) {
 				//let start = event.start._d
@@ -206,15 +208,16 @@ const WeeklyCalendar = React.createClass( {
 				}
     		},
             eventAfterRender: function(event, element, view) {
-                if(event.type == 'unAvailable'){
+                //if(event.type == 'unAvailable'){
                     $(element).css('width','105%');
 					$(element).css('left','-2px');
 					//$(element).css('right','-3px');
-                }
+                //}
             },
             eventMouseover: function(data, event, view){
                 let tooltip;
-                if(data.type == "unAvailable"){
+                //if(data.type == "unAvailable"){
+				if(data.tooltip != undefined){
                     tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + data.tooltip + '</div>';
                     $("body").append(tooltip);
                     $(this).mouseover(function (e) {
@@ -225,12 +228,13 @@ const WeeklyCalendar = React.createClass( {
                         $('.tooltiptopicevent').css('top', e.pageY + 10);
                         $('.tooltiptopicevent').css('left', e.pageX + 20);
                     });
-                }
+				}
+                //}
             },
             eventMouseout: function (data, event, view) {
                 $(this).css('z-index', 0);
                 $('.tooltiptopicevent').remove();
-            },
+            }
         } );
     },
 
