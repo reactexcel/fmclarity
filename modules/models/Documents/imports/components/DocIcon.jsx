@@ -76,10 +76,12 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
 		</div>
         <table className="doc-icon pull-right" style={{fontStyle:"italic"}}>
+            <tbody>
             <tr>
                 <td><div style={{height:"18px",width:"18px",background:"#ffffcc"}}></div></td>
                 <td style = {{ color: "rgb(153, 153, 153)" }}>Expires within 2 weeks</td>
             </tr>
+            </tbody>
         </table>
         </div>
         )
