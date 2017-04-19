@@ -275,6 +275,7 @@ const RequestSchema = {
             label: "Sub-area",
             size: 4,
             type: "object",
+            required: false,
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
@@ -283,6 +284,11 @@ const RequestSchema = {
                         }}/>
             } ,
             condition: ( item ) => {
+                if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.type != "Bookable"){
+                    RequestSchema.area.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
                 if ( selectedTeam ) {
@@ -324,7 +330,13 @@ const RequestSchema = {
             size: 4,
             type: "object",
             input: Select,
+            required:false,
             condition: ( item ) => {
+                if(item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.type != "Bookable"){
+                    RequestSchema.identifier.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
                 if ( selectedTeam ) {
