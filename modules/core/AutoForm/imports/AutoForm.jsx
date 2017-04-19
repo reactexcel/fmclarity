@@ -104,7 +104,7 @@ class AutoForm extends React.Component {
 				this.props.afterSubmit( item )
 			}
 		} else {
-			this.form.save( item, ( newItem ) => {
+			this.form.save( item, null, ( newItem ) => {
 				if ( this.props.afterSubmit ) {
 					this.props.afterSubmit( newItem )
 				}
@@ -120,15 +120,12 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
-
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-
 			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
 				placeholder = label,
 				Input = null;
-
 			// Create default value for this field
 			//  I feel like this should be done when initialising the form
 			//  also
@@ -196,7 +193,6 @@ class AutoForm extends React.Component {
 				}
 
 				if ( Input == null ) {
-					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
