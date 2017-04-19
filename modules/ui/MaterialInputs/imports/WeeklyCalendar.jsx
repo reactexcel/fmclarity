@@ -107,6 +107,7 @@ const WeeklyCalendar = React.createClass( {
                 center: 'title,today',
                 right: 'next'
             },
+			selectOverlap: false,
 			/*header: {
       			left: 'prev,next today prevYear nextYear',
       			center: 'title',
@@ -168,6 +169,7 @@ const WeeklyCalendar = React.createClass( {
 				//}
     		},
     		eventClick: function(event) {
+				//console.log("eventClick")
 				//let start = event.start._d
 				//let end = event.end._d
 				//start = moment(start).subtract({hours:5,minutes:30})
