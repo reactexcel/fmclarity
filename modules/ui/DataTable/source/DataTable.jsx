@@ -65,7 +65,7 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
-		Perf.start();
+		//Perf.start();
 		this.update( this.props );
 		if (this.props.setDataSet) {
 			this.props.setDataSet(this.state.dataset);

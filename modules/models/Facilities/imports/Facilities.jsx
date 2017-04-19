@@ -128,6 +128,70 @@ Facilities.actions( {
             } );
         }
     },
+    updateBookingForArea: {
+        authentication:true,
+        method: function(selectedFacility, level, area, identifier, booking){
+            let facility = Facilities.findOne({'_id':selectedFacility._id})
+            console.log(facility,"facility")
+            let areas = facility.areas;
+            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
+            if(level && level.data){
+                for(var i in areas){
+                    if(areas[i].name == level.name){
+                        let area1 = areas[i];
+                        let subArea = areas[i].children;
+                        if(area && area.data){
+                            for(var j in subArea){
+                                if(subArea[j].name == area.name){
+                                    let identifier2 = subArea[j].children;
+                                    if(identifier && identifier.data){
+                                        for(var k in identifier2){
+                                            if(identifier[k].name == identifier.name){
+                                                if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
+                                                    if(areas[i].children[j].children[k].totalBooking){
+                                                        areas[i].children[j].children[k].totalBooking.push(booking);
+                                                    } else {
+                                                        areas[i].children[j].children[k].totalBooking = [booking];
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        if(areas[i].children[j].data.areaDetails && areas[i].children[j].data.areaDetails.type == "Bookable"){
+                                            if(areas[i].children[j].totalBooking){
+                                                areas[i].children[j].totalBooking.push(booking);
+                                            } else {
+                                                areas[i].children[j].totalBooking = [booking];
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        } else {
+                            if(areas[i].data.areaDetails && areas[i].data.areaDetails.type == "Bookable"){
+                                if(areas[i].totalBooking){
+                                    areas[i].totalBooking.push(booking);
+                                } else {
+                                    areas[i].totalBooking = [booking];
+                                }
+                            }
+                            break;
+                        }
+                        break;
+                    }
+                }
+            }
+            console.log(areas,"last")
+            Facilities.update( facility._id, {
+                $set: {
+                    areas: areas
+                }
+            } );
+        }
+    },
     getServices: {
         authentication: true,
         helper: function( facility, parent ) {
@@ -713,18 +777,20 @@ function invitePropertyManager( team, email, ext ) {
 }
 
 function sendMemberInvite( facility, recipient, team ) {
-    console.log( recipient );
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
+    if( Meteor.isServer ) {
+        console.log( recipient );
+        let body = ReactDOMServer.renderToStaticMarkup(
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
         } )
-    );
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+    }
 }
 
 function clearComplianceRules( facility ) {

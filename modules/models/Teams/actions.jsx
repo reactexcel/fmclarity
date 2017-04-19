@@ -125,6 +125,11 @@ const createRequest = new Action( {
             submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
+
+                    if(newRequest.type == "Booking"){
+                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                    }
+
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest }/>
@@ -141,9 +146,8 @@ const createRequest = new Action( {
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.issue';
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
                         method = 'Issues.create';
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -159,11 +163,11 @@ const createRequest = new Action( {
                         else if( !baseBuilding ) {
 
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.create';
+                                method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
 
-                                method = 'Issues.create';
+                                method = 'Issues.issue';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     costThreshold = null;
@@ -196,12 +200,8 @@ const createRequest = new Action( {
                                 }*/
                             }
 
-                            else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){
-                                method == 'Issues.issue'
-                            }
                         }
                     }
-
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();

@@ -361,11 +361,13 @@ Actions.addAccessRule( {
                     let memberCostThreshold = parseFloat( facilityMemberThresholdValue ),
                         cost = parseFloat( costString ),
                         teamThresholdValue = user.getTeam().defaultCostThreshold;
+                        /*
                         console.log({
                             "team Threshold Value =" : teamThresholdValue ? teamThresholdValue : "not found", //1500
                             "facility Member Threshold Value =" : facilityMemberThresholdValue ? facilityMemberThresholdValue : "not found",//200
                             "request cost =" : cost ? cost : "not found", //500
                         });
+                        */
                     if ( cost <= memberCostThreshold ) {
                         return true;
                     }
