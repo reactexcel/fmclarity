@@ -705,7 +705,8 @@ const RequestSchema = {
                             bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
                         }
                         bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
-                        request.costThreshold = cost*bookingIncreament;
+                        request.costThreshold = cost*bookingIncreament*(request.duration == "" ? 0 : request.duration);
+
                     }
                 } else {
                     request.costThreshold = '500';
@@ -762,6 +763,13 @@ const RequestSchema = {
             defaultValue: {},
             condition: (request)=>{
                 if(request.type == "Booking" && request.level && request.level.name){
+                    if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
+                        let hours = duration.asHours();
+                        request.duration = hours
+                    } else {
+                        request.duration = ''
+                    }
                     return true;
                 } else {
                     return false;
