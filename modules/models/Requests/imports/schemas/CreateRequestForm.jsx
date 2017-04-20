@@ -1,7 +1,7 @@
 export default CreateRequestForm = [
 	/*'team',*/
 	'type',
-	'occupancy',
+	/* 'occupancy', */
 
 	'facility',
 
@@ -9,6 +9,7 @@ export default CreateRequestForm = [
 	'level',
 	'area',
 	'identifier',
+	'bookingPeriod',
 
 	'name',
 

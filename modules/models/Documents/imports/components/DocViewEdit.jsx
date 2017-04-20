@@ -27,6 +27,35 @@ const DocViewEdit = React.createClass( {
         }
     },
 
+    getInitialState(){
+      return {
+        isEditable: true,
+      };
+    },
+
+    componentDidMount( ){
+        let isPublic = false;
+        if( this.props && this.props.item && !this.props.item.private ){
+            isPublic = true;
+        }
+        if( isPublic === true ){
+            // check for doc owner id and logged user id
+            let loggedUser = Meteor.user();
+            let loggedUserId = loggedUser._id;
+            let loggedUserRole = loggedUser.role;
+            let docOwner = this.props.item.owner._id;
+            if( (docOwner == loggedUserId) || loggedUserRole == 'fmc support' ||  loggedUserRole == 'portfolio manager'  ){
+                this.setState({
+                    isEditable : true
+                })
+            }else{
+                this.setState({
+                    isEditable : false
+                })
+            }
+        }        
+    },
+
     downloadFile() {
         var win = window.open( this.data.url, '_blank' );
         win.focus();
@@ -145,6 +174,7 @@ const DocViewEdit = React.createClass( {
 					form 		= { DocForm }
 					item 		= { this.data.doc }
 					onSubmit 	= { this.handleChange  }
+                    hideSubmit  = { this.state.isEditable ? null : true }
 				/>
 			</div>
         )
