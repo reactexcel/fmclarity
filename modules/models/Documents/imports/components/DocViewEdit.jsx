@@ -34,17 +34,22 @@ const DocViewEdit = React.createClass( {
     },
 
     componentDidMount( ){
-        let isPublic = false,
-            isEditable = false;
+        let isEditable = false;
 
         if( this.props && this.props.item && !this.props.item.private ){
             // check for doc owner id and logged user id
-            let loggedUser = Meteor.user(),
-                loggedUserRole = loggedUser.getRole(),
-                loggedUserId = loggedUser._id,
-                docOwnerId = this.props.item.owner && this.props.item.owner._id;
+            let user = Meteor.user(),
+                team = Session.getSelectedTeam(),
+                userRole = loggedTeam.getMemberRole( user ),
+                owner = this.props.item.owner;
 
-            if( (docOwnerId == loggedUserId) || loggedUserRole == 'fmc support' ||  loggedUserRole == 'portfolio manager'  ){
+            if( 
+                (owner._id == user._id) 
+                || userRole == 'fmc support' 
+                || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
+                || ( Teams.isServiceTeam( team ) && userRole == 'manager' )
+            )
+            {
                 isEditable = true;
             }
         }
