@@ -46,6 +46,22 @@ const WeeklyCalendar = React.createClass( {
 		this.props.setValue(this.state.value);
 	},
 
+	getCurrentTime(start, end){
+		let timedifference = new Date().getTimezoneOffset();
+		let s= start._d
+			s_timstamp = s.getTime()
+			s_timstamp = s_timstamp + timedifference*60000
+			startTime = new Date(s_timstamp)
+		let e= end._d
+			e_timstamp = e.getTime()
+			e_timstamp = e_timstamp + timedifference*60000
+			endTime = new Date(e_timstamp)
+			return {
+				startTime:startTime,
+				endTime:endTime
+			}
+	},
+
     componentDidMount() {
 		var date = new Date();
   		var d = date.getDate();
@@ -141,11 +157,14 @@ const WeeklyCalendar = React.createClass( {
 				let startTime = start._d
 				let endTime = end._d
 				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
+				let getCurrentTime = self.getCurrentTime(start, end)
 				/*if(timeDiff>1800000){
         			$("#bookingCalendar").fullCalendar('unselect');
       			} else {*/
-					startTime = moment(startTime).subtract({hours:5,minutes:30})
-					endTime = moment(endTime).subtract({hours:5,minutes:30})
+					startTime = moment(startTime)
+					startTime._d = getCurrentTime.startTime
+					endTime = moment(endTime)
+					endTime._d = getCurrentTime.endTime
 					let newEvent = {
 						id:0,
 						title: 'Your Booking',
@@ -169,21 +188,19 @@ const WeeklyCalendar = React.createClass( {
 				//}
     		},
     		eventClick: function(event) {
-				//console.log("eventClick")
-				//let start = event.start._d
-				//let end = event.end._d
-				//start = moment(start).subtract({hours:5,minutes:30})
-				//end = moment(end).subtract({hours:5,minutes:30})
     		},
     		eventDrop: function (event, delta, revertFunc) {
 				let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 				if(value == false){
 					revertFunc();
 				} else {
+					let getCurrentTime = self.getCurrentTime(event.start,event.end)
 					let startTime = event.start._d
-					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					    startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
 					let endTime = event.end._d
-						endTime = moment(endTime).subtract({hours:5,minutes:30})
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
 					self.setState({
 						value:{
 							startTime:startTime,
@@ -197,10 +214,13 @@ const WeeklyCalendar = React.createClass( {
 				if(value == false){
 					revertFunc();
 				} else {
+					let getCurrentTime = self.getCurrentTime(event.start,event.end)
 					let startTime = event.start._d
-					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					    startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
 					let endTime = event.end._d
-						endTime = moment(endTime).subtract({hours:5,minutes:30})
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
 					self.setState({
 						value:{
 							startTime:startTime,
