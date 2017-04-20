@@ -321,6 +321,7 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
+                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
                             onServiceChange = props.changeSubmitText
                             props.onChange(value);
                         }}/>

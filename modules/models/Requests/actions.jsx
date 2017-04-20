@@ -10,7 +10,7 @@ import RequestPanel from './imports/components/RequestPanel.jsx';
 
 import { Teams } from '/modules/models/Teams';
 
-import { DropFileContainer, Switch } from '/modules/ui/MaterialInputs';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
 
 const view = new Action( {
@@ -43,20 +43,8 @@ const edit = new Action( {
         let oldRequest = Object.assign( {}, request );
         Modal.show( {
             content:
-            <div style = { { padding:"20px" } }>
-                <h2>Edit Request</h2>
-            {request.service && request.service.data && request.status=='Issued' && !_.contains(['staff','resident'], Meteor.user().getRole()) ? 
-            <Switch
-                value = { request.service.data.baseBuilding }
-                placeholder = "Base Building"
-                labelInactive = "Tenant"
-                onChange = { ( val ) =>{
-                    request.service.data.baseBuilding = val;
-                    request.service.data.tenancy = !val;
-                    } 
-                }
-            /> : null}
-            <AutoForm
+                <AutoForm
+            title = "Edit Request"
             model = { Requests }
             item = { request }
             form = { CreateRequestForm }
@@ -91,7 +79,6 @@ const edit = new Action( {
                 }
             }
             />
-            </div>
         } )
     }
 } )
