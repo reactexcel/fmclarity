@@ -37,14 +37,17 @@ const DocViewEdit = React.createClass( {
         let isEditable = false;
 
         if( this.props && this.props.item && !this.props.item.private ){
+
+            import { Teams } from '/modules/models/Teams';
+
             // check for doc owner id and logged user id
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
-                userRole = loggedTeam.getMemberRole( user ),
-                owner = this.props.item.owner;
+                userRole = team.getMemberRole( user ),
+                ownerId = this.props.item.owner && this.props.item.owner._id;
 
             if( 
-                (owner._id == user._id) 
+                (ownerId == user._id) 
                 || userRole == 'fmc support' 
                 || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
                 || ( Teams.isServiceTeam( team ) && userRole == 'manager' )

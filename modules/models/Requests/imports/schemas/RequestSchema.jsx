@@ -1057,20 +1057,16 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    let role = Meteor.user().getRole();
-                    /*if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        return false;
-                    }*/
-                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        return false;
+                    if ( request.supplier && request.supplier._id ) {
+                        let team = Session.getSelectedTeam();
+                        if( team._id == request.supplier._id ) {
+                            let userRole = Meteor.user().getRole();
+                            if( _.contains( [ 'portfolio manager', 'manager' ], userRole ) ) {
+                                return true;
+                            }
+                        }
                     }
-                    let team = Session.getSelectedTeam();
-                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
-                        return true;
-                    }
-                    if(_.contains( [ "portfolio manager", 'manager'], role )){
-                        return true;
-                    }
+                    return false;
                 },
                 input: Select,
                 type: "object",
@@ -1104,10 +1100,16 @@ const RequestSchema = {
                             }
                         },
                         afterChange: ( item ) => {
+                            if( !item.members ) {
+                                item.members = [];
+                            }
                             let found = false;
                             if ( item.assignee && item.assignee._id ) {
+
                                 import { Users } from '/modules/models/Users';
+
                                 let assignee = Users.findOne( item.assignee._id );
+
                                 for ( i in item.members ) {
                                     let member = item.members[ i ];
                                     if ( member.role == "assignee" ) {
