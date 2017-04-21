@@ -707,7 +707,7 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
                     return false;
                 }
                 return true;
