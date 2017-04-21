@@ -5,6 +5,7 @@
 
 import React from "react";
 import { RequestActions } from '/modules/models/Requests';
+import moment from 'moment'
 
 /**
  * An ui component that renders a calendar with requests appearing as events.
@@ -50,23 +51,29 @@ class Calendar extends React.Component {
                 } else {
                     title = request.name;
                 }
-                events.push( {
+                let newEvent = {
                     title: title,
                     color: colors[ request.priority ],
                     start: request.dueDate,
-                    start: request.dueDate,
-                    allDay: true,
+                    allDay: false,
                     request: {
                         _id: request._id,
                         code: request.code,
                         name: request.name
-                    }
+                    },
+                    tooltip:request.priority
                     //url:i.getUrl()
-                } );
+                }
+                if(request.type == 'Booking' && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                    newEvent.start = request.bookingPeriod.startTime
+                    newEvent.end = request.bookingPeriod.endTime
+                    newEvent.allDay = false
+                }
+                events.push( newEvent );
             }
         } );
-        $( this.refs.calendar ).fullCalendar( 'removeEventSource', events );
-        $( this.refs.calendar ).fullCalendar( 'addEventSource', events );
+        $( '#calendar' ).fullCalendar( 'removeEventSource', events );
+        $( '#calendar' ).fullCalendar( 'addEventSource', events );
     }
 
     /**
@@ -77,7 +84,7 @@ class Calendar extends React.Component {
         this.events = {
             events: []
         };
-        $( this.refs.calendar ).fullCalendar( {
+        $( '#calendar' ).fullCalendar( {
             //height:500,
             eventClick( event ) {
                 if ( event.request ) {
@@ -85,10 +92,48 @@ class Calendar extends React.Component {
                 }
             },
             eventLimit: true,
-            header: {
+            /*header: {
                 left: 'prev',
                 center: 'title,today',
                 right: 'next'
+            }*/
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            defaultView: 'month',
+            eventMouseover: function(data, event, view){
+                let tooltip;
+                    tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + 'PRIORITY :'+'<b>'+ data.tooltip +'</b>'+ '</div>';
+                    $("body").append(tooltip);
+                    $(this).mouseover(function (e) {
+                        $(this).css('z-index', 10000);
+                        $('.tooltiptopicevent').fadeIn('500');
+                        $('.tooltiptopicevent').fadeTo('10', 1.9);
+                    }).mousemove(function (e) {
+                        $('.tooltiptopicevent').css('top', e.pageY + 10);
+                        $('.tooltiptopicevent').css('left', e.pageX + 20);
+                    });
+            },
+            eventMouseout: function (data, event, view) {
+                $(this).css('z-index', 0);
+                $('.tooltiptopicevent').remove();
+            },
+            viewRender: function(view) {
+                let event = $("#calendar").fullCalendar('clientEvents');
+                if(event.length > 0){
+                    event.map( ( evt,id ) => {
+                        if(view.name == "agendaWeek" && event[id].end == null){
+                            event[id].allDay = true;
+                        }else{
+                            event[id].allDay = false;
+                        }
+                    })
+                }
+            },
+            eventRender: function(event, element) {
+                $('.fc-scroller').css('overflow','scroll');
             }
         } );
         this._addEvents( this.props );
@@ -109,7 +154,7 @@ class Calendar extends React.Component {
      */
     render() {
         return (
-            <div ref="calendar"></div>
+            <div ref="calendar" id="calendar"></div>
         )
     }
 }
