@@ -34,7 +34,7 @@ const RequestsStatusReport = React.createClass( {
 	},
 
 	getMeteorData() {
-
+		console.log("&&&&&&&&&&&&&&&");
 		var user, team, facility, requests, data = {};
 		user = Meteor.user();
 		if ( user ) {
@@ -115,13 +115,20 @@ const RequestsStatusReport = React.createClass( {
             };
         },
         "Comments": ( item ) => {
-            if ( !item.data.baseBuilding ){
-                return {
-                    val: "Tenant Responsibility"
-                };
-            }
+					console.log(item);
+						if(item.data){
+							if ( item.data.baseBuilding == ''){
+	                return {
+											val: "N/A"
+	                };
+	            }else{
+								return {
+									val: "Tenant Responsibility"
+		            };
+							}
+						}
             return {
-                val: "N/A"
+                val: "Tenant Responsibility"
             };
         },
         "Status": ( item ) => {
