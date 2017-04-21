@@ -54,7 +54,7 @@ const Text = React.createClass( {
     },
 
     componentWillReceiveProps( newProps ) {
-        // this.refs.input.value = newProps.value;
+        this.refs.input.value = newProps.value;
     },
 
     render() {
@@ -62,7 +62,6 @@ const Text = React.createClass( {
             used = false,
             invalid = false,
             classes = [ "input" ];
-
         if ( value != null && value.length != 0 ) {
             used = true;
             classes.push( "used" );
