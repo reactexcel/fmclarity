@@ -121,7 +121,7 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
-		console.log(filteredRows.length"xxxxxxx");
+		console.log(filteredRows.length);
 		//console.log( rows );
 		var unreadRows=[];
 		var readRows =[];
