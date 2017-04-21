@@ -18,6 +18,7 @@ import { LoginService } from '/modules/core/Authentication';
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
+import { AssigneeRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
@@ -676,15 +677,20 @@ function setAssignee( request, assignee ) {
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
     if ( request ) {
-                    user = Meteor.user();
-                
+                    
                 request.distributeMessage( {
                     recipientRoles: [ "assignee" ],
+                    suppressOriginalPost: true,
                     message: {
                         verb: "assigned",
+                        subject: "New work request assignment from " + " " + Meteor.user().getName(),
                         read: false,
-                        subject: "A new work order has been assigned to you" + ( user ? ` by ${user.getName()}` : '' ),
-                        body: request.description
+                        digest: false,
+                        emailBody: function( recipient ) {
+                            var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                            var token = LoginService.generateLoginToken( recipient, expiry );
+                            return DocMessages.render( AssigneeRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                        }
                     }
                 } );
             }
