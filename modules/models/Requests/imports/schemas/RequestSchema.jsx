@@ -290,7 +290,14 @@ const RequestSchema = {
                         }}/>
             } ,
             condition: ( item ) => {
-                if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.type != "Bookable"){
+                if(
+                    item.type == "Booking" 
+                    && item.level 
+                    && item.level.data 
+                    && item.level.data.areaDetails 
+                    && item.level.data.areaDetails.type != "Bookable"
+                )
+                {
                     RequestSchema.area.required = true;
                 } else {
                     RequestSchema.area.required = false;
@@ -338,7 +345,14 @@ const RequestSchema = {
             input: Select,
             required:false,
             condition: ( item ) => {
-                if(item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.type != "Bookable"){
+                if(                    
+                    item.type == "Booking" 
+                    && item.area 
+                    && item.area.data 
+                    && item.area.data.areaDetails 
+                    && item.area.data.areaDetails.type != "Bookable"
+                )
+                {
                     RequestSchema.identifier.required = true;
                 } else {
                     RequestSchema.area.required = false;

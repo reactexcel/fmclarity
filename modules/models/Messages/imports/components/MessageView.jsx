@@ -77,13 +77,13 @@ export default MessageView = React.createClass( {
 
     performLinkAction( message ) {
         let target = message.getTarget();
-        console.log( target );
         Actions.run('view request', target );
     },
 
     render() {
         let message = this.data.message || {},
             owner = this.data.owner || Meteor.user(),
+            target = message.getTarget ? message.getTarget() : null,
             createdAt = message.createdAt,
             used = false,
             hideContext = message.type=='comment'&&this.data.messageIsInContext;
@@ -132,6 +132,7 @@ export default MessageView = React.createClass( {
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
                             {
                                 message.verb == 'completed'
+                                && target
                                 && target.closeDetails ?
                                 <div>
                                     <small className="text-muted pull-right">Attended - {moment(target.closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
