@@ -54,7 +54,10 @@ const Text = React.createClass( {
     },
 
     componentWillReceiveProps( newProps ) {
+        let input = this.refs.input,
+            caret = input.selectionStart;
         this.refs.input.value = newProps.value;
+        input.setSelectionRange( caret, caret );
     },
 
     render() {
