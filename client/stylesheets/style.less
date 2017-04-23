@@ -18,6 +18,19 @@ body
     -webkit-font-smoothing: antialiased;
 }
 
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+     /* IE10+ CSS fix to prevent messy scroll behavior */
+     html {
+        overflow: hidden;
+        height: 100%;
+     }
+     body {
+        overflow: auto;
+        height: 100%;
+     }
+}
+
 div.body-background
 {
     position: fixed;
