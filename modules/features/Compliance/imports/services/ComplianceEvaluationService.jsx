@@ -93,7 +93,7 @@ ComplianceEvaluationService = new function() {
             }
             //   console.log({count: docCount});
             //   console.log(query);
-            if ( docCount ) {                
+            if ( docCount ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
@@ -118,8 +118,8 @@ ComplianceEvaluationService = new function() {
                                 />
                             })
                         }
-                        
-                        
+
+
                     }
                 } )
             }
@@ -268,7 +268,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -286,14 +285,18 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
+
             var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
+            let previousDate = requests[0].lastUpdate,
+                nextDate = requests[0].dueDate
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
+                        lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM' )}`,
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
                     resolve: function() {
@@ -372,7 +375,7 @@ ComplianceEvaluationService = new function() {
                        passed: true,
                        message: {
                            summary: "passed",
-                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                           lastCompleted_nextDueDate: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`,
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
