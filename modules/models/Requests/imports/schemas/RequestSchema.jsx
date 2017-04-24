@@ -291,10 +291,10 @@ const RequestSchema = {
             } ,
             condition: ( item ) => {
                 if(
-                    item.type == "Booking" 
-                    && item.level 
-                    && item.level.data 
-                    && item.level.data.areaDetails 
+                    item.type == "Booking"
+                    && item.level
+                    && item.level.data
+                    && item.level.data.areaDetails
                     && item.level.data.areaDetails.type != "Bookable"
                 )
                 {
@@ -345,11 +345,11 @@ const RequestSchema = {
             input: Select,
             required:false,
             condition: ( item ) => {
-                if(                    
-                    item.type == "Booking" 
-                    && item.area 
-                    && item.area.data 
-                    && item.area.data.areaDetails 
+                if(
+                    item.type == "Booking"
+                    && item.area
+                    && item.area.data
+                    && item.area.data.areaDetails
                     && item.area.data.areaDetails.type != "Bookable"
                 )
                 {
