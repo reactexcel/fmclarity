@@ -10,6 +10,7 @@ import React from "react";
  */
 const Text = React.createClass( {
     handleChange(newValue) {
+        //let newValue = this.refs.input.value;
         if ( this.props.onChange ) {
             this.props.onChange( newValue );
         }
@@ -49,14 +50,11 @@ const Text = React.createClass( {
     },
 
     componentDidMount() {
-        this.handleChange = _.debounce( this.handleChange, 3000 );
-        setTimeout( () => {
-            $( this.refs.input ).elastic();
-        }, 800 );
+        this.handleChange = _.debounce( this.handleChange, 200 );
     },
 
     componentWillReceiveProps( newProps ) {
-        this.refs.input.value = newProps.value;
+        // this.refs.input.value = newProps.value;
     },
 
     render() {

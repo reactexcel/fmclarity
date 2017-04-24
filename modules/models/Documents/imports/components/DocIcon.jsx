@@ -72,15 +72,9 @@ export default function DocIcon( props ) {
         return (
         <div>
             <div className = "doc-icon" onClick={handleClick}>
-			<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-			<span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
-		</div>
-        <table className="doc-icon pull-right" style={{fontStyle:"italic"}}>
-            <tr>
-                <td><div style={{height:"18px",width:"18px",background:"#ffffcc"}}></div></td>
-                <td style = {{ color: "rgb(153, 153, 153)" }}>Expires within 2 weeks</td>
-            </tr>
-        </table>
+                <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
+                <span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
+            </div>
         </div>
         )
     }
@@ -88,11 +82,13 @@ export default function DocIcon( props ) {
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
+    var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
     let docAlmostExpires = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
+    let docExpired = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 0;
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
-		<div className={"doc-icon " + (docAlmostExpires ? 'expired-doc' : '')} onClick={handleClick}>
+		<div className={"doc-icon " + (docAlmostExpires ? 'expiring-doc' : '') + (docExpired ? 'expired-doc' : '')} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
@@ -123,22 +119,30 @@ export default function DocIcon( props ) {
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
             { docAlmostExpires  ?
-                <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
-                <button
-                    type        = "button"
-                    className   = "btn btn-flat"
-                    title="Create update document request"
-                    onClick={
-                        ( event ) => {
-                            event.stopPropagation();
-                                runaction( DocActions.createUpdateRequest.bind( item ) );
-                                props.onChange();
-                            
-                        }
-                    }>
-                    <span>&#43;</span>
-                </button>
-            </span> : null }
+                item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
+                    <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                        <a   href={url}
+                             className   = "btn btn-flat"
+                             title="View Update request"
+                             >
+                             <span><i className="fa fa-eye" aria-hidden="true"></i></span>
+                         </a>
+                    </span>:<span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                                 <button
+                                     type        = "button"
+                                     className   = "btn btn-flat"
+                                     title="Create update document request"
+                                     onClick={
+                                         ( event ) => {
+                                             event.stopPropagation();
+                                                 runaction( DocActions.createUpdateRequest.bind( item ) );
+                                                 props.onChange();
+                                             
+                                         }
+                                     }>
+                                     <span>&#43;</span>
+                                 </button>
+                             </span> : null }
 		</div>:null}
 	</div>
     )
