@@ -377,8 +377,8 @@ ComplianceEvaluationService = new function() {
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
-                                           onClick={() => {
-                                                event.stopPropagation();
+                                           onClick={(e) => {
+                                                e.stopPropagation();
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
@@ -396,8 +396,8 @@ ComplianceEvaluationService = new function() {
                                            : <div>Last N/A</div> }
                                        </div>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
-                                           onClick={(event) => {
-                                               event.stopPropagation();
+                                           onClick={(e) => {
+                                                e.stopPropagation();
                                                 if (nextRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
