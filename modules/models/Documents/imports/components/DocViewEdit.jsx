@@ -46,9 +46,9 @@ const DocViewEdit = React.createClass( {
                 userRole = team.getMemberRole( user ),
                 ownerId = this.props.item.owner && this.props.item.owner._id;
 
-            if( 
-                (ownerId == user._id) 
-                || userRole == 'fmc support' 
+            if(
+                (ownerId == user._id)
+                || userRole == 'fmc support'
                 || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
                 || ( Teams.isServiceTeam( team ) && userRole == 'manager' )
             )
