@@ -4,6 +4,7 @@ import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
 import moment from 'moment';
+import { Messages } from '/modules/models/Messages';
 
 ComplianceEvaluationService = new function() {
 
@@ -349,6 +350,13 @@ ComplianceEvaluationService = new function() {
             if ( event ) {
                 let nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
+
+                /*let message = Messages.findOne( this.props.item._id );
+                let target = message.getTarget ? message.getTarget() : null,
+                let value = moment(target.closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')
+                console.log(value,"value--------------------")*/
+
+
                 let nextRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
                     priority: {$in:["PPM","PMP"]},
@@ -375,7 +383,7 @@ ComplianceEvaluationService = new function() {
                        passed: true,
                        message: {
                            summary: "passed",
-                           lastCompleted_nextDueDate: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`,
+                           lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM' )}`,
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
