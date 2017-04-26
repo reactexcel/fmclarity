@@ -93,7 +93,7 @@ ComplianceEvaluationService = new function() {
             }
             //   console.log({count: docCount});
             //   console.log(query);
-            if ( docCount ) {                
+            if ( docCount ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
@@ -118,8 +118,8 @@ ComplianceEvaluationService = new function() {
                                 />
                             })
                         }
-                        
-                        
+
+
                     }
                 } )
             }
@@ -323,7 +323,8 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service
+                        service: rule.service,
+                        subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
                     TeamActions.createRequest.bind( team, null, newRequest ).run();
