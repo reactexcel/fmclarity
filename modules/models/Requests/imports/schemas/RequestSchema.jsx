@@ -398,6 +398,7 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
+                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
                             onServiceChange = props.changeSubmitText
                             props.onChange(value);
                         }}/>
@@ -653,7 +654,8 @@ const RequestSchema = {
                 return item.service && item.service.data && item.service.data.baseBuilding;
             },
             condition: ( item ) => {
-                return _.contains(['Ad-hoc', 'Defect'], item.type);
+                let role = Meteor.user().getRole();
+                return _.contains(['Ad-hoc', 'Defect'], item.type) && !_.contains(['staff', 'resident'], role) && item.status=='Issued';
             },
             input(props){
                 let value = false,
