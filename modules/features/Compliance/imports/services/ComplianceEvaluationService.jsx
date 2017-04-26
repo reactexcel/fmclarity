@@ -297,7 +297,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM' )}`,
+                        lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`,
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
                     resolve: function() {
@@ -383,7 +383,7 @@ ComplianceEvaluationService = new function() {
                        passed: true,
                        message: {
                            summary: "passed",
-                           lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM' )}`,
+                           lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`,
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
