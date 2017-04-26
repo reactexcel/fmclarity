@@ -296,9 +296,9 @@ ComplianceEvaluationService = new function() {
                         summary: "passed",
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
-                    resolve: function() {
+                    resolve: function(r, callback) {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind( establishedRequest ).run();
+                        RequestActions.view.bind( establishedRequest, callback ).run();
                     }
                 } )
             }
@@ -309,7 +309,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
@@ -323,11 +323,10 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
-                        subservice: rule.subservice
+                        service: rule.service
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
