@@ -93,7 +93,7 @@ ComplianceEvaluationService = new function() {
             }
             //   console.log({count: docCount});
             //   console.log(query);
-            if ( docCount ) {                
+            if ( docCount ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
@@ -112,14 +112,15 @@ ComplianceEvaluationService = new function() {
                              Modal.show( {
                                 content: <DocViewEdit
                                     item = { docForModal }
+                                    model={Facilities}
                                     onChange={ ( docForModal ) => {
                                         callback({});
                                     }}
                                 />
                             })
                         }
-                        
-                        
+
+
                     }
                 } )
             }
@@ -215,6 +216,7 @@ ComplianceEvaluationService = new function() {
                         Modal.show( {
                             content: <DocViewEdit
                                 item = { doc }
+                                model={Facilities}
                                 onChange={ ( doc ) => {
                                     callback({});
                                 }}
@@ -309,7 +311,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
@@ -326,7 +328,7 @@ ComplianceEvaluationService = new function() {
                         service: rule.service
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -338,11 +340,10 @@ ComplianceEvaluationService = new function() {
                     'facility._id': rule.facility._id,
                     name: rule.event,
                     status: "Complete",
-                    type: "Ad-Hoc",
+                    //type: "Ad-Hoc",
                     priority: "PMP"
                 } );
             }
-
             if ( event ) {
                 let nextDate = event.getNextDate();
                 previousDate = event.getPreviousDate();
@@ -358,7 +359,6 @@ ComplianceEvaluationService = new function() {
                if( previousDate ) {
                    previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
-               console.log({previousDateString, nextDateString});
                return _.extend( {}, defaultResult, {
                    passed: true,
                    message: {
@@ -407,7 +407,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: false,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let request = Requests.findOne( {
@@ -437,7 +437,7 @@ ComplianceEvaluationService = new function() {
                             frequency: rule.frequency,
                             service: rule.service
                         } );
-                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
                     //    Meteor.call( 'Issues.save', newRequest );
                 }
