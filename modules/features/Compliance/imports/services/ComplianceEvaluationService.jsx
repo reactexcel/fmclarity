@@ -387,11 +387,17 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "Compliance level": function( rule, facility, service ){
+          // console.log(rule,"*-*-**--*-*-*-*-*");
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
                 "priority": "PMP",
                 "status": "Complete",
+            },
+            docQuery = {
+                "facility._id": rule.facility._id,
+                "serviceType.name": rule.service.name,
+                'type': 'Service Report'
             },
             count = 0;
             if ( rule.docType == "Service Report"){
@@ -409,6 +415,30 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
+                for (let i=0; i<=12; i++  ) {
+                    docQuery["applicablePeriodStartDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let test = Documents.find(docQuery).fetch();
+                    //console.log(test,"===========");
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        count++;
+                      }
+                    }
+
+                }
+                 //console.log(count);
+                //  console.log(Documents.find( {
+                //   "facility._id": rule.facility._id,
+                //   "serviceType.name": rule.service.name,
+                //   'type': 'Service Report',
+                //   'applicablePeriodStartDate':{
+                //      "$gte": new moment().subtract(0, "months").startOf("months").toDate(),
+                //      "$lte": new moment().subtract(0, "months").endOf("months").toDate()
+                //  }} ).fetch());
                 if (count == 12) {
                     return _.extend( {}, defaultResult, {
                         passed: true,
@@ -417,12 +447,54 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 service reports"
                         },
                     } )
+                }else if(count > 0 && count < 12){
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 service reports"
+                      },
+                      resolve: function() {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: rule.service,
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} />
+                          } )
+                      },
+                  } )
                 }
                 return _.extend( {}, defaultResult, {
                     passed: false,
                     message: {
                         summary: "failed",
                         detail: count + " out of 12 service reports"
+                    },
+                    resolve: function() {
+                        let type = "team",
+                            team = Session.getSelectedFacility(),
+                            _id = team._id,
+                            name = team.name,
+                            owner = Meteor.user(),
+                            newDocument = Documents.create( {
+                                team: { _id, name },
+                                owner: { type, _id, name },
+                                name: rule.docName,
+                                type: rule.docType,
+                                serviceType: rule.service,
+                            } );
+                        Modal.show( {
+                            content: <DocViewEdit item = { newDocument } model={Facilities} />
+                        } )
                     },
                 } )
             }
