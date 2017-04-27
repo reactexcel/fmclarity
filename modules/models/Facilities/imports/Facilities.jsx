@@ -465,7 +465,7 @@ Facilities.actions( {
                     applicablePeriodStartDate:doc.applicablePeriodStartDate,
                     applicablePeriodEndDate:doc.applicablePeriodEndDate,
                     issueDate:doc.issueDate,
-                    serviceType:doc.serviceType
+                    serviceType:doc.serviceType,
                     owner: doc.owner
                 }
             } );
