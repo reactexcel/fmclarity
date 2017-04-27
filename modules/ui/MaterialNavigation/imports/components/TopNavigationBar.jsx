@@ -47,10 +47,8 @@ export default function TopNavigationBar( props ) {
                     <img className="fm-logo" src="/img/logo-white.svg"/>
                 </div>
                 <div className="icon-region-2">
-                    <div style={{float:"right"}}>
-                        <UserProfileMenu { ...props }>
-                            <span className="topnav-icon"><i className="fa fa-cog"></i></span>
-                        </UserProfileMenu>
+                    <div className="searchbox hidden-xs">
+                        <FMInstantSearchBox mobileView={false}/>
                     </div>
                     <div id="alerts-icon" style={{float:"right"}} className="hidden-xs hidden-sm dropdown right-dropdown">
                         <span className="dropdown-toggle count-info topnav-icon" data-toggle="dropdown">
@@ -64,8 +62,23 @@ export default function TopNavigationBar( props ) {
                         <NotificationList items = { notifications }/>
                         <DesktopNotificationPopUp items = { notifications } showNotifications = { props.showNotifications } />
                     </div>
-                    <div className="searchbox">
-                    {/*<FMInstantSearchBox/>*/}
+                    <div id="search-icon" style={{float:"right"}} className="hidden-xl hidden-lg hidden-md hidden-sm">
+                        <i className="fa fa-search" onClick={(e)=>{
+                            if($("#search-icon").hasClass("open")){
+                                $("#search-icon").removeClass("open")
+                            }else{
+                                $("#search-icon").addClass("open")
+                                $('#searchInput1').focus()
+                            }
+                        }} ></i>
+                        <div className="search">
+                            <FMInstantSearchBox mobileView={true} blur={()=>{$("#search-icon").removeClass("open")}}/>
+                        </div>
+                    </div>
+                    <div style={{float:"right"}}>
+                        <UserProfileMenu { ...props }>
+                            <span className="topnav-icon"><i className="fa fa-cog"></i></span>
+                        </UserProfileMenu>
                     </div>
                 </div>
             </nav>
@@ -99,7 +112,7 @@ class DesktopNotificationPopUp extends React.Component {
         }
     }
     */
-    
+
     componentWillReceiveProps( { items } ) {
         import { Messages } from '/modules/models/Messages';
         if ( !this.showPopUp ) {

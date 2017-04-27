@@ -128,6 +128,70 @@ Facilities.actions( {
             } );
         }
     },
+    updateBookingForArea: {
+        authentication:true,
+        method: function(selectedFacility, level, area, identifier, booking){
+            let facility = Facilities.findOne({'_id':selectedFacility._id})
+            console.log(facility,"facility")
+            let areas = facility.areas;
+            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
+            if(level && level.data){
+                for(var i in areas){
+                    if(areas[i].name == level.name){
+                        let area1 = areas[i];
+                        let subArea = areas[i].children;
+                        if(area && area.data){
+                            for(var j in subArea){
+                                if(subArea[j].name == area.name){
+                                    let identifier2 = subArea[j].children;
+                                    if(identifier && identifier.data){
+                                        for(var k in identifier2){
+                                            if(identifier[k].name == identifier.name){
+                                                if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
+                                                    if(areas[i].children[j].children[k].totalBooking){
+                                                        areas[i].children[j].children[k].totalBooking.push(booking);
+                                                    } else {
+                                                        areas[i].children[j].children[k].totalBooking = [booking];
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        if(areas[i].children[j].data.areaDetails && areas[i].children[j].data.areaDetails.type == "Bookable"){
+                                            if(areas[i].children[j].totalBooking){
+                                                areas[i].children[j].totalBooking.push(booking);
+                                            } else {
+                                                areas[i].children[j].totalBooking = [booking];
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        } else {
+                            if(areas[i].data.areaDetails && areas[i].data.areaDetails.type == "Bookable"){
+                                if(areas[i].totalBooking){
+                                    areas[i].totalBooking.push(booking);
+                                } else {
+                                    areas[i].totalBooking = [booking];
+                                }
+                            }
+                            break;
+                        }
+                        break;
+                    }
+                }
+            }
+            console.log(areas,"last")
+            Facilities.update( facility._id, {
+                $set: {
+                    areas: areas
+                }
+            } );
+        }
+    },
     getServices: {
         authentication: true,
         helper: function( facility, parent ) {
@@ -402,10 +466,48 @@ Facilities.actions( {
                     applicablePeriodEndDate:doc.applicablePeriodEndDate,
                     issueDate:doc.issueDate,
                     serviceType:doc.serviceType
+                    owner: doc.owner
                 }
             } );
         }
     },
+
+    addTenant: {
+        authentication: AuthHelpers.managerOfRelatedTeam,
+        method: function( facility, team ) {
+            if ( team && team._id ) {
+                Facilities.update( facility._id, {
+                    $push: {
+                        tenants: {
+                            _id: team._id,
+                            name: team.name
+                        }
+                    }
+                } );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
+            }
+        }
+    },
+
+    getTenants: {
+        authentication: true,
+        helper: ( facility ) => {
+            import { Teams } from '/modules/models/Teams';
+            if( !facility.tenants ) {
+                // no tenants to return
+                return;
+            }
+            let tenantIds = _.pluck( facility.tenants, '_id' );
+            console.log( tenantIds );
+            return Teams.findAll( { _id: { $in: tenantIds } } );
+        }
+    },
+
+
+    /////////////////////////////////////////
+    // Provide through the services mixin??
+    /////////////////////////////////////////
+
     /**
      * Returns an array of supplier documents
      */
@@ -418,7 +520,9 @@ Facilities.actions( {
             let ids = [],
                 names = [],
                 suppliers = null;
-
+            let facilitySuppliers = _.uniq(facility.suppliers, s => s._id);
+                ids = _.pluck(facilitySuppliers, "_id");
+                names = _.pluck(facilitySuppliers, "name");
             if ( _.isArray( facility.servicesRequired ) ) {
                 _.map( facility.servicesRequired, ( s ) => {
                         let supplier = null;
@@ -484,9 +588,7 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
-                Facilities.update( {
-                    "_id": facility._id
-                }, {
+                Facilities.update( facility._id, {
                     $push: {
                         suppliers: {
                             _id: supplier._id,
@@ -498,6 +600,9 @@ Facilities.actions( {
             }
         }
     },
+
+
+
     /**
      *  Add personnel to facility
      **/
@@ -532,12 +637,16 @@ Facilities.actions( {
     },
     removeComplianceRule: {
         authentication: true,
-        helper: ( facility, servicePosition, rulePosition, serviceName ) => {
+        helper: ( facility, servicePosition, rulePosition, serviceName, subservicePosition ) => {
             let servicesRequired = facility.servicesRequired;
-            _.map( servicesRequired, ( svc, i ) => {
-                if ( svc.name == serviceName ) servicePosition = i
-            } );
-            servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            // _.map( servicesRequired, ( svc, i ) => {
+            //     if ( svc.name == serviceName ) servicePosition = i
+            // } );
+            if ( subservicePosition != null ) {
+                servicesRequired[ servicePosition ].children[ subservicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            } else {
+                servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            }
             Facilities.update( { _id: facility._id }, { $set: { "servicesRequired": servicesRequired } } );
         }
     },
@@ -610,10 +719,6 @@ Facilities.actions( {
         authentication: AuthHelpers.managerOfRelatedTeam,
     },
 
-    addTenant: {
-        authentication: AuthHelpers.managerOfRelatedTeam,
-    },
-
     addDocument: {
         authentication: AuthHelpers.managerOfRelatedTeam,
     },
@@ -677,18 +782,20 @@ function invitePropertyManager( team, email, ext ) {
 }
 
 function sendMemberInvite( facility, recipient, team ) {
-    console.log( recipient );
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
+    if( Meteor.isServer ) {
+        console.log( recipient );
+        let body = ReactDOMServer.renderToStaticMarkup(
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
         } )
-    );
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+    }
 }
 
 function clearComplianceRules( facility ) {

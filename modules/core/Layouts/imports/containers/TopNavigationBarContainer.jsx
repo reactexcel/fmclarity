@@ -90,7 +90,6 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
             Meteor.call( 'Messages.markAsRead', { user } );
         }
     }
-
     return {
         user,
         team,

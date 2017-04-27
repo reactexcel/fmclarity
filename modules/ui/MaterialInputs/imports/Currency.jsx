@@ -20,9 +20,9 @@ const Currency = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
-		if ( this.props.onChange ) {
+		/*if ( this.props.onChange ) {
 			this.props.onChange( null );
-		}
+		}*/
 		this.refs.input.value = "";
 	},
 

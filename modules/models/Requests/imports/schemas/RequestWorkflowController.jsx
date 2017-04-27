@@ -336,7 +336,7 @@ Requests.workflow.addState( 'Issued', {
 		form: {
 			title: "Please provide eta and, if appropriate, an assignee.",
 			//so this should prob be a subschema???
-			fields: [ 'eta', 'assignee', 'acceptComment' ]
+			fields: [ 'eta','assignee','acceptComment' ]
 		},
 		authentication: AuthHelpers.memberOfSuppliersTeam,
 		validation: function( request ) {
