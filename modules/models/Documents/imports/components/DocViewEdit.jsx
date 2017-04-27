@@ -34,26 +34,29 @@ const DocViewEdit = React.createClass( {
     },
 
     componentDidMount( ){
-        let isPublic = false;
+        let isEditable = false;
+
         if( this.props && this.props.item && !this.props.item.private ){
-            isPublic = true;
-        }
-        if( isPublic === true ){
+
+            import { Teams } from '/modules/models/Teams';
+
             // check for doc owner id and logged user id
-            let loggedUser = Meteor.user();
-            let loggedUserId = loggedUser._id;
-            let loggedUserRole = loggedUser.role;
-            let docOwner = this.props.item.owner._id;
-            if( (docOwner == loggedUserId) || loggedUserRole == 'fmc support' ||  loggedUserRole == 'portfolio manager'  ){
-                this.setState({
-                    isEditable : true
-                })
-            }else{
-                this.setState({
-                    isEditable : false
-                })
+            let user = Meteor.user(),
+                team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
+                ownerId = this.props.item.owner && this.props.item.owner._id;
+
+            if( 
+                (ownerId == user._id) 
+                || userRole == 'fmc support' 
+                || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
+                || ( Teams.isServiceTeam( team ) && userRole == 'manager' )
+            )
+            {
+                isEditable = true;
             }
-        }        
+        }
+        this.setState( { isEditable } );
     },
 
     downloadFile() {

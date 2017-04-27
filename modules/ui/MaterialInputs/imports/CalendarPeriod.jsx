@@ -63,7 +63,8 @@ const CalendarPeriod = React.createClass( {
 						allDay:false,
 						editable:false,
 						color:"#ef6c00",
-						overlap:false
+						overlap:false,
+						tooltip:"Already Booked",
 					})
 				})
 			}
@@ -82,7 +83,8 @@ const CalendarPeriod = React.createClass( {
 						allDay:false,
 						editable:false,
 						color:"#ef6c00",
-						overlap:false
+						overlap:false,
+						tooltip:"Already Booked",
 					})
 				})
 			}
@@ -101,7 +103,8 @@ const CalendarPeriod = React.createClass( {
 						allDay:false,
 						editable:false,
 						color:"#ef6c00",
-						overlap:false
+						overlap:false,
+						tooltip:"Already Booked",
 					})
 				})
 			}
@@ -109,7 +112,7 @@ const CalendarPeriod = React.createClass( {
 		}
 
 		let businessHours = [];
-		
+
         let extra = moment().format('YYYY-MM-DD') + ' ';
 		let showSecondEvent = true
 		if(bookableTimeSlot && bookableTimeSlot.Sun && bookableTimeSlot.Sun.startTime && bookableTimeSlot.Sun.endTime && bookableTimeSlot.Sun.select == true){
