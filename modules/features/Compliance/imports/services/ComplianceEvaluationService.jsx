@@ -327,7 +327,8 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service
+                        service: rule.service,
+                        subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
                     TeamActions.createRequest.bind( team, null, newRequest ).run();
