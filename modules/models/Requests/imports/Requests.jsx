@@ -192,9 +192,10 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
                 query = null;
 
-            if( Teams.isServiceTeam( team ) ) {
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
@@ -205,7 +206,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -235,7 +236,10 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New';
+            let status = 'New',
+                description = request.description;
+
+            request.description = null;
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
@@ -275,7 +279,7 @@ Requests.methods( {
                         verb: "created",
                         read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: newRequest.description
+                        body: description
                     }
                 } );
             }
@@ -410,7 +414,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -457,7 +461,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
@@ -682,7 +686,10 @@ function actionIssue( request ) {
 
     let code = null,
         userId = Meteor.user(),
+        description = request.description,
         user = Users.findOne( userId._id );
+
+    request.description = null;
 
     if ( request ) {
         if ( request.code ) {
@@ -713,6 +720,7 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
+                body: description
             }
         } );
 
@@ -726,7 +734,7 @@ function actionIssue( request ) {
                 read: false,
                 digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 13 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
@@ -942,7 +950,7 @@ function actionSendReminder( requests ) {
             message: {
                 subject: "Overdue Work order #" + request.code + " reminder",
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 4 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }

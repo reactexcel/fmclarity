@@ -12,6 +12,7 @@ const DocForm = [
 	'currentYear+1',
 	'currentYear+2',
 	'serviceType',
+	'subServiceType',
 	//'supplier',
 	'issuer',
 	'insuranceType',

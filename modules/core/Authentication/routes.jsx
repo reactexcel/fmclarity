@@ -82,9 +82,9 @@ AccessGroups.exposed.add( {
 	action( params ) {
 		var redirect = Base64.decode( decodeURIComponent( params.redirect ) );
 		redirect = String.fromCharCode.apply( null, redirect );
-		console.log( redirect );
+		//console.log( redirect );
 		LoginService.loginWithToken( params.token, function( err ) {
-			console.log( 'Did it!' );
+			//console.log( 'Did it!' );
 			if ( err ) {
 				console.log( err );
 				mount( LayoutBlank, { content: <Page403 /> } );
