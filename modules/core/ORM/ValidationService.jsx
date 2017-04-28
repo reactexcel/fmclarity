@@ -130,7 +130,7 @@ function checkUniqueKey(rule, value, key, errors){
 					if (data._id !=docId && curCollectionValue==value) {
 						errors.push( { name: key, type: "This value already exists. Please try another." } );
 					}
-					
+
 				});
 		}
 }
@@ -140,9 +140,9 @@ function checkString( rule, value, key, errors ) {
 		errors.push( { name: key, type: "This is a required field" } );
 	}
 	if (rule.unique) {
-		checkUniqueKey(rule, value, key, errors);	
+		checkUniqueKey(rule, value, key, errors);
 	}
-	
+
 	if ( !_.isString( value ) ) {
 		errors.push( { name: key, type: "Invalid type: expected a string" } );
 	}
@@ -155,7 +155,7 @@ function checkNumber( rule, value, key, errors ) {
 		errors.push( { name: key, type: "Invalid type: expected a number" } );
 	}
 	if (rule.unique) {
-		checkUniqueKey(rule, value, key, errors);	
+		checkUniqueKey(rule, value, key, errors);
 	}
 }
 
@@ -188,7 +188,7 @@ function checkABN( rule, value, key, errors ) {
 		errors.push( { name: key, type: "Invalid type: expected an Australian Business Number" } );
 	}
 	if (rule.unique) {
-		checkUniqueKey(rule, value, key, errors);	
+		checkUniqueKey(rule, value, key, errors);
 	}
 }
 
@@ -230,7 +230,7 @@ function checkPhoneNumber( rule, value, key, errors ) {
 	}
 
 	if (rule.unique) {
-		checkUniqueKey(rule, value, key, errors);	
+		checkUniqueKey(rule, value, key, errors);
 	}
 
 

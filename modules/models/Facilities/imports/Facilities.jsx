@@ -462,6 +462,10 @@ Facilities.actions( {
                     type: doc.type,
                     description: doc.description,
                     private: doc.private,
+                    applicablePeriodStartDate:doc.applicablePeriodStartDate,
+                    applicablePeriodEndDate:doc.applicablePeriodEndDate,
+                    issueDate:doc.issueDate,
+                    serviceType:doc.serviceType,
                     owner: doc.owner
                 }
             } );
