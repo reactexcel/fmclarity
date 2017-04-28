@@ -439,6 +439,8 @@ const RequestSchema = {
                         if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
+                        request.supplier = null;
+                        request.subservice = null;
                         if ( request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;

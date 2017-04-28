@@ -23,6 +23,9 @@ const view = new Action( {
     */
     label: "View",
     action: ( request, callback ) => {
+        if( !request ) {
+            throw new Meteor.Error('view request: request is null', "Tried to view null request");
+        }
         Modal.show( {
             id: `viewRequest-${request._id}`,
             content: //<DropFileContainer request={request} model={Requests}>
