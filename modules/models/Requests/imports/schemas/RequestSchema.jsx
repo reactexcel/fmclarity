@@ -403,7 +403,7 @@ const RequestSchema = {
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
                                 let actualCost = props.item.costThreshold.replace (/,/g, "");
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseInt(actualCost)
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
@@ -709,8 +709,9 @@ const RequestSchema = {
                         let team = Session.getSelectedTeam();
                         if(team.defaultCostThreshold){
                             cost_withIn_teamCost = false;
-                            let actualCost = value.replace (/,/g, "");
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseInt(actualCost)
+                            let actualCost = value;
+                            actualCost = actualCost.replace (",","");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
                         }
                         onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
@@ -945,7 +946,7 @@ const RequestSchema = {
                         if(team.defaultCostThreshold){
                             costAbleToIssue = false;
                             let actualCost = props.item.costThreshold.replace (/,/g, "");
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseInt(actualCost)
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                         }
                         onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
