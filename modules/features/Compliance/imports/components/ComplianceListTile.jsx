@@ -75,7 +75,8 @@ export default ComplianceListTile = React.createClass( {
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
     if ( rule.document && rule.document.query ){
-        let query = JSON.parse(rule.document.query);
+        //let query = JSON.parse(rule.document.query);
+        let query = rule.document.query;
         rule.document.query = query;
     }
     if ( rule.docName && !rule.document ) {
