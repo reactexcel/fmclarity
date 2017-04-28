@@ -124,7 +124,7 @@ export default ComplianceListTile = React.createClass( {
           {info}
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
-          {/*this.state.showLoader && loader*/
+          {
             this.state.showLoader && loader?
                 <div style={{width:"30%"}}>
                     <LinearProgress mode="indeterminate" color='#0152b5'/>

@@ -449,7 +449,7 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    console.log(test,"===========");
+                    // console.log(test,"===========");
                     // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
@@ -475,56 +475,31 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 service reports"
                         },
                     } )
-                }else if(count > 0 && count < 12){
-                  return _.extend( {}, defaultResult, {
-                      passed: false,
-                      message: {
-                          summary: "failed",
-                          detail: count + " out of 12 service reports"
-                      },
-                      resolve: function() {
-                          let type = "team",
-                              team = Session.getSelectedFacility(),
-                              _id = team._id,
-                              name = team.name,
-                              owner = Meteor.user(),
-                              newDocument = Documents.create( {
-                                  team: { _id, name },
-                                  owner: { type, _id, name },
-                                  name: rule.docName,
-                                  type: rule.docType,
-                                  serviceType: rule.service,
-                              } );
-                          Modal.show( {
-                              content: <DocViewEdit item = { newDocument } model={Facilities} />
-                          } )
-                      },
-                  } )
-                  return _.extend( {}, defaultResult, {
-                      passed: false,
-                      message: {
-                          summary: "failed",
-                          detail: count + " out of 12 service reports"
-                      },
-                      resolve: function() {
-                          let type = "team",
-                              team = Session.getSelectedFacility(),
-                              _id = team._id,
-                              name = team.name,
-                              owner = Meteor.user(),
-                              newDocument = Documents.create( {
-                                  team: { _id, name },
-                                  owner: { type, _id, name },
-                                  name: rule.docName,
-                                  type: rule.docType,
-                                  serviceType: rule.service,
-                              } );
-                          Modal.show( {
-                              content: <DocViewEdit item = { newDocument } model={Facilities} />
-                          } )
-                      },
-                  } )
                 }
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 service reports"
+                      },
+                      resolve: function(r,update) {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: rule.service,
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update} />
+                          } )
+                      },
+                  } )
             }
             if ( rule.docType == "Invoice"){
                 for (let i=0; i<=12; i++  ) {
@@ -573,7 +548,7 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 Invoice"
                         },
                     } )
-                }else if(count >= 0 && count < 12){
+                }
                   return _.extend( {}, defaultResult, {
                       passed: false,
                       message: {
@@ -598,7 +573,6 @@ ComplianceEvaluationService = new function() {
                           } )
                       },
                   } )
-                }
             }
             if ( rule.docType == "Confirmation"){
                 for (let i=0; i<=12; i++  ) {
@@ -639,7 +613,7 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 Confirmation"
                         },
                     } )
-                }else if(count >= 0 && count < 12){
+                }
                   return _.extend( {}, defaultResult, {
                       passed: false,
                       message: {
@@ -664,7 +638,6 @@ ComplianceEvaluationService = new function() {
                           } )
                       },
                   } )
-                }
             }
             if ( rule.docType == "Induction"){
                 for (let i=0; i<=12; i++  ) {
@@ -705,7 +678,7 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 induction"
                         },
                     } )
-                }else if(count >= 0 && count < 12){
+                }
                   return _.extend( {}, defaultResult, {
                       passed: false,
                       message: {
@@ -730,7 +703,6 @@ ComplianceEvaluationService = new function() {
                           } )
                       },
                   } )
-                }
             }
             if ( rule.docType == "Contract"){
                 for (let i=0; i<=12; i++  ) {
@@ -771,7 +743,7 @@ ComplianceEvaluationService = new function() {
                             detail: count + " out of 12 contract"
                         },
                     } )
-                }else if(count >= 0 && count < 12){
+                }
                   return _.extend( {}, defaultResult, {
                       passed: false,
                       message: {
@@ -796,7 +768,6 @@ ComplianceEvaluationService = new function() {
                           } )
                       },
                   } )
-                }
             }
             facility = Facilities.findOne({_id: rule.facility._id});
             if (facility) {
