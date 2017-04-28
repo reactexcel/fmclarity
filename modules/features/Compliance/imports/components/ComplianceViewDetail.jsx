@@ -50,9 +50,9 @@ export default ComplianceViewDetail = React.createClass( {
         })
       }
     },
-    removeComplianceRule(servicePosition, rulePosition, serviceName ) {
+    removeComplianceRule(servicePosition, rulePosition, serviceName, subservicePosition ) {
         let facility = this.data.facility;
-        facility.removeComplianceRule(servicePosition, rulePosition, serviceName);
+        facility.removeComplianceRule(servicePosition, rulePosition, serviceName, subservicePosition);
     },
     componentDidUpdate(){
         this.handelCollaps( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
@@ -75,7 +75,9 @@ export default ComplianceViewDetail = React.createClass( {
         let facility = this.data.facility;
         facility.updateComplianceRule( rulePosition, updatedRule, serviceName, servicePosition, subservicePosition );
     },
-
+    handelChange(){
+        this.setState({});
+    },
     render() {
         var facility = this.data.facility;
         if ( !facility )
@@ -93,7 +95,7 @@ export default ComplianceViewDetail = React.createClass( {
         }
         */
         var results = ComplianceEvaluationService.evaluateServices( services );
-
+        //console.log(results);
         return (
             <div className="facility-card" style={{background:"#fff",color:"#333"}}>
 
@@ -135,6 +137,7 @@ export default ComplianceViewDetail = React.createClass( {
                                 onClick={( event) => {
                                     this.setCoverImage( event, service );
                                 }}
+                                results={results.overallServiceresults[idx]}
                                 isService={ true }
                                 />
                             <div id={idx} className={"serviceTabHeader"} >
@@ -142,6 +145,8 @@ export default ComplianceViewDetail = React.createClass( {
                                     onClick={( event) => {
                                         this.setCoverImage( event, service );
                                     }}
+                                    onChange={this.handelChange}
+                                    results={results.overallServiceresults[idx]["results"]["all"]}
                                     onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx )}
                                     removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
                                     />
@@ -154,6 +159,7 @@ export default ComplianceViewDetail = React.createClass( {
                                                     onClick={( event) => {
                                                         this.setCoverImage( event, service );
                                                     }}
+                                                    results={results.overallServiceresults[idx]["subservice"][idy]}
                                                     isService={ false }
                                                     />
                                                 <div id={idx+"-"+idy} className={"serviceTabHeader"} >
@@ -161,8 +167,10 @@ export default ComplianceViewDetail = React.createClass( {
                                                         onClick={( event) => {
                                                             this.setCoverImage( event, service );
                                                         }}
+                                                        onChange={this.handelChange}
+                                                        results={results.overallServiceresults[idx]["subservice"][idy]["results"]["all"]}
                                                         onUpdate={ ( rulePosition, updatedRule ) => this.updateRule( rulePosition, updatedRule, service.name, idx, idy )}
-                                                        removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name )}
+                                                        removeComplianceRule={( rulePosition ) => this.removeComplianceRule( idx, rulePosition, service.name, idy, subservice.name )}
                                                         />
                                                 </div>
                                                 <span className="subservice-list-header-icon">
