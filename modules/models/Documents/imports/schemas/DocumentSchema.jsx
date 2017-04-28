@@ -239,10 +239,7 @@ export default DocumentSchema = {
 			}
 
 			return {
-				items: items,
-				afterChange: ( doc ) => {
-					doc.subServiceType = null;
-				}
+				items: items
 			}
 		}
 	},
