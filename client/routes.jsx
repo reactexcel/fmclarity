@@ -18,6 +18,11 @@ AccessGroups.loggedIn.add( {
     }
 } )
 
+function teamTypeIsRealEstateOrTenancy( team ) {
+    return team.type == 'fm' || team.type == 'real estate';
+
+}
+
 Routes.addAccessRule( {
     action: [
         'logout',
@@ -51,7 +56,7 @@ Routes.addAccessRule( {
             'team portfolio manager',
             'supplier portfolio manager',
         ],
-        condition: { type: 'fm' }
+        condition: teamTypeIsRealEstateOrTenancy
     } )
     // Routes.addAccessRule( {
     // 	action: [
@@ -81,7 +86,7 @@ Routes.addAccessRule( {
         'account',
     ],
     role: [ 'fmc support', 'portfolio manager', 'manager', 'caretaker' ],
-    condition: { type: 'fm' }
+    condition: teamTypeIsRealEstateOrTenancy
 } )
 
 Routes.addAccessRule( {
@@ -91,7 +96,7 @@ Routes.addAccessRule( {
         'user-docs',
     ],
     role: [ 'fmc support' ],
-    condition: { type: 'fm' }
+    condition: teamTypeIsRealEstateOrTenancy
 } )
 
 Routes.addAccessRule( {
@@ -99,7 +104,7 @@ Routes.addAccessRule( {
         'requests',
     ],
     role: [ 'support' ],
-    condition: { type: 'fm' }
+    condition: teamTypeIsRealEstateOrTenancy
 } )
 
 Routes.addAccessRule( {

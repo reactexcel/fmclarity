@@ -58,7 +58,7 @@ Meteor.methods( {
         }
 
         // create a moment obj representing expiry data (14 days in future)
-        let expiry = moment( new Date() ).add( { days: 13 } ).toDate();
+        let expiry = moment( new Date() ).add( { days: 14 } ).toDate();
 
         // make a login token which expires at "expiry"
         let token = LoginService.generateLoginToken( user, expiry );
