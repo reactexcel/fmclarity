@@ -177,7 +177,7 @@ const DocViewEdit = React.createClass( {
 					form 		= { DocForm }
 					item 		= { this.data.doc }
 					onSubmit 	= { this.handleChange  }
-                    hideSubmit  = { this.state.isEditable ? null : true }
+                    hideSubmit  = { this.state.isEditable ? null : null }
 				/>
 			</div>
         )
