@@ -193,7 +193,12 @@ export default DocumentSchema = {
 
 	},
 	serviceType: {
-		input: Select,
+		input:( props ) => {
+				return <Select {...props}
+								onChange={( value ) => {
+										props.onChange(value);
+								}}/>
+		},
 		label: "Service type",
 		optional: true,
 		type: "object",
@@ -233,7 +238,41 @@ export default DocumentSchema = {
 				items = team.getAvailableServices();
 			}
 
-
+			return {
+				items: items
+			}
+		}
+	},
+	subServiceType: {
+		input:( props ) => {
+				return <Select {...props}
+								onChange={( value ) => {
+								//		props.serviceType.children = {};
+										props.onChange(value);
+								}}/>
+		},
+		label: "Sub Service type",
+		optional: true,
+		type: "object",
+		size: 6,
+		condition: function( item ) {
+			if(item && item.serviceType){
+				if(item.serviceType.children && item.serviceType.children.length > 0){
+					return true
+				}else{
+					return false
+				}
+			}
+		},
+		options: function( item ) {
+			let items ;
+			if(item && item.serviceType){
+				if(item.serviceType.children && item.serviceType.children.length > 0){
+					items = item.serviceType.children
+				}else{
+					items = null;
+				}
+			}
 			return {
 				items: items
 			}

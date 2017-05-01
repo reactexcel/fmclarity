@@ -46,7 +46,7 @@ ComplianceGroup = React.createClass({
         var facility,item,rules,results;
 
         item = this.props.item;
-		results = this.props.results;
+		results = this.props.results||[];
         if(item&&item.data) {
             rules = item.data.complianceRules||[]
         }
