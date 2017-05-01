@@ -31,6 +31,7 @@ const StartEndTimePicker = React.createClass( {
 		this.refs.endTimePicker.openDialog(); //this could be used to override material-ui's stupid text boxes!!
 		this.setState( {
 			value: "From" + moment( startTime ).format( " LT " ) + "to ",
+			startTime
 			//dateValue: date,
 		} )
 	},
@@ -38,9 +39,11 @@ const StartEndTimePicker = React.createClass( {
 	handleEndTimeChange( event, endTime ) {
     let component = this;
 		this.setState( {
-			value: this.state.value + moment(endTime).format( "LT" )
+			value: this.state.value + moment(endTime).format( "LT" ),
+			endTime
 		}, () => {
-      component.props.onChange( this.state.value );
+			let {value, startTime, endTime} = this.state;
+      component.props.onChange(value, startTime, endTime);
     } )
 	},
 

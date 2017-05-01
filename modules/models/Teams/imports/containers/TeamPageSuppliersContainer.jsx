@@ -43,7 +43,10 @@ const TeamPageSuppliersContainer = createContainer((params) => {
     } else if (facilities && facilities.length) {
         let supplierIds = [],
             supplierNames = [];
-
+        let teamSupplier = team.suppliers;
+        teamSupplier = _.uniq(teamSupplier, s => s._id);
+        supplierIds = _.pluck(teamSupplier, "_id");
+        supplierNames = _.pluck(teamSupplier, "name");
         facilities.map((facility) => {
             let services = facility.servicesRequired || [];
             services.map((service) => {

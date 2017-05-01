@@ -17,6 +17,7 @@ function CompliancePageIndex( props ) {
 	if( !team ) {
 		return <div/>
 	}
+	console.log({facility});
 	return (
 		<div className = "facility-page animated fadeIn">
 			<FacilityFilter items = { facilities } selectedItem = { facility } />

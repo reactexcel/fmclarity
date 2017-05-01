@@ -339,7 +339,12 @@ const TeamStepper = React.createClass( {
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
                         tab:        <span id = "members-tab">Members</span>,
-                        content:    <ContactList group = { viewingTeam } filter = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager'] } } } defaultRole = "staff" team = { viewingTeam }/>,
+                        content:    <ContactList 
+                                        team        = { viewingTeam }
+                                        group       = { viewingTeam } 
+                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } } 
+                                        defaultRole = "staff" 
+                                    />,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:        <span id = "services-provided-tab">Services provided</span>,
