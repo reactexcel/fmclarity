@@ -65,8 +65,18 @@ export default class SearchSuppliersWithinNetwork extends Component {
             }];
         if (selectedService) query[0]["services"] = { $elemMatch: { name: selectedService.name } };
         if (selectedSubservice) query[0]["services"] = {$elemMatch:{"children":{$elemMatch:{ name: selectedSubservice.name } } } };
-        if (supplierName) query[0][name] = supplierName;
+        //if (supplierName) query[0].name = supplierName;
         let suppliers = Teams.find( ...query ).fetch();
+
+        if(supplierName){
+            let newSupplierList = []
+            suppliers.map((supplier,id)=>{
+                if (supplier.name.toLowerCase().indexOf(supplierName.toLowerCase()) >= 0){
+                    newSupplierList.push(supplier)
+                }
+            })
+            suppliers = newSupplierList;
+        }
         suppliers = _.uniq( suppliers, s => s._id );
         if (suppliers.length )
             this.setState({suppliers, showMsg: false});
@@ -87,11 +97,13 @@ export default class SearchSuppliersWithinNetwork extends Component {
         let { facility, selectedService } = this.state;
         Meteor.call("Facilities.setDefaultSupplier", facility, supplier, selectedService, (err, data) => {
             if (data) {
-                //console.log(data);
                 toastr.success(
                     "Supplier '" + data.supplier.name + "' has been added to service '" + data.service.name + "'",
                     "Default supplier added"
                 );
+                if(this.props.onSaveSupplier){
+                    this.props.onSaveSupplier(supplier)
+                }
                 Modal.hide();
             }
         })
@@ -156,7 +168,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                             </span>
                             <span style={{'float':'right','marginRight':'1%'}}>
                                 <button
-                                    title={"Click to save supplier in your team."}
+                                    title={"Click to add supplier."}
                                     className="btn btn-flat btn-primary" onClick={this.addSupplier.bind(this)}
                                 >
                                     Add new
