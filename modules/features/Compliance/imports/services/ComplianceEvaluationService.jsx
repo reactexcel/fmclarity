@@ -552,7 +552,8 @@ ComplianceEvaluationService = new function() {
                               newDocument = Documents.create( {
                                   team: { _id, name },
                                   owner: { type, _id, name },
-                                  name: rule.docName,
+                                  name: rule.service.name + " Monthly " + rule.docType,
+                                  description:rule.docName,
                                   type: rule.docType,
                                   serviceType: rule.service,
                               } );
@@ -625,7 +626,8 @@ ComplianceEvaluationService = new function() {
                               newDocument = Documents.create( {
                                   team: { _id, name },
                                   owner: { type, _id, name },
-                                  name: rule.docName,
+                                  name: rule.service.name + " Monthly " + rule.docType,
+                                  description:rule.docName,
                                   type: rule.docType,
                                   serviceType: rule.service,
                               } );
