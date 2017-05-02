@@ -19,52 +19,60 @@ export default ChildDataTable = React.createClass( {
 			dataset: dataset,
 			rows: dataset.getRows(),
 			cols: dataset.getCols(),
+			data:{}
 		}
 	},
-	componentWillReceiveProps(props){
-		if(props.readRow._item && props.readRow._item.children &&  props.readRow._item.children.length > 0 ){
+	componentWillMount(){
+		if(this.props.readRow){
 			dataset = this.state.dataset;
-			dataset.reset(props.readRow._item.children ,props.fields);
+			// console.log(this.props.items,"///////////////////////////");
+			dataset.reset(this.props.items ,this.props.fields);
 			let rows = dataset.getRows();
-			console.log(rows,"childRow");
+			// console.log(rows,"childRow");
+			let selRow = _.filter(rows,row => row['Service Type'].val === this.props.readRow.name);
+			// console.log(selRow,"2222222*-**-*-*-*-*-*");
+			let data1 = {
+				'one' : selRow[0]["Annual Amount"].val,
+				'two'	: selRow[0]["Comments"].val ? selRow[0]["Comments"].val : '--',
+				'three'	: selRow[0]["Contractor Name"].val ? selRow[0]["Contractor Name"].val : '--',
+				'four'	: selRow[0]["Service Type"].val ? selRow[0]["Service Type"].val : '--',
+				'five'	: selRow[0]["Expiry Date"].val ? selRow[0]["Expiry Date"].val : '--',
+				'six'	: selRow[0]["Status"].val ? selRow[0]["Status"].val : '--',
+			}
 			this.setState({
 				rows:rows,
-				cols:props.cols
+				cols:this.props.cols,
+				data:data1
 			})
 		}
 	},
 	render(){
-				let { cols, rows } = this.state;
-				let childRow;
-			 	childRow = rows.map((r,idx)=>{
-					return (
-
-						<tr
-							className 	= "data-grid-row"
-							key 		= { idx }
-							onClick 	= { () => { this.props.onClick( r._item ) } }
-						>
-							<td className="data-grid-select-col">&nbsp;</td>
-							<td className="data-grid-select-col">&nbsp;</td>
-							{ cols.map( (col,colIdx) => {
-
-								return (
-									<td
-										className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-										key 		= {('val('+idx+','+colIdx+')-'+r[col].val)}
-										style 		= {r[col].style?r[col].style:{}}
-									>
-										{r[col].val}
-
-									</td>
-								)
-
-							} ) }
-						</tr>
-					)
-				})
+				let { cols, rows,data } = this.state;
+				// console.log(data);
 		return (
-			{childRow}
+				<tr className = "data-grid-row">
+					<td className="data-grid-select-col">&nbsp;&nbsp;</td>
+					<td style={{paddingLeft:"22px"}}>{data.four}</td>
+					<td style={{paddingLeft:"10px"}}>{data.three}</td>
+					<td style={{paddingLeft:"10px"}}>{data.one}</td>
+					<td style={{paddingLeft:"10px"}}>{data.two}</td>
+					<td style={{paddingLeft:"10px"}}>{data.six}</td>
+					<td style={{paddingLeft:"10px"}}>{data.five}</td>
+					{/* { this.props.cols.map( (col,colIdx) => {
+
+						return (
+						<td
+						className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+						key 		= {('val('+this.props.index+','+colIdx+')-'+rows[col].val)}
+						style 		= {rows[col].style?rows[col].style:{}}
+						>
+						{rows[col].val}
+
+					</td>
+				)
+
+			} ) } */}
+		</tr>
 		)
 	}
 })

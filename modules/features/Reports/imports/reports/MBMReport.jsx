@@ -34,7 +34,7 @@ const RequestsStatusReport = React.createClass( {
 	},
 
 	getMeteorData() {
-		console.log("&&&&&&&&&&&&&&&");
+		// console.log("&&&&&&&&&&&&&&&");
 		var user, team, facility, requests, data = {};
 		user = Meteor.user();
 		if ( user ) {
@@ -76,7 +76,7 @@ const RequestsStatusReport = React.createClass( {
 					if (data.services[i] !== null)
                     	data.services[i].doc = docs[ data.services[i].name]
                 }
-                console.log({docs,"services":data.services});
+                // console.log({docs,"services":data.services});
 			}
 		}
 		return {
@@ -115,7 +115,7 @@ const RequestsStatusReport = React.createClass( {
             };
         },
         "Comments": ( item ) => {
-					console.log(item);
+					// console.log(item);
 						if(item.data){
 							if ( item.data.baseBuilding == ''){
 	                return {

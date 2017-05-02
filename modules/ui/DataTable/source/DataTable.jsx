@@ -44,7 +44,7 @@ export default DataTable = React.createClass( {
 			} ) ;
 
 			items = items.concat( restItems )
-
+			
 			dataset.reset( items, fields );
 
 			if ( this.state.sortCol ) {
@@ -203,7 +203,11 @@ export default DataTable = React.createClass( {
 						})}
 
 						{readRows.map((readRow, idx)=>{
-							console.log(readRow);
+							// console.log(readRow);
+							let hideChildContractor = false;
+							// if((readRow._item && readRow._item.children &&  readRow._item.children.length > 0)){
+							// 	let contractor =
+							// }
 							return (
 								<tbody key={idx}>
 							<tr
@@ -220,14 +224,20 @@ export default DataTable = React.createClass( {
 											key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
 											style 		= {readRow[col].style?readRow[col].style:{}}
 										>
-											{readRow[col].val}
+											{readRow[col].val ? readRow[col].val : null}
 
 										</td>
 									)
 
 								} ) }
 							</tr>
-							<ChildDataTable readRow={readRow} cols={cols} fields={this.props.fields}/>
+							{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
+
+									return (
+
+										<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
+									)
+							}) : null }
 						</tbody>
 							)
 
