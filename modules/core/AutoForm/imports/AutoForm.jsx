@@ -144,6 +144,9 @@ class AutoForm extends React.Component {
 			if ( _.isFunction( options ) ) {
 				options = options( item );
 			}
+			if ( _.isFunction( description ) ) {
+				description = description( item );
+			}
 
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
@@ -190,6 +193,9 @@ class AutoForm extends React.Component {
 				//  ( refact: there may be a better location for this check )
 				if ( !item[ key ] ) {
 					item[ key ] = '';
+				}
+				if(key === 'facility'){
+					item [key] = Session.getSelectedFacility();
 				}
 
 				if ( Input == null ) {

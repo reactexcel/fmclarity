@@ -578,6 +578,6 @@ FacilityMenuActions = Actions.clone( [
 FloatingActionButtonActions = Actions.clone( [
     'create team request',
     'create team facility',
-    'create team',
+    //'create team',
     'create team document'
 ] );

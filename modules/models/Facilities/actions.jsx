@@ -10,6 +10,7 @@ import FacilityStepperContainer from './imports/containers/FacilityStepperContai
 import FacilityPanel from './imports/components/FacilityPanel.jsx';
 import { Select } from '/modules/ui/MaterialInputs';
 import { ContactCard } from '/modules/mixins/Members';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
 const edit = new Action( {
 	name: "edit facility",
@@ -17,7 +18,9 @@ const edit = new Action( {
 	label: "Edit facility",
 	action: ( facility ) => {
 		Modal.show( {
-			content: <FacilityStepperContainer params = { { item: facility } } />
+			content: <DropFileContainer model={Facilities}>
+				<FacilityStepperContainer params = { { item: facility } } />
+			</DropFileContainer>
 		} )
 	}
 } )
@@ -29,7 +32,9 @@ const view = new Action( {
 	label: "View facility",
 	action: ( facility ) => {
 		Modal.show( {
-			content: <FacilityPanel item = { facility } />
+			content: <DropFileContainer model={Facilities}>
+				<FacilityPanel item = { facility } />
+			</DropFileContainer>
 		} )
 	}
 } )

@@ -414,7 +414,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -461,7 +461,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
