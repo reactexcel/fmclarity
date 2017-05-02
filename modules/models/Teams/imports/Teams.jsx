@@ -321,6 +321,7 @@ function inviteMember( team, email, ext ) {
         ext.callback ? ext.callback( user, found ) : "";
         return {
             user: user,
+            userIsNew: false,
             found: found
         }
     } else {
@@ -346,6 +347,7 @@ function inviteMember( team, email, ext ) {
                 } );
                 return {
                     user: user,
+                    userIsNew: true,
                     found: true
                 }
             }
@@ -357,34 +359,36 @@ function inviteMember( team, email, ext ) {
 }
 
 function sendMemberInvite( team, recipient ) {
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
-        } )
-    );
-
-    /*
-        getEmail( notification ) {
-        // we need to see the notification to do this
+    if( Meteor.isServer ) {
         let body = ReactDOMServer.renderToStaticMarkup(
-                React.createElement( EmailMessageView, { notification } )
-           );
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
 
-        let { recipient } = notification;
-        console.log( body );
-        return {
-            to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
-            from:"FM Clarity <no-reply@fmclarity.com>",
-            subject:"FM Clarity notification",
-            emailBody:body
-        }
-    }*/
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+        /*
+            getEmail( notification ) {
+            // we need to see the notification to do this
+            let body = ReactDOMServer.renderToStaticMarkup(
+                    React.createElement( EmailMessageView, { notification } )
+               );
+
+            let { recipient } = notification;
+            console.log( body );
+            return {
+                to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+                from:"FM Clarity <no-reply@fmclarity.com>",
+                subject:"FM Clarity notification",
+                emailBody:body
+            }
+        }*/
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
+        } )
+    }
 }
 
 function sendSupplierInvite( supplier, inviter ) {

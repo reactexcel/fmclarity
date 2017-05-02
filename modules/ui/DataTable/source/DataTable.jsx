@@ -65,7 +65,7 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
-		Perf.start();
+		//Perf.start();
 		this.update( this.props );
 		if (this.props.setDataSet) {
 			this.props.setDataSet(this.state.dataset);
@@ -73,9 +73,11 @@ export default DataTable = React.createClass( {
 	},
 
 	componentDidMount() {
+		/*
 	    Perf.stop();
 	    console.log('output datatable load time');
 	    Perf.printInclusive();
+	    */
 	},
 
 	componentWillReceiveProps( props ) {

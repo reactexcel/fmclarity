@@ -17,7 +17,6 @@ import FacilityListTile from './FacilityListTile.jsx';
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 function FacilityFilter( props ) {
-	console.log(props.items.length);
 	return (
 		<div style = { { position:"absolute", zIndex:1300 } }>
 		{props.items && props.items.length > 1 ? <NavListDropDown
