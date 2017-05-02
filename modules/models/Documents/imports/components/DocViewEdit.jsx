@@ -83,6 +83,9 @@ const DocViewEdit = React.createClass( {
                 _id: item._id
             } )
         }
+        else if(this.props.onChange){
+            this.props.onChange(item);
+        }
     },
 
     handleChange( item ) {
