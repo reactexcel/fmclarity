@@ -4,6 +4,7 @@ import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
 import moment from 'moment';
+import { Messages } from '/modules/models/Messages';
 
 ComplianceEvaluationService = new function() {
 
@@ -268,7 +269,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -286,19 +286,23 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
+
             var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
+            let previousDate = requests[0].lastUpdate,
+                nextDate = requests[0].dueDate
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
+                        lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`,
                         detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
-                    resolve: function() {
+                    resolve: function(r, callback) {
                         let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind( establishedRequest ).run();
+                        RequestActions.view.bind( establishedRequest, callback ).run();
                     }
                 } )
             }
@@ -309,7 +313,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
@@ -323,11 +327,10 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
-                        subservice: rule.subservice
+                        service: rule.service
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -347,6 +350,13 @@ ComplianceEvaluationService = new function() {
             if ( event ) {
                 let nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
+
+                /*let message = Messages.findOne( this.props.item._id );
+                let target = message.getTarget ? message.getTarget() : null,
+                let value = moment(target.closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')
+                console.log(value,"value--------------------")*/
+
+
                 let nextRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
                     priority: {$in:["PPM","PMP"]},
@@ -373,7 +383,7 @@ ComplianceEvaluationService = new function() {
                        passed: true,
                        message: {
                            summary: "passed",
-                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                           lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`,
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>

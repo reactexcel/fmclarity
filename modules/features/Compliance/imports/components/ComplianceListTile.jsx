@@ -144,7 +144,7 @@ export default ComplianceListTile = React.createClass( {
                             }
                             results.resolve(rule, this.updateList)
                         }}>
-                      { _.isString(message.detail)?message.detail:message.detail()}
+                        {results.message.lastCompleted_nextDueDate && !_.isEmpty(results.message.lastCompleted_nextDueDate) ? results.message.lastCompleted_nextDueDate:_.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
               </div>
             :
