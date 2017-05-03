@@ -5,6 +5,7 @@ import Perf from 'react-addons-perf';
 
 import DataSet from './DataSet.jsx';
 import ChildDataTable from './ChildDataTable.jsx';
+import { Documents } from '/modules/models/Documents';
 import { download, print } from './DataSetActions.jsx';
 import { Menu } from '/modules/ui/MaterialNavigation';
 
@@ -44,7 +45,7 @@ export default DataTable = React.createClass( {
 			} ) ;
 
 			items = items.concat( restItems )
-			
+
 			dataset.reset( items, fields );
 
 			if ( this.state.sortCol ) {
@@ -208,38 +209,47 @@ export default DataTable = React.createClass( {
 							// if((readRow._item && readRow._item.children &&  readRow._item.children.length > 0)){
 							// 	let contractor =
 							// }
-							return (
-								<tbody key={idx}>
-							<tr
-								className 	= "data-grid-row"
-								key 		= { idx }
-								onClick 	= { () => { this.props.onClick( readRow._item ) } }
-							>
-								<td className="data-grid-select-col">&nbsp;</td>
-								{ cols.map( (col,colIdx) => {
+							let query = {
+									"facility._id" : Session.getSelectedFacility()._id,
+									"type":"Contract",
+									"serviceType.name":readRow["Service Type"].val
+								}
+							let docs = Documents.find(query).fetch();
+							if(docs.length > 0){
 
-									return (
-										<td
-											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-											key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
-											style 		= {readRow[col].style?readRow[col].style:{}}
-										>
-											{readRow[col].val ? readRow[col].val : null}
+								return (
+									<tbody key={idx}>
+										<tr
+											className 	= "data-grid-row"
+											key 		= { idx }
+											onClick 	= { () => { this.props.onClick( readRow._item ) } }
+											>
+												<td className="data-grid-select-col">&nbsp;</td>
+												{ cols.map( (col,colIdx) => {
 
-										</td>
-									)
+													return (
+														<td
+															className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+															key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+															style 		= {readRow[col].style?readRow[col].style:{}}
+															>
+																{readRow[col].val ? readRow[col].val : null}
 
-								} ) }
-							</tr>
-							{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
+															</td>
+														)
 
-									return (
+													} ) }
+												</tr>
+												{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
 
-										<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
-									)
-							}) : null }
-						</tbody>
-							)
+													return (
+
+														<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
+													)
+												}) : null }
+											</tbody>
+										)
+							}
 
 						})}
 
