@@ -9,6 +9,7 @@ export default function DocIconHeader( props ) {
 	return (
 		<div>
 		<table style={{fontStyle:"italic"}}>
+			<tbody>
             <tr>
                 <td><div style={{height:"18px",width:"18px",background:"#ffffcc"}}></div></td>
                 <td style = {{ color: "rgb(153, 153, 153)" }}>Expires within 2 weeks</td>
@@ -17,6 +18,7 @@ export default function DocIconHeader( props ) {
                 <td><div style={{height:"18px",width:"18px",background:"#FFE0E0"}}></div></td>
                 <td style = {{ color: "rgb(153, 153, 153)" }}>Expired Document</td>
             </tr>
+            </tbody>
         </table>
 		<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}}>
 			<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}>&nbsp;</span>

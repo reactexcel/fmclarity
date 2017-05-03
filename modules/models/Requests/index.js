@@ -9,6 +9,7 @@ import RequestsTable from './imports/components/RequestsTable.jsx';
 
 import CreateRequestForm from './imports/schemas/CreateRequestForm.jsx';
 import SupplierCreateRequestForm from './imports/schemas/SupplierCreateRequestForm.jsx';
+import CreateDocUpdateRequestForm from './imports/schemas/CreateDocUpdateRequestForm.jsx';
 
 import RequestSearch from './imports/schemas/RequestSearchController';
 import RequestActions from './actions.jsx';
@@ -25,6 +26,7 @@ export {
 	RequestsTable,
 	CreateRequestForm,
 	SupplierCreateRequestForm,
+	CreateDocUpdateRequestForm,
 	RequestPanel,
 
 	RequestActions,

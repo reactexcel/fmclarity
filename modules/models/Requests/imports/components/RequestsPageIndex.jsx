@@ -38,7 +38,7 @@ export default class RequestsPageIndex extends Component {
 	}
 
 	componentWillMount() {
-		Perf.start();
+		//Perf.start();
 	}
 
 	componentDidMount() {
