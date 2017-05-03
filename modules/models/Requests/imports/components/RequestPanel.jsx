@@ -130,10 +130,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         title = 'PPM';
 
         if ( nextDate ) {
-            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
         }
         if ( previousDate ) {
-            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM YYYY' );
         }
 
     } else {
