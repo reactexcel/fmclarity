@@ -97,7 +97,7 @@ export default TeamGlobalSupplierPage = React.createClass( {
 		}
 		idList = _.pluck(team.suppliers, '_id');
 		return <div className="facility-page animated fadeIn">
-			<div style = { { paddingTop:"50px" } }>
+			<div style = { { paddingTop:"10px"} }>
 			<SupplierFilter suppliers={suppliers} onChange={ ( suppliers ) => { this.setState({suppliers})}} team={this.props.team}/>
             <div className ="row" style={{'marginLeft':'0px','marginTop':'20px'}}>
 	            { suppliers ? suppliers.map( ( supplier, idx ) => {
