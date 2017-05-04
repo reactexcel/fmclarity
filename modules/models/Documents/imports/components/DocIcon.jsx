@@ -118,7 +118,7 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
-            { docAlmostExpires  ?
+            { docAlmostExpires || docExpired  ?
                 item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
                     <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                         <a   href={url}
