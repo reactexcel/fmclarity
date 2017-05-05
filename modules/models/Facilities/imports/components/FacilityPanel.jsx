@@ -65,8 +65,9 @@ function FacilityPanel( { item } ) {
 
 			  		 />
 		} )
-	    
+
 	  }
+
 
     return (
         <DropFileContainer model={Facilities}>

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
+import LinearProgress from 'material-ui/LinearProgress';
 
 import '../services/ComplianceEvaluationService.jsx';
 
@@ -25,7 +26,7 @@ export default ComplianceListTile = React.createClass( {
 
   getMeteorData() {
     var rule = this.props.item;
-    var name, info, results, message;
+    var name, info, results, message, loader;
     switch ( rule.type ) {
       case "Document exists":
         name = rule.docType + " exists";
@@ -48,16 +49,34 @@ export default ComplianceListTile = React.createClass( {
         info = "" + rule.docName;
         break;
     }
-    results = ComplianceEvaluationService.evaluateRule( rule ) || {};
+    results = this.props.results || {}//ComplianceEvaluationService.evaluateRule( rule ) || {};
     message = results.message || {};
-
-    return { rule, name, info, results, message }
+    loader = results.loader;
+    return { rule, name, info, results, message, loader }
   },
-
+  getInitialState(){
+      return {
+          showLoader: false,
+      };
+  },
+  updateList(newState){
+      let component = this;
+      setTimeout( () => {
+          if (component.props.onChange) {
+              component.props.onChange();
+          }
+      },0);
+  },
+  componentWillRecivesProps(){
+          this.setState({
+              showLoader: false,
+          })
+  },
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
     if ( rule.document && rule.document.query ){
-        let query = JSON.parse(rule.document.query);
+        //let query = JSON.parse(rule.document.query);
+        let query = rule.document.query;
         rule.document.query = query;
     }
     if ( rule.docName && !rule.document ) {
@@ -96,6 +115,7 @@ export default ComplianceListTile = React.createClass( {
     var message = this.data.message
     var results = this.data.results;
     var info = this.data.info;
+    var loader = this.data.loader;
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
@@ -106,25 +126,47 @@ export default ComplianceListTile = React.createClass( {
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
           {
-            results.passed?
-              <span style={{color:"green"}}>
+            this.state.showLoader && loader?
+                <div style={{width:"30%"}}>
+                    <LinearProgress mode="indeterminate" color='#0152b5'/>
+                </div>:
+            (results.passed?
+              <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
                 {message.detail?
-                    <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
-                      { _.isString(message.detail)?message.detail:message.detail()}
+                    <span>: <span
+                        className="resolution-link"
+                        onClick={()=>{
+                            if (loader) {
+                                this.setState({
+                                    showLoader: true,
+                                })
+                            }
+                            results.resolve(rule, this.updateList)
+                        }}>
+                        {results.message.lastCompleted_nextDueDate && !_.isEmpty(results.message.lastCompleted_nextDueDate) ? results.message.lastCompleted_nextDueDate:_.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
-              </span>
+              </div>
             :
-              <span style={{color:"red"}}>
+              <div style={{color:"red", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-exclamation-triangle"/> {message.summary||"failed"}</b>
                 {
                     message.detail?
-                      <span>: <span className="resolution-link" onClick={()=>{results.resolve(rule)}}>
+                      <span>: <span
+                          className="resolution-link"
+                          onClick={()=>{
+                              if (loader) {
+                                  this.setState({
+                                      showLoader: true,
+                                  })
+                              }
+                              results.resolve(rule, this.updateList)
+                          }}>
                         { _.isString(message.detail)?message.detail:message.detail()}
                       </span></span>
                     :null
                 }
-              </span>
+            </div>)
           }
         </div>
       </div>

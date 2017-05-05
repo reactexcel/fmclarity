@@ -27,10 +27,14 @@ export default DocumentSchema = {
 			items: DocTypes
 		}
 	},
-
-
 	description: {
 		label: "Description",
+		optional: true,
+		type: "string",
+		input: TextArea
+	},
+	comment: {
+		label: "Comment",
 		optional: true,
 		type: "string",
 		input: TextArea
@@ -133,6 +137,7 @@ export default DocumentSchema = {
 				"Insurance",
 				"Invoice",
 				"Quote",
+				"Contract"
 			].indexOf( item.type ) > -1;
 		},
 
@@ -193,7 +198,12 @@ export default DocumentSchema = {
 
 	},
 	serviceType: {
-		input: Select,
+		input:( props ) => {
+				return <Select {...props}
+								onChange={( value ) => {
+										props.onChange(value);
+								}}/>
+		},
 		label: "Service type",
 		optional: true,
 		type: "object",
@@ -233,7 +243,41 @@ export default DocumentSchema = {
 				items = team.getAvailableServices();
 			}
 
-
+			return {
+				items: items
+			}
+		}
+	},
+	subServiceType: {
+		input:( props ) => {
+				return <Select {...props}
+								onChange={( value ) => {
+								//		props.serviceType.children = {};
+										props.onChange(value);
+								}}/>
+		},
+		label: "Sub Service type",
+		optional: true,
+		type: "object",
+		size: 6,
+		condition: function( item ) {
+			if(item && item.serviceType){
+				if(item.serviceType.children && item.serviceType.children.length > 0){
+					return true
+				}else{
+					return false
+				}
+			}
+		},
+		options: function( item ) {
+			let items ;
+			if(item && item.serviceType){
+				if(item.serviceType.children && item.serviceType.children.length > 0){
+					items = item.serviceType.children
+				}else{
+					items = null;
+				}
+			}
 			return {
 				items: items
 			}
@@ -588,7 +632,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date client executed",
 		optional: true,
