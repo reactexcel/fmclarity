@@ -579,7 +579,20 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			if ([
+				'Bank Guarantee',
+				'Contract',
+				'Emergency Management',
+				'Insurance',
+				'Lease',
+				'Quote',
+				'Register',
+				'Registration'
+			].indexOf( item.type ) > -1) {
+				return new Date();
+			}
+			return null;
+			
 		},
 		label: "Expiry",
 		optional: true,

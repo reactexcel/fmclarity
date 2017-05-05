@@ -89,7 +89,7 @@ export default function DocIcon( props ) {
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
-		<div className={"doc-icon " + (docAlmostExpires ? 'expiring-doc' : '') + (docExpired ? 'expired-doc' : '')} onClick={handleClick}>
+		<div className={"doc-icon " + (docAlmostExpires ? 'expiring-doc ' : '') + (docExpired ? 'expired-doc' : '')} onClick={handleClick}>
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
