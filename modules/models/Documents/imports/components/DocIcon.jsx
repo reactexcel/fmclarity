@@ -85,7 +85,7 @@ export default function DocIcon( props ) {
     }
     var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
     let docAlmostExpires = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
-    let docExpired = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 0;
+    let docExpired = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
