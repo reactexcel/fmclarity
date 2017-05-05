@@ -14,6 +14,8 @@ import { Requests } from '/modules/models/Requests';
 import { Documents } from '/modules/models/Documents';
 import { DefaultComplianceRule } from '/modules/features/Compliance';
 import { ContactCard } from '/modules/mixins/Members';
+import { Facilities } from '/modules/models/Facilities';
+import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
 import moment from 'moment';
 
@@ -90,10 +92,12 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
+
 			let supplier = item.data?item.data.supplier:item.supplier;
 			if( supplier != null ){
 				return {
-					val: <ContactCard item={supplier} />
+					val: <ContactCard item={supplier} />,
+					name: supplier.name
 				}
 			}
 			return {
@@ -118,37 +122,53 @@ const RequestsStatusReport = React.createClass( {
 					let docs = Documents.find(query).fetch();
 					if(docs.length > 0){
 
-						if(docs.length > 1){
+						if(Object.keys(item).length > 3){
 							docs = _.filter(docs,d => !d.subServiceType.name)
 						}
 						let amount = null;
-						if ( docs[0] ) {
+						if ( docs.length > 0) {
 							amount = docs[0].totalValue;
 							return {
 								val: `$${amount}`
 							};
 						}
-						return {
-							val: ""
-						};
 					}
+					return {
+						val: "--"
+					};
         },
         "Comments": ( item ) => {
-					// console.log(item);
-						if(item.data){
-							if ( item.data.baseBuilding == ''){
-	                return {
-											val: "N/A"
-	                };
-	            }else{
-								return {
-									val: "Tenant Responsibility"
-		            };
+					let query
+					if(Object.keys(item).length > 3){
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"serviceType.name":item.name
+						}
+					}else{
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"subServiceType.name":item.name
+						}
+					}
+					let docs = Documents.find(query).fetch();
+					if(docs.length > 0){
+
+						if(Object.keys(item).length > 3){
+							docs = _.filter(docs,d => !d.subServiceType.name)
+						}
+
+						//console.log(docs);
+						if(docs.length > 0 && docs[0].hasOwnProperty("comment")){
+							return {
+								val : docs[0].comment
 							}
 						}
-            return {
-                val: "Tenant Responsibility"
-            };
+						return {
+							val : '--'
+						}
+					}
         },
         "Status": ( item ) => {
 					let query
@@ -168,17 +188,19 @@ const RequestsStatusReport = React.createClass( {
 					let docs = Documents.find(query).fetch();
 					if(docs.length > 0){
 
-						if(docs.length > 1){
+						if(Object.keys(item).length > 3){
 							docs = _.filter(docs,d => !d.subServiceType.name)
 						}
-						console.log(docs);
-						if (docs[0]) {
+						if (docs.length > 0) {
 							let status = (docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != '') ? "Fully Executed" : "Supplier Executed"
 							// if ( moment(expiryDate).isBefore(moment().endOf("day")) ) {
 								return {
 									val: <span>{status}</span>
 								}
 							// }
+						}
+						return {
+							val: '--'
 						}
 					}
         },
@@ -200,17 +222,20 @@ const RequestsStatusReport = React.createClass( {
 					let docs = Documents.find(query).fetch();
 					if(docs.length > 0){
 
-						if(docs.length > 1){
+						if(Object.keys(item).length > 3){
 							docs = _.filter(docs,d => !d.subServiceType.name)
 						}
 						let expiryDate = null;
-						if ( docs[0]) {
+						if ( docs.length > 0) {
 							expiryDate = docs[0].expiryDate;
-						}
-						if(expiryDate){
-							return {
-								val: moment(expiryDate).format("DD-MMM-YY")
+							if(expiryDate){
+								return {
+									val: moment(expiryDate).format("DD-MMM-YY")
+								}
 							}
+						}
+						return {
+							val: '--'
 						}
 					}
         }
@@ -219,6 +244,26 @@ const RequestsStatusReport = React.createClass( {
     	this.setState({
     		dataset:newdata,
     	});
+    },
+		onChange(data){
+			this.setState({data : data})
+		},
+ 		showFileDetailsModal(doc) {
+				Modal.show( {
+						content: <DocViewEdit
+				item = {doc}
+				onChange = { (data) => { this.onChange(data); }}
+				model={Facilities}
+				team = {Session.getSelectedTeam()}/>
+				} )
+		},
+		handleClick(doc) {
+			console.log(doc);
+			if(doc != null){
+				this.showFileDetailsModal(doc);
+			}else{
+				this.showFileDetailsModal({"type":"Contract"});
+			}
     },
 
 	render() {
@@ -233,7 +278,7 @@ const RequestsStatusReport = React.createClass( {
 			<div>
                 <h3>Service Contract</h3>
 				<div className = "ibox" ref="printable">
-					<DataTable items={data||{}} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					<DataTable items={data||{}} fields={fields} includeActionMenu={true} MBMreport ={true} handleClick={this.handleClick} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)

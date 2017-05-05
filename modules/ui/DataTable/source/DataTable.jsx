@@ -66,7 +66,7 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
-		console.log("[][][][][][][]");
+		//console.log("[][][][][][][]");
 		//Perf.start();
 		this.update( this.props );
 		if (this.props.setDataSet) {
@@ -83,7 +83,6 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		console.log("111111111111111");
 		this.update( props );
 	},
 
@@ -122,7 +121,7 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
-		console.log(filteredRows.length);
+		//console.log(filteredRows.length);
 		//console.log( rows );
 		var unreadRows=[];
 		var readRows =[];
@@ -204,50 +203,95 @@ export default DataTable = React.createClass( {
 						})}
 
 						{readRows.map((readRow, idx)=>{
-							// console.log(readRow);
-							let hideChildContractor = false;
-							// if((readRow._item && readRow._item.children &&  readRow._item.children.length > 0)){
-							// 	let contractor =
-							// }
-							let query = {
+							if(this.props.MBMreport){
+								let hideChild = false
+								let query1 = {
 									"facility._id" : Session.getSelectedFacility()._id,
 									"type":"Contract",
 									"serviceType.name":readRow["Service Type"].val
 								}
-							let docs = Documents.find(query).fetch();
-							if(docs.length > 0){
+								let docs = Documents.find(query1).fetch();
+								if(docs.length > 0){
+									docs = _.filter(docs,d => !d.subServiceType.name)
+									if(docs.length > 1){
+										docs = _.filter(docs,d => !d.subServiceType.name)
+									}
+									if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
+
+										let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
+										if(arr.length == readRow._item.children.length){
+											hideChild = true
+										}
+										//console.log(arr);
+									}
+									return (
+										<tbody key={idx}>
+											<tr
+												className 	= "data-grid-row"
+												key 		= { idx }
+												onClick 	= { () => { this.props.handleClick( docs.length > 0 ? docs[0] : null ) } }
+												>
+													<td className="data-grid-select-col">&nbsp;</td>
+													{ cols.map( (col,colIdx) => {
+
+														return (
+															<td
+																className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+																key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+																style 		= {readRow[col].style?readRow[col].style:{}}
+																>
+																	{readRow[col].val ? readRow[col].val : null}
+
+																</td>
+															)
+
+														} ) }
+													</tr>
+													{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0 && !hideChild) ? readRow._item.children.map((val,i)=>{
+														let query = {
+															"facility._id" : Session.getSelectedFacility()._id,
+															"type":"Contract",
+															"subServiceType.name":val.name
+														}
+														let childDoc = Documents.find(query).fetch();
+														if(childDoc.length > 0){
+
+															return (
+
+																<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} onClick={this.props.handleClick} doc = {childDoc[0]} cols={cols} fields={this.props.fields}/>
+															)
+														}
+													}) : null }
+												</tbody>
+											)
+										}
+
+							}else{
 
 								return (
-									<tbody key={idx}>
-										<tr
-											className 	= "data-grid-row"
-											key 		= { idx }
-											onClick 	= { () => { this.props.onClick( readRow._item ) } }
-											>
-												<td className="data-grid-select-col">&nbsp;</td>
-												{ cols.map( (col,colIdx) => {
+									<tbody key = { idx }>
+									<tr
+										className 	= "data-grid-row"
+										key 		= { idx }
+										onClick 	= { () => { this.props.onClick( readRow._item ) } }
+										>
+											<td className="data-grid-select-col">&nbsp;</td>
+											{ cols.map( (col,colIdx) => {
 
-													return (
-														<td
-															className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-															key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
-															style 		= {readRow[col].style?readRow[col].style:{}}
-															>
-																{readRow[col].val ? readRow[col].val : null}
+												return (
+													<td
+														className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+														key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+														style 		= {readRow[col].style?readRow[col].style:{}}
+														>
+															{readRow[col].val}
 
-															</td>
-														)
-
-													} ) }
-												</tr>
-												{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
-
-													return (
-
-														<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
+														</td>
 													)
-												}) : null }
-											</tbody>
+
+												} ) }
+											</tr>
+										</tbody>
 										)
 							}
 
