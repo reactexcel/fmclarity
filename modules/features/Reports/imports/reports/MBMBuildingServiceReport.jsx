@@ -65,12 +65,16 @@ const MBMBuildingServiceReport = React.createClass( {
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
+						console.log(facility);
             d = services.map( function( s, idx ){
-                let dataset = queries.map( function(q){
-                    q["service.name"] = s.name;
-                    return Requests.find( q ).count();
-                });
-                return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							if(s != null){
+
+								let dataset = queries.map( function(q){
+									q["service.name"] = s.name;
+									return Requests.find( q ).count();
+								});
+								return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							}
             });
             console.log(d);
         }
@@ -179,7 +183,7 @@ const MBMBuildingServiceReport = React.createClass( {
 					<h2>Building Service Requests {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
+					<div style={{width:"630px","height":"300px",paddingLeft:"20%"}}>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
@@ -307,8 +311,8 @@ const SingleServiceRequest = React.createClass( {
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
-						<canvas id={"bar-chart-" + this.props.id}></canvas>
+					<div style={{width:"630px","height":"300px",paddingLeft:"20%"}}>
+						<canvas id={"bar-chart-" + this.props.id} style={{width:"630px","height":"300px"}}></canvas>
 					</div>
 				</div>
 				<div className="data-table">
