@@ -29,7 +29,7 @@ const view = new Action( {
         Modal.show( {
             id: `viewRequest-${request._id}`,
             content: //<DropFileContainer request={request} model={Requests}>
-                <RequestPanel item = { request } />
+                <RequestPanel item = { request } callback={callback}/>
                 //</DropFileContainer>
         } )
         callback( request );
