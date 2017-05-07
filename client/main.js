@@ -5,11 +5,10 @@ import { Actions } from '/modules/core/Actions';
 //console.log( { Actions, Routes } );
 function loadExternalScripts() {
 
-    // load browser-update.org browser compatibility script
-    loadBrowerCompatibilityScript();
-
-    // load google map api script
-    loadGoogleMapApiScript();
+    loadBrowerCompatibilityScript();// load browser-update.org browser compatibility script
+    fixIEirregularScroll();// fixes internet explorer problem of scrolling fixed html elements which brings messy displays
+    
+    loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
 
 }
@@ -34,6 +33,17 @@ function sortableApiScript() {
     link.href = 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css';
     link.async = true;
     document.body.appendChild( link );
+}
+
+function fixIEirregularScroll() {
+     if(navigator.userAgent.match(/MSIE 10/i) || navigator.userAgent.match(/Trident\/7\./) || navigator.userAgent.match(/Edge\/12\./)) {
+        $('body').on("mousewheel", function () {
+          event.preventDefault();
+          var wd = event.wheelDelta;
+          var csp = window.pageYOffset;
+          window.scrollTo(0, csp - wd);
+        });
+    }
 }
 
 function loadBrowerCompatibilityScript() {
