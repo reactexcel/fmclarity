@@ -166,8 +166,7 @@ const createRequest = new Action( {
                                 method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-
-                                method = 'Issues.issue';
+                                method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     memberThreshold = null,
@@ -204,12 +203,19 @@ const createRequest = new Action( {
                                 /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
+                                if(newRequest.haveToIssue == true){
+                                    method = 'Issues.issue';
+                                }
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
                                     team.setMemberThreshold( owner, newThreshold.toString() );
                                 }*/
                             }
 
+                        }
+                        if(newRequest.haveToIssue == true){
+                            method = 'Issues.issue';
+                            newRequest = _.omit(newRequest,'haveToIssue')
                         }
                     }
                     Meteor.call( method, newRequest );
