@@ -63,7 +63,6 @@ export default class DocExplorer extends React.Component {
             newDocumentsList = this.getDocsList(),
             listLength = oldDocumentsList.length + newDocumentsList.length,
             role = Meteor.user().getRole();
-
         return (
             <div>
 
