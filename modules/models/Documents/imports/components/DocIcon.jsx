@@ -24,8 +24,7 @@ export default function DocIcon( props ) {
 				onChange = { (data) => { props.onChange(data); }}
 				model={props.model}
 				selectedItem={props.selectedItem}
-				team = {props.team}
-        add = {props.add ? props.add : false}/>
+				team = {props.team}/>
         } )
     }
 

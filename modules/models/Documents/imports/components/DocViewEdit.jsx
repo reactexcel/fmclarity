@@ -172,21 +172,13 @@ const DocViewEdit = React.createClass( {
     render() {
         return (
             <div style={{padding:"15px"}}>
-              {this.props.add ?
-                <AutoForm
-        					model 		= { Documents }
-        					form 		= { DocForm }
-        					item 		= { this.data.doc }
-        					onSubmit 	= { this.handleChange  }
-        				/> :
-                <AutoForm
-                  model 		= { Documents }
-                  form 		= { DocForm }
-                  item 		= { this.data.doc }
-                  onSubmit 	= { this.handleChange  }
-                  hideSubmit  = { this.state.isEditable ? null : true }
-                />
-              }
+				<AutoForm
+					model 		= { Documents }
+					form 		= { DocForm }
+					item 		= { this.data.doc }
+					onSubmit 	= { this.handleChange  }
+                    hideSubmit  = { this.state.isEditable ? null : true }
+				/>
 			</div>
         )
     }

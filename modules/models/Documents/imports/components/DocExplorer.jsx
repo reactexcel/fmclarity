@@ -105,7 +105,6 @@ export default class DocExplorer extends React.Component {
                     selectedItem = { this.state.item }
                     team = { this.state.item}
                     role = {role}
-                    add
                 />
 
 			</div>
