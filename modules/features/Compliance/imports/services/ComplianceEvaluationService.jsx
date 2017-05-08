@@ -113,6 +113,7 @@ ComplianceEvaluationService = new function() {
                              Modal.show( {
                                 content: <DocViewEdit
                                     item = { docForModal }
+                                    model={Facilities}
                                     onChange={ ( docForModal ) => {
                                         callback({});
                                     }}
@@ -216,6 +217,7 @@ ComplianceEvaluationService = new function() {
                         Modal.show( {
                             content: <DocViewEdit
                                 item = { doc }
+                                model={Facilities}
                                 onChange={ ( doc ) => {
                                     callback({});
                                 }}
@@ -335,110 +337,72 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM event completed": function( rule, facility, service ) {
-            var event, query;
+            var event;
             if ( rule.event ) {
-                query = {
+                //event = Requests.findOne(rule.event._id);
+                event = Requests.findOne( {
                     'facility._id': rule.facility._id,
                     name: rule.event,
-                    "service.name": rule.service.name,
-                    status: {$in:["PMP"]}
-                }
-                if (rule.subservice) query["subservice.name"] = rule.subservice.name;
-                //event = Requests.findOne(rule.event._id);
-                event = Requests.findOne( query );
+                    status: "Complete",
+                    //type: "Ad-Hoc",
+                    priority: "PMP"
+                } );
             }
             if ( event ) {
-                let nextDate = event.getNextDate(),
+                let nextDate = event.getNextDate();
                 previousDate = event.getPreviousDate();
-
-                /*let message = Messages.findOne( this.props.item._id );
-                let target = message.getTarget ? message.getTarget() : null,
-                let value = moment(target.closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')
-                console.log(value,"value--------------------")*/
-
-
-                let nextRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
-                    status: "Complete",
-                    dueDate:nextDate
-                })),
-                previousRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
-                    status: "Complete",
-                    dueDate:previousDate
-                })),
+                nextRequest = event.findCloneAt( nextDate );
+                previousRequest = event.findCloneAt( previousDate );
                 nextDateString = null,
-                frequency = event.frequency || {},
-                previousDateString = null;
+                    frequency = event.frequency || {},
+                    previousDateString = null;
+
                if( nextDate ) {
                    nextDateString = moment( nextDate ).format('DD/MM/YY');
                }
                if( previousDate ) {
                    previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
-               if (nextRequest || previousRequest) {
-                   return _.extend( {}, defaultResult, {
-                       passed: true,
-                       message: {
-                           summary: "passed",
-                           lastCompleted_nextDueDate: `${previousDate?'Last completed - '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date - ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`,
-                           detail: function(){
-                               return (
-                                   <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
-                                       <div className = "issue-summary-col" style = {{width:"45%"}}
-                                           onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (previousRequest)
-                                                    Modal.show( {
-                                                        id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { previousRequest } />
-                                                    } );
-                                           }}
-                                           >
-                                           {( previousDateString && previousRequest) ?
-                                               <div>
-                                                   <span>Last <b>{ previousDateString }</b> </span>
-                                                   { previousRequest ?
-                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
-                                                   : "N/A" }
-                                               </div>
-                                           : <div>Last N/A</div> }
-                                       </div>
-                                       <div className = "issue-summary-col" style = {{width:"45%"}}
-                                           onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (nextRequest)
-                                                    Modal.show( {
-                                                        id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { nextRequest } />
-                                                    } );
-                                           }}
-                                           >
-                                           { (nextDateString && nextRequest) ?
-                                               <div>
-                                                   <span>Next <b>{ nextDateString }</b> </span>
-                                                   { nextRequest ?
-                                                       <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
-                                                   : "N/A"}
-                                               </div>
-                                           : <div>Next N/A</div> }
-                                       </div>
-                                   </div>
-                                );
-                            }
-                        },
-                        data: event,
-                        resolve: function() {
-                            Modal.show( {
-                                id: `viewRequest-${event._id}`,
-                                content: <RequestPanel item = { event } />
-                            } );
+               return _.extend( {}, defaultResult, {
+                   passed: true,
+                   message: {
+                       summary: "passed",
+                       //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                       detail: function(){
+                           return (
+                               <span style={{position:"absolute", bottom: "15%", width: "37%"}}>
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       {( previousDateString && previousRequest) ?
+                                           <span>
+                                               <span>Last <b>{ previousDateString }</b> </span>
+                                               { previousRequest ?
+                                                   <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
+                                               : null }
+                                           </span>
+                                       : <span>Last N/A</span> }
+                                   </span>
+                                   <span className = "issue-summary-col" style = {{width:"45%"}}>
+                                       { (nextDateString && nextRequest) ?
+                                           <span>
+                                               <span>Next <b>{ nextDateString }</b> </span>
+                                               { nextRequest ?
+                                                   <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
+                                               : <span>Next N/A</span> }
+                                           </span>
+                                       : null }
+                                   </span>
+                               </span>
+                            );
                         }
-                    } )
-               }
-
+                    },
+                    data: event,
+                    resolve: function() {
+                        Modal.show( {
+                            id: `viewRequest-${event._id}`,
+                            content: <RequestPanel item = { event } />
+                        } );
+                    }
+                } )
             }
             return _.extend( {}, defaultResult, {
                 passed: false,
@@ -447,17 +411,16 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: false,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let q = {
+                    let request = Requests.findOne( {
                         "facility._id": facility._id,
+                        type: 'Preventative',
                         status: "PMP",
-                        "service.name": rule.service.name,
+                        service: rule.service,
                         name: rule.event
-                    };
-                    if (rule.subservice) q["subservice.name"] = rule.subservice.name;
-                    let request = Requests.findOne( q );
+                    } );
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
@@ -476,10 +439,9 @@ ComplianceEvaluationService = new function() {
                             status: 'PMP',
                             name: rule.event,
                             frequency: rule.frequency,
-                            service: rule.service,
-                            subservice: rule.subservice || {},
+                            service: rule.service
                         } );
-                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
                     //    Meteor.call( 'Issues.save', newRequest );
                 }
