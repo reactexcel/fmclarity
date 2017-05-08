@@ -112,6 +112,7 @@ ComplianceEvaluationService = new function() {
                              Modal.show( {
                                 content: <DocViewEdit
                                     item = { docForModal }
+                                    model={Facilities}
                                     onChange={ ( docForModal ) => {
                                         callback({});
                                     }}
@@ -215,6 +216,7 @@ ComplianceEvaluationService = new function() {
                         Modal.show( {
                             content: <DocViewEdit
                                 item = { doc }
+                                model={Facilities}
                                 onChange={ ( doc ) => {
                                     callback({});
                                 }}
@@ -386,7 +388,6 @@ ComplianceEvaluationService = new function() {
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
                                                 e.stopPropagation();
-                                                console.log("1111111")
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
@@ -406,7 +407,6 @@ ComplianceEvaluationService = new function() {
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
                                                 e.stopPropagation();
-                                                console.log("2222222222")
                                                 if (nextRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,

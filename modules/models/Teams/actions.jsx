@@ -215,7 +215,7 @@ const createRequest = new Action( {
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
-                    //callback( newRequest );
+                    callback? callback( newRequest ): null;
                 }
             }
             />
