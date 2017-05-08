@@ -219,7 +219,7 @@ export default DataTable = React.createClass( {
 									if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
 
 										let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
-										if(arr.length == readRow._item.children.length){
+										if(arr.length == readRow._item.children.length && docs.length > 0){
 											hideChild = true
 										}
 										//console.log(arr);
