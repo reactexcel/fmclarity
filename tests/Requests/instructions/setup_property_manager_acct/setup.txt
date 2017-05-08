@@ -1,0 +1,6 @@
+Setup Property Manager Account to enable access to Base-building Work Orders.
+===========================================================================
+
+1. Follow screenshot steps shown
+2. Create a new Work Order having a service type that is Base-building as
+   specified in the Portfolio>Facility>Services tab. 
