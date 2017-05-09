@@ -398,8 +398,16 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
+                            let team = Session.getSelectedTeam();
+                            let costAbleToIssue = true;
+                            if(team.defaultCostThreshold){
+                                costAbleToIssue = false;
+                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                            }
+                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
                             props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
-                            onServiceChange = props.changeSubmitText
                             props.onChange(value);
                         }}/>
             } ,
@@ -694,6 +702,24 @@ const RequestSchema = {
             size: 6,
             defaultValue: '500',
             input: Currency,
+            input: (props)=>{
+                return <Currency {...props}
+                    onChange={(value)=>{
+                        props.onChange(value);
+                        let cost_withIn_teamCost = true
+                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
+                        let team = Session.getSelectedTeam();
+                        if(team.defaultCostThreshold){
+                            cost_withIn_teamCost = false;
+                            let actualCost = value;
+                            actualCost = actualCost.replace (",","");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                    }}
+                />
+            },
             condition: ( request ) => {
                 if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
                     return false;
@@ -917,7 +943,15 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                     onChange={( value ) => {
-                        props.changeSubmitText(value);
+                        let team = Session.getSelectedTeam();
+                        let costAbleToIssue = true;
+                        if(team.defaultCostThreshold){
+                            costAbleToIssue = false;
+                            let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                         props.onChange(value);
                     }}/>
             } ,
@@ -987,6 +1021,7 @@ const RequestSchema = {
                     (
                         request.status != 'Issued' &&
                         request.type != 'Booking' &&
+                        //Teams.isServiceTeam( selectedTeam )
                         Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false

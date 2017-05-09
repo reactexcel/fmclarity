@@ -91,13 +91,16 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit() {
+	submit(haveToIssue) {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
+				if(haveToIssue == true){
+					item.haveToIssue = true
+				}
 				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
@@ -243,18 +246,24 @@ class AutoForm extends React.Component {
 				{ this.getForm() }
 
 		        { !this.props.hideSubmit ?
+						<div style={ {textAlign:"right", clear:"both"}}>
+							{this.state.submitText && this.state.submitText == "Issue"?<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+								>
+								{this.state.submitText}
+							</button>:null}
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit() } }
+							>
+								{this.props.submitText?this.props.submitText:'Submit'}
+							</button>
+						</div>
 
-				<div style={ {textAlign:"right", clear:"both"}}>
-					<button
-						type 		= "button"
-						className 	= "btn btn-flat btn-primary"
-						onClick 	= { ( ) => { this.submit() } }
-					>
 
-						{this.state.submitText?this.state.submitText:
-						    (this.props.submitText?this.props.submitText:'Submit')}
-					</button>
-				</div>
 
 				: this.props.submitFormOnStepperNext ?
 
