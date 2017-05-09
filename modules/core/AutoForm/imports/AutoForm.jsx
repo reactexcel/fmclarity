@@ -194,9 +194,6 @@ class AutoForm extends React.Component {
 				if ( !item[ key ] ) {
 					item[ key ] = '';
 				}
-				if(key === 'facility'){
-					item [key] = Session.getSelectedFacility();
-				}
 
 				if ( Input == null ) {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
