@@ -285,7 +285,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
-	/*
+	
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -294,9 +294,9 @@ export default DocumentSchema = {
 		size: 6,
 		condition: function( item ) {
 			return [
-				"Audit",
+				// "Audit",
 				"Contract",
-				"Emergency Management",
+				/*"Emergency Management",
 				"Induction",
 				"Inspection",
 				"Insurance",
@@ -306,11 +306,47 @@ export default DocumentSchema = {
 				"Register",
 				"Registration",
 				"Service Report",
-				"SWMS",
-			].indexOf( item.type ) > -1;
+				"SWMS",*/
+			].indexOf( item.type ) > -1 && item.serviceType;
 		},
+		options: ( item ) => {
+                let facility = null,
+                    supplier = null,
+                    role = Meteor.user().getRole();
+
+                if ( item.facility && item.facility._id ) {
+                    facility = Facilities.findOne( item.facility._id );
+                    /*if( facility ) {
+                        console.log( facility.getSuppliers() );
+                    }*/
+                }
+
+                return {
+                    items: facility && facility.getSuppliers ? facility.getSuppliers() : null,
+                    view: ContactCard,
+                    addNew: {
+                        //Add new supplier to document and selected facility.
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        label: "Create New",
+                        onAddNewItem: ( callback ) => {
+                            import { TeamStepper } from '/modules/models/Teams';
+                            Modal.show( {
+                                content: <TeamStepper item = { supplier }
+                                facility = { facility }
+                                onChange = {
+                                    ( supplier ) => {
+                                        facility.addSupplier( supplier );
+                                        callback( supplier );
+                                    }
+                                }
+                                />
+                            } )
+                        }
+                    }
+                }
+            },
 	},
-	*/
+	
 	issuer: {
 		input: Text,
 		label: "Insurer",
