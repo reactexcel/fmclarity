@@ -32,16 +32,14 @@ export default DataTable = React.createClass( {
 			dataset = this.state.dataset;
 			let user = Meteor.user();
 		if ( items && items.length ) {
-			//fields = this.props.fields;
-		//	console.log(fields);
 
 			let updatedItems = _.filter(items, (i) => typeof i.lastUpdate !== "undefined"),
 				restItems = _.filter(items, (i) => typeof i.lastUpdate === "undefined");
 
 			items = updatedItems.sort( (i, j) => {
-					let a = i.lastUpdate.valueOf(),
-					  b = j.lastUpdate.valueOf();
-					return a < b ? 1 : ( a > b ? -1 : 0);
+				let a = i.lastUpdate.valueOf(),
+					b = j.lastUpdate.valueOf();
+				return a < b ? 1 : ( a > b ? -1 : 0);
 			} ) ;
 
 			items = items.concat( restItems )
@@ -66,7 +64,6 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
-		console.log("[][][][][][][]");
 		//Perf.start();
 		this.update( this.props );
 		if (this.props.setDataSet) {
@@ -83,7 +80,6 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		console.log("111111111111111");
 		this.update( props );
 	},
 
@@ -122,8 +118,6 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
-		console.log(filteredRows.length);
-		//console.log( rows );
 		var unreadRows=[];
 		var readRows =[];
 
@@ -161,6 +155,7 @@ export default DataTable = React.createClass( {
 							} ) }
 						</tr>
 					</thead>
+					<tbody>
 
 						{ filteredRows.map( (row,rowIdx) => {
 							let unread = false;
@@ -175,7 +170,7 @@ export default DataTable = React.createClass( {
 							}
 
 						})}
-						{unreadRows.map((unreadRow, idx)=>{
+						{ unreadRows.map((unreadRow, idx)=>{
 
 							return (
 							<tr
@@ -203,56 +198,57 @@ export default DataTable = React.createClass( {
 
 						})}
 
-						{readRows.map((readRow, idx)=>{
-							// console.log(readRow);
+						{ readRows.map((readRow, idx)=>{
 							let hideChildContractor = false;
-							// if((readRow._item && readRow._item.children &&  readRow._item.children.length > 0)){
-							// 	let contractor =
-							// }
 							let query = {
-									"facility._id" : Session.getSelectedFacility()._id,
-									"type":"Contract",
-									"serviceType.name":readRow["Service Type"].val
-								}
+								//"type":"Contract",
+							}
+
+							if( facility ) {
+								query[ 'facility._id' ] = facility._id;
+							}
+
+							// if 'Service Type' exists then add to query
+							if( readRow[ 'Service Type' ] ) {
+								query[ 'serviceType.name' ] = readRow[ 'Service Type' ].val;
+							}
+
 							let docs = Documents.find(query).fetch();
 							if(docs.length > 0){
 
 								return (
-									<tbody key={idx}>
-										<tr
-											className 	= "data-grid-row"
-											key 		= { idx }
-											onClick 	= { () => { this.props.onClick( readRow._item ) } }
-											>
-												<td className="data-grid-select-col">&nbsp;</td>
-												{ cols.map( (col,colIdx) => {
+									<tr
+										className 	= "data-grid-row"
+										key 		= { idx }
+										onClick 	= { () => { this.props.onClick( readRow._item ) } }
+									>
+										<td className="data-grid-select-col">&nbsp;</td>
+											{ cols.map( (col,colIdx) => {
 
-													return (
-														<td
-															className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-															key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
-															style 		= {readRow[col].style?readRow[col].style:{}}
-															>
-																{readRow[col].val ? readRow[col].val : null}
+												return (
+													<td
+														className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+														key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+														style 		= {readRow[col].style?readRow[col].style:{}}
+													>
+														{readRow[col].val ? readRow[col].val : null}
 
-															</td>
-														)
+													</td>
+												)
 
-													} ) }
-												</tr>
-												{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
+											} ) }
+											{ (readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
 
-													return (
+												return (
+													<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
+												)
 
-														<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
-													)
-												}) : null }
-											</tbody>
-										)
+											} ) : null }
+									</tr>
+								)
 							}
-
 						})}
-
+					</tbody>
 				</table>
 				</div>
 			</div>
