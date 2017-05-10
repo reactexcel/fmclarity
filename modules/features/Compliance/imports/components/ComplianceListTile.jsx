@@ -125,7 +125,7 @@ export default ComplianceListTile = React.createClass( {
           {info}
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
-          {/*this.state.showLoader && loader*/
+          {
             this.state.showLoader && loader?
                 <div style={{width:"30%"}}>
                     <LinearProgress mode="indeterminate" color='#0152b5'/>
@@ -144,7 +144,7 @@ export default ComplianceListTile = React.createClass( {
                             }
                             results.resolve(rule, this.updateList)
                         }}>
-                      { _.isString(message.detail)?message.detail:message.detail()}
+                        {results.message.lastCompleted_nextDueDate && !_.isEmpty(results.message.lastCompleted_nextDueDate) ? results.message.lastCompleted_nextDueDate:_.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
               </div>
             :

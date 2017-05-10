@@ -186,7 +186,7 @@ const FacilitySchema = {
 		 type: "object",
 		 subschema:  ServiceDetailsSchema,
 	 },
-	 
+
 	 billingDetails : {
 	 	label: "Billing Details",
 	 	type: "object",

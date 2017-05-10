@@ -112,6 +112,7 @@ ComplianceEvaluationService = new function() {
                              Modal.show( {
                                 content: <DocViewEdit
                                     item = { docForModal }
+                                    model={Facilities}
                                     onChange={ ( docForModal ) => {
                                         callback({});
                                     }}
@@ -215,6 +216,7 @@ ComplianceEvaluationService = new function() {
                         Modal.show( {
                             content: <DocViewEdit
                                 item = { doc }
+                                model={Facilities}
                                 onChange={ ( doc ) => {
                                     callback({});
                                 }}
@@ -268,7 +270,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -290,15 +291,20 @@ ComplianceEvaluationService = new function() {
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
+                let establishedRequest = requests[ numEvents - 1 ];
+                let request = Requests.findOne( establishedRequest._id );
+                let nextDate = request.getNextDate();
+                let previousDate = request.getPreviousDate();
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: `${previousDate?'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`
+                        //detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
-                    resolve: function() {
-                        let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind( establishedRequest ).run();
+                    resolve: function(r, callback) {
+                        //let establishedRequest = requests[ numEvents - 1 ];
+                        RequestActions.view.bind( establishedRequest, callback ).run();
                     }
                 } )
             }
@@ -309,7 +315,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
@@ -323,11 +329,10 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
-                        subservice: rule.subservice
+                        service: rule.service
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -344,9 +349,12 @@ ComplianceEvaluationService = new function() {
                 //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
-            if ( event ) {
-                let nextDate = event.getNextDate(),
+            let nextDate,previousDate
+            if(event){
+                nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
+            }
+            if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
                     priority: {$in:["PPM","PMP"]},
@@ -363,10 +371,10 @@ ComplianceEvaluationService = new function() {
                 frequency = event.frequency || {},
                 previousDateString = null;
                if( nextDate ) {
-                   nextDateString = moment( nextDate ).format('DD/MM/YY');
+                   nextDateString = moment( nextDate ).format('ddd Do MMM YYYY');
                }
                if( previousDate ) {
-                   previousDateString = moment( previousDate ).format('DD/MM/YY');
+                   previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
                }
                if (nextRequest || previousRequest) {
                    return _.extend( {}, defaultResult, {
@@ -383,18 +391,18 @@ ComplianceEvaluationService = new function() {
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { previousRequest } />
+                                                        content: <RequestPanel item = { previousRequest }/>
                                                     } );
                                            }}
                                            >
-                                           {( previousDateString && previousRequest) ?
-                                               <div>
-                                                   <span>Last <b>{ previousDateString }</b> </span>
-                                                   { previousRequest ?
-                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
-                                                   : "N/A" }
-                                               </div>
-                                           : <div>Last N/A</div> }
+                                           {( previousDateString || previousRequest) ?
+                                                <div>
+                                                    <span>Last completed <b>{ previousDateString }</b> </span>
+                                                    {previousRequest ?
+                                                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                                                    : null}
+                                                </div>
+                                            : <div>Last completed N/A</div>}
                                        </div>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
@@ -402,57 +410,87 @@ ComplianceEvaluationService = new function() {
                                                 if (nextRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { nextRequest } />
+                                                        content: <RequestPanel item = { nextRequest }/>
                                                     } );
                                            }}
                                            >
-                                           { (nextDateString && nextRequest) ?
+                                           { (nextDateString || nextRequest) ?
                                                <div>
-                                                   <span>Next <b>{ nextDateString }</b> </span>
+                                                   <span>Next Due <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
                                                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
-                                                   : "N/A"}
+                                                   : null}
                                                </div>
-                                           : <div>Next N/A</div> }
+                                           : <div>Next Due N/A</div> }
                                        </div>
                                    </div>
                                 );
                             }
                         },
                         data: event,
-                        resolve: function() {
+                        resolve: function(r, callback) {
                             Modal.show( {
                                 id: `viewRequest-${event._id}`,
-                                content: <RequestPanel item = { event } />
+                                content: <RequestPanel item = { event } callback={callback}/>
                             } );
                         }
                     } )
                }
 
             }
+
+            let q = {
+                "facility._id": facility._id,
+                status: "PMP",
+                "service.name": rule.service.name,
+                name: rule.event
+            };
+            if (rule.subservice){
+                 q["subservice.name"] = rule.subservice.name;
+            }
+            let request = Requests.findOne( q );
+            let message = {}
+            let passed = false;
+            let summary = "failed"
+            if(request){
+                let dueDateTimeStamp = nextDate.getTime()
+                let currentTimeStamp = new Date().getTime()
+                if(dueDateTimeStamp>currentTimeStamp){
+                    summary = "passed"
+                    passed = true;
+                }
+                message = {
+                    summary: summary,
+                    //detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
+                    detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                }
+            }else if(!request){
+                message = {
+                    summary: summary,
+                    //detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
+                    detail: "Set up PPM"
+                }
+            }
             return _.extend( {}, defaultResult, {
-                passed: false,
-                message: {
-                    summary: "failed",
-                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                },
+                passed: passed,
+                message: message,
                 loader: false,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    let q = {
+                    /*let q = {
                         "facility._id": facility._id,
                         status: "PMP",
                         "service.name": rule.service.name,
                         name: rule.event
                     };
                     if (rule.subservice) q["subservice.name"] = rule.subservice.name;
-                    let request = Requests.findOne( q );
+                    let request = Requests.findOne( q );*/
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
-                            content: <RequestPanel item = { request } />
+                            content: <RequestPanel item = { request } callback={callback}/>
                         } );
                     } else if ( !request ) { // If no PPM event exists.
                         let newRequest = Requests.create( {
@@ -469,7 +507,7 @@ ComplianceEvaluationService = new function() {
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
-                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
                     //    Meteor.call( 'Issues.save', newRequest );
                 }
