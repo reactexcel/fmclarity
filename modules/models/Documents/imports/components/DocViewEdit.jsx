@@ -21,6 +21,7 @@ const DocViewEdit = React.createClass( {
         var doc = this.props.item || {};
         if ( doc && doc._id ) {
             doc = Documents.findOne( doc._id );
+            doc["facility"] = Session.getSelectedFacility();
         }
         return {
             doc: doc
