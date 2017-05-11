@@ -23,10 +23,13 @@ const view = new Action( {
     */
     label: "View",
     action: ( request, callback ) => {
+        if( !request ) {
+            throw new Meteor.Error('view request: request is null', "Tried to view null request");
+        }
         Modal.show( {
             id: `viewRequest-${request._id}`,
             content: //<DropFileContainer request={request} model={Requests}>
-                <RequestPanel item = { request } />
+                <RequestPanel item = { request } callback={callback}/>
                 //</DropFileContainer>
         } )
         callback( request );
@@ -48,6 +51,7 @@ const edit = new Action( {
             model = { Requests }
             item = { request }
             form = { CreateRequestForm }
+            submitText="Save"
             onSubmit = {
                 ( request ) => {
                     // this should really be in a Request action called 'update' or something
@@ -59,7 +63,10 @@ const edit = new Action( {
                     request.description = null;
 
                     request.costThreshold = request.costThreshold == '' ? 0 : request.costThreshold;
-
+                    if(request.haveToIssue == true){
+                        request.status = "Issued"
+                        request = _.omit(request,'haveToIssue')
+                    }
                     Requests.save.call( request );
 
                     Modal.hide();

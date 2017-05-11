@@ -252,12 +252,9 @@ const Select = React.createClass( {
 						}
 					}
 					if(key==9){
-						//$('ul#open > li').removeClass('onFocus')
-						if($selected.length){
-							$selected.click();
-						}
-						this.setOpen( false )
+						$selected.click();
 					}
+					this.setOpen( false )
 				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>

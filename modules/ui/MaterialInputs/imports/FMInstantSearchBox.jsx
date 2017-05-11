@@ -14,35 +14,52 @@ import { Documents, DocViewEdit } from '/modules/models/Documents';
  * @class           Text
  * @memberOf        module:ui/MaterialInputs
  */
+export class SearchBox extends React.Component {
+    constructor(props) {
+      super(props);
+    }
 
- var SearchBox = React.createClass({
     doSearch(e){
         var query=e.target.value // this is the search text
         $('#search-results').show();
         this.props.doSearch(query);
-    },
-    handleBlur:function(e){
-        e.target.value="";
-        this.props.query="";
-        if(this.props.mobileView == true){
-            if($('#search-results').is(':visible')==false){
-                this.props.blur()
+    }
+
+    componentDidMount(){
+        let self = this;
+        $(document).bind('click', function () {
+            if($('#searchInput').width() >= 200 ){
+                //e.target.value="";
+
+                self.props.query="";
+
+                    if($('#search-results').is(':visible')==true){
+                        //$('#searchInput').focus();
+                        //this.props.doSearch('')
+                        $('#searchInput').val('');
+                        $('#search-results').hide();
+                        $('#searchInput').animate({ width: '-=200' }, 'slow');
+                    } else {
+                        $('#searchInput').animate({ width: '-=200' }, 'slow');
+                    }
             }
-        } else {
-            if($('#search-results').is(':visible')==true){
-                $('#searchInput').focus();
-            } else {
-                $('#searchInput').animate({ width: '-=200' }, 'slow');
+
+            if($("#search-icon").hasClass("open") == true){
+                    $('#search-results').hide();
+                    $("#search-icon").removeClass("open")
+                    $('#searchInput1').val('');
             }
-        }
-    },
-    render:function(){
+        });
+    }
+
+    render(){
         return(
             <div>
             {this.props.mobileView==true?<div>
-                <input style={{'borderBottom':'1px solid black'}} type="search" onBlur={(e)=>{this.handleBlur(e)}} id={this.props.mobileView?"searchInput1":"searchInput"} placeholder="Search FM" value={this.props.query} onChange={(e)=>{this.doSearch(e)}}/>
+                <input style={{'borderBottom':'1px solid black'}} type="search" id={this.props.mobileView?"searchInput1":"searchInput"} ref={this.props.mobileView?"searchInput1":"searchInput"} placeholder="Search FMC" value={this.props.query} onChange={(e)=>{this.doSearch(e)}}/>
             </div>:<div style={{'marginRight':'20px'}}>
-            <i className="fa fa-search" onClick={(e)=>{
+            <i className="fa fa-search" onClick={(event)=>{
+                event.stopPropagation();
                 if($('#searchInput').width() >= 200 ){
                     $('#searchInput').animate({ width: '-=200' }, 'slow');
                     $('#search-results').hide();
@@ -51,12 +68,13 @@ import { Documents, DocViewEdit } from '/modules/models/Documents';
                     $('#searchInput').animate({ width: '+=200' }, 'slow');
                 }
             }} style={{'marginRight':'10px','cursor':'pointer'}}/>
-            <input style={{'width':'0px','borderBottom':'1px solid white'}} type="search" onBlur={(e)=>{this.handleBlur(e)}} id={this.props.mobileView?"searchInput1":"searchInput"} placeholder="Search FM" value={this.props.query} onChange={(e)=>{this.doSearch(e)}}/>
+            <input style={{'width':'0px','borderBottom':'1px solid white'}} type="search" id={this.props.mobileView?"searchInput1":"searchInput"} ref={this.props.mobileView?"searchInput1":"searchInput"} placeholder="Search FMC" value={this.props.query} onChange={(e)=>{this.doSearch(e)}}/>
             </div>}
             </div>
         )
     }
-});
+}
+
 
 var DisplayTable = React.createClass({
     handleClick: function(e) {
@@ -72,7 +90,7 @@ var DisplayTable = React.createClass({
         if(this.props.data && this.props.data.length > 0){
             this.props.data.forEach(function(data, idx) {
                 rows.push(<li key={idx} onClick={(e)=>{
-                    //comp.props.mobileView==true?$('searchInput1').focus():$('searchInput').focus();
+                    event.stopPropagation();
                     data.action ? data.action : comp.handleClick(e)
                 }} ><a href={data.searchUrl ? data.searchUrl : ""}>{data.listText ? data.listText : data.name}</a></li>)
                 });
@@ -144,12 +162,11 @@ const FMInstantSearchBox = React.createClass({
         }
     },
     render:function(){
+        let self =this;
         return (
             <div className="FMInstantSearchBox">
-                <SearchBox blur={()=>{
-                    this.props.blur()
-                }} mobileView={this.props.mobileView} query={this.state.query} doSearch={this.doSearch}/>
-                {this.renderResults()}
+                <SearchBox mobileView={self.props.mobileView} query={self.state.query} doSearch={self.doSearch}/>
+                {self.renderResults()}
             </div>
         );
     }
