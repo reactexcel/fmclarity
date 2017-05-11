@@ -27,10 +27,14 @@ export default DocumentSchema = {
 			items: DocTypes
 		}
 	},
-
-
 	description: {
 		label: "Description",
+		optional: true,
+		type: "string",
+		input: TextArea
+	},
+	comment: {
+		label: "Comment",
 		optional: true,
 		type: "string",
 		input: TextArea
@@ -239,7 +243,10 @@ export default DocumentSchema = {
 			}
 
 			return {
-				items: items
+				items: items,
+				afterChange: ( doc ) => {
+					doc.subServiceType = null;
+				}
 			}
 		}
 	},

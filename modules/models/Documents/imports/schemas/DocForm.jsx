@@ -4,6 +4,7 @@ const DocForm = [
 	'type',
 	'facility',
 	'description',
+	'comment',
 	'documentNumber',
 	'gst',
 	'totalValue',
