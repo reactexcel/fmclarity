@@ -478,7 +478,8 @@ ComplianceEvaluationService = new function() {
         "Compliance level": function( rule, facility, service ){
           //console.log(rule,"*-*-**--*-*-*-*-*");
             let allServices = Session.getSelectedFacility().servicesRequired
-            let selectedService = _.filter(allServices, service => service.name === rule.service.name);
+            let selectedService = _.filter(allServices, service => service != null);
+            selectedService = _.filter(selectedService, service => service.name === rule.service.name);
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
@@ -944,12 +945,14 @@ ComplianceEvaluationService = new function() {
         }
         var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
+        // console.log(results,"2");
         if ( service.children ) {
             var numSubservices = 0;
             var totalPassed = 0;
             var totalFailed = 0;
             var subservice = _.map(service.children, ( subservice, idx) => {
                 var subResult = evaluateService( subservice, facility );
+                // console.log(subResult,"1");
                 numSubservices += subResult.numRules;
                 totalPassed += subResult.numPassed;
                 totalFailed += subResult.numFailed;
@@ -1010,7 +1013,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
-      //console.log(services,"11111");
+      console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
