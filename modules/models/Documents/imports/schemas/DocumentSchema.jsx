@@ -248,9 +248,6 @@ export default DocumentSchema = {
 			return {
 				items: items,
 				afterChange: ( doc ) => {
-					doc.subServiceType = null;
-				},
-				afterChange: ( doc ) => {
                         if ( doc == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
@@ -268,16 +265,6 @@ export default DocumentSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 doc.supplier = defaultSupplier;
-                                if( doc.supplier && onServiceChange ) {
-                                    onServiceChange( doc.supplier );
-                                }
-                                if ( doc.serviceType.data.defaultContact && doc.serviceType.data.defaultContact.length ) {
-                                    doc.supplierContacts = doc.serviceType.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    doc.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
-                                } else {
-                                    doc.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
-                                }
                             } else {
                                 doc.supplier = null;
                                 doc.subServiceType = null;
