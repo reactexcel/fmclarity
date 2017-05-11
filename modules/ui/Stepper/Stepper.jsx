@@ -18,29 +18,39 @@ export default Stepper = React.createClass( {
         } );
     },
 
-    selectNext() {
+    selectNext( evt, done ) {
         var idx = parseInt( this.state.active );
+        if ( this.props.submitForm && ( idx == 0 || done == true ) ) {
+            this.props.submitForm( ( err ) => {
+                if ( _.isObject( err ) ) {
+                    if ( Object.keys( err ).length == 0 ) {
 
-        if( this.props.submitForm && idx == 0){
-          let self  = this;
-          self.props.submitForm( ( err ) => {
-            if(_.isObject( err )){
-              if( Object.keys( err ).length == 0 ){
-                self.selectTab( idx + 1 );
-              }
-            }
-          });
-        }else{
-          this.selectTab( idx + 1 );
+                        if ( done == true ) {
+                            Modal.hide();
+                            if ( this.props.onFinish ) {
+                                this.props.onFinish();
+                            }
+                        }
+                        else {
+                            this.selectTab( idx + 1 );
+                        }
+
+                    }
+                }
+            } );
+        } else {
+
+            this.selectTab( idx + 1 );
+            
         }
 
         if ( this.state.active >= this.props.tabs.length - 1 ) {
             Modal.hide();
             /**
-            * Open new created facility.
-            **/
-            if ( this.props.onFinish ){
-              this.props.onFinish();
+             * Open new created facility.
+             **/
+            if ( this.props.onFinish ) {
+                this.props.onFinish();
             }
         }
     },
@@ -88,7 +98,7 @@ export default Stepper = React.createClass( {
                                                 </button>
 
                                                 {idx<(tabs.length-1)?<button
-                                                    onClick     = { selectNext }
+                                                    onClick     = { (evt)=>{selectNext(evt,true)} }
                                                     type        = "button"
                                                     className   = "btn btn-primary"
                                                     style       = {{'float':'right'}}

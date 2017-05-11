@@ -41,6 +41,7 @@ if ( Meteor.isServer ) {
     Meteor.publish( 'Users', () => {
         return Users.find();
     } );
+    Users.collection._ensureIndex( { 'profile.email': 1 }, { unique: false } );
 }
 
 /** Added method create user is added **/
@@ -105,6 +106,24 @@ Users.actions( {
                 var currentMember = group.members[ i ];
                 if ( currentMember && user && currentMember._id == user._id ) {
                     return currentMember.threshold;
+                }
+            }
+        },
+    },
+    getThresholdValue: {
+        authentication: true,
+        helper: function( user, group ) {
+            if ( Meteor.isClient && !group ) {
+                // causes problems when evaluated server side
+                group = user.getSelectedTeam();
+            }
+            if ( !group || !group.members || !group.members.length ) {
+                return null;
+            }
+            for ( var i in group.members ) {
+                var currentMember = group.members[ i ];
+                if ( currentMember && user && currentMember._id == user._id ) {
+                    return currentMember.issueThresholdValue;
                 }
             }
         },
@@ -238,11 +257,17 @@ Meteor.methods( {
             Accounts.sendEnrollmentEmail( userId );
         }
     },
+    'User.checkExists': function( query ) {
+        return Users.find( query ).count();
+    },
     'User.getRole': () => {
         return Meteor.user().getRole();
     },
     'User.getThreshold': () => {
         return Meteor.user().getThreshold();
+    },
+    'User.getThresholdValue': () => {
+        return Meteor.user().getThresholdValue();
     },
 } )
 

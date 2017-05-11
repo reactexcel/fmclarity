@@ -5,7 +5,7 @@
 import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Teams } from '/modules/models/Teams';
+import { Teams, SearchSuppliersWithinNetwork } from '/modules/models/Teams';
 import { ThumbView } from '/modules/mixins/Thumbs';
 import { ContactList } from '/modules/mixins/Members';
 import { ContactCard } from '/modules/mixins/Members';
@@ -43,9 +43,11 @@ const TeamStepper = React.createClass( {
         //getting value of item from state instead of props
         if ( this.state.item && this.state.item._id ) {
             viewingTeam = Teams.findOne( this.state.item._id );
+            /*
             if(viewingTeam.type == "contractor"){
                 Teams.schema.email.required=false;
             }
+            */
             if ( !viewingTeam && this.state.searchName ) {
                 let query = {
                     name: {
@@ -206,8 +208,18 @@ const TeamStepper = React.createClass( {
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
-
+        var showFilter = this.props.showFilter;
+        console.log({showFilter});
         if ( !viewingTeam ) {
+            if (showFilter == true) {
+                return (
+                    <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier={(supplier)=>{
+                        if(this.props.onChange){
+                            this.props.onChange(supplier)
+                        }
+                    }}/>
+                )
+            }
             return (
                 <form style={{padding:"15px"}} className="form-inline">
                     <div className="form-group">
@@ -220,9 +232,11 @@ const TeamStepper = React.createClass( {
             )
         }
 
+        /*
         if(viewingTeam.type == "contractor"){
             Teams.schema.email.required=false;
         }
+        */
 
         /*
         else if ( !viewingTeam.canSave() )
@@ -282,15 +296,17 @@ const TeamStepper = React.createClass( {
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             onChange =  { ( newItem ) => {
+                                                /*
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;
                                                 }
+                                                */
                                                 }
                                             }
                                             submitFormOnStepperNext = { true }
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
-                                                if ( team.email && team.inviteMember && !team.members) {
+                                                if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
                                                       role: role ? role : "manager",
                                                       owner: {
@@ -327,7 +343,12 @@ const TeamStepper = React.createClass( {
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
                         tab:        <span id = "members-tab">Members</span>,
-                        content:    <ContactList group = { viewingTeam } filter = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager'] } } } defaultRole = "staff" team = { viewingTeam }/>,
+                        content:    <ContactList
+                                        team        = { viewingTeam }
+                                        group       = { viewingTeam }
+                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } }
+                                        defaultRole = "staff"
+                                    />,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:        <span id = "services-provided-tab">Services provided</span>,

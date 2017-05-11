@@ -15,8 +15,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
-
+import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -25,6 +24,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -53,12 +53,24 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
-            description: "A brief, descriptive, title for the work request"
+            description: (item)=>{
+                let workRequest = "work request";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type + " details"
+                }
+                return "A brief, descriptive, title for the " + workRequest;
+            }
         },
 
         code: {
             label: "Code",
-            description: "The unique code for this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The unique code for this"+ workRequest +"request";
+            },
             type: "number",
             input: Text,
             defaultValue: getJobCode,
@@ -71,14 +83,11 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
+            size: 12,
             required: true,
             defaultValue: () => {
-                let team = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
-                if ( teamType == 'contractor' ) {
+                let team = Session.get( 'selectedTeam' );
+                if ( Teams.isServiceTeam( team ) ) {
                     return 'Tenancy';
                 }
                 return "Ad-hoc";
@@ -87,19 +96,30 @@ const RequestSchema = {
             options: () => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
-                    teamType = null;
+                    user = Meteor.user();
 
-                if ( team ) {
-                    teamType = team.type;
-                }
-
-                if ( teamType == 'contractor' ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect' ] };
+                if ( Teams.isServiceTeam( team ) ) {
+                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
                 } else {
-                    if ( _.contains( [ "staff", 'resident' ], role ) ) {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Tenancy' ] };
+                    if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
+                        return {
+                            items: items,
+                            afterChange: ( request ) => {
+                                // prefill area with tenant/resident address
+                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                    request.area= user.apartment ? user.apartment : null;
+                                    request.level= user.level ? user.level : null;
+                                }
+                                else{
+                                    request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;
+                                }
+
+                                }
+                             };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
                     }
                 }
             }
@@ -107,7 +127,13 @@ const RequestSchema = {
 
         priority: {
             label: "Priority",
-            description: "The urgency of the requested work",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The urgency of the "+ workRequest +" request";
+            },
             type: "string",
             defaultValue: "Standard",
             required: true,
@@ -192,28 +218,59 @@ const RequestSchema = {
             label: "Location - Area",
             size: 4,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.area = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' ),
-                    teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
-                return teamType == 'fm' || !_.isEmpty( item.level );
+                let selectedTeam = Session.get( 'selectedTeam' );
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
                 let facility = null;
                 if ( item.facility ) {
                     facility = Facilities.findOne( item.facility._id );
                 }
+                let areas = []
+                if(item.type == "Booking"){
+                    let allArea = facility ? facility.areas : []
+                    allArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                areas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        areas.push(area)
+                                    }
+                                } else if(area2.children && area2.children.length > 0){
+                                    area2.children.map(( area3, idx3) => {
+                                        if(area3.data && area3.data.areaDetails  && area3.data.areaDetails.type == "Bookable"){
+                                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                                areas.push(area)
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    areas = facility ? facility.areas : null
+                }
                 return {
-                    items: facility ? facility.areas : null
+                    items: areas
                 }
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ "tenant", 'resident' ], user.getRole() ) ) {
+                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
                 }
                 return val;
@@ -224,8 +281,27 @@ const RequestSchema = {
             label: "Sub-area",
             size: 4,
             type: "object",
-            input: Select,
+            required: false,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.identifier = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             condition: ( item ) => {
+                if(
+                    item.type == "Booking"
+                    && item.level
+                    && item.level.data
+                    && item.level.data.areaDetails
+                    && item.level.data.areaDetails.type != "Bookable"
+                )
+                {
+                    RequestSchema.area.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
                 if ( selectedTeam ) {
@@ -234,8 +310,29 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.area );
             },
             options: ( item ) => {
+                let subAreas = [];
+                if(item.type == "Booking"){
+                    let allSubArea = item.level && item.level.children ? item.level.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                subAreas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        subAreas.push(area)
+                                    }
+                                }
+                            })
+                        }
+                    } )
+                } else {
+                    subAreas = item.level ? item.level.children : null
+                }
                 return {
-                    items: item.level ? item.level.children : null
+                    items: subAreas
                 }
             }
         },
@@ -246,7 +343,20 @@ const RequestSchema = {
             size: 4,
             type: "object",
             input: Select,
+            required:false,
             condition: ( item ) => {
+                if(
+                    item.type == "Booking"
+                    && item.area
+                    && item.area.data
+                    && item.area.data.areaDetails
+                    && item.area.data.areaDetails.type != "Bookable"
+                )
+                {
+                    RequestSchema.identifier.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
                 if ( selectedTeam ) {
@@ -255,8 +365,19 @@ const RequestSchema = {
                 return teamType == 'fm' || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
+                let subAreas =[];
+                if(item.type == 'Booking'){
+                    let allSubArea = item.area && item.area.children ? item.area.children : []
+                    allSubArea.map( ( area, idx ) => {
+                        if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
+                            subAreas.push(area)
+                        }
+                    })
+                } else {
+                    subAreas = item.area ? item.area.children : null
+                }
                 return {
-                    items: item.area ? item.area.children : null
+                    items: subAreas
                 }
             }
         },
@@ -265,42 +386,57 @@ const RequestSchema = {
 
         service: {
             label: "Service",
-            description: "The category of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The category of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            let team = Session.getSelectedTeam();
+                            let costAbleToIssue = true;
+                            if(team.defaultCostThreshold){
+                                costAbleToIssue = false;
+                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                            }
+                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( request ) => {
                 let team = Session.getSelectedTeam(),
-                    teamType = null,
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
             },
             options: ( item ) => {
                 let selectedTeam = Session.getSelectedTeam(),
-                    teamType = null,
                     items = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
 
-                if ( teamType == 'fm' && item.facility && item.facility._id ) {
+                if ( Teams.isFacilityTeam( selectedTeam ) && item.facility && item.facility._id ) {
                     let facility = Facilities.findOne( item.facility._id );
                     if ( facility ) {
                         items = facility.servicesRequired;
                     }
-                } else if ( teamType == 'contractor' && team.getAvailableServices ) {
+                } else if ( Teams.isServiceTeam( selectedTeam ) && team.getAvailableServices ) {
                     items = team.getAvailableServices();
                 }
 
@@ -308,9 +444,11 @@ const RequestSchema = {
                 return {
                     items: items,
                     afterChange: ( request ) => {
-                        if ( request == null || teamType == 'contractor' ) {
+                        if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
+                        request.supplier = null;
+                        request.subservice = null;
                         if ( request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
@@ -323,9 +461,12 @@ const RequestSchema = {
                                     defaultSupplier = Teams.findOne( { name: supplier.name } );
                                 }
                                 request.supplier = defaultSupplier;
+                                if( request.supplier && onServiceChange ) {
+                                    onServiceChange( request.supplier );
+                                }
                                 if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                     request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( defaultSupplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -342,24 +483,27 @@ const RequestSchema = {
 
         subservice: {
             label: "Subservice",
-            description: "The subcategory of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The subcategory of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
             input: Select,
             condition: ( request ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null,
+                let team = Session.getSelectedTeam();
                     services = [];
                 if ( team ) {
-                    teamType = team.type;
-
                     if ( team.getAvailableServices ) {
                         services = team.getAvailableServices()
                     }
                 }
                 if ( request.type == 'Booking' ) {
                     return false;
-                } else if ( teamType == 'contractor' && !team.services.length <= 1 ) {
+                } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
                 }
                 return true;
@@ -385,7 +529,7 @@ const RequestSchema = {
                                 request.supplier = defaultSupplier;
                                 if ( request.subservice.data.defaultContact && request.subservice.data.defaultContact.length ) {
                                     request.supplierContacts = request.subservice.data.defaultContact;
-                                } else if ( supplier.type == 'fm' ) {
+                                } else if ( Teams.isFacilityTeam( supplier ) ) {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
                                 } else {
                                     request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
@@ -412,7 +556,13 @@ const RequestSchema = {
 
         issueComment: {
             label: "Comment",
-            description: "Comment about the issuing of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the issuing of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: true,
@@ -420,7 +570,13 @@ const RequestSchema = {
 
         acceptComment: {
             label: "Comment",
-            description: "Comment about the acceptance of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the acceptance of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: false,
@@ -498,12 +654,72 @@ const RequestSchema = {
             input: Switch
         },
 
+        occupancy: {
+            label: "Base Building",
+            description: "Specify occupancy type",
+            size: 12,
+            defaultValue: ( item ) => {
+                return item.service && item.service.data && item.service.data.baseBuilding;
+            },
+            condition: ( item ) => {
+                let role = Meteor.user().getRole();
+                return _.contains(['Ad-hoc', 'Defect'], item.type) && !_.contains(['staff', 'resident'], role) && item.status=='Issued';
+            },
+            input(props){
+                let value = false,
+                    team = Session.get( 'selectedTeam' );
+                if (!props.value && Teams.isServiceTeam( team ) ) {
+                    value = true;
+                }
+                else if (props.value) {
+                    value = props.value;
+                }
+
+                return(
+                    <div className="row">
+                    <div className="col-xs-12">
+                    <br/><br/>
+                    <Switch
+                        value = { value }
+                        placeholder = "Base Building"
+                        labelInactive = "Tenant"
+                        onChange = { ( val ) =>{
+                            props.item.occupancy = val;
+                            props.item.service.data.baseBuilding = val;
+                            props.item.service.data.tenancy = !val;
+                        }
+                    }
+                    />
+                    </div>
+                    </div>
+                    )
+            }
+        },
+
         costThreshold: {
             label: "Value",
             type: "number",
             size: 6,
             defaultValue: '500',
             input: Currency,
+            input: (props)=>{
+                return <Currency {...props}
+                    onChange={(value)=>{
+                        props.onChange(value);
+                        let cost_withIn_teamCost = true
+                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
+                        let team = Session.getSelectedTeam();
+                        if(team.defaultCostThreshold){
+                            cost_withIn_teamCost = false;
+                            let actualCost = value;
+                            actualCost = actualCost.replace (",","");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                    }}
+                />
+            },
             condition: ( request ) => {
                 if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
                     return false;
@@ -535,10 +751,35 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ "staff", 'resident' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
                     return false;
                 }
                 return true;
+            }
+        },
+
+        bookingPeriod: {
+            type: "object",
+            label: "Booking period",
+            description: "Select the booking period",
+            input: (props) => {
+                return  <CalendarPeriod
+                            onChangeValue={(value)=>{
+                                props.onChange(value);
+                            }}
+                            {...props}
+                        />
+            },
+
+            size: 12,
+            required: true,
+            defaultValue: {},
+            condition: (request)=>{
+                if(request.type == "Booking" && request.level && request.level.name){
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
 
@@ -569,30 +810,27 @@ const RequestSchema = {
 
         team: {
             label: "Client",
-            description: "The team who created this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The team who created this"+ workRequest +"request";
+            },
             type: "object",
             input: Select,
             options: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
-                }
+                let team = Session.getSelectedTeam();
                 return {
-                    items: teamType == 'contractor' ? team.getClients() : null,
+                    items: Teams.isServiceTeam( team ) ? team.getClients() : null,
                     view: ContactCard
                 }
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
+                let team = Session.getSelectedTeam();
+                if ( Teams.isFacilityTeam( team ) ) {
+                    return team;
                 }
-                if ( teamType == 'contractor' ) {
-                    return null;
-                }
-                return team;
             }
         },
 
@@ -636,12 +874,11 @@ const RequestSchema = {
                         request.service = null;
                         request.subservice = null;
                         request.supplier = null;
-                        //request.members = getMembersDefaultValue( request );
                         request.members = ( _.filter( request.members, m => m.role !== defaultContactRole ) );
                     },
                     addNew: {
                         //Add new facility to current selectedTeam.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { Facilities, FacilityStepperContainer } from '/modules/models/Facilities';
@@ -685,29 +922,39 @@ const RequestSchema = {
             },
             condition: ( request ) => {
 
-                let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
+                let team = Session.getSelectedTeam();
                 //do not show for booking, contractors, staff or resident
-                return (
-                    ( request.type != 'Booking' && teamType != 'contractor' ) ?
-                    ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
-                )
+                if( request.type != 'Booking' ) {
+                    if( Teams.isFacilityTeam( team ) ) {
+                        if( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+
             },
             defaultValue: ( item ) => {
-                let team = Session.getSelectedTeam(),
-                    teamType = null;
-                if ( team ) {
-                    teamType = team.type;
+                let team = Session.getSelectedTeam();
+                if( Teams.isServiceTeam( team ) ) {
+                    return team;
                 }
-                if ( teamType == 'fm' ) {
-                    return null;
-                }
-                return team;
             },
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                    onChange={( value ) => {
+                        let team = Session.getSelectedTeam();
+                        let costAbleToIssue = true;
+                        if(team.defaultCostThreshold){
+                            costAbleToIssue = false;
+                            let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        props.onChange(value);
+                    }}/>
+            } ,
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
@@ -715,6 +962,9 @@ const RequestSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
+                    /*if( facility ) {
+                        console.log( facility.getSuppliers() );
+                    }*/
                 }
 
                 return {
@@ -723,7 +973,7 @@ const RequestSchema = {
                     readOnly: item.status == 'Issued',
                     addNew: {
                         //Add new supplier to request and selected facility.
-                        show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
                         label: "Create New",
                         onAddNewItem: ( callback ) => {
                             import { TeamStepper } from '/modules/models/Teams';
@@ -741,11 +991,10 @@ const RequestSchema = {
                         }
                     },
                     afterChange: ( request, supplier ) => {
-                        //console.log( supplier );
                         if( !supplier ) {
                             request.supplierContacts = [];
                         }
-                        else if ( supplier.type == 'fm' ) {
+                        else if ( Teams.isFacilityTeam( supplier ) ) {
                             request.supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                         } else {
                             request.supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -767,14 +1016,15 @@ const RequestSchema = {
             size: 12,
             condition: ( request ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
-                teamType = null;
-                if ( selectedTeam ) {
-                    teamType = selectedTeam.type;
-                }
                 //do not show for booking, contractors, staff or resident
                 return (
-                    ( request.status != 'Issued' && request.type != 'Booking' && teamType != 'contractor' ) ?
-                    ( !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ) ) : false
+                    (
+                        request.status != 'Issued' &&
+                        request.type != 'Booking' &&
+                        //Teams.isServiceTeam( selectedTeam )
+                        Teams.isFacilityTeam( selectedTeam )
+                    ) ?
+                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
             },
             input( props ) {
@@ -860,21 +1110,32 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    let role = Meteor.user().getRole();
-                    if ( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident" ) {
-                        return false;
+                    if ( request.supplier && request.supplier._id ) {
+                        let team = Session.getSelectedTeam();
+                        if( team._id == request.supplier._id ) {
+                            let userRole = Meteor.user().getRole();
+                            if( _.contains( [ 'portfolio manager', 'manager' ], userRole ) ) {
+                                return true;
+                            }
+                        }
                     }
-                    let team = Session.getSelectedTeam();
-                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
-                        return true;
-                    }
+                    return false;
                 },
                 input: Select,
                 type: "object",
                 options: ( request ) => {
                     request = Requests.collection._transform( request );
-                    let supplier = request.getSupplier(),
-                        members = Teams.getMembers( supplier );
+
+                    let members = null,
+                        supplier = null;
+
+                    if( request.supplier && request.supplier._id ) {
+                        let supplier = Teams.findOne( request.supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers();
+                        }
+                    }
+
                     return {
                         items: members,
                         view: ContactCard,
@@ -884,17 +1145,24 @@ const RequestSchema = {
                             label: "Add New",
                             onAddNewItem: ( callback ) => {
                                 import { Users, UserViewEdit } from '/modules/models/Users';
-                                let team = Session.getSelectedTeam();
-                                Modal.show( {
-                                    content: <UserViewEdit group={ team } team={ team } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
-                                } )
+                                if( supplier ) {
+                                    Modal.show( {
+                                        content: <UserViewEdit group={ supplier } team={ supplier } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
+                                    } )
+                                }
                             }
                         },
                         afterChange: ( item ) => {
+                            if( !item.members ) {
+                                item.members = [];
+                            }
                             let found = false;
                             if ( item.assignee && item.assignee._id ) {
+
                                 import { Users } from '/modules/models/Users';
+
                                 let assignee = Users.findOne( item.assignee._id );
+
                                 for ( i in item.members ) {
                                     let member = item.members[ i ];
                                     if ( member.role == "assignee" ) {
@@ -922,8 +1190,13 @@ const RequestSchema = {
 
             members: {
                 label: "Contacts",
-                description: "Stakeholders for this work request",
-                defaultValue: getMembersDefaultValue
+                description: (item)=>{
+                    let workRequest = "work";
+                    if(!_.isEmpty(item.type)){
+                        workRequest = item.type
+                    }
+                    return "Stakeholders for this"+ workRequest +"request";
+                },
             },
 
             documents: {
@@ -1029,57 +1302,6 @@ const RequestSchema = {
 
         }
 
-        /*
-         *
-         *
-         *
-         */
-        function getMembersDefaultValue( item ) {
-
-            if ( item.team == null ) {
-                return;
-            }
-
-            let owner = Meteor.user(),
-                team = Teams.findOne( item.team._id ),
-                teamMembers = team.getMembers( {
-                    role: "portfolio manager"
-                } );
-
-            let members = [ {
-                _id: owner._id,
-                name: owner.profile.name,
-                email: owner.profile.email,
-                role: "owner"
-            } ];
-
-            teamMembers.map( ( m ) => {
-                members.push( {
-                    _id: m._id,
-                    name: m.profile.name,
-                    email: m.profile.email,
-                    role: "team manager"
-                } )
-            } );
-
-            if ( item.facility && item.facility._id ) {
-                let facility = Facilities.findOne( item.facility._id ),
-                    facilityMembers = facility.getMembers( {
-                        role: "manager"
-                    } );
-
-                facilityMembers.map( ( m ) => {
-                    members.push( {
-                        _id: m._id,
-                        name: m.profile.name,
-                        email: m.profile.email,
-                        role: "facility manager"
-                    } )
-                } );
-            }
-
-            return members;
-        }
 
         function getTimeframe( _id, priority ) {
             //let team = this.getTeam();

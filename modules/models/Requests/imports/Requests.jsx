@@ -35,8 +35,54 @@ const Requests = new Model( {
                 getInboxName() {
                     return "work order #" + this.code + ' "' + this.getName() + '"';
                 },
-                getWatchers() {
-                    return this.getMembers();
+                getWatchers( message ) {
+                    let members = this.getMembers(),
+                        newMembers = [];
+
+                    //console.log({ request: this, message });
+
+                    if ( message && message.verb == 'commented on' && this.status != 'New' ) {
+
+                        //console.log( 'scenario 1' );
+
+                        members.map( ( member ) => {
+                            let roles = Roles.getRoles( this ),
+                                memberRoles = roles.actors[ member._id ];
+
+                            //console.log( memberRoles );
+
+                            if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
+                                //remove everyone who isn't pm
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    if( _.contains( [ 'property manager', 'supplier manager', 'assignee' ], role ) ) {
+                                        newMembers.push( member );
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                //remove staff, tenant and resident
+                                let rejectMember = false;
+                                for( let i in memberRoles ) {
+                                    let role = memberRoles[ i ];
+                                    //console.log( role );
+                                    if( _.contains( [ 'facility staff', 'facility tenant', 'facility resident' ], role ) ) {
+                                        rejectMember = true;
+                                        break;
+                                    }
+                                }
+                                if( !rejectMember ) {
+                                    newMembers.push( member );
+                                }
+                            }
+                        } );
+                    }
+                    else {
+                        newMembers = members;
+                    }
+                    //console.log( newMembers );
+                    return newMembers;
                 }
             }
         } ],
@@ -121,13 +167,12 @@ Requests.methods( {
         authentication: true,
         helper: function( request ) {
             let supplierContacts = null;
-            if( request.supplierContacts && request.supplierContacts.length ) {
+            if ( request.supplierContacts && request.supplierContacts.length ) {
                 supplierContacts = request.supplierContacts;
-            }
-            else {
+            } else {
                 let supplier = request.getSupplier();
                 if ( supplier ) {
-                    if ( supplier.type == 'fm' ) {
+                    if ( Teams.isFacilityTeam( supplier ) ) {
                         supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                     } else {
                         supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -141,6 +186,34 @@ Requests.methods( {
             }
         }
     },
+
+    getMessages: {
+        authentication: true,
+        helper: ( request ) => {
+            let user = Meteor.user(),
+                team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
+                query = null;
+
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
+                query = {
+                    'inboxId.query._id': request._id
+                }
+            }
+            else {
+                query = {
+                    $and: [
+                        { 'inboxId.query._id': user._id },
+                        { 'target.query._id': request._id }
+                    ]
+                }
+            }
+
+            let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
+            return messages;
+        }
+    },
+
 
     /* just seems to be a simple calculated field - in schema??, location.toString(), address.toString() */
     getLocationString: {
@@ -163,7 +236,10 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New';
+            let status = 'New',
+                description = request.description;
+
+            request.description = null;
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
@@ -201,8 +277,9 @@ Requests.methods( {
                 newRequest.distributeMessage( {
                     message: {
                         verb: "created",
+                        read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: newRequest.description
+                        body: description
                     }
                 } );
             }
@@ -213,6 +290,27 @@ Requests.methods( {
     issue: {
         authentication: true,
         method: actionIssue
+    },
+
+    getContact: {
+        authentication: true,
+        helper: ( request ) => {
+            let facility = request.getFacility();
+            if( facility ) {
+                // if the request is base building the contact should be the property manager, not the facility manager
+                let team = Session.get( 'selectedTeam' ).type,
+                    requestIsBaseBuilding = ( request && request.service && request.service.data && request.service.data.baseBuilding ),
+                    role = 'manager';
+
+                if( Teams.isFacilityTeam( team ) && requestIsBaseBuilding ) {
+                    role = 'property manager';
+                }
+                let fms = facility.getMembers( { role } );
+                if( fms && fms.length ) {
+                    return fms[0];
+                }
+            }
+        }
     },
 
     complete: {
@@ -296,19 +394,27 @@ Requests.methods( {
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
-                if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                if ( request.frequency.unit == "custom" ) {
+                    unit = request.frequency.period;
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
-                        unit  = freq[ request.frequency.unit ];
+                        unit = freq[ request.frequency.unit ];
                         repeats = parseInt( request.frequency.number )
                     } else {
-                        unit  = request.frequency.unit;
+                        unit = request.frequency.unit;
                     }
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
+                    period[ unit ] *= 2;
+                }
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -329,25 +435,33 @@ Requests.methods( {
                     repeats = parseInt( request.frequency.repeats ),
                     freq = {
                         "daily": 'days',
-                        "fortnightly": 'fortnights',
+                        "fortnightly": 'weeks',
                         "weekly": 'weeks',
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
                     };
-                if ( request.frequency.unit == "custom" ){
-                    period[ request.frequency.period + "s" ] = parseInt( request.frequency.number );
+                if ( request.frequency.unit == "custom" ) {
+                    unit = request.frequency.period;
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                        unit = "weeks";
+                    period[ unit ] = parseInt( request.frequency.number );
                     repeats = parseInt( request.frequency.number );
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
-                        unit  = freq[ request.frequency.unit ];
+                        unit = freq[ request.frequency.unit ];
                         repeats = parseInt( request.frequency.number )
                     } else {
-                        unit  = request.frequency.unit;
+                        unit = request.frequency.unit;
                     }
+                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                        unit = "weeks";
                     period[ unit ] = parseInt( request.frequency.number );
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
+                    period[ unit ] *= 2;
+                }
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
@@ -567,11 +681,15 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
+
 function actionIssue( request ) {
 
     let code = null,
         userId = Meteor.user(),
+        description = request.description,
         user = Users.findOne( userId._id );
+
+    request.description = null;
 
     if ( request ) {
         if ( request.code ) {
@@ -602,6 +720,7 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
+                body: description
             }
         } );
 
@@ -612,8 +731,10 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "New work request from " + " " + team.getName(),
+                read: false,
+                digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
@@ -623,6 +744,7 @@ function actionIssue( request ) {
         return request;
     }
 }
+
 
 /*
  *
@@ -707,6 +829,9 @@ function getMembersDefaultValue( item ) {
 function actionComplete( request ) {
 
     if ( request.closeDetails ) {
+        if( request.closeDetails.jobCancelled == true ){
+            request.closeDetails.furtherQuoteValue = 0;
+        }
         if ( request.closeDetails.attachments ) {
             request.closeDetails.attachments.map( function( a ) {
                 request.attachments.push( a );
@@ -724,7 +849,7 @@ function actionComplete( request ) {
     }
 
     Meteor.call( 'Issues.save', request, {
-        status: 'Complete'
+        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
     } );
     request = Requests.findOne( request._id );
 
@@ -769,16 +894,22 @@ function actionComplete( request ) {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
-                target: newRequest.getInboxId()
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true,
+                /*alert: false*/
             }
         } );
 
         newRequest.distributeMessage( {
             message: {
-                verb: "raised follow up to",
+                verb: "requested a follow up to",
                 subject: closer.getName() + " requested a follow up to " + request.getName(),
                 body: newRequest.description,
-                target: request.getInboxId()
+                target: request.getInboxId(),
+                digest: false,
+                read: true,
+                /*alert: false*/
             }
         } );
 
@@ -788,11 +919,19 @@ function actionComplete( request ) {
         }
 
 
+    } else if( request.closeDetails.jobCancelled == true ){
+        request.distributeMessage( {
+            message: {
+                verb: 'closed',
+                body: "JOB CANCELLED: "+request.closeDetails.comment,
+                subject: "Work order #" + request.code + " has been closed"
+            }
+        } );
     } else {
 
         request.distributeMessage( {
             message: {
-                verb: "completed",
+                verb: 'completed',
                 subject: "Work order #" + request.code + " has been completed"
             }
         } );
@@ -811,7 +950,7 @@ function actionSendReminder( requests ) {
             message: {
                 subject: "Overdue Work order #" + request.code + " reminder",
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 4 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }

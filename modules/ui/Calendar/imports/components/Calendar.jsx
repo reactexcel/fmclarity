@@ -54,6 +54,7 @@ class Calendar extends React.Component {
                     title: title,
                     color: colors[ request.priority ],
                     start: request.dueDate,
+                    start: request.dueDate,
                     allDay: true,
                     request: {
                         _id: request._id,

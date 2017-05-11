@@ -32,7 +32,7 @@ class AutoForm extends React.Component {
 
 		this.state = {
 			item: this.form.item,
-			errors: this.form.errors || {}
+			errors: this.form.errors || {},
 		}
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
@@ -91,20 +91,23 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit() {
+	submit(haveToIssue) {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
+				if(haveToIssue == true){
+					item.haveToIssue = true
+				}
 				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
 			}
 		} else {
-			this.form.save( item, ( newItem ) => {
+			this.form.save( item, null, ( newItem ) => {
 				if ( this.props.afterSubmit ) {
 					this.props.afterSubmit( newItem )
 				}
@@ -119,17 +122,13 @@ class AutoForm extends React.Component {
 		let { item, errors } = this.state;
 		let form = this.form;
 		let { keys, schema } = form;
-
 		return keys.map( ( key ) => {
-
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-
 			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
 				placeholder = label,
 				Input = null;
-
 			// Create default value for this field
 			//  I feel like this should be done when initialising the form
 			//  also
@@ -148,6 +147,9 @@ class AutoForm extends React.Component {
 			if ( _.isFunction( options ) ) {
 				options = options( item );
 			}
+			if ( _.isFunction( description ) ) {
+				description = description( item );
+			}
 
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
@@ -164,7 +166,6 @@ class AutoForm extends React.Component {
 							errors 		= { errors }
 
 							hideSubmit 	= { true }
-
 							// since we are calling this recursively we need to update the parent state with the changes from the child
 							onChange 	= { ( newState ) => {
 												let item = this.state.item,
@@ -186,7 +187,6 @@ class AutoForm extends React.Component {
 			// otherwise determine the type of input to create and make it,
 			//  passing on the fields options as params
 			else {
-
 				if ( _.isObject( input ) ) {
 					Input = input;
 				}
@@ -199,7 +199,6 @@ class AutoForm extends React.Component {
 				}
 
 				if ( Input == null ) {
-					console.log( { key, fields: schema[ key ] } );
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
 
@@ -210,12 +209,17 @@ class AutoForm extends React.Component {
 
 							fieldName 	= { key }
 							value 		= { item[ key ] }
-							onChange	= { ( update, modifiers ) => { form.updateField( key, update, modifiers ) } }
+							onChange	= { ( update, modifiers ) => {
+								form.updateField( key, update, modifiers )
+							} }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
 							description	= { description }
 							maxLength 	= { maxLength }
-
+							changeSubmitText={(value)=> {
+								let val = value==null?"Save":"Issue"
+								this.setState({submitText: val})
+							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
 
@@ -229,9 +233,6 @@ class AutoForm extends React.Component {
 	}
 
 	render() {
-
-		//console.log( 'rendering form' );
-
 		return (
 			<div className="autoform row">
 
@@ -242,16 +243,24 @@ class AutoForm extends React.Component {
 				{ this.getForm() }
 
 		        { !this.props.hideSubmit ?
+						<div style={ {textAlign:"right", clear:"both"}}>
+							{this.state.submitText && this.state.submitText == "Issue"?<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+								>
+								{this.state.submitText}
+							</button>:null}
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit() } }
+							>
+								{this.props.submitText?this.props.submitText:'Submit'}
+							</button>
+						</div>
 
-				<div style={ {textAlign:"right", clear:"both"}}>
-					<button
-						type 		= "button"
-						className 	= "btn btn-flat btn-primary"
-						onClick 	= { ( ) => { this.submit() } }
-					>
-						{this.props.submitText?this.props.submitText:'Submit'}
-					</button>
-				</div>
+
 
 				: this.props.submitFormOnStepperNext ?
 

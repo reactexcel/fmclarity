@@ -3,16 +3,16 @@ import { Text, TextArea, Select, DateInput, Currency, Switch } from '/modules/ui
 
 export default ComplianceDocumentSearchSchema = {
     name: {
-		label: "Document name",
+		label: "Description",
 		type: "string",
 		input: Text,
         description:"It's an optional field",
 		size: 6,
-        options:{
-            afterChange( item ) {
-                createQuery(item, item.name?{ $regex: item.name, $options: "i" }:"", "name" )
-            }
-        }
+        // options:{
+        //     afterChange( item ) {
+        //         createQuery(item, item.name?{ $regex: item.name, $options: "i" }:"", "name" )
+        //     }
+        // }
 	},
     type: {
 		label: "Document type",

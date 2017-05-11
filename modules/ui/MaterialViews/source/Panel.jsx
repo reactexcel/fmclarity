@@ -44,7 +44,6 @@ export default function FacilityPanel( props ) {
         } )
         return menu;
     }
-
     return (
         <div>
             <div className="facility-card">
@@ -58,11 +57,11 @@ export default function FacilityPanel( props ) {
                     <div className="title-overlay">
                         <div className="row">
                             <div className="col-md-4">
-                                <div 
-                                    className="facility-title" 
+                                <div
+                                    className="facility-title"
                                     style={{borderBottom:facility.contact?"1px solid #fff":"none"}}>
 
-                                    <h2>{facility.name}</h2>                        
+                                    <h2>{facility.name}</h2>
 
                                     {facility.address.toString()?
                                     <b>{facility.address.toString()}</b>
@@ -108,7 +107,7 @@ export default function FacilityPanel( props ) {
                         tab:        <span id="requests-tab">Requests</span>,
                         content:    <RequestsTable filter={{"facility._id":facility._id}}/>
                     }
-                ]} />                
+                ]} />
             </div>
             <ActionsMenu items={getMenu()} />
         </div>

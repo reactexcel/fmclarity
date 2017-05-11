@@ -32,7 +32,7 @@ export default class BillingAddressDetails extends React.Component {
   render() {
     let { facility } = this.state;
     let billingAddress = facility.billingDetails;
-    
+
     return (
       <div className="row">
         <div className="col-sm-12">

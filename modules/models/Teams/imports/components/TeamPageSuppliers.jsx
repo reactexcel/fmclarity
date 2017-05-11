@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import Perf from 'react-addons-perf';
 
 import { NavList } from '/modules/ui/MaterialNavigation';
 import { ContactCard } from '/modules/mixins/Members';
@@ -24,6 +25,17 @@ class TeamPageSuppliers extends React.Component {
         this.state = {
             supplier: null
         }
+    }
+    componentWillMount(){
+        //Perf.start();
+    }
+
+    componentDidMount(){
+        /*
+        Perf.stop();
+        console.log('output suppliers page load time');
+        Perf.printInclusive();
+        */
     }
 
     showModal( callback ) {

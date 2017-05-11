@@ -52,7 +52,8 @@ export default UserViewEdit = React.createClass( {
 
 	getInitialState() {
 		return {
-			item: this.props.item
+			item: this.props.item,
+			userIsNew: false
 		}
 	},
 
@@ -105,8 +106,10 @@ export default UserViewEdit = React.createClass( {
 						role: role
 					} );
 				}
-				this.setItem( user );
-				Meteor.call("Teams.sendMemberInvite",team, user);
+				this.setState( { 
+					item: user,
+					userIsNew: response.userIsNew
+				} );
 			} );
 		}
 	},
@@ -149,10 +152,17 @@ export default UserViewEdit = React.createClass( {
 				newMember.emails[0].address = profileEmail;
 				Users.save.call( newMember );
 		}
+
+		if( this.state.userIsNew ) {
+			let { user, team, group, role } = this.data;
+			group.sendMemberInvite( user, team );
+			window.alert("Invitation has been sent to \""+ user.getName() + "\"");
+			//Meteor.call("Teams.sendMemberInvite",team, user);
+		}
 	},
 
 	render() {
-		let { user, team, group, role } 	= this.data,
+		let { user, team, group, role } = this.data,
 			views 					= Meteor.user(),
 			profile 				= null;
 			// role            = null;
@@ -207,9 +217,13 @@ export default UserViewEdit = React.createClass( {
 	    			<div className = "col-sm-12">
 	    				<UserViewRelationEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 	    			</div>
-	    			{( _.contains(['portfolio manager'], Meteor.user().getRole()) && _.contains(['manager','caretaker'], role)) ? <div className = "col-sm-12">
-	    				    				<UserThresholdEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
-	    				    			</div>: null}
+	    			{/*{
+	    				    				_.contains( ['portfolio manager', 'fmc support'], Meteor.user().getRole() ) ? 
+	    				    					<div className = "col-sm-12">
+	    				    						<UserThresholdEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
+	    										</div>
+	    									: null
+	    								}*/}
 	    			</div>
 		    		: null }
 
