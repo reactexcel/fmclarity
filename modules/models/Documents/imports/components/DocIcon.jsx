@@ -119,7 +119,7 @@ export default function DocIcon( props ) {
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
             { docAlmostExpires  ?
-                item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
+                item.serviceType && item.serviceType.data && item.serviceType.data.request ?
                     <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                         <a   href={url}
                              className   = "btn btn-flat"
@@ -137,7 +137,7 @@ export default function DocIcon( props ) {
                                              event.stopPropagation();
                                                  runaction( DocActions.createUpdateRequest.bind( item ) );
                                                  props.onChange();
-                                             
+
                                          }
                                      }>
                                      <span>&#43;</span>
