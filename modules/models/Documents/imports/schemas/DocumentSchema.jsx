@@ -3,12 +3,15 @@ import DocTypes from './DocTypes.jsx';
 
 import { Text, TextArea, Select, DateInput, Currency, Switch } from '/modules/ui/MaterialInputs';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
+import { Teams } from '/modules/models/Teams';
 import { Requests } from '/modules/models/Requests';
 
 import { ContactCard } from '/modules/mixins/Members';
 
 import React from 'react';
 
+const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 export default DocumentSchema = {
 
 	name: {
@@ -246,7 +249,41 @@ export default DocumentSchema = {
 				items: items,
 				afterChange: ( doc ) => {
 					doc.subServiceType = null;
-				}
+				},
+				afterChange: ( doc ) => {
+                        if ( doc == null || Teams.isServiceTeam( selectedTeam ) ) {
+                            return;
+                        }
+                        doc.supplier = null;
+                        doc.subServiceType = null;
+                        if ( doc.serviceType.data ) {
+                            let supplier = doc.serviceType.data.supplier,
+                                defaultSupplier = null;
+
+                            if ( supplier ) {
+                                if ( supplier._id ) {
+                                    defaultSupplier = Teams.findOne( supplier._id );
+                                }
+                                if ( !defaultSupplier && supplier.name ) {
+                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                }
+                                doc.supplier = defaultSupplier;
+                                if( doc.supplier && onServiceChange ) {
+                                    onServiceChange( doc.supplier );
+                                }
+                                if ( doc.serviceType.data.defaultContact && doc.serviceType.data.defaultContact.length ) {
+                                    doc.supplierContacts = doc.serviceType.data.defaultContact;
+                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                    doc.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                } else {
+                                    doc.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                }
+                            } else {
+                                doc.supplier = null;
+                                doc.subServiceType = null;
+                            }
+                        }
+                    },
 			}
 		}
 	},
