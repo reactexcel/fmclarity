@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import React from "react";
@@ -10,8 +10,8 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocForm from '../schemas/DocForm.jsx';
 /**
- * @class 			DocViewEdit
- * @memberOf 		module:models/Documents
+ * @class           DocViewEdit
+ * @memberOf        module:models/Documents
  */
 const DocViewEdit = React.createClass( {
 
@@ -21,10 +21,47 @@ const DocViewEdit = React.createClass( {
         var doc = this.props.item || {};
         if ( doc && doc._id ) {
             doc = Documents.findOne( doc._id );
+            doc["facility"] = Session.getSelectedFacility();
         }
         return {
             doc: doc
         }
+    },
+
+    getInitialState(){
+      return {
+        isEditable: true,
+      };
+    },
+
+    componentDidMount( ){
+        let isEditable = false;
+
+        if( !this.props.item ) {
+            //new item is being created
+            isEditable = true;
+        }
+        else if( !this.props.item.private ) {
+
+            import { Teams } from '/modules/models/Teams';
+
+            // check for doc owner id and logged user id
+            let user = Meteor.user(),
+                team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
+                ownerId = this.props.item.owner && this.props.item.owner._id;
+
+            if( 
+                (ownerId == user._id) 
+                || userRole == 'fmc support' 
+                || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
+                || ( Teams.isServiceTeam( team ) && userRole == 'manager' )
+            )
+            {
+                isEditable = true;
+            }
+        }
+        this.setState( { isEditable } );
     },
 
     downloadFile() {
@@ -83,11 +120,12 @@ const DocViewEdit = React.createClass( {
                             } );
                         }
 
+                    } else {
+                        this.handleChangeCallback( null, item );
                     }
 
-
                 } );
-            //	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
+            //  item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
         } else {
             let modelName = this.props.model._name;
             let _id, name;
@@ -139,13 +177,14 @@ const DocViewEdit = React.createClass( {
     render() {
         return (
             <div style={{padding:"15px"}}>
-				<AutoForm
-					model 		= { Documents }
-					form 		= { DocForm }
-					item 		= { this.data.doc }
-					onSubmit 	= { this.handleChange  }
-				/>
-			</div>
+                <AutoForm
+                    model       = { Documents }
+                    form        = { DocForm }
+                    item        = { this.data.doc }
+                    onSubmit    = { this.handleChange  }
+                    hideSubmit  = { this.state.isEditable ? null : true }
+                />
+            </div>
         )
     }
 } )

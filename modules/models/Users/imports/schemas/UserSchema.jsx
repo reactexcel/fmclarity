@@ -53,11 +53,13 @@ const UserProfileSchema = {
 		input: Text,
 		required: true,
 		type: "string",
+		/*
 		unique: {
 			collection: Meteor.users.find({},{ _id: 1, "profile.email": 1 }),
 			field: "profile.email",
 			identifier: "profile._id"
 		},
+		*/
 	},
 	phone: {
 		label: "Phone number",
@@ -88,7 +90,7 @@ const UserProfileSchema = {
 		description: "Managers can issue work orders up to this amount, above require Portfolio Manager approval",
 		input: Text,
 		optional: true,
-		type: "string",
+		type: "number",
 		condition: ( item ) => {
 				group = user.getSelectedFacility() || user.getSelectedTeam();
 				relation = group.getMemberRelation( item );

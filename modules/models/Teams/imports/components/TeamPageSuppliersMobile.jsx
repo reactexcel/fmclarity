@@ -27,6 +27,17 @@ export default class TeamPageSuppliersMobile extends React.Component {
 		} )
 	}
 
+	addSupplier(){
+		let viewersTeam = Session.getSelectedTeam();
+		TeamActions.create.bind(null, this.addSupplierToGroup.bind(this)).run();
+	}
+
+	addSupplierToGroup( supplier ){
+		facility = Session.getSelectedFacility();
+		if( facility ) {
+			facility.addSupplier( supplier );
+		}
+	}
 	render() {
 		let { team, facility, facilities, suppliers, ...other } = this.props;
 
@@ -36,31 +47,41 @@ export default class TeamPageSuppliersMobile extends React.Component {
 
 		return <div className="facility-page animated fadeIn">
 			{/*<ClientFilter/>*/}
-
-                <FacilityFilter
-                    items           = { facilities }
-                    selectedItem    = { facility }
-                    onChange = {
-                      () => {
-                        this.setState( {
-                            selectedSupplier: null
-                        } )
-                      }
-                    }
-                />
+			<div className="row">
+				<div className="col-sm-6">
+					<FacilityFilter
+						items           = { facilities }
+						selectedItem    = { facility }
+						onChange = {
+							() => {
+								this.setState( {
+									selectedSupplier: null
+								} )
+							}
+						}
+					/>
+				</div>
+				<div className="col-sm-6" style={{float:"right"}}>
+					<span style={{float: "right"}}>
+						<button className="btn btn-flat" onClick={this.addSupplier.bind(this)}>
+							Add new supplier
+						</button>
+					</span>
+				</div>
+			</div>
 
 			<div style = { { paddingTop:"50px" } }>
-            <div className = "nav-list">
-	        { suppliers ? suppliers.map( ( supplier, idx ) => {
-	        	return 	<div
-								key 		= { `${idx}-${supplier._id}` }
-								className 	= "list-tile"
-								onClick		= { () => { TeamActions.view.run( supplier ) } }
-							>
+				<div className = "nav-list">
+					{ suppliers ? suppliers.map( ( supplier, idx ) => {
+						return 	<div
+							key 		= { `${idx}-${supplier._id}` }
+							className 	= "list-tile"
+							onClick		= { () => { TeamActions.view.run( supplier ) } }
+						>
 							<ContactCard item = { supplier }/>
 						</div>
-	        } ) : null }
-	        </div>
+					} ) : null }
+				</div>
 	        </div>
 
 		</div>

@@ -20,6 +20,15 @@ class LayoutPrint extends React.Component {
 		}, 1000 );
 	}
 
+	componentDidUpdate() {
+		setTimeout( () => {
+			window.print();
+			setTimeout( () => {
+				window.history.back();
+			}, 1000 );
+		}, 1000 );
+	}
+
 	render() {
 		return (
 			<MuiThemeProvider muiTheme={getMuiTheme()}>

@@ -4,6 +4,7 @@ import { Teams, TeamActions } from '/modules/models/Teams';
 import { Facilities } from '/modules/models/Facilities';
 import { Documents } from '/modules/models/Documents';
 import { Modal } from '/modules/ui/Modal';
+import { ThumbView } from '/modules/mixins/Thumbs'
 
 export default class SearchSuppliersWithinNetwork extends Component {
     constructor(props){
@@ -174,7 +175,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                             </span>
                             <span style={{'float':'right','marginRight':'1%'}}>
                                 <button
-                                    title={"Click to add supplier."}
+                                    title={"Click to add new supplier."}
                                     className="btn btn-flat btn-primary" onClick={this.addSupplier.bind(this)}
                                 >
                                     Add new

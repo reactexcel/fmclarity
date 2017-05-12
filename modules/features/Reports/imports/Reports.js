@@ -1,6 +1,7 @@
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
+import MBMServiceImages from './reports/MBMServiceImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
 
@@ -33,6 +34,12 @@ Reports.register( {
 	id: "request-activity-chart",
 	name: "Request Activity Chart",
 	content: RequestActivityChart
+} )
+
+Reports.register( {
+	id: "mbm-service-image",
+	name: "MBM Service Image",
+	content: MBMServiceImages
 } )
 
 Reports.register( {
