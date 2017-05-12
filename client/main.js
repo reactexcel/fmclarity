@@ -170,6 +170,22 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
+            role = user.getRole();
+
+        return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+
+    action: [
+        'remove supplier',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
             role = team.getMemberRole( user );
 
         return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';

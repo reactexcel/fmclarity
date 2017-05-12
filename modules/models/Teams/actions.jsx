@@ -388,6 +388,7 @@ export {
     createFacility,
     createRequest,
     createDocument,
+    removeSupplier,
 
     createMember,
     viewMember,

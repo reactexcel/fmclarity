@@ -107,13 +107,12 @@ const TeamPanel = React.createClass( {
         return [
             TeamActions.edit.bind( this.props.item ),
             ( this.props.item.type == "contractor" ? TeamActions.inviteSupplier.bind( this.props.item ) : null ),
-            /*TeamActions.destroy.bind( this.props.item )*/
+            ( this.props.item.type == "contractor" ? TeamActions.removeSupplier.bind(Session.getSelectedFacility(), this.props.item ) : null )
         ];
     },
 
     render() {
         let { team, availableServices, insuranceDocs } = this.data;
-
         if ( !team ) {
             return <div/>
         }
