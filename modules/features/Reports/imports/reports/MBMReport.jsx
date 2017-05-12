@@ -32,14 +32,27 @@ const RequestsStatusReport = React.createClass( {
 			service: null,
 			showFacilityName: true,
 			dataset:null,
-			serverDoc:[]
+			serverDoc:[],
+			currentDoc:[]
 		}
 	},
 	componentWillMount(){
+		let docs = Documents.find({"type":"Contract"}).fetch();
+		this.setState({currentDoc : docs})
 		$("#fab").hide();
 	},
 	componentWillUnmount(){
 		$("#fab").show();
+	},
+	componentWillUpdate(){
+		setInterval(()=>{
+			let serverDoc = Documents.find({"type":"Contract"}).fetch();
+			if(serverDoc.length != this.state.currentDoc.length){
+				this.setState({
+					currentDoc : serverDoc
+				})
+			}
+		},1000)
 	},
 
 	getMeteorData() {
