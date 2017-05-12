@@ -216,14 +216,14 @@ export default DataTable = React.createClass( {
 									if(docs.length > 1){
 										docs = _.filter(docs,d => !d.subServiceType.name)
 									}
-									if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
-
-										let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
-										if(arr.length == readRow._item.children.length && docs.length > 0){
-											hideChild = true
-										}
-										//console.log(arr);
-									}
+									// if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
+									//
+									// 	let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
+									// 	if(arr.length == readRow._item.children.length && docs.length > 0){
+									// 		hideChild = true
+									// 	}
+									// 	//console.log(arr);
+									// }
 									return (
 										<tbody key={idx}>
 											<tr
@@ -247,9 +247,10 @@ export default DataTable = React.createClass( {
 
 														} ) }
 													</tr>
-													{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0 && !hideChild) ? readRow._item.children.map((val,i)=>{
+													{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
 														let query = {
 															"facility._id" : Session.getSelectedFacility()._id,
+															"serviceType.name":readRow["Service Type"].val,
 															"type":"Contract",
 															"subServiceType.name":val.name
 														}
