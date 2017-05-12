@@ -19,6 +19,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
             selectedSubservice: null,
             team: Session.getSelectedTeam(),
             services: facility?facility.servicesRequired:[],
+            selectedService: JSON.parse(localStorage.getItem('defaultService'))
         }
     }
     search(){
@@ -78,10 +79,15 @@ export default class SearchSuppliersWithinNetwork extends Component {
             suppliers = newSupplierList;
         }
         suppliers = _.uniq( suppliers, s => s._id );
-        if (suppliers.length )
-            this.setState({suppliers, showMsg: false});
-        else
+        if (suppliers.length ){
+            if(this.state.selectedService){
+                this.setState({suppliers, showMsg: false});
+            }else{
+                this.setState({suppliers:[], showMsg: false});
+            }
+        }else{
             this.setState({suppliers, showMsg: true});
+        }
     }
     getAttachments( supplier ){
         let attachments = [],
@@ -117,7 +123,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
 		let { suppliers, facility, showMsg } = this.state;
 		idList = _.pluck(facility.suppliers, '_id');
         return (
-            <div>
+            <div style={{minWidth:'500px'}}>
                 <div style = { {padding:"5px 15px 20px 15px"} } >
                     <div className="row">
                         <div className="col-sm-4">
@@ -146,7 +152,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                         </div>
                         <div className="col-sm-4">
                             <Text
-                                placeholder="supplier name (optional)"
+                                placeholder="Supplier name (optional)"
                                 value={this.state.supplierName}
                                 onChange={ ( text ) => {
                                     this.setState( { supplierName : text } );
@@ -154,14 +160,14 @@ export default class SearchSuppliersWithinNetwork extends Component {
                             />
                         </div>
                     </div>
-                    {this.state.selectedService?<div className="row">
+                    <div className="row">
                         <div className="col-lg-12">
                             <span style={{'float':'right','marginRight':'1%'}}>
                                 <button
                                     className="btn btn-flat btn-primary"
                                     style={{float:'right'}}
                                     onClick={ () => {
-                                        this.search()
+                                            this.search()
                                     } }>
                                     Search <i className="fa fa-search" aria-hidden="true"></i>
                                 </button>
@@ -175,7 +181,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                 </button>
                             </span>
                         </div>
-                    </div>:''}
+                    </div>
                 </div>
                 <div className ="row" style={{'marginLeft':'0px'}}>
     	            { suppliers && suppliers.length ? suppliers.map( ( supplier, idx ) => {
@@ -246,7 +252,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                     'borderTop': '1px solid #e3e3e3',
                                     padding: '15px',
                                 }}>
-                                    Sorry! no suppliers found...  You can add a new supplier by pressing the  <em>ADD NEW</em> button.
+                                    Sorry! No suppliers found...  You can add a new supplier by pressing the  <em>ADD NEW</em> button.
                                 </p>
                         </div>:null)
                     }

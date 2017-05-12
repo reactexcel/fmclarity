@@ -109,7 +109,7 @@ const Select = React.createClass( {
 
  	sortObject(arr) {
  		let sortedList = arr.sort(function(a, b){
-			if(a != null && b != null){
+			if(a != null && a.name != null && b != null && b.name != null){
 	 			var textA = a.name.toUpperCase();
     			var textB = b.name.toUpperCase();
     			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
