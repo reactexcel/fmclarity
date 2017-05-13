@@ -115,15 +115,16 @@ export default ServiceDetailsSchema = {
                         import { TeamStepper } from '/modules/models/Teams';
                         Modal.show( {
                             content: <TeamStepper
-                            facility = { facility }
-                            onChange = {
-                                ( supplier ) => {
-                                    let facility = Session.getSelectedFacility();
-                                    facility.addSupplier( supplier );
-                                    //Meteor.call("Facilities.addSupplier", facility, supplier );
-                                    callback( supplier );
+                                facility = { facility }
+                                showFilter={true}
+                                onChange = {
+                                    ( supplier ) => {
+                                        let facility = Session.getSelectedFacility();
+                                        facility.addSupplier( supplier );
+                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
+                                        callback( supplier );
+                                    }
                                 }
-                            }
                             />
                         } )
                     }

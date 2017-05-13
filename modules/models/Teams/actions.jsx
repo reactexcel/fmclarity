@@ -16,15 +16,11 @@ const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: ( team, callback ) => {
+    action: (team, showFilter) => {
         team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } onChange={( invitee ) => {
-                    if (callback){
-                        callback( _.pick(invitee, "name", "type", "_id" ) );
-                    }
-                }}/>;
+                <TeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }
@@ -166,8 +162,7 @@ const createRequest = new Action( {
                                 method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-
-                                method = 'Issues.issue';
+                                method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     memberThreshold = null,
@@ -204,6 +199,9 @@ const createRequest = new Action( {
                                 /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
+                                if(newRequest.haveToIssue == true){
+                                    method = 'Issues.issue';
+                                }
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
                                     team.setMemberThreshold( owner, newThreshold.toString() );
@@ -211,11 +209,15 @@ const createRequest = new Action( {
                             }
 
                         }
+                        if(newRequest.haveToIssue == true){
+                            method = 'Issues.issue';
+                            newRequest = _.omit(newRequest,'haveToIssue')
+                        }
                     }
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
-                    //callback( newRequest );
+                    callback? callback( newRequest ): null;
                 }
             }
             />

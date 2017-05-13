@@ -130,7 +130,7 @@ Actions.addAccessRule( {
     action: [
         'create team',
     ],
-    role: [ 'portfolio manager', 'fmc support' ],
+    role: [ 'portfolio manager', 'manager' ],
     alert: true
 } );
 

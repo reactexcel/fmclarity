@@ -4,11 +4,12 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import Perf from 'react-addons-perf';
 
 import DataSet from './DataSet.jsx';
+import ChildDataTable from './ChildDataTable.jsx';
+import { Documents } from '/modules/models/Documents';
 import { download, print } from './DataSetActions.jsx';
 import { Menu } from '/modules/ui/MaterialNavigation';
 
 import SearchInput, {createFilter} from 'react-search-input';
-
 
 
 export default DataTable = React.createClass( {
@@ -21,7 +22,7 @@ export default DataTable = React.createClass( {
 			cols: dataset.getCols(),
 			sortCol: this.props.sortByColumn ? this.props.sortByColumn : null,
 			sortDir: this.props.sortDirection ? this.props.sortDirection : "none",
-			searchTerm: '',
+			searchTerm: ''
 		}
 	},
 
@@ -31,16 +32,14 @@ export default DataTable = React.createClass( {
 			dataset = this.state.dataset;
 			let user = Meteor.user();
 		if ( items && items.length ) {
-			//fields = this.props.fields;
-		//	console.log(fields);
 
 			let updatedItems = _.filter(items, (i) => typeof i.lastUpdate !== "undefined"),
 				restItems = _.filter(items, (i) => typeof i.lastUpdate === "undefined");
 
 			items = updatedItems.sort( (i, j) => {
-					let a = i.lastUpdate.valueOf(),
-					  b = j.lastUpdate.valueOf();
-					return a < b ? 1 : ( a > b ? -1 : 0);
+				let a = i.lastUpdate.valueOf(),
+					b = j.lastUpdate.valueOf();
+				return a < b ? 1 : ( a > b ? -1 : 0);
 			} ) ;
 
 			items = items.concat( restItems )
@@ -109,7 +108,7 @@ export default DataTable = React.createClass( {
 		let { dataset, sortCol, sortDir, cols, rows } = this.state;
 		let { fields, children } = this.props;
 		const KEYS_TO_FILTERS = ["Prty.val", "Status.val", "Facility.val", "WO#.val", "Issue.val", "Amount.val", "Issued.val", "Due.val", "Supplier.val"];
-	    
+
 
 
 		let user = Meteor.user(),
@@ -119,7 +118,6 @@ export default DataTable = React.createClass( {
 			return <div/>
 		}
 		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
-		//console.log( rows );
 		var unreadRows=[];
 		var readRows =[];
 
@@ -157,8 +155,8 @@ export default DataTable = React.createClass( {
 							} ) }
 						</tr>
 					</thead>
-
 					<tbody>
+
 						{ filteredRows.map( (row,rowIdx) => {
 							let unread = false;
 							if( row._item.unreadRecipents ){
@@ -170,9 +168,9 @@ export default DataTable = React.createClass( {
 							if (!unread) {
 								readRows.push(row);
 							}
-							
+
 						})}
-						{unreadRows.map((unreadRow, idx)=>{
+						{ unreadRows.map((unreadRow, idx)=>{
 
 							return (
 							<tr
@@ -189,7 +187,7 @@ export default DataTable = React.createClass( {
 											key 		= {('val('+idx+','+colIdx+')-'+unreadRow[col].val)}
 											style 		= {unreadRow[col].style?unreadRow[col].style:{}}
 										>
-											<strong style={{fontWeight: "900"}}> {unreadRow[col].val} </strong> 
+											<strong style={{fontWeight: "900"}}> {unreadRow[col].val} </strong>
 
 										</td>
 									)
@@ -200,35 +198,57 @@ export default DataTable = React.createClass( {
 
 						})}
 
-						{readRows.map((readRow, idx)=>{
+						{ readRows.map((readRow, idx)=>{
+							let hideChildContractor = false;
+							let query = {
+								//"type":"Contract",
+							}
 
-							return (
-							<tr
-								className 	= "data-grid-row"
-								key 		= { idx }
-								onClick 	= { () => { this.props.onClick( readRow._item ) } }
-							>
-								<td className="data-grid-select-col">&nbsp;</td>
-								{ cols.map( (col,colIdx) => {
+							if( facility ) {
+								query[ 'facility._id' ] = facility._id;
+							}
 
-									return (
-										<td
-											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-											key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
-											style 		= {readRow[col].style?readRow[col].style:{}}
-										>
-											{readRow[col].val} 
+							// if 'Service Type' exists then add to query
+							if( readRow[ 'Service Type' ] ) {
+								query[ 'serviceType.name' ] = readRow[ 'Service Type' ].val;
+							}
 
-										</td>
-									)
+							let docs = Documents.find(query).fetch();
+							if(docs.length > 0){
 
-								} ) }
-							</tr>
-							)
+								return (
+									<tr
+										className 	= "data-grid-row"
+										key 		= { idx }
+										onClick 	= { () => { this.props.onClick( readRow._item ) } }
+									>
+										<td className="data-grid-select-col">&nbsp;</td>
+											{ cols.map( (col,colIdx) => {
 
+												return (
+													<td
+														className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+														key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
+														style 		= {readRow[col].style?readRow[col].style:{}}
+													>
+														{readRow[col].val ? readRow[col].val : null}
+
+													</td>
+												)
+
+											} ) }
+											{ (readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
+
+												return (
+													<ChildDataTable key={i} index={i} readRow={val} items = {readRow._item.children} cols={cols} fields={this.props.fields}/>
+												)
+
+											} ) : null }
+									</tr>
+								)
+							}
 						})}
 					</tbody>
-
 				</table>
 				</div>
 			</div>
