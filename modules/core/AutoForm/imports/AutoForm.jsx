@@ -136,6 +136,8 @@ class AutoForm extends React.Component {
 			// Check visibility condition specified in schema
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
+					// remove fields that do not meet condition from being added to collection
+					delete item[key];
 					return;
 				}
 			}

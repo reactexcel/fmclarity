@@ -190,7 +190,24 @@ class Model {
         return this.collection.find( ...args ).fetch();
     }
 
+    checkCondition( condition, item ) {
+        return (
+            ( _.isString( condition ) && item.type == condition ) ||
+            ( _.isArray( condition ) && _.contains( condition, item.type ) ) ||
+            ( _.isFunction( condition ) && condition( item ) )
+        )
+    }
+
     _save( doc, newValues ) {
+        var collectionItem = this.collection.findOne( doc._id );
+        for ( let fieldName in this.schema ) {
+            if ((this.schema[fieldName].condition !=null) && !this.checkCondition(this.schema[fieldName].condition, collectionItem)) {
+                // console.log('condition failed for '+fieldName);
+                var dataToUnSet={};
+                dataToUnSet[fieldName]= 1;
+                this.collection.update({_id: doc._id},{ $unset: dataToUnSet });
+            }
+        }
         let selector = null;
         if ( doc._id != null ) {
             selector = doc._id;
