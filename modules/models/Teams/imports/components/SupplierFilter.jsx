@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom'
 export default class SupplierFilter extends React.Component {
     constructor(props) {
         super(props);
-        let team = this.props.team || null;
+        let team = this.props.team || Session.getSelectedTeam();
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
         this.tags = {
             clearAll:'Clear All',

@@ -395,14 +395,14 @@ ComplianceEvaluationService = new function() {
                                                     } );
                                            }}
                                            >
-                                           {( previousDateString && previousRequest) ?
-                                               <div>
-                                                   <span>Last completed <b>{ previousDateString }</b> </span>
-                                                   { previousRequest ?
-                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
-                                                   : "N/A" }
-                                               </div>
-                                           : <div>Last completed N/A</div> }
+                                           {( previousDateString || previousRequest) ?
+                                                <div>
+                                                    <span>Last completed <b>{ previousDateString }</b> </span>
+                                                    {previousRequest ?
+                                                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                                                    : null}
+                                                </div>
+                                            : <div>Last completed N/A</div>}
                                        </div>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
@@ -414,12 +414,12 @@ ComplianceEvaluationService = new function() {
                                                     } );
                                            }}
                                            >
-                                           { (nextDateString && nextRequest) ?
+                                           { (nextDateString || nextRequest) ?
                                                <div>
                                                    <span>Next Due <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
                                                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
-                                                   : "N/A"}
+                                                   : null}
                                                </div>
                                            : <div>Next Due N/A</div> }
                                        </div>
@@ -488,7 +488,6 @@ ComplianceEvaluationService = new function() {
                     let request = Requests.findOne( q );*/
                     // If PPM event exists.
                     if ( request ) {
-                        console.log("4444444")
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
                             content: <RequestPanel item = { request } callback={callback}/>

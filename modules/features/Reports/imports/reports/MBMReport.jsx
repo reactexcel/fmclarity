@@ -32,7 +32,27 @@ const RequestsStatusReport = React.createClass( {
 			service: null,
 			showFacilityName: true,
 			dataset:null,
+			serverDoc:[],
+			currentDoc:[]
 		}
+	},
+	componentWillMount(){
+		let docs = Documents.find({"type":"Contract"}).fetch();
+		this.setState({currentDoc : docs})
+		$("#fab").hide();
+	},
+	componentWillUnmount(){
+		$("#fab").show();
+	},
+	componentWillUpdate(){
+		setInterval(()=>{
+			let serverDoc = Documents.find({"type":"Contract"}).fetch();
+			if(serverDoc.length != this.state.currentDoc.length){
+				this.setState({
+					currentDoc : serverDoc
+				})
+			}
+		},1000)
 	},
 
 	getMeteorData() {
@@ -192,7 +212,14 @@ const RequestsStatusReport = React.createClass( {
 							docs = _.filter(docs,d => !d.subServiceType.name)
 						}
 						if (docs.length > 0) {
-							let status = (docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != '') ? "Fully Executed" : "Supplier Executed"
+							let status = "not Executed"
+							if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != ''){
+								status = "Fully Executed"
+							}else if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate == ''){
+								status = "Client Executed"
+							}else if (docs[0].clientExecutedDate == '' && docs[0].supplierExecutedDate != '') {
+								status = "Supplier Executed"
+							}
 							// if ( moment(expiryDate).isBefore(moment().endOf("day")) ) {
 								return {
 									val: <span>{status}</span>
@@ -276,6 +303,9 @@ const RequestsStatusReport = React.createClass( {
 		let fields = this.fields
 		return (
 			<div>
+				<div style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
+					this.handleClick(null);
+				}}>+ Add Contract</div>
                 <h3>Service Contract</h3>
 				<div className = "ibox" ref="printable">
 					<DataTable items={data||{}} fields={fields} includeActionMenu={true} MBMreport ={true} handleClick={this.handleClick} setDataSet={this.setDataSet}/>

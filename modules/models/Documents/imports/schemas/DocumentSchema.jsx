@@ -244,7 +244,10 @@ export default DocumentSchema = {
 			}
 
 			return {
-				items: items
+				items: items,
+				afterChange: ( doc ) => {
+					doc.subServiceType = null
+				}
 			}
 		}
 	},
@@ -645,7 +648,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date supplier executed",
 		optional: true,

@@ -206,24 +206,31 @@ export default DataTable = React.createClass( {
 							if(this.props.MBMreport){
 								let hideChild = false
 								let query1 = {
-									"facility._id" : Session.getSelectedFacility()._id,
-									"type":"Contract",
-									"serviceType.name":readRow["Service Type"].val
+									"type":"Contract"
 								}
+								if( facility ) {
+								query1[ 'facility._id' ] = facility._id;
+							}
+
+							// if 'Service Type' exists then add to query
+							if( readRow[ 'Service Type' ] ) {
+								query1[ 'serviceType.name' ] = readRow[ 'Service Type' ].val;
+							}
 								let docs = Documents.find(query1).fetch();
 								if(docs.length > 0){
 									docs = _.filter(docs,d => !d.subServiceType || !d.subServiceType.name)
 									if(docs.length > 1){
 										docs = _.filter(docs,d => !d.subServiceType.name)
 									}
-									if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
-
-										let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
-										if(arr.length == readRow._item.children.length){
-											hideChild = true
-										}
-										//console.log(arr);
-									}
+									// *****checing for parent supplier same as child supplier******//
+									// if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){
+									//
+									// 	let arr = _.filter(readRow._item.children,child => (child.data.supplier ? child.data.supplier.name : "none")  == readRow["Contractor Name"].name)
+									// 	if(arr.length == readRow._item.children.length && docs.length > 0){
+									// 		hideChild = true
+									// 	}
+									// 	//console.log(arr);
+									// }
 									return (
 										<tbody key={idx}>
 											<tr
@@ -247,12 +254,19 @@ export default DataTable = React.createClass( {
 
 														} ) }
 													</tr>
-													{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0 && !hideChild) ? readRow._item.children.map((val,i)=>{
+													{(readRow._item && readRow._item.children &&  readRow._item.children.length > 0) ? readRow._item.children.map((val,i)=>{
 														let query = {
-															"facility._id" : Session.getSelectedFacility()._id,
 															"type":"Contract",
 															"subServiceType.name":val.name
 														}
+														if( facility ) {
+							              	query[ 'facility._id' ] = facility._id;
+						              	}
+
+					              		// if 'Service Type' exists then add to query
+						              	if( readRow[ 'Service Type' ] ) {
+				              				query[ 'serviceType.name' ] = readRow[ 'Service Type' ].val;
+					              		}
 														let childDoc = Documents.find(query).fetch();
 														if(childDoc.length > 0){
 
