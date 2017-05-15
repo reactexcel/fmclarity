@@ -387,14 +387,14 @@ ComplianceEvaluationService = new function() {
                                                     } );
                                            }}
                                            >
-                                           {( previousDateString && previousRequest) ?
-                                               <div>
-                                                   <span>Last <b>{ previousDateString }</b> </span>
-                                                   { previousRequest ?
-                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
-                                                   : "N/A" }
-                                               </div>
-                                           : <div>Last N/A</div> }
+                                           {( previousDateString || previousRequest) ?
+                                                <div>
+                                                    <span>Last completed <b>{ previousDateString }</b> </span>
+                                                    {previousRequest ?
+                                                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
+                                                    : null}
+                                                </div>
+                                            : <div>Last completed N/A</div>}
                                        </div>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
@@ -406,12 +406,12 @@ ComplianceEvaluationService = new function() {
                                                     } );
                                            }}
                                            >
-                                           { (nextDateString && nextRequest) ?
+                                           { (nextDateString || nextRequest) ?
                                                <div>
                                                    <span>Next <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
                                                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
-                                                   : "N/A"}
+                                                   : null}
                                                </div>
                                            : <div>Next N/A</div> }
                                        </div>

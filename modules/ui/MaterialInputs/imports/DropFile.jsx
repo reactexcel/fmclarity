@@ -8,17 +8,19 @@ export default class DropFileContainer extends React.Component {
   }
   componentDidMount(){
     $("#drop-box").mouseout(( event ) => {
-        console.log("mouse out");
       $("#drop-box").css("display", "none");
     })
+
     $("body").on("dragover", function(event){
         event.preventDefault();
         $("#drop-box").css("display", "block");
     })
+
     $("body").on("dragend", function(event){
         event.preventDefault();
         console.log("end");
         $("#drop-box").css("display", "none");
+        $("#drop").css("display", "hide");
     })
   }
   handelDrop(event) {
