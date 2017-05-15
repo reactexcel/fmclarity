@@ -137,6 +137,7 @@ export default DocumentSchema = {
 				"Insurance",
 				"Invoice",
 				"Quote",
+				"Contract"
 			].indexOf( item.type ) > -1;
 		},
 
@@ -245,7 +246,7 @@ export default DocumentSchema = {
 			return {
 				items: items,
 				afterChange: ( doc ) => {
-					doc.subServiceType = null;
+					doc.subServiceType = null
 				}
 			}
 		}
@@ -634,7 +635,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date client executed",
 		optional: true,
@@ -647,7 +648,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date supplier executed",
 		optional: true,
