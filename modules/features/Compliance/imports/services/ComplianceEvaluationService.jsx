@@ -476,7 +476,10 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "Compliance level": function( rule, facility, service ){
-          // console.log(rule,"*-*-**--*-*-*-*-*");
+          //console.log(rule,"*-*-**--*-*-*-*-*");
+            let allServices = Session.getSelectedFacility().servicesRequired
+            let selectedService = _.filter(allServices, service => service != null);
+            selectedService = _.filter(selectedService, service => service.name === rule.service.name);
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
@@ -489,6 +492,14 @@ ComplianceEvaluationService = new function() {
                 'type': rule.docType
             },
             count = 0;
+            if(rule.subservice){
+              docQuery = {
+                  "facility._id": rule.facility._id,
+                  "serviceType.name": rule.service.name,
+                  "subServiceType.name": rule.subservice.name,
+                  'type': rule.docType
+              }
+            }
             if ( rule.docType == "Service Report"){
                 for (let i=0; i<=12; i++  ) {
                     query["closeDetails.completionDate"] = {
@@ -510,10 +521,10 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    // console.log(test,"===========");
                     // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
+                        //console.log(test,"===========");
                         count++;
                       }
                     }
@@ -554,7 +565,8 @@ ComplianceEvaluationService = new function() {
                                   owner: { type, _id, name },
                                   name: rule.docName,
                                   type: rule.docType,
-                                  serviceType: rule.service,
+                                  serviceType: selectedService[0],
+                                  subServiceType:rule.subservice ? rule.subservice : ''
                               } );
                           Modal.show( {
                               content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update} />
@@ -569,7 +581,7 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let request = Requests.findOne(query);
-                    // console.log(request, "Invoice", rule.service.name );
+                    // //console.log(request, "Invoice", rule.service.name );
                     if (request) {
                         if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
                             count++;
@@ -583,10 +595,10 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    //console.log(test,"===========");
                     // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
+                        // console.log(Session.getSelectedFacility(),test,"===========");
                         count++;
                       }
                     }
@@ -616,7 +628,7 @@ ComplianceEvaluationService = new function() {
                           summary: "failed",
                           detail: count + " out of 12 Invoice"
                       },
-                      resolve: function() {
+                      resolve: function(r,update) {
                           let type = "team",
                               team = Session.getSelectedFacility(),
                               _id = team._id,
@@ -627,10 +639,11 @@ ComplianceEvaluationService = new function() {
                                   owner: { type, _id, name },
                                   name: rule.docName,
                                   type: rule.docType,
-                                  serviceType: rule.service,
+                                  serviceType: selectedService[0],
+                                  subServiceType: rule.subservice
                               } );
                           Modal.show( {
-                              content: <DocViewEdit item = { newDocument } model={Facilities} />
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update}/>
                           } )
                       },
                   } )
@@ -692,7 +705,7 @@ ComplianceEvaluationService = new function() {
                                   owner: { type, _id, name },
                                   name: rule.docName,
                                   type: rule.docType,
-                                  serviceType: rule.service,
+                                  serviceType: selectedService[0],
                               } );
                           Modal.show( {
                               content: <DocViewEdit item = { newDocument } model={Facilities} />
@@ -932,12 +945,14 @@ ComplianceEvaluationService = new function() {
         }
         var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
+        // console.log(results,"2");
         if ( service.children ) {
             var numSubservices = 0;
             var totalPassed = 0;
             var totalFailed = 0;
             var subservice = _.map(service.children, ( subservice, idx) => {
                 var subResult = evaluateService( subservice, facility );
+                // console.log(subResult,"1");
                 numSubservices += subResult.numRules;
                 totalPassed += subResult.numPassed;
                 totalFailed += subResult.numFailed;
@@ -998,6 +1013,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
+      console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
