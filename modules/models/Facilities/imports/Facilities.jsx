@@ -712,6 +712,54 @@ Facilities.actions( {
         }
     },
 
+    setDefaultSupplier: {
+        authentication: true,
+        method: ( facility, supplier, service ) => {
+            let services = facility.servicesRequired,
+                index = null;
+            for (var i = 0; i < services.length; i++) {
+                if ( services[i].name == service.name ) {
+                    if (!services[i].data) {
+                        services[i].data = [];
+                    }
+                    services[i].data.supplier = supplier;
+                    let members = [];
+                    if( supplier && supplier._id ) {
+                        import { Teams } from '/modules/models/Teams';
+                        supplier = Teams.findOne( supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers( { "role": "manager" } );
+                            if ( members.length ) {
+                                let dsc = members[0];
+                                services[i].data.defaultContact = [{
+                                    _id: dsc._id,
+                                    name: dsc.name || dsc.profile.name,
+                                    role: "supplier manager",
+                                    email: dsc.email || dsc.profile.email,
+                                }];
+
+                            }
+                        }
+                    }
+                    index = i;
+                    //console.log(services[i]);
+                    break;
+                }
+            }
+            Facilities.update( facility._id, {
+                    $set: {
+                        servicesRequired: services,
+                    }
+                }
+            )
+            return {
+                index,
+                service: services[index],
+                supplier,
+            }
+        }
+    },
+
     invitePropertyManager: {
         authentication: true,
         method: invitePropertyManager,
