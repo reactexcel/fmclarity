@@ -2020,18 +2020,27 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Utilities"
         },
-        "subservice": {
-            name: "Energy Management"
-        },
         "type": "Document is current",
         "docType": "Certificate",
         "docName": "Building Energy Efficiency Certificate"
-    }, {
+    },
+    {
         "service": {
             name: "Utilities"
         },
         "subservice": {
-            name: "Energy Management"
+            name: "Electricity"
+        },
+        "type": "Compliance level",
+        "docType": "Invoice",
+        "docName": "12 months' Utilities invoices exist"
+    },
+    {
+        "service": {
+            name: "Utilities"
+        },
+        "subservice": {
+            name: "Gas"
         },
         "type": "Compliance level",
         "docType": "Invoice",

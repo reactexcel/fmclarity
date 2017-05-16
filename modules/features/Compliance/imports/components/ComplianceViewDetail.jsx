@@ -94,8 +94,10 @@ export default ComplianceViewDetail = React.createClass( {
           thumb = "img/services/" + this.state.coverImageName + ".jpg";
         }
         */
+        // console.log(services);
+         services = _.filter(services, service => service != null);
         var results = ComplianceEvaluationService.evaluateServices( services );
-        //console.log(results);
+        // console.log(results);
         return (
             <div className="facility-card" style={{background:"#fff",color:"#333"}}>
 
