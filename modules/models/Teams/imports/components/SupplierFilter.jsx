@@ -9,37 +9,26 @@ export default class SupplierFilter extends React.Component {
         super(props);
         let team = this.props.team || null;
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
-        this.tags = {
-            clearAll:'Clear All',
-            service:'Service',
-            subService:'Sub service',
-            supplier:'Supplier',
-            address:'Geo Location',
-            insurance:'Insurance'
-        }
+        this.areas = ['Adelaide','Brisbane','Canberra','Darwin','Hobart','Melbourne','Perth','Sydney']
+        this.selectedAreas = []
+        this.selectedServices = []
         this.state = {
             team: team,
             facility: facility,
             services: facility && facility.servicesRequired || [],
             suplierName:'',
-            address:{
-                city:'',
-                postcode:'',
-                state:'',
-                streetName:'',
-                streetNumber:''
-            },
             insuranceDetails:{
                 expiry:'',
                 insurer:'',
                 policyNumber:''
             },
-            tags:[this.tags.clearAll]
+            selectedAreas:[],
+            selectedServices:[],
+            otherCity:''
         }
         this.query = {
             type: "contractor",
         }
-        this.states = ['ACT','NSW','NT','QLD','SA','TAS','VIC','WA']
 
     }
     componentWillReceiveProps(props){
@@ -52,18 +41,16 @@ export default class SupplierFilter extends React.Component {
     }
 
     componentDidMount(){
-        $(document).bind('click', function () {
-            /*if($('#filter-box').css('display') == 'block'){
-                $('#filter-box').css('display','none')
-                $('#arrow-icon').css('display','none')
-            }*/
-        });
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
+            $('#filter-details').css('display','block')
        });
     }
-    clearFilters(filter){
+    componentWillMount(){
+        this.search();
+    }
+    /*clearFilters(filter){
         let tags = this.state.tags;
         let stateToSet = {}
 
@@ -72,21 +59,17 @@ export default class SupplierFilter extends React.Component {
                 selectedService:'',
                 selectedSubservice:'',
                 suplierName:'',
-                address:{
-                    city:'',
-                    postcode:'',
-                    state:'',
-                    streetName:'',
-                    streetNumber:''
-                },
                 insuranceDetails:{
                     expiry:'',
                     insurer:'',
                     policyNumber:''
                 },
-                tags:['Clear All']
+                tags:[],
+                selectedAreas:[],
+                otherCity:''
             }
-            tags = [this.tags.clearAll]
+            tags = []
+            this.selectedAreas = []
             this.query = {
                 type: "contractor",
             }
@@ -112,22 +95,14 @@ export default class SupplierFilter extends React.Component {
             }
             this.updateQuery( this.query, "name", null );
         } else if(filter == this.tags.address){
-            stateToSet.address = {
-                city:'',
-                postcode:'',
-                state:'',
-                streetName:'',
-                streetNumber:''
-            }
+            stateToSet.selectedAreas = []
+            stateToSet.otherCity = ''
             if(_.contains(tags, filter)){
                 let index = tags.indexOf(filter);
                     tags.splice(index,1)
             }
-            this.updateQuery(this.query, "address.streetNumber", null)
-            this.updateQuery(this.query, "address.streetName", null)
-            this.updateQuery(this.query, "address.city", null)
-            this.updateQuery(this.query, "address.state", null)
-            this.updateQuery(this.query, "address.postcode", null)
+            this.selectedAreas = [];
+            this.updateQueryForCity(this.query, "address.city", null)
         } else if(filter == this.tags.insurance){
             stateToSet.insuranceDetails = {
                 expiry:'',
@@ -142,17 +117,25 @@ export default class SupplierFilter extends React.Component {
             this.updateQuery(this.query, "insuranceDetails.insurer", null)
             this.updateQuery(this.query, "insuranceDetails.policyNumber", null)
         }
+        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
+            let index = tags.indexOf(this.tags.clearAll);
+                tags.splice(index,1)
+        }
+        this.search();
         stateToSet.tags = tags;
         this.setState( stateToSet )
-        /*if(filter != this.tags.clearAll){
-            this.search();
-        }*/
-
-    }
+    }*/
     search(){
+        console.log(this.query,"search")
         let suppliers = null
         suppliers = Teams.findAll( this.query, { sort: { name: 1 } } )
+        console.log(suppliers,"suppliers")
         if( this.props.onChange) this.props.onChange( suppliers );
+        if($('#filter-box').css('display') == 'block'){
+            $('#filter-box').css('display','none')
+            $('#arrow-icon').css('display','none')
+            $('#filter-details').css('display','block')
+        }
     }
     /*updateQuery( query, fieldName, value ){
         if(!query.$or && value){
@@ -176,6 +159,120 @@ export default class SupplierFilter extends React.Component {
             }
         }
     }*/
+    updateQueryForArea(query,selectedAreas,fieldName){
+        this.query = _.omit(query, "$or");
+        this.query.$or = [];
+        _.map(selectedAreas,( area, i ) => {
+            this.query.$or.push({ [fieldName] : area })
+            this.query.$or.push({ [fieldName] : area.toLowerCase() })
+        })
+        if(this.query.$or.length == 0){
+            this.query = _.omit(query, "$or");
+        }
+    }
+    removeAreaTag(area){
+        let stateToSet = {}
+        let selectedAreas = this.state.selectedAreas;
+        if(_.contains(selectedAreas, area)){
+            let stateIndex = selectedAreas.indexOf(area);
+                selectedAreas.splice(stateIndex,1)
+                stateToSet.selectedAreas = selectedAreas
+            let varIndex = this.selectedAreas.indexOf(area);
+                this.selectedAreas.splice(varIndex,1)
+        }
+        this.updateQueryForArea(this.query,this.selectedAreas,"address.city")
+        this.search();
+        this.setState(stateToSet)
+    }
+    updateOtherCity(city){
+        let otherCity = city === null ? city : this.state.otherCity;
+        let selectedAreas = this.state.selectedAreas;
+        let stateToSet = {};
+
+        for(var i in selectedAreas){
+            if(!_.contains(this.areas, selectedAreas[i])){
+                let stateIndex = selectedAreas.indexOf(selectedAreas[i]);
+                    selectedAreas.splice(stateIndex,1)
+                let varIndex = this.selectedAreas.indexOf(selectedAreas[i])
+                    this.selectedAreas.splice(varIndex,1)
+                break;
+            }
+        }
+
+        if(!_.isEmpty(otherCity)){
+            selectedAreas.push(otherCity)
+            stateToSet.selectedAreas = selectedAreas
+            this.selectedAreas.push(otherCity)
+        }
+        this.updateQueryForArea(this.query,this.selectedAreas,"address.city")
+        this.setState(stateToSet)
+    }
+    updateSuplierName(name){
+        this.query = _.omit(this.query,"name")
+        if(!_.isEmpty(name)){
+            this.query.name = name
+        }
+        if(name === null){
+            this.search();
+        }
+    }
+    /*updateQueryForCity( query, fieldName, value ){
+        if(!query.$or && value){
+            query.$or = [ { [fieldName] : value }, { [fieldName] : value.toLowerCase() } ];
+            return;
+        }
+        for (var i in query.$or) {
+            if (query.$or[i][fieldName]){
+                if(!value) {
+                    query.$or.splice(i,1);
+                    query.$or.splice(i,1);
+                }else{
+                    query.$or[i][fieldName] = value;
+                    query.$or[parseInt(i)+1][fieldName] = value.toLowerCase();
+                }
+                if(query.$or.length == 0){
+                    this.query = _.omit(query, "$or");
+                }
+                break;
+            }
+            if ( i == query.$or.length-1 && value){
+                query.$or.push({ [fieldName] : value});
+                query.$or.push({ [fieldName] : value.toLowerCase()});
+            }
+        }
+    }*/
+    updateQueryForService(query,selectedServices,removeServiceTag){
+        this.query = _.omit(query, "service");
+        let services = {
+            $elemMatch:{
+                $or:[]
+            }
+        }
+        _.map(selectedServices,( serviceName, i ) => {
+            services.$elemMatch.$or.push({ 'name' : serviceName })
+        })
+        this.query.services = services;
+        if(selectedServices.length == 0){
+            this.query = _.omit(this.query, "services");
+        }
+        console.log(this.query,"this.query");
+        if(removeServiceTag === true){
+            this.search()
+        }
+    }
+    removeServiceTag(service){
+        let stateToSet = {}
+        let selectedServices = this.state.selectedServices;
+        if(_.contains(selectedServices, service)){
+            let stateIndex = selectedServices.indexOf(service);
+                selectedServices.splice(stateIndex,1)
+                stateToSet.selectedServices = selectedServices
+            let varIndex = this.selectedServices.indexOf(service);
+                this.selectedServices.splice(varIndex,1)
+        }
+        this.updateQueryForService(this.query,this.selectedServices,true)
+        this.setState(stateToSet)
+    }
     updateQuery( query, fieldName, value ){
         if(!query.$and && value){
             query.$and = [ { [fieldName] : value } ];
@@ -213,14 +310,6 @@ export default class SupplierFilter extends React.Component {
             }
         }
     }
-    countNonEmptyFieldsForAddress(){
-        let count = (!_.isEmpty(this.state.address.city) ? 1 : 0 ) +
-                    (!_.isEmpty(this.state.address.postcode) ? 1 : 0) +
-                    (!_.isEmpty(this.state.address.state) ? 1 : 0) +
-                    (!_.isEmpty(this.state.address.streetName) ? 1 : 0)+
-                    (!_.isEmpty(this.state.address.streetNumber) ? 1 : 0)
-        return count;
-    }
     countNonEmptyFieldsForInsurance(){
         let count = (!_.isEmpty(this.state.insuranceDetails.expiry) ? 1 : 0 ) +
                     (!_.isEmpty(this.state.insuranceDetails.insurer) ? 1 : 0) +
@@ -228,10 +317,9 @@ export default class SupplierFilter extends React.Component {
         return count;
     }
     render() {
+        console.log(this.state.services,"services");
         let totalSupplierFound = this.props.suppliers?this.props.suppliers.length:0
-        let showTotalCountClass = totalSupplierFound > 0 ? 'col-lg-6' : 'col-lg-12'
-        let showSearchButton = !_.isEmpty(this.state.selectedService) ||
-                               (!_.isEmpty(this.state.address.city) || !_.isEmpty(this.state.address.postcode) || !_.isEmpty(this.state.address.state) || !_.isEmpty(this.state.address.streetName)  || !_.isEmpty(this.state.address.streetNumber)) ||
+        let showSearchButton = !_.isEmpty(this.state.selectedServices) || !_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length != 0  || !_.isEmpty(this.state.otherCity) ||
                                (!_.isEmpty(this.state.insuranceDetails.expiry) || !_.isEmpty(this.state.insuranceDetails.insurer) || !_.isEmpty(this.state.insuranceDetails.policyNumber))
         return (
             <div>
@@ -242,12 +330,95 @@ export default class SupplierFilter extends React.Component {
                             if($('#filter-box').css('display') == 'none'){
                                 $('#filter-box').css('display','block')
                                 $('#arrow-icon').css('display','block')
+                                $('#filter-details').css('display','none')
                             } else {
                                 $('#filter-box').css('display','none')
                                 $('#arrow-icon').css('display','none')
+                                $('#filter-details').css('display','block')
                             }
                         }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-search" style={{'marginRight':'5px'}}></i>Find Supplier</button>
                     </div>
+                </div>
+                <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#C5CAE9',padding:'0px 10px 0px 10px'}}>
+                        {this.state.selectedServices.length>0?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
+                            <div className="col-xs-12">
+                                    <h4 style={{fontWeight:'400'}}>Services:</h4>
+                                    {_.map(this.state.selectedServices,( service, i ) => {
+                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
+                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                                {service}
+                                                <span
+                                                onClick={() => {
+                                                   this.removeServiceTag(service)
+                                                }}
+                                                style={{
+                                                    float: 'right',
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginLeft: '10px',
+                                                }}
+                                                title={'Remove Service'}
+                                            >&times;</span></button>
+                                        </div>
+                                    })}
+                            </div>
+                        </div>
+                        <hr></hr></div>:null}
+                        {!_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length > 0 ?<div style={this.state.selectedServices.length>0?{marginTop:'-20px'}:{}}>
+                            <div className="row" style={{marginBottom:'-10px'}}>
+                            {!_.isEmpty(this.state.suplierName)?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px'}}>
+                                <h4 style={{fontWeight:'400'}}>Supplier:</h4>
+                                <div style={{marginTop:'8px',display:'inline'}}>
+                                    <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                        {this.state.suplierName}
+                                        <span
+                                        onClick={() => {
+                                           this.updateSuplierName(null)
+                                           this.setState({
+                                               suplierName:''
+                                           })
+                                        }}
+                                        style={{
+                                            float: 'right',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold',
+                                            marginLeft: '10px',
+                                        }}
+                                        title={'Remove supplier'}
+                                    >&times;</span></button>
+                                </div>
+                            </div>:null}
+                            {this.state.selectedAreas.length > 0?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px'}}>
+                                <h4 style={{fontWeight:'400'}}>Geographical Area:</h4>
+                                {_.map(this.state.selectedAreas,( area, i ) => {
+                                    return <div key={i} style={{marginTop:'8px',display:'inline'}}>
+                                        <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                            {area}
+                                            <span
+                                            onClick={() => {
+                                               this.removeAreaTag(area)
+                                            }}
+                                            style={{
+                                                float: 'right',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                marginLeft: '10px',
+                                            }}
+                                            title={'Remove Area'}
+                                        >&times;</span></button>
+                                    </div>
+                                })}
+                            </div>:null}
+                        </div>
+                        <hr></hr></div>:null}
+                        <div className="row">
+                            <div className="col-lg-6" style={{paddingTop:'15px',paddingBottom:'15px'}}>
+                                <span style={{marginLeft:'7px',backgroundColor:'#9FA8DA',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
+                            </div>
+                        </div>
                 </div>
                 <div className="row">
                     <div className="col-xs-12" style={{textAlign:'center'}}>
@@ -257,98 +428,53 @@ export default class SupplierFilter extends React.Component {
 
             <div onClick={(event)=>{ event.stopPropagation();}} id="filter-box" style = { {'backgroundColor':'#E8EAF6','position':'absolute','width':'100%','display':'none','zIndex':'1000','paddingTop':"5px",paddingBottom:'0px',paddingLeft:'10px',paddingRight:'0px','boxShadow':'2px 11px 8px 1px rgba(0, 0, 0, 0.14), 2px 5px 13px 1px rgba(0, 0, 0, 0.2), 4px 5px 16px 0px rgba(0, 0, 0, 0.12)'} } className = "ibox search-box report-details">
                 <h3 style={{textAlign:'center'}}>Supplier Filter</h3>
+                <div className="row" style={{borderBottom:'1px solid #ddd',marginLeft:"0px",marginBottom:'5px',paddingBottom:'20px',marginRight:'20px'}}>
+                    <div className="col-xs-12">
+                        <h4 style={{fontSize:'15px',fontWeight:'300'}}>Services</h4>
+                    </div>
+                    <div className="col-xs-12">
+                        {_.map(this.state.services,( service, idx ) => {
+                            return <div key={idx} style={{marginTop:'8px',display:'inline'}}>
+                                <button onClick={(event)=>{
+                                    let stateToSet = {}
+                                    let selectedServices = this.state.selectedServices;
+                                    if(_.contains(selectedServices, service.name)){
+                                        let stateIndex = selectedServices.indexOf(service.name);
+                                            selectedServices.splice(stateIndex,1)
+                                            stateToSet.selectedServices = selectedServices
+                                        let varIndex = this.selectedServices.indexOf(service);
+                                            this.selectedServices.splice(varIndex,1)
+                                    } else {
+                                        selectedServices.push(service.name)
+                                        stateToSet.selectedServices = selectedServices
+                                        this.selectedServices.push(service.name)
+                                    }
+                                    this.updateQueryForService(this.query,this.selectedServices)
+                                    this.setState(stateToSet)
+                                }} style={{marginTop:'4px',marginRight:'4px','cursor':'pointer','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'#CFD8DC'}}>{service.name}{_.contains(this.state.selectedServices, service.name) ?<i className="fa fa-check" style={{color:'#2196F3',marginLeft:'5px'}}></i>:null}</button>
+                            </div>
+                        })}
+                    </div>
+                </div>
+
                 <div className="row" style={{marginLeft:"0px",marginBottom:'20px'}}>
                     <div className="col-lg-4" style={{paddingRight:'20px'}}>
                         <div className="row">
                             <div className="col-xs-12">
-                                <h4 style={{fontSize:'15px',fontWeight:'300'}}>Services & Supplier</h4>
-                            </div>
-                            <div className="col-xs-12">
-                                <Select
-                                    placeholder="Select service"
-                                    items={this.state.services}
-                                    value={this.state.selectedService}
-                                    onChange={ ( service  ) => {
-                                        let tags = this.state.tags
-                                        let stateToSet = {
-                                            selectedService: service || this.state.service,
-                                            subservice: service && service.children,
-                                            selectedSubservice: null,
-                                        }
-                                        let query = this.query
-                                        if(!_.isEmpty(service)){
-                                            this.query["services"] = service && { $elemMatch: { name: service.name } };
-                                            this.updateQuery( this.query, "services", null );
-                                            if(!_.contains(tags, this.tags.service)){
-                                                tags.push(this.tags.service)
-                                            }
-                                        } else {
-                                            this.query = _.omit(this.query, "services");
-                                            if(_.contains(tags, this.tags.service)){
-                                                let index = tags.indexOf(this.tags.service);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        if(query.$and && query.$and.length <= 1) {
-                                            stateToSet.tags = [this.tags.clearAll, this.tags.service]
-                                        }
-                                        this.setState( stateToSet );
-                                        if( this.props.onChange ) {
-                                            this.props.onChange()
-                                        }
-                                    } }
-                                />
-                            </div>
-                            <div className="col-xs-12">
-                                <Select
-                                    placeholder="Select subservice (optional)"
-                                    items={this.state.selectedService && this.state.selectedService.children }
-                                    value={this.state.selectedSubservice}
-                                    onChange={ ( subservice  ) => {
-                                        let tags = this.state.tags
-                                        let stateToSet = { selectedSubservice: subservice }
-                                        if(!_.isEmpty(subservice)){
-                                            if(!_.contains(tags, this.tags.subService)){
-                                                tags.push(this.tags.subService)
-                                            }
-                                        }else{
-                                            if(_.contains(tags, this.tags.subService)){
-                                                let index = tags.indexOf(this.tags.subService);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet );
-                                        this.updateQuery( this.query, "services", subservice?{$elemMatch:{"children":{$elemMatch:{ name: subservice.name}}}}:null );
-
-                                    } }
-                                />
+                                <h4 style={{fontSize:'15px',fontWeight:'300'}}>Supplier</h4>
                             </div>
                             <div className="col-xs-12">
                                 <Text
-                                    placeholder="supplier name (optional)"
+                                    placeholder="Supplier Name"
                                     value={this.state.suplierName}
-                                    onChange={ ( text ) => {
-                                        let value = text?{
-                                            $regex: text,
+                                    onChange={ ( name ) => {
+                                        let value = name?{
+                                            $regex: name,
                                             $options: 'i'
-                                        }:null
-                                        let tags = this.state.tags;
-                                        let stateToSet = { suplierName : text }
-                                        if(!_.isEmpty(text)){
-                                            if(!_.contains(tags, this.tags.supplier)){
-                                                tags.push(this.tags.supplier)
-                                            }
-                                        }else{
-                                            if(_.contains(tags, this.tags.supplier)){
-                                                let index = tags.indexOf(this.tags.supplier);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
+                                        }:''
+                                        let stateToSet = { suplierName : name }
                                         this.setState( stateToSet );
-                                        this.updateQuery( this.query, "name", value );
+                                        this.updateSuplierName( value );
                                 } }/>
                             </div>
                         </div>
@@ -358,151 +484,45 @@ export default class SupplierFilter extends React.Component {
                             <div className="col-xs-12">
                                 <h4 style={{fontSize:'15px',fontWeight:'300'}}>Geographical Area</h4>
                             </div>
-                            <div className="col-xs-6">
-                                <Text
-                                    placeholder="Street Number"
-                                    value={this.state.address.streetNumber}
-                                    onChange={ ( streetNumber ) => {
-                                        let value = streetNumber?{
-                                            $regex: streetNumber,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "address.streetNumber", streetNumber)
-                                        let address = this.state.address
-                                            address.streetNumber = streetNumber;
-                                        let stateToSet = {address:address}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(streetNumber)){
-                                            if(!_.contains(tags, this.tags.address)){
-                                                tags.push(this.tags.address)
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForAddress()
-                                            if(_.contains(tags, this.tags.address) && count == 0){
-                                                let index = tags.indexOf(this.tags.address);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
-                                } }/>
+                            <div className="col-xs-12">
+                                <div className="row">
+                                    {_.map(this.areas,( area, idx ) => {
+                                        return <div key={idx} className="col-xs-4" style={idx>2?{marginTop:'8px'}:{}}>
+                                            <button onClick={(event)=>{
+                                                let stateToSet = {}
+                                                let selectedAreas = this.state.selectedAreas;
+                                                if(_.contains(selectedAreas, area)){
+                                                    let stateIndex = selectedAreas.indexOf(area);
+                                                        selectedAreas.splice(stateIndex,1)
+                                                        stateToSet.selectedAreas = selectedAreas
+                                                    let varIndex = this.selectedAreas.indexOf(area);
+                                                        this.selectedAreas.splice(varIndex,1)
+                                                } else {
+                                                    selectedAreas.push(area)
+                                                    stateToSet.selectedAreas = selectedAreas
+                                                    this.selectedAreas.push(area)
+                                                }
+                                                this.updateQueryForArea(this.query,this.selectedAreas,"address.city")
+                                                this.setState(stateToSet)
+                                            }} style={{'cursor':'pointer','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'#CFD8DC'}}>{area}{_.contains(this.state.selectedAreas, area) ?<i className="fa fa-check" style={{color:'#2196F3',marginLeft:'5px'}}></i>:null}</button>
+                                        </div>
+                                    })}
+                                </div>
                             </div>
                             <div className="col-xs-6">
                                 <Text
-                                    placeholder="Street Name"
-                                    value={this.state.address.streetName}
-                                    onChange={ ( streetName ) => {
-                                        let value = streetName?{
-                                            $regex: streetName,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "address.streetName", streetName)
-                                        let address = this.state.address
-                                            address.streetName = streetName;
-                                        let stateToSet = {address:address}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(streetName)){
-                                            if(!_.contains(tags, this.tags.address)){
-                                                tags.push(this.tags.address)
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForAddress()
-                                            if(_.contains(tags, this.tags.address) && count == 0){
-                                                let index = tags.indexOf(this.tags.address);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
-                                } }/>
-                            </div>
-                            <div className="col-xs-6">
-                                <Text
-                                    placeholder="City"
-                                    value={this.state.address.city}
+                                    placeholder="Other City"
+                                    value={this.state.otherCity}
+                                    onBlur={()=>{
+                                        this.updateOtherCity()
+                                    }}
                                     onChange={ ( city ) => {
-                                        let value = city?{
-                                            $regex: city,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "address.city", city)
-                                        let address = this.state.address
-                                            address.city = city;
-                                        let stateToSet = {address:address}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(city)){
-                                            if(!_.contains(tags, this.tags.address)){
-                                                tags.push(this.tags.address)
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForAddress()
-                                            if(_.contains(tags, this.tags.address) && count == 0){
-                                                let index = tags.indexOf(this.tags.address);
-                                                tags.splice(index,1)
-                                            }
+                                        this.setState({
+                                            otherCity:city
+                                        })
+                                        if(city === null){
+                                            this.updateOtherCity(city)
                                         }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
-                                } }/>
-                            </div>
-                            <div className="col-xs-6">
-                                <Select
-                                    placeholder="State"
-                                    items={this.states}
-                                    value={this.state.address.state}
-                                    onChange={ ( state  ) => {
-                                        let value = state?{
-                                            $regex: state,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "address.state", state)
-                                        let address = this.state.address
-                                            address.state = state;
-                                        let stateToSet = {address:address}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(state)){
-                                            if(!_.contains(tags, this.tags.address)){
-                                                tags.push('Geo Location')
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForAddress()
-                                            if(_.contains(tags, this.tags.address) && count == 0){
-                                                let index = tags.indexOf(this.tags.address);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
-                                    } }
-                                />
-                            </div>
-                            <div className="col-xs-6">
-                                <Text
-                                    placeholder="Postal Code"
-                                    value={this.state.address.postcode}
-                                    onChange={ ( postcode ) => {
-                                        let value = postcode?{
-                                            $regex: postcode,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "address.postcode", postcode)
-                                        let address = this.state.address
-                                            address.postcode = postcode;
-                                        let stateToSet = {address:address}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(postcode)){
-                                            if(!_.contains(tags, this.tags.address)){
-                                                tags.push('Geo Location')
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForAddress()
-                                            if(_.contains(tags, this.tags.address) && count == 0){
-                                                let index = tags.indexOf(this.tags.address);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
                                 } }/>
                             </div>
                         </div>
@@ -534,10 +554,17 @@ export default class SupplierFilter extends React.Component {
                                             if(!_.contains(tags, this.tags.insurance)){
                                                 tags.push(this.tags.insurance)
                                             }
+                                            if(!_.contains(tags, this.tags.clearAll)){
+                                                tags.push(this.tags.clearAll)
+                                            }
                                         }else{
                                             let count = this.countNonEmptyFieldsForInsurance()
                                             if(_.contains(tags, this.tags.insurance) && count == 0){
                                                 let index = tags.indexOf(this.tags.insurance);
+                                                tags.splice(index,1)
+                                            }
+                                            if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
+                                                let index = tags.indexOf(this.tags.clearAll);
                                                 tags.splice(index,1)
                                             }
                                         }
@@ -564,10 +591,17 @@ export default class SupplierFilter extends React.Component {
                                         if(!_.contains(tags, this.tags.insurance)){
                                             tags.push(this.tags.insurance)
                                         }
+                                        if(!_.contains(tags, this.tags.clearAll)){
+                                            tags.push(this.tags.clearAll)
+                                        }
                                     }else{
                                         let count = this.countNonEmptyFieldsForInsurance()
                                         if(_.contains(tags, this.tags.insurance) && count == 0){
                                             let index = tags.indexOf(this.tags.insurance);
+                                            tags.splice(index,1)
+                                        }
+                                        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
+                                            let index = tags.indexOf(this.tags.clearAll);
                                             tags.splice(index,1)
                                         }
                                     }
@@ -593,10 +627,17 @@ export default class SupplierFilter extends React.Component {
                                         if(!_.contains(tags, this.tags.insurance)){
                                             tags.push(this.tags.insurance)
                                         }
+                                        if(!_.contains(tags, this.tags.clearAll)){
+                                            tags.push(this.tags.clearAll)
+                                        }
                                     }else{
                                         let count = this.countNonEmptyFieldsForInsurance()
                                         if(_.contains(tags, this.tags.insurance) && count == 0){
                                             let index = tags.indexOf(this.tags.insurance);
+                                            tags.splice(index,1)
+                                        }
+                                        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
+                                            let index = tags.indexOf(this.tags.clearAll);
                                             tags.splice(index,1)
                                         }
                                     }
@@ -607,54 +648,9 @@ export default class SupplierFilter extends React.Component {
                         </div>
                     </div>
                 </div>
-                {showSearchButton?<div style={{backgroundColor:'#C5CAE9',marginLeft:'-10px'}}>
-                    {this.state.tags.length > 0 ?<div style={{padding:'10px'}}><div className="row" style={{marginBottom:'-10px'}}>
-                        <div className="col-xs-12">
-                            {_.map(this.state.tags,( filter, i ) => {
-                                let color = 'aliceblue'
-                                let tolTip;
-                                if(filter == this.tags.clearAll){
-                                    color = '#e91e63'
-                                    tolTip = 'Remove all filters'
-                                }
-                                return <div
-										className={filter.length > 9 ? "col-xs-2": "col-xs-1"}
-										key={i}
-										style={{
-											paddingTop: '4px',
-	    								    paddingBottom: '4px',
-	    								    //paddingLeft: '15px',
-	    								    backgroundColor: color,
-	    								    fontSize: '13px',
-	    								    fontWeight: '400',
-											//marginLeft: '7px',
-                                            //marginTop:'7px',
-                                            marginRight:'5px',
-											border: '1px solid transparent',
-	    								    borderRadius: '13px',
-											//margin: "2px",
-										}}>
-											{filter}
-											<span onClick={() => {
-													this.clearFilters(filter)
-												}}
-												style={{
-													float: 'right',
-	    										    cursor: 'pointer',
-	    										    fontSize: '14px',
-	    										    fontWeight: 'bold',
-													marginRight: '10px',
-												}} title={tolTip?tolTip:'Remove Filter'}>&times;</span>
-									</div>}
-							)}
-                        </div>
-                    </div><hr></hr></div>:null}
-
-                    <div className="row" style={{marginTop:'-30px'}}>
-                        {totalSupplierFound > 0 ? <div className="col-lg-6" style={{paddingTop:'15px'}}>
-                                <span style={{marginLeft:'7px',backgroundColor:'#9FA8DA',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Found suppliers: '+totalSupplierFound}</span>
-                            </div>:null}
-                    <div className={showTotalCountClass}>
+                <div style={{backgroundColor:'#C5CAE9',marginLeft:'-10px'}}>
+                    <div className="row">
+                    <div className={'col-xs-12'}>
                         <button
                             className="btn btn-flat btn-primary"
                             style={{float:'right',marginRight:'10px'}}
@@ -665,7 +661,7 @@ export default class SupplierFilter extends React.Component {
                         </button>
                     </div>
                 </div>
-            </div>:''}
+            </div>
             </div>
             </div>
         );
