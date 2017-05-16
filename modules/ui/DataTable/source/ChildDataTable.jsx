@@ -22,15 +22,19 @@ export default ChildDataTable = React.createClass( {
 			data:{}
 		}
 	},
+	componentWillReceiveProps(props){
+		this.update(props.readRow);
+		this.setState({edit : true})
+	},
 	componentWillMount(){
-		if(this.props.readRow){
+		this.update(this.props.readRow);
+	},
+	update(readRow){
+		if(readRow){
 			dataset = this.state.dataset;
-			// console.log(this.props.items,"///////////////////////////");
 			dataset.reset(this.props.items ,this.props.fields);
 			let rows = dataset.getRows();
-			// console.log(rows,"childRow");
 			let selRow = _.filter(rows,row => row['Service Type'].val === this.props.readRow.name);
-			// console.log(selRow,"2222222*-**-*-*-*-*-*");
 			let data1 = {
 				'one' : selRow[0]["Annual Amount"].val,
 				'two'	: selRow[0]["Comments"].val ? selRow[0]["Comments"].val : '--',
@@ -46,11 +50,14 @@ export default ChildDataTable = React.createClass( {
 			})
 		}
 	},
+	handleEdit(){
+		this.props.onClick(this.props.doc);
+	},
 	render(){
 				let { cols, rows,data } = this.state;
-				// console.log(data);
+
 		return (
-				<tr className = "data-grid-row">
+				<tr className = "data-grid-row" onClick ={this.handleEdit}>
 					<td className="data-grid-select-col">&nbsp;&nbsp;</td>
 					<td style={{paddingLeft:"22px"}}>{data.four}</td>
 					<td style={{paddingLeft:"10px"}}>{data.three}</td>
@@ -58,20 +65,6 @@ export default ChildDataTable = React.createClass( {
 					<td style={{paddingLeft:"10px"}}>{data.two}</td>
 					<td style={{paddingLeft:"10px"}}>{data.six}</td>
 					<td style={{paddingLeft:"10px"}}>{data.five}</td>
-					{/* { this.props.cols.map( (col,colIdx) => {
-
-						return (
-						<td
-						className 	= { `data-grid-cell data-grid-col-${colIdx}` }
-						key 		= {('val('+this.props.index+','+colIdx+')-'+rows[col].val)}
-						style 		= {rows[col].style?rows[col].style:{}}
-						>
-						{rows[col].val}
-
-					</td>
-				)
-
-			} ) } */}
 		</tr>
 		)
 	}

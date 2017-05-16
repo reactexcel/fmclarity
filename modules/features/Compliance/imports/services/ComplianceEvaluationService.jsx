@@ -112,7 +112,6 @@ ComplianceEvaluationService = new function() {
                              Modal.show( {
                                 content: <DocViewEdit
                                     item = { docForModal }
-                                    model={Facilities}
                                     onChange={ ( docForModal ) => {
                                         callback({});
                                     }}
@@ -216,7 +215,6 @@ ComplianceEvaluationService = new function() {
                         Modal.show( {
                             content: <DocViewEdit
                                 item = { doc }
-                                model={Facilities}
                                 onChange={ ( doc ) => {
                                     callback({});
                                 }}
@@ -270,6 +268,7 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM schedule established": function( rule, facility, service ) {
+            //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -291,20 +290,15 @@ ComplianceEvaluationService = new function() {
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
-                let establishedRequest = requests[ numEvents - 1 ];
-                let request = Requests.findOne( establishedRequest._id );
-                let nextDate = request.getNextDate();
-                let previousDate = request.getPreviousDate();
                 return _.extend( {}, defaultResult, {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: `${previousDate?'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM YYYY' )}`
-                        //detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
                     },
-                    resolve: function(r, callback) {
-                        //let establishedRequest = requests[ numEvents - 1 ];
-                        RequestActions.view.bind( establishedRequest, callback ).run();
+                    resolve: function() {
+                        let establishedRequest = requests[ numEvents - 1 ];
+                        RequestActions.view.bind( establishedRequest ).run();
                     }
                 } )
             }
@@ -315,7 +309,7 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function(r, callback) {
+                resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
@@ -329,10 +323,11 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service
+                        service: rule.service,
+                        subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                    TeamActions.createRequest.bind( team, null, newRequest ).run();
                 }
             } )
         },
@@ -349,12 +344,9 @@ ComplianceEvaluationService = new function() {
                 //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
-            let nextDate,previousDate
-            if(event){
-                nextDate = event.getNextDate(),
-                previousDate = event.getPreviousDate();
-            }
             if ( event ) {
+                let nextDate = event.getNextDate(),
+                previousDate = event.getPreviousDate();
                 let nextRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
                     priority: {$in:["PPM","PMP"]},
@@ -371,10 +363,10 @@ ComplianceEvaluationService = new function() {
                 frequency = event.frequency || {},
                 previousDateString = null;
                if( nextDate ) {
-                   nextDateString = moment( nextDate ).format('ddd Do MMM YYYY');
+                   nextDateString = moment( nextDate ).format('DD/MM/YY');
                }
                if( previousDate ) {
-                   previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
+                   previousDateString = moment( previousDate ).format('DD/MM/YY');
                }
                if (nextRequest || previousRequest) {
                    return _.extend( {}, defaultResult, {
@@ -391,7 +383,7 @@ ComplianceEvaluationService = new function() {
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { previousRequest }/>
+                                                        content: <RequestPanel item = { previousRequest } />
                                                     } );
                                            }}
                                            >
@@ -410,87 +402,57 @@ ComplianceEvaluationService = new function() {
                                                 if (nextRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { nextRequest }/>
+                                                        content: <RequestPanel item = { nextRequest } />
                                                     } );
                                            }}
                                            >
                                            { (nextDateString || nextRequest) ?
                                                <div>
-                                                   <span>Next Due <b>{ nextDateString }</b> </span>
+                                                   <span>Next <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
                                                        <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
                                                    : null}
                                                </div>
-                                           : <div>Next Due N/A</div> }
+                                           : <div>Next N/A</div> }
                                        </div>
                                    </div>
                                 );
                             }
                         },
                         data: event,
-                        resolve: function(r, callback) {
+                        resolve: function() {
                             Modal.show( {
                                 id: `viewRequest-${event._id}`,
-                                content: <RequestPanel item = { event } callback={callback}/>
+                                content: <RequestPanel item = { event } />
                             } );
                         }
                     } )
                }
 
             }
-
-            let q = {
-                "facility._id": facility._id,
-                status: "PMP",
-                "service.name": rule.service.name,
-                name: rule.event
-            };
-            if (rule.subservice){
-                 q["subservice.name"] = rule.subservice.name;
-            }
-            let request = Requests.findOne( q );
-            let message = {}
-            let passed = false;
-            let summary = "failed"
-            if(request){
-                let dueDateTimeStamp = nextDate.getTime()
-                let currentTimeStamp = new Date().getTime()
-                if(dueDateTimeStamp>currentTimeStamp){
-                    summary = "passed"
-                    passed = true;
-                }
-                message = {
-                    summary: summary,
-                    //detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                    detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                }
-            }else if(!request){
-                message = {
-                    summary: summary,
-                    //detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                    detail: "Set up PPM"
-                }
-            }
             return _.extend( {}, defaultResult, {
-                passed: passed,
-                message: message,
+                passed: false,
+                message: {
+                    summary: "failed",
+                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
+                },
                 loader: false,
-                resolve: function(r, callback) {
+                resolve: function() {
                     let team = Session.getSelectedTeam();
                     console.log( 'attempting to resolve' );
-                    /*let q = {
+                    let q = {
                         "facility._id": facility._id,
                         status: "PMP",
                         "service.name": rule.service.name,
                         name: rule.event
                     };
                     if (rule.subservice) q["subservice.name"] = rule.subservice.name;
-                    let request = Requests.findOne( q );*/
+                    let request = Requests.findOne( q );
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
-                            content: <RequestPanel item = { request } callback={callback}/>
+                            content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
                         let newRequest = Requests.create( {
@@ -507,20 +469,37 @@ ComplianceEvaluationService = new function() {
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
-                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                        TeamActions.createRequest.bind( team, null, newRequest ).run();
                     }
                     //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
         "Compliance level": function( rule, facility, service ){
+          //console.log(rule,"*-*-**--*-*-*-*-*");
+            let allServices = Session.getSelectedFacility().servicesRequired
+            let selectedService = _.filter(allServices, service => service != null);
+            selectedService = _.filter(selectedService, service => service.name === rule.service.name);
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
                 "priority": "PMP",
                 "status": "Complete",
             },
+            docQuery = {
+                "facility._id": rule.facility._id,
+                "serviceType.name": rule.service.name,
+                'type': rule.docType
+            },
             count = 0;
+            if(rule.subservice){
+              docQuery = {
+                  "facility._id": rule.facility._id,
+                  "serviceType.name": rule.service.name,
+                  "subServiceType.name": rule.subservice.name,
+                  'type': rule.docType
+              }
+            }
             if ( rule.docType == "Service Report"){
                 for (let i=0; i<=12; i++  ) {
                     query["closeDetails.completionDate"] = {
@@ -536,6 +515,30 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
+                for (let i=0; i<=12; i++  ) {
+                    docQuery["applicablePeriodStartDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let test = Documents.find(docQuery).fetch();
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        //console.log(test,"===========");
+                        count++;
+                      }
+                    }
+
+                }
+                 //console.log(count);
+                //  console.log(Documents.find( {
+                //   "facility._id": rule.facility._id,
+                //   "serviceType.name": rule.service.name,
+                //   'type': 'Service Report',
+                //   'applicablePeriodStartDate':{
+                //      "$gte": new moment().subtract(0, "months").startOf("months").toDate(),
+                //      "$lte": new moment().subtract(0, "months").endOf("months").toDate()
+                //  }} ).fetch());
                 if (count == 12) {
                     return _.extend( {}, defaultResult, {
                         passed: true,
@@ -545,15 +548,159 @@ ComplianceEvaluationService = new function() {
                         },
                     } )
                 }
-                return _.extend( {}, defaultResult, {
-                    passed: false,
-                    message: {
-                        summary: "failed",
-                        detail: count + " out of 12 service reports"
-                    },
-                } )
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 service reports"
+                      },
+                      resolve: function(r,update) {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: selectedService[0],
+                                  subServiceType:rule.subservice ? rule.subservice : ''
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update} />
+                          } )
+                      },
+                  } )
             }
             if ( rule.docType == "Invoice"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // //console.log(request, "Invoice", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
+                            count++;
+                        }
+                    }
+
+                }
+                for (let i=0; i<=12; i++  ) {
+                    docQuery["applicablePeriodStartDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let test = Documents.find(docQuery).fetch();
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        // console.log(Session.getSelectedFacility(),test,"===========");
+                        count++;
+                      }
+                    }
+
+                }
+                 //console.log(count);
+                //  console.log(Documents.find( {
+                //   "facility._id": rule.facility._id,
+                //   "serviceType.name": rule.service.name,
+                //   'type': 'Service Report',
+                //   'applicablePeriodStartDate':{
+                //      "$gte": new moment().subtract(0, "months").startOf("months").toDate(),
+                //      "$lte": new moment().subtract(0, "months").endOf("months").toDate()
+                //  }} ).fetch());
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 Invoice"
+                        },
+                    } )
+                }
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 Invoice"
+                      },
+                      resolve: function(r,update) {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: selectedService[0],
+                                  subServiceType: rule.subservice ? rule.subservice : ''
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update}/>
+                          } )
+                      },
+                  } )
+            }
+            if ( rule.docType == "Confirmation"){
+              console.log(Session.getSelectedFacility());
+
+                // for (let i=0; i<=12; i++  ) {
+                    // docQuery["issueDate"] = {
+                    //     "$gte": new moment().subtract(0, "months").startOf("months").toDate(),
+                    //     "$lte": new moment().subtract(0, "months").endOf("months").toDate()
+                    // }
+                    let test = Documents.find(docQuery).fetch();
+                    //console.log(test,"===========");
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        count++;
+                      }
+                    }
+
+                if (count == 1) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 1 Confirmation"
+                        },
+                    } )
+                }
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 1 Confirmation"
+                      },
+                      resolve: function(r,update) {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: selectedService[0],
+                                  subServiceType:rule.subservice ? rule.subservice : ''
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update}/>
+                          } )
+                      },
+                  } )
+            }
+            if ( rule.docType == "Induction"){
                 for (let i=0; i<=12; i++  ) {
                     query["closeDetails.completionDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
@@ -568,22 +715,120 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
+                for (let i=0; i<=12; i++  ) {
+                    docQuery["issueDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let test = Documents.find(docQuery).fetch();
+                    //console.log(test,"===========");
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        count++;
+                      }
+                    }
+
+                }
+
                 if (count == 12) {
                     return _.extend( {}, defaultResult, {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 induction"
                         },
                     } )
                 }
-                return _.extend( {}, defaultResult, {
-                    passed: false,
-                    message: {
-                        summary: "failed",
-                        detail: count + " out of 12 Invoice"
-                    },
-                } )
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 induction"
+                      },
+                      resolve: function() {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: rule.service,
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} />
+                          } )
+                      },
+                  } )
+            }
+            if ( rule.docType == "Contract"){
+                for (let i=0; i<=12; i++  ) {
+                    query["closeDetails.completionDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let request = Requests.findOne(query);
+                    // console.log(request, "Invoice", rule.service.name );
+                    if (request) {
+                        if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
+                            count++;
+                        }
+                    }
+
+                }
+                for (let i=0; i<=12; i++  ) {
+                    docQuery["commencementDate"] = {
+                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
+                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
+                    }
+                    let test = Documents.find(docQuery).fetch();
+                    //console.log(test,"===========");
+                    // console.log(request, "Service Requests", rule.service.name );
+                    if (test) {
+                      if(test.length > 0){
+                        count++;
+                      }
+                    }
+
+                }
+
+                if (count == 12) {
+                    return _.extend( {}, defaultResult, {
+                        passed: true,
+                        message: {
+                            summary: "passed",
+                            detail: count + " out of 12 contract"
+                        },
+                    } )
+                }
+                  return _.extend( {}, defaultResult, {
+                      passed: false,
+                      message: {
+                          summary: "failed",
+                          detail: count + " out of 12 contract"
+                      },
+                      resolve: function() {
+                          let type = "team",
+                              team = Session.getSelectedFacility(),
+                              _id = team._id,
+                              name = team.name,
+                              owner = Meteor.user(),
+                              newDocument = Documents.create( {
+                                  team: { _id, name },
+                                  owner: { type, _id, name },
+                                  name: rule.docName,
+                                  type: rule.docType,
+                                  serviceType: rule.service,
+                              } );
+                          Modal.show( {
+                              content: <DocViewEdit item = { newDocument } model={Facilities} />
+                          } )
+                      },
+                  } )
             }
             facility = Facilities.findOne({_id: rule.facility._id});
             if (facility) {
@@ -687,12 +932,14 @@ ComplianceEvaluationService = new function() {
         }
         var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
+        // console.log(results,"2");
         if ( service.children ) {
             var numSubservices = 0;
             var totalPassed = 0;
             var totalFailed = 0;
             var subservice = _.map(service.children, ( subservice, idx) => {
                 var subResult = evaluateService( subservice, facility );
+                // console.log(subResult,"1");
                 numSubservices += subResult.numRules;
                 totalPassed += subResult.numPassed;
                 totalFailed += subResult.numFailed;
@@ -753,6 +1000,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
+      console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
