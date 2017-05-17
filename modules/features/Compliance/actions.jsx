@@ -20,6 +20,7 @@ const createRule = new Action( {
 
 
 function createNewComplianceRule( newRule ) {
+  // console.log(newRule,"new Rule");
     if( newRule.document ){
         newRule.docType = newRule.document.type;
         newRule.docName = newRule.document.name;
@@ -29,6 +30,7 @@ function createNewComplianceRule( newRule ) {
     var facility = newRule.facility;
     if ( facility ) {
         var services = facility.servicesRequired;
+        services =  _.filter(services, service => service != null);
         //get index of the selected service
         var idx = -1;
         for ( var i in services ) {
@@ -54,8 +56,8 @@ function createNewComplianceRule( newRule ) {
                     }
                 }
                 if( subserviceId != -1 ){
-                    isSubService = subservices[subserviceId];                    
-                }  
+                    isSubService = subservices[subserviceId];
+                }
             }
             // end-- check for sub service -----
 
@@ -78,7 +80,7 @@ function createNewComplianceRule( newRule ) {
                 copy.service = _.pick( newRule.service, 'name' );
             }
 
-            if( isSubService == false ){   // existing code of adding in service                
+            if( isSubService == false ){   // existing code of adding in service
                 service.data.complianceRules.push( copy );
             }else{
                 service.children[subserviceId].data.complianceRules.push( copy )
