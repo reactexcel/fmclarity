@@ -165,11 +165,13 @@ class ActionGroup {
 	 * @return {array} An array of actions that are valid for this user with the provided args.
 	 */
 	filter( actionNames, ...args ) {
-
+		if(args[0] != undefined && args[1] != undefined){
+			let callback = args[1]
+			callback(args[0])
+		}
 		let validActions = {},
 			item = args[ 0 ],
 			relationships = Roles.getRoles( item );
-
 		// this is phrased in a slightly awkward way because we don't know that the keys
 		//  of the passed in will actually match the name property of the action itself
 		actionNames.map( ( actionName ) => {
