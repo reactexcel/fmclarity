@@ -10,7 +10,7 @@ import moment from 'moment';
 export default class SupplierFilter extends React.Component {
     constructor(props) {
         super(props);
-        let team = this.props.team || null;
+        let team = this.props.team || Session.getSelectedTeam();
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
         this.areas = ['Adelaide','Brisbane','Canberra','Darwin','Hobart','Melbourne','Perth','Sydney']
         this.selectedAreas = []
