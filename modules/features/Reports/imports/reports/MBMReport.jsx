@@ -115,7 +115,9 @@ const RequestsStatusReport = React.createClass( {
 				let supplier = item.data?item.data.supplier:item.supplier;
 				if( supplier != null ){
 				let string = supplier.name
-				supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+				if(string != undefined || null){
+					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+				}
 				console.log(supplier);
 				return {
 					val: <ContactCard item={supplier} />,
