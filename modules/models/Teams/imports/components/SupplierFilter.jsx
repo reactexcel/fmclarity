@@ -1,8 +1,11 @@
 import React from 'react';
 import { Teams, TeamStepper } from '/modules/models/Teams';
+import { Documents } from '/modules/models/Documents';
 import { Facilities } from '/modules/models/Facilities';
 import { Text, Select,DateInput } from '/modules/ui/MaterialInputs';
+import { Switch } from '/modules/ui/MaterialInputs';
 import ReactDOM from 'react-dom'
+import moment from 'moment';
 
 export default class SupplierFilter extends React.Component {
     constructor(props) {
@@ -12,6 +15,11 @@ export default class SupplierFilter extends React.Component {
         this.areas = ['Adelaide','Brisbane','Canberra','Darwin','Hobart','Melbourne','Perth','Sydney']
         this.selectedAreas = []
         this.selectedServices = []
+        this.insurance = {
+            publicLiablityInsurance:false,
+            professionalIndemnity:false,
+            workersCompensation:false
+        }
         this.state = {
             team: team,
             facility: facility,
@@ -24,7 +32,10 @@ export default class SupplierFilter extends React.Component {
             },
             selectedAreas:[],
             selectedServices:[],
-            otherCity:''
+            otherCity:'',
+            publicLiablityInsurance:false,
+            professionalIndemnity:false,
+            workersCompensation:false
         }
         this.query = {
             type: "contractor",
@@ -50,115 +61,31 @@ export default class SupplierFilter extends React.Component {
     componentWillMount(){
         this.search();
     }
-    /*clearFilters(filter){
-        let tags = this.state.tags;
-        let stateToSet = {}
-
-        if(filter == this.tags.clearAll){
-            stateToSet = {
-                selectedService:'',
-                selectedSubservice:'',
-                suplierName:'',
-                insuranceDetails:{
-                    expiry:'',
-                    insurer:'',
-                    policyNumber:''
-                },
-                tags:[],
-                selectedAreas:[],
-                otherCity:''
-            }
-            tags = []
-            this.selectedAreas = []
-            this.query = {
-                type: "contractor",
-            }
-        } else if(filter == this.tags.service){
-            stateToSet.selectedService = '';
-            this.query = _.omit(this.query, "services");
-            if(_.contains(tags, filter)){
-                let index = tags.indexOf(filter);
-                    tags.splice(index,1)
-            }
-        } else if(filter == this.tags.subService){
-            stateToSet.selectedSubservice = '';
-            if(_.contains(tags, filter)){
-                let index = tags.indexOf(filter);
-                    tags.splice(index,1)
-            }
-            this.updateQuery( this.query, "services", null );
-        } else if(filter == this.tags.supplier){
-            stateToSet.suplierName = '';
-            if(_.contains(tags, filter)){
-                let index = tags.indexOf(filter);
-                    tags.splice(index,1)
-            }
-            this.updateQuery( this.query, "name", null );
-        } else if(filter == this.tags.address){
-            stateToSet.selectedAreas = []
-            stateToSet.otherCity = ''
-            if(_.contains(tags, filter)){
-                let index = tags.indexOf(filter);
-                    tags.splice(index,1)
-            }
-            this.selectedAreas = [];
-            this.updateQueryForCity(this.query, "address.city", null)
-        } else if(filter == this.tags.insurance){
-            stateToSet.insuranceDetails = {
-                expiry:'',
-                insurer:'',
-                policyNumber:''
-            }
-            if(_.contains(tags, filter)){
-                let index = tags.indexOf(filter);
-                    tags.splice(index,1)
-            }
-            this.updateQuery(this.query, "insuranceDetails.expiry", null)
-            this.updateQuery(this.query, "insuranceDetails.insurer", null)
-            this.updateQuery(this.query, "insuranceDetails.policyNumber", null)
-        }
-        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
-            let index = tags.indexOf(this.tags.clearAll);
-                tags.splice(index,1)
-        }
-        this.search();
-        stateToSet.tags = tags;
-        this.setState( stateToSet )
-    }*/
     search(){
-        console.log(this.query,"search")
+        if(this.insurance.publicLiablityInsurance === true || this.insurance.professionalIndemnity === true || this.insurance.workersCompensation === true){
+            let insuranceTypes = []
+            if(this.insurance.professionalIndemnity === true){
+                insuranceTypes.push({'insuranceType':'Professional Indemnity'})
+            }
+            if(this.insurance.publicLiablityInsurance === true){
+                insuranceTypes.push({'insuranceType':'Public Liablity'})
+            }
+            if(this.insurance.workersCompensation === true){
+                insuranceTypes.push({'insuranceType':"Worker's Compensation"})
+            }
+            let docs = Documents.find({$or:insuranceTypes,expiryDate:{"$gt": new moment().toDate()}}).fetch();
+            let team = _.pluck(docs, 'team');
+            let teamIds = _.pluck(team, '_id');
+            this.query._id = {
+                $in:teamIds
+            }
+        }else{
+            this.query = _.omit(this.query, "_id");
+        }
         let suppliers = null
         suppliers = Teams.findAll( this.query, { sort: { name: 1 } } )
-        console.log(suppliers,"suppliers")
         if( this.props.onChange) this.props.onChange( suppliers );
-        if($('#filter-box').css('display') == 'block'){
-            $('#filter-box').css('display','none')
-            $('#arrow-icon').css('display','none')
-            $('#filter-details').css('display','block')
-        }
     }
-    /*updateQuery( query, fieldName, value ){
-        if(!query.$or && value){
-            query.$or = [ { [fieldName] : value } ];
-            return;
-        }
-        if(query.$or && query.$or.length <= 1 && !value) {
-            this.query = _.omit(query, "$or");
-        }
-        for (var i in query.$or) {
-            if (query.$or[i][fieldName]){
-                if(!value) {
-                    query.$or.splice(i,1);
-                }else{
-                    query.$or[i][fieldName] = value;
-                }
-                break;
-            }
-            if ( i == query.$or.length-1 && value){
-                query.$or.push({ [fieldName] : value});
-            }
-        }
-    }*/
     updateQueryForArea(query,selectedAreas,fieldName){
         this.query = _.omit(query, "$or");
         this.query.$or = [];
@@ -169,6 +96,7 @@ export default class SupplierFilter extends React.Component {
         if(this.query.$or.length == 0){
             this.query = _.omit(query, "$or");
         }
+        this.search()
     }
     removeAreaTag(area){
         let stateToSet = {}
@@ -180,8 +108,10 @@ export default class SupplierFilter extends React.Component {
             let varIndex = this.selectedAreas.indexOf(area);
                 this.selectedAreas.splice(varIndex,1)
         }
+        if(!_.contains(this.areas,area)){
+            stateToSet.otherCity = ''
+        }
         this.updateQueryForArea(this.query,this.selectedAreas,"address.city")
-        this.search();
         this.setState(stateToSet)
     }
     updateOtherCity(city){
@@ -212,36 +142,9 @@ export default class SupplierFilter extends React.Component {
         if(!_.isEmpty(name)){
             this.query.name = name
         }
-        if(name === null){
-            this.search();
-        }
+        this.search();
     }
-    /*updateQueryForCity( query, fieldName, value ){
-        if(!query.$or && value){
-            query.$or = [ { [fieldName] : value }, { [fieldName] : value.toLowerCase() } ];
-            return;
-        }
-        for (var i in query.$or) {
-            if (query.$or[i][fieldName]){
-                if(!value) {
-                    query.$or.splice(i,1);
-                    query.$or.splice(i,1);
-                }else{
-                    query.$or[i][fieldName] = value;
-                    query.$or[parseInt(i)+1][fieldName] = value.toLowerCase();
-                }
-                if(query.$or.length == 0){
-                    this.query = _.omit(query, "$or");
-                }
-                break;
-            }
-            if ( i == query.$or.length-1 && value){
-                query.$or.push({ [fieldName] : value});
-                query.$or.push({ [fieldName] : value.toLowerCase()});
-            }
-        }
-    }*/
-    updateQueryForService(query,selectedServices,removeServiceTag){
+    updateQueryForService(query,selectedServices){
         this.query = _.omit(query, "service");
         let services = {
             $elemMatch:{
@@ -255,10 +158,7 @@ export default class SupplierFilter extends React.Component {
         if(selectedServices.length == 0){
             this.query = _.omit(this.query, "services");
         }
-        console.log(this.query,"this.query");
-        if(removeServiceTag === true){
-            this.search()
-        }
+        this.search()
     }
     removeServiceTag(service){
         let stateToSet = {}
@@ -270,57 +170,34 @@ export default class SupplierFilter extends React.Component {
             let varIndex = this.selectedServices.indexOf(service);
                 this.selectedServices.splice(varIndex,1)
         }
-        this.updateQueryForService(this.query,this.selectedServices,true)
+        this.updateQueryForService(this.query,this.selectedServices)
         this.setState(stateToSet)
     }
-    updateQuery( query, fieldName, value ){
-        if(!query.$and && value){
-            query.$and = [ { [fieldName] : value } ];
-            return;
-        }
-        if(query.$and && query.$and.length <= 1 && !value) {
-            this.query = _.omit(query, "$and");
+
+    removeInsuranceTag(insurance){
+        if(insurance == "1"){
+            this.insurance.publicLiablityInsurance = false;
             this.setState({
-                address:{
-                    city:'',
-                    postcode:'',
-                    state:'',
-                    streetName:'',
-                    streetNumber:''
-                },
-                insuranceDetails:{
-                    expiry:'',
-                    insurer:'',
-                    policyNumber:''
-                },
-                tags:[this.tags.clearAll]
+                publicLiablityInsurance:false
             })
         }
-        for (var i in query.$and) {
-            if (query.$and[i][fieldName]){
-                if(!value) {
-                    query.$and.splice(i,1);
-                }else{
-                    query.$and[i][fieldName] = value;
-                }
-                break;
-            }
-            if ( i == query.$and.length-1 && value){
-                query.$and.push({ [fieldName] : value});
-            }
+        if(insurance == "2"){
+            this.insurance.professionalIndemnity = false;
+            this.setState({
+                professionalIndemnity:false
+            })
         }
+        if(insurance == "3"){
+            this.insurance.workersCompensation = false;
+            this.setState({
+                workersCompensation:false
+            })
+        }
+        this.search()
     }
-    countNonEmptyFieldsForInsurance(){
-        let count = (!_.isEmpty(this.state.insuranceDetails.expiry) ? 1 : 0 ) +
-                    (!_.isEmpty(this.state.insuranceDetails.insurer) ? 1 : 0) +
-                    (!_.isEmpty(this.state.insuranceDetails.policyNumber) ? 1 : 0)
-        return count;
-    }
+
     render() {
-        console.log(this.state.services,"services");
         let totalSupplierFound = this.props.suppliers?this.props.suppliers.length:0
-        let showSearchButton = !_.isEmpty(this.state.selectedServices) || !_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length != 0  || !_.isEmpty(this.state.otherCity) ||
-                               (!_.isEmpty(this.state.insuranceDetails.expiry) || !_.isEmpty(this.state.insuranceDetails.insurer) || !_.isEmpty(this.state.insuranceDetails.policyNumber))
         return (
             <div>
                 <div className="row">
@@ -336,7 +213,7 @@ export default class SupplierFilter extends React.Component {
                                 $('#arrow-icon').css('display','none')
                                 $('#filter-details').css('display','block')
                             }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-search" style={{'marginRight':'5px'}}></i>Find Supplier</button>
+                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Supplier</button>
                     </div>
                 </div>
                 <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#C5CAE9',padding:'0px 10px 0px 10px'}}>
@@ -365,9 +242,9 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                         <hr></hr></div>:null}
-                        {!_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length > 0 ?<div style={this.state.selectedServices.length>0?{marginTop:'-20px'}:{}}>
+                        {!_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length > 0 || (this.state.publicLiablityInsurance==true || this.state.professionalIndemnity==true || this.state.workersCompensation==true)?<div style={this.state.selectedServices.length>0?{marginTop:'-20px'}:{}}>
                             <div className="row" style={{marginBottom:'-10px'}}>
-                            {!_.isEmpty(this.state.suplierName)?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px'}}>
+                            {!_.isEmpty(this.state.suplierName)?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
                                 <h4 style={{fontWeight:'400'}}>Supplier:</h4>
                                 <div style={{marginTop:'8px',display:'inline'}}>
                                     <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
@@ -390,7 +267,7 @@ export default class SupplierFilter extends React.Component {
                                     >&times;</span></button>
                                 </div>
                             </div>:null}
-                            {this.state.selectedAreas.length > 0?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px'}}>
+                            {this.state.selectedAreas.length > 0?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
                                 <h4 style={{fontWeight:'400'}}>Geographical Area:</h4>
                                 {_.map(this.state.selectedAreas,( area, i ) => {
                                     return <div key={i} style={{marginTop:'8px',display:'inline'}}>
@@ -411,6 +288,62 @@ export default class SupplierFilter extends React.Component {
                                         >&times;</span></button>
                                     </div>
                                 })}
+                            </div>:null}
+                            {this.state.publicLiablityInsurance==true || this.state.professionalIndemnity==true || this.state.workersCompensation==true?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
+                                <h4 style={{fontWeight:'400'}}>Compliance:</h4>
+                                <div className="row">
+                                {this.state.publicLiablityInsurance==true?<div className="col-xs-12">
+                                        <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                            {"public Liablity Insurance"}
+                                            <span
+                                            onClick={() => {
+                                                this.removeInsuranceTag('1')
+                                            }}
+                                            style={{
+                                                float: 'right',
+                                                cursor: 'pointer',
+                                                fontSize: '14px',
+                                                fontWeight: 'bold',
+                                                marginLeft: '10px',
+                                            }}
+                                            title={'Remove Insurance'}
+                                        >&times;</span></button>
+                                    </div>:null}
+                                    {this.state.professionalIndemnity==true?<div className="col-xs-12">
+                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                                {"Professional Indemnity"}
+                                                <span
+                                                onClick={() => {
+                                                    this.removeInsuranceTag('2')
+                                                }}
+                                                style={{
+                                                    float: 'right',
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginLeft: '10px',
+                                                }}
+                                                title={'Remove Insurance'}
+                                            >&times;</span></button>
+                                        </div>:null}
+                                        {this.state.workersCompensation==true?<div className="col-xs-12">
+                                                <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                                    {"Workers Compensation"}
+                                                    <span
+                                                    onClick={() => {
+                                                        this.removeInsuranceTag('3')
+                                                    }}
+                                                    style={{
+                                                        float: 'right',
+                                                        cursor: 'pointer',
+                                                        fontSize: '14px',
+                                                        fontWeight: 'bold',
+                                                        marginLeft: '10px',
+                                                    }}
+                                                    title={'Remove Insurance'}
+                                                >&times;</span></button>
+                                            </div>:null}
+                                </div>
                             </div>:null}
                         </div>
                         <hr></hr></div>:null}
@@ -457,7 +390,7 @@ export default class SupplierFilter extends React.Component {
                     </div>
                 </div>
 
-                <div className="row" style={{marginLeft:"0px",marginBottom:'20px'}}>
+                <div className="row" style={{marginLeft:"0px",marginBottom:'20px',minHeight:'210px'}}>
                     <div className="col-lg-4" style={{paddingRight:'20px'}}>
                         <div className="row">
                             <div className="col-xs-12">
@@ -479,7 +412,7 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd'}}>
+                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd',minHeight:'210px'}}>
                         <div className="row">
                             <div className="col-xs-12">
                                 <h4 style={{fontSize:'15px',fontWeight:'300'}}>Geographical Area</h4>
@@ -527,141 +460,62 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd'}}>
+                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd',minHeight:'210px'}}>
                         <div className="row">
                             <div className="col-xs-12">
-                                <h4 style={{fontSize:'15px',fontWeight:'300'}}>Current Insurance</h4>
+                                <h4 style={{fontSize:'15px',fontWeight:'300'}}>Compliance</h4>
                             </div>
                             <div className="col-xs-12">
-                                <DateInput
-                                    placeholder='Expiry Date'
-                                    //items={props.items}
-                                    //item={props.item}
-                                    //view={props.view}
-                                    value={this.state.insuranceDetails.expiry}
-                                    fieldName='expiryDate'
-                                    onChange={( expiryDate ) => {
-                                        let value = expiryDate?{
-                                            $regex: expiryDate,
-                                            $options: 'i'
-                                        }:null
-                                        this.updateQuery(this.query, "insuranceDetails.expiry", expiryDate)
-                                        let insuranceDetails = this.state.insuranceDetails
-                                            insuranceDetails.expiry = expiryDate;
-                                        let stateToSet = {insuranceDetails:insuranceDetails}
-                                        let tags = this.state.tags
-                                        if(!_.isEmpty(expiryDate)){
-                                            if(!_.contains(tags, this.tags.insurance)){
-                                                tags.push(this.tags.insurance)
-                                            }
-                                            if(!_.contains(tags, this.tags.clearAll)){
-                                                tags.push(this.tags.clearAll)
-                                            }
-                                        }else{
-                                            let count = this.countNonEmptyFieldsForInsurance()
-                                            if(_.contains(tags, this.tags.insurance) && count == 0){
-                                                let index = tags.indexOf(this.tags.insurance);
-                                                tags.splice(index,1)
-                                            }
-                                            if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
-                                                let index = tags.indexOf(this.tags.clearAll);
-                                                tags.splice(index,1)
-                                            }
-                                        }
-                                        stateToSet.tags = tags;
-                                        this.setState( stateToSet )
-                                    }}
-                                />
+                                <Switch
+                                    placeholder = {"Public Liablity Insurance"}
+                					value = { this.state.publicLiablityInsurance }
+                					onChange = { (value)=>{
+                                        this.insurance.publicLiablityInsurance = value
+                                        this.search()
+                                        this.setState({
+                                            publicLiablityInsurance:value
+                                        })
+                                    } }
+                				/>
                             </div>
                             <div className="col-xs-12">
-                            <Text
-                                placeholder="Insurer"
-                                value={this.state.insuranceDetails.insurer}
-                                onChange={ ( insurer ) => {
-                                    let value = insurer?{
-                                        $regex: insurer,
-                                        $options: 'i'
-                                    }:null
-                                    this.updateQuery(this.query, "insuranceDetails.insurer", insurer)
-                                    let insuranceDetails = this.state.insuranceDetails
-                                        insuranceDetails.insurer = insurer;
-                                    let stateToSet = {insuranceDetails:insuranceDetails}
-                                    let tags = this.state.tags
-                                    if(!_.isEmpty(insurer)){
-                                        if(!_.contains(tags, this.tags.insurance)){
-                                            tags.push(this.tags.insurance)
-                                        }
-                                        if(!_.contains(tags, this.tags.clearAll)){
-                                            tags.push(this.tags.clearAll)
-                                        }
-                                    }else{
-                                        let count = this.countNonEmptyFieldsForInsurance()
-                                        if(_.contains(tags, this.tags.insurance) && count == 0){
-                                            let index = tags.indexOf(this.tags.insurance);
-                                            tags.splice(index,1)
-                                        }
-                                        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
-                                            let index = tags.indexOf(this.tags.clearAll);
-                                            tags.splice(index,1)
-                                        }
-                                    }
-                                    stateToSet.tags = tags;
-                                    this.setState( stateToSet )
-                            } }/>
+                                <Switch
+                                    placeholder = {"Professional Indemnity Insurance"}
+                					value = { this.state.professionalIndemnity }
+                					onChange = { (value)=>{
+                                        this.insurance.professionalIndemnity = value
+                                        this.search()
+                                        this.setState({
+                                            professionalIndemnity:value
+                                        })
+                                    } }
+                				/>
                             </div>
                             <div className="col-xs-12">
-                            <Text
-                                placeholder="Policy Number"
-                                value={this.state.insuranceDetails.policyNumber}
-                                onChange={ ( policyNumber ) => {
-                                    let value = policyNumber?{
-                                        $regex: policyNumber,
-                                        $options: 'i'
-                                    }:null
-                                    this.updateQuery(this.query, "insuranceDetails.policyNumber", policyNumber)
-                                    let insuranceDetails = this.state.insuranceDetails
-                                        insuranceDetails.policyNumber = policyNumber;
-                                    let stateToSet = {insuranceDetails:insuranceDetails}
-                                    let tags = this.state.tags
-                                    if(!_.isEmpty(policyNumber)){
-                                        if(!_.contains(tags, this.tags.insurance)){
-                                            tags.push(this.tags.insurance)
-                                        }
-                                        if(!_.contains(tags, this.tags.clearAll)){
-                                            tags.push(this.tags.clearAll)
-                                        }
-                                    }else{
-                                        let count = this.countNonEmptyFieldsForInsurance()
-                                        if(_.contains(tags, this.tags.insurance) && count == 0){
-                                            let index = tags.indexOf(this.tags.insurance);
-                                            tags.splice(index,1)
-                                        }
-                                        if(tags.length == 1 && _.contains(tags, this.tags.clearAll)){
-                                            let index = tags.indexOf(this.tags.clearAll);
-                                            tags.splice(index,1)
-                                        }
-                                    }
-                                    stateToSet.tags = tags;
-                                    this.setState( stateToSet )
-                                } }/>
+                                <Switch
+                                    placeholder = {"Workcover Insurance"}
+                					value = { this.state.workersCompensation }
+                					onChange = { (value)=>{
+                                        this.insurance.workersCompensation = value
+                                        this.search()
+                                        this.setState({
+                                            workersCompensation:value
+                                        })
+                                    } }
+                				/>
+                            </div>
+                            <div className="col-xs-12">
+                                <Switch
+                                    placeholder = {"Responsive Insurance"}
+                					value = {false }
+                					onChange = { (value)=>{
+                                    } }
+                                    disabled={true}
+                				/>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div style={{backgroundColor:'#C5CAE9',marginLeft:'-10px'}}>
-                    <div className="row">
-                    <div className={'col-xs-12'}>
-                        <button
-                            className="btn btn-flat btn-primary"
-                            style={{float:'right',marginRight:'10px'}}
-                            onClick={ () => {
-                                this.search()
-                            } }>
-                            Apply Filters <i className="fa fa-search" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
             </div>
             </div>
         );
