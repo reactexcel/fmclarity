@@ -89,7 +89,6 @@ const RequestsStatusReport = React.createClass( {
 		// 		val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
 		// 	}
 		// },
-		//Status: "status",
 		Status:  ( item ) => {
 			let color = "#4d4d4d";
 			if ( item.status == "Closed") {
