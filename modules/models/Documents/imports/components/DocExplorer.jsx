@@ -31,10 +31,10 @@ export default class DocExplorer extends React.Component {
       let docs = Documents.find({}).fetch();
       this.setState({currentDoc : docs})
 
-      let test = setInterval(()=>{
-        
+      let update = setInterval(()=>{
+
         PubSub.subscribe( 'stop', (msg,data) => {
-          clearInterval(test)
+          clearInterval(update)
         } );
 
         let serverDoc = Documents.find({}).fetch();
