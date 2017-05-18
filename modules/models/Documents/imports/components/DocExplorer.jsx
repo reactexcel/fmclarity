@@ -4,8 +4,10 @@
  */
 
 import React from "react";
+import PubSub from 'pubsub-js';
 import DocIconHeader from './DocIconHeader.jsx';
 import DocIcon from './DocIcon.jsx';
+import { Documents } from '/modules/models/Documents';
 
 export default class DocExplorer extends React.Component {
     constructor( props ) {
@@ -20,8 +22,33 @@ export default class DocExplorer extends React.Component {
         this.state = {
             item: item,
             value: props.value,
+            // stopInterval:"false",
+            currentDoc:[]
         }
 
+    }
+    componentWillMount(){
+      let docs = Documents.find({}).fetch();
+      this.setState({currentDoc : docs})
+
+      let test = setInterval(()=>{
+        
+        PubSub.subscribe( 'stop', (msg,data) => {
+          clearInterval(test)
+        } );
+
+        let serverDoc = Documents.find({}).fetch();
+
+        if(serverDoc.length != this.state.currentDoc.length){
+          this.setState({
+            currentDoc : serverDoc
+          })
+        }
+      },1000)
+    }
+
+    componentWillUnmount(){
+      PubSub.publish('stop', "test");
     }
 
     componentWillReceiveProps( props ) {
