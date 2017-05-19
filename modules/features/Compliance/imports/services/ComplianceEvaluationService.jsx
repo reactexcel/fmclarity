@@ -640,7 +640,7 @@ ComplianceEvaluationService = new function() {
                                   name: rule.docName,
                                   type: rule.docType,
                                   serviceType: selectedService[0],
-                                  subServiceType: rule.subservice
+                                  subServiceType: rule.subservice ? rule.subservice : ''
                               } );
                           Modal.show( {
                               content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update}/>
@@ -649,25 +649,13 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Confirmation"){
-                for (let i=0; i<=12; i++  ) {
-                    query["closeDetails.completionDate"] = {
-                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
-                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
-                    }
-                    let request = Requests.findOne(query);
-                    // console.log(request, "Invoice", rule.service.name );
-                    if (request) {
-                        if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
-                            count++;
-                        }
-                    }
+              console.log(Session.getSelectedFacility());
 
-                }
-                for (let i=0; i<=12; i++  ) {
-                    docQuery["issueDate"] = {
-                        "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
-                        "$lte": new moment().subtract(i, "months").endOf("months").toDate()
-                    }
+                // for (let i=0; i<=12; i++  ) {
+                    // docQuery["issueDate"] = {
+                    //     "$gte": new moment().subtract(0, "months").startOf("months").toDate(),
+                    //     "$lte": new moment().subtract(0, "months").endOf("months").toDate()
+                    // }
                     let test = Documents.find(docQuery).fetch();
                     //console.log(test,"===========");
                     // console.log(request, "Service Requests", rule.service.name );
@@ -677,14 +665,12 @@ ComplianceEvaluationService = new function() {
                       }
                     }
 
-                }
-
-                if (count == 12) {
+                if (count == 1) {
                     return _.extend( {}, defaultResult, {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Confirmation"
+                            detail: count + " out of 1 Confirmation"
                         },
                     } )
                 }
@@ -692,9 +678,9 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Confirmation"
+                          detail: count + " out of 1 Confirmation"
                       },
-                      resolve: function() {
+                      resolve: function(r,update) {
                           let type = "team",
                               team = Session.getSelectedFacility(),
                               _id = team._id,
@@ -706,9 +692,10 @@ ComplianceEvaluationService = new function() {
                                   name: rule.docName,
                                   type: rule.docType,
                                   serviceType: selectedService[0],
+                                  subServiceType:rule.subservice ? rule.subservice : ''
                               } );
                           Modal.show( {
-                              content: <DocViewEdit item = { newDocument } model={Facilities} />
+                              content: <DocViewEdit item = { newDocument } model={Facilities} onChange={update}/>
                           } )
                       },
                   } )
