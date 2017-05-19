@@ -6,6 +6,7 @@ import { Text } from '/modules/ui/MaterialInputs'
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents'
 import { Select } from '/modules/ui/MaterialInputs';
+import {Teams} from '/modules/models/Teams'
 
 export default class DocsSinglePageIndex extends React.Component {
     constructor(props) {
@@ -54,7 +55,6 @@ export default class DocsSinglePageIndex extends React.Component {
                     skip: (currentPage * parseInt( listSize )),
                 }
             );
-            console.log({query, documents, totalPage});
             this.setState({
                 documents,
                 totalPage,
@@ -78,6 +78,28 @@ export default class DocsSinglePageIndex extends React.Component {
             this.query["team._id"] = props.team._id;
         }
 	}
+
+    handleChange( index, newValue ) {
+        let docs = this.state.documents;
+        docs[index] = newValue;
+        if ( newValue ) {
+            this.setState({
+                documents: docs
+            })
+        }
+        if ( !newValue ) {
+            let newDocs = [];
+            docs.map((doc,idx)=>{
+                if(idx != index){
+                    newDocs.push(doc)
+                }
+            })
+            //Update the component when a document get deleted.
+            this.setState( {
+                documents: newDocs
+            } );
+        }
+    }
   render() {
     let role = Meteor.user()&&Meteor.user().getRole();
     return (
@@ -125,7 +147,6 @@ export default class DocsSinglePageIndex extends React.Component {
                                         'nextPage': 2,
                                         'previousPage': -1,
                                     },() => componet.onPageChange() );
-                                    //console.log( { query: response.query } );
                                 } }
                                 submitText={<span title="Click to search documents">Search <i className="fa fa-search" aria-hidden="true"></i></span>}
                             />:
@@ -191,13 +212,15 @@ export default class DocsSinglePageIndex extends React.Component {
 					<div className="col-lg-12">
 						<DocIconHeader />
 						<div style={{backgroundColor: "#fff"}}>
-							{_.map(this.state.documents, ( doc, idx ) => (
-									<DocIcon
-										key = { idx }
-										item = { doc }
-										role = {role}
-										/>
-								))
+							{_.map(this.state.documents, ( doc, idx ) => {
+                                return <DocIcon
+                                    key = { idx }
+                                    item = { doc }
+                                    role = {role}
+                                    model = {Teams}
+                                    onChange = { (doc) => { this.handleChange( idx, doc ) } }
+                                    />
+                            })
 							}
 						</div>
 					</div>

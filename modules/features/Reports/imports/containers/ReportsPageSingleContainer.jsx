@@ -14,7 +14,7 @@ import { Facilities } from '/modules/models/Facilities';
  */
 const ReportsPageSingleContainer = createContainer( ( params ) => {
 
-	console.log( params );
+	// console.log( params );
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
