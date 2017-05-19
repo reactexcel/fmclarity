@@ -280,14 +280,15 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-
+          // console.log(facility,rules);
             let services = clearComplianceRules( facility );
-
+            // console.log(services,"after clear compliance");
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
                 let serviceIndex = null;
                 for ( var i in services ) {
+                  // console.log(services[ i ].name ,key,"For loop");
                     if ( services[ i ].name == key ) {
                         service = services[ i ];
                         serviceIndex = i;
@@ -295,7 +296,7 @@ Facilities.actions( {
                     }
                 }
 
-                //console.log( { key, service, serviceIndex } );
+                // console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
@@ -410,6 +411,7 @@ Facilities.actions( {
 
                 }
             }
+            console.log(services,"final services");
             Meteor.call( 'Facilities.save', facility, {
                 servicesRequired: services
             } );
@@ -848,6 +850,7 @@ function sendMemberInvite( facility, recipient, team ) {
 
 function clearComplianceRules( facility ) {
     let services = facility.servicesRequired;
+    services =  _.filter(services, service => service != null);
     if ( services ) {
         services.map( ( service, idx ) => {
             if ( !services[ idx ].data ) {
