@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDom from "react-dom";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import ComplianceList from './ComplianceList.jsx';
+import { Documents } from '/modules/models/Documents';
 import ComplianceActions from '../../actions.jsx';
 
 
@@ -19,9 +21,34 @@ export default ComplianceViewDetail = React.createClass( {
 
     getInitialState(){
       return {
-        coverImageName: ""
+        coverImageName: "",
+        currentDoc:[]
       }
     },
+
+    componentWillMount(){
+      let docs = Documents.find({}).fetch();
+      this.setState({currentDoc : docs})
+
+      let test = setInterval(()=>{
+        PubSub.subscribe( 'stop', (msg,data) => {
+          clearInterval(test)
+        } );
+
+        let serverDoc = Documents.find({}).fetch();
+
+        if(serverDoc.length != this.state.currentDoc.length){
+          this.setState({
+            currentDoc : serverDoc
+          })
+        }
+      },1000)
+    },
+
+    componentWillUnmount(){
+      PubSub.publish('stop', "test");
+    },
+
     deleteRules( serviceName ) {
         var services = this.data.facility.servicesRequired;
         var idx = -1;

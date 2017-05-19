@@ -618,7 +618,7 @@ ComplianceEvaluationService = new function() {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 Invoices"
                         },
                     } )
                 }
@@ -626,7 +626,7 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Invoice"
+                          detail: count + " out of 12 Invoices"
                       },
                       resolve: function(r,update) {
                           let type = "team",
