@@ -185,11 +185,13 @@ export default class DocsSinglePageIndex extends React.Component {
             query.$and = []
         }
         if ( !query.$and.length) {
-            query.$and.push( { [fieldName]: value } );
+            if(!_.isEmpty(value)){
+                query.$and.push( { [fieldName]: value } );
+            }
         } else {
             for ( var i in query.$and ) {
                 if ( query.$and[i][fieldName] ) {
-                    if( !value ){
+                    if( _.isEmpty(value) ){
                         query.$and.splice(i,1);
                     } else {
                         query.$and[i][fieldName] = value;
@@ -197,7 +199,9 @@ export default class DocsSinglePageIndex extends React.Component {
                     break;
                 }
                 if ( i == query.$and.length-1 && !query.$and[i][fieldName]){
-                    query.$and.push( { [fieldName]: value } );
+                    if(!_.isEmpty(value)){
+                        query.$and.push( { [fieldName]: value } );
+                    }
                 }
             }
         }
@@ -369,7 +373,11 @@ export default class DocsSinglePageIndex extends React.Component {
                                             let stateToSet = {},
                                                 self = this;
                                                 stateToSet.docName = docName
-                                            this.updateQuery( this.query, docName, 'name');
+                                            let value = docName?{
+                                                    $regex: docName,
+                                                    $options: 'i'
+                                                }:''
+                                            this.updateQuery( this.query, value, 'name');
                                             this.query = this.query.$and && !this.query.$and.length ? _.omit(this.query, '$and') : this.query
                                             this.query =  _.omit(this.query, '$or')
                                             stateToSet.query = this.query
