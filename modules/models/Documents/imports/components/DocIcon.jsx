@@ -65,6 +65,14 @@ export default function DocIcon( props ) {
         item.run();
     }
 
+    function checkCondition( condition, item ) {
+        return (
+            ( _.isString( condition ) && item.type == condition ) ||
+            ( _.isArray( condition ) && _.contains( condition, item.type ) ) ||
+            ( _.isFunction( condition ) && condition( item ) )
+        )
+    }
+
     let item = props.item;
     if ( item && item._id ) {
         item = Documents.findOne( { "_id": props.item._id } );
@@ -84,8 +92,8 @@ export default function DocIcon( props ) {
         color = getColorFromString( item.type );
     }
     var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
-    let docAlmostExpires = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
-    let docExpired = item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
+    let docAlmostExpires = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
+    let docExpired = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?

@@ -151,6 +151,9 @@ const DocViewEdit = React.createClass( {
                     name: name
                 }
             }
+            if (!item.expiryDate) {
+                item.expiryDate = null;
+            }
             Documents.save.call( item );
             if ( item ) {
                 let owner = null;
