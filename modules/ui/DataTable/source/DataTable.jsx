@@ -218,7 +218,7 @@ export default DataTable = React.createClass( {
 							}
 								let docs = Documents.find(query1).fetch();
 								if(docs.length > 0){
-									docs = _.filter(docs,d => !d.subServiceType.name)
+									docs = _.filter(docs,d => !d.subServiceType || !d.subServiceType.name)
 									if(docs.length > 1){
 										docs = _.filter(docs,d => !d.subServiceType.name)
 									}
