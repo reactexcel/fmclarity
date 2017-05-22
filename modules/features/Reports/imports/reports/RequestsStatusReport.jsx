@@ -144,6 +144,7 @@ const RequestsStatusReport = React.createClass( {
 
 			if ( duration ) {
 				let val = {};
+				val.duration = duration;
 				val.originalVal = parseInt( duration.asMinutes() );
 				val.val = duration.humanize();
 				if ( val.originalVal < 0 ) {

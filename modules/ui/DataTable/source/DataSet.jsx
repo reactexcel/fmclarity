@@ -130,6 +130,10 @@ export default function DataSet( items ) {
 						val: obj.Status.val.props.children[2]
 					}
 				}
+				if(newObj.Responsiveness && newObj.Responsiveness.duration && newObj.Responsiveness.duration._data && newObj.Responsiveness.duration._data){
+					let daysValue = newObj.Responsiveness.duration._data.days ? newObj.Responsiveness.duration._data.days.toString() : (1).toString();
+					    newObj.Responsiveness.val = daysValue+' days';
+				}
 				if(newObj.Issue){
 					newObj.Summary = obj.Issue
 					newObj = _.omit(newObj,'Issue')
