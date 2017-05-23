@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
@@ -43,9 +44,14 @@ const RequestsStatusReport = React.createClass( {
 	},
 	componentWillUnmount(){
 		$("#fab").show();
+		PubSub.publish('stop', "test");
 	},
 	componentWillUpdate(){
-		setInterval(()=>{
+	let update = setInterval(()=>{
+
+			PubSub.subscribe( 'stop', (msg,data) => {
+				clearInterval(update)
+			});
 			let serverDoc = Documents.find({"type":"Contract"}).fetch();
 			if(serverDoc.length != this.state.currentDoc.length){
 				this.setState({

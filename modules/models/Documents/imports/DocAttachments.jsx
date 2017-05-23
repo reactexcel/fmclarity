@@ -79,7 +79,6 @@ function getDocs( fieldName ) {
             }
 
         } );
-
         return Documents.find( {
                 $or: [
                     { _id: { $in: ids } },
