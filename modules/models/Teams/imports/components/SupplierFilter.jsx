@@ -25,11 +25,6 @@ export default class SupplierFilter extends React.Component {
             facility: facility,
             services: facility && facility.servicesRequired || [],
             suplierName:'',
-            insuranceDetails:{
-                expiry:'',
-                insurer:'',
-                policyNumber:''
-            },
             selectedAreas:[],
             selectedServices:[],
             otherCity:'',
@@ -84,7 +79,35 @@ export default class SupplierFilter extends React.Component {
         }
         let suppliers = null
         suppliers = Teams.findAll( this.query, { sort: { name: 1 } } )
+        if(this.query.services && this.query.services.$elemMatch && this.query.services.$elemMatch.$or && this.query.services.$elemMatch.$or.length ){
+            suppliers = this.filterForServices(suppliers);
+        }
         if( this.props.onChange) this.props.onChange( suppliers );
+    }
+    filterForServices(suppliers){
+        let searchFor = this.query.services.$elemMatch.$or;
+        let newSuplierList = []
+        _.map(suppliers,(supplier,i)=>{
+            if(supplier.getAvailableServices){
+                let availableServices = supplier.getAvailableServices();
+                _.map(searchFor,(obj,i)=>{
+                    let serviceExist = availableServices.filter(function(ser){
+                            return ser.name == obj.name
+                        })
+                    if(serviceExist && serviceExist.length > 0){
+                        let alreadyContainThisSupplier = newSuplierList.filter(function(list){
+                            return list._id == supplier._id
+                        })
+                        if(alreadyContainThisSupplier && alreadyContainThisSupplier.length>0){
+                        }else{
+                            newSuplierList.push(supplier)
+                        }
+                    }
+                })
+            }else{
+            }
+        })
+        return newSuplierList;
     }
     updateQueryForArea(query,selectedAreas,fieldName){
         this.query = _.omit(query, "$or");
@@ -198,10 +221,11 @@ export default class SupplierFilter extends React.Component {
 
     render() {
         let totalSupplierFound = this.props.suppliers?this.props.suppliers.length:0
+        let showTags = this.state.selectedServices.length>0 || !_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length > 0 || (this.state.publicLiablityInsurance==true || this.state.professionalIndemnity==true || this.state.workersCompensation==true) ? true : false;
         return (
             <div>
                 <div className="row">
-                    <div className="col-xs-12" style={{textAlign:'center'}}>
+                    <div className="col-xs-12">
                         <button onClick={(event)=>{
                             event.stopPropagation();
                             if($('#filter-box').css('display') == 'none'){
@@ -213,13 +237,13 @@ export default class SupplierFilter extends React.Component {
                                 $('#arrow-icon').css('display','none')
                                 $('#filter-details').css('display','block')
                             }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Supplier</button>
+                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Suppliers</button>
                     </div>
                 </div>
-                <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#C5CAE9',padding:'0px 10px 0px 10px'}}>
-                        {this.state.selectedServices.length>0?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
+                <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#d6e6fa',padding:'0px 10px 0px 10px'}}>
+                        {showTags === true?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
                             <div className="col-xs-12">
-                                    <h4 style={{fontWeight:'400'}}>Services:</h4>
+                                    <h4 style={{fontWeight:'400'}}>Tags:</h4>
                                     {_.map(this.state.selectedServices,( service, i ) => {
                                         return <div key={i} style={{marginTop:'8px',display:'inline'}}>
                                             <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
@@ -239,43 +263,15 @@ export default class SupplierFilter extends React.Component {
                                             >&times;</span></button>
                                         </div>
                                     })}
-                            </div>
-                        </div>
-                        <hr></hr></div>:null}
-                        {!_.isEmpty(this.state.suplierName) || this.state.selectedAreas.length > 0 || (this.state.publicLiablityInsurance==true || this.state.professionalIndemnity==true || this.state.workersCompensation==true)?<div style={this.state.selectedServices.length>0?{marginTop:'-20px'}:{}}>
-                            <div className="row" style={{marginBottom:'-10px'}}>
-                            {!_.isEmpty(this.state.suplierName)?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
-                                <h4 style={{fontWeight:'400'}}>Supplier:</h4>
-                                <div style={{marginTop:'8px',display:'inline'}}>
-                                    <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                        {this.state.suplierName}
-                                        <span
-                                        onClick={() => {
-                                           this.updateSuplierName(null)
-                                           this.setState({
-                                               suplierName:''
-                                           })
-                                        }}
-                                        style={{
-                                            float: 'right',
-                                            cursor: 'pointer',
-                                            fontSize: '14px',
-                                            fontWeight: 'bold',
-                                            marginLeft: '10px',
-                                        }}
-                                        title={'Remove supplier'}
-                                    >&times;</span></button>
-                                </div>
-                            </div>:null}
-                            {this.state.selectedAreas.length > 0?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
-                                <h4 style={{fontWeight:'400'}}>Geographical Area:</h4>
-                                {_.map(this.state.selectedAreas,( area, i ) => {
-                                    return <div key={i} style={{marginTop:'8px',display:'inline'}}>
+                                    {!_.isEmpty(this.state.suplierName)?<div style={{marginTop:'8px',display:'inline'}}>
                                         <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                            {area}
+                                            {this.state.suplierName}
                                             <span
                                             onClick={() => {
-                                               this.removeAreaTag(area)
+                                               this.updateSuplierName(null)
+                                               this.setState({
+                                                   suplierName:''
+                                               })
                                             }}
                                             style={{
                                                 float: 'right',
@@ -284,37 +280,34 @@ export default class SupplierFilter extends React.Component {
                                                 fontWeight: 'bold',
                                                 marginLeft: '10px',
                                             }}
-                                            title={'Remove Area'}
-                                        >&times;</span></button>
-                                    </div>
-                                })}
-                            </div>:null}
-                            {this.state.publicLiablityInsurance==true || this.state.professionalIndemnity==true || this.state.workersCompensation==true?<div className="col-xs-4" style={{borderRight:'1px solid #f0f8ff',marginTop:'5px',minHeight:'140px'}}>
-                                <h4 style={{fontWeight:'400'}}>Compliance:</h4>
-                                <div className="row">
-                                {this.state.publicLiablityInsurance==true?<div className="col-xs-12">
-                                        <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                            {"public Liablity Insurance"}
-                                            <span
-                                            onClick={() => {
-                                                this.removeInsuranceTag('1')
-                                            }}
-                                            style={{
-                                                float: 'right',
-                                                cursor: 'pointer',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                                marginLeft: '10px',
-                                            }}
-                                            title={'Remove Insurance'}
+                                            title={'Remove supplier'}
                                         >&times;</span></button>
                                     </div>:null}
-                                    {this.state.professionalIndemnity==true?<div className="col-xs-12">
+                                    {_.map(this.state.selectedAreas,( area, i ) => {
+                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
                                             <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {"Professional Indemnity"}
+                                                {area}
                                                 <span
                                                 onClick={() => {
-                                                    this.removeInsuranceTag('2')
+                                                   this.removeAreaTag(area)
+                                                }}
+                                                style={{
+                                                    float: 'right',
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginLeft: '10px',
+                                                }}
+                                                title={'Remove Area'}
+                                            >&times;</span></button>
+                                        </div>
+                                    })}
+                                    {this.state.publicLiablityInsurance==true?<div style={{marginTop:'8px',display:'inline'}}>
+                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                                {"Public Liablity Insurance"}
+                                                <span
+                                                onClick={() => {
+                                                    this.removeInsuranceTag('1')
                                                 }}
                                                 style={{
                                                     float: 'right',
@@ -326,12 +319,12 @@ export default class SupplierFilter extends React.Component {
                                                 title={'Remove Insurance'}
                                             >&times;</span></button>
                                         </div>:null}
-                                        {this.state.workersCompensation==true?<div className="col-xs-12">
+                                        {this.state.professionalIndemnity==true?<div style={{marginTop:'8px',display:'inline'}}>
                                                 <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                    {"Workers Compensation"}
+                                                    {"Professional Indemnity"}
                                                     <span
                                                     onClick={() => {
-                                                        this.removeInsuranceTag('3')
+                                                        this.removeInsuranceTag('2')
                                                     }}
                                                     style={{
                                                         float: 'right',
@@ -343,27 +336,63 @@ export default class SupplierFilter extends React.Component {
                                                     title={'Remove Insurance'}
                                                 >&times;</span></button>
                                             </div>:null}
-                                </div>
-                            </div>:null}
+                                            {this.state.workersCompensation==true?<div style={{marginTop:'8px',display:'inline'}}>
+                                                    <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                                        {"Workers Compensation"}
+                                                        <span
+                                                        onClick={() => {
+                                                            this.removeInsuranceTag('3')
+                                                        }}
+                                                        style={{
+                                                            float: 'right',
+                                                            cursor: 'pointer',
+                                                            fontSize: '14px',
+                                                            fontWeight: 'bold',
+                                                            marginLeft: '10px',
+                                                        }}
+                                                        title={'Remove Insurance'}
+                                                    >&times;</span></button>
+                                                </div>:null}
+                            </div>
                         </div>
                         <hr></hr></div>:null}
                         <div className="row">
                             <div className="col-lg-6" style={{paddingTop:'15px',paddingBottom:'15px'}}>
-                                <span style={{marginLeft:'7px',backgroundColor:'#9FA8DA',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
+                                <span style={{marginLeft:'7px',backgroundColor:'#75aaee',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
                             </div>
                         </div>
                 </div>
                 <div className="row">
-                    <div className="col-xs-12" style={{textAlign:'center'}}>
-                        <div onClick={(event)=>{ event.stopPropagation();}} id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','borderBottom':'15px solid #E8EAF6','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','margin':'0 auto','marginTop':'-10px'}}></div>
+                    <div className="col-xs-12">
+                        <div onClick={(event)=>{ event.stopPropagation();}} id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','borderBottom':'15px solid #d6e6fa','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','margin':'0 42px','marginTop':'-10px'}}></div>
                     </div>
                 </div>
 
-            <div onClick={(event)=>{ event.stopPropagation();}} id="filter-box" style = { {'backgroundColor':'#E8EAF6','position':'absolute','width':'100%','display':'none','zIndex':'1000','paddingTop':"5px",paddingBottom:'0px',paddingLeft:'10px',paddingRight:'0px','boxShadow':'2px 11px 8px 1px rgba(0, 0, 0, 0.14), 2px 5px 13px 1px rgba(0, 0, 0, 0.2), 4px 5px 16px 0px rgba(0, 0, 0, 0.12)'} } className = "ibox search-box report-details">
-                <h3 style={{textAlign:'center'}}>Supplier Filter</h3>
-                <div className="row" style={{borderBottom:'1px solid #ddd',marginLeft:"0px",marginBottom:'5px',paddingBottom:'20px',marginRight:'20px'}}>
-                    <div className="col-xs-12">
+            <div onClick={(event)=>{ event.stopPropagation();}} id="filter-box" style = { {'backgroundColor':'#d6e6fa','position':'absolute','width':'100%','display':'none','zIndex':'1000','paddingTop':"5px",paddingBottom:'0px',paddingLeft:'10px',paddingRight:'0px','boxShadow':'2px 11px 8px 1px rgba(0, 0, 0, 0.14), 2px 5px 13px 1px rgba(0, 0, 0, 0.2), 4px 5px 16px 0px rgba(0, 0, 0, 0.12)'} } className = "ibox search-box report-details">
+                <div className="row" style={{borderBottom:'1px solid #BDBDBD',marginLeft:"0px",marginBottom:'5px',paddingBottom:'20px',marginRight:'20px'}}>
+                    <div className="col-xs-11">
                         <h4 style={{fontSize:'15px',fontWeight:'300'}}>Services</h4>
+                    </div>
+                    <div className="col-xs-1">
+                        <span style={{float:"right"}}>
+                            <button className="btn btn-flat btn-primary" onClick={() => {
+                                    let self = this;
+                                    self.query = {
+                                        type: "contractor",
+                                    }
+                                    self.setState({
+                                        suplierName:'',
+                                        selectedAreas:[],
+                                        selectedServices:[],
+                                        otherCity:'',
+                                        publicLiablityInsurance:false,
+                                        professionalIndemnity:false,
+                                        workersCompensation:false
+                                    }, () => self.search() );
+                                }}  title="Reset supplier filter">
+                                <i className="fa fa-refresh"></i>
+                            </button>
+                        </span>
                     </div>
                     <div className="col-xs-12">
                         {_.map(this.state.services,( service, idx ) => {
@@ -412,7 +441,7 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd',minHeight:'210px'}}>
+                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #BDBDBD',minHeight:'210px'}}>
                         <div className="row">
                             <div className="col-xs-12">
                                 <h4 style={{fontSize:'15px',fontWeight:'300'}}>Geographical Area</h4>
@@ -460,7 +489,7 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #ddd',minHeight:'210px'}}>
+                    <div className="col-lg-4" style={{paddingLeft:'20px',paddingRight:'20px',borderLeft:'1px solid #BDBDBD',minHeight:'210px'}}>
                         <div className="row">
                             <div className="col-xs-12">
                                 <h4 style={{fontSize:'15px',fontWeight:'300'}}>Compliance</h4>
@@ -514,6 +543,12 @@ export default class SupplierFilter extends React.Component {
                 				/>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div className="row" style={{padding:'10px 10px 10px 0px',backgroundColor:'#c5cae9'}}>
+                    <div className="col-lg-6">
+                        <span style={{marginLeft:'7px',backgroundColor:'#75aaee',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
                     </div>
                 </div>
             </div>
