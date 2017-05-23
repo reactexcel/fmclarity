@@ -54,7 +54,7 @@ const PageLogin = React.createClass( {
 		return (
 		<div className="middle-box loginscreen animated fadeInDown">
 			<div>
-				<img width="300px" src="img/logo-horizontal-blue.svg"/>
+				<img width="300px" src="/img/logo-horizontal-blue.svg"/>
 			</div>
 			<div style={{marginTop:"30%"}}>
 				<form className="m-t" role="form" onSubmit={this.handleSubmit}>

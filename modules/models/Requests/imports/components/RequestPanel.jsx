@@ -44,7 +44,7 @@ export default RequestPanel = React.createClass( {
 
                 if( facility ) {
                     realEstateAgency = facility.getRealEstateAgency();
-                    console.log( realEstateAgency );
+                    //console.log( realEstateAgency );
                 }
 
                 contact = request.getContact();
@@ -57,24 +57,25 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+        let callback = this.props.callback
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
-        Perf.start();
+        //Perf.start();
     },
 
     componentDidMount() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing mount load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
     componentDidUpdate() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing update load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
@@ -84,22 +85,20 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
-
-    //console.log( facility );
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
     function showUserModal( selectedUser ) {
-            
+
             Modal.show( {
                 content: <UserPanel
                     item    = { selectedUser }
                     team    = { Session.get( 'selectedTeam' ) }
                     group   = { facility }/>
             } )
-        
+
     }
 
     function showMoreUsers() {
@@ -127,7 +126,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
-
         if ( nextDate ) {
             nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
         }
@@ -164,7 +162,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
 
     } ) : null;
-    request.readBy=_.uniq(request.readBy, '_id'); 
+    request.readBy=_.uniq(request.readBy, '_id');
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -239,7 +237,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                   </div>
                 </div>
                 <div className="col-md-11">
-                  <WorkflowButtons actions = { RequestActions } item = { request }/>
+                  <WorkflowButtons actions = { RequestActions } item = { request } callback={callback}/>
                 </div>
               </div>
             </div>
@@ -330,12 +328,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 })}
 
                             </ul>
-                            
+
                         </td>
                     </tr> : null }
                 </tbody>
             </table>
-            
+
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
