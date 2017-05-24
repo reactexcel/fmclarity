@@ -7,6 +7,8 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents'
 import { Select } from '/modules/ui/MaterialInputs';
 import {Teams} from '/modules/models/Teams'
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
+import DocViewEdit from './DocViewEdit.jsx';
 
 export default class DocsSinglePageIndex extends React.Component {
     constructor(props) {
@@ -101,6 +103,7 @@ export default class DocsSinglePageIndex extends React.Component {
         }
     }
   render() {
+    let facilityID = this.state.query && this.state.query['facility._id'] ? this.state.query['facility._id'] : null;
     let role = Meteor.user()&&Meteor.user().getRole();
     return (
 			<div className='col-lg-12'>
@@ -208,6 +211,18 @@ export default class DocsSinglePageIndex extends React.Component {
                         </span>
                     </div>
                 </div>
+                <DropFileContainer model={{_name:"Facilities"}} facilityID={facilityID} onDrop={(doc)=>{
+                    console.log(doc,"doc")
+                    Modal.show( {
+                        content: <DocViewEdit
+            				item = { doc }
+            				onChange = { (data) => { this.handleChange( this.state.documents.length, data ) }}
+            				model={this.props.model}
+            				selectedItem={this.state.item}
+            				team = {this.state.item}
+                        />
+                    } )
+                }}>
 				<div className="row">
 					<div className="col-lg-12">
 						<DocIconHeader />
@@ -225,6 +240,7 @@ export default class DocsSinglePageIndex extends React.Component {
 						</div>
 					</div>
 				</div>
+                </DropFileContainer>
 			</div>
 		);
   }
