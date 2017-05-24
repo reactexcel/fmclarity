@@ -4,8 +4,12 @@
  */
 
 import React from "react";
+import PubSub from 'pubsub-js';
 import DocIconHeader from './DocIconHeader.jsx';
 import DocIcon from './DocIcon.jsx';
+import { Documents } from '/modules/models/Documents';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
+import DocViewEdit from './DocViewEdit.jsx';
 
 export default class DocExplorer extends React.Component {
     constructor( props ) {
@@ -20,8 +24,33 @@ export default class DocExplorer extends React.Component {
         this.state = {
             item: item,
             value: props.value,
+            // stopInterval:"false",
+            currentDoc:[]
         }
 
+    }
+    componentWillMount(){
+      let docs = Documents.find({}).fetch();
+      this.setState({currentDoc : docs})
+
+      let update = setInterval(()=>{
+
+        PubSub.subscribe( 'stop', (msg,data) => {
+          clearInterval(update)
+        } );
+
+        let serverDoc = Documents.find({}).fetch();
+
+        if(serverDoc.length != this.state.currentDoc.length){
+          this.setState({
+            currentDoc : serverDoc
+          })
+        }
+      },1000)
+    }
+
+    componentWillUnmount(){
+      PubSub.publish('stop', "test");
     }
 
     componentWillReceiveProps( props ) {
@@ -64,6 +93,16 @@ export default class DocExplorer extends React.Component {
             listLength = oldDocumentsList.length + newDocumentsList.length,
             role = Meteor.user().getRole();
         return (
+            <DropFileContainer model={{_name:"Facilities"}} onDrop={(doc)=>{
+                Modal.show( {
+                    content: <DocViewEdit
+        				item = { doc }
+        				onChange = { (data) => { this.handleChange( listLength, data ) }}
+        				model={this.props.model}
+        				selectedItem={this.state.item}
+        				team = {this.state.item}/>
+                } )
+            }}>
             <div>
 
 				<DocIconHeader />
@@ -108,6 +147,7 @@ export default class DocExplorer extends React.Component {
                 />
 
 			</div>
+            </DropFileContainer>
         );
     }
 }
