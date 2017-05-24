@@ -10,6 +10,7 @@ import PageLostPassword from './imports/components/PageLostPassword.jsx';
 import PageChangePassword from './imports/components/PageChangePassword.jsx';
 import LoginService from './imports/LoginService.js';
 import Page403 from './imports/components/Page403.jsx';
+import PageRequestLinkExpired from './imports/components/PageRequestLinkExpired.jsx';
 
 AccessGroups.exposed.add( {
 	name: 'login',
@@ -72,7 +73,13 @@ AccessGroups.exposed.add( {
 			console.log( 'Did it!' );
 			if ( err ) {
 				console.log( err );
-				FlowRouter.go( '/403' );
+				if (redirect.substring(0, 9) == "requests/") {
+					FlowRouter.go( '/request-link-expired' );
+				}
+				else{
+					FlowRouter.go( '/403' );
+				}
+				
 			} else {
 				FlowRouter.go( '/' + redirect );
 			}
@@ -108,6 +115,16 @@ AccessGroups.exposed.add( {
 	action() {
 		mount( LayoutBlank, {
 			content: <Page403 />
+		} );
+	}
+} );
+
+AccessGroups.exposed.add( {
+	name: 'request-link-expired',
+	path: '/request-link-expired',
+	action() {
+		mount( LayoutBlank, {
+			content: <PageRequestLinkExpired />
 		} );
 	}
 } );
