@@ -99,6 +99,9 @@ const DocViewEdit = React.createClass( {
     },
 
     handleChange( item ) {
+        if (!item.attachments.length) {
+            return alert('Please atach file');
+        }
         let self = this,
             selectedFacility = Session.getSelectedFacility();
         Modal.hide();
