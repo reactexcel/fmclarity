@@ -47,14 +47,30 @@ export default class SupplierFilter extends React.Component {
     }
 
     componentDidMount(){
+        window.addEventListener('scroll', this.handleScroll);
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
             $('#filter-details').css('display','block')
        });
     }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
     componentWillMount(){
         this.search();
+    }
+
+    handleScroll(event) {
+    let scrollTop = event.srcElement.body.scrollTop,
+        itemTranslate = Math.min(0, scrollTop/3 - 60);
+        if(itemTranslate > -20){
+            $('#arrow-icon').hide('slow');
+            $('#filter-box').hide('slow');
+            $('#filter-details').css('display','block')
+        }
     }
     search(){
         if(this.insurance.publicLiablityInsurance === true || this.insurance.professionalIndemnity === true || this.insurance.workersCompensation === true){
@@ -225,19 +241,23 @@ export default class SupplierFilter extends React.Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-xs-12">
-                        <button onClick={(event)=>{
-                            event.stopPropagation();
-                            if($('#filter-box').css('display') == 'none'){
-                                $('#filter-box').css('display','block')
-                                $('#arrow-icon').css('display','block')
-                                $('#filter-details').css('display','none')
-                            } else {
-                                $('#filter-box').css('display','none')
-                                $('#arrow-icon').css('display','none')
-                                $('#filter-details').css('display','block')
-                            }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Suppliers</button>
+                    <div className="col-xs-12" style={{float:"left"}}>
+                        <span style={{float: "left"}}>
+    						<button className="btn btn-flat" onClick={(event)=>{
+                                event.stopPropagation();
+                                if($('#filter-box').css('display') == 'none'){
+                                    $('#filter-box').css('display','block')
+                                    $('#arrow-icon').css('display','block')
+                                    $('#filter-details').css('display','none')
+                                } else {
+                                    $('#filter-box').css('display','none')
+                                    $('#arrow-icon').css('display','none')
+                                    $('#filter-details').css('display','block')
+                                }
+                            }}>
+    							<i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Suppliers
+    						</button>
+    					</span>
                     </div>
                 </div>
                 <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#d6e6fa',padding:'0px 10px 0px 10px'}}>
@@ -362,6 +382,7 @@ export default class SupplierFilter extends React.Component {
                             </div>
                         </div>
                 </div>
+                <div className="filter-container">
                 <div className="row">
                     <div className="col-xs-12">
                         <div onClick={(event)=>{ event.stopPropagation();}} id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','borderBottom':'15px solid #d6e6fa','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','margin':'0 42px','marginTop':'-10px'}}></div>
@@ -379,6 +400,13 @@ export default class SupplierFilter extends React.Component {
                                     let self = this;
                                     self.query = {
                                         type: "contractor",
+                                    }
+                                    self.selectedAreas = []
+                                    self.selectedServices = []
+                                    self.insurance = {
+                                        publicLiablityInsurance:false,
+                                        professionalIndemnity:false,
+                                        workersCompensation:false
                                     }
                                     self.setState({
                                         suplierName:'',
@@ -552,6 +580,7 @@ export default class SupplierFilter extends React.Component {
                     </div>
                 </div>
             </div>
+        </div>
             </div>
         );
       }
