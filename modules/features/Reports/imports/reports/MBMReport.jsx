@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
@@ -43,9 +44,14 @@ const RequestsStatusReport = React.createClass( {
 	},
 	componentWillUnmount(){
 		$("#fab").show();
+		PubSub.publish('stop', "test");
 	},
 	componentWillUpdate(){
-		setInterval(()=>{
+	let update = setInterval(()=>{
+
+			PubSub.subscribe( 'stop', (msg,data) => {
+				clearInterval(update)
+			});
 			let serverDoc = Documents.find({"type":"Contract"}).fetch();
 			if(serverDoc.length != this.state.currentDoc.length){
 				this.setState({
@@ -112,9 +118,13 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
-
-			let supplier = item.data?item.data.supplier:item.supplier;
-			if( supplier != null ){
+				let supplier = item.data?item.data.supplier:item.supplier;
+				if( supplier != null ){
+				let string = supplier.name
+				if(string != undefined || null){
+					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+				}
+				console.log(supplier);
 				return {
 					val: <ContactCard item={supplier} />,
 					name: supplier.name
@@ -212,7 +222,7 @@ const RequestsStatusReport = React.createClass( {
 							docs = _.filter(docs,d => !d.subServiceType.name)
 						}
 						if (docs.length > 0) {
-							let status = "not Executed"
+							let status = "Not Executed"
 							if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != ''){
 								status = "Fully Executed"
 							}else if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate == ''){
