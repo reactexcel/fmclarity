@@ -681,7 +681,7 @@ const RequestSchema = {
                     return false;
                 }
                 if(request.type == "Booking"){
-                    request.costThreshold = 0;
+                    request.costThreshold = '0';
                     let selectedAreaDetail = null;
                     if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
                         selectedAreaDetail = request.identifier.data.areaDetails
@@ -705,7 +705,7 @@ const RequestSchema = {
                             bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
                         }
                         bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
-                        request.costThreshold = cost*bookingIncreament*(request.duration == "" ? 0 : request.duration);
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
 
                     }
                 } else {
@@ -766,7 +766,7 @@ const RequestSchema = {
                     if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
                         let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
                         let hours = duration.asHours();
-                        request.duration = hours
+                        request.duration = hours.toString();
                     } else {
                         request.duration = ''
                     }
