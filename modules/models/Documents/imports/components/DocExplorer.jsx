@@ -61,6 +61,9 @@ export default class DocExplorer extends React.Component {
               updatedString = updatedString + d.subServiceType.name
             }
           }
+          if(d.hasOwnProperty("comment")){
+  						updatedString = updatedString + d.comment
+  				}
         })
         if(updatedString != this.state.docString){
           this.setState({

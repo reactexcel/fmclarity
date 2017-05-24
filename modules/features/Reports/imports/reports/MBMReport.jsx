@@ -78,6 +78,9 @@ const RequestsStatusReport = React.createClass( {
 						updatedString = updatedString + d.subServiceType.name
 					}
 				}
+				if(d.hasOwnProperty("comment")){
+						updatedString = updatedString + d.comment
+				}
 			})
 			if(updatedString != this.state.docString){
 				this.setState({
