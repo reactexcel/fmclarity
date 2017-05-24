@@ -9,6 +9,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocForm from '../schemas/DocForm.jsx';
+//import { Facilities } from '/modules/models/Facilities';
 /**
  * @class           DocViewEdit
  * @memberOf        module:models/Documents
@@ -20,8 +21,12 @@ const DocViewEdit = React.createClass( {
     getMeteorData() {
         var doc = this.props.item || {};
         if ( doc && doc._id ) {
+            //let facility = doc.facility;
             doc = Documents.findOne( doc._id );
             doc["facility"] = Session.getSelectedFacility();
+            /*if(!doc.facility){
+                doc["facility"] = Facilities.findOne({ _id: facility._id });
+            }*/
         }
         return {
             doc: doc
@@ -184,7 +189,7 @@ const DocViewEdit = React.createClass( {
                     model       = { Documents }
                     form        = { DocForm }
                     item        = { this.data.doc }
-                    onSubmit    = { this.handleChange  }
+                    onSubmit    = {this.handleChange  }
                     hideSubmit  = { this.state.isEditable ? null : true }
                 />
             </div>

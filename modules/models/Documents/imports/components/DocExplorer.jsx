@@ -8,6 +8,8 @@ import PubSub from 'pubsub-js';
 import DocIconHeader from './DocIconHeader.jsx';
 import DocIcon from './DocIcon.jsx';
 import { Documents } from '/modules/models/Documents';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
+import DocViewEdit from './DocViewEdit.jsx';
 
 export default class DocExplorer extends React.Component {
     constructor( props ) {
@@ -91,6 +93,16 @@ export default class DocExplorer extends React.Component {
             listLength = oldDocumentsList.length + newDocumentsList.length,
             role = Meteor.user().getRole();
         return (
+            <DropFileContainer model={{_name:"Facilities"}} onDrop={(doc)=>{
+                Modal.show( {
+                    content: <DocViewEdit
+        				item = { doc }
+        				onChange = { (data) => { this.handleChange( listLength, data ) }}
+        				model={this.props.model}
+        				selectedItem={this.state.item}
+        				team = {this.state.item}/>
+                } )
+            }}>
             <div>
 
 				<DocIconHeader />
@@ -135,6 +147,7 @@ export default class DocExplorer extends React.Component {
                 />
 
 			</div>
+            </DropFileContainer>
         );
     }
 }
