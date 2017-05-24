@@ -22,28 +22,61 @@ export default ComplianceViewDetail = React.createClass( {
     getInitialState(){
       return {
         coverImageName: "",
-        currentDoc:[]
+        currentDoc:[],
+        docString:''
       }
     },
 
     componentWillMount(){
-      let docs = Documents.find({}).fetch();
-      this.setState({currentDoc : docs})
+    let docs = Documents.find({}).fetch();
+    let aa = docs.filter((doc) => doc.hasOwnProperty("serviceType") && doc.serviceType.hasOwnProperty("name"));
 
-      let test = setInterval(()=>{
-        PubSub.subscribe( 'stop', (msg,data) => {
-          clearInterval(test)
-        } );
-
-        let serverDoc = Documents.find({}).fetch();
-
-        if(serverDoc.length != this.state.currentDoc.length){
-          this.setState({
-            currentDoc : serverDoc
-          })
+    let docString = " "
+    aa.map((d)=>{
+      docString = docString + d.type + d.serviceType.name
+      if(d.hasOwnProperty("subServiceType")){
+        if(d.subServiceType.hasOwnProperty("name")){
+          docString = docString + d.subServiceType.name
         }
-      },1000)
-    },
+      }
+      if(d.hasOwnProperty("applicablePeriodStartDate")){
+          docString = docString + d.applicablePeriodStartDate
+      }
+    })
+    this.setState({currentDoc : docs , docString})
+
+    let update = setInterval(()=>{
+
+      PubSub.subscribe( 'stop', (msg,data) => {
+        clearInterval(update)
+      } );
+      let contractServerDoc = Documents.find({}).fetch();
+      let aa = contractServerDoc.filter((doc) => doc.hasOwnProperty("serviceType") && doc.serviceType.hasOwnProperty("name"));
+      let updatedString = " "
+      aa.map((d)=>{
+        updatedString = updatedString + d.type + d.serviceType.name
+        if(d.hasOwnProperty("subServiceType")){
+          if(d.subServiceType.hasOwnProperty("name")){
+            updatedString = updatedString + d.subServiceType.name
+          }
+        }
+        if(d.hasOwnProperty("applicablePeriodStartDate")){
+            updatedString = updatedString + d.applicablePeriodStartDate
+        }
+      })
+      if(updatedString != this.state.docString){
+        this.setState({
+          docString : updatedString
+        })
+      }
+      let serverDoc = Documents.find({}).fetch();
+      if(serverDoc.length != this.state.currentDoc.length){
+        this.setState({
+          currentDoc : serverDoc
+        })
+      }
+    },1000)
+  },
 
     componentWillUnmount(){
       PubSub.publish('stop', "test");
