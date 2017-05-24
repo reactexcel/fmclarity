@@ -3,6 +3,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
+import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
@@ -330,7 +331,22 @@ const SingleServiceRequest = React.createClass( {
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
-							<button className="btn btn-flat" onClick={() => {
+							<button className="btn btn-flat" onClick={(e) => {
+									let	user = Meteor.user();
+									let team = user.getSelectedTeam();
+									let facility = Session.getSelectedFacility();
+									let test = {
+										_id: team._id,
+										team : {
+											_id : team._id
+										},
+										facility :{
+											_id : facility._id
+										},
+										comment : "Hello"
+									}
+									console.log(test);
+									Reports.save.call(test);
 									let edited = this.state.showEditor;
 									let component = this;
 									this.setState({
