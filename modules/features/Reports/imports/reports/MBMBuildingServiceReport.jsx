@@ -65,12 +65,16 @@ const MBMBuildingServiceReport = React.createClass( {
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
+						console.log(facility);
             d = services.map( function( s, idx ){
-                let dataset = queries.map( function(q){
-                    q["service.name"] = s.name;
-                    return Requests.find( q ).count();
-                });
-                return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							if(s != null){
+
+								let dataset = queries.map( function(q){
+									q["service.name"] = s.name;
+									return Requests.find( q ).count();
+								});
+								return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							}
             });
             console.log(d);
         }
@@ -82,6 +86,12 @@ const MBMBuildingServiceReport = React.createClass( {
             d:d,
 			ready: handle.ready()
 		}
+	},
+	componentWillMount(){
+		$("#fab").hide();
+	},
+	componentWillUnmount(){
+		$("#fab").show();
 	},
 
 	printChart(){
@@ -179,7 +189,7 @@ const MBMBuildingServiceReport = React.createClass( {
 					<h2>Building Service Requests {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
+					<div style={{width:"830px","height":"450px",paddingLeft:"20%",paddingTop:"8%"}}>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
@@ -302,13 +312,13 @@ const SingleServiceRequest = React.createClass( {
 	render() {
 		let data = this.getData();
 		return (
-			<div style={ { marginTop: "55px", marginBottom: "10px", borderTop:"2px solid"  } }>
+			<div style={ { marginTop: "100px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
-						<canvas id={"bar-chart-" + this.props.id}></canvas>
+					<div style={{width:"830px","height":"400px",paddingLeft:"20%",paddingTop:"5%"}}>
+						<canvas id={"bar-chart-" + this.props.id} style={{width:"630px","height":"300px"}}></canvas>
 					</div>
 				</div>
 				<div className="data-table">
@@ -316,7 +326,7 @@ const SingleServiceRequest = React.createClass( {
 						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 					</div>
 				</div>
-				<div style={ { marginTop: "5px", marginBottom: "-15px" } }>
+				<div style={ { marginTop: "20px", marginBottom: "-15px",height:"100px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
@@ -343,6 +353,7 @@ const SingleServiceRequest = React.createClass( {
 						{this.state.showEditor?
 							<TextArea
 								ref="textarea"
+								style={{height:"50px"}}
 								value={this.state.comment}
 								onChange={( value ) => {this.setState({ comment: value })}}
 								/>:
