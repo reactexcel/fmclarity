@@ -6,12 +6,23 @@ import { Text, Select,DateInput } from '/modules/ui/MaterialInputs';
 import { Switch } from '/modules/ui/MaterialInputs';
 import ReactDOM from 'react-dom'
 import moment from 'moment';
+import Chip from 'material-ui/Chip';
 
 export default class SupplierFilter extends React.Component {
     constructor(props) {
         super(props);
         let team = this.props.team || Session.getSelectedTeam();
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
+        this.styles = {
+            chip: {
+                margin: 4,
+                backgroundColor:'#cecece',
+            },
+            wrapper: {
+                display: 'flex',
+                flexWrap: 'wrap',
+            },
+        };
         this.areas = ['Adelaide','Brisbane','Canberra','Darwin','Hobart','Melbourne','Perth','Sydney']
         this.selectedAreas = []
         this.selectedServices = []
@@ -264,118 +275,75 @@ export default class SupplierFilter extends React.Component {
                         {showTags === true?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
                             <div className="col-xs-12">
                                     <h4 style={{fontWeight:'400'}}>Tags:</h4>
+                                    <div style={this.styles.wrapper}>
                                     {_.map(this.state.selectedServices,( service, i ) => {
-                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {service}
-                                                <span
-                                                onClick={() => {
-                                                   this.removeServiceTag(service)
+                                        return <Chip
+                                                key={i}
+                                                onRequestDelete={() => {
+                                                    this.removeServiceTag(service)
                                                 }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
+                                                style={this.styles.chip}
                                                 title={'Remove Service'}
-                                            >&times;</span></button>
-                                        </div>
+                                            >
+                                                {service}
+                                            </Chip>
+
                                     })}
-                                    {!_.isEmpty(this.state.suplierName)?<div style={{marginTop:'8px',display:'inline'}}>
-                                        <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                    {!_.isEmpty(this.state.suplierName)?<Chip
+                                            onRequestDelete={() => {
+                                                this.updateSuplierName(null)
+                                                this.setState({
+                                                    suplierName:''
+                                                })
+                                            }}
+                                            style={this.styles.chip}
+                                            title={'Remove Supplier'}
+                                        >
                                             {this.state.suplierName}
-                                            <span
-                                            onClick={() => {
-                                               this.updateSuplierName(null)
-                                               this.setState({
-                                                   suplierName:''
-                                               })
-                                            }}
-                                            style={{
-                                                float: 'right',
-                                                cursor: 'pointer',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                                marginLeft: '10px',
-                                            }}
-                                            title={'Remove supplier'}
-                                        >&times;</span></button>
-                                    </div>:null}
+                                    </Chip>:null}
                                     {_.map(this.state.selectedAreas,( area, i ) => {
-                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {area}
-                                                <span
-                                                onClick={() => {
-                                                   this.removeAreaTag(area)
+                                        return <Chip
+                                                key={i}
+                                                onRequestDelete={() => {
+                                                    this.removeAreaTag(area)
                                                 }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
+                                                style={this.styles.chip}
                                                 title={'Remove Area'}
-                                            >&times;</span></button>
-                                        </div>
+                                            >
+                                                {area}
+                                            </Chip>
                                     })}
-                                    {this.state.publicLiablityInsurance==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {"Public Liablity Insurance"}
-                                                <span
-                                                onClick={() => {
-                                                    this.removeInsuranceTag('1')
-                                                }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
-                                                title={'Remove Insurance'}
-                                            >&times;</span></button>
-                                        </div>:null}
-                                        {this.state.professionalIndemnity==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                                <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                    {"Professional Indemnity"}
-                                                    <span
-                                                    onClick={() => {
-                                                        this.removeInsuranceTag('2')
-                                                    }}
-                                                    style={{
-                                                        float: 'right',
-                                                        cursor: 'pointer',
-                                                        fontSize: '14px',
-                                                        fontWeight: 'bold',
-                                                        marginLeft: '10px',
-                                                    }}
-                                                    title={'Remove Insurance'}
-                                                >&times;</span></button>
-                                            </div>:null}
-                                            {this.state.workersCompensation==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                                    <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                        {"Workers Compensation"}
-                                                        <span
-                                                        onClick={() => {
-                                                            this.removeInsuranceTag('3')
-                                                        }}
-                                                        style={{
-                                                            float: 'right',
-                                                            cursor: 'pointer',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold',
-                                                            marginLeft: '10px',
-                                                        }}
-                                                        title={'Remove Insurance'}
-                                                    >&times;</span></button>
-                                                </div>:null}
+                                    {this.state.publicLiablityInsurance==true?<Chip
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('1')
+                                            }}
+                                            style={this.styles.chip}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Public Liablity Insurance"}
+                                    </Chip>:null}
+                                    {this.state.professionalIndemnity==true?<Chip
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('2')
+                                            }}
+                                            style={this.styles.chip}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Professional Indemnity"}
+                                    </Chip>:null}
+                                    {this.state.workersCompensation==true?<Chip
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('3')
+                                            }}
+                                            style={this.styles.chip}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Workers Compensation"}
+                                    </Chip>:null}
+                                    </div>
                             </div>
                         </div>
-                        <hr></hr></div>:null}
+                        <hr style={{borderTop:'1px solid rgb(189, 189, 189)'}}></hr></div>:null}
                         <div className="row">
                             <div className="col-lg-6" style={{paddingTop:'15px',paddingBottom:'15px'}}>
                                 <span style={{marginLeft:'7px',backgroundColor:'#75aaee',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
