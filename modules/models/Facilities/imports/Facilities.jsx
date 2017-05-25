@@ -132,9 +132,7 @@ Facilities.actions( {
         authentication:true,
         method: function(selectedFacility, level, area, identifier, booking){
             let facility = Facilities.findOne({'_id':selectedFacility._id})
-            console.log(facility,"facility")
             let areas = facility.areas;
-            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
             if(level && level.data){
                 for(var i in areas){
                     if(areas[i].name == level.name){
@@ -146,7 +144,7 @@ Facilities.actions( {
                                     let identifier2 = subArea[j].children;
                                     if(identifier && identifier.data){
                                         for(var k in identifier2){
-                                            if(identifier[k].name == identifier.name){
+                                            if(identifier2[k].name == identifier.name){
                                                 if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
                                                     if(areas[i].children[j].children[k].totalBooking){
                                                         areas[i].children[j].children[k].totalBooking.push(booking);
@@ -184,7 +182,6 @@ Facilities.actions( {
                     }
                 }
             }
-            console.log(areas,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
