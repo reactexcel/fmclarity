@@ -478,6 +478,12 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
+                        
+                        let frequency = {
+                            unit : 'custom',
+                            number: rule.frequency.number,
+                            period: rule.frequency.unit,
+                        };
                         let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
@@ -488,7 +494,7 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: rule.frequency,
+                            frequency: frequency,
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
