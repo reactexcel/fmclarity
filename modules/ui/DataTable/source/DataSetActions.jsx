@@ -14,12 +14,13 @@ function download( dataset ) {
 	}
 }
 
-function print( dataset, element ) {
+function print( dataset, element, pdfDetails ) {
+	let details = pdfDetails ? pdfDetails : ''
 	return {
 		label: "Print",
 		authentication: true,
 		run: () => {
-			dataset.print(element);
+			dataset.print(element,details);
 		},
 		notification: () => {
 			///blah
