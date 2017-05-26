@@ -112,21 +112,47 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
-				let supplier = item.data?item.data.supplier:item.supplier;
-				if( supplier != null ){
-				let string = supplier.name
-				if(string != undefined || null){
-					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
-				}
-				console.log(supplier);
-				return {
-					val: <ContactCard item={supplier} />,
-					name: supplier.name
-				}
-			}
-			return {
-				val: <span/>
-			}
+					let query
+					if(Object.keys(item).length > 3){
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"serviceType.name":item.name
+						}
+					}else{
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"subServiceType.name":item.name
+						}
+					}
+					let docs = Documents.find(query).fetch();
+					if(docs.length > 0){
+
+						if(Object.keys(item).length > 3){
+							docs = _.filter(docs,d => !d.subServiceType.name)
+						}
+
+						//console.log(docs);
+						if(docs.length > 0 && docs[0].hasOwnProperty("supplier")){
+							console.log(docs[0].supplier);
+							let supplier = docs[0].supplier
+							if( supplier != null ){
+								let string = supplier.name
+								if(string != undefined || null){
+									supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+								}
+								// console.log(supplier);
+								return {
+									val: <ContactCard item={supplier} />,
+									name: supplier.name
+								}
+							}
+							return {
+								val: <span/>
+							}
+						}
+					}
 		},
         "Annual Amount": ( item ) => {
 					let query
