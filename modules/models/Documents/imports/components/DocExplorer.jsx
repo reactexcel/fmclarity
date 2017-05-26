@@ -31,16 +31,48 @@ export default class DocExplorer extends React.Component {
     }
     componentWillMount(){
       let docs = Documents.find({}).fetch();
-      this.setState({currentDoc : docs})
+      let contractDocs = Documents.find({"type":"Contract"}).fetch();
+      let aa = contractDocs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
 
-      let update = setInterval(()=>{
+      let docString = " "
+      aa.map((d)=>{
+        docString = docString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+        if(d.hasOwnProperty("subServiceType")){
+          if(d.subServiceType.hasOwnProperty("name")){
+            docString = docString + d.subServiceType.name
+          }
+        }
+        if(d.hasOwnProperty("comment")){
+            docString = docString + d.comment
+        }
+      })
+      this.setState({currentDoc : docs , docString})
+
+      let test = setInterval(()=>{
 
         PubSub.subscribe( 'stop', (msg,data) => {
-          clearInterval(update)
+          clearInterval(test)
         } );
-
+        let contractServerDoc = Documents.find({"type":"Contract"}).fetch();
+        let aa = contractServerDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+        let updatedString = " "
+        aa.map((d)=>{
+          updatedString = updatedString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+          if(d.hasOwnProperty("subServiceType")){
+            if(d.subServiceType.hasOwnProperty("name")){
+              updatedString = updatedString + d.subServiceType.name
+            }
+          }
+          if(d.hasOwnProperty("comment")){
+  						updatedString = updatedString + d.comment
+  				}
+        })
+        if(updatedString != this.state.docString){
+          this.setState({
+            docString : updatedString
+          })
+        }
         let serverDoc = Documents.find({}).fetch();
-
         if(serverDoc.length != this.state.currentDoc.length){
           this.setState({
             currentDoc : serverDoc
