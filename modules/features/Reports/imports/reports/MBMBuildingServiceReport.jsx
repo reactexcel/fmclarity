@@ -86,7 +86,7 @@ const MBMBuildingServiceReport = React.createClass( {
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
-						console.log(facility);
+
             d = services.map( function( s, idx ){
 							let finalComment
 							let currentMonth = false
@@ -107,7 +107,7 @@ const MBMBuildingServiceReport = React.createClass( {
 								return <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>
 							}
             });
-            console.log(d);
+            //console.log(d);
         }
 
 		return {
@@ -132,8 +132,7 @@ const MBMBuildingServiceReport = React.createClass( {
 			$lte: moment().subtract(0, "months").endOf("month").toDate( )
 		};
 		let comments = Reports.find(query).fetch();
-		// console.log(docs.stringfy());
-		console.log(comments);
+
 	 	comments = comments.filter((c) => c.hasOwnProperty("service"));
 		let commentString = " "
 		comments.map((c)=>{
@@ -156,8 +155,7 @@ const MBMBuildingServiceReport = React.createClass( {
 				$lte: moment().subtract(0, "months").endOf("month").toDate( )
 			};
 			let comments = Reports.find(query).fetch();
-			// console.log(docs.stringfy());
-			// console.log(comments);
+
 		 	comments = comments.filter((c) => c.hasOwnProperty("service"));
 			let UpdatedString = " "
 			comments.map((c)=>{
@@ -294,7 +292,6 @@ const SingleServiceRequest = React.createClass( {
 		} )
 	},
 	componentWillReceiveProps(props){
-		console.log(props.currentMonth,"///////////");
 	this.setState({
 		comment: props.commentData.length > 0 ? props.commentData[0].comment : "",
 		commentData:props.commentData.length > 0 ? props.commentData[0] : {},
@@ -392,11 +389,10 @@ const SingleServiceRequest = React.createClass( {
 				$lte: new moment().endOf("month").toDate()
 			}
 		} );
-		// console.log(data,  this.props.serviceName);
+
 		return data;
 	},
 	handleComment(item){
-		console.log(this.state.currentMonth);
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
 		let facility = Session.getSelectedFacility();
@@ -438,7 +434,6 @@ const SingleServiceRequest = React.createClass( {
 	},
 
 	render() {
-		console.log(this.props.serviceName,this.state.currentMonth);
 		let data = this.getData();
 		let item = this.state.commentData;
 		return (
@@ -467,7 +462,7 @@ const SingleServiceRequest = React.createClass( {
 										showEditor: !this.state.showEditor
 									}, () => {
 										if ( !edited ){
-											console.log("edited", component );
+											//console.log("edited", component );
 											$(component.refs.textarea.refs.input).focus();
 										}else{
 											this.handleComment(item);
