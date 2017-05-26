@@ -89,19 +89,22 @@ const MBMBuildingServiceReport = React.createClass( {
 						console.log(facility);
             d = services.map( function( s, idx ){
 							let finalComment
+							let currentMonth = false
 							if(s != null){
 								let previousMonthServiceComment = previousMonthComment.filter((val) => val.service === s.name);
 								let presentMonthServiceComment = currentMonthComment.filter((val) => val.service === s.name);
 								if(presentMonthServiceComment.length > 0){
+									currentMonth = true
 									finalComment = presentMonthServiceComment
 								}else{
+									currentMonth = false
 									finalComment = previousMonthServiceComment
 								}
 								let dataset = queries.map( function(q){
 									q["service.name"] = s.name;
 									return Requests.find( q ).count();
 								});
-								return <SingleServiceRequest serviceName={s.name} commentData = {finalComment} set={dataset} labels={labels} key={idx} id={idx}/>
+								return <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>
 							}
             });
             console.log(d);
@@ -249,7 +252,6 @@ const MBMBuildingServiceReport = React.createClass( {
 	},
 
 	render() {
-		console.log(this.state.commentString,this.state.facility,this.state.team);
 		var facility=this.data.facility;
 		facilities=null;
 		if (this.data.ready) {
@@ -287,13 +289,16 @@ const SingleServiceRequest = React.createClass( {
 		return ( {
 			expandall: false,
 			comment: this.props.commentData.length > 0 ? this.props.commentData[0].comment : "",
-			commentData:this.props.commentData.length > 0 ? this.props.commentData[0] : {}
+			commentData:this.props.commentData.length > 0 ? this.props.commentData[0] : {},
+			currentMonth: this.props.currentMonth
 		} )
 	},
 	componentWillReceiveProps(props){
+		console.log(props.currentMonth,"///////////");
 	this.setState({
 		comment: props.commentData.length > 0 ? props.commentData[0].comment : "",
-		commentData:props.commentData.length > 0 ? props.commentData[0] : {}
+		commentData:props.commentData.length > 0 ? props.commentData[0] : {},
+		currentMonth:props.currentMonth
 	})
 	},
 	getChartConfiguration() {
@@ -391,39 +396,49 @@ const SingleServiceRequest = React.createClass( {
 		return data;
 	},
 	handleComment(item){
+		console.log(this.state.currentMonth);
+		let	user = Meteor.user();
+		let team = user.getSelectedTeam();
+		let facility = Session.getSelectedFacility();
+		let commentSchema = {
+			service : this.props.serviceName,
+			team : {
+				_id : team._id
+			},
+			facility :{
+				_id : facility._id
+			},
+			comment : this.state.comment.trim()
+		}
 		if(item){
+
 			if(!item._id){
-				// console.log(this.state.comment,"new");
-				let	user = Meteor.user();
-				let team = user.getSelectedTeam();
-				let facility = Session.getSelectedFacility();
-				let item = {
-					service : this.props.serviceName,
-					team : {
-						_id : team._id
-					},
-					facility :{
-						_id : facility._id
-					},
-					comment : this.state.comment
-				}
-				// console.log(item);
 				let test = this.state.comment.trim()
+
 				if(test != "" || null || undefined){
-					Reports.save.call(item);
+					Reports.save.call(commentSchema);
 				}
+
 			}else{
 				item["comment"] = this.state.comment;
-				// console.log(item,"edit");
 				let test = this.state.comment.trim()
+
 				if(test != "" || null || undefined){
-					Reports.save.call(item);
+					if(this.state.currentMonth){
+						console.log("current");
+						Reports.save.call(item);
+				}else{
+						console.log("previousMonthComment");
+						Reports.save.call(commentSchema);
+					}
 				}
+
 			}
 		}
 	},
 
 	render() {
+		console.log(this.props.serviceName,this.state.currentMonth);
 		let data = this.getData();
 		let item = this.state.commentData;
 		return (
