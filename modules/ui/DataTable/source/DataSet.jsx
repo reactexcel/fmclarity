@@ -130,6 +130,19 @@ export default function DataSet( items ) {
 						val: obj.Status.val.props.children[2]
 					}
 				}
+				if(newObj.Responsiveness && newObj.Responsiveness.duration && newObj.Responsiveness.duration._data && newObj.Responsiveness.duration._data){
+					let daysValue = newObj.Responsiveness.duration._data.days ? newObj.Responsiveness.duration._data.days.toString() : (1).toString();
+					    newObj.Responsiveness.val = daysValue;
+				}
+				if(newObj.Responsiveness){
+					if(newObj.Responsiveness.val){
+						newObj['Responsiveness (days)'] = {val:''}
+						newObj['Responsiveness (days)']['val'] = newObj.Responsiveness.val
+					}else{
+						newObj['Responsiveness (days)'] = {}
+					}
+					newObj = _.omit(newObj,'Responsiveness')
+				}
 				if(newObj.Issue){
 					newObj.Summary = obj.Issue
 					newObj = _.omit(newObj,'Issue')
@@ -154,6 +167,7 @@ export default function DataSet( items ) {
 						val: obj.Supplier && obj.Supplier.val && obj.Supplier.val.props && obj.Supplier.val.props.item && obj.Supplier.val.props.item.name ? obj.Supplier.val.props.item.name : ''
 					}
 				}
+				newObj = _.omit(newObj,'_item')
 				dataForCSV.push(newObj)
 			})
 			dataForCSV.map( function( d ) {

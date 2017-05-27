@@ -53,7 +53,18 @@ ComplianceEvaluationService = new function() {
     var evaluators = {
         //can pass in facility and service for more efficient calculation
         "Document exists": function( rule, facility, service ) {
-            //  console.log({rule});
+            //  console.log(facility);
+             let houseRule = false;
+             let reqService
+             let reqSubService
+             if(rule.service.name === "House Rules"){
+               houseRule = true;
+               if(facility.hasOwnProperty("servicesRequired")){
+                //  console.log(facility.servicesRequired,"------------------------------");
+                 reqService = facility.servicesRequired != undefined && facility.servicesRequired.length > 0 ? facility.servicesRequired.filter((service) => service != null && service.name === "WHS & Risk Management") : ''
+                 reqSubService = reqService.length > 0 && reqService[0].children.length > 0 ? reqService[0].children.filter((sub)=> sub.name === "House Rules") : ''
+               }
+             }
             var docCount = null,
                 docs = null,
                 docName = null,
@@ -67,6 +78,17 @@ ComplianceEvaluationService = new function() {
                         { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
+                if(houseRule){
+                  query = rule.document && rule.document.query ?
+                  JSON.parse( rule.document.query ) : {
+                      "facility._id": facility[ "_id" ],
+                      $and: [
+                          { type: "Confirmation" },
+                          { 'serviceType.name': 'WHS & Risk Management'},
+                          { 'subServiceType.name': 'House Rules'}
+                      ]
+                  };
+                }
 
             //----- Solution for "370 Docklands Dve"
             while(_.isString(query)) {
@@ -141,8 +163,9 @@ ComplianceEvaluationService = new function() {
                             team: { _id, name },
                             owner: { type, _id, name },
                             name: rule.docName,
-                            type: rule.docType,
-                            serviceType: rule.service,
+                            type: houseRule ? "Confirmation" :rule.docType,
+                            serviceType: houseRule ? reqService[0] : rule.service,
+                            subServiceType: houseRule ? reqSubService[0] : ''
                         } );
                     if ( rule.docSubType ) {
                         if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
@@ -455,6 +478,12 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
+                        
+                        let frequency = {
+                            unit : 'custom',
+                            number: rule.frequency.number,
+                            period: rule.frequency.unit,
+                        };
                         let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
@@ -465,7 +494,7 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: rule.frequency,
+                            frequency: frequency,
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
