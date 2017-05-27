@@ -290,7 +290,7 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "PPM schedule established": function( rule, facility, service ) {
+        "PPM exists": function( rule, facility, service ) {
             //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
@@ -317,7 +317,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP exists"
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];

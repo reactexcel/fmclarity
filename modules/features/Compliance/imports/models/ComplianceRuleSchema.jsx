@@ -58,7 +58,7 @@ export default ComplianceRuleSchema = {
             items: [
                 "Document exists",
                 "Document is current",
-                "PPM schedule established",
+                "PPM exists",
                 "PPM event completed",
                 "Compliance level",
             ],
@@ -73,7 +73,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Service",
-        //condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
+        //condition: [ "PPM exists", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
                 return {
@@ -88,7 +88,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Sub-Service",
-        //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        //condition: item => item.service && [ "PPM event completed", "PPM exists" ].indexOf( item.type ) > -1,
         options: function( item ) {
             if ( item.service ) {
                 return {
@@ -113,7 +113,7 @@ export default ComplianceRuleSchema = {
     event: {
         label: "PMP event name",
         input: Select,
-        condition: [ "PPM event completed", "PPM schedule established" ],
+        condition: [ "PPM event completed", "PPM exists" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
             let query = {
