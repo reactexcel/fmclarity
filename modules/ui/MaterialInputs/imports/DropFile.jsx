@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import { Documents} from '/modules/models/Documents'
 import { Files } from '/modules/models/Files'
+import { Facilities } from '/modules/models/Facilities';
 
 export default class DropFileContainer extends React.Component {
   constructor(props) {
@@ -8,20 +9,23 @@ export default class DropFileContainer extends React.Component {
   }
   componentDidMount(){
     $("#drop-box").mouseout(( event ) => {
-        console.log("mouse out");
       $("#drop-box").css("display", "none");
     })
+
     $("body").on("dragover", function(event){
         event.preventDefault();
         $("#drop-box").css("display", "block");
     })
+
     $("body").on("dragend", function(event){
         event.preventDefault();
         console.log("end");
         $("#drop-box").css("display", "none");
+        $("#drop").css("display", "hide");
     })
   }
   handelDrop(event) {
+      let self = this;
     const {model} = this.props;
     event.stopPropagation();
     event.preventDefault();
@@ -29,10 +33,20 @@ export default class DropFileContainer extends React.Component {
       team = Session.getSelectedTeam()
       doc = Documents.create( { attachments: [] } );
     if(model._name === "Facilities"){
-      doc.facility = {
-        _id: facility._id,
-        name: facility.name,
-      }
+        if(facility){
+            doc.facility = {
+              _id: facility._id,
+              name: facility.name,
+            }
+        }else if(self.props.facilityID){
+            let foundFacility = Facilities.findOne({ _id: self.props.facilityID });
+            doc.facility = foundFacility
+        }else{
+            doc.facility = {
+
+            }
+        }
+
     } else if(model._name === "Teams"){
       doc.team = {
         _id: team._id,
@@ -49,10 +63,15 @@ export default class DropFileContainer extends React.Component {
       Files.insert( file, function( err, newFile ) {
         doc.name = (file.name.split('.'))[0];
         doc.attachments.push({_id: newFile._id, name: newFile.name});
-        Documents.save.call( doc )
+        if(self.props.onDrop){
+            self.props.onDrop(doc)
+        }
+        /*Documents.save.call( doc )
           .then( ( doc ) => {
+
+              //this.props.onDrop()
             console.log(Documents.findOne({_id : doc._id}));
-          });
+        });*/
       } );
     } );
     $("#drop-box").css("display", "none");

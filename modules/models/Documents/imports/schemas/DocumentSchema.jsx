@@ -3,12 +3,15 @@ import DocTypes from './DocTypes.jsx';
 
 import { Text, TextArea, Select, DateInput, Currency, Switch } from '/modules/ui/MaterialInputs';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
+import { Teams } from '/modules/models/Teams';
 import { Requests } from '/modules/models/Requests';
 
 import { ContactCard } from '/modules/mixins/Members';
 
 import React from 'react';
 
+const defaultContactRole = 'supplier manager';
+let onServiceChange = null;
 export default DocumentSchema = {
 
 	name: {
@@ -27,10 +30,14 @@ export default DocumentSchema = {
 			items: DocTypes
 		}
 	},
-
-
 	description: {
 		label: "Description",
+		optional: true,
+		type: "string",
+		input: TextArea
+	},
+	comment: {
+		label: "Comment",
 		optional: true,
 		type: "string",
 		input: TextArea
@@ -133,6 +140,7 @@ export default DocumentSchema = {
 				"Insurance",
 				"Invoice",
 				"Quote",
+				"Contract"
 			].indexOf( item.type ) > -1;
 		},
 
@@ -239,7 +247,31 @@ export default DocumentSchema = {
 			}
 
 			return {
-				items: items
+				items: items,
+				afterChange: ( doc ) => {
+                        if ( doc == null || Teams.isServiceTeam( selectedTeam ) ) {
+                            return;
+                        }
+                        doc.supplier = null;
+                        doc.subServiceType = null;
+                        if ( doc.serviceType.data ) {
+                            let supplier = doc.serviceType.data.supplier,
+                                defaultSupplier = null;
+
+                            if ( supplier ) {
+                                if ( supplier._id ) {
+                                    defaultSupplier = Teams.findOne( supplier._id );
+                                }
+                                if ( !defaultSupplier && supplier.name ) {
+                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                }
+                                doc.supplier = defaultSupplier;
+                            } else {
+                                doc.supplier = null;
+                                doc.subServiceType = null;
+                            }
+                        }
+                    },
 			}
 		}
 	},
@@ -278,7 +310,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
-	/*
+	
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -287,9 +319,9 @@ export default DocumentSchema = {
 		size: 6,
 		condition: function( item ) {
 			return [
-				"Audit",
+				// "Audit",
 				"Contract",
-				"Emergency Management",
+				/*"Emergency Management",
 				"Induction",
 				"Inspection",
 				"Insurance",
@@ -299,11 +331,47 @@ export default DocumentSchema = {
 				"Register",
 				"Registration",
 				"Service Report",
-				"SWMS",
-			].indexOf( item.type ) > -1;
+				"SWMS",*/
+			].indexOf( item.type ) > -1 && item.serviceType;
 		},
+		options: ( item ) => {
+                let facility = null,
+                    supplier = null,
+                    role = Meteor.user().getRole();
+
+                if ( item.facility && item.facility._id ) {
+                    facility = Facilities.findOne( item.facility._id );
+                    /*if( facility ) {
+                        console.log( facility.getSuppliers() );
+                    }*/
+                }
+
+                return {
+                    items: facility && facility.getSuppliers ? facility.getSuppliers() : null,
+                    view: ContactCard,
+                    addNew: {
+                        //Add new supplier to document and selected facility.
+                        show: !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
+                        label: "Create New",
+                        onAddNewItem: ( callback ) => {
+                            import { TeamStepper } from '/modules/models/Teams';
+                            Modal.show( {
+                                content: <TeamStepper item = { supplier }
+                                facility = { facility }
+                                onChange = {
+                                    ( supplier ) => {
+                                        facility.addSupplier( supplier );
+                                        callback( supplier );
+                                    }
+                                }
+                                />
+                            } )
+                        }
+                    }
+                }
+            },
 	},
-	*/
+	
 	issuer: {
 		input: Text,
 		label: "Insurer",
@@ -578,9 +646,7 @@ export default DocumentSchema = {
 				'Registration'
 			].indexOf( item.type ) > -1;
 		},
-		defaultValue: function( item ) {
-			return new Date();
-		},
+		defaultValue: new Date(),
 		label: "Expiry",
 		optional: true,
 		size: 6,
@@ -627,7 +693,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date client executed",
 		optional: true,
@@ -640,7 +706,7 @@ export default DocumentSchema = {
 			return [ 'Contract' ].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			return ''
 		},
 		label: "Date supplier executed",
 		optional: true,
