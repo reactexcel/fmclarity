@@ -180,7 +180,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 
 						//console.log(docs);
