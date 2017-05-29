@@ -604,7 +604,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Invoice"){
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     query["closeDetails.completionDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -618,7 +618,7 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     docQuery["applicablePeriodStartDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -647,7 +647,7 @@ ComplianceEvaluationService = new function() {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 Invoices"
                         },
                     } )
                 }
@@ -655,7 +655,7 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Invoice"
+                          detail: count + " out of 12 Invoices"
                       },
                       resolve: function(r,update) {
                           let type = "team",
@@ -678,7 +678,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Confirmation"){
-              console.log(Session.getSelectedFacility());
+              // console.log(Session.getSelectedFacility());
 
                 // for (let i=0; i<=12; i++  ) {
                     // docQuery["issueDate"] = {
@@ -1029,7 +1029,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
-      console.log(services,"evaluateServices");
+      // console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
