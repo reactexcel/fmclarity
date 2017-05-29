@@ -11,6 +11,7 @@ import { Documents } from '/modules/models/Documents';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import DocViewEdit from './DocViewEdit.jsx';
 
+
 export default class DocExplorer extends React.Component {
     constructor( props ) {
         super( props );
@@ -48,10 +49,11 @@ export default class DocExplorer extends React.Component {
       })
       this.setState({currentDoc : docs , docString})
 
-      let test = setInterval(()=>{
+      let update = setInterval(()=>{
 
         PubSub.subscribe( 'stop', (msg,data) => {
-          clearInterval(test)
+          clearInterval(update)
+
         } );
         let contractServerDoc = Documents.find({"type":"Contract"}).fetch();
         let aa = contractServerDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));

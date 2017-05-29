@@ -418,12 +418,12 @@ const RequestSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                let actualCost = props.item.costThreshold ? props.item.costThreshold.replace (/,/g, "") : '';
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
-                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -465,7 +465,7 @@ const RequestSchema = {
                         }
                         request.supplier = null;
                         request.subservice = null;
-                        if ( request.service.data ) {
+                        if (request && request.service && request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
 

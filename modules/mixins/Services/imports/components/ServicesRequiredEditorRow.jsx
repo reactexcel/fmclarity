@@ -110,6 +110,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 						{!readOnly?<span className="services-editor-delete-icon"
 							onClick = {
 								() => {
+									localStorage.removeItem('defaultService');
+									localStorage.setItem('defaultService', JSON.stringify(this.data.service));
 									Modal.show({
 										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
