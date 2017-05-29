@@ -478,7 +478,7 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
-                        
+
                         let frequency = {
                             unit : 'custom',
                             number: rule.frequency.number,

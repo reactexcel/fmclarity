@@ -121,7 +121,7 @@ const createRequest = new Action( {
             submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
-
+                    console.log(newRequest,"newRequest");
                     if(newRequest.type == "Booking"){
                         Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
                     }
@@ -143,6 +143,7 @@ const createRequest = new Action( {
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
+                        console.log(hasSupplier,"hasSupplier");
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
                         let team = Teams.findOne( newRequest.team._id ),
                             role = team.getMemberRole( owner ),
@@ -214,8 +215,11 @@ const createRequest = new Action( {
                             newRequest = _.omit(newRequest,'haveToIssue')
                         }
                     }
+                    console.log("11111111");
                     Meteor.call( method, newRequest );
+                    console.log("22222222");
                     let request = Requests.findOne( { _id: newRequest._id } );
+                    console.log(request,"request");
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
                 }

@@ -99,8 +99,8 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { 
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ], 
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -127,7 +127,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ], 
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -423,7 +423,7 @@ const RequestSchema = {
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
-                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -465,7 +465,7 @@ const RequestSchema = {
                         }
                         request.supplier = null;
                         request.subservice = null;
-                        if ( request.service.data ) {
+                        if (request && request.service && request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
 
