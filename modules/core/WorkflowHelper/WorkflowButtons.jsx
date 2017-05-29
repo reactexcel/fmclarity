@@ -37,8 +37,6 @@ export default function WorkflowButtons( { actions, item, callback } ) {
                     classes.push('disabled');
                 }
 
-                //console.log(actions);
-
                 return (
 
                 <button

@@ -291,7 +291,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM exists": function( rule, facility, service ) {
-          console.log(rule,facility,service);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -340,7 +339,6 @@ ComplianceEvaluationService = new function() {
                 loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
                         facility: {
                             _id: facility._id,
@@ -348,8 +346,8 @@ ComplianceEvaluationService = new function() {
                         },
                         team: team,
                         type: 'Preventative',
-                        priority: 'Scheduled',
-                        status: 'PMP',
+                        priority: 'PPM',
+                        status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
                         service: serviceReq[0],
@@ -477,8 +475,9 @@ ComplianceEvaluationService = new function() {
                     console.log( 'attempting to resolve' );
                     let q = {
                         "facility._id": facility._id,
-                        status: "PMP",
-                        "service.name": rule.service.name,
+                        type: 'Preventative',
+                        status: "PPM",
+                        service: rule.service,
                         name: rule.event
                     };
                     if (rule.subservice) q["subservice.name"] = rule.subservice.name;
@@ -503,8 +502,8 @@ ComplianceEvaluationService = new function() {
                             },
                             team: team,
                             type: 'Preventative',
-                            priority: 'Scheduled',
-                            status: 'PMP',
+                            priority: 'PPM',
+                            status: 'PPM',
                             name: rule.event,
                             frequency: frequency,
                             service: serviceReq[0],

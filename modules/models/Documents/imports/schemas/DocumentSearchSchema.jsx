@@ -79,6 +79,7 @@ DocumentSearchSchema = {
                 afterChange( item ) {
                     if ( !item.facility ) {
                         item.query = _.omit(item.query, "facility._id");
+                        item.query = _.omit(item.query, "team._id");
                     } else {
                         item.query["facility._id"] = item.facility._id;
                     }
