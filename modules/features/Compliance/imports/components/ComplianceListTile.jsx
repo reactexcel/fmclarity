@@ -36,7 +36,7 @@ export default ComplianceListTile = React.createClass( {
         name = rule.docType + " document is current";
         info = rule.docName;
         break;
-      case "PPM schedule established":
+      case "PPM exists":
         name = rule.type;
         info = ( rule.service ? rule.service.name : "" );
         break;

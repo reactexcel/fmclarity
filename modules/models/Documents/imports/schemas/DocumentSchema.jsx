@@ -646,9 +646,7 @@ export default DocumentSchema = {
 				'Registration'
 			].indexOf( item.type ) > -1;
 		},
-		defaultValue: function( item ) {
-			return new Date();
-		},
+		defaultValue: new Date(),
 		label: "Expiry",
 		optional: true,
 		size: 6,

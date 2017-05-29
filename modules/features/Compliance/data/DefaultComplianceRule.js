@@ -1,6 +1,6 @@
 export default DefaultComplianceRule = {
     "Fire Protection": [ {
-        "service": {
+        /*"service": {
             name: "Fire Protection"
         },
         "type": "Document exists",
@@ -30,18 +30,18 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Fire Protection"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Fire Doors"
     }, {
         "service": {
             name: "Fire Protection"
         },
-        "type": "PPM schedule established"
+        "type": "PPM exists"
     }, {
         "service": {
             name: "Fire Protection"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Sprinklers serviced"
     }, {
         "service": {
@@ -109,7 +109,7 @@ export default DefaultComplianceRule = {
             "unit": "years"
         },
         "event": "Fire detection and alarm systems tested"
-    }, {
+    }, {*/
         "service": {
             name: "Fire Protection"
         },
@@ -120,7 +120,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Fire Protection"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Fire Protection PPM exists for monthly maintenance"
     }, {
         "service": {
@@ -692,11 +692,11 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Fire Doors"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Fire Protection PPM exists"
     } ],
 
-    "Air-conditioning": [ {
+   /* "Air-conditioning": [ {
         "service": {
             name: "Air-conditioning"
         },
@@ -707,7 +707,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Air-conditioning"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Mechanical Services & Air-conditioning"
     }, {
         "service": {
@@ -758,9 +758,9 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "",
         "docName": "Exhaust ducting clean included on contract"
-    }, ],
+    }, ],*/
 
-    "Electrical Services": [ {
+    "Electrical Services": [ /*{
         "service": {
             name: "Electrical Services"
         },
@@ -771,7 +771,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Electrical Services"
     }, {
         "service": {
@@ -784,39 +784,39 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Electrical Services RCD Test"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Annual switchboard maintenance"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Electrical system thermographic scan"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Lightning protection annual check"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Testing & Tagging"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "UPS maintenance"
-    }, {
+    },*/ {
         "service": {
             name: "Electrical Services"
         },
@@ -827,13 +827,13 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Electrical Services"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Electrical Services PPM exists"
     }, {
         "service": {
             name: "Electrical Services"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "SWMS",
         "docName": "Risk assessment exists"
     }, {
@@ -929,12 +929,12 @@ export default DefaultComplianceRule = {
         },
         "type": "Document is current",
         "docType": "Contract",
-        "docName": "Electrical Services contract is current",
-        "frequency": {
+        "docName": "Electrical Services contract is current"
+        /*"frequency": {
             "number": "6",
             "unit": "months",
             "repeats": "1"
-        }
+        }*/
     }, {
         "service": {
             name: "Electrical Services"
@@ -945,7 +945,9 @@ export default DefaultComplianceRule = {
         "type": "PPM event completed",
         "event": "Electrical Services Emergency & Exit Lighting 6-monthly maintenance",
         "frequency": {
-
+            "number": "6",
+            "unit": "months",
+            "repeats": "1"
         }
     }, {
         "service": {
@@ -964,7 +966,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Generator"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -991,7 +993,7 @@ export default DefaultComplianceRule = {
             "repeats": "1"
         }
     } ],
-    "Generator": [ {
+    /*"Generator": [ {
         "service": {
             name: "Generator"
         },
@@ -1002,7 +1004,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Generator"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Generator"
     }, {
         "service": {
@@ -1017,9 +1019,9 @@ export default DefaultComplianceRule = {
         },
         "type": "Document exists",
         "docName": "Generator Load Test"
-    } ],
+    } ],*/
 
-    "Emergency & Exit Lighting": [ {
+   /* "Emergency & Exit Lighting": [ {
         "service": {
             name: "Emergency & Exit Lighting"
         },
@@ -1030,7 +1032,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Emergency & Exit Lighting"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Emergency & Exit Lighting"
     }, {
         "service": {
@@ -1039,9 +1041,9 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Service Report",
         "docName": "Emergency & Exit Lighting service reports on file"
-    } ],
+    } ],*/
 
-    "Water Coolers": [ {
+    /*"Water Coolers": [ {
         "service": {
             name: "Water Coolers"
         },
@@ -1059,7 +1061,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Water Coolers"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Water Treatment"
     }, {
         "service": {
@@ -1086,25 +1088,25 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Water Coolers"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Water Testing"
     }, {
         "service": {
             name: "Water Coolers"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Water Testing Risk Management Plan date"
     }, {
         "service": {
             name: "Water Coolers"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Water Testing RMP Review"
     }, {
         "service": {
             name: "Water Coolers"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Water Testing RMP Audit"
     }, {
         "service": {
@@ -1112,7 +1114,7 @@ export default DefaultComplianceRule = {
         },
         "type": "Document exists",
         "docName": "Water Testing actions within RMP review addressed"
-    } ],
+    } ],*/
 
     "Plumbing": [ {
         "service": {
@@ -1121,11 +1123,11 @@ export default DefaultComplianceRule = {
         "type": "Document is current",
         "docType": "Contract",
         "docName": "Plumbing contract is current"
-    }, {
+    }, /*{
         "service": {
             name: "Plumbing"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Plumbing"
     }, {
         "service": {
@@ -1134,7 +1136,7 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Service Report",
         "docName": "Plumbing service reports on file"
-    }, {
+    },*/ {
         "service": {
             name: "Plumbing"
         },
@@ -1175,7 +1177,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Plumbing"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -1192,7 +1194,7 @@ export default DefaultComplianceRule = {
         "type": "Document is current",
         "docType": "Contract",
         "docName": "Lifts & Escalators contract is current"
-    }, {
+    }, /*{
         "service": {
             name: "Lifts & Escalators"
         },
@@ -1234,11 +1236,11 @@ export default DefaultComplianceRule = {
         "type": "Document is current",
         "docType": "Contract",
         "docName": "Egress Contract"
-    }, {
+    },*/ {
         "service": {
             name: "Lifts & Escalators"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -1262,7 +1264,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Lifts & Escalators"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Audit",
         "docName": "Lift/escalator audit"
     }, {
@@ -1291,10 +1293,10 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Essential Safety Measures"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Certificate",
         "event": "Maintenance determination/occupancy permit on file"
-    }, {
+    }, /*{
         "service": {
             name: "Essential Safety Measures"
         },
@@ -1305,13 +1307,13 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Essential Safety Measures"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Review and audit"
-    }, {
+    }, */{
         "service": {
             name: "Essential Safety Measures"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -1354,17 +1356,17 @@ export default DefaultComplianceRule = {
         "service": {
             name: "Emergency Management Procedures"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Plan",
         "docName": "Evacuation diagrams installed"
-    }, {
+    }, /*{
         "service": {
             name: "Emergency Management Procedures"
         },
         "type": "Document exists",
         "docType": "",
         "docName": "Emergency evacuation training exercise"
-    }, {
+    },*/ {
         "service": {
             name: "Emergency Management Procedures"
         },
@@ -1400,7 +1402,7 @@ export default DefaultComplianceRule = {
         }
     } ],
 
-    "Asbestos & Hazardous Materials": [ {
+    /*"Asbestos & Hazardous Materials": [ {
         "service": {
             name: "Asbestos & Hazardous Materials"
         },
@@ -1428,9 +1430,9 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "",
         "docName": "Occupant notification process complete"
-    } ],
+    } ],*/
 
-    "Confined Spaces": [ {
+    /*"Confined Spaces": [ {
         "service": {
             name: "Confined Spaces"
         },
@@ -1451,18 +1453,18 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "",
         "docName": "Permit entry procedures in place"
-    } ],
+    } ],*/
 
-    "Indoor Air Quality (IAQ)": [ {
+    /*"Indoor Air Quality (IAQ)": [ {
         "service": {
             name: "Indoor Air Quality (IAQ)"
         },
         "type": "Document is current",
         "docType": "",
         "docName": "Annual IAQ test"
-    } ],
+    } ],*/
 
-    "Structrual/Roof Safety": [ {
+    /*"Structrual/Roof Safety": [ {
         "service": {
             name: "Structrual/Roof Safety"
         },
@@ -1490,7 +1492,7 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Audit",
         "docName": "Façade audit/inspection"
-    } ],
+    } ],*/
 
     "Building Maintenance Unit": [ {
         "service": {
@@ -1498,20 +1500,20 @@ export default DefaultComplianceRule = {
         },
         "type": "Document is current",
         "docType": "Contract",
-        "docName": "Building Maintenance Unit Contract is current"
+        "docName": "Building Maintenance Unit contract is current"
     }, {
         "service": {
             name: "Building Maintenance Unit"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "Building Maintenance Unit PPM exists"
-    }, {
+    }, /*{
         "service": {
             name: "Building Maintenance Unit"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
-    }, {
+    },*/ {
         "service": {
             name: "Building Maintenance Unit"
         },
@@ -1530,7 +1532,12 @@ export default DefaultComplianceRule = {
             name: "Building Maintenance Unit"
         },
         "type": "PPM event completed",
-        "event": "Major maintenance routine"
+        "event": "Major maintenance routine",
+        "frequency": {
+            "number": "10",
+            "unit": "years",
+            "repeats": "1"
+        }
     }, {
         "service": {
             name: "Building Maintenance Unit"
@@ -1540,7 +1547,7 @@ export default DefaultComplianceRule = {
         "docName": "BMU registration"
     } ],
 
-    "Dangerous Goods & Hazardous Substances": [ {
+    /*"Dangerous Goods & Hazardous Substances": [ {
         "service": {
             name: "Dangerous Goods & Hazardous Substances"
         },
@@ -1596,7 +1603,7 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Service Report",
         "docName": "Liquid substances are bunded to requirements"
-    } ],
+    } ],*/
 
     "Underground Petroleum Storage Systems (UPSS)": [ {
         "service": {
@@ -1604,7 +1611,7 @@ export default DefaultComplianceRule = {
         },
         "type": "Document is current",
         "docType": "Contract",
-        "docName": "Underground Petroleum Storage Systems (UPSS) Contract is current"
+        "docName": "Underground Petroleum Storage Systems (UPSS) contract is current"
     }, {
         "service": {
             name: "Underground Petroleum Storage Systems (UPSS)"
@@ -1654,7 +1661,7 @@ export default DefaultComplianceRule = {
         "docName": "Decommissioning/validation test reports on file"
     } ],
 
-    "Radio Frequency Radiation (RFR)": [ {
+    /*"Radio Frequency Radiation (RFR)": [ {
         "service": {
             name: "Radio Frequency Radiation (RFR)"
         },
@@ -1675,9 +1682,9 @@ export default DefaultComplianceRule = {
         "type": "Document is current",
         "docType": "Contract",
         "docName": "Risk Review contract"
-    } ],
+    } ],*/
 
-    "Environmental Risk Management": [ {
+ /*   "Environmental Risk Management": [ {
         "service": {
             name: "Environmental Risk Management"
         },
@@ -1705,10 +1712,10 @@ export default DefaultComplianceRule = {
         "type": "Document is current",
         "docType": "Contract",
         "docName": "Grease trap disposal contract"
-    }, ],
+    }, ],*/
 
 
-    "OHS": [ {
+    /*"OHS": [ {
         "service": {
             name: "OHS"
         },
@@ -1743,9 +1750,9 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "",
         "docName": "Slip Test"
-    } ],
+    } ],*/
 
-    "Critical Environment": [ {
+    /*"Critical Environment": [ {
         "service": {
             name: "Critical Environment"
         },
@@ -1759,7 +1766,7 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Procedure",
         "docName": "Critical Environment procedures in place"
-    } ],
+    } ],*/
 
 
     "Security": [ {
@@ -1806,16 +1813,16 @@ export default DefaultComplianceRule = {
         "docName": "Cleaning Test and Tag certificate current"
     } ],
 
-    "House Rules": [ {
+    /*"House Rules": [ {
         "service": {
             name: "House Rules"
         },
         "type": "Document exists",
         "docType": "House Rules",
         "docName": "Tenant receipt of House Rules"
-    } ],
+    } ],*/
 
-    "Contractor Management": [ {
+    /*"Contractor Management": [ {
         "service": {
             name: "Contractor Management"
         },
@@ -1836,7 +1843,7 @@ export default DefaultComplianceRule = {
         "type": "Document exists",
         "docType": "Registration",
         "docName": "Contracts register operational"
-    } ],
+    } ],*/
     "HVAC": [ {
         "service": {
             name: "HVAC"
@@ -1848,7 +1855,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "HVAC"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "HVAC PPM exists"
     }, {
         "service": {
@@ -1861,7 +1868,7 @@ export default DefaultComplianceRule = {
         "service": {
             name: "HVAC"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "SWMS",
         "docName": "Risk assessment exists"
     }, {
@@ -1927,7 +1934,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Water Treatment"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -1963,7 +1970,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Water Testing"
         },
-        "type": "PPM schedule established",
+        "type": "PPM exists",
         "event": "PPM schedule has been established"
     }, {
         "service": {
@@ -2047,7 +2054,7 @@ export default DefaultComplianceRule = {
         "docName": "12 months' Utilities invoices exist"
     } ],
 
-    "WHS & Risk Management": [ {
+    "WHS & Risk Management": [ /*{
         "service": {
             name: "WHS & Risk Management"
         },
@@ -2055,14 +2062,14 @@ export default DefaultComplianceRule = {
         "docType": "Certificate",
         "docSubType": "Certificate of Occupancy",
         "docName": "Cert of Occupancy/Final Inspection/ESM determination"
-    }, {
+    },*/ {
         "service": {
             name: "WHS & Risk Management"
         },
         "subservice": {
             name: "Property risk"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Certificate",
         "docSubType": "Certificate of Occupancy",
         "docName": "Cert of Occupancy/Final Inspection/ESM determination"
@@ -2143,7 +2150,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Asbestos & Hazardous Materials"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Register",
         "docName": "Asbestos/Haz mat register included in induction"
     }, {
@@ -2153,7 +2160,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Asbestos & Hazardous Materials"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Management Plan",
         "docName": "Asbestos/Haz Mat Management Management plan prepared"
     }, {
@@ -2163,7 +2170,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Asbestos & Hazardous Materials"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Procedure",
         "docName": "Occupant notification process complete"
     }, {
@@ -2173,7 +2180,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Confined Spaces"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Register",
         "docName": "Confined Spaces register available"
     }, {
@@ -2183,7 +2190,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Confined Spaces"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Confirmation",
         "docName": "Confined Spaces identified and signposted"
     }, {
@@ -2193,7 +2200,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Confined Spaces"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Procedure",
         "docName": "Permit entry procedures in place"
     }, {
@@ -2213,7 +2220,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Dangerous Goods & Hazardous Substances"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Register",
         "docName": "Dangerous goods register"
     }, {
@@ -2233,7 +2240,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Dangerous Goods & Hazardous Substances"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Confirmation",
         "docSubType": "Signage",
         "docName": "Signage in place"
@@ -2244,7 +2251,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Dangerous Goods & Hazardous Substances"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Confirmation",
         "docSubType": "Manifest",
         "docName": "Dangerous goods manifest in-situ"
@@ -2275,7 +2282,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Dangerous Goods & Hazardous Substances"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Confirmation",
         "docSubType": "Spill bins",
         "docName": "Emergency spill bins in place"
@@ -2286,7 +2293,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Dangerous Goods & Hazardous Substances"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Confirmation",
         "docSubType": "Bunding",
         "docName": "Liquid substances are bunded to requirements"
@@ -2297,7 +2304,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Radio Frequency Radiation"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Assessment",
         "docName": "Risk assessment on file"
     }, {
@@ -2307,7 +2314,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Radio Frequency Radiation"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Procedure",
         "docName": "Restricted access procedures in place"
     }, {
@@ -2337,7 +2344,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Hazardous Waste"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Register",
         "docName": "Hazardous waste register"
     }, {
@@ -2347,7 +2354,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Hazardous Waste"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Certificate",
         "docName": "Hazardous waste removal certificates on file"
     }, {
@@ -2367,7 +2374,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Critical Environment"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Audit",
         "docName": "Critical Environment audit completed"
     }, {
@@ -2377,7 +2384,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Critical Environment"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Register",
         "docName": "Equipment schedule"
     }, {
@@ -2387,7 +2394,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Critical Environment"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Procedure",
         "docName": "Critical Environment procedures in place"
     }, {
@@ -2417,7 +2424,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Contractor Management"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Procedure",
         "docSubType": "Restricted access",
         "docName": "Restricted access procedures"
@@ -2449,7 +2456,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Height safety"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Report",
         "docName": "Height safety assessment"
     }, {
@@ -2459,7 +2466,7 @@ export default DefaultComplianceRule = {
         "subservice": {
             name: "Height safety"
         },
-        "type": "Document exists",
+        "type": "Documents exist",
         "docType": "Service Report",
         "docName": "Height safety recommendations completed"
     }, {
