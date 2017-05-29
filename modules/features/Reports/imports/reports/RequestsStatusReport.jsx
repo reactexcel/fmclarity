@@ -127,7 +127,7 @@ const RequestsStatusReport = React.createClass( {
 			}
 		},
 		Service: ( item ) => {
-			if ( item.service.name ) {
+			if ( item.service && item.service.name ) {
 				return { val: item.service.name + ( item.subservice && item.subservice.name ? ( " - " + item.subservice.name ) : "" ) };
 			}else{
 				return { value: ''}
