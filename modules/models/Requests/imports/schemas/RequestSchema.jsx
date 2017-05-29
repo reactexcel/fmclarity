@@ -99,8 +99,8 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { 
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ], 
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -127,7 +127,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ], 
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
