@@ -4,6 +4,7 @@
  */
 
 import React from "react";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
@@ -33,20 +34,59 @@ const RequestsStatusReport = React.createClass( {
 			showFacilityName: true,
 			dataset:null,
 			serverDoc:[],
-			currentDoc:[]
+			currentDoc:[],
+			docString:''
 		}
 	},
 	componentWillMount(){
 		let docs = Documents.find({"type":"Contract"}).fetch();
-		this.setState({currentDoc : docs})
+		// console.log(docs.stringfy());
+		console.log(docs);
+		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+		let docString = " "
+		aa.map((d)=>{
+			docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+			if(d.hasOwnProperty("subServiceType")){
+				if(d.subServiceType.hasOwnProperty("name")){
+					docString = docString + d.subServiceType.name
+				}
+			}
+			if(d.hasOwnProperty("comment")){
+					docString = docString + d.comment
+			}
+		})
+		this.setState({currentDoc : docs , docString})
 		$("#fab").hide();
 	},
 	componentWillUnmount(){
 		$("#fab").show();
+		PubSub.publish('stop', "test");
 	},
 	componentWillUpdate(){
-		setInterval(()=>{
+	let update = setInterval(()=>{
+
+			PubSub.subscribe( 'stop', (msg,data) => {
+				clearInterval(update)
+			});
 			let serverDoc = Documents.find({"type":"Contract"}).fetch();
+			let aa = serverDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+			let updatedString = " "
+			aa.map((d)=>{
+				updatedString = updatedString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+				if(d.hasOwnProperty("subServiceType")){
+					if(d.subServiceType.hasOwnProperty("name")){
+						updatedString = updatedString + d.subServiceType.name
+					}
+				}
+				if(d.hasOwnProperty("comment")){
+						updatedString = updatedString + d.comment
+				}
+			})
+			if(updatedString != this.state.docString){
+				this.setState({
+					docString : updatedString
+				})
+			}
 			if(serverDoc.length != this.state.currentDoc.length){
 				this.setState({
 					currentDoc : serverDoc
@@ -112,9 +152,13 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
-
-			let supplier = item.data?item.data.supplier:item.supplier;
-			if( supplier != null ){
+				let supplier = item.data?item.data.supplier:item.supplier;
+				if( supplier != null ){
+				let string = supplier.name
+				if(string != undefined || null){
+					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+				}
+				// console.log(supplier);
 				return {
 					val: <ContactCard item={supplier} />,
 					name: supplier.name
@@ -143,7 +187,9 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							console.log(docs);
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
+							console.log(docs,"filtered");
 						}
 						let amount = null;
 						if ( docs.length > 0) {
@@ -176,7 +222,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 
 						//console.log(docs);
@@ -209,10 +255,10 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 						if (docs.length > 0) {
-							let status = "not Executed"
+							let status = "Not Executed"
 							if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != ''){
 								status = "Fully Executed"
 							}else if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate == ''){
@@ -250,7 +296,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 						let expiryDate = null;
 						if ( docs.length > 0) {

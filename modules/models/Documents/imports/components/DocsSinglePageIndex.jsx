@@ -6,7 +6,7 @@ import { Text } from '/modules/ui/MaterialInputs'
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents'
 import { Select } from '/modules/ui/MaterialInputs';
-import {Teams} from '/modules/models/Teams'
+import {Teams} from '/modules/models/Teams';
 import { Facilities,FacilityListTile } from '/modules/models/Facilities';
 import DocTypes from '../schemas/DocTypes.jsx';
 
@@ -292,6 +292,7 @@ export default class DocsSinglePageIndex extends React.Component {
         this.setState( stateToSet )
     }
   render() {
+    let facilityID = this.state.query && this.state.query['facility._id'] ? this.state.query['facility._id'] : null;
     let role = Meteor.user()&&Meteor.user().getRole();
     let currentFolders = this.state.currentFolders;
     return (

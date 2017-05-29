@@ -53,7 +53,18 @@ ComplianceEvaluationService = new function() {
     var evaluators = {
         //can pass in facility and service for more efficient calculation
         "Document exists": function( rule, facility, service ) {
-            //  console.log({rule});
+            //  console.log(facility);
+             let houseRule = false;
+             let reqService
+             let reqSubService
+             if(rule.service.name === "House Rules"){
+               houseRule = true;
+               if(facility.hasOwnProperty("servicesRequired")){
+                //  console.log(facility.servicesRequired,"------------------------------");
+                 reqService = facility.servicesRequired != undefined && facility.servicesRequired.length > 0 ? facility.servicesRequired.filter((service) => service != null && service.name === "WHS & Risk Management") : ''
+                 reqSubService = reqService.length > 0 && reqService[0].children.length > 0 ? reqService[0].children.filter((sub)=> sub.name === "House Rules") : ''
+               }
+             }
             var docCount = null,
                 docs = null,
                 docName = null,
@@ -67,6 +78,17 @@ ComplianceEvaluationService = new function() {
                         { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
+                if(houseRule){
+                  query = rule.document && rule.document.query ?
+                  JSON.parse( rule.document.query ) : {
+                      "facility._id": facility[ "_id" ],
+                      $and: [
+                          { type: "Confirmation" },
+                          { 'serviceType.name': 'WHS & Risk Management'},
+                          { 'subServiceType.name': 'House Rules'}
+                      ]
+                  };
+                }
 
             //----- Solution for "370 Docklands Dve"
             while(_.isString(query)) {
@@ -141,8 +163,9 @@ ComplianceEvaluationService = new function() {
                             team: { _id, name },
                             owner: { type, _id, name },
                             name: rule.docName,
-                            type: rule.docType,
-                            serviceType: rule.service,
+                            type: houseRule ? "Confirmation" :rule.docType,
+                            serviceType: houseRule ? reqService[0] : rule.service,
+                            subServiceType: houseRule ? reqSubService[0] : ''
                         } );
                     if ( rule.docSubType ) {
                         if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
@@ -267,7 +290,7 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "PPM schedule established": function( rule, facility, service ) {
+        "PPM exists": function( rule, facility, service ) {
             //console.log(rule);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
@@ -294,7 +317,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP exists"
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
@@ -455,6 +478,12 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
+
+                        let frequency = {
+                            unit : 'custom',
+                            number: rule.frequency.number,
+                            period: rule.frequency.unit,
+                        };
                         let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
@@ -465,7 +494,7 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: rule.frequency,
+                            frequency: frequency,
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
@@ -575,7 +604,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Invoice"){
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     query["closeDetails.completionDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -589,7 +618,7 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     docQuery["applicablePeriodStartDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -618,7 +647,7 @@ ComplianceEvaluationService = new function() {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 Invoices"
                         },
                     } )
                 }
@@ -626,7 +655,7 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Invoice"
+                          detail: count + " out of 12 Invoices"
                       },
                       resolve: function(r,update) {
                           let type = "team",
@@ -649,7 +678,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Confirmation"){
-              console.log(Session.getSelectedFacility());
+              // console.log(Session.getSelectedFacility());
 
                 // for (let i=0; i<=12; i++  ) {
                     // docQuery["issueDate"] = {
@@ -1000,7 +1029,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
-      console.log(services,"evaluateServices");
+      // console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
