@@ -43,6 +43,13 @@ export default class DocsSinglePageIndex extends React.Component {
         }
     }
 
+    componentWillMount(){
+        $("body").disableSelection()
+    }
+    componentWillUnmount(){
+        $("body").enableSelection()
+    }
+
     // Get the list of document which have to be shown
     onPageChange(){
         let  { query, facilityIds, listSize, currentPage, previousPage, nextPage, facilities, team } = this.state;
@@ -291,7 +298,7 @@ export default class DocsSinglePageIndex extends React.Component {
 			<div className='col-lg-12' style={{paddingTop:'10px'}}>
                 <div className="row">
                     <div className="col-xs-12">
-                        <button onClick={(event)=>{
+                        {/*<button onClick={(event)=>{
                             event.stopPropagation();
                             if($('#filter-box').css('display') == 'none'){
                                 $('#filter-box').css('display','block')
@@ -302,7 +309,19 @@ export default class DocsSinglePageIndex extends React.Component {
                                 $('#arrow-icon').css('display','none')
                                 //$('#filter-details').css('display','block')
                             }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Documents</button>
+                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Documents</button>*/}
+                        <button className="btn btn-flat" onClick={(event)=>{
+                            event.stopPropagation();
+                            if($('#filter-box').css('display') == 'none'){
+                                $('#filter-box').css('display','block')
+                                $('#arrow-icon').css('display','block')
+                                //$('#filter-details').css('display','none')
+                            } else {
+                                $('#filter-box').css('display','none')
+                                $('#arrow-icon').css('display','none')
+                                //$('#filter-details').css('display','block')
+                            }
+                        }} ><i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Documents</button>
                     </div>
                 </div>
                 <div className="row">
@@ -496,6 +515,10 @@ export default class DocsSinglePageIndex extends React.Component {
                             })
                             return <div key={idx} className="col-xs-2" style={{marginTop:'20px',textAlign:'center'}}>
                                 <i title = {"Total documents :"+totalDoc} onDoubleClick={()=>{
+                                    $("body").disableSelection()
+                                    //let sel=window.getSelection();
+                                    //if(sel && sel.removeAllRanges)
+                                    //sel.removeAllRanges() ;
                                     this.onClickFolder(folder)
                                 }} className="fa fa-folder" aria-hidden="true" style={{cursor:'pointer',color:'#fad95f',fontSize:'90px',textShadow:'1px 1px 1px black',marginLeft:'20px'}}></i>
                                 <div className="folder-name" style={{marginLeft:'23px',maxWidth:'50%',minWidth:'150px',display:'inline-block'}}>{folder.name}</div>
