@@ -187,7 +187,9 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							console.log(docs);
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
+							console.log(docs,"filtered");
 						}
 						let amount = null;
 						if ( docs.length > 0) {
@@ -220,7 +222,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 
 						//console.log(docs);
@@ -253,7 +255,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 						if (docs.length > 0) {
 							let status = "Not Executed"
@@ -294,7 +296,7 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							docs = _.filter(docs,d => !d.subServiceType.name)
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
 						}
 						let expiryDate = null;
 						if ( docs.length > 0) {
