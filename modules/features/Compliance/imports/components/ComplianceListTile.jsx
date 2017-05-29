@@ -36,7 +36,7 @@ export default ComplianceListTile = React.createClass( {
         name = rule.docType + " document is current";
         info = rule.docName;
         break;
-      case "PPM schedule established":
+      case "PPM exists":
         name = rule.type;
         info = ( rule.service ? rule.service.name : "" );
         break;
@@ -115,7 +115,7 @@ export default ComplianceListTile = React.createClass( {
     var message = this.data.message
     var results = this.data.results;
     var info = this.data.info;
-    var loader = this.data.loader;
+    // var loader = this.data.loader;
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
@@ -126,10 +126,7 @@ export default ComplianceListTile = React.createClass( {
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
           {
-            this.state.showLoader && loader?
-                <div style={{width:"30%"}}>
-                    <LinearProgress mode="indeterminate" color='#0152b5'/>
-                </div>:
+            
             (results.passed?
               <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
@@ -137,11 +134,6 @@ export default ComplianceListTile = React.createClass( {
                     <span>: <span
                         className="resolution-link"
                         onClick={()=>{
-                            if (loader) {
-                                this.setState({
-                                    showLoader: true,
-                                })
-                            }
                             results.resolve(rule, this.updateList)
                         }}>
                         {results.message.lastCompleted_nextDueDate && !_.isEmpty(results.message.lastCompleted_nextDueDate) ? results.message.lastCompleted_nextDueDate:_.isString(message.detail)?message.detail:message.detail()}
@@ -155,11 +147,6 @@ export default ComplianceListTile = React.createClass( {
                       <span>: <span
                           className="resolution-link"
                           onClick={()=>{
-                              if (loader) {
-                                  this.setState({
-                                      showLoader: true,
-                                  })
-                              }
                               results.resolve(rule, this.updateList)
                           }}>
                         { _.isString(message.detail)?message.detail:message.detail()}
