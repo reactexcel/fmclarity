@@ -2040,7 +2040,7 @@ export default DefaultComplianceRule = {
         },
         "type": "Compliance level",
         "docType": "Invoice",
-        "docName": "12 months' Utilities invoices exist"
+        "docName": "Utilities - Electricity Monthly Invoice"
     },
     {
         "service": {
@@ -2051,7 +2051,7 @@ export default DefaultComplianceRule = {
         },
         "type": "Compliance level",
         "docType": "Invoice",
-        "docName": "12 months' Utilities invoices exist"
+        "docName": "Utilities - Gas Monthly Invoice"
     } ],
 
     "WHS & Risk Management": [ /*{
