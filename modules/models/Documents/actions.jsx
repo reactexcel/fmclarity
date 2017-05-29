@@ -100,6 +100,11 @@ const createUpdateRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
+                    newRequest.supplier = {
+                        _id: owner._id,
+                        name: owner.profile ? owner.profile.name : owner.name
+                    };
+
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,

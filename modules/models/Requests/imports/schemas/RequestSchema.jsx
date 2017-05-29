@@ -411,7 +411,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder' ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -490,7 +490,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder') {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
