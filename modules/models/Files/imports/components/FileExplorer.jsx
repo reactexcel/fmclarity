@@ -33,15 +33,17 @@ function FileExplorer( props ) {
 		<div className="col-sm-12 dragdrop" style={{
 			border: "none"
 		}}
-		onDrop={
-			(e) => {
+		onDrop={(e) => {
+			e.preventDefault();
+			e.stopPropagation();
 				if (onDropCallback) {
 					onDropCallback(e);
 				}
 			}
 		}
-		onDragOver={
-			(e) => {
+		onDragOver={(e) => {
+			e.preventDefault();
+			e.stopPropagation();
 				if (onDragOverCallback) {
 					onDragOverCallback(e);
 				}
@@ -59,8 +61,12 @@ function FileExplorer( props ) {
 		<div style = { {display:"inline-block"} }>
 			<FileView
 				onChange = { (newFile) => { handleChange( attachments.length, newFile ) } }
-				drop = { drop => onDropCallback = drop }
-				drag = { drag => onDragOverCallback = drag }
+				drop = { (drop) => {
+					onDropCallback = drop
+				}}
+				drag = { (drag) => {
+					onDragOverCallback = drag
+				} }
 				/>
 		</div>
 

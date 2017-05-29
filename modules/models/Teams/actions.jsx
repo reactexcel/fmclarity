@@ -16,11 +16,11 @@ const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: () => {
-        let team = Teams.create();
+    action: (team, showFilter) => {
+        team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } />
+                <TeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }
@@ -116,11 +116,16 @@ const createRequest = new Action( {
             content: <AutoForm
             title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
-            form = { team.type == 'fm' ? CreateRequestForm : SupplierCreateRequestForm }
+            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
+                    console.log(newRequest,"newRequest");
+                    if(newRequest.type == "Booking"){
+                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                    }
+
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest }/>
@@ -137,35 +142,40 @@ const createRequest = new Action( {
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.issue';
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
                         method = 'Issues.create';
+                        console.log(hasSupplier,"hasSupplier");
+                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
-                            role = Meteor.user().getRole( team ),
+                            role = team.getMemberRole( owner ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
                         if( !team ) {
                             throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
                             return;
                         }
                         else if( baseBuilding ) {
-                            /*if( role == 'property manager' ) {
+                            if( role == 'property manager' ) {
                                 method = 'Issues.issue';
-                            }*/
-                            if( _.contains( [ 'staff', 'tenant', 'support', 'resident'], role ) ){
-                                method = 'Issues.issue'
                             }
                         }
                         else if( !baseBuilding ) {
 
                             if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.create';
+                                method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-
                                 method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
+                                    memberThreshold = null,
                                     costThreshold = null;
+
+                                if( relation ) {
+                                    memberThreshold = relation.issueThresholdValue;
+                                    if( _.isString( memberThreshold ) ) {
+                                        memberThreshold = memberThreshold.replace(',','');
+                                    }
+                                }
 
                                 // strips out commas
                                 //  this is a hack due to an inadequete implementation of number formatting
@@ -176,9 +186,11 @@ const createRequest = new Action( {
 
                                 let cost = parseInt( costString );
 
-                                if( relation.threshold ) {
-                                    costThreshold = parseInt( relation.threshold );
+                                // this is the value saved in the member team relation
+                                if( memberThreshold ) {
+                                    costThreshold = parseInt( memberThreshold );
                                 }
+                                // this is the threshold value from the global team configuration
                                 else if( team.defaultCostThreshold ) {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }
@@ -186,25 +198,31 @@ const createRequest = new Action( {
                                 if( cost > costThreshold ) {
                                     method = 'Issues.create';
                                 }
-                                if( parseInt(relation.threshold) < 1 ) {
+                                /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
+                                }
+                                if(newRequest.haveToIssue == true){
+                                    method = 'Issues.issue';
                                 }
                                 if( method == 'Issues.issue' ) {
                                     console.log('new threshold='+newThreshold.toString());
                                     team.setMemberThreshold( owner, newThreshold.toString() );
-                                }
+                                }*/
                             }
 
-                            else if( _.contains( [ 'staff', 'tenant', 'support', 'resident' ], role )){
-                                method == 'Issues.issue'
-                            }
+                        }
+                        if(newRequest.haveToIssue == true){
+                            method = 'Issues.issue';
+                            newRequest = _.omit(newRequest,'haveToIssue')
                         }
                     }
-
+                    console.log("11111111");
                     Meteor.call( method, newRequest );
+                    console.log("22222222");
                     let request = Requests.findOne( { _id: newRequest._id } );
+                    console.log(request,"request");
                     request.markAsUnread();
-                    //callback( newRequest );
+                    callback? callback( newRequest ): null;
                 }
             }
             />
@@ -324,7 +342,6 @@ const inviteSupplier = new Action( {
     label: "Invite supplier",
     type: [ 'team' ],
     action: ( supplier ) => {
-        console.log( { supplier } );
         let inviter = Session.getSelectedTeam();
         //Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
         //invite supplier
@@ -358,7 +375,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();

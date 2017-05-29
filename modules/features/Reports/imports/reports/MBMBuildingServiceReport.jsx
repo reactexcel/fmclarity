@@ -6,8 +6,8 @@ import { Requests } from '/modules/models/Requests';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
-
-
+import { TextArea } from '/modules/ui/MaterialInputs';
+import { DataTable } from '/modules/ui/DataTable';
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
 }
@@ -65,12 +65,16 @@ const MBMBuildingServiceReport = React.createClass( {
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
+						console.log(facility);
             d = services.map( function( s, idx ){
-                let dataset = queries.map( function(q){
-                    q["service.name"] = s.name;
-                    return Requests.find( q ).count();
-                });
-                return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							if(s != null){
+
+								let dataset = queries.map( function(q){
+									q["service.name"] = s.name;
+									return Requests.find( q ).count();
+								});
+								return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							}
             });
             console.log(d);
         }
@@ -82,6 +86,12 @@ const MBMBuildingServiceReport = React.createClass( {
             d:d,
 			ready: handle.ready()
 		}
+	},
+	componentWillMount(){
+		$("#fab").hide();
+	},
+	componentWillUnmount(){
+		$("#fab").show();
 	},
 
 	printChart(){
@@ -179,7 +189,7 @@ const MBMBuildingServiceReport = React.createClass( {
 					<h2>Building Service Requests {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
+					<div style={{width:"830px","height":"450px",paddingLeft:"20%",paddingTop:"8%"}}>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
@@ -200,24 +210,10 @@ const SingleServiceRequest = React.createClass( {
 
 	getInitialState() {
 		return ( {
-			expandall: false
+			expandall: false,
+			comment: ""
 		} )
 	},
-
-	printChart(){
-		var component = this;
-		component.setState( {
-			expandall: true
-		} );
-
-		setTimeout(function(){
-			window.print();
-			component.setState( {
-				expandall: false
-			} );
-		},200);
-	},
-
 	getChartConfiguration() {
 		return {
 			barData: {
@@ -281,18 +277,89 @@ const SingleServiceRequest = React.createClass( {
 		this.updateChart();
 	},
 
+	setDataSet(newdata){
+		this.setState({
+			dataset:newdata,
+		});
+	},
+	fields:{
+		"Event Name": "name",
+		"Completed At": ( item ) => {
+			if( item && item.closeDetails && item.closeDetails.completionDate ){
+				return {
+					val: moment( item.closeDetails.completionDate ).format("DD-MMM-YY")
+				}
+			}
+		}
+	},
+	getData(){
+		let facility = Session.getSelectedFacility();
+		let data = Requests.findAll( {
+			'facility._id': facility._id,
+			"service.name": this.props.serviceName,
+			status: "Complete",
+			type: "Ad-Hoc",
+			priority: "PMP",
+			"closeDetails.completionDate":{
+				$gte: new moment().startOf("month").toDate(),
+				$lte: new moment().endOf("month").toDate()
+			}
+		} );
+		// console.log(data,  this.props.serviceName);
+		return data;
+	},
+
 	render() {
+		let data = this.getData();
 		return (
-			<div>
-			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-			    <i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+			<div style={ { marginTop: "100px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
-						<canvas id={"bar-chart-" + this.props.id}></canvas>
+					<div style={{width:"830px","height":"400px",paddingLeft:"20%",paddingTop:"5%"}}>
+						<canvas id={"bar-chart-" + this.props.id} style={{width:"630px","height":"300px"}}></canvas>
+					</div>
+				</div>
+				<div className="data-table">
+					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
+						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					</div>
+				</div>
+				<div style={ { marginTop: "20px", marginBottom: "-15px",height:"100px" } }>
+					<div className="comment-header">
+						<h4>Comments</h4>
+						<span style={{float: "right"}}>
+							<button className="btn btn-flat" onClick={() => {
+									let edited = this.state.showEditor;
+									let component = this;
+									this.setState({
+										showEditor: !this.state.showEditor
+									}, () => {
+										if ( !edited ){
+											console.log("edited", component );
+											$(component.refs.textarea.refs.input).focus();
+										}
+									})
+								}}>
+								{!this.state.showEditor?
+									<i className="fa fa-pencil-square-o" aria-hidden="true"></i>:
+									<i className="fa fa-floppy-o" aria-hidden="true"></i>
+								}
+							</button>
+						</span>
+					</div>
+					<div className="comment-body">
+						{this.state.showEditor?
+							<TextArea
+								ref="textarea"
+								style={{height:"50px"}}
+								value={this.state.comment}
+								onChange={( value ) => {this.setState({ comment: value })}}
+								/>:
+							<div>
+								<p style={{fontFamily: "inherit"}}>{this.state.comment}</p>
+							</div>}
 					</div>
 				</div>
 			</div>

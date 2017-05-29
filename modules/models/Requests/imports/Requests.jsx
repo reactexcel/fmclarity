@@ -92,10 +92,9 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
     if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
@@ -173,7 +172,7 @@ Requests.methods( {
             } else {
                 let supplier = request.getSupplier();
                 if ( supplier ) {
-                    if ( supplier.type == 'fm' ) {
+                    if ( Teams.isFacilityTeam( supplier ) ) {
                         supplierContacts = supplier.getMembers( { role: 'portfolio manager' } );
                     } else {
                         supplierContacts = supplier.getMembers( { role: 'manager' } );
@@ -193,9 +192,10 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
                 query = null;
 
-            if( team.type == 'contractor' ) {
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
@@ -206,7 +206,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -236,13 +236,16 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New';
+            let status = 'New',
+                description = request.description;
+
+            request.description = null;
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
 
             if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -276,7 +279,7 @@ Requests.methods( {
                         verb: "created",
                         read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: newRequest.description
+                        body: description
                     }
                 } );
             }
@@ -295,11 +298,11 @@ Requests.methods( {
             let facility = request.getFacility();
             if( facility ) {
                 // if the request is base building the contact should be the property manager, not the facility manager
-                let teamType = Session.get( 'selectedTeam' ).type,
+                let team = Session.get( 'selectedTeam' ).type,
                     requestIsBaseBuilding = ( request && request.service && request.service.data && request.service.data.baseBuilding ),
                     role = 'manager';
 
-                if( teamType != 'fm' && requestIsBaseBuilding ) {
+                if( Teams.isFacilityTeam( team ) && requestIsBaseBuilding ) {
                     role = 'property manager';
                 }
                 let fms = facility.getMembers( { role } );
@@ -411,7 +414,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -458,7 +461,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
@@ -474,7 +477,7 @@ Requests.methods( {
         helper: ( request, dueDate ) => {
             return Requests.findOne( {
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -502,7 +505,7 @@ Requests.methods( {
             if ( nextDate ) {
                 nextRequest = Requests.findOne( {
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -519,7 +522,7 @@ Requests.methods( {
             if ( previousDate ) {
                 previousRequest = Requests.findOne( {
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -696,11 +699,14 @@ function setAssignee( request, assignee ) {
             }
 }
 
-function actionIssue( request ) {
 
+function actionIssue( request ) {
     let code = null,
         userId = Meteor.user(),
+        description = request.description,
         user = Users.findOne( userId._id );
+
+    request.description = null;
 
     if ( request ) {
         if ( request.code ) {
@@ -731,6 +737,7 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
+                body: description
             }
         } );
 
@@ -744,7 +751,7 @@ function actionIssue( request ) {
                 read: false,
                 digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
@@ -754,6 +761,7 @@ function actionIssue( request ) {
         return request;
     }
 }
+
 
 /*
  *
@@ -959,7 +967,7 @@ function actionSendReminder( requests ) {
             message: {
                 subject: "Overdue Work order #" + request.code + " reminder",
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 4 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }

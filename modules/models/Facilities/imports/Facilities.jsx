@@ -70,6 +70,7 @@ const Facilities = new Model( {
 
 Facilities.collection.allow( {
     update: () => {
+        console.log("update");
         return true;
     }
 } )
@@ -121,6 +122,70 @@ Facilities.actions( {
     setAreas: {
         authentication: AuthHelpers.managerOfRelatedTeam,
         method: function( facility, areas ) {
+            Facilities.update( facility._id, {
+                $set: {
+                    areas: areas
+                }
+            } );
+        }
+    },
+    updateBookingForArea: {
+        authentication:true,
+        method: function(selectedFacility, level, area, identifier, booking){
+            let facility = Facilities.findOne({'_id':selectedFacility._id})
+            console.log(facility,"facility")
+            let areas = facility.areas;
+            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
+            if(level && level.data){
+                for(var i in areas){
+                    if(areas[i].name == level.name){
+                        let area1 = areas[i];
+                        let subArea = areas[i].children;
+                        if(area && area.data){
+                            for(var j in subArea){
+                                if(subArea[j].name == area.name){
+                                    let identifier2 = subArea[j].children;
+                                    if(identifier && identifier.data){
+                                        for(var k in identifier2){
+                                            if(identifier2[k].name == identifier.name){
+                                                if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
+                                                    if(areas[i].children[j].children[k].totalBooking){
+                                                        areas[i].children[j].children[k].totalBooking.push(booking);
+                                                    } else {
+                                                        areas[i].children[j].children[k].totalBooking = [booking];
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        if(areas[i].children[j].data.areaDetails && areas[i].children[j].data.areaDetails.type == "Bookable"){
+                                            if(areas[i].children[j].totalBooking){
+                                                areas[i].children[j].totalBooking.push(booking);
+                                            } else {
+                                                areas[i].children[j].totalBooking = [booking];
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        } else {
+                            if(areas[i].data.areaDetails && areas[i].data.areaDetails.type == "Bookable"){
+                                if(areas[i].totalBooking){
+                                    areas[i].totalBooking.push(booking);
+                                } else {
+                                    areas[i].totalBooking = [booking];
+                                }
+                            }
+                            break;
+                        }
+                        break;
+                    }
+                }
+            }
+            console.log(areas,facility._id,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
@@ -216,14 +281,15 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-
+          // console.log(facility,rules);
             let services = clearComplianceRules( facility );
-
+            // console.log(services,"after clear compliance");
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
                 let serviceIndex = null;
                 for ( var i in services ) {
+                  // console.log(services[ i ].name ,key,"For loop");
                     if ( services[ i ].name == key ) {
                         service = services[ i ];
                         serviceIndex = i;
@@ -231,7 +297,7 @@ Facilities.actions( {
                     }
                 }
 
-                //console.log( { key, service, serviceIndex } );
+                // console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
@@ -398,10 +464,52 @@ Facilities.actions( {
                     type: doc.type,
                     description: doc.description,
                     private: doc.private,
+                    applicablePeriodStartDate:doc.applicablePeriodStartDate,
+                    applicablePeriodEndDate:doc.applicablePeriodEndDate,
+                    issueDate:doc.issueDate,
+                    serviceType:doc.serviceType,
+                    owner: doc.owner
                 }
             } );
         }
     },
+
+    addTenant: {
+        authentication: AuthHelpers.managerOfRelatedTeam,
+        method: function( facility, team ) {
+            if ( team && team._id ) {
+                Facilities.update( facility._id, {
+                    $push: {
+                        tenants: {
+                            _id: team._id,
+                            name: team.name
+                        }
+                    }
+                } );
+                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
+            }
+        }
+    },
+
+    getTenants: {
+        authentication: true,
+        helper: ( facility ) => {
+            import { Teams } from '/modules/models/Teams';
+            if( !facility.tenants ) {
+                // no tenants to return
+                return;
+            }
+            let tenantIds = _.pluck( facility.tenants, '_id' );
+            console.log( tenantIds );
+            return Teams.findAll( { _id: { $in: tenantIds } } );
+        }
+    },
+
+
+    /////////////////////////////////////////
+    // Provide through the services mixin??
+    /////////////////////////////////////////
+
     /**
      * Returns an array of supplier documents
      */
@@ -414,7 +522,9 @@ Facilities.actions( {
             let ids = [],
                 names = [],
                 suppliers = null;
-
+            let facilitySuppliers = _.uniq(facility.suppliers, s => s._id);
+                ids = _.pluck(facilitySuppliers, "_id");
+                names = _.pluck(facilitySuppliers, "name");
             if ( _.isArray( facility.servicesRequired ) ) {
                 _.map( facility.servicesRequired, ( s ) => {
                         let supplier = null;
@@ -480,9 +590,7 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
-                Facilities.update( {
-                    "_id": facility._id
-                }, {
+                Facilities.update( facility._id, {
                     $push: {
                         suppliers: {
                             _id: supplier._id,
@@ -494,6 +602,9 @@ Facilities.actions( {
             }
         }
     },
+
+
+
     /**
      *  Add personnel to facility
      **/
@@ -528,12 +639,16 @@ Facilities.actions( {
     },
     removeComplianceRule: {
         authentication: true,
-        helper: ( facility, servicePosition, rulePosition, serviceName ) => {
+        helper: ( facility, servicePosition, rulePosition, serviceName, subservicePosition ) => {
             let servicesRequired = facility.servicesRequired;
-            _.map( servicesRequired, ( svc, i ) => {
-                if ( svc.name == serviceName ) servicePosition = i
-            } );
-            servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            // _.map( servicesRequired, ( svc, i ) => {
+            //     if ( svc.name == serviceName ) servicePosition = i
+            // } );
+            if ( subservicePosition != null ) {
+                servicesRequired[ servicePosition ].children[ subservicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            } else {
+                servicesRequired[ servicePosition ].data.complianceRules.splice( rulePosition, 1 );
+            }
             Facilities.update( { _id: facility._id }, { $set: { "servicesRequired": servicesRequired } } );
         }
     },
@@ -597,16 +712,60 @@ Facilities.actions( {
         }
     },
 
+    setDefaultSupplier: {
+        authentication: true,
+        method: ( facility, supplier, service ) => {
+            let services = facility.servicesRequired,
+                index = null;
+            for (var i = 0; i < services.length; i++) {
+                if ( services[i].name == service.name ) {
+                    if (!services[i].data) {
+                        services[i].data = [];
+                    }
+                    services[i].data.supplier = supplier;
+                    let members = [];
+                    if( supplier && supplier._id ) {
+                        import { Teams } from '/modules/models/Teams';
+                        supplier = Teams.findOne( supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers( { "role": "manager" } );
+                            if ( members.length ) {
+                                let dsc = members[0];
+                                services[i].data.defaultContact = [{
+                                    _id: dsc._id,
+                                    name: dsc.name || dsc.profile.name,
+                                    role: "supplier manager",
+                                    email: dsc.email || dsc.profile.email,
+                                }];
+
+                            }
+                        }
+                    }
+                    index = i;
+                    //console.log(services[i]);
+                    break;
+                }
+            }
+            Facilities.update( facility._id, {
+                    $set: {
+                        servicesRequired: services,
+                    }
+                }
+            )
+            return {
+                index,
+                service: services[index],
+                supplier,
+            }
+        }
+    },
+
     invitePropertyManager: {
         authentication: true,
         method: invitePropertyManager,
     },
 
     addPMP: {
-        authentication: AuthHelpers.managerOfRelatedTeam,
-    },
-
-    addTenant: {
         authentication: AuthHelpers.managerOfRelatedTeam,
     },
 
@@ -673,22 +832,25 @@ function invitePropertyManager( team, email, ext ) {
 }
 
 function sendMemberInvite( facility, recipient, team ) {
-    console.log( recipient );
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
+    if( Meteor.isServer ) {
+        console.log( recipient );
+        let body = ReactDOMServer.renderToStaticMarkup(
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
         } )
-    );
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+    }
 }
 
 function clearComplianceRules( facility ) {
     let services = facility.servicesRequired;
+    services =  _.filter(services, service => service != null);
     if ( services ) {
         services.map( ( service, idx ) => {
             if ( !services[ idx ].data ) {

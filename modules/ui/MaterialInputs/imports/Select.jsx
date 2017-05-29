@@ -108,12 +108,12 @@ const Select = React.createClass( {
   	},
 
  	sortObject(arr) {
- 		let sortedList = arr.sort(function(a, b){
-			if(a != null && b != null){
+ 		let sortedList = arr.sort( (a, b) => {
+			if( a && a.name && b && b.name ) {
 	 			var textA = a.name.toUpperCase();
     			var textB = b.name.toUpperCase();
     			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-			}else{
+			} else {
 				return 0;
 			}
 		});
@@ -133,12 +133,14 @@ const Select = React.createClass( {
 		} = this.props;
 		let ListTile = view,
 			invalid = false,
+			hidden = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
+				hidden = true;
 				disabled = true;
 				readOnly = true;
 			}
@@ -172,7 +174,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"}>
+				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?' hidden':'')}>
 
 					<span className = { classes.join(' ') }>
 						{ used?
@@ -250,12 +252,9 @@ const Select = React.createClass( {
 						}
 					}
 					if(key==9){
-						//$('ul#open > li').removeClass('onFocus')
-						if($selected.length){
-							$selected.click();
-						}
-						this.setOpen( false )
+						$selected.click();
 					}
+					this.setOpen( false )
 				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>

@@ -63,7 +63,7 @@ const PageRegister = React.createClass( {
             <div className="middle-box loginscreen animated fadeInDown">
         <div>
             <div>
-                <img width="300px" src="img/logo-horizontal-blue.svg"/>
+                <img width="300px" src="/img/logo-horizontal-blue.svg"/>
             </div>
             <div style={{marginTop:"30%"}}>
             <h2>Create Account</h2>

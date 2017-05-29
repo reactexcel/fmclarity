@@ -2,6 +2,7 @@
  * @author 			Leo Keith <leo@fmclarity.com>
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
+import CalendarPeriod from './imports/CalendarPeriod.jsx';
 import Currency from './imports/Currency.jsx';
 import DateInput from './imports/DateInput.jsx';
 import DateTime from './imports/DateTime.jsx';
@@ -32,6 +33,7 @@ checkModules( {
 	StartEndTimePicker,
 	DropFileContainer,
 	FMInstantSearchBox,
+	CalendarPeriod
 } );
 
 /**
@@ -52,4 +54,5 @@ export {
 	StartEndTimePicker,
 	DropFileContainer,
 	FMInstantSearchBox,
+	CalendarPeriod
 }
