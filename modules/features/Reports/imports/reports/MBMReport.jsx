@@ -193,7 +193,7 @@ const RequestsStatusReport = React.createClass( {
 						}
 						let amount = null;
 						if ( docs.length > 0) {
-							amount = docs[0].totalValue;
+							amount = docs[docs.length - 1].totalValue;
 							return {
 								val: `$${amount}`
 							};
@@ -226,9 +226,9 @@ const RequestsStatusReport = React.createClass( {
 						}
 
 						//console.log(docs);
-						if(docs.length > 0 && docs[0].hasOwnProperty("comment")){
+						if(docs.length > 0 && docs[docs.length - 1].hasOwnProperty("comment")){
 							return {
-								val : docs[0].comment
+								val : docs[docs.length - 1].comment
 							}
 						}
 						return {
@@ -259,11 +259,11 @@ const RequestsStatusReport = React.createClass( {
 						}
 						if (docs.length > 0) {
 							let status = "Not Executed"
-							if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != ''){
+							if(docs[docs.length - 1].clientExecutedDate != '' && docs[docs.length - 1].supplierExecutedDate != ''){
 								status = "Fully Executed"
-							}else if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate == ''){
+							}else if(docs[docs.length - 1].clientExecutedDate != '' && docs[docs.length - 1].supplierExecutedDate == ''){
 								status = "Client Executed"
-							}else if (docs[0].clientExecutedDate == '' && docs[0].supplierExecutedDate != '') {
+							}else if (docs[docs.length - 1].clientExecutedDate == '' && docs[docs.length - 1].supplierExecutedDate != '') {
 								status = "Supplier Executed"
 							}
 							// if ( moment(expiryDate).isBefore(moment().endOf("day")) ) {
@@ -300,7 +300,7 @@ const RequestsStatusReport = React.createClass( {
 						}
 						let expiryDate = null;
 						if ( docs.length > 0) {
-							expiryDate = docs[0].expiryDate;
+							expiryDate = docs[docs.length - 1].expiryDate;
 							if(expiryDate){
 								return {
 									val: moment(expiryDate).format("DD-MMM-YY")

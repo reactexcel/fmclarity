@@ -99,8 +99,8 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { 
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ], 
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -127,7 +127,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ], 
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -414,11 +414,12 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
+                          console.log(props);
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
@@ -963,7 +964,7 @@ const RequestSchema = {
                         let costAbleToIssue = true;
                         if(team.defaultCostThreshold){
                             costAbleToIssue = false;
-                            let actualCost = props.item.costThreshold.replace (/,/g, "");
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                 actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                         }

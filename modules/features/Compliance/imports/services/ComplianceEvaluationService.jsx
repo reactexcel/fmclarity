@@ -291,7 +291,7 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "PPM exists": function( rule, facility, service ) {
-            //console.log(rule);
+          console.log(rule,facility,service);
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -308,6 +308,12 @@ ComplianceEvaluationService = new function() {
                         detail: "Service not specified"
                     }
                 } )
+            }
+            let serviceReq ;
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
             }
             var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
@@ -346,7 +352,7 @@ ComplianceEvaluationService = new function() {
                         status: 'PMP',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
+                        service: serviceReq[0],
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
@@ -366,6 +372,12 @@ ComplianceEvaluationService = new function() {
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
                 //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
+            }
+            let serviceReq ;
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
             }
             if ( event ) {
                 let nextDate = event.getNextDate(),
@@ -478,7 +490,7 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
-                        
+
                         let frequency = {
                             unit : 'custom',
                             number: rule.frequency.number,
@@ -495,7 +507,7 @@ ComplianceEvaluationService = new function() {
                             status: 'PMP',
                             name: rule.event,
                             frequency: frequency,
-                            service: rule.service,
+                            service: serviceReq[0],
                             subservice: rule.subservice || {},
                         } );
                         TeamActions.createRequest.bind( team, null, newRequest ).run();
