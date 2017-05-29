@@ -418,7 +418,7 @@ const RequestSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                let actualCost = props.item.costThreshold ? props.item.costThreshold.replace (/,/g, "") : '';
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
