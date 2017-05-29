@@ -43,9 +43,10 @@ ComplianceList = React.createClass({
 ComplianceGroup = React.createClass({
 
     render() {
-        var facility,item,rules;
+        var facility,item,rules,results;
 
         item = this.props.item;
+		results = this.props.results||[];
         if(item&&item.data) {
             rules = item.data.complianceRules||[]
         }
@@ -55,7 +56,12 @@ ComplianceGroup = React.createClass({
                     return (
                         <div className="grid-item service-list-item" key={idx} style={{height:"55px",paddingTop:"5px"}}
 													onClick={this.props.onClick?this.props.onClick:null} >
-                            <ComplianceListTile item={r} onUpdate={ ( updatedRule ) => this.props.onUpdate( idx, updatedRule ) }/>
+                            <ComplianceListTile
+								item={r}
+								results={results[idx]}
+								onChange={this.props.onChange}
+								onUpdate={ ( updatedRule ) => this.props.onUpdate( idx, updatedRule ) }
+							/>
 							<span className="service-list-item-icon">
 								<button className="btn btn-flat" onClick={ () => this.props.removeComplianceRule(idx)}> &times; </button>
 							</span>

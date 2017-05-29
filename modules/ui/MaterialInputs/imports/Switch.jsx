@@ -49,12 +49,19 @@ const Switch = React.createClass( {
 	render() {
 		var value = this.props.value;
 		var label = this.props.placeholder;
+		var labelInactive = this.props.labelInactive;
 		return (
 			<div className="md-switch">
+			{labelInactive?
+				<span className="switch-label">{labelInactive}</span>
+				:
+				null
+			}
 				<input
 					ref="input"
 					type="checkbox"
 					defaultChecked={value}
+					disabled={this.props.disabled?true:false}
 				/>
 				{label?
 					<span className="switch-label">{label}</span>

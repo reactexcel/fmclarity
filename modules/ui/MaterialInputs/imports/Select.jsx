@@ -86,7 +86,39 @@ const Select = React.createClass( {
 		 } );
 	},
 
+	sortString(ary, fullNumbers) {
+	  	var re = fullNumbers ? /[\d\.\-]+|\D+/g : /\d+|\D+/g;
+	  	for (var i=ary.length;i--;)
+	    	ary[i] = [ary[i]].concat((ary[i]+"").match(re).map(function(s){
+	      		return isNaN(s) ? [s,false,s] : [s*1,true,s];
+	    	}));
+	  	ary.sort(function(a,b){
+	    	var al = a.length, bl=b.length, e=al>bl?al:bl;
+	    	for (var i=1;i<e;++i) {
+	      		if (i>=al) return -1; else if (i>=bl) return 1;
+	      		else if (a[i][0]!==b[i][0])
+	        	return (a[i][1]&&b[i][1]) ?
+	               (a[i][0]-b[i][0]) :
+	               (a[i][2]<b[i][2]) ? -1 : 1;
+	    	}
+	    	return 0;
+	  	});
+	  	for (var i=ary.length;i--;) ary[i] = ary[i][0];
+	  	return ary;
+  	},
 
+ 	sortObject(arr) {
+ 		let sortedList = arr.sort(function(a, b){
+			if(a != null && a.name != null && b != null && b.name != null){
+	 			var textA = a.name.toUpperCase();
+    			var textB = b.name.toUpperCase();
+    			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+			} else {
+				return 0;
+			}
+		});
+ 		return sortedList
+	},
 
 	render() {
 		let {
@@ -101,17 +133,29 @@ const Select = React.createClass( {
 		} = this.props;
 		let ListTile = view,
 			invalid = false,
+			hidden = false,
 			disabled = this.props.disabled,
 			readOnly = this.props.readOnly,
 			used = this.inputIsUsed( value );
 
 		if ( items == null || items.length == 0 ) {
 			if ( !addNew ) {
+				hidden = true;
 				disabled = true;
 				readOnly = true;
 			}
 			items = [];
 		}
+		let sortedItems = []
+		if(typeof items[0] == 'string'){
+			sortedItems = this.sortString(items)
+		} else if(typeof items[0] == 'object') {
+			sortedItems = this.sortObject(items)
+		} else {
+			sortedItems = items
+		}
+
+
 
 		if ( errors != null && errors.length > 0 ) {
 			invalid = true;
@@ -130,7 +174,7 @@ const Select = React.createClass( {
 
 		if ( readOnly ) {
 			return (
-				<div className = {"md-input md-select readonly disabled dropdown"}>
+				<div className = {"md-input md-select readonly disabled dropdown"+(hidden?' hidden':'')}>
 
 					<span className = { classes.join(' ') }>
 						{ used?
@@ -163,9 +207,6 @@ const Select = React.createClass( {
 				} }
 				onBlur={(e)=>{
 					let $selected = $('ul#open > li').filter('.onFocus')
-					if($selected.length){
-						$selected.click();
-					}
 					this.setOpen( false );
 				}}
 				onKeyDown={(e)=>{
@@ -211,12 +252,9 @@ const Select = React.createClass( {
 						}
 					}
 					if(key==9){
-						//$('ul#open > li').removeClass('onFocus')
-						if($selected.length){
-							$selected.click();
-						}
-						this.setOpen( false )
+						$selected.click();
 					}
+					this.setOpen( false )
 				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>
@@ -247,8 +285,7 @@ const Select = React.createClass( {
 					</div>
 		        	:null}
 
-
-		        	{items.map( ( item, idx ) => {
+		        	{sortedItems.map( ( item, idx ) => {
 		        	/********************************************/
 		        	if( !item ) {
 		        		return null;

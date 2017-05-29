@@ -11,6 +11,7 @@ import { RequestFilter } from '/modules/models/Requests';
 
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
+import Perf from 'react-addons-perf';
 
 /**
  * @class 			RequestsPageIndex
@@ -34,6 +35,19 @@ export default class RequestsPageIndex extends Component {
 		this.setState( {
 			requests: props.requests
 		} )
+	}
+
+	componentWillMount() {
+		//Perf.start();
+	}
+
+	componentDidMount() {
+		/*
+	    Perf.stop();
+	    console.log('output requests page load time');
+	    Perf.printInclusive();
+	    */
+	    // Perf.printWasted();
 	}
 
 	render() {

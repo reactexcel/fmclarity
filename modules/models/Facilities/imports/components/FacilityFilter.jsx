@@ -19,18 +19,18 @@ import FacilityListTile from './FacilityListTile.jsx';
 function FacilityFilter( props ) {
 	return (
 		<div style = { { position:"absolute", zIndex:1300 } }>
-		<NavListDropDown
-			{ ...props }
-			ListTile = { FacilityListTile }
-			startOpen = { false }
-			onChange = { ( facility ) => {
-				if( props.onChange ) {
-					props.onChange();
-				}
-				Session.set( "selectedFacility", facility );
-			} }
-			multiple = { true }
-		/>
+		{props.items && props.items.length > 1 ? <NavListDropDown
+					{ ...props }
+					ListTile = { FacilityListTile }
+					startOpen = { false }
+					onChange = { ( facility ) => {
+						if( props.onChange ) {
+							props.onChange();
+						}
+						Session.set( "selectedFacility", facility );
+					} }
+					multiple = { true }
+				/> : null}
 		</div>
 	)
 }

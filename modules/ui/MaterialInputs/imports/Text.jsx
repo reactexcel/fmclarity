@@ -9,8 +9,8 @@ import React from "react";
  * @memberOf 		module:ui/MaterialInputs
  */
 const Text = React.createClass( {
-    handleChange() {
-        let newValue = this.refs.input.value;
+    handleChange(newValue) {
+        //let newValue = this.refs.input.value;
         if ( this.props.onChange ) {
             this.props.onChange( newValue );
         }
@@ -54,7 +54,10 @@ const Text = React.createClass( {
     },
 
     componentWillReceiveProps( newProps ) {
+        let input = this.refs.input,
+            caret = input.selectionStart;
         this.refs.input.value = newProps.value;
+        input.setSelectionRange( caret, caret );
     },
 
     render() {
@@ -62,7 +65,6 @@ const Text = React.createClass( {
             used = false,
             invalid = false,
             classes = [ "input" ];
-
         if ( value != null && value.length != 0 ) {
             used = true;
             classes.push( "used" );
@@ -81,7 +83,7 @@ const Text = React.createClass( {
       			ref 			= "input"
       			type 			= "text"
       			defaultValue	= { value }
-      			onChange 		= { this.handleChange }
+      			onChange 		= { ( event ) => { this.handleChange( event.target.value ) } }
       			onSelect		= { this.handleSelect }
       			maxLength		= { this.props.maxLength }
       			onBlur			= { this.handleOnBlur }
