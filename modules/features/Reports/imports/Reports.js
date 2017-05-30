@@ -3,6 +3,7 @@ import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
+import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
 
 const Reports = {
@@ -22,6 +23,12 @@ Reports.register( {
 	id: "requests-status",
 	name: "Requests Status Report",
 	content: RequestsStatusReport
+} )
+
+Reports.register( {
+	id: "monthly-report",
+	name: "Monthly Report",
+	content: MonthlyReport
 } )
 
 Reports.register( {
