@@ -301,6 +301,12 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
+            let serviceReq ;
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
+            }
             var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
@@ -337,7 +343,7 @@ ComplianceEvaluationService = new function() {
                         status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
+                        service: serviceReq[0],
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
@@ -358,8 +364,17 @@ ComplianceEvaluationService = new function() {
                 //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
-            let nextDate,previousDate
-            if(event){
+
+            let nextDate,
+                previousDate,
+                serviceReq;
+
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
+            }
+            if ( event ) {
                 nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
             }
@@ -510,8 +525,8 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: rule.frequency,
-                            service: rule.service,
+                            frequency: frequency,
+                            service: serviceReq[0],
                             subservice: rule.subservice || {},
                         } );
                         TeamActions.createRequest.bind( team, callback, newRequest ).run();
