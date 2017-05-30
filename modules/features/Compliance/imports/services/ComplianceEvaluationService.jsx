@@ -290,8 +290,7 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
+        "PPM exists": function( rule, facility, service ) {
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -317,7 +316,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP exists"
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
@@ -334,7 +333,6 @@ ComplianceEvaluationService = new function() {
                 loader: true,
                 resolve: function() {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
                         facility: {
                             _id: facility._id,
@@ -342,8 +340,8 @@ ComplianceEvaluationService = new function() {
                         },
                         team: team,
                         type: 'Preventative',
-                        priority: 'Scheduled',
-                        status: 'PMP',
+                        priority: 'PPM',
+                        status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
                         service: rule.service,
@@ -465,8 +463,9 @@ ComplianceEvaluationService = new function() {
                     console.log( 'attempting to resolve' );
                     let q = {
                         "facility._id": facility._id,
-                        status: "PMP",
-                        "service.name": rule.service.name,
+                        type: 'Preventative',
+                        status: "PPM",
+                        service: rule.service,
                         name: rule.event
                     };
                     if (rule.subservice) q["subservice.name"] = rule.subservice.name;
@@ -478,6 +477,12 @@ ComplianceEvaluationService = new function() {
                             content: <RequestPanel item = { request } />
                         } );
                     } else if ( !request ) { // If no PPM event exists.
+
+                        let frequency = {
+                            unit : 'custom',
+                            number: rule.frequency.number,
+                            period: rule.frequency.unit,
+                        };
                         let newRequest = Requests.create( {
                             facility: {
                                 _id: facility._id,
@@ -485,10 +490,10 @@ ComplianceEvaluationService = new function() {
                             },
                             team: team,
                             type: 'Preventative',
-                            priority: 'Scheduled',
-                            status: 'PMP',
+                            priority: 'PPM',
+                            status: 'PPM',
                             name: rule.event,
-                            frequency: rule.frequency,
+                            frequency: frequency,
                             service: rule.service,
                             subservice: rule.subservice || {},
                         } );
@@ -598,7 +603,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Invoice"){
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     query["closeDetails.completionDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -612,7 +617,7 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     docQuery["applicablePeriodStartDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
@@ -641,7 +646,7 @@ ComplianceEvaluationService = new function() {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 Invoices"
                         },
                     } )
                 }
@@ -649,7 +654,7 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Invoice"
+                          detail: count + " out of 12 Invoices"
                       },
                       resolve: function(r,update) {
                           let type = "team",
@@ -672,7 +677,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Confirmation"){
-              console.log(Session.getSelectedFacility());
+              // console.log(Session.getSelectedFacility());
 
                 // for (let i=0; i<=12; i++  ) {
                     // docQuery["issueDate"] = {
@@ -1023,7 +1028,7 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
-      console.log(services,"evaluateServices");
+      // console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},

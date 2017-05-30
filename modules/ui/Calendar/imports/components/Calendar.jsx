@@ -26,7 +26,6 @@ class Calendar extends React.Component {
         if ( requests == null ) {
             return;
         }
-
         var colors = {
             "Scheduled": "#70aaee",
             "Standard": "#0152b5",
@@ -34,7 +33,7 @@ class Calendar extends React.Component {
             "Critical": "#d0021b",
             "Closed": "#000000",
             "Booking": "#ef6c00",
-            "PMP": "#333333",
+            "PPM": "#333333",
         };
 
         var events = this.events.events;

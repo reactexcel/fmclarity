@@ -213,7 +213,7 @@ const TeamStepper = React.createClass( {
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
-                    <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier={(supplier)=>{
+                    <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier = {(supplier)=>{
                         if(this.props.onChange){
                             this.props.onChange(supplier)
                         }
