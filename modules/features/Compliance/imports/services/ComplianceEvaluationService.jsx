@@ -283,7 +283,7 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "PPM schedule established": function( rule, facility, service ) {
+        "PPM exists": function( rule, facility, service ) {
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -339,7 +339,7 @@ ComplianceEvaluationService = new function() {
                         },
                         team: team,
                         type: 'Preventative',
-                        priority: 'PPM',
+                        priority: 'Scheduled',
                         status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
@@ -367,6 +367,7 @@ ComplianceEvaluationService = new function() {
 
             let nextDate,
                 previousDate,
+                frequency,
                 serviceReq;
 
             if(facility && facility.hasOwnProperty("servicesRequired")){
@@ -381,13 +382,13 @@ ComplianceEvaluationService = new function() {
             if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
+                    priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
                 previousRequest = Requests.findOne( _.extend( query, {
                     type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
+                    priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:previousDate
                 })),
@@ -542,7 +543,7 @@ ComplianceEvaluationService = new function() {
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
-                "priority": "PMP",
+                "priority": "Scheduled",
                 "status": "Complete",
             },
             docQuery = {
