@@ -448,7 +448,9 @@ const SingleServiceRequest = React.createClass( {
 				</div>
 				<div className="data-table">
 					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
-						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+						<DataTable items={data.length ? data : [{name:""}]} onClick={()=>{
+							console.log("onClickHandler");
+						}} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 					</div>
 				</div>
 				<div style={ { marginTop: "20px", marginBottom: "-15px",height:"100px" } }>
