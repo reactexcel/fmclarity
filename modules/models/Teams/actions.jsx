@@ -121,7 +121,7 @@ const createRequest = new Action( {
             submitText="Save"
             onSubmit = {
                 ( newRequest ) => {
-
+                    console.log(newRequest,"newRequest");
                     if(newRequest.type == "Booking"){
                         Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
                     }
@@ -143,7 +143,9 @@ const createRequest = new Action( {
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
+                        console.log(hasSupplier,"hasSupplier");
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = team.getMemberRole( owner ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -214,8 +216,11 @@ const createRequest = new Action( {
                             newRequest = _.omit(newRequest,'haveToIssue')
                         }
                     }
+                    console.log("11111111");
                     Meteor.call( method, newRequest );
+                    console.log("22222222");
                     let request = Requests.findOne( { _id: newRequest._id } );
+                    console.log(request,"request");
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
                 }
@@ -370,7 +375,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();

@@ -122,7 +122,55 @@ export default function DataSet( items ) {
 		},
 		toCSV: function() {
 			var csv = [];
-			data.map( function( d ) {
+			let dataForCSV = [];
+			data.map((obj,idx)=>{
+				let newObj = Object.assign({}, obj)
+				if(newObj.Status){
+					newObj.Status = {
+						val: obj.Status.val.props.children[2]
+					}
+				}
+				if(newObj.Responsiveness && newObj.Responsiveness.duration && newObj.Responsiveness.duration._data && newObj.Responsiveness.duration._data){
+					let daysValue = newObj.Responsiveness.duration._data.days ? newObj.Responsiveness.duration._data.days.toString() : (1).toString();
+					    newObj.Responsiveness.val = daysValue;
+				}
+				if(newObj.Responsiveness){
+					if(newObj.Responsiveness.val){
+						newObj['Responsiveness (days)'] = {val:''}
+						newObj['Responsiveness (days)']['val'] = newObj.Responsiveness.val
+					}else{
+						newObj['Responsiveness (days)'] = {}
+					}
+					newObj = _.omit(newObj,'Responsiveness')
+				}
+				if(newObj.Issue){
+					newObj.Summary = obj.Issue
+					newObj = _.omit(newObj,'Issue')
+				}
+				if(newObj.Issued){
+					newObj.Issued = {
+						val: obj.Issued.originalVal == "" ? '': moment( obj.Issued.originalVal ).format('DD/MM/YY')
+					}
+				}
+				if(newObj.Due){
+					newObj.Due = {
+						val: obj.Due.originalVal == "" ? '': moment( obj.Due.originalVal ).format('DD/MM/YY')
+					}
+				}
+				if(newObj.Completed){
+					newObj.Completed = {
+						val: (obj.Completed && obj.Completed.originalVal && obj.Completed.originalVal != '')?moment( obj.Completed.originalVal ).format('DD/MM/YY'):''
+					}
+				}
+				if(newObj.Supplier){
+					newObj.Supplier = {
+						val: obj.Supplier && obj.Supplier.val && obj.Supplier.val.props && obj.Supplier.val.props.item && obj.Supplier.val.props.item.name ? obj.Supplier.val.props.item.name : ''
+					}
+				}
+				newObj = _.omit(newObj,'_item')
+				dataForCSV.push(newObj)
+			})
+			dataForCSV.map( function( d ) {
 				var item = {};
 				for ( var label in d ) {
 					item[ label ] = d[ label ].val;

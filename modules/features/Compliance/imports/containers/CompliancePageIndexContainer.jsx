@@ -24,6 +24,7 @@ const CompliancePageIndexContainer = createContainer( ( { params } ) => {
 	}
 
 	if ( facility ) {
+    console.log(facility);
 		services = _.filter( facility.servicesRequired, ( service ) => {
 			return ( service && service.data && service.data.complianceRules && service.data.complianceRules.length )
 		} );
