@@ -125,8 +125,8 @@ const MBMBuildingServiceReport = React.createClass( {
 	componentWillMount(){
 		$("#fab").hide();
 		let query = {};
-		query[ "facility._id" ] = this.state.facility._id;
-		query[ "team._id" ] = this.state.team._id;
+		query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+		query[ "team._id" ] = this.state.team ? this.state.team._id : null;
 		query["createdAt"] = {
 			$gte: moment().subtract(1, "months").startOf("month").toDate(),
 			$lte: moment().subtract(0, "months").endOf("month").toDate( )
