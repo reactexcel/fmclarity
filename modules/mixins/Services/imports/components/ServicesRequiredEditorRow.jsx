@@ -116,6 +116,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
 												<h1>{'Service Parameters - '+this.data.service.name}</h1>
+												<button className="btn btn-info" onClick={onChange.bind(null,null)}> Delete</button>
 											</div>
 											<AutoForm
 												model = { Facilities }
@@ -131,7 +132,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-					{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
+					{/*!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null*/}
 				</div>
 				<div style={{width:"30%", float:"left"}}>
 					<div className="services-editor-col services-editor-col-supplier" style={{width:"100%",cursor: "default"}}>
