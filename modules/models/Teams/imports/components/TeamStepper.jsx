@@ -28,7 +28,6 @@ const TeamStepper = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let viewer = Meteor.user(),
             viewersTeam = null,
             viewingTeam = null,
@@ -48,6 +47,24 @@ const TeamStepper = React.createClass( {
                 Teams.schema.email.required=false;
             }
             */
+            if(!_.isEmpty(this.state.item.preActiveService)){
+                let preService = _.filter( viewingTeam.services, ( ser ) => ser.name == this.state.item.preActiveService.name );
+                if (preService.length > 0) {
+                    for(var i in viewingTeam.services){
+                        if(viewingTeam.services[i].name == this.state.item.preActiveService.name){
+                            viewingTeam.services[i].active = true;
+                            break;
+                        }
+                    }
+                }else{
+                    var array = $.map(viewingTeam.services, function(value, index) {
+                        return [value];
+                    });
+                    viewingTeam.services = array;
+                    this.state.item.preActiveService.active = true;
+                    viewingTeam.services.push(this.state.item.preActiveService)
+                }
+            }
             if ( !viewingTeam && this.state.searchName ) {
                 let query = {
                     name: {
@@ -66,7 +83,6 @@ const TeamStepper = React.createClass( {
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
         group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
-
         return {
             viewer: viewer,
             viewersTeam: viewersTeam,
@@ -209,7 +225,6 @@ const TeamStepper = React.createClass( {
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
-        console.log({showFilter});
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
