@@ -45,7 +45,7 @@ const MBMBuildingServiceReport = React.createClass( {
 			status:{$ne:'Deleted'}
 		}
 
-		var facility = Session.get( 'selectedFacility' );
+		var facility = Session.getSelectedFacility();;
 		if ( facility ) {
 			query[ "facility._id" ] = facility._id;
 		}
