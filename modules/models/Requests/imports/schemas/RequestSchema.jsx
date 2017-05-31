@@ -99,7 +99,15 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
+                        afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+
+                                } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
@@ -119,7 +127,15 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
+                                afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+
+                                }
+                         };
                     }
                 }
             }
@@ -402,12 +418,12 @@ const RequestSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                let actualCost = props.item.costThreshold ? props.item.costThreshold.replace (/,/g, "") : '';
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
-                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -449,7 +465,7 @@ const RequestSchema = {
                         }
                         request.supplier = null;
                         request.subservice = null;
-                        if ( request.service.data ) {
+                        if (request && request.service && request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
 
