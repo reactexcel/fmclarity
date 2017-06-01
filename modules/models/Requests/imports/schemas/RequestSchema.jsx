@@ -1288,6 +1288,9 @@ const RequestSchema = {
 
                         }
                         period = period || props.item.frequency.period;
+                        if (period.slice(-1)=='s') {
+                            period =  period.substring(0, period.length-1)+"(s)";
+                        }
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
