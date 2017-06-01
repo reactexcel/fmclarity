@@ -12,10 +12,17 @@ export default MonthlyReport = React.createClass( {
 	render() {
 		return (
 			<div>
-			<MBMReport/>
-		  <MBMBuildingServiceReport/>
-			<MBMServiceImages/>
+			<div style={{paddingBottom:"100%"}}>
+				<MBMReport/>
 			</div>
+			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
+				<MBMBuildingServiceReport/>
+			</div>
+			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
+				<span style={{fontSize:"26px",fontWeight:"500"}}>Building Photos</span>
+				<MBMServiceImages/>
+			</div>
+		</div>
 		)
 	}
 } )
