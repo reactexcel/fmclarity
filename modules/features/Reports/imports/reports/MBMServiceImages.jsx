@@ -100,9 +100,11 @@ const MBMServiceImages = React.createClass( {
 	render() {
 		return (
 			<div>
-                <button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
-					<i className="fa fa-print" aria-hidden="true"></i>
-				</button>
+        {this.props.MonthlyReport ? null :
+					<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+						<i className="fa fa-print" aria-hidden="true"></i>
+					</button>
+				}
                 <div className="ibox-content">
                     {this.state.data.map( ( d, idx ) => {
                         return(

@@ -41,7 +41,7 @@ const RequestsStatusReport = React.createClass( {
 	componentWillMount(){
 		let docs = Documents.find({"type":"Contract"}).fetch();
 		// console.log(docs.stringfy());
-		console.log(docs);
+		// console.log(docs);
 		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
 		let docString = " "
 		aa.map((d)=>{
@@ -187,9 +187,9 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							console.log(docs);
+							// console.log(docs);
 							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
-							console.log(docs,"filtered");
+							// console.log(docs,"filtered");
 						}
 						let amount = null;
 						if ( docs.length > 0) {

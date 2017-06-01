@@ -1,3 +1,4 @@
+import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
@@ -27,7 +28,7 @@ Reports.register( {
 
 Reports.register( {
 	id: "monthly-report",
-	name: "Monthly Report",
+	name: "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')',
 	content: MonthlyReport
 } )
 

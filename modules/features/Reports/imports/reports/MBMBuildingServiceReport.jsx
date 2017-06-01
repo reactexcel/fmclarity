@@ -6,6 +6,8 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
 import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
+import { Facilities } from '/modules/models/Facilities';
+import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
 import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
@@ -182,8 +184,16 @@ const MBMBuildingServiceReport = React.createClass( {
 			} );
 		},200);
 
+		setTimeout(function(){
+			Modal.show( {
+					content: <DocViewEdit
+			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}}
+			onChange = { (data) => { console.log("onChangeHandler"); }}
+			model={Facilities}
+			team = {Session.getSelectedTeam()}/>
+			} )
 
-
+		},1000);
 	},
 
 	getChartConfiguration() {
@@ -257,9 +267,11 @@ const MBMBuildingServiceReport = React.createClass( {
 		}
 		return (
 			<div>
-			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-			    <i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+				{this.props.MonthlyReport ? null :
+					<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+						<i className="fa fa-print" aria-hidden="true"></i>
+					</button>
+				}
 				<div className="ibox-title">
 					<h2>Building Service Requests {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>

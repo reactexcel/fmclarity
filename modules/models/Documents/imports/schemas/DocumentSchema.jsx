@@ -310,7 +310,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
-	
+
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -371,7 +371,7 @@ export default DocumentSchema = {
                 }
             },
 	},
-	
+
 	issuer: {
 		input: Text,
 		label: "Insurer",
@@ -410,6 +410,7 @@ export default DocumentSchema = {
 		options: {
 			items:[
 				'Validation Report',
+				'Monthly Report'
 			],
 		},
 		size: 6,
