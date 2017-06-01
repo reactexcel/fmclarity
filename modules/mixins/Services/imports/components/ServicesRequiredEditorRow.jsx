@@ -86,6 +86,10 @@ const ServicesRequiredEditorRow = React.createClass( {
 			content: <TeamStepper item = { supplier } facility = { facility } onChange = { this.updateSupplier }/>
 		} )
 	},
+	removeService(){
+		this.props.onChange(null);
+		Modal.hide();
+	},
 
 	render() {
 		service = this.data.service;
@@ -115,8 +119,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 									Modal.show({
 										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
+												<button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={this.removeService}>&times; Delete</button>
 												<h1>{'Service Parameters - '+this.data.service.name}</h1>
-												<button className="btn btn-info" onClick={onChange.bind(null,null)}> Delete</button>
 											</div>
 											<AutoForm
 												model = { Facilities }
