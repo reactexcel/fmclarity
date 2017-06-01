@@ -7,7 +7,11 @@ export default ReportsNavWidget = React.createClass( {
 
 	render() {
 		var reports = Reports.getAll();
-		var reportIds = Object.keys( reports );
+		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart");
+		var facility = Session.getSelectedFacility();
+		if(facility){
+			reportIds = Object.keys( reports )
+		}
 		return (
 			<div>
 		        {/*<ActionsMenu items={this.getMenu()} icon="eye" />*/}
