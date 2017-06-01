@@ -41,7 +41,9 @@ export default MonthlyReport = React.createClass( {
 			Modal.show( {
 			content: <DocViewEdit
 			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}}
-			onChange = { (data) => { console.log("onChangeHandler"); }}
+			onChange = { (data) => {
+				return FlowRouter.go( '/dashboard' );
+			}}
 			model={Facilities}
 			team = {Session.getSelectedTeam()}/>
 			} )

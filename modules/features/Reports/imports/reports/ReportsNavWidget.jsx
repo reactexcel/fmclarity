@@ -2,6 +2,8 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import Reports from '../Reports.js';
+import { Documents } from '/modules/models/Documents';
+import moment from 'moment';
 
 export default ReportsNavWidget = React.createClass( {
 
@@ -10,7 +12,13 @@ export default ReportsNavWidget = React.createClass( {
 		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart");
 		var facility = Session.getSelectedFacility();
 		if(facility){
+			// console.log(facility);
+			let docs = Documents.find({"facility._id": facility["_id"],"type":"Report","reportType": "Monthly Report","name" : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}).fetch();
+			// console.log(docs);
 			reportIds = Object.keys( reports )
+			if(docs.length > 0){
+				reportIds = Object.keys( reports ).filter((val)=> val != "monthly-report")
+			}
 		}
 		return (
 			<div>
