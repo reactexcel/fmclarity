@@ -87,8 +87,10 @@ const ServicesRequiredEditorRow = React.createClass( {
 		} )
 	},
 	removeService(){
-		this.props.onChange(null);
-		Modal.hide();
+		if(this.props.onChange){
+			this.props.onChange(null);
+				Modal.hide();
+			}
 	},
 
 	render() {
