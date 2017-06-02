@@ -36,6 +36,7 @@ export default class DocsSinglePageIndex extends React.Component {
     }
 
     componentDidMount( ){
+        window.addEventListener('scroll', this.handleScroll);
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
@@ -49,6 +50,17 @@ export default class DocsSinglePageIndex extends React.Component {
     componentWillMount(){
     }
     componentWillUnmount(){
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
+    handleScroll(event) {
+        let scrollTop = event.srcElement.body.scrollTop,
+        itemTranslate = Math.min(0, scrollTop/3 - 60);
+        if(itemTranslate > -20){
+            $('#arrow-icon').hide('slow');
+            $('#filter-box').hide('slow');
+            $('#filter-details').css('display','block')
+        }
     }
 
     // Get the list of document which have to be shown
@@ -282,7 +294,7 @@ export default class DocsSinglePageIndex extends React.Component {
         if(!newValue){
             let newDocs=[];
             docs.map((doc,idx)=>{
-                if(idx != index){
+                if(idx != index && !_.isEmpty(doc)){
                     newDocs.push(doc)
                 }
             })
@@ -384,6 +396,13 @@ export default class DocsSinglePageIndex extends React.Component {
     }
 
     openFolder( folder,currentFolders ){
+        let newContent = []
+        _.map(folder.content,( cont, i ) => {
+            if(cont != undefined){
+                newContent.push(cont)
+            }
+        })
+        folder.content = newContent
         let stateToSet = {
             currentFolders:folder.content
         }
@@ -690,6 +709,9 @@ export default class DocsSinglePageIndex extends React.Component {
                                                 role={role}
                                                 onClickFolder={(folder,currentFolders)=>{
                                                     this.onClickFolder(folder,currentFolders)
+                                                }}
+                                                onChange={()=>{
+                                                    this.handleChange(idx)
                                                 }}
                                             />
                                         </div>)
