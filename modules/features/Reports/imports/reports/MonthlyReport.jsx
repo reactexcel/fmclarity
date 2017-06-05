@@ -2,6 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
+import { Calendar } from '/modules/ui/Calendar';
 import { Files } from '/modules/models/Files';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 import moment from 'moment';
@@ -24,6 +25,15 @@ export default MonthlyReport = React.createClass( {
 			team,
 			facility
 		} )
+	},
+	componentDidMount(){
+		console.log("workig");
+		$(".fc-left").hide();
+		$(".fc-right").hide();
+	},
+	componentWillUnmount(){
+		$(".fc-left").show();
+		$(".fc-right").show();
 	},
 
 	archiveChart(){
@@ -88,6 +98,33 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	render() {
+				$(".fc-left").hide();
+		let team = Session.getSelectedTeam(),
+        user = Meteor.user(),
+        requests = null,
+        facilities = null,
+        statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
+        contextFilter = {};
+
+    if ( team ) {
+        facilities = team.getFacilities(); //Facilities.findAll( { 'team._id': team._id } );
+        if ( facilities ) {
+            let facilityThumbs = _.pluck( facilities, 'thumb' );
+            Meteor.subscribe( 'Thumbs', facilityThumbs );
+        }
+    }
+
+    if ( facility && facility._id ) {
+        contextFilter[ 'facility._id' ] = facility._id;
+    } else if ( team && team._id ) {
+        contextFilter[ 'team._id' ] = team._id;
+    }
+
+    if ( user != null ) {
+        // Requests.findForUser( Meteor.user() )...???
+        requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+    }
+
 		let facility = this.state.facility;
 		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
@@ -104,8 +141,13 @@ export default MonthlyReport = React.createClass( {
 					{this.getImage(imgThumb,facility)}
 				</div>
 			<div>
-			<div style={{paddingBottom:"10%"}}>
+			<div style={{paddingBottom:"6%",marginTop:"8%"}}>
 				<MBMReport MonthlyReport/>
+			</div>
+			<div className="ibox">
+				<div className="ibox-content" style={{padding:"7px",marginBottom:"5%"}}>
+					<Calendar requests = { requests } />
+				</div>
 			</div>
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
 				<MBMBuildingServiceReport MonthlyReport/>
