@@ -8,7 +8,8 @@ export default function Contact2Line( props ) {
 		tenancyVariables = [],
 		facility_name = "",
 		level = "",
-		apartment = "";
+		apartment = "",
+		removeEmail = props.removeEmail;
 
 	if ( contact ) {
 		profile = contact.getProfile ? contact.getProfile() : ( contact.profile ? contact.profile : contact );
@@ -53,7 +54,7 @@ export default function Contact2Line( props ) {
 			}
 
 			<br/>
-	        <span className="contact-card-line-2">
+	        {removeEmail?null:<span className="contact-card-line-2">
 
 	        {
 	        profile.email?
@@ -68,7 +69,7 @@ export default function Contact2Line( props ) {
 	        :null
 	        }
 
-	        </span>
+			</span>}
 	    </span>
 	)
 }

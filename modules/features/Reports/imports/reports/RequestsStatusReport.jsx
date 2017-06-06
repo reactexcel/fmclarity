@@ -177,7 +177,6 @@ const RequestsStatusReport = React.createClass( {
 
 	render() {
 		var data = this.data.reportData.requests;
-
 		if ( !data ) {
 			return <div/>
 		}
