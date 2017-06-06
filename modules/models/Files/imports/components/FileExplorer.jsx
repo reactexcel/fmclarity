@@ -27,7 +27,8 @@ function FileExplorer( props ) {
 		props.onChange( attachments )
 	}
 
-	let attachments = props.value || [];
+	let attachments = props.value || [],
+		errors		= props.errors;
 
 	return (
 		<div className="col-sm-12 dragdrop" style={{
@@ -57,7 +58,7 @@ function FileExplorer( props ) {
 				</div>
 			)
 		} ) }
-
+			
 		<div style = { {display:"inline-block"} }>
 			<FileView
 				onChange = { (newFile) => { handleChange( attachments.length, newFile ) } }
@@ -69,6 +70,11 @@ function FileExplorer( props ) {
 				} }
 				/>
 		</div>
+		{
+			errors?
+			<div className="invalid" style = {{color:"#dd2c00"}}>{ errors[0] }</div>
+			:null
+			}
 
 		</div>
 	)
