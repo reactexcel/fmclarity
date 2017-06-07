@@ -126,7 +126,7 @@ export default ComplianceListTile = React.createClass( {
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
           {
-            
+
             (results.passed?
               <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
