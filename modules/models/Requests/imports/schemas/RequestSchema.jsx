@@ -6,6 +6,7 @@
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
+import IncidentCommentSchema from './IncidentCommentSchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
@@ -103,8 +104,12 @@ const RequestSchema = {
                         items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
+                                if (_.contains( [ "Defect", "Incident" ], request.type )) {
                                     request.costThreshold= '0';
+                                }
+                                if(request.type == 'Incident'){
+                                    request.priority = 'Urgent';
+                                    request.supplier = Session.getSelectedTeam();
                                 }
 
                                 } };
@@ -130,8 +135,12 @@ const RequestSchema = {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
+                                if (_.contains( [ "Defect", "Incident" ], request.type )) {
                                     request.costThreshold= '0';
+                                }
+                                if(request.type == 'Incident'){
+                                    request.priority = 'Urgent';
+                                    request.supplier = Session.getSelectedTeam();
                                 }
 
                                 }
@@ -151,7 +160,13 @@ const RequestSchema = {
                 return "The urgency of the "+ workRequest +" request";
             },
             type: "string",
-            defaultValue: "Standard",
+            defaultValue: (item) =>{
+                let priority = "Standard";
+                if(item.type == 'Incident'){
+                    priority = 'Urgent'
+                }
+                return priority;
+            },
             required: true,
             condition: ( request ) => {
                 if ( request.type == "Preventative" || request.type == 'Booking' ) {
@@ -229,7 +244,53 @@ const RequestSchema = {
         //////////////////////////////////////////////////
         // Facility dependant properties
         //////////////////////////////////////////////////
+        location: {
+            label: "Where did it happen?",
+            type: "string",
+            input: Text,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        incidentVictim: {
+            label: "Who did it happen to?",
+            type: "string",
+            input: Text,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        reporter: {
+            label: "Reporter",
+            description: "Who reported the incident",
+            type: "object",
+            input: Select,
+            required: true,
+            options: ( request ) => {
+                    request = Requests.collection._transform( request );
 
+                    let team = request.getFacility() || request.getTeam(),
+                        members = team.getMembers();
+                    return {
+                        items: members,
+                        view: ContactCard
+                    }
+            },
+            condition: "Incident"
+        },
+        reporterContact: {
+            label: "Reporter Contact ",
+            type: "string",
+            input: TextArea,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        incidentFurtherComments: {
+            type: "object",
+            subschema: IncidentCommentSchema,
+            condition: "Incident"
+        },
         level: {
             label: "Location - Area",
             size: 4,
@@ -244,6 +305,9 @@ const RequestSchema = {
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
+                if (item.type=="Incident") {
+                    return false;
+                }
                 return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
@@ -437,7 +501,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type =='Incident' ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -717,7 +781,13 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
+            defaultValue: (request)=>{
+                if(request.type == "Incident"){
+                    return '0';
+                } else {
+                    return '500';
+                }
+            },
             input: Currency,
             input: (props)=>{
                 return <Currency {...props}
@@ -738,7 +808,7 @@ const RequestSchema = {
                 />
             },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect", "Preventative", "Incident" ], request.type ) ) {
                     return false;
                 }
                 let role = Meteor.user().getRole();
@@ -771,8 +841,22 @@ const RequestSchema = {
                 if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
                     return false;
                 }
+                if (request.type=='Incident') {
+                    return false;
+                }
                 return true;
             }
+        },
+
+        incidenceDate: {
+            type: "date",
+            label: "When did it happen?",
+            description: "The date and time the incident occured",
+            input: DateTime,
+            size: 6,
+            required: true,
+            defaultValue: getDefaultDueDate,
+            condition: "Incident"
         },
 
         bookingPeriod: {
@@ -953,6 +1037,9 @@ const RequestSchema = {
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
+                if ( item.type == 'Incident' ) {
+                    return team;
+                }
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
