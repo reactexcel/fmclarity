@@ -99,8 +99,8 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { 
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ], 
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -127,7 +127,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ], 
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect" ], request.type )) {
@@ -414,16 +414,17 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
+                          console.log(props);
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold.replace (/,/g, "");
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
-                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -465,7 +466,7 @@ const RequestSchema = {
                         }
                         request.supplier = null;
                         request.subservice = null;
-                        if ( request.service.data ) {
+                        if (request && request.service && request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
 
@@ -963,7 +964,7 @@ const RequestSchema = {
                         let costAbleToIssue = true;
                         if(team.defaultCostThreshold){
                             costAbleToIssue = false;
-                            let actualCost = props.item.costThreshold.replace (/,/g, "");
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                 actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                         }
@@ -1286,9 +1287,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1302,10 +1302,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1354,6 +1354,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

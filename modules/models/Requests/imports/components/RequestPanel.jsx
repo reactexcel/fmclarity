@@ -63,7 +63,7 @@ export default RequestPanel = React.createClass( {
 
     componentWillMount() {
         //Perf.start();
-        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : null
+        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
@@ -128,10 +128,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
         if ( nextDate ) {
-            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
         }
         if ( previousDate ) {
-            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM YYYY' );
         }
 
     } else {

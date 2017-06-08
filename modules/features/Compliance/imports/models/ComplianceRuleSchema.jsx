@@ -58,7 +58,7 @@ export default ComplianceRuleSchema = {
             items: [
                 "Document exists",
                 "Document is current",
-                "PPM schedule established",
+                "PPM exists",
                 "PPM event completed",
                 "Compliance level",
             ],
@@ -73,7 +73,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Service",
-        //condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
+        //condition: [ "PPM exists", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
                 return {
@@ -88,7 +88,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Sub-Service",
-        //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        //condition: item => item.service && [ "PPM event completed", "PPM exists" ].indexOf( item.type ) > -1,
         options: function( item ) {
             if ( item.service ) {
                 return {
@@ -113,7 +113,7 @@ export default ComplianceRuleSchema = {
     event: {
         label: "PMP event name",
         input: Select,
-        condition: [ "PPM event completed", "PPM schedule established" ],
+        condition: [ "PPM event completed", "PPM exists" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
             let query = {
@@ -234,9 +234,8 @@ export default ComplianceRuleSchema = {
                     default:
 
                 }
-                period = props.item.frequency.number > 1?
-                    ( period || props.item.frequency.period ) + "s":
-                    ( period || props.item.frequency.period );
+                period = period || props.item.frequency.period;
+                period = formatSingularPlural(period);
             }
             return (
                 <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -250,10 +249,10 @@ export default ComplianceRuleSchema = {
                             </div>:(
                                 props.item.frequency.period && props.item.frequency.endDate?
                                 <div>
-                                    {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                    {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                 </div>:
                                 <div>
-                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || props.item.frequency.unit?formatSingularPlural(props.item.frequency.unit):null} until stopped`:null}
                                 </div>
                             )
                         )
@@ -263,4 +262,10 @@ export default ComplianceRuleSchema = {
         },
         condition: "PPM event completed",
     }
+}
+function formatSingularPlural(str) {
+    if (str.slice(-1)=='s') {
+        str =  str.substring(0, str.length-1)+"(s)";
+    }
+    return str;
 }

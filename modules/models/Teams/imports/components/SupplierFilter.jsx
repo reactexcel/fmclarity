@@ -6,12 +6,28 @@ import { Text, Select,DateInput } from '/modules/ui/MaterialInputs';
 import { Switch } from '/modules/ui/MaterialInputs';
 import ReactDOM from 'react-dom'
 import moment from 'moment';
+import Chip from 'material-ui/Chip';
 
 export default class SupplierFilter extends React.Component {
     constructor(props) {
         super(props);
         let team = this.props.team || Session.getSelectedTeam();
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
+        this.styles = {
+            chip: {
+                margin: '4px 4px 6px 4px',
+                backgroundColor:'#cecece',
+            },
+            chipLabel: {
+                fontSize:'13px',
+                lineHeight:'24px',
+                paddingLeft:'8px',
+            },
+            wrapper: {
+                display: 'flex',
+                flexWrap: 'wrap',
+            },
+        };
         this.areas = ['Adelaide','Brisbane','Canberra','Darwin','Hobart','Melbourne','Perth','Sydney']
         this.selectedAreas = []
         this.selectedServices = []
@@ -47,14 +63,36 @@ export default class SupplierFilter extends React.Component {
     }
 
     componentDidMount(){
+        window.addEventListener('scroll', this.handleScroll);
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
             $('#filter-details').css('display','block')
+            $('.chip svg').css('height','16px');
+            $('.chip svg').css('width','16px');
+            $('.chip svg').css('margin','4px 4px 0px -8px');
        });
     }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
     componentWillMount(){
         this.search();
+    }
+
+    handleScroll(event) {
+    let scrollTop = event.srcElement.body.scrollTop,
+        itemTranslate = Math.min(0, scrollTop/3 - 60);
+        if(itemTranslate > -20){
+            $('#arrow-icon').hide('slow');
+            $('#filter-box').hide('slow');
+            $('#filter-details').css('display','block')
+            $('.chip svg').css('height','16px');
+            $('.chip svg').css('width','16px');
+            $('.chip svg').css('margin','4px 4px 0px -8px');
+        }
     }
     search(){
         if(this.insurance.publicLiablityInsurance === true || this.insurance.professionalIndemnity === true || this.insurance.workersCompensation === true){
@@ -225,143 +263,120 @@ export default class SupplierFilter extends React.Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-xs-12">
-                        <button onClick={(event)=>{
-                            event.stopPropagation();
-                            if($('#filter-box').css('display') == 'none'){
-                                $('#filter-box').css('display','block')
-                                $('#arrow-icon').css('display','block')
-                                $('#filter-details').css('display','none')
-                            } else {
-                                $('#filter-box').css('display','none')
-                                $('#arrow-icon').css('display','none')
-                                $('#filter-details').css('display','block')
-                            }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Suppliers</button>
+                    <div className="col-xs-12" style={{float:"left"}}>
+                        <span style={{float: "left"}}>
+    						<button className="btn btn-flat" onClick={(event)=>{
+                                event.stopPropagation();
+                                if($('#filter-box').css('display') == 'none'){
+                                    $('#filter-box').css('display','block')
+                                    $('#arrow-icon').css('display','block')
+                                    $('#filter-details').css('display','none')
+                                } else {
+                                    $('#filter-box').css('display','none')
+                                    $('#arrow-icon').css('display','none')
+                                    $('#filter-details').css('display','block')
+                                }
+                                $('.chip svg').css('height','16px');
+                                $('.chip svg').css('width','16px');
+                                $('.chip svg').css('margin','4px 4px 0px -8px');
+                            }}>
+    							<i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Suppliers
+    						</button>
+    					</span>
                     </div>
                 </div>
                 <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#d6e6fa',padding:'0px 10px 0px 10px'}}>
                         {showTags === true?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
                             <div className="col-xs-12">
-                                    <h4 style={{fontWeight:'400'}}>Tags:</h4>
+                                    <h4 style={{fontWeight:'400',marginLeft:'5px'}}>Tags:</h4>
+                                    <div style={this.styles.wrapper}>
                                     {_.map(this.state.selectedServices,( service, i ) => {
-                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {service}
-                                                <span
-                                                onClick={() => {
-                                                   this.removeServiceTag(service)
+                                        return <Chip
+                                                className={"chip"}
+                                                key={i}
+                                                onRequestDelete={() => {
+                                                    this.removeServiceTag(service)
                                                 }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
+                                                style={this.styles.chip}
+                                                labelStyle={this.styles.chipLabel}
                                                 title={'Remove Service'}
-                                            >&times;</span></button>
-                                        </div>
+                                            >
+                                                {service}
+                                            </Chip>
+
                                     })}
-                                    {!_.isEmpty(this.state.suplierName)?<div style={{marginTop:'8px',display:'inline'}}>
-                                        <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
+                                    {!_.isEmpty(this.state.suplierName)?<Chip
+                                            className={"chip"}
+                                            onRequestDelete={() => {
+                                                this.updateSuplierName(null)
+                                                this.setState({
+                                                    suplierName:''
+                                                })
+                                            }}
+                                            style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
+                                            title={'Remove Supplier'}
+                                        >
                                             {this.state.suplierName}
-                                            <span
-                                            onClick={() => {
-                                               this.updateSuplierName(null)
-                                               this.setState({
-                                                   suplierName:''
-                                               })
-                                            }}
-                                            style={{
-                                                float: 'right',
-                                                cursor: 'pointer',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                                marginLeft: '10px',
-                                            }}
-                                            title={'Remove supplier'}
-                                        >&times;</span></button>
-                                    </div>:null}
+                                    </Chip>:null}
                                     {_.map(this.state.selectedAreas,( area, i ) => {
-                                        return <div key={i} style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {area}
-                                                <span
-                                                onClick={() => {
-                                                   this.removeAreaTag(area)
+                                        return <Chip
+                                                className={"chip"}
+                                                key={i}
+                                                onRequestDelete={() => {
+                                                    this.removeAreaTag(area)
                                                 }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
+                                                style={this.styles.chip}
+                                                labelStyle={this.styles.chipLabel}
                                                 title={'Remove Area'}
-                                            >&times;</span></button>
-                                        </div>
+                                            >
+                                                {area}
+                                            </Chip>
                                     })}
-                                    {this.state.publicLiablityInsurance==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                            <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                {"Public Liablity Insurance"}
-                                                <span
-                                                onClick={() => {
-                                                    this.removeInsuranceTag('1')
-                                                }}
-                                                style={{
-                                                    float: 'right',
-                                                    cursor: 'pointer',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    marginLeft: '10px',
-                                                }}
-                                                title={'Remove Insurance'}
-                                            >&times;</span></button>
-                                        </div>:null}
-                                        {this.state.professionalIndemnity==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                                <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                    {"Professional Indemnity"}
-                                                    <span
-                                                    onClick={() => {
-                                                        this.removeInsuranceTag('2')
-                                                    }}
-                                                    style={{
-                                                        float: 'right',
-                                                        cursor: 'pointer',
-                                                        fontSize: '14px',
-                                                        fontWeight: 'bold',
-                                                        marginLeft: '10px',
-                                                    }}
-                                                    title={'Remove Insurance'}
-                                                >&times;</span></button>
-                                            </div>:null}
-                                            {this.state.workersCompensation==true?<div style={{marginTop:'8px',display:'inline'}}>
-                                                    <button style={{marginTop:'4px',marginRight:'4px','borderRadius':'37px','padding':'5px 10px 5px 10px','color':'black','backgroundColor':'aliceblue'}}>
-                                                        {"Workers Compensation"}
-                                                        <span
-                                                        onClick={() => {
-                                                            this.removeInsuranceTag('3')
-                                                        }}
-                                                        style={{
-                                                            float: 'right',
-                                                            cursor: 'pointer',
-                                                            fontSize: '14px',
-                                                            fontWeight: 'bold',
-                                                            marginLeft: '10px',
-                                                        }}
-                                                        title={'Remove Insurance'}
-                                                    >&times;</span></button>
-                                                </div>:null}
+                                    {this.state.publicLiablityInsurance==true?<Chip
+                                            className={"chip"}
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('1')
+                                            }}
+                                            style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Public Liablity Insurance"}
+                                    </Chip>:null}
+                                    {this.state.professionalIndemnity==true?<Chip
+                                            className={"chip"}
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('2')
+                                            }}
+                                            style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Professional Indemnity"}
+                                    </Chip>:null}
+                                    {this.state.workersCompensation==true?<Chip
+                                            className={"chip"}
+                                            onRequestDelete={() => {
+                                                this.removeInsuranceTag('3')
+                                            }}
+                                            style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
+                                            title={'Remove Insurance'}
+                                        >
+                                            {"Workers Compensation"}
+                                    </Chip>:null}
+                                    </div>
                             </div>
                         </div>
-                        <hr></hr></div>:null}
+                        <hr style={{borderTop:'1px solid rgb(189, 189, 189)'}}></hr></div>:null}
                         <div className="row">
                             <div className="col-lg-6" style={{paddingTop:'15px',paddingBottom:'15px'}}>
                                 <span style={{marginLeft:'7px',backgroundColor:'#75aaee',color:'#333',borderRadius:'6px',padding:'3px 5px',border:'1px solid rgba(0, 0, 0, 0.1)'}}>{'Total Suppliers Found: '+(totalSupplierFound > 0 ? totalSupplierFound:0)}</span>
                             </div>
                         </div>
                 </div>
+                <div className="filter-container">
                 <div className="row">
                     <div className="col-xs-12">
                         <div onClick={(event)=>{ event.stopPropagation();}} id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','borderBottom':'15px solid #d6e6fa','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','margin':'0 42px','marginTop':'-10px'}}></div>
@@ -379,6 +394,13 @@ export default class SupplierFilter extends React.Component {
                                     let self = this;
                                     self.query = {
                                         type: "contractor",
+                                    }
+                                    self.selectedAreas = []
+                                    self.selectedServices = []
+                                    self.insurance = {
+                                        publicLiablityInsurance:false,
+                                        professionalIndemnity:false,
+                                        workersCompensation:false
                                     }
                                     self.setState({
                                         suplierName:'',
@@ -552,6 +574,7 @@ export default class SupplierFilter extends React.Component {
                     </div>
                 </div>
             </div>
+        </div>
             </div>
         );
       }
