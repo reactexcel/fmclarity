@@ -278,7 +278,7 @@ Users.actions( {
                           }
                         }
                       }else{
-                        console.log(r);
+                        // console.log(r);
                         r.frequency = time[r.frequency.unit];
                         var date = moment( r.dueDate );
                         var repeats = parseInt( r.frequency.repeats );
