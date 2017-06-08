@@ -28,7 +28,7 @@ Reports.register( {
 
 Reports.register( {
 	id: "monthly-report",
-	name: "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')',
+	name: "Monthly Report" + ' ' + '-' + ' ' + moment().format('MMMM YYYY'),
 	content: MonthlyReport
 } )
 
