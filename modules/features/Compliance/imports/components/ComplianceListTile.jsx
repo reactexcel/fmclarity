@@ -26,6 +26,7 @@ export default ComplianceListTile = React.createClass( {
 
   getMeteorData() {
     var rule = this.props.item;
+    var facility = Session.getSelectedFacility();
     var name, info, results, message, loader;
     switch ( rule.type ) {
       case "Document exists":
@@ -52,7 +53,7 @@ export default ComplianceListTile = React.createClass( {
     results = this.props.results || {}//ComplianceEvaluationService.evaluateRule( rule ) || {};
     message = results.message || {};
     loader = results.loader;
-    return { rule, name, info, results, message, loader }
+    return { rule, name, info, results, message, loader ,facility }
   },
   getInitialState(){
       return {
@@ -95,6 +96,9 @@ export default ComplianceListTile = React.createClass( {
         }
         if ( _.contains(serviceDocType, rule.docType) ) rule.document.serviceType = rule.service.name;
     }
+    
+    let service = facility.servicesRequired.filter((ser)=> ser!= null && ser.name === rule.service.name)
+    rule.service = service[0]
     Modal.show( {
       content: <AutoForm
             item = { rule }
@@ -126,7 +130,7 @@ export default ComplianceListTile = React.createClass( {
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
           {
-            
+
             (results.passed?
               <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
