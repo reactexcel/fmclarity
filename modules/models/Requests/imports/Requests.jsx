@@ -91,10 +91,9 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
     if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
@@ -245,7 +244,7 @@ Requests.methods( {
             }
 
             if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -414,7 +413,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -461,7 +460,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
@@ -475,9 +474,11 @@ Requests.methods( {
     findCloneAt: {
         authentication: true,
         helper: ( request, dueDate ) => {
+            let facility = request.getFacility();
             return Requests.findOne( {
+                "facility._id": facility._id,
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -503,9 +504,11 @@ Requests.methods( {
                 nextRequest = null;
 
             if ( nextDate ) {
+                let facility = request.getFacility();
                 nextRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -520,9 +523,11 @@ Requests.methods( {
             previousRequest = null;
 
             if ( previousDate ) {
+                let facility = request.getFacility();
                 previousRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -683,7 +688,6 @@ function setAssignee( request, assignee ) {
 
 
 function actionIssue( request ) {
-
     let code = null,
         userId = Meteor.user(),
         description = request.description,

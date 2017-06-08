@@ -36,7 +36,7 @@ export default ComplianceListTile = React.createClass( {
         name = rule.docType + " document is current";
         info = rule.docName;
         break;
-      case "PPM schedule established":
+      case "PPM exists":
         name = rule.type;
         info = ( rule.service ? rule.service.name : "" );
         break;
@@ -75,7 +75,8 @@ export default ComplianceListTile = React.createClass( {
   showModal( rule ) {
     //Need a width option for modals before this can be instantiated
     if ( rule.document && rule.document.query ){
-        let query = JSON.parse(rule.document.query);
+        //let query = JSON.parse(rule.document.query);
+        let query = rule.document.query;
         rule.document.query = query;
     }
     if ( rule.docName && !rule.document ) {
@@ -114,7 +115,7 @@ export default ComplianceListTile = React.createClass( {
     var message = this.data.message
     var results = this.data.results;
     var info = this.data.info;
-    var loader = this.data.loader;
+    // var loader = this.data.loader;
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
@@ -124,48 +125,35 @@ export default ComplianceListTile = React.createClass( {
           {info}
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
-          {/*this.state.showLoader && loader*/
-            this.state.showLoader && loader?
-                <div style={{width:"30%"}}>
-                    <LinearProgress mode="indeterminate" color='#0152b5'/>
-                </div>:
+          {
+            
             (results.passed?
-              <span style={{color:"green"}}>
+              <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
                 {message.detail?
                     <span>: <span
                         className="resolution-link"
                         onClick={()=>{
-                            if (loader) {
-                                this.setState({
-                                    showLoader: true,
-                                })
-                            }
                             results.resolve(rule, this.updateList)
                         }}>
-                      { _.isString(message.detail)?message.detail:message.detail()}
+                        {results.message.lastCompleted_nextDueDate && !_.isEmpty(results.message.lastCompleted_nextDueDate) ? results.message.lastCompleted_nextDueDate:_.isString(message.detail)?message.detail:message.detail()}
                   </span></span>:null}
-              </span>
+              </div>
             :
-              <span style={{color:"red"}}>
+              <div style={{color:"red", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-exclamation-triangle"/> {message.summary||"failed"}</b>
                 {
                     message.detail?
                       <span>: <span
                           className="resolution-link"
                           onClick={()=>{
-                              if (loader) {
-                                  this.setState({
-                                      showLoader: true,
-                                  })
-                              }
                               results.resolve(rule, this.updateList)
                           }}>
                         { _.isString(message.detail)?message.detail:message.detail()}
                       </span></span>
                     :null
                 }
-              </span>)
+            </div>)
           }
         </div>
       </div>

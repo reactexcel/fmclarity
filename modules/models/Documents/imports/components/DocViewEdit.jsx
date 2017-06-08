@@ -1,6 +1,6 @@
 /**
- * @author 			Leo Keith <leo@fmclarity.com>
- * @copyright 		2016 FM Clarity Pty Ltd.
+ * @author          Leo Keith <leo@fmclarity.com>
+ * @copyright       2016 FM Clarity Pty Ltd.
  */
 
 import React from "react";
@@ -9,9 +9,10 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents } from '/modules/models/Documents';
 import DocForm from '../schemas/DocForm.jsx';
+//import { Facilities } from '/modules/models/Facilities';
 /**
- * @class 			DocViewEdit
- * @memberOf 		module:models/Documents
+ * @class           DocViewEdit
+ * @memberOf        module:models/Documents
  */
 const DocViewEdit = React.createClass( {
 
@@ -20,7 +21,14 @@ const DocViewEdit = React.createClass( {
     getMeteorData() {
         var doc = this.props.item || {};
         if ( doc && doc._id ) {
+            //let facility = doc.facility;
             doc = Documents.findOne( doc._id );
+            if (doc) {
+                doc["facility"] = Session.getSelectedFacility();
+            }
+            /*if(!doc.facility){
+                doc["facility"] = Facilities.findOne({ _id: facility._id });
+            }*/
         }
         return {
             doc: doc
@@ -36,7 +44,11 @@ const DocViewEdit = React.createClass( {
     componentDidMount( ){
         let isEditable = false;
 
-        if( this.props && this.props.item && !this.props.item.private ){
+        if( !this.props.item ) {
+            //new item is being created
+            isEditable = true;
+        }
+        else if( !this.props.item.private ) {
 
             import { Teams } from '/modules/models/Teams';
 
@@ -46,9 +58,9 @@ const DocViewEdit = React.createClass( {
                 userRole = team.getMemberRole( user ),
                 ownerId = this.props.item.owner && this.props.item.owner._id;
 
-            if( 
-                (ownerId == user._id) 
-                || userRole == 'fmc support' 
+            if(
+                (ownerId == user._id)
+                || userRole == 'fmc support'
                 || ( Teams.isFacilityTeam( team ) && userRole == 'portfolio manager' )
                 || ( Teams.isServiceTeam( team ) && userRole == 'manager' )
             )
@@ -82,6 +94,9 @@ const DocViewEdit = React.createClass( {
                 type: item.type,
                 _id: item._id
             } )
+        }
+        else if(this.props.onChange){
+            this.props.onChange(item);
         }
     },
 
@@ -120,7 +135,7 @@ const DocViewEdit = React.createClass( {
                     }
 
                 } );
-            //	item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
+            //  item = Meteor.call( 'Files.create', item, this.handleChangeCallback );
         } else {
             let modelName = this.props.model._name;
             let _id, name;
@@ -151,6 +166,9 @@ const DocViewEdit = React.createClass( {
                     name: name
                 }
             }
+            if (!item.expiryDate) {
+                item.expiryDate = null;
+            }
             Documents.save.call( item );
             if ( item ) {
                 let owner = null;
@@ -172,14 +190,14 @@ const DocViewEdit = React.createClass( {
     render() {
         return (
             <div style={{padding:"15px"}}>
-				<AutoForm
-					model 		= { Documents }
-					form 		= { DocForm }
-					item 		= { this.data.doc }
-					onSubmit 	= { this.handleChange  }
+                <AutoForm
+                    model       = { Documents }
+                    form        = { DocForm }
+                    item        = { this.data.doc }
+                    onSubmit    = {this.handleChange  }
                     hideSubmit  = { this.state.isEditable ? null : true }
-				/>
-			</div>
+                />
+            </div>
         )
     }
 } )

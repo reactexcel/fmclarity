@@ -10,7 +10,7 @@
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="Requests-LoginAsPortfolioManager.html">Requests-LoginAsPortfolioManager</a></td></tr>
 <tr><td><a href="Requests-LoginAsSupplierManager-OPIndustries.html">Requests-LoginAsSupplierManager-OPIndustries</a></td></tr>
-<tr><td><a href="Requests-CheckNewRequestAsSupplierManager_OPIndustries.html">Requests-CheckNewRequestAsSupplierManager_OPIndustries</a></td></tr>
+<tr><td><a href="Requests-CheckNewFollowUpRequestAsSupplierManager_OPIndustries.html">Requests-CheckNewFollowUpRequestAsSupplierManager_OPIndustries</a></td></tr>
 <tr><td><a href="Requests-AssignRequestToSupplierStaff.html">Requests-AssignRequestToSupplierStaff</a></td></tr>
 <tr><td><a href="Requests-AddCommentToRequest_03-after_WO_assignment.html">Requests-AddCommentToRequest_03-after_WO_assignment</a></td></tr>
 <tr><td><a href="Requests-Logout.html">Requests-Logout</a></td></tr>

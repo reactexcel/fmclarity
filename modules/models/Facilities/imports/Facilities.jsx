@@ -70,6 +70,7 @@ const Facilities = new Model( {
 
 Facilities.collection.allow( {
     update: () => {
+        console.log("update");
         return true;
     }
 } )
@@ -146,7 +147,7 @@ Facilities.actions( {
                                     let identifier2 = subArea[j].children;
                                     if(identifier && identifier.data){
                                         for(var k in identifier2){
-                                            if(identifier[k].name == identifier.name){
+                                            if(identifier2[k].name == identifier.name){
                                                 if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
                                                     if(areas[i].children[j].children[k].totalBooking){
                                                         areas[i].children[j].children[k].totalBooking.push(booking);
@@ -184,7 +185,7 @@ Facilities.actions( {
                     }
                 }
             }
-            console.log(areas,"last")
+            console.log(areas,facility._id,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
@@ -280,14 +281,15 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-
+          // console.log(facility,rules);
             let services = clearComplianceRules( facility );
-
+            // console.log(services,"after clear compliance");
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
                 let serviceIndex = null;
                 for ( var i in services ) {
+                  // console.log(services[ i ].name ,key,"For loop");
                     if ( services[ i ].name == key ) {
                         service = services[ i ];
                         serviceIndex = i;
@@ -295,7 +297,7 @@ Facilities.actions( {
                     }
                 }
 
-                //console.log( { key, service, serviceIndex } );
+                // console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
@@ -462,6 +464,10 @@ Facilities.actions( {
                     type: doc.type,
                     description: doc.description,
                     private: doc.private,
+                    applicablePeriodStartDate:doc.applicablePeriodStartDate,
+                    applicablePeriodEndDate:doc.applicablePeriodEndDate,
+                    issueDate:doc.issueDate,
+                    serviceType:doc.serviceType,
                     owner: doc.owner
                 }
             } );
@@ -706,6 +712,54 @@ Facilities.actions( {
         }
     },
 
+    setDefaultSupplier: {
+        authentication: true,
+        method: ( facility, supplier, service ) => {
+            let services = facility.servicesRequired,
+                index = null;
+            for (var i = 0; i < services.length; i++) {
+                if ( services[i].name == service.name ) {
+                    if (!services[i].data) {
+                        services[i].data = [];
+                    }
+                    services[i].data.supplier = supplier;
+                    let members = [];
+                    if( supplier && supplier._id ) {
+                        import { Teams } from '/modules/models/Teams';
+                        supplier = Teams.findOne( supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers( { "role": "manager" } );
+                            if ( members.length ) {
+                                let dsc = members[0];
+                                services[i].data.defaultContact = [{
+                                    _id: dsc._id,
+                                    name: dsc.name || dsc.profile.name,
+                                    role: "supplier manager",
+                                    email: dsc.email || dsc.profile.email,
+                                }];
+
+                            }
+                        }
+                    }
+                    index = i;
+                    //console.log(services[i]);
+                    break;
+                }
+            }
+            Facilities.update( facility._id, {
+                    $set: {
+                        servicesRequired: services,
+                    }
+                }
+            )
+            return {
+                index,
+                service: services[index],
+                supplier,
+            }
+        }
+    },
+
     invitePropertyManager: {
         authentication: true,
         method: invitePropertyManager,
@@ -796,6 +850,7 @@ function sendMemberInvite( facility, recipient, team ) {
 
 function clearComplianceRules( facility ) {
     let services = facility.servicesRequired;
+    services =  _.filter(services, service => service != null);
     if ( services ) {
         services.map( ( service, idx ) => {
             if ( !services[ idx ].data ) {

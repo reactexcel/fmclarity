@@ -156,7 +156,7 @@ const createUpdateRequest = new Action( {
 
                                 if( relation.threshold ) {
                                     costThreshold = parseInt( relation.threshold );
-                                }                                
+                                }
                                 else if( team.defaultCostThreshold ) {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }
