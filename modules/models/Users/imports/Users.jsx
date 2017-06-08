@@ -245,7 +245,7 @@ Users.actions( {
                 }
                 PMPRequests.map( ( r ) => {
                   // console.log(r);
-                    if ( r.frequency ) {
+                    if ( r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats") ) {
                       if(r.frequency.unit === "custom"){
                         let temp = r.frequency ;
                         r.frequency = time[r.frequency.period];
@@ -278,6 +278,7 @@ Users.actions( {
                           }
                         }
                       }else{
+                        console.log(r);
                         r.frequency = time[r.frequency.unit];
                         var date = moment( r.dueDate );
                         var repeats = parseInt( r.frequency.repeats );
@@ -309,7 +310,7 @@ Users.actions( {
                     }
                 } )
             }
-            
+
             return requests;
         }
     }
