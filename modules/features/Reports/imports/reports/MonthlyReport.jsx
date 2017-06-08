@@ -31,6 +31,7 @@ export default MonthlyReport = React.createClass( {
 		} );
 
 		setTimeout(function(){
+			document.title = "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
 			window.print();
 			component.setState( {
 				expandall: false
@@ -57,7 +58,6 @@ export default MonthlyReport = React.createClass( {
 		} );
 
 		setTimeout(function(){
-			document.title = "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
 			window.print();
 			component.setState( {
 				expandall: false
