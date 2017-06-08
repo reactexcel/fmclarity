@@ -9,7 +9,6 @@ import moment from 'moment';
 import Reports from '../Reports.js';
 import MBMServiceImages from '../reports/MBMServiceImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
-import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
 
 
@@ -18,7 +17,7 @@ export default MonthlyReport = React.createClass( {
 	getInitialState() {
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = ""
+		let facility = Session.getSelectedFacility();
 		// console.log(facility);
 
 		return ( {
@@ -27,56 +26,10 @@ export default MonthlyReport = React.createClass( {
 			facility
 		} )
 	},
-	componentWillMount(){
+	componentWillReceiveProps(props){
 		this.setState({
-			facility:Session.getSelectedFacility()
+			facility:props.facility
 		})
-	},
-	componentWillReceiveProps(){
-			this.setState({
-				facility:Session.getSelectedFacility()
-			})
-	},
-
-	archiveChart(){
-		var component = this;
-		component.setState( {
-			expandall: true
-		} );
-
-		setTimeout(function(){
-			document.title = "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
-			window.print();
-			component.setState( {
-				expandall: false
-			} );
-		},200);
-
-		setTimeout(function(){
-			Modal.show( {
-			content: <DocViewEdit
-			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
-			onChange = { (data) => {
-				return FlowRouter.go( '/dashboard' );
-			}}
-			model={Facilities}
-			team = {Session.getSelectedTeam()}/>
-			} )
-
-		},200);
-	},
-	printChart(){
-		var component = this;
-		component.setState( {
-			expandall: true
-		} );
-
-		setTimeout(function(){
-			window.print();
-			component.setState( {
-				expandall: false
-			} );
-		},200);
 	},
 	getImage( _id,facility ){
 		if(_id != null){
@@ -104,29 +57,9 @@ export default MonthlyReport = React.createClass( {
 		let facility = this.state.facility;
 		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
-			<div>
-				<div>
-					<button className="btn btn-flat"  onClick={this.printChart}>
-						<i className="fa fa-print" aria-hidden="true"></i>
-					</button>
-					<button className="btn btn-flat"  onClick={this.archiveChart}>
-						Archive
-					</button>
+				<div style = {{border:"1px solid black"}}>
+					{this.getImage(imgThumb,facility)}
 				</div>
-				<MonthlyReportHeader facility = {this.state.facility}/>
-			<div>
-			<div style={{paddingBottom:"10%"}}>
-				<MBMReport MonthlyReport/>
-			</div>
-			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
-				<MBMBuildingServiceReport MonthlyReport/>
-			</div>
-			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
-				<span style={{fontSize:"26px",fontWeight:"500"}}>Building Photos</span>
-				<MBMServiceImages MonthlyReport/>
-			</div>
-		</div>
-	</div>
 		)
 	}
 } )
