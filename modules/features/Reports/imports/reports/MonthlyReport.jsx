@@ -31,7 +31,10 @@ export default MonthlyReport = React.createClass( {
 		} );
 
 		setTimeout(function(){
-			document.title = "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+			$("#toggleButton").hide();
+			$("#toggleButton2").hide();
+			$(".contact-card-avatar").hide()
 			window.print();
 			component.setState( {
 				expandall: false
@@ -39,9 +42,12 @@ export default MonthlyReport = React.createClass( {
 		},200);
 
 		setTimeout(function(){
+			$("#toggleButton").show();
+			$("#toggleButton2").show();
+			$(".contact-card-avatar").show();
 			Modal.show( {
 			content: <DocViewEdit
-			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
+			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
 			onChange = { (data) => {
 				return FlowRouter.go( '/dashboard' );
 			}}
@@ -68,7 +74,7 @@ export default MonthlyReport = React.createClass( {
 	render() {
 		return (
 			<div>
-				<div>
+				<div id="toggleButton">
 					<button className="btn btn-flat"  onClick={this.printChart}>
 						<i className="fa fa-print" aria-hidden="true"></i>
 					</button>
