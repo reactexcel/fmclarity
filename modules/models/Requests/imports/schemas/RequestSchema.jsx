@@ -99,7 +99,15 @@ const RequestSchema = {
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
+                        afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+
+                                } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
@@ -119,7 +127,15 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
+                                afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+
+                                }
+                         };
                     }
                 }
             }
@@ -290,7 +306,14 @@ const RequestSchema = {
                         }}/>
             } ,
             condition: ( item ) => {
-                if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.type != "Bookable"){
+                if(
+                    item.type == "Booking"
+                    && item.level
+                    && item.level.data
+                    && item.level.data.areaDetails
+                    && item.level.data.areaDetails.type != "Bookable"
+                )
+                {
                     RequestSchema.area.required = true;
                 } else {
                     RequestSchema.area.required = false;
@@ -338,7 +361,14 @@ const RequestSchema = {
             input: Select,
             required:false,
             condition: ( item ) => {
-                if(item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.type != "Bookable"){
+                if(
+                    item.type == "Booking"
+                    && item.area
+                    && item.area.data
+                    && item.area.data.areaDetails
+                    && item.area.data.areaDetails.type != "Bookable"
+                )
+                {
                     RequestSchema.identifier.required = true;
                 } else {
                     RequestSchema.area.required = false;
@@ -384,7 +414,17 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
-                            onServiceChange = props.changeSubmitText
+                          console.log(props);
+                            let team = Session.getSelectedTeam();
+                            let costAbleToIssue = true;
+                            if(team.defaultCostThreshold){
+                                costAbleToIssue = false;
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                            }
+                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -424,7 +464,9 @@ const RequestSchema = {
                         if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
-                        if ( request.service.data ) {
+                        request.supplier = null;
+                        request.subservice = null;
+                        if (request && request.service && request.service.data ) {
                             let supplier = request.service.data.supplier,
                                 defaultSupplier = null;
 
@@ -637,7 +679,8 @@ const RequestSchema = {
                 return item.service && item.service.data && item.service.data.baseBuilding;
             },
             condition: ( item ) => {
-                return _.contains(['Ad-hoc', 'Defect'], item.type);
+                let role = Meteor.user().getRole();
+                return _.contains(['Ad-hoc', 'Defect'], item.type) && !_.contains(['staff', 'resident'], role) && item.status=='Issued';
             },
             input(props){
                 let value = false,
@@ -676,6 +719,24 @@ const RequestSchema = {
             size: 6,
             defaultValue: '500',
             input: Currency,
+            input: (props)=>{
+                return <Currency {...props}
+                    onChange={(value)=>{
+                        props.onChange(value);
+                        let cost_withIn_teamCost = true
+                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
+                        let team = Session.getSelectedTeam();
+                        if(team.defaultCostThreshold){
+                            cost_withIn_teamCost = false;
+                            let actualCost = value;
+                            actualCost = actualCost.replace (",","");
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                    }}
+                />
+            },
             condition: ( request ) => {
                 if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
                     return false;
@@ -738,7 +799,7 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
                     return false;
                 }
                 return true;
@@ -937,7 +998,15 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                     onChange={( value ) => {
-                        props.changeSubmitText(value);
+                        let team = Session.getSelectedTeam();
+                        let costAbleToIssue = true;
+                        if(team.defaultCostThreshold){
+                            costAbleToIssue = false;
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                         props.onChange(value);
                     }}/>
             } ,
@@ -1007,6 +1076,7 @@ const RequestSchema = {
                     (
                         request.status != 'Issued' &&
                         request.type != 'Booking' &&
+                        //Teams.isServiceTeam( selectedTeam )
                         Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
@@ -1095,20 +1165,16 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    let role = Meteor.user().getRole();
-                    /*if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        return false;
-                    }*/
-                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        return false;
+                    if ( request.supplier && request.supplier._id ) {
+                        let team = Session.getSelectedTeam();
+                        if( team._id == request.supplier._id ) {
+                            let userRole = Meteor.user().getRole();
+                            if( _.contains( [ 'portfolio manager', 'manager' ], userRole ) ) {
+                                return true;
+                            }
+                        }
                     }
-                    let team = Session.getSelectedTeam();
-                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
-                        return true;
-                    }
-                    if(_.contains( [ "portfolio manager", 'manager'], role )){
-                        return true;
-                    }
+                    return false;
                 },
                 input: Select,
                 type: "object",
@@ -1142,10 +1208,16 @@ const RequestSchema = {
                             }
                         },
                         afterChange: ( item ) => {
+                            if( !item.members ) {
+                                item.members = [];
+                            }
                             let found = false;
                             if ( item.assignee && item.assignee._id ) {
+
                                 import { Users } from '/modules/models/Users';
+
                                 let assignee = Users.findOne( item.assignee._id );
+
                                 for ( i in item.members ) {
                                     let member = item.members[ i ];
                                     if ( member.role == "assignee" ) {
@@ -1253,9 +1325,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1269,10 +1340,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1321,6 +1392,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

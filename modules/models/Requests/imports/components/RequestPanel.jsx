@@ -57,12 +57,13 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+        let callback = this.props.callback
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
         //Perf.start();
+        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
@@ -85,9 +86,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
-
-    //console.log( facility );
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -128,12 +127,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
-
         if ( nextDate ) {
-            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
         }
         if ( previousDate ) {
-            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM YYYY' );
         }
 
     } else {
@@ -240,7 +238,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                   </div>
                 </div>
                 <div className="col-md-11">
-                  <WorkflowButtons actions = { RequestActions } item = { request }/>
+                  <WorkflowButtons actions = { RequestActions } item = { request } callback={callback}/>
                 </div>
               </div>
             </div>

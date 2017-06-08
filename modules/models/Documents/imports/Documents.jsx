@@ -73,6 +73,17 @@ Documents.actions( {
             }
         }
     },
+    getRequest: {
+        authentication: true,
+        helper: ( doc ) => {
+
+            import { Requests } from '/modules/models/Requests';
+
+            if ( doc.team && doc.team._id ) {
+                return Requests.findOne( {"team._id" : doc.team._id} );
+            }
+        }
+    },
     destroy: {
         authentication: true,
         helper: ( doc ) => {

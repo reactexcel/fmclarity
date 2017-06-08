@@ -46,6 +46,22 @@ const WeeklyCalendar = React.createClass( {
 		this.props.setValue(this.state.value);
 	},
 
+	getCurrentTime(start, end){
+		let timedifference = new Date().getTimezoneOffset();
+		let s= start._d
+			s_timstamp = s.getTime()
+			s_timstamp = s_timstamp + timedifference*60000
+			startTime = new Date(s_timstamp)
+		let e= end._d
+			e_timstamp = e.getTime()
+			e_timstamp = e_timstamp + timedifference*60000
+			endTime = new Date(e_timstamp)
+			return {
+				startTime:startTime,
+				endTime:endTime
+			}
+	},
+
     componentDidMount() {
 		var date = new Date();
   		var d = date.getDate();
@@ -66,6 +82,7 @@ const WeeklyCalendar = React.createClass( {
 				allDay: false,
 				editable:true,
 				overlap:false,
+				tooltip: 'Your Booking'
     		})
 		}
         businessHours.map( ( slot ) => {
@@ -106,6 +123,7 @@ const WeeklyCalendar = React.createClass( {
                 center: 'title,today',
                 right: 'next'
             },
+			selectOverlap: false,
 			/*header: {
       			left: 'prev,next today prevYear nextYear',
       			center: 'title',
@@ -139,11 +157,14 @@ const WeeklyCalendar = React.createClass( {
 				let startTime = start._d
 				let endTime = end._d
 				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
-				if(timeDiff>1800000){
+				let getCurrentTime = self.getCurrentTime(start, end)
+				/*if(timeDiff>1800000){
         			$("#bookingCalendar").fullCalendar('unselect');
-      			} else {
-					startTime = moment(startTime).subtract({hours:5,minutes:30})
-					endTime = moment(endTime).subtract({hours:5,minutes:30})
+      			} else {*/
+					startTime = moment(startTime)
+					startTime._d = getCurrentTime.startTime
+					endTime = moment(endTime)
+					endTime._d = getCurrentTime.endTime
 					let newEvent = {
 						id:0,
 						title: 'Your Booking',
@@ -152,6 +173,7 @@ const WeeklyCalendar = React.createClass( {
 		      			allDay: false,
 		      			editable:true,
 						overlap:false,
+						tooltip: 'Your Booking'
 					}
 					$('#bookingCalendar').fullCalendar('removeEvents',0);
 					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
@@ -163,23 +185,22 @@ const WeeklyCalendar = React.createClass( {
 							endTime:endTime,
 						}
 					})
-				}
+				//}
     		},
     		eventClick: function(event) {
-				//let start = event.start._d
-				//let end = event.end._d
-				//start = moment(start).subtract({hours:5,minutes:30})
-				//end = moment(end).subtract({hours:5,minutes:30})
     		},
     		eventDrop: function (event, delta, revertFunc) {
 				let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 				if(value == false){
 					revertFunc();
 				} else {
+					let getCurrentTime = self.getCurrentTime(event.start,event.end)
 					let startTime = event.start._d
-					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					    startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
 					let endTime = event.end._d
-						endTime = moment(endTime).subtract({hours:5,minutes:30})
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
 					self.setState({
 						value:{
 							startTime:startTime,
@@ -193,10 +214,13 @@ const WeeklyCalendar = React.createClass( {
 				if(value == false){
 					revertFunc();
 				} else {
+					let getCurrentTime = self.getCurrentTime(event.start,event.end)
 					let startTime = event.start._d
-					    startTime = moment(startTime).subtract({hours:5,minutes:30})
+					    startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
 					let endTime = event.end._d
-						endTime = moment(endTime).subtract({hours:5,minutes:30})
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
 					self.setState({
 						value:{
 							startTime:startTime,
@@ -206,15 +230,16 @@ const WeeklyCalendar = React.createClass( {
 				}
     		},
             eventAfterRender: function(event, element, view) {
-                if(event.type == 'unAvailable'){
+                //if(event.type == 'unAvailable'){
                     $(element).css('width','105%');
 					$(element).css('left','-2px');
 					//$(element).css('right','-3px');
-                }
+                //}
             },
             eventMouseover: function(data, event, view){
                 let tooltip;
-                if(data.type == "unAvailable"){
+                //if(data.type == "unAvailable"){
+				if(data.tooltip != undefined){
                     tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + data.tooltip + '</div>';
                     $("body").append(tooltip);
                     $(this).mouseover(function (e) {
@@ -225,12 +250,13 @@ const WeeklyCalendar = React.createClass( {
                         $('.tooltiptopicevent').css('top', e.pageY + 10);
                         $('.tooltiptopicevent').css('left', e.pageX + 20);
                     });
-                }
+				}
+                //}
             },
             eventMouseout: function (data, event, view) {
                 $(this).css('z-index', 0);
                 $('.tooltiptopicevent').remove();
-            },
+            }
         } );
     },
 

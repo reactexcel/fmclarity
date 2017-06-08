@@ -6,7 +6,8 @@ import React from "react";
 
 let css = {
     'facility-list-tile': {
-        overflow: 'hidden'
+        overflow: 'hidden',
+        padding:'3px'
     }
 }
 
@@ -27,7 +28,7 @@ function FacilityListTile( props ) {
     	import { Facilities } from '/modules/models/Facilities';
     	item = Facilities.collection._transform( item );
     }
-    
+
     thumbUrl = item.getThumbUrl();
 
     if ( item.contact != null ) {
