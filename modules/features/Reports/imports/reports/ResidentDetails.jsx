@@ -95,6 +95,19 @@ const ResidentDetails = React.createClass( {
     	});
     },
 
+	sortObject(arr) {
+ 		let sortedList = arr.sort(function(a, b){
+			if(a != null && a.apartmentAddress != null && b != null && b.apartmentAddress != null){
+	 			var textA = a.apartmentAddress.toUpperCase();
+    			var textB = b.apartmentAddress.toUpperCase();
+    			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+			} else {
+				return 0;
+			}
+		});
+ 		return sortedList
+	},
+
 	render() {
 
 		if ( this.data.residents.length == 0 ) {
@@ -103,20 +116,21 @@ const ResidentDetails = React.createClass( {
 
 		let { team, facility, residents } = this.data;
 		let fields = this.data.facility ? _.omit( this.fields, "Facility" ) : this.fields;
-		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; }.contact-card-2line {overflow:hidden;text-align:left;white-space:nowrap;}.contact-card-avatar {float:left;overflow:hidden;width:35px;height:35px;margin-right:7px;border-radius:50%;color:#ffffff;}.contact-card-avatar-child {text-align:center;color:#ffffff;line-height:35px;width:35px;height:35px;font-weight:bold;}  .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black;} #last-head {text-align:center;border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} #last-col {border-bottom:1px solid black}</style>';
-		let pdfTitle = "Resident's details of "+ (this.data.facility && this.data.facility.name ? this.data.facility.name : "all facility")
+		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; }.contact-card-2line {overflow:hidden;text-align:left;white-space:nowrap;}.contact-card-avatar {float:left;overflow:hidden;width:35px;height:35px;margin-right:7px;border-radius:50%;color:#ffffff;}.contact-card-avatar-child {text-align:center;color:#ffffff;line-height:35px;width:35px;height:35px;font-weight:bold;}  .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;border-bottom: 2px solid black;} #last-head {border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} #last-col {border-bottom:1px solid black}</style>';
+		let pdfTitle = "Resident List of "+ (this.data.facility && this.data.facility.name ? this.data.facility.name : "all facility")
 		let pdfDetails = {
  			styleForPDF:styleForPDF,
- 			pdfTitle:pdfTitle
+ 			pdfTitle:pdfTitle,
+			pdfName: 'Resident_List-'+(this.data.facility && this.data.facility.name ? this.data.facility.name : "all facility")+'-'
  		}
 		return (
 			<div>
 				<h2>Resident list of {facility && facility.name?facility.name:"all facility"}</h2>
 	            {this.state.dataset ? <div>
-					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
+					<Menu items = { [ download(this.state.dataset, pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 				<div className = "ibox" ref="printable">
-					<DataTable items={residents} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					<DataTable items={this.sortObject(residents)} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)

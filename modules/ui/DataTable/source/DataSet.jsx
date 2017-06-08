@@ -202,18 +202,31 @@ export default function DataSet( items ) {
 			} )
 			return data;
 		},
-		download: function() {
+		getFileName(fileName){
+			fileName = fileName + moment().format("YYYY-MM-DD") + '_' + moment().format("hh") + '-'+ moment().format("mm") +'-'+ moment().format("ss") + '-' + moment().format("a")
+			fileName = fileName.replace('.','')
+			//fileName = fileName.replace(' ','-')
+			return fileName;
+		},
+		download: function(fileDetails) {
+			var fileName = "fm-clarity-export";
+			if(fileDetails && fileDetails.pdfName){
+				fileName = this.getFileName(fileDetails.pdfName);
+			}
 			var csv = this.toCSV();
 			var blob = new Blob( [ csv ], {
 				type: "text/plain;charset=utf-8"
 			} );
-			saveAs( blob, "fm-clarity-export.csv" );
+			saveAs( blob, fileName+".csv" );
 		},
 		print: function( element,pdfDetails ) {
+			if(pdfDetails.pdfName){
+				pdfDetails.pdfName = this.getFileName(pdfDetails.pdfName);
+			}
 			var print_data = element.innerHTML;
 
 			var datawindow = window.open( '', 'fm-clarity-print', 'height=600,width=800' );
-			datawindow.document.write( '<html><head>'+pdfDetails.styleForPDF+'<title>fm-clarity-print</title>' );
+			datawindow.document.write( '<html><head>'+pdfDetails.styleForPDF+'<title>'+(pdfDetails && pdfDetails.pdfName ? pdfDetails.pdfName : 'fm-clarity-print')+'</title>' );
 			//datawindow.document.write( '<html><head><title>fm-clarity-print</title>' );
 			//datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
 			datawindow.document.write( '</head><body ><h3 style="text-align:center;margin-bottom:80px;margin-top:20px;text-decoration:underline;">'+pdfDetails.pdfTitle+'</h3>' );
