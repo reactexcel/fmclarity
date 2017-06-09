@@ -385,7 +385,7 @@ const RequestsStatusReport = React.createClass( {
 		let fields = this.fields
 		return (
 			<div>
-				<div style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
+				<div id = "toggleButton2" style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
 					this.handleClick(null);
 				}}>+ Add Contract</div>
                 <h3>Service Contract</h3>
