@@ -29,11 +29,13 @@ export default MonthlyReport = React.createClass( {
 		} )
 	},
 	componentWillMount(){
-		$(".fc-left").hide();
-		$(".fc-right").hide();
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
+	},
+	componentDidMount(){
+		$(".fc-left").hide();
+		$(".fc-right").hide();
 	},
 
 	componentWillUnmount(){
