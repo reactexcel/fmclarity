@@ -181,7 +181,11 @@ export default DataTable = React.createClass( {
 							<tr
 								className 	= "data-grid-row"
 								key 		= { idx }
-								onClick 	= { () => { this.props.onClick( unreadRow._item ) } }
+								onClick 	= { () => {
+									if(this.props.onClick){
+										this.props.onClick( unreadRow._item )
+									}
+								} }
 							>
 								{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 								{ cols.map( (col,colIdx) => {
@@ -296,7 +300,11 @@ export default DataTable = React.createClass( {
 									<tr
 										className 	= "data-grid-row"
 										key 		= { idx }
-										onClick 	= { () => { this.props.onClick( readRow._item ) } }
+										onClick 	= { () => {
+											if(this.props.onClick){
+												this.props.onClick( readRow._item )
+											}
+										} }
 										>
 											{ cols.map( (col,colIdx) => {
 												let styles = readRow[col].style?readRow[col].style:{}

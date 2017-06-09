@@ -74,7 +74,7 @@ const ResidentDetails = React.createClass( {
 	    Facility: 'facilityResident.name',
 		Apartment:'apartmentAddress',
 		"Owner/Tenant": 'owner/tenant',
-        Name: (item) => {
+        /*Name: (item) => {
 			if( item != null ){
 				return {
 					val: <div style={{minWidth:'100px'}}><ContactCard item={item} removeEmail={true}/></div>
@@ -83,7 +83,8 @@ const ResidentDetails = React.createClass( {
 			return {
 				val: <span/>
 			}
-		},
+		},*/
+		Name:"profile.name",
         "Email Address": "profile.email",
         "Phone Number": "phoneNumber",
 		"Keys": "keys",
@@ -109,14 +110,13 @@ const ResidentDetails = React.createClass( {
 	},
 
 	render() {
-
 		if ( this.data.residents.length == 0 ) {
 			return <div/>
 		}
 
 		let { team, facility, residents } = this.data;
 		let fields = this.data.facility ? _.omit( this.fields, "Facility" ) : this.fields;
-		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; }.contact-card-2line {overflow:hidden;text-align:left;white-space:nowrap;}.contact-card-avatar {float:left;overflow:hidden;width:35px;height:35px;margin-right:7px;border-radius:50%;color:#ffffff;}.contact-card-avatar-child {text-align:center;color:#ffffff;line-height:35px;width:35px;height:35px;font-weight:bold;}  .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;border-bottom: 2px solid black;} #last-head {border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} #last-col {border-bottom:1px solid black}</style>';
+		let styleForPDF = '<style type="text/css" media="print"> .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;border-bottom: 2px solid black;} #last-head {border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} #last-col {border-bottom:1px solid black}</style>';
 		let pdfTitle = "Resident List of "+ (this.data.facility && this.data.facility.name ? this.data.facility.name : "all facility")
 		let pdfDetails = {
  			styleForPDF:styleForPDF,
