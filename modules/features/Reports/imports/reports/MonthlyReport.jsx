@@ -58,6 +58,9 @@ export default MonthlyReport = React.createClass( {
 		},200);
 	},
 	printChart(){
+		$("#toggleButton").hide();
+		$("#toggleButton2").hide();
+		$(".contact-card-avatar").hide()
 		var component = this;
 		component.setState( {
 			expandall: true
@@ -68,6 +71,9 @@ export default MonthlyReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$("#toggleButton").show();
+			$("#toggleButton2").show();
+			$(".contact-card-avatar").show();
 		},200);
 	},
 
