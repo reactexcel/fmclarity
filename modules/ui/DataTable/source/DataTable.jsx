@@ -145,7 +145,7 @@ export default DataTable = React.createClass( {
 									<th
 										onClick = { () => { this.handleSortBy( col ) } }
 										className = "data-grid-header-cell" key={('head'+col)}
-										style={i==0?{paddingLeft:'10px',textAlign:'center'}:{textAlign:'center'}}
+										style={i==0?{paddingLeft:'10px'}:{}}
 										id={i==cols.length-1?'last-head':'pre-head'}
 									>
 
@@ -192,7 +192,7 @@ export default DataTable = React.createClass( {
 										}
 									return (
 										<td
-											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+											className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 											key 		= {('val('+idx+','+colIdx+')-'+unreadRow[col].val)}
 											style 		= {styles}
 											id={colIdx==cols.length-1?'last-col':'pre-col'}
@@ -252,7 +252,7 @@ export default DataTable = React.createClass( {
 															}
 														return (
 															<td
-																className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+																className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 																key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
 																style 		= {styles}
 																id={colIdx==cols.length-1?'last-col':'pre-col'}
@@ -297,7 +297,11 @@ export default DataTable = React.createClass( {
 									<tr
 										className 	= "data-grid-row"
 										key 		= { idx }
-										onClick 	= { () => { this.props.onClick( readRow._item ) } }
+										onClick 	= { () => {
+											if(this.props.onClick){
+												this.props.onClick( readRow._item )
+											}
+										 } }
 										>
 											{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 											{ cols.map( (col,colIdx) => {
@@ -307,7 +311,7 @@ export default DataTable = React.createClass( {
 													}
 												return (
 													<td
-														className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+														className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 														key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
 														style 		= {styles}
 														id={colIdx==cols.length-1?'last-col':'pre-col'}

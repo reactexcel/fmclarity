@@ -114,8 +114,8 @@ const RequestsStatusReport = React.createClass( {
 		"PO#": "code",
 		Summary: "name",
 		//Issued: "issuedAt",
-		//Supplier: "supplier.name",
-		Supplier: ( item ) => {
+		Supplier: "supplier.name",
+		/*Supplier: ( item ) => {
 			let supplier = item.getSupplier();
 			if( supplier != null ){
 				return {
@@ -125,7 +125,7 @@ const RequestsStatusReport = React.createClass( {
 			return {
 				val: <span/>
 			}
-		},
+		},*/
 		Service: ( item ) => {
 			if ( item.service && item.service.name ) {
 				return { val: item.service.name + ( item.subservice && item.subservice.name ? ( " - " + item.subservice.name ) : "" ) };
@@ -191,12 +191,14 @@ const RequestsStatusReport = React.createClass( {
 
 		let { team, showFacilityName } = this.data, { facility, service } = this.state;
 		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
-		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; }.contact-card-2line {overflow:hidden;text-align:left;white-space:nowrap;}.contact-card-avatar {float:left;overflow:hidden;width:35px;height:35px;margin-right:7px;border-radius:50%;color:#ffffff;}.contact-card-avatar-child {text-align:center;color:#ffffff;line-height:35px;width:35px;height:35px;font-weight:bold;}  .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black;} #last-head {text-align:center;border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} #last-col {border-bottom:1px solid black}</style>';
+		let styleForPDF = '<style type="text/css" media="print">.table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black;} #last-head {text-align:center;border-bottom: 2px solid black;} #pre-col {border-right:1px solid black; border-bottom:1px solid black} .Summary{min-width:320px;} .Supplier{min-width:120px;} .Service{min-width:200px;} #last-col {border-bottom:1px solid black}</style>';
 		//let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : '')+'Status Report '+(this.state.startDate || this.state.endDate ?'for ('+(this.state.startDate? moment( this.state.startDate ).format('DD/MM/YY'):'')+' -'(this.state.endDate? moment( this.state.endDate ).format('DD/MM/YY'):'')+' )':'')
 		let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : '')+'Status Report '+((this.state.startDate || this.state.endDate)?('for ('+(this.state.startDate ? moment( this.state.startDate ).format('DD/MM/YY'):'')+' - '+(this.state.endDate ? moment( this.state.endDate ).format('DD/MM/YY'):'')+')'):'')
+		let pdfName = (this.state.facility ? this.state.facility.name+'_' : '')+'Status Report '+((this.state.startDate || this.state.endDate)?('_('+(this.state.startDate ? moment( this.state.startDate ).format('DD-MM-YY'):'')+' to '+(this.state.endDate ? moment( this.state.endDate ).format('DD-MM-YY'):'')+')'):'')
 		let pdfDetails = {
 			styleForPDF:styleForPDF,
-			pdfTitle:pdfTitle
+			pdfTitle:pdfTitle,
+			pdfName: pdfName.replace('.','')
 		}
 		return (
 			<div>
@@ -204,7 +206,7 @@ const RequestsStatusReport = React.createClass( {
 
 					<h2>Status Report</h2>
 	                {this.state.dataset ? <div>
-					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
+					<Menu items = { [ download(this.state.dataset, pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 					<div className="row">
 						<div className="col-md-4">
