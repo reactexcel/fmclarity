@@ -4,11 +4,13 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Calendar } from '/modules/ui/Calendar';
 import { Files } from '/modules/models/Files';
+import { Documents } from '/modules/models/Documents';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 import moment from 'moment';
 import Reports from '../Reports.js';
 import MBMServiceImages from '../reports/MBMServiceImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
+import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
 
 
@@ -17,8 +19,8 @@ export default MonthlyReport = React.createClass( {
 	getInitialState() {
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = Session.getSelectedFacility();
-		console.log(facility);
+		let facility = ""
+		// console.log(facility);
 
 		return ( {
 			expandall: false,
@@ -26,14 +28,23 @@ export default MonthlyReport = React.createClass( {
 			facility
 		} )
 	},
-	componentDidMount(){
-		console.log("workig");
+	componentWillMount(){
 		$(".fc-left").hide();
 		$(".fc-right").hide();
+		this.setState({
+			facility:Session.getSelectedFacility()
+		})
 	},
+
 	componentWillUnmount(){
 		$(".fc-left").show();
 		$(".fc-right").show();
+	},
+
+	componentWillReceiveProps(){
+			this.setState({
+				facility:Session.getSelectedFacility()
+			})
 	},
 
 	archiveChart(){
@@ -43,6 +54,10 @@ export default MonthlyReport = React.createClass( {
 		} );
 
 		setTimeout(function(){
+			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+			$("#toggleButton").hide();
+			$("#toggleButton2").hide();
+			$(".contact-card-avatar").hide()
 			window.print();
 			component.setState( {
 				expandall: false
@@ -50,9 +65,12 @@ export default MonthlyReport = React.createClass( {
 		},200);
 
 		setTimeout(function(){
+			$("#toggleButton").show();
+			$("#toggleButton2").show();
+			$(".contact-card-avatar").show();
 			Modal.show( {
 			content: <DocViewEdit
-			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}}
+			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
 			onChange = { (data) => {
 				return FlowRouter.go( '/dashboard' );
 			}}
@@ -63,6 +81,9 @@ export default MonthlyReport = React.createClass( {
 		},200);
 	},
 	printChart(){
+		$("#toggleButton").hide();
+		$("#toggleButton2").hide();
+		$(".contact-card-avatar").hide()
 		var component = this;
 		component.setState( {
 			expandall: true
@@ -73,6 +94,9 @@ export default MonthlyReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$("#toggleButton").show();
+			$("#toggleButton2").show();
+			$(".contact-card-avatar").show();
 		},200);
 	},
 	getImage( _id,facility ){
@@ -129,7 +153,7 @@ export default MonthlyReport = React.createClass( {
 		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
 			<div>
-				<div>
+				<div id="toggleButton">
 					<button className="btn btn-flat"  onClick={this.printChart}>
 						<i className="fa fa-print" aria-hidden="true"></i>
 					</button>
@@ -137,9 +161,7 @@ export default MonthlyReport = React.createClass( {
 						Archive
 					</button>
 				</div>
-				<div style = {{border:"1px solid black"}}>
-					{this.getImage(imgThumb,facility)}
-				</div>
+				<MonthlyReportHeader facility = {this.state.facility}/>
 			<div>
 			<div style={{paddingBottom:"6%",marginTop:"8%"}}>
 				<MBMReport MonthlyReport/>

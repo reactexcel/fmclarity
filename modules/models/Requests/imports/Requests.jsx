@@ -474,7 +474,9 @@ Requests.methods( {
     findCloneAt: {
         authentication: true,
         helper: ( request, dueDate ) => {
+            let facility = request.getFacility();
             return Requests.findOne( {
+                "facility._id": facility._id,
                 name: request.name,
                 status: { $ne: 'PPM' },
                 dueDate: dueDate
@@ -502,7 +504,9 @@ Requests.methods( {
                 nextRequest = null;
 
             if ( nextDate ) {
+                let facility = request.getFacility();
                 nextRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
                     dueDate: nextDate
@@ -519,7 +523,9 @@ Requests.methods( {
             previousRequest = null;
 
             if ( previousDate ) {
+                let facility = request.getFacility();
                 previousRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
                     dueDate: previousDate

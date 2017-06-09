@@ -51,6 +51,11 @@ const RequestsStatusReport = React.createClass( {
 					docString = docString + d.subServiceType.name
 				}
 			}
+			if(d.hasOwnProperty("supplier")){
+				if(d.supplier.hasOwnProperty("name")){
+					docString = docString + d.supplier.name
+				}
+			}
 			if(d.hasOwnProperty("comment")){
 					docString = docString + d.comment
 			}
@@ -76,6 +81,11 @@ const RequestsStatusReport = React.createClass( {
 				if(d.hasOwnProperty("subServiceType")){
 					if(d.subServiceType.hasOwnProperty("name")){
 						updatedString = updatedString + d.subServiceType.name
+					}
+				}
+				if(d.hasOwnProperty("supplier")){
+					if(d.supplier.hasOwnProperty("name")){
+						updatedString = updatedString + d.supplier.name
 					}
 				}
 				if(d.hasOwnProperty("comment")){
@@ -152,21 +162,47 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
-				let supplier = item.data?item.data.supplier:item.supplier;
-				if( supplier != null ){
-				let string = supplier.name
-				if(string != undefined || null){
-					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
-				}
-				// console.log(supplier);
-				return {
-					val: <ContactCard item={supplier} />,
-					name: supplier.name
-				}
-			}
-			return {
-				val: <span/>
-			}
+					let query
+					if(Object.keys(item).length > 3){
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"serviceType.name":item.name
+						}
+					}else{
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"subServiceType.name":item.name
+						}
+					}
+					let docs = Documents.find(query).fetch();
+					if(docs.length > 0){
+
+						if(Object.keys(item).length > 3){
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
+						}
+
+						//console.log(docs);
+						if(docs.length > 0 && docs[0].hasOwnProperty("supplier")){
+							console.log(docs[0].supplier);
+							let supplier = docs[0].supplier
+							if( supplier != null ){
+								let string = supplier.name
+								if(string != undefined || null){
+									supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+								}
+								// console.log(supplier);
+								return {
+									val: <ContactCard item={supplier} />,
+									name: supplier.name
+								}
+							}
+							return {
+								val: <span/>
+							}
+						}
+					}
 		},
         "Annual Amount": ( item ) => {
 					let query
@@ -349,7 +385,7 @@ const RequestsStatusReport = React.createClass( {
 		let fields = this.fields
 		return (
 			<div>
-				<div style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
+				<div id = "toggleButton2" style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
 					this.handleClick(null);
 				}}>+ Add Contract</div>
                 <h3>Service Contract</h3>
