@@ -23,7 +23,9 @@ const DocViewEdit = React.createClass( {
         if ( doc && doc._id ) {
             //let facility = doc.facility;
             doc = Documents.findOne( doc._id );
-            doc["facility"] = Session.getSelectedFacility();
+            if (doc) {
+                doc["facility"] = Session.getSelectedFacility();
+            }
             /*if(!doc.facility){
                 doc["facility"] = Facilities.findOne({ _id: facility._id });
             }*/

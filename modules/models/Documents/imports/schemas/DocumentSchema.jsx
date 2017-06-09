@@ -87,7 +87,6 @@ export default DocumentSchema = {
 				return Session.getSelectedFacility();
 		},
 		options: ( item ) => {
-			//console.log( item );
 			let team = Session.getSelectedTeam();
 			return {
 				items: ( team && team.getFacilities ? team.getFacilities() : null ),
@@ -312,7 +311,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
-	
+
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -373,7 +372,7 @@ export default DocumentSchema = {
                 }
             },
 	},
-	
+
 	issuer: {
 		input: Text,
 		label: "Insurer",
@@ -558,7 +557,8 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			//return new Date();
+			return;
 		},
 		label: "Applicable period end",
 		optional: true,
@@ -682,7 +682,8 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			//return new Date();
+			return;
 		},
 		label: "Issue date",
 		optional: true,
