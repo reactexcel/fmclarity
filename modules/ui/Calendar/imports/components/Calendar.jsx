@@ -26,7 +26,6 @@ class Calendar extends React.Component {
         if ( requests == null ) {
             return;
         }
-
         var colors = {
             "Scheduled": "#70aaee",
             "Standard": "#0152b5",
@@ -34,13 +33,14 @@ class Calendar extends React.Component {
             "Critical": "#d0021b",
             "Closed": "#000000",
             "Booking": "#ef6c00",
-            "PMP": "#333333",
+            "PPM": "#333333",
         };
 
         var events = this.events.events;
         events.length = 0;
 
         requests.map( ( request ) => {
+          // console.log(request);
             if ( request.dueDate ) {
                 let title = null;
                 if ( request.type == 'Preventative' ) {
@@ -53,7 +53,6 @@ class Calendar extends React.Component {
                 events.push( {
                     title: title,
                     color: colors[ request.priority ],
-                    start: request.dueDate,
                     start: request.dueDate,
                     allDay: true,
                     request: {

@@ -145,6 +145,7 @@ const createRequest = new Action( {
                         method = 'Issues.create';
                         console.log(hasSupplier,"hasSupplier");
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = team.getMemberRole( owner ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -374,7 +375,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();

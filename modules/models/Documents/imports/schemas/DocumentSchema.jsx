@@ -17,6 +17,7 @@ export default DocumentSchema = {
 	name: {
 		label: "Document name",
 		type: "string",
+		required: true,
 		input: Text,
 		size: 6,
 	},
@@ -25,6 +26,7 @@ export default DocumentSchema = {
 		label: "Document type",
 		size: 6,
 		type: "string",
+		required: true,
 		input: Select,
 		options: {
 			items: DocTypes
@@ -76,7 +78,7 @@ export default DocumentSchema = {
 	facility: {
 
 		label: "Facility",
-		optional: true,
+		required: true,
 		description: "The site for this job",
 		type: "object",
 		size: 12,
@@ -85,7 +87,6 @@ export default DocumentSchema = {
 				return Session.getSelectedFacility();
 		},
 		options: ( item ) => {
-			//console.log( item );
 			let team = Session.getSelectedTeam();
 			return {
 				items: ( team && team.getFacilities ? team.getFacilities() : null ),
@@ -310,7 +311,7 @@ export default DocumentSchema = {
 			}
 		}
 	},
-	
+
 	supplier: {
 		input: Select,
 		label: "Supplier",
@@ -371,7 +372,7 @@ export default DocumentSchema = {
                 }
             },
 	},
-	
+
 	issuer: {
 		input: Text,
 		label: "Insurer",
@@ -556,7 +557,8 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			//return new Date();
+			return;
 		},
 		label: "Applicable period end",
 		optional: true,
@@ -680,7 +682,8 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: function( item ) {
-			return new Date();
+			//return new Date();
+			return;
 		},
 		label: "Issue date",
 		optional: true,
@@ -872,7 +875,7 @@ export default DocumentSchema = {
 	attachments: {
 		//type: "array",
 		label: "Attachments",
-		optional: true,
+		required: true,
 		input: FileExplorer
 	},
 
