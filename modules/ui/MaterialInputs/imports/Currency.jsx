@@ -20,10 +20,12 @@ const Currency = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
-		/*if ( this.props.onChange ) {
+		if ( this.props.onChange ) {
 			this.props.onChange( null );
-		}*/
+		}
 		this.refs.input.value = "";
+		this.toggleCurrencyHolder();
+		this.formatNum(this.refs.input);
 	},
 
 	handleSelect( event ) {
@@ -87,6 +89,12 @@ const Currency = React.createClass( {
 		// format number and delimit multiple 0's eg 0000, 0000.0002, 0002 etc
 		var curval = this.refs.input.value.replace(/,/g , "");
 		this.refs.input.value=Number(curval);
+		if(this.refs.input.value == 0){
+			this.refs.input.value = ''
+			if ( this.props.onChange ) {
+				this.props.onChange( null );
+			}
+		}
 		this.formatNum(this.refs.input);
 
 	},
@@ -119,11 +127,18 @@ const Currency = React.createClass( {
 		this.handleChange = _.debounce( this.handleChange, 200 );
 		if(this.refs.input.value.length > 0){
 			$('.currency-holder').show();
+		}else{
+			$('.currency-holder').hide();
 		}
 	},
 
 	componentWillReceiveProps( newProps ) {
 		this.refs.input.value = newProps.value;
+		if(this.refs.input.value.length > 0){
+			$('.currency-holder').show();
+		}else{
+			$('.currency-holder').hide();
+		}
 	},
 
 
