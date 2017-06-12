@@ -738,7 +738,7 @@ const RequestSchema = {
                 />
             },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect" ], request.type ) ) {
                     return false;
                 }
                 let role = Meteor.user().getRole();
@@ -922,10 +922,14 @@ const RequestSchema = {
             condition: ( request ) => {
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
+                let toReturn = false;
                 if ( facilities.length <= 1 ) {
-                    return false;
+                    //return false;
+                    toReturn = false
                 }
-                return true;
+                //return true;
+                toReturn = true
+                return toReturn;
             }
         },
 
