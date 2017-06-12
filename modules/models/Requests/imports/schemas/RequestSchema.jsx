@@ -738,7 +738,7 @@ const RequestSchema = {
                 />
             },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect" ], request.type ) ) {
                     return false;
                 }
                 let role = Meteor.user().getRole();
@@ -922,10 +922,14 @@ const RequestSchema = {
             condition: ( request ) => {
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
+                let toReturn = false;
                 if ( facilities.length <= 1 ) {
-                    return false;
+                    //return false;
+                    toReturn = false
                 }
-                return true;
+                //return true;
+                toReturn = true
+                return toReturn;
             }
         },
 
@@ -1287,9 +1291,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1303,10 +1306,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1355,6 +1358,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

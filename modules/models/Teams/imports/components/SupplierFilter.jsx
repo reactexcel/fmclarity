@@ -15,8 +15,13 @@ export default class SupplierFilter extends React.Component {
         let facility = team && Facilities.findOne( { 'team._id': team._id } );
         this.styles = {
             chip: {
-                margin: 4,
+                margin: '4px 4px 6px 4px',
                 backgroundColor:'#cecece',
+            },
+            chipLabel: {
+                fontSize:'13px',
+                lineHeight:'24px',
+                paddingLeft:'8px',
             },
             wrapper: {
                 display: 'flex',
@@ -63,6 +68,9 @@ export default class SupplierFilter extends React.Component {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
             $('#filter-details').css('display','block')
+            $('.chip svg').css('height','16px');
+            $('.chip svg').css('width','16px');
+            $('.chip svg').css('margin','4px 4px 0px -8px');
        });
     }
 
@@ -81,6 +89,9 @@ export default class SupplierFilter extends React.Component {
             $('#arrow-icon').hide('slow');
             $('#filter-box').hide('slow');
             $('#filter-details').css('display','block')
+            $('.chip svg').css('height','16px');
+            $('.chip svg').css('width','16px');
+            $('.chip svg').css('margin','4px 4px 0px -8px');
         }
     }
     search(){
@@ -265,6 +276,9 @@ export default class SupplierFilter extends React.Component {
                                     $('#arrow-icon').css('display','none')
                                     $('#filter-details').css('display','block')
                                 }
+                                $('.chip svg').css('height','16px');
+                                $('.chip svg').css('width','16px');
+                                $('.chip svg').css('margin','4px 4px 0px -8px');
                             }}>
     							<i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Suppliers
     						</button>
@@ -274,15 +288,17 @@ export default class SupplierFilter extends React.Component {
                 <div id="filter-details" style={{display:'block',marginTop:'20px',backgroundColor:'#d6e6fa',padding:'0px 10px 0px 10px'}}>
                         {showTags === true?<div style={{paddingTop:'-20px'}}><div className="row" style={{marginBottom:'-10px'}}>
                             <div className="col-xs-12">
-                                    <h4 style={{fontWeight:'400'}}>Tags:</h4>
+                                    <h4 style={{fontWeight:'400',marginLeft:'5px'}}>Tags:</h4>
                                     <div style={this.styles.wrapper}>
                                     {_.map(this.state.selectedServices,( service, i ) => {
                                         return <Chip
+                                                className={"chip"}
                                                 key={i}
                                                 onRequestDelete={() => {
                                                     this.removeServiceTag(service)
                                                 }}
                                                 style={this.styles.chip}
+                                                labelStyle={this.styles.chipLabel}
                                                 title={'Remove Service'}
                                             >
                                                 {service}
@@ -290,6 +306,7 @@ export default class SupplierFilter extends React.Component {
 
                                     })}
                                     {!_.isEmpty(this.state.suplierName)?<Chip
+                                            className={"chip"}
                                             onRequestDelete={() => {
                                                 this.updateSuplierName(null)
                                                 this.setState({
@@ -297,45 +314,54 @@ export default class SupplierFilter extends React.Component {
                                                 })
                                             }}
                                             style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
                                             title={'Remove Supplier'}
                                         >
                                             {this.state.suplierName}
                                     </Chip>:null}
                                     {_.map(this.state.selectedAreas,( area, i ) => {
                                         return <Chip
+                                                className={"chip"}
                                                 key={i}
                                                 onRequestDelete={() => {
                                                     this.removeAreaTag(area)
                                                 }}
                                                 style={this.styles.chip}
+                                                labelStyle={this.styles.chipLabel}
                                                 title={'Remove Area'}
                                             >
                                                 {area}
                                             </Chip>
                                     })}
                                     {this.state.publicLiablityInsurance==true?<Chip
+                                            className={"chip"}
                                             onRequestDelete={() => {
                                                 this.removeInsuranceTag('1')
                                             }}
                                             style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
                                             title={'Remove Insurance'}
                                         >
                                             {"Public Liablity Insurance"}
                                     </Chip>:null}
                                     {this.state.professionalIndemnity==true?<Chip
+                                            className={"chip"}
                                             onRequestDelete={() => {
                                                 this.removeInsuranceTag('2')
                                             }}
                                             style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
                                             title={'Remove Insurance'}
                                         >
                                             {"Professional Indemnity"}
                                     </Chip>:null}
                                     {this.state.workersCompensation==true?<Chip
+                                            className={"chip"}
                                             onRequestDelete={() => {
                                                 this.removeInsuranceTag('3')
                                             }}
                                             style={this.styles.chip}
+                                            labelStyle={this.styles.chipLabel}
                                             title={'Remove Insurance'}
                                         >
                                             {"Workers Compensation"}
