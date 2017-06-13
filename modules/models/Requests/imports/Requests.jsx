@@ -848,15 +848,12 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-
     Meteor.call( 'Issues.save', request, {
         status: request.closeDetails.jobCancelled == true?'Close':'Complete'
     } );
     request = Requests.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
-
-        console.log( 'further work required' );
 
         var closer = Meteor.user(),
             closerRole = closer.getRole();

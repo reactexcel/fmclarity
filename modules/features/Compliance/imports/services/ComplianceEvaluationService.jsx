@@ -358,10 +358,9 @@ ComplianceEvaluationService = new function() {
                     'facility._id': rule.facility._id,
                     name: rule.event,
                     "service.name": rule.service.name,
-                    status: {$in:["PMP"]}
+                    status: {$in:["PMP","PPM"]}
                 }
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
-                //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
 
@@ -381,13 +380,13 @@ ComplianceEvaluationService = new function() {
             }
             if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
+                    type:"Ad-Hoc",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
                 previousRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
+                    type:"Ad-Hoc",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:previousDate
@@ -416,7 +415,7 @@ ComplianceEvaluationService = new function() {
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { previousRequest }/>
+                                                        content: <RequestPanel item = { previousRequest } />
                                                     } );
                                            }}
                                            >
@@ -466,7 +465,7 @@ ComplianceEvaluationService = new function() {
 
             let q = {
                 "facility._id": facility._id,
-                status: "PMP",
+                status: {$in:["PMP","PPM"]},
                 "service.name": rule.service.name,
                 name: rule.event
             };
@@ -510,7 +509,7 @@ ComplianceEvaluationService = new function() {
                 loader: false,
                 resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
+                    console.log('attempting to resolve' );
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
