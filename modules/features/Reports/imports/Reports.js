@@ -3,6 +3,7 @@ import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
+import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
 import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
@@ -48,6 +49,12 @@ Reports.register( {
 	id: "mbm-service-image",
 	name: "MBM Service Image",
 	content: MBMServiceImages
+} )
+
+Reports.register( {
+	id: "mbm-Defect-image",
+	name: "MBM Defect Image",
+	content: MBMDefectImages
 } )
 
 Reports.register( {
