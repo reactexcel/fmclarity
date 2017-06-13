@@ -50,7 +50,6 @@ const Requests = new Model( {
                                 memberRoles = roles.actors[ member._id ];
 
                             //console.log( memberRoles );
-
                             if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
                                 //remove everyone who isn't pm
                                 for( let i in memberRoles ) {
@@ -263,11 +262,9 @@ Requests.methods( {
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
-
             if ( newRequestId ) {
                 newRequest = Requests.findOne( newRequestId );
             }
-
             if ( newRequest ) {
                 let owner = null;
                 if ( newRequest.owner ) {
@@ -808,7 +805,7 @@ function getMembersDefaultValue( item ) {
                 let role = member.getRole( facility );
 
                 if ( role == 'property manager' ) {
-                    if ( item.service.data && item.service.data.baseBuilding ) {
+                    if ( item.service && item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
