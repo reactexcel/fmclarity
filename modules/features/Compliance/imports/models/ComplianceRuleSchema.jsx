@@ -111,7 +111,7 @@ export default ComplianceRuleSchema = {
         condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
-        label: "PMP event name",
+        label: "PPM event name",
         input: Select,
         condition: [ "PPM event completed", "PPM exists" ],
         options( item ) {
