@@ -140,7 +140,7 @@ class AutoForm extends React.Component {
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
 					// remove fields that do not meet condition from being added to collection
-					delete item[key];
+					//delete item[key];
 					return;
 				}
 			}
