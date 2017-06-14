@@ -9,6 +9,7 @@ import DocViewEdit from '../../../.././models/Documents/imports/components/DocVi
 import moment from 'moment';
 import Reports from '../Reports.js';
 import MBMServiceImages from '../reports/MBMServiceImages.jsx';
+import MBMDefectImages from '../reports/MBMDefectImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
 import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
@@ -36,6 +37,7 @@ export default MonthlyReport = React.createClass( {
 	componentDidMount(){
 		$(".fc-left").hide();
 		$(".fc-right").hide();
+		$(".test").css({"marginTop":"160px"});
 	},
 
 	componentWillUnmount(){
@@ -57,6 +59,7 @@ export default MonthlyReport = React.createClass( {
 
 		setTimeout(function(){
 			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+			$(".test").removeAttr("style");
 			$("#toggleButton").hide();
 			$("#toggleButton2").hide();
 			$(".contact-card-avatar").hide()
@@ -67,6 +70,7 @@ export default MonthlyReport = React.createClass( {
 		},200);
 
 		setTimeout(function(){
+			$(".test").css({"marginTop":"160px"});
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
@@ -82,7 +86,9 @@ export default MonthlyReport = React.createClass( {
 
 		},200);
 	},
+
 	printChart(){
+		$(".test").removeAttr("style");
 		$("#toggleButton").hide();
 		$("#toggleButton2").hide();
 		$(".contact-card-avatar").hide()
@@ -96,11 +102,13 @@ export default MonthlyReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$(".test").css({"marginTop":"160px"});
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
 		},200);
 	},
+	
 	getImage( _id,facility ){
 		if(_id != null){
 			let address = facility.address
@@ -124,7 +132,6 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	render() {
-				$(".fc-left").hide();
 		let team = Session.getSelectedTeam(),
         user = Meteor.user(),
         requests = null,
@@ -179,6 +186,10 @@ export default MonthlyReport = React.createClass( {
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
 				<span style={{fontSize:"26px",fontWeight:"500"}}>Building Photos</span>
 				<MBMServiceImages MonthlyReport/>
+			</div>
+			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
+				<span style={{fontSize:"26px",fontWeight:"500"}}>Defects Table</span>
+				<MBMDefectImages/>
 			</div>
 		</div>
 	</div>

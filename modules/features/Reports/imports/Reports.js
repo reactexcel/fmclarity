@@ -52,12 +52,6 @@ Reports.register( {
 } )
 
 Reports.register( {
-	id: "mbm-Defect-image",
-	name: "MBM Defect Image",
-	content: MBMDefectImages
-} )
-
-Reports.register( {
 	id: "mbm-report-contract",
 	name: "MBM Report (Service Contract)",
 	content: MBMReport
