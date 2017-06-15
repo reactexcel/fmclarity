@@ -143,7 +143,6 @@ const createRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
-                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = team.getMemberRole( owner ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -162,7 +161,6 @@ const createRequest = new Action( {
                                 method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-                                method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     memberThreshold = null,
@@ -193,9 +191,11 @@ const createRequest = new Action( {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }
 
-                                if( cost > costThreshold ) {
-                                    method = 'Issues.create';
+                                if( cost <= costThreshold || newRequest.haveToIssue == true ) {
+                                    method = 'Issues.issue';
+                                    newRequest = _.omit(newRequest,'haveToIssue')
                                 }
+
                                 /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
@@ -208,10 +208,6 @@ const createRequest = new Action( {
                                 }*/
                             }
 
-                        }
-                        if(newRequest.haveToIssue == true){
-                            method = 'Issues.issue';
-                            newRequest = _.omit(newRequest,'haveToIssue')
                         }
                     }
                     Meteor.call( method, newRequest );
