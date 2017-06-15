@@ -7,7 +7,6 @@ export default function WorkflowButtons( { actions, item, callback } ) {
     let width = "100px"
     actions = Actions.filter( WorkflowActions, item, callback );
     let actionNames = Object.keys( actions );
-
     function runAction( action, item ) {
   		if ( action.shouldConfirm ) {
   			var message = confirm( action.label + " request. Are you sure?" );
@@ -16,8 +15,11 @@ export default function WorkflowButtons( { actions, item, callback } ) {
   			}
   		}
         //item.callback = callback;
-        //item.callback = callback;
+        item.callback = callback;
   		action.run( item );
+        if(callback){
+            callback(item);
+        }
   	}
 
     if ( actions == null || actionNames.length == 0 ) {

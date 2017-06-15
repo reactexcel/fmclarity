@@ -234,10 +234,15 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New',
-                description = request.description;
 
+            let status = 'New';
+
+            // The description field simply carries the value to be sent to the notification or comment.
+            // After extracting that value we clear it because we don't want to save the description value.
+            let description = request.description;
             request.description = null;
+
+            // Cost threshold should be numeric - perhaps there is a better way to enforce this in the schema... anyone?
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
@@ -848,15 +853,12 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-
     Meteor.call( 'Issues.save', request, {
         status: request.closeDetails.jobCancelled == true?'Close':'Complete'
     } );
     request = Requests.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
-
-        console.log( 'further work required' );
 
         var closer = Meteor.user(),
             closerRole = closer.getRole();

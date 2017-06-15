@@ -22,7 +22,7 @@ export default function DocIconHeader( props ) {
 		            </tbody>
 		        </table>
 			</div>
-		    <div>
+			{!props.onlyTags?<div>
 				<div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}}>
 					<span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}>&nbsp;</span>
 					<span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Type</span>
@@ -31,7 +31,8 @@ export default function DocIconHeader( props ) {
 					{/*<span style={{display:"inline-block",width:"9%",minWidth:"20px",paddingLeft:"10px"}}>Work order link</span>*/}
 					<span style={{display:"inline-block",width:"1%",minWidth:"20px",paddingLeft:"10px"}}></span>
 				</div>
-			</div>
+			</div>:null}
+
         </div>
 	)
 }
