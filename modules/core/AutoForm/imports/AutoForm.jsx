@@ -65,7 +65,7 @@ class AutoForm extends React.Component {
 	checkBookingAreas(key){
 		if(key == 'type' || key == 'facility'){
 			let item = this.props.item;
-			if(item && item.type == "Booking" && !_.isEmpty(item.facility)){
+			if(item && item.type && item.type == "Booking" && !_.isEmpty(item.facility)){
 				let { keys, schema } = this.form;
 				let formItem = this.form.item,
 				    areaLevels = ['level','area','identifier'],
