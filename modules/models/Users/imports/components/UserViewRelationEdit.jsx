@@ -16,6 +16,7 @@ export default UserViewRelationEdit = React.createClass( {
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole( member, role );
+		this.handleThresholdValueChange(null);
 		if ( !_.contains([ "portfolio manager" ], role) ) {
 			Users.update( { _id: member._id}, { $set: { role: role } } );
 			this.props.team.setMemberRole( member, role );
@@ -79,7 +80,7 @@ export default UserViewRelationEdit = React.createClass( {
 					placeholder 	= "Role"
 				/>
 
-				{_.contains(['portfolio manager','fmc support'], userRole) && role=='manager'? 
+				{_.contains(['portfolio manager','fmc support'], userRole) && _.contains(['manager','caretaker'], role)? 
 				<Text
 					value			= { threshold }
 					onChange		= { this.handleThresholdValueChange }
