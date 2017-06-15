@@ -244,7 +244,8 @@ const RequestSchema = {
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
-                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
+                let a= Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
+                return a;
             },
             options: ( item ) => {
                 let facility = null;
@@ -906,7 +907,6 @@ const RequestSchema = {
             input: Select,
 
             options: ( request ) => {
-
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
