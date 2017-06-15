@@ -289,7 +289,7 @@ Requests.methods( {
     },
 
     issue: {
-        authentication: true,
+        authentication: checkIssuePermissions,
         method: actionIssue
     },
 
@@ -686,6 +686,72 @@ function setAssignee( request, assignee ) {
 
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
+}
+
+function checkIssuePermissions( role, user, request ) {
+    console.log( request, user, role );
+
+    let hasSupplier = request.supplier && request.supplier._id,
+        userCanIssue = false;
+
+    if ( request.type != 'Preventative' && hasSupplier ) {
+        let team = Teams.findOne( request.team._id ),
+            role = team.getMemberRole( user ),
+            baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
+        if( !team ) {
+            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+            return;
+        }
+        else if( baseBuilding ) {
+            if( role == 'property manager' ) {
+                userCanIssue = true;
+            }
+        }
+        else if( !baseBuilding ) {
+
+            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                userCanIssue = true;
+            }
+            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
+                let relation = team.getMemberRelation( user ),
+                    costString = request.costThreshold,
+                    memberThreshold = null,
+                    costThreshold = null;
+
+                if( relation ) {
+                    memberThreshold = relation.issueThresholdValue;
+                    if( _.isString( memberThreshold ) ) {
+                        memberThreshold = memberThreshold.replace(',','');
+                    }
+                }
+
+                // strips out commas
+                //  this is a hack due to an inadequete implementation of number formatting
+                //  needs a refactor
+                if( _.isString( costString ) ) {
+                    costString = costString.replace(',','')
+                }
+
+                let cost = parseInt( costString );
+
+                // this is the value saved in the member team relation
+                if( memberThreshold ) {
+                    costThreshold = parseInt( memberThreshold );
+                }
+                // this is the threshold value from the global team configuration
+                else if( team.defaultCostThreshold ) {
+                    costThreshold = parseInt( team.defaultCostThreshold );
+                }
+
+                if( cost <= costThreshold || request.haveToIssue == true ) {
+                    userCanIssue = true;
+                    request = _.omit(request,'haveToIssue')
+                }
+            }
+
+        }
+    }            
+    return userCanIssue;
 }
 
 
