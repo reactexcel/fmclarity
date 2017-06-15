@@ -244,8 +244,7 @@ const RequestSchema = {
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
-                let a= Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
-                return a;
+                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
                 let facility = null;
