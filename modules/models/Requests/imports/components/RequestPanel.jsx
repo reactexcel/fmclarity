@@ -35,8 +35,8 @@ export default RequestPanel = React.createClass( {
             owner = null;
 
         if ( this.props.item && this.props.item._id ) {
-            request = Requests.findOne( this.props.item._id );
-
+            //request = Requests.findOne( this.props.item._id );
+            request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();

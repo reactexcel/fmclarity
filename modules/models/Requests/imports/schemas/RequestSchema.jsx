@@ -773,7 +773,7 @@ const RequestSchema = {
                     request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
-                if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
+                if ( (role == 'staff' || role == 'tenant' || role == 'resident') && request.type != "Booking") {
                     return false;
                 }
                 return true;
@@ -798,8 +798,11 @@ const RequestSchema = {
             required: true,
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
+                if(request.type=='Booking'){
+                    return false;
+                }
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) /*&& request.type !='Booking'*/ ) {
                     return false;
                 }
                 return true;

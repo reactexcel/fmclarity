@@ -40,29 +40,51 @@ class Calendar extends React.Component {
         events.length = 0;
 
         requests.map( ( request ) => {
-            if ( request.dueDate ) {
+            if(request.type=="Booking" && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
                 let title = null;
-                if ( request.type == 'Preventative' ) {
-                    title = request.name;
-                } else if ( request.code ) {
+                if(request.code){
                     title = `#${request.code} ${request.name}`
-                } else {
+                }else{
                     title = request.name;
                 }
                 events.push( {
                     title: title,
                     color: colors[ request.priority ],
-                    start: request.dueDate,
-                    start: request.dueDate,
+                    start: request.bookingPeriod.startTime,
+                    end: request.bookingPeriod.endTime,
                     allDay: true,
                     request: {
                         _id: request._id,
                         code: request.code,
                         name: request.name
                     }
-                    //url:i.getUrl()
                 } );
+            }else{
+                if ( request.dueDate ) {
+                    let title = null;
+                    if ( request.type == 'Preventative' ) {
+                        title = request.name;
+                    } else if ( request.code ) {
+                        title = `#${request.code} ${request.name}`
+                    } else {
+                        title = request.name;
+                    }
+                    events.push( {
+                        title: title,
+                        color: colors[ request.priority ],
+                        start: request.dueDate,
+                        start: request.dueDate,
+                        allDay: true,
+                        request: {
+                            _id: request._id,
+                            code: request.code,
+                            name: request.name
+                        }
+                        //url:i.getUrl()
+                    } );
+                }
             }
+
         } );
         $( this.refs.calendar ).fullCalendar( 'removeEventSource', events );
         $( this.refs.calendar ).fullCalendar( 'addEventSource', events );

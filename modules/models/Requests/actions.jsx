@@ -42,14 +42,15 @@ const edit = new Action( {
     name: "edit request",
     type: 'request',
     label: "Edit",
-    action: ( request ) => {
-        let oldRequest = Object.assign( {}, request );
+    action: ( preRequest ) => {
+        let previousRequest = Object.assign( {}, preRequest );
+        let oldRequest = Object.assign( {}, preRequest );
         Modal.show( {
             content:
                 <AutoForm
             title = "Edit Request"
             model = { Requests }
-            item = { request }
+            item = { previousRequest }
             form = { CreateRequestForm }
             submitText="Save"
             onSubmit = {

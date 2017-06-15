@@ -60,7 +60,6 @@ export default class RequestsPageIndex extends Component {
 		if( selectedRequest ) {
 			RequestActions.view.run( selectedRequest );
 		}
-
 		return (
 			<div>
 				<div className = "row">
@@ -68,7 +67,7 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3 desktop-only">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close' ] } selectedItem = { selectedStatus } />
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Booking' ] } selectedItem = { selectedStatus } />
 					</div>
 					{ /*user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >

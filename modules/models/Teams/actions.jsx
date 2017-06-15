@@ -125,11 +125,11 @@ const createRequest = new Action( {
                         Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
                     }
 
-                    Modal.replace( {
+                    /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest }/>
                             </DropFileContainer>
-                    } );
+                    } );*/
 
                     let owner = Meteor.user();
 
@@ -218,6 +218,11 @@ const createRequest = new Action( {
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
+                    Modal.replace( {
+                        content: <DropFileContainer model={Requests} request={request}>
+                                <RequestPanel item = { /*newRequest*/  request}/>
+                            </DropFileContainer>
+                    } );
                 }
             }
             />

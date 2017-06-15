@@ -165,7 +165,6 @@ Users.actions( {
 
         // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
-
             let query = [ {
                 'members._id': user._id
             } ]

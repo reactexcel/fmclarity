@@ -91,6 +91,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             _id: 1,
             area: 1,
             attachments: 1,
+            bookingPeriod:1,
             'assignee._id': 1,
             'assignee.name': 1,
             closeDetails: 1,
