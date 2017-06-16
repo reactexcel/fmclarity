@@ -123,7 +123,7 @@ class AutoForm extends React.Component {
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength, shouldClearIfHidden } = schema[ key ],
 				placeholder = label,
 				Input = null;
 			// Create default value for this field
@@ -137,8 +137,10 @@ class AutoForm extends React.Component {
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
 					// remove fields that do not meet condition from being added to collection
-					delete item[key];
+					if (shouldClearIfHidden) {
+						delete item[key];
 					return;
+					}
 				}
 			}
 

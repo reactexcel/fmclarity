@@ -579,6 +579,7 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: new Date(),
+		shouldClearIfHidden: true,
 		label: "Expiry",
 		optional: true,
 		size: 6,
