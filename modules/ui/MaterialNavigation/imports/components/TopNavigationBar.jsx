@@ -8,7 +8,7 @@ import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
 export default function TopNavigationBar( props ) {
 
     import { NotificationList } from '/modules/models/Messages';
-
+    $(".loader").hide();
     setTimeout( () => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {

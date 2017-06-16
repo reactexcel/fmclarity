@@ -9,6 +9,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import NavigationDrawerContainer from '../containers/NavigationDrawerContainer.jsx';
 import TopNavigationBarContainer from '../containers/TopNavigationBarContainer.jsx';
 import FloatingActionButtonContainer from '../containers/FloatingActionButtonContainer.jsx';
+import CircularProgressExampleSimple from '/modules/ui/Loader/loader';
 
 /**
  * @class           LayoutMain
@@ -23,6 +24,11 @@ function LayoutMain( props ) {
     return (
         <MuiThemeProvider muiTheme = { getMuiTheme() }>
         <div>
+          <div className="loader"  style={{ height: '100%', width: '100%', position: 'fixed', zIndex: '2000', left: '0', top: '0', backgroundColor: ' rgba(0,0,0, 0.9)', overflow: 'hidden', opacity: '1.5' }}>
+            <div style={{position:"absolute",zIndex:"20000",right:"50%",top:"50%"}}>
+            				<CircularProgressExampleSimple/>
+            </div>
+          </div>
             <div className = "body-background"/>
             <NavigationDrawerContainer/>
             <TopNavigationBarContainer/>

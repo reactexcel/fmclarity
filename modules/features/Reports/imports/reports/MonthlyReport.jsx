@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
+import Loader from 'react-loader';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Calendar } from '/modules/ui/Calendar';
@@ -26,18 +27,27 @@ export default MonthlyReport = React.createClass( {
 		return ( {
 			expandall: false,
 			team,
-			facility
+			facility,
+			loaded: false, profile: null
 		} )
 	},
 	componentWillMount(){
+	 console.log($(".loader"));
+	//  $(".loader").show();
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
 	},
+	componentWillUpdate(){
+				// $(".loader").show();
+	},
+
 	componentDidMount(){
 		$(".fc-left").hide();
 		$(".fc-right").hide();
 		$(".test").css({"marginTop":"160px"});
+		this.setState({ loaded: true });
+		// $(".loader").hide();
 	},
 
 	componentWillUnmount(){
@@ -45,7 +55,8 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-right").show();
 	},
 
-	componentWillReceiveProps(){
+	componentWillReceiveProps(props){
+				// $(".loader").hide();
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
@@ -108,7 +119,7 @@ export default MonthlyReport = React.createClass( {
 			$(".contact-card-avatar").show();
 		},200);
 	},
-	
+
 	getImage( _id,facility ){
 		if(_id != null){
 			let address = facility.address
@@ -162,6 +173,7 @@ export default MonthlyReport = React.createClass( {
 		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
 			<div>
+				<Loader loaded={this.state.loaded}>
 				<div id="toggleButton">
 					<button className="btn btn-flat"  onClick={this.printChart}>
 						<i className="fa fa-print" aria-hidden="true"></i>
@@ -192,6 +204,7 @@ export default MonthlyReport = React.createClass( {
 				<MBMDefectImages/>
 			</div>
 		</div>
+	</Loader>
 	</div>
 		)
 	}
