@@ -38,6 +38,8 @@ export default RequestPanel = React.createClass( {
             request = Requests.findOne( this.props.item._id );
 
             if ( request ) {
+                let date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
+
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -49,11 +51,15 @@ export default RequestPanel = React.createClass( {
 
                 contact = request.getContact();
                 supplier = request.getSupplier();
-                if ( request.type == 'Preventative' ) {
+                if ( request.type == 'Preventative' && date_diff != 0) {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
+                }
+                if(date_diff === 0 ){
+                  let lastdate = request.getPreviousDate();
+                  request = request.findCloneAt( lastdate );
                 }
             }
         }
@@ -63,7 +69,7 @@ export default RequestPanel = React.createClass( {
 
     componentWillMount() {
         //Perf.start();
-        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
