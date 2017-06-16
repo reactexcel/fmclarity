@@ -20,10 +20,12 @@ const Currency = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
+		var val = 0;
 		if ( this.props.onChange ) {
-			this.props.onChange( null );
+			this.props.onChange( val );
 		}
 		this.refs.input.value = "";
+		this.props.value = "0";
 		this.toggleCurrencyHolder();
 		this.formatNum(this.refs.input);
 	},

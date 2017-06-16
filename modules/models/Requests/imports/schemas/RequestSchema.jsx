@@ -717,7 +717,7 @@ const RequestSchema = {
             type: "number",
             size: 6,
             defaultValue: '500',
-            input: Currency,
+            // input: Currency,
             input: (props)=>{
                 return <Currency {...props}
                     onChange={(value)=>{
@@ -727,7 +727,7 @@ const RequestSchema = {
                         let team = Session.getSelectedTeam();
                         if(team.defaultCostThreshold){
                             cost_withIn_teamCost = false;
-                            let actualCost = value;
+                            let actualCost = value ? value : "0";
                             actualCost = actualCost.replace (",","");
                                 actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
@@ -769,7 +769,7 @@ const RequestSchema = {
 
                     }
                 } else {
-                    request.costThreshold = '500';
+                    // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {

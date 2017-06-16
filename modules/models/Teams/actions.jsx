@@ -137,7 +137,7 @@ const createRequest = new Action( {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
-
+                    newRequest.costThreshold = newRequest.costThreshold ? newRequest.costThreshold : "0";
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
