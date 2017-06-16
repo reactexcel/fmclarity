@@ -23,7 +23,6 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let request = null,
             nextRequest = null,
             previousRequest = null,
