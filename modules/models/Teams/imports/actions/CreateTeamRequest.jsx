@@ -34,7 +34,7 @@ const CreateTeamRequest = new Action( {
 		            item = { newItem }
 		            submitText="Save"
 		            onSubmit = {
-		                ( newRequest ) => {
+		                ( newRequest, requestShouldIssue ) => {
 		                    if(newRequest.type == "Booking"){
 		                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
 		                    }
@@ -55,7 +55,7 @@ const CreateTeamRequest = new Action( {
 
 		                    newRequest = Requests.collection._transform( newRequest );
 
-		                    if( newRequest.canIssue( owner ) ) {
+		                    if( newRequest.canIssue( owner ) && requestShouldIssue ) {
 		                    	method = 'Issues.issue';
 		                    }
 
@@ -70,6 +70,5 @@ const CreateTeamRequest = new Action( {
         } )
     }
 } )
-
 
 export default CreateTeamRequest

@@ -689,7 +689,6 @@ function setAssignee( request, assignee ) {
 }
 
 function checkIssuePermissions( role, user, request ) {
-    console.log( request, user, role );
 
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
@@ -743,9 +742,8 @@ function checkIssuePermissions( role, user, request ) {
                     costThreshold = parseInt( team.defaultCostThreshold );
                 }
 
-                if( cost <= costThreshold || request.haveToIssue == true ) {
+                if( cost <= costThreshold ) {
                     userCanIssue = true;
-                    request = _.omit(request,'haveToIssue')
                 }
             }
 
