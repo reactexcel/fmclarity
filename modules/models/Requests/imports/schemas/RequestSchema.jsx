@@ -414,7 +414,6 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
-                          console.log(props);
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
@@ -694,20 +693,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -738,8 +737,39 @@ const RequestSchema = {
                 />
             },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect" ], request.type ) ) {
                     return false;
+                }
+                if(request.type == "Booking"){
+                    request.costThreshold = '0';
+                    let selectedAreaDetail = null;
+                    if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
+                        selectedAreaDetail = request.identifier.data.areaDetails
+                    } else if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    } else if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+
+                    if(selectedAreaDetail != null){
+                        let unit = selectedAreaDetail.unit,
+                            cost = parseInt(_.isEmpty(selectedAreaDetail.cost)?0:selectedAreaDetail.cost),
+                            bookingIncreament = 0;
+                        if(unit == 'Hours'){
+                            bookingIncreament = selectedAreaDetail.hour.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Days'){
+                            bookingIncreament = selectedAreaDetail.day.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Months'){
+                            bookingIncreament = selectedAreaDetail.month.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Weeks'){
+                            bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
+                        }
+                        bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
+
+                    }
+                } else {
+                    request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
@@ -793,6 +823,13 @@ const RequestSchema = {
             defaultValue: {},
             condition: (request)=>{
                 if(request.type == "Booking" && request.level && request.level.name){
+                    if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
+                        let hours = duration.asHours();
+                        request.duration = hours.toString();
+                    } else {
+                        request.duration = ''
+                    }
                     return true;
                 } else {
                     return false;
@@ -920,6 +957,7 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
                 if ( facilities.length <= 1 ) {

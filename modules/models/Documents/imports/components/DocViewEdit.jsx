@@ -21,7 +21,7 @@ const DocViewEdit = React.createClass( {
     getMeteorData() {
         var doc = this.props.item || {};
         if ( doc && doc._id ) {
-            //let facility = doc.facility;
+            let facility = doc.facility;
             doc = Documents.findOne( doc._id );
             if (doc) {
                 doc["facility"] = Session.getSelectedFacility();

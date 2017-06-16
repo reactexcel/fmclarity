@@ -70,7 +70,6 @@ const Facilities = new Model( {
 
 Facilities.collection.allow( {
     update: () => {
-        console.log("update");
         return true;
     }
 } )
@@ -133,9 +132,7 @@ Facilities.actions( {
         authentication:true,
         method: function(selectedFacility, level, area, identifier, booking){
             let facility = Facilities.findOne({'_id':selectedFacility._id})
-            console.log(facility,"facility")
             let areas = facility.areas;
-            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
             if(level && level.data){
                 for(var i in areas){
                     if(areas[i].name == level.name){
@@ -185,7 +182,6 @@ Facilities.actions( {
                     }
                 }
             }
-            console.log(areas,facility._id,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
@@ -281,15 +277,12 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-          // console.log(facility,rules);
             let services = clearComplianceRules( facility );
-            // console.log(services,"after clear compliance");
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
                 let serviceIndex = null;
                 for ( var i in services ) {
-                  // console.log(services[ i ].name ,key,"For loop");
                     if ( services[ i ].name == key ) {
                         service = services[ i ];
                         serviceIndex = i;
@@ -297,7 +290,6 @@ Facilities.actions( {
                     }
                 }
 
-                // console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
