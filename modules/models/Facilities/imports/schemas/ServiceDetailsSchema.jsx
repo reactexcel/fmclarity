@@ -202,7 +202,7 @@ export default ServiceDetailsSchema = {
                                     }} title="Remove tag">&times;</span>
                                 <ContactCard item={sc}/>
                             </div>))}
-                    </div> < /div>
+                    </div> </div>
             )
         },
         options( item ) {
