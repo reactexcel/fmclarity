@@ -12,19 +12,17 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 
+import CreateTeamRequest from './imports/actions/CreateTeamRequest';
+
 const create = new Action( {
     name: 'create team',
     label: "Create team",
     icon: 'fa fa-group',
-    action: ( team, callback ) => {
+    action: (team, showFilter) => {
         team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } onChange={( invitee ) => {
-                    if (callback){
-                        callback( _.pick(invitee, "name", "type", "_id" ) );
-                    }
-                }}/>;
+                <TeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }
@@ -98,130 +96,6 @@ const createFacility = new Action( {
             } )
         }
     }
-} )
-
-// now that we are evaluating people based on their role in the request then we can perhaps actually
-// have this located in request ( ie request.create ) rather than team.createRequest
-const createRequest = new Action( {
-    name: "create team request",
-    type: [ 'team' ],
-    label: "Create new request",
-    verb: "created a work order",
-    icon: 'fa fa-plus',
-    // action should return restult and that gets used in the notification
-    action: ( team, callback, options ) => {
-        let item = { team };
-        if ( options ) {
-            options.team = team;
-            item = options
-        }
-        newItem = Requests.create( item );
-        Modal.show( {
-            content: <AutoForm
-            title = "Please tell us a little bit more about the work that is required."
-            model = { Requests }
-            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
-            item = { newItem }
-            submitText="Save"
-            onSubmit = {
-                ( newRequest ) => {
-                    Modal.replace( {
-                        content: <DropFileContainer model={Requests} request={request}>
-                                <RequestPanel item = { newRequest }/>
-                            </DropFileContainer>
-                    } );
-
-                    let owner = Meteor.user();
-
-                    newRequest.owner = {
-                        _id: owner._id,
-                        name: owner.profile ? owner.profile.name : owner.name
-                    };
-
-                    // this is a big of a mess - for starters it would be better placed in the create method
-                    //  and then perhaps in its own function "canAutoIssue( request )"
-                    let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.create';
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
-                        let team = Teams.findOne( newRequest.team._id ),
-                            role = Meteor.user().getRole( team ),
-                            baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-                        if( !team ) {
-                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
-                            return;
-                        }
-                        else if( baseBuilding ) {
-                            if( role == 'property manager' ) {
-                                method = 'Issues.issue';
-                            }
-                        }
-                        else if( !baseBuilding ) {
-
-                            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.issue';
-                            }
-                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-
-                                method = 'Issues.issue';
-                                let relation = team.getMemberRelation( owner ),
-                                    costString = newRequest.costThreshold,
-                                    costThreshold = null;
-
-                                // strips out commas
-                                //  this is a hack due to an inadequete implementation of number formatting
-                                //  needs a refactor
-                                if( _.isString( costString ) ) {
-                                    costString = costString.replace(',','')
-                                }
-
-                                let cost = parseInt( costString );
-
-                                if( relation.threshold ) {
-                                    costThreshold = parseInt( relation.threshold );
-                                }
-                                else if( team.defaultCostThreshold ) {
-                                    costThreshold = parseInt( team.defaultCostThreshold );
-                                }
-
-                                if( cost > costThreshold ) {
-                                    method = 'Issues.create';
-                                }
-                                /*if( parseInt(relation.threshold) < 1 ) {
-                                    method = 'Issues.create';
-                                }
-                                if( method == 'Issues.issue' ) {
-                                    console.log('new threshold='+newThreshold.toString());
-                                    team.setMemberThreshold( owner, newThreshold.toString() );
-                                }*/
-                            }
-
-                        }
-                    }
-
-                    Meteor.call( method, newRequest );
-                    let request = Requests.findOne( { _id: newRequest._id } );
-                    request.markAsUnread();
-                    //callback( newRequest );
-                }
-            }
-            />
-        } )
-    },
-    // this function is a template for formatting / displaying the notification
-    // it should default to a simple statement of the notification
-    // notification: ( item ) => {}???
-    getResult: ( item ) => {
-            if ( item && item._id ) {
-                let result = Requests.findOne( item._id );
-                if ( result ) {
-                    return {
-                        text: ( result.code ? `#${result.code} - ` : '' ) + result.name,
-                        href: ""
-                    }
-                }
-            }
-        }
-        // this function returns the email template
 } )
 
 const createDocument = new Action( {
@@ -321,7 +195,6 @@ const inviteSupplier = new Action( {
     label: "Invite supplier",
     type: [ 'team' ],
     action: ( supplier ) => {
-        console.log( { supplier } );
         let inviter = Session.getSelectedTeam();
         //Meteor.call("Teams.sendSupplierInvite", supplier, inviter );
         //invite supplier
@@ -355,7 +228,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();
@@ -371,7 +244,7 @@ export {
     destroy,
 
     createFacility,
-    createRequest,
+    CreateTeamRequest,
     createDocument,
 
     createMember,

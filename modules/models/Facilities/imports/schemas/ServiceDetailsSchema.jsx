@@ -100,13 +100,15 @@ export default ServiceDetailsSchema = {
         label: "Default supplier",
         size: 12,
         input: Select,
-        options( item ) {
+        options(item){
             let facility = Session.getSelectedFacility();
             return {
                 items: facility.getSuppliers(),
-                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
-                                        <ContactCard {...props} />
-                                    </div>,
+                view: ( props ) => {
+                    return (<div style={ { cursor: "default", height: "inherit", } }>
+                                            <ContactCard {...props} />
+                                        </div>)
+                },
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -115,15 +117,16 @@ export default ServiceDetailsSchema = {
                         import { TeamStepper } from '/modules/models/Teams';
                         Modal.show( {
                             content: <TeamStepper
-                            facility = { facility }
-                            onChange = {
-                                ( supplier ) => {
-                                    let facility = Session.getSelectedFacility();
-                                    facility.addSupplier( supplier );
-                                    //Meteor.call("Facilities.addSupplier", facility, supplier );
-                                    callback( supplier );
+                                facility = { facility }
+                                showFilter={true}
+                                onChange = {
+                                    ( supplier ) => {
+                                        let facility = Session.getSelectedFacility();
+                                        facility.addSupplier( supplier );
+                                        //Meteor.call("Facilities.addSupplier", facility, supplier );
+                                        callback( supplier );
+                                    }
                                 }
-                            }
                             />
                         } )
                     }

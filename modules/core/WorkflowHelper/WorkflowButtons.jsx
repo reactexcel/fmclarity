@@ -2,11 +2,10 @@ import React from "react";
 import { Actions } from '/modules/core/Actions';
 import WorkflowActions from './WorkflowActions.jsx';
 
-export default function WorkflowButtons( { actions, item, width = "100px" } ) {
-
-    actions = Actions.filter( WorkflowActions, item );
+export default function WorkflowButtons( { actions, item, callback } ) {
+    let width = "100px"
+    actions = Actions.filter( WorkflowActions, item, callback );
     let actionNames = Object.keys( actions );
-
     function runAction( action, item ) {
   		if ( action.shouldConfirm ) {
   			var message = confirm( action.label + " request. Are you sure?" );
@@ -14,7 +13,12 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
   				return;
   			}
   		}
+        //item.callback = callback;
+        item.callback = callback;
   		action.run( item );
+        if(callback){
+            callback(item);
+        }
   	}
 
     if ( actions == null || actionNames.length == 0 ) {
@@ -34,8 +38,6 @@ export default function WorkflowButtons( { actions, item, width = "100px" } ) {
                 if( !permitted ) {
                     classes.push('disabled');
                 }
-
-                //console.log(actions);
 
                 return (
 

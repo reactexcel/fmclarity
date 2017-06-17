@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDom from "react-dom";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import ComplianceList from './ComplianceList.jsx';
+import { Documents } from '/modules/models/Documents';
 import ComplianceActions from '../../actions.jsx';
 
 
@@ -19,9 +21,67 @@ export default ComplianceViewDetail = React.createClass( {
 
     getInitialState(){
       return {
-        coverImageName: ""
+        coverImageName: "",
+        currentDoc:[],
+        docString:''
       }
     },
+
+    componentWillMount(){
+    let docs = Documents.find({}).fetch();
+    let aa = docs.filter((doc) => doc.hasOwnProperty("serviceType") && doc.serviceType.hasOwnProperty("name"));
+
+    let docString = " "
+    aa.map((d)=>{
+      docString = docString + d.type + d.serviceType.name
+      if(d.hasOwnProperty("subServiceType")){
+        if(d.subServiceType.hasOwnProperty("name")){
+          docString = docString + d.subServiceType.name
+        }
+      }
+      if(d.hasOwnProperty("applicablePeriodStartDate")){
+          docString = docString + d.applicablePeriodStartDate
+      }
+    })
+    this.setState({currentDoc : docs , docString})
+
+    let update = setInterval(()=>{
+
+      PubSub.subscribe( 'stop', (msg,data) => {
+        clearInterval(update)
+      } );
+      let contractServerDoc = Documents.find({}).fetch();
+      let aa = contractServerDoc.filter((doc) => doc.hasOwnProperty("serviceType") && doc.serviceType.hasOwnProperty("name"));
+      let updatedString = " "
+      aa.map((d)=>{
+        updatedString = updatedString + d.type + d.serviceType.name
+        if(d.hasOwnProperty("subServiceType")){
+          if(d.subServiceType.hasOwnProperty("name")){
+            updatedString = updatedString + d.subServiceType.name
+          }
+        }
+        if(d.hasOwnProperty("applicablePeriodStartDate")){
+            updatedString = updatedString + d.applicablePeriodStartDate
+        }
+      })
+      if(updatedString != this.state.docString){
+        this.setState({
+          docString : updatedString
+        })
+      }
+      let serverDoc = Documents.find({}).fetch();
+      if(serverDoc.length != this.state.currentDoc.length){
+        this.setState({
+          currentDoc : serverDoc
+        })
+      }
+    },1000)
+  },
+
+    componentWillUnmount(){
+      PubSub.publish('stop', "test");
+    },
+
     deleteRules( serviceName ) {
         var services = this.data.facility.servicesRequired;
         var idx = -1;
@@ -94,8 +154,10 @@ export default ComplianceViewDetail = React.createClass( {
           thumb = "img/services/" + this.state.coverImageName + ".jpg";
         }
         */
+        // console.log(services);
+         services = _.filter(services, service => service != null);
         var results = ComplianceEvaluationService.evaluateServices( services );
-        //console.log(results);
+        // console.log(results);
         return (
             <div className="facility-card" style={{background:"#fff",color:"#333"}}>
 

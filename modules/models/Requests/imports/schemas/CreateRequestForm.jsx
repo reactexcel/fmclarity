@@ -9,6 +9,7 @@ export default CreateRequestForm = [
 	'level',
 	'area',
 	'identifier',
+	'bookingPeriod',
 
 	'name',
 

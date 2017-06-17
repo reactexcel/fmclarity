@@ -91,14 +91,14 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit() {
+	submit( shouldIssue ) {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				this.props.onSubmit( item );
+				this.props.onSubmit( item, shouldIssue );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
@@ -123,11 +123,9 @@ class AutoForm extends React.Component {
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-
 			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
 				placeholder = label,
 				Input = null;
-
 			// Create default value for this field
 			//  I feel like this should be done when initialising the form
 			//  also
@@ -138,6 +136,8 @@ class AutoForm extends React.Component {
 			// Check visibility condition specified in schema
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
+					// remove fields that do not meet condition from being added to collection
+					//delete item[key];
 					return;
 				}
 			}
@@ -145,6 +145,9 @@ class AutoForm extends React.Component {
 			// Unpack options for this field (if the field is a function)
 			if ( _.isFunction( options ) ) {
 				options = options( item );
+			}
+			if ( _.isFunction( description ) ) {
+				description = description( item );
 			}
 
 			// If this field in the schema has it's own subschema then recursively run autoform
@@ -229,8 +232,6 @@ class AutoForm extends React.Component {
 	}
 
 	render() {
-
-		//console.log( 'rendering form' );
 		return (
 			<div className="autoform row">
 
@@ -241,18 +242,38 @@ class AutoForm extends React.Component {
 				{ this.getForm() }
 
 		        { !this.props.hideSubmit ?
+						<div style={ {textAlign:"right", clear:"both"}}>
+							{
+								
+							this.state.submitText && this.state.submitText == "Issue"?
 
-				<div style={ {textAlign:"right", clear:"both"}}>
-					<button
-						type 		= "button"
-						className 	= "btn btn-flat btn-primary"
-						onClick 	= { ( ) => { this.submit() } }
-					>
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
 
-						{this.state.submitText?this.state.submitText:
-						    (this.props.submitText?this.props.submitText:'Submit')}
-					</button>
-				</div>
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit() } }
+							>
+
+								{this.props.submitText?this.props.submitText:'Submit'}
+
+							</button>
+							
+						</div>
+
+
 
 				: this.props.submitFormOnStepperNext ?
 
