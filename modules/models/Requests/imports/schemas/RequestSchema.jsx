@@ -693,20 +693,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -957,16 +957,13 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                let toReturn = false;
                 if ( facilities.length <= 1 ) {
-                    //return false;
-                    toReturn = false
+                    return false;
                 }
-                //return true;
-                toReturn = true
-                return toReturn;
+                return true;
             }
         },
 
