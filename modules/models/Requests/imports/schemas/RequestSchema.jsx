@@ -102,12 +102,11 @@ const RequestSchema = {
                     return {
                         items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-
-                                } };
+                            // prefill value with zero for defect
+                            if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                request.costThreshold= '0';
+                            }
+                        } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
@@ -130,7 +129,7 @@ const RequestSchema = {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
+                                if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                     request.costThreshold= '0';
                                 }
 
@@ -716,23 +715,24 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
+            defaultValue: ( item ) => {
+                // get the default value from the team and return that as default costThreshold
+                let team = Session.getSelectedTeam();
+                if( team && ( team.defaultWorkOrderValue != null ) ) {
+                    return  team.defaultWorkOrderValue;
+                }
+                // if none exists return 0
+                return '0';
+            },
             // input: Currency,
             input: (props)=>{
                 return <Currency {...props}
                     onChange={(value)=>{
-                        props.onChange(value);
-                        let cost_withIn_teamCost = true
-                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
-                        let team = Session.getSelectedTeam();
-                        if(team.defaultCostThreshold){
-                            cost_withIn_teamCost = false;
-                            let actualCost = value ? value : "0";
-                            actualCost = actualCost.replace (",","");
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
                         }
-                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        props.onChange( value );
                     }}
                 />
             },

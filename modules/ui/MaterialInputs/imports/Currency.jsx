@@ -20,14 +20,12 @@ const Currency = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
-		var val = 0;
 		if ( this.props.onChange ) {
-			this.props.onChange( val );
+			this.props.onChange( null );
 		}
 		this.refs.input.value = "";
-		this.props.value = "0";
+		this.props.value = null;
 		this.toggleCurrencyHolder();
-		this.formatNum(this.refs.input);
 	},
 
 	handleSelect( event ) {
@@ -37,9 +35,10 @@ const Currency = React.createClass( {
 	},
 
 	formatNum(obj) {
-		  if (obj) {  // object exist
-		     var val = obj.value;
+		// if object exists
+		if ( obj ) {
 
+		    var val = obj.value;
 		    val = val.replace(/,/g, "")
 		    obj.value = "";
 		    val += '';
@@ -74,31 +73,24 @@ const Currency = React.createClass( {
 		        obj.value = "0.0"+val
 		      }
 		    }*/
-		  }
-		},
+		}
+	},
 
 	handleKeyUp(event){
 		//allow navigation around textbox using arrow keys
-    if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40)
-    {
-        return;
-    }
+    	if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40) {
+        	return;
+    	}
 		this.formatNum(event.target);
 
 	},
+
 	handleOnBlur(event){
 		this.toggleCurrencyHolder();
 		// format number and delimit multiple 0's eg 0000, 0000.0002, 0002 etc
 		var curval = this.refs.input.value.replace(/,/g , "");
 		this.refs.input.value=Number(curval);
-		if(this.refs.input.value == 0){
-			this.refs.input.value = ''
-			if ( this.props.onChange ) {
-				this.props.onChange( null );
-			}
-		}
 		this.formatNum(this.refs.input);
-
 	},
 
 	CheckNumeric(e) {
@@ -121,7 +113,7 @@ const Currency = React.createClass( {
 			$('.currency-holder').show();
 		}
 		if ( this.refs.input.value.length == 0 ) {
-			$('.currency-holder').toggle('display');
+			$('.currency-holder').hide();
 		}
 	},
 
@@ -150,7 +142,7 @@ const Currency = React.createClass( {
 			invalid = false,
 			classes = [ "input" ];
 
-		if ( value != null && value.length != 0 ) {
+		if ( value != null ) {
 			used = true;
 			classes.push( "used" );
 		}
