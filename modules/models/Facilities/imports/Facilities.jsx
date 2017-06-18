@@ -709,8 +709,12 @@ Facilities.actions( {
         method: ( facility, supplier, service ) => {
             let services = facility.servicesRequired,
                 index = null;
-            for (var i = 0; i < services.length; i++) {
-                if ( services[i].name && services[i].name == service.name ) {
+            for ( let i in services ) {
+                if( !services[i] ) {
+                    console.log( `Facility service ${i} is invalid`);
+                    continue;
+                }
+                if ( services[i].name == service.name ) {
                     if (!services[i].data) {
                         services[i].data = [];
                     }
