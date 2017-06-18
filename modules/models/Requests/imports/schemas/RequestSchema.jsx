@@ -102,12 +102,11 @@ const RequestSchema = {
                     return {
                         items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-
-                                } };
+                            // prefill value with zero for defect
+                            if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                request.costThreshold= '0';
+                            }
+                        } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
@@ -130,7 +129,7 @@ const RequestSchema = {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
+                                if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                     request.costThreshold= '0';
                                 }
 
@@ -418,7 +417,7 @@ const RequestSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.costThreshold ? props.item.costThreshold.replace (/,/g, "") : '';
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
@@ -693,20 +692,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -716,29 +715,61 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
-            input: Currency,
+            defaultValue: ( item ) => {
+                // get the default value from the team and return that as default costThreshold
+                let team = Session.getSelectedTeam();
+                if( team && ( team.defaultWorkOrderValue != null ) ) {
+                    return  team.defaultWorkOrderValue;
+                }
+                // if none exists return 0
+                return '0';
+            },
+            // input: Currency,
             input: (props)=>{
                 return <Currency {...props}
                     onChange={(value)=>{
-                        props.onChange(value);
-                        let cost_withIn_teamCost = true
-                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
-                        let team = Session.getSelectedTeam();
-                        if(team.defaultCostThreshold){
-                            cost_withIn_teamCost = false;
-                            let actualCost = value;
-                            actualCost = actualCost.replace (",","");
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
                         }
-                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        props.onChange( value );
                     }}
                 />
             },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect" ], request.type ) ) {
                     return false;
+                }
+                if(request.type == "Booking"){
+                    request.costThreshold = '0';
+                    let selectedAreaDetail = null;
+                    if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
+                        selectedAreaDetail = request.identifier.data.areaDetails
+                    } else if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    } else if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+
+                    if(selectedAreaDetail != null){
+                        let unit = selectedAreaDetail.unit,
+                            cost = parseInt(_.isEmpty(selectedAreaDetail.cost)?0:selectedAreaDetail.cost),
+                            bookingIncreament = 0;
+                        if(unit == 'Hours'){
+                            bookingIncreament = selectedAreaDetail.hour.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Days'){
+                            bookingIncreament = selectedAreaDetail.day.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Months'){
+                            bookingIncreament = selectedAreaDetail.month.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Weeks'){
+                            bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
+                        }
+                        bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
+
+                    }
+                } else {
+                    // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
@@ -792,6 +823,13 @@ const RequestSchema = {
             defaultValue: {},
             condition: (request)=>{
                 if(request.type == "Booking" && request.level && request.level.name){
+                    if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
+                        let hours = duration.asHours();
+                        request.duration = hours.toString();
+                    } else {
+                        request.duration = ''
+                    }
                     return true;
                 } else {
                     return false;
@@ -919,6 +957,7 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
                 if ( facilities.length <= 1 ) {
@@ -963,7 +1002,7 @@ const RequestSchema = {
                         let costAbleToIssue = true;
                         if(team.defaultCostThreshold){
                             costAbleToIssue = false;
-                            let actualCost = props.item.costThreshold.replace (/,/g, "");
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
                                 actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                         }
@@ -1286,9 +1325,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1302,10 +1340,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1354,6 +1392,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

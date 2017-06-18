@@ -178,7 +178,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
             <div style={{minWidth:'800px'}}>
                 <div style = { {padding:"5px 15px 20px 15px"} } >
                     <div className="row">
-                        <div className="col-sm-4">
+                        <div className="col-sm-12">
                             <Select
                                 placeholder="Service"
                                 items={this.state.services}
@@ -192,7 +192,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                 } }
                             />
                         </div>
-                        <div className="col-sm-4">
+                        <div className="col-sm-12">
                             <Select
                                 placeholder="Subservice (optional)"
                                 items={this.state.subservice}
@@ -202,7 +202,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                 } }
                             />
                         </div>
-                        <div className="col-sm-4">
+                        <div className="col-sm-12">
                             <Text
                                 placeholder="Supplier name (optional)"
                                 value={this.state.supplierName}

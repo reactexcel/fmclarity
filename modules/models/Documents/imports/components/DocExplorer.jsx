@@ -33,13 +33,13 @@ export default class DocExplorer extends React.Component {
     componentWillMount(){
       let docs = Documents.find({}).fetch();
       let contractDocs = Documents.find({"type":"Contract"}).fetch();
-      let aa = contractDocs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+      let aa = contractDocs.filter((doc) => doc.serviceType ? doc.serviceType.hasOwnProperty("name"):null);
 
       let docString = " "
       aa.map((d)=>{
         docString = docString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
         if(d.hasOwnProperty("subServiceType")){
-          if(d.subServiceType.hasOwnProperty("name")){
+          if(d.subServiceType && d.serviceType.hasOwnProperty("name")){
             docString = docString + d.subServiceType.name
           }
         }
@@ -56,12 +56,12 @@ export default class DocExplorer extends React.Component {
 
         } );
         let contractServerDoc = Documents.find({"type":"Contract"}).fetch();
-        let aa = contractServerDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+        let aa = contractServerDoc.filter((doc) => doc.serviceType ? doc.serviceType.hasOwnProperty("name"):null);
         let updatedString = " "
         aa.map((d)=>{
           updatedString = updatedString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
           if(d.hasOwnProperty("subServiceType")){
-            if(d.subServiceType.hasOwnProperty("name")){
+            if(d.subServiceType && d.serviceType.hasOwnProperty("name")){
               updatedString = updatedString + d.subServiceType.name
             }
           }
