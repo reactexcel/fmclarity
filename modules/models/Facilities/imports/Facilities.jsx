@@ -582,15 +582,21 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
+                let suppliers = facility.suppliers;
+                if (!suppliers || !_.isArray(suppliers)) {
+                    suppliers = [];
+                }
+                suppliers.push({
+                    _id:supplier._id,
+                    name:supplier.name,
+                    email:supplier.email
+                });
                 Facilities.update( facility._id, {
-                    $push: {
-                        suppliers: {
-                            _id: supplier._id,
-                            name: supplier.name
-                        }
+                    $set: {
+                        suppliers: suppliers
                     }
                 } );
-                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
+                console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },

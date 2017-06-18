@@ -43,6 +43,7 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
             'team.name': 1,
             name: 1,
             members: 1,
+            suppliers: 1,
             operatingTimes: 1,
             'owner._id': 1,
             'owner.name': 1,
