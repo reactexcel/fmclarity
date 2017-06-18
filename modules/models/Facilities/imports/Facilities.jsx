@@ -710,7 +710,7 @@ Facilities.actions( {
             let services = facility.servicesRequired,
                 index = null;
             for (var i = 0; i < services.length; i++) {
-                if ( services[i].name == service.name ) {
+                if ( services[i].name && services[i].name == service.name ) {
                     if (!services[i].data) {
                         services[i].data = [];
                     }
