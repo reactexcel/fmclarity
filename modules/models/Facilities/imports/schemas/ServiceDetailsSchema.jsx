@@ -109,6 +109,7 @@ export default ServiceDetailsSchema = {
                                             <ContactCard {...props} />
                                         </div>)
                 },
+                /*
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -131,6 +132,7 @@ export default ServiceDetailsSchema = {
                         } )
                     }
                 },
+                */
                 afterChange( item ) {
                     item.defaultContact = [];
                 }

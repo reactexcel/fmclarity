@@ -33,7 +33,6 @@ export default class TeamPageSuppliersMobile extends React.Component {
         Modal.show( {
             content: <DropFileContainer model = { Teams }>
                 <TeamStepper item = { null } onChange = { ( supplier ) => {
-                	console.log( supplier );
                 	if( facility ) {
                 		facility.addSupplier( supplier );
                 	}

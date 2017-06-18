@@ -596,7 +596,6 @@ Facilities.actions( {
                         suppliers: suppliers
                     }
                 } );
-                console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },

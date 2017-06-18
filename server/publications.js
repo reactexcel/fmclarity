@@ -112,6 +112,7 @@ Meteor.publish( 'Requests: Complete', function( ) {
         }
     } );
 
+    /*
     requestsCursor.forEach( ( r ) => {
         if( r.status == 'Complete' ) {
             console.log( r.name );
@@ -120,6 +121,7 @@ Meteor.publish( 'Requests: Complete', function( ) {
             console.log( r.status );
         }
     } );
+    */
 
     return requestsCursor;
 } );
