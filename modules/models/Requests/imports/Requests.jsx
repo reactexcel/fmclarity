@@ -98,7 +98,7 @@ Requests.save.before( ( request ) => {
         request.priority = "Booking";
     }
 
-    if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
+    if ( request.costThreshold && ( request.costThreshold.length === 0 || ( _.isString( request.costThreshold ) && !request.costThreshold.trim() ) ) ) {
         request.costThreshold = 0;
     }
 
