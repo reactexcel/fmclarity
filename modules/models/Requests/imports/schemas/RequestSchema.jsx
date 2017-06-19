@@ -769,7 +769,7 @@ const RequestSchema = {
 
                     }
                 } else {
-                    request.costThreshold = '500';
+                    // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {

@@ -83,7 +83,8 @@ class UserPanel extends React.Component {
 			availableServices = contact.getAvailableServices();
 		}
 
-		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
+		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact ),
+		currentUserRelation = this.props.group? this.props.group.getMemberRelation( Meteor.user() ) : Session.getSelectedTeam().getMemberRelation( Meteor.user() );
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
@@ -100,7 +101,7 @@ class UserPanel extends React.Component {
 													<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
 													 : null}*/}
 
-						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue && 
+						{( currentUserRelation && _.contains(['fmc support', 'portfolio manager'], currentUserRelation.role) && relation && relation.issueThresholdValue && 
 							/*temp fix to hide for old non-manager users who have threshold value(that should not be existing) still set on their profile. this should later be removed--*/ 
 							_.contains(['manager', 'caretaker'], relation.role)) ? 
 							<span><b>WO Issue Threshold Value</b> {relation.issueThresholdValue}<br/></span>
