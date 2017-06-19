@@ -183,17 +183,6 @@ const MBMBuildingServiceReport = React.createClass( {
 				expandall: false
 			} );
 		},200);
-
-		setTimeout(function(){
-			Modal.show( {
-					content: <DocViewEdit
-			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}}
-			onChange = { (data) => { console.log("onChangeHandler"); }}
-			model={Facilities}
-			team = {Session.getSelectedTeam()}/>
-			} )
-
-		},1000);
 	},
 
 	getChartConfiguration() {
