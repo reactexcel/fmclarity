@@ -128,14 +128,14 @@ export default function DocIcon( props ) {
 			</span> : null }
             { docAlmostExpires || docExpired  ?
                 item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
-                    <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                    <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                         <a   href={url}
                              className   = "btn btn-flat"
                              title="View Update request"
                              >
                              <span><i className="fa fa-eye" aria-hidden="true"></i></span>
                          </a>
-                    </span>:<span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                    </span>:<span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                                  <button
                                      type        = "button"
                                      className   = "btn btn-flat"
