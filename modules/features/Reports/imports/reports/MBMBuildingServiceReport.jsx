@@ -172,6 +172,8 @@ const MBMBuildingServiceReport = React.createClass( {
 	},
 
 	printChart(){
+		$(".body-background").css({"position":"relative"});
+		$(".page-wrapper-inner").css({"display":"block"});
 		var component = this;
 		component.setState( {
 			expandall: true
@@ -182,6 +184,8 @@ const MBMBuildingServiceReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 		},200);
 	},
 

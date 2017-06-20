@@ -32,6 +32,8 @@ export default MonthlyReport = React.createClass( {
 
 		setTimeout(function(){
 			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+			$(".body-background").css({"position":"relative"});
+			$(".page-wrapper-inner").css({"display":"block"});
 			$("#toggleButton").hide();
 			$("#toggleButton2").hide();
 			$(".contact-card-avatar").hide()
@@ -45,6 +47,8 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 			Modal.show( {
 			content: <DocViewEdit
 			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
@@ -58,10 +62,13 @@ export default MonthlyReport = React.createClass( {
 		},200);
 	},
 	printChart(){
+		var component = this;
+		document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+		$(".body-background").css({"position":"relative"});
+		$(".page-wrapper-inner").css({"display":"block"});
 		$("#toggleButton").hide();
 		$("#toggleButton2").hide();
 		$(".contact-card-avatar").hide()
-		var component = this;
 		component.setState( {
 			expandall: true
 		} );
@@ -74,6 +81,8 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 		},200);
 	},
 
