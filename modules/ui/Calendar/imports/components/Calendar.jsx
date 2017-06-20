@@ -40,6 +40,7 @@ class Calendar extends React.Component {
         events.length = 0;
 
         requests.map( ( request ) => {
+          // console.log(request);
             if ( request.dueDate ) {
                 let title = null;
                 if ( request.type == 'Preventative' ) {
@@ -52,7 +53,6 @@ class Calendar extends React.Component {
                 events.push( {
                     title: title,
                     color: colors[ request.priority ],
-                    start: request.dueDate,
                     start: request.dueDate,
                     allDay: true,
                     request: {
