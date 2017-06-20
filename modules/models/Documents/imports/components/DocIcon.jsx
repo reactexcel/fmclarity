@@ -143,6 +143,7 @@ export default function DocIcon( props ) {
                                      onClick={
                                          ( event ) => {
                                              event.stopPropagation();
+                                             item.dueDate = docAlmostExpires ? item.expiryDate : moment(new Date()).add( { days: 1 } ).toDate();
                                                  runaction( DocActions.createUpdateRequest.bind( item ) );
                                                  props.onChange();
 

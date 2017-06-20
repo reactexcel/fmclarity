@@ -78,7 +78,7 @@ const createUpdateRequest = new Action( {
                     team: team,
                     type: 'Reminder',
                     priority: 'Urgent',
-                    dueDate: moment(doc.expiryDate).subtract( { months: 1 } ).toDate(),
+                    dueDate: doc.dueDate,
                     name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
                     service: doc.serviceType ? doc.serviceType : null,
                     supplier: supplier,
