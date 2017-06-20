@@ -5,6 +5,7 @@ import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
 import { Requests, CreateRequestForm } from '/modules/models/Requests';
+import {Facilities} from '/modules/models/Facilities';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
@@ -49,6 +50,7 @@ const edit = new Action( {
             content:
                 <AutoForm
             title = "Edit Request"
+            edit = {true}
             model = { Requests }
             item = { previousRequest }
             form = { CreateRequestForm }
@@ -131,6 +133,44 @@ const deleteFunction = new Action( {
     shouldConfirm: true,
     verb: 'deleted request',
     action: ( request, callback ) => {
+        if(request.status == "Booking"){
+            let facility = Facilities.findOne({'_id':request.facility._id})
+            let areas = facility.areas;
+            	for(var i in areas){
+                    if(areas[i].totalBooking && areas[i].totalBooking.length>0){
+                        let bookingToRemove = areas[i].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                        if(bookingToRemove>=0){
+                            areas[i].totalBooking.splice( bookingToRemove, 1 );
+                            break;
+                        }
+                    }
+                    if(areas[i].children && areas[i].children.length>0){
+                        for(var j in areas[i].children){
+                            if(areas[i].children[j].totalBooking && areas[i].children[j].totalBooking.length>0){
+                                let bookingToRemove = areas[i].children[j].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                if(bookingToRemove>=0){
+                                    areas[i].children[j].totalBooking.splice( bookingToRemove, 1 );
+                                    break;
+                                }
+                            }
+                            if(areas[i].children[j].children && areas[i].children[j].children.length>0){
+                                for(var k in areas[i].children[j].children){
+                                    if(areas[i].children[j].children[k].totalBooking && areas[i].children[j].children[k].totalBooking.length>0){
+                                        let bookingToRemove = areas[i].children[j].children[k].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                        if(bookingToRemove>=0){
+                                            areas[i].children[j].children[k].totalBooking.splice( bookingToRemove, 1 );
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                Facilities.update( { _id: facility._id }, { $set: { "areas": areas } } );
+        }
         Requests.update( request._id, { $set: { status: 'Deleted' } } );
         Modal.hide();
         request = Requests.collection._transform( request );

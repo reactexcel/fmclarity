@@ -143,7 +143,7 @@ const Currency = React.createClass( {
 
 
 	render() {
-		let { value, errors } = this.props,
+		let { value, errors, readOnly } = this.props,
 			used = false,
 			invalid = false,
 			classes = [ "input" ];
@@ -170,18 +170,25 @@ const Currency = React.createClass( {
       			type 			= "text"
       			defaultValue	= { value }
       			onChange 		= { this.handleChange }
-      			onSelect		= { this.handleSelect }
+      			onSelect		= { ()=>{
+				    readOnly && readOnly == true ? '' : this.handleSelect
+				}}
       			onKeyUp			= { this.handleKeyUp }
       			onKeyDown		= { this.CheckNumeric }
-      			onFocus			= { this.toggleCurrencyHolder }
+      			onFocus			= { ()=>{
+					readOnly && readOnly == true ? '' : this.toggleCurrencyHolder
+				} }
       			onBlur			= { this.handleOnBlur }
+				readOnly		= { readOnly }
       		/>
 
 	        {
         	used?
     		<div
     			className	= "close-button"
-    			onClick		= { this.handleClear }>
+    			onClick		= { () =>{
+				    readOnly && readOnly == true ? '' : this.handleClear
+				}}>
     			&times;
     		</div>
         	:null

@@ -122,7 +122,7 @@ const createRequest = new Action( {
             onSubmit = {
                 ( newRequest ) => {
                     if(newRequest.type == "Booking"){
-                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                        Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
 
                     /*Modal.replace( {

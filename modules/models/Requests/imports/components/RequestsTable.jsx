@@ -109,7 +109,9 @@ export default function RequestsTable( { requests, filter, columns } ) {
         requiredColumns.map(function(col){
             newCols[col] = this.fields[col];
         });
-
+        if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) == "Booking"){
+			newCols = _.omit(newCols,"Due");
+		}
     return (
         <div className = "request-table">
         <DataTable
