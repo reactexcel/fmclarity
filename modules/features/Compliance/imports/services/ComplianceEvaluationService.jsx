@@ -303,11 +303,12 @@ ComplianceEvaluationService = new function() {
             }
             let serviceReq ;
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter( (val) => rule.service.name === val?val.name:null )
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -330,13 +331,11 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r,callback) {
+                    let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                     let team = Session.getSelectedTeam();
                     let newRequest = Requests.create( {
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
+                        facility: preSelectedFacility,
                         team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
@@ -347,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -370,8 +369,9 @@ ComplianceEvaluationService = new function() {
                 serviceReq;
 
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val?val.name:null )
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
             if ( event ) {

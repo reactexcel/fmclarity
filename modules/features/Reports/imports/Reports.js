@@ -44,6 +44,7 @@ Reports.register( {
 	content: RequestActivityChart
 } )
 
+/*
 Reports.register( {
 	id: "mbm-service-image",
 	name: "MBM Service Image",
@@ -61,5 +62,5 @@ Reports.register( {
 	name: "MBM Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
 } )
-
+*/
 export default Reports;
