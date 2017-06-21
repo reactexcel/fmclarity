@@ -80,7 +80,7 @@ class AutoForm extends React.Component {
 					}
 				})
 				if(foundAreas.length == 0){
-					window.alert("Oops, no bookable areas for this facility");
+					window.alert("Oops, no bookable areas available");
 				}
 			}
 		}
