@@ -181,7 +181,7 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
 			$(".body-background").css({"position":"fixed"});
-			$(".page-wrapper-inner").css({"display":"inlineBlock"});
+			$(".page-wrapper-inner").css({"display":"inline-block"});
 		},200);
 	},
 
