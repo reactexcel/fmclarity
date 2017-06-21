@@ -1,6 +1,7 @@
 import React from "react";
 
-import DocIcon from './DocIcon.jsx';
+import DocDirectory from './DocDirectory.jsx';
+import DocViewEdit from './DocViewEdit.jsx';
 import DocIconHeader from './DocIconHeader.jsx';
 import { Text } from '/modules/ui/MaterialInputs'
 import { AutoForm } from '/modules/core/AutoForm';
@@ -9,6 +10,8 @@ import { Select } from '/modules/ui/MaterialInputs';
 import {Teams} from '/modules/models/Teams';
 import { Facilities,FacilityListTile } from '/modules/models/Facilities';
 import DocTypes from '../schemas/DocTypes.jsx';
+import DocumentSchema from '../schemas/DocumentSchema.jsx';
+import moment from 'moment';
 
 export default class DocsSinglePageIndex extends React.Component {
     constructor(props) {
@@ -25,7 +28,7 @@ export default class DocsSinglePageIndex extends React.Component {
             currentPage: 0,
             nextPage: 2,
             previousPage: -1,
-            listSize: "10",
+            listSize: "400",
     	};
         this.query = {
             $and:[]
@@ -33,6 +36,7 @@ export default class DocsSinglePageIndex extends React.Component {
     }
 
     componentDidMount( ){
+        window.addEventListener('scroll', this.handleScroll);
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
@@ -44,10 +48,19 @@ export default class DocsSinglePageIndex extends React.Component {
     }
 
     componentWillMount(){
-        $("body").disableSelection()
     }
     componentWillUnmount(){
-        $("body").enableSelection()
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
+    handleScroll(event) {
+        let scrollTop = event.srcElement.body.scrollTop,
+        itemTranslate = Math.min(0, scrollTop/3 - 60);
+        if(itemTranslate > -20){
+            $('#arrow-icon').hide('slow');
+            $('#filter-box').hide('slow');
+            $('#filter-details').css('display','block')
+        }
     }
 
     // Get the list of document which have to be shown
@@ -103,26 +116,127 @@ export default class DocsSinglePageIndex extends React.Component {
                         })
                     }
                     if(facilityAlreadyExist.length != 0){
-                        let docTypeAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
-                            return obj.name === documents[idx].type
-                        })
-                        let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id)
-                        if(docTypeAlreadyExist.length == 0){
-                            folders[facilityIndex].content.push({
-                                facilityId: documents[idx].facility._id,
-                                name: documents[idx].type,
-                                folderType:'docType',
-                                content: [documents[idx]]
+                        if(documents[idx].serviceType && documents[idx].serviceType.name){
+                            let serviceTypeAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
+                                return obj.name === documents[idx].serviceType.name
                             })
+                            let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id);
+                            if(serviceTypeAlreadyExist.length == 0){
+                                folders[facilityIndex].content.push({
+                                    facilityId: documents[idx].facility._id,
+                                    name: documents[idx].serviceType.name,
+                                    folderType:'service',
+                                    content:[]
+                                })
+                                serviceTypeAlreadyExist.push({
+                                    facilityId: documents[idx].facility._id,
+                                    name: documents[idx].serviceType.name,
+                                    folderType:'service',
+                                    content:[]
+                                })
+                            }
+                            if(serviceTypeAlreadyExist.length != 0){
+                                if(documents[idx].subServiceType && documents[idx].subServiceType.name){
+                                    let subServiceTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
+                                        return obj.name === documents[idx].subServiceType.name
+                                    })
+                                    //let docIndex = folders[facilityIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                    let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
+                                    if(subServiceTypeAlreadyExist.length == 0){
+                                        folders[facilityIndex].content[serviceIndex].content.push({
+                                            facilityyId:documents[idx].facility._id,
+                                            name:documents[idx].subServiceType.name,
+                                            folderType: 'subService',
+                                            content:[]
+                                        })
+                                        subServiceTypeAlreadyExist.push({
+                                            facilityyId:documents[idx].facility._id,
+                                            name:documents[idx].subServiceType.name,
+                                            folderType: 'subService',
+                                            content:[]
+                                        })
+                                    }
+                                    if(subServiceTypeAlreadyExist.length != 0){
+                                        let docTypeAlreadyExist = subServiceTypeAlreadyExist[0].content.filter(function(obj){
+                                            return obj.name === documents[idx].type
+                                        })
+                                        let subServiceIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(subServ => subServ.name === documents[idx].subServiceType.name);
+                                        if(docTypeAlreadyExist.length == 0){
+                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push({
+                                                facilityId: documents[idx].facility._id,
+                                                name: documents[idx].type,
+                                                folderType:'docType',
+                                                content: [documents[idx]],
+                                                folderColor:'#d6e6fa'
+                                            })
+                                        }else{
+                                            let docIndex = folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].facilityId = documents[idx].facility._id;
+                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push(documents[idx]);
+                                        }
+                                    }
+                                }else{
+                                    let docTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
+                                        return (obj.folderType == 'docType' && obj.name == documents[idx].type)
+                                    })
+                                    let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
+                                    if(docTypeAlreadyExist.length == 0){
+                                        folders[facilityIndex].content[serviceIndex].content.push({
+                                            facilityId: documents[idx].facility._id,
+                                            name: documents[idx].type,
+                                            folderType:'docType',
+                                            content: [documents[idx]],
+                                            folderColor:'#d6e6fa'
+                                        })
+                                    }else{
+                                        let docIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(doc => (doc.name == documents[idx].type && doc.folderType == 'docType'))
+                                        folders[facilityIndex].content[serviceIndex].content[docIndex].facilityId = documents[idx].facility._id;
+                                        folders[facilityIndex].content[serviceIndex].content[docIndex].content.push(documents[idx]);
+                                    }
+                                }
+                            }
                         }else{
-                            let docIndex = folders[facilityIndex].content.findIndex(doc => doc.name === documents[idx].type)
-                            folders[facilityIndex].content[docIndex].facilityId = documents[idx].facility._id;
-                            folders[facilityIndex].content[docIndex].content.push(documents[idx]);
+                            let buildingDocAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
+                                return obj.folderType === 'buildingDocs'
+                            })
+                            let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id)
+                            if(buildingDocAlreadyExist.length == 0){
+                                folders[facilityIndex].content.push({
+                                    facilityId: documents[idx].facility._id,
+                                    name:'Building Documents',
+                                    folderType:'buildingDocs',
+                                    content:[]
+                                })
+                                buildingDocAlreadyExist.push({
+                                    facilityId: documents[idx].facility._id,
+                                    name:'Building Documents',
+                                    folderType:'buildingDocs',
+                                    content:[]
+                                })
+                            }
+                            if(buildingDocAlreadyExist.length != 0){
+                                let docTypeAlreadyExist = buildingDocAlreadyExist[0].content.filter(function(obj){
+                                    return obj.name === documents[idx].type
+                                })
+                                let buildingDocIndex = folders[facilityIndex].content.findIndex(fold => fold.folderType === 'buildingDocs')
+                                if(docTypeAlreadyExist.length == 0){
+                                    folders[facilityIndex].content[buildingDocIndex].content.push({
+                                        facilityId: documents[idx].facility._id,
+                                        name: documents[idx].type,
+                                        folderType:'docType',
+                                        content: [documents[idx]],
+                                        folderColor:'#d6e6fa'
+                                    })
+                                }else{
+                                    let docIndex = folders[facilityIndex].content[buildingDocIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                    folders[facilityIndex].content[buildingDocIndex].content[docIndex].facilityId = documents[idx].facility._id;
+                                    folders[facilityIndex].content[buildingDocIndex].content[docIndex].content.push(documents[idx]);
+                                }
+                            }
                         }
                     }
                 }
             }
-
             let currentFolders = folders
             let path = {
                 documents:{
@@ -130,6 +244,9 @@ export default class DocsSinglePageIndex extends React.Component {
                     onClick:()=>{
                         let path = this.state.path;
                         path = _.omit(path,'facility')
+                        path = _.omit(path,'service')
+                        path = _.omit(path,'buildingDocType')
+                        path = _.omit(path,'subService')
                         path = _.omit(path,'docType')
                         this.setState({
                             path:path,
@@ -166,24 +283,24 @@ export default class DocsSinglePageIndex extends React.Component {
 	}
 
     handleChange( index, newValue ) {
-        let docs = this.state.documents;
+        let docs = this.state.currentFolders;
         docs[index] = newValue;
-        if ( newValue ) {
+        if(newValue){
             this.setState({
-                documents: docs
+                currentFolders:docs
             })
+            this.onPageChange()
         }
-        if ( !newValue ) {
-            let newDocs = [];
+        if(!newValue){
+            let newDocs=[];
             docs.map((doc,idx)=>{
-                if(idx != index){
+                if(idx != index && !_.isEmpty(doc)){
                     newDocs.push(doc)
                 }
             })
-            //Update the component when a document get deleted.
-            this.setState( {
-                documents: newDocs
-            } );
+            this.setState({
+                currentFolders:newDocs
+            })
         }
     }
 
@@ -260,7 +377,32 @@ export default class DocsSinglePageIndex extends React.Component {
         }
     }
 
-    onClickFolder( folder ){
+    onClickFolder( folder,currentFolders ){
+        let openingFile = folder.content ? false : true;
+        if(openingFile){
+            let folderIndex = currentFolders.findIndex(fold => fold._id === folder._id);
+            Modal.show( {
+                content: <DocViewEdit
+    				item = { folder }
+    				onChange = { (data) => { this.handleChange( folderIndex, data ) }}
+    				model={Teams}
+    				selectedItem={this.props.selectedItem}
+                    role={Meteor.user()&&Meteor.user().getRole()}
+    				team = {Session.getSelectedTeam()}/>
+            } )
+        }else{
+            this.openFolder( folder,currentFolders )
+        }
+    }
+
+    openFolder( folder,currentFolders ){
+        let newContent = []
+        _.map(folder.content,( cont, i ) => {
+            if(cont != undefined){
+                newContent.push(cont)
+            }
+        })
+        folder.content = newContent
         let stateToSet = {
             currentFolders:folder.content
         }
@@ -271,8 +413,11 @@ export default class DocsSinglePageIndex extends React.Component {
                 onClick:()=>{
                     let path = this.state.path;
                     let newFolder = this.state.currentFolders
+                    path = _.omit(path,'service')
+                    path = _.omit(path,'buildingDocType')
+                    path = _.omit(path,'subService')
                     path = _.omit(path,'docType')
-                    if(this.state.path.docType){
+                    if(this.state.path.facility || this.state.path.service || this.state.path.buildingDocType || this.state.path.subService || this.state.path.docType){
                         newFolder = folder.content;
                     }
                     this.setState({
@@ -281,6 +426,59 @@ export default class DocsSinglePageIndex extends React.Component {
                     })
                 }
             }
+        } else if(folder.folderType == 'service'){
+            stateToSet.path.service = {
+                name: folder.name,
+                onClick:()=>{
+                    let path = this.state.path;
+                    let newFolder = this.state.currentFolders
+                    path = _.omit(path,'buildingDocType')
+                    path = _.omit(path,'subService')
+                    path = _.omit(path,'docType')
+                    if(this.state.path.facility || this.state.path.service || this.state.path.buildingDocType || this.state.path.subService || this.state.path.docType){
+                        newFolder = folder.content;
+                    }
+                    this.setState({
+                        path: path,
+                        currentFolders: newFolder
+                    })
+                }
+            }
+
+        } else if(folder.folderType == 'subService'){
+            stateToSet.path.subService = {
+                name: folder.name,
+                onClick:()=>{
+                    let path = this.state.path;
+                    let newFolder = this.state.currentFolders
+                    path = _.omit(path,'docType')
+                    if(this.state.path.facility || this.state.path.service || this.state.path.buildingDocType || this.state.path.subService || this.state.path.docType){
+                        newFolder = folder.content;
+                    }
+                    this.setState({
+                        path: path,
+                        currentFolders: newFolder
+                    })
+                }
+            }
+
+        } else if(folder.folderType == 'buildingDocs'){
+            stateToSet.path.buildingDocType = {
+                name: folder.name,
+                onClick:()=>{
+                    let path = this.state.path;
+                    let newFolder = this.state.currentFolders
+                    path = _.omit(path,'docType')
+                    if(this.state.path.facility || this.state.path.service || this.state.path.buildingDocType || this.state.path.subService || this.state.path.docType){
+                        newFolder = folder.content;
+                    }
+                    this.setState({
+                        path: path,
+                        currentFolders: newFolder
+                    })
+                }
+            }
+
         } else if(folder.folderType == 'docType'){
             stateToSet.path = this.state.path;
             stateToSet.path.docType = {
@@ -296,21 +494,9 @@ export default class DocsSinglePageIndex extends React.Component {
     let role = Meteor.user()&&Meteor.user().getRole();
     let currentFolders = this.state.currentFolders;
     return (
-			<div className='col-lg-12' style={{paddingTop:'10px'}}>
+			<div className='col-xs-12' style={{paddingTop:'10px'}}>
                 <div className="row">
                     <div className="col-xs-12">
-                        {/*<button onClick={(event)=>{
-                            event.stopPropagation();
-                            if($('#filter-box').css('display') == 'none'){
-                                $('#filter-box').css('display','block')
-                                $('#arrow-icon').css('display','block')
-                                //$('#filter-details').css('display','none')
-                            } else {
-                                $('#filter-box').css('display','none')
-                                $('#arrow-icon').css('display','none')
-                                //$('#filter-details').css('display','block')
-                            }
-                        }} className="button" style={{'cursor':'pointer','borderRadius':'37px','padding':'10px','color':'white','backgroundColor':'#0152b5'}}><i className="fa fa-filter" style={{'marginRight':'5px'}}></i>Filter Documents</button>*/}
                         <button className="btn btn-flat" onClick={(event)=>{
                             event.stopPropagation();
                             if($('#filter-box').css('display') == 'none'){
@@ -326,13 +512,13 @@ export default class DocsSinglePageIndex extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-lg-12" style={{textAlign:'center'}}>
+                    <div className="col-xs-12" style={{textAlign:'center'}}>
                         <div onClick={(event)=>{ event.stopPropagation();}} id="arrow-icon" style={{'display':'none','height':'25px','width':'25px','backgroundColor':'transparent','borderBottom':'15px solid #d6e6fa','borderLeft':'15px solid transparent','borderRight':'15px solid transparent','margin':'0 45px','marginTop':'-10px'}}></div>
                     </div>
                 </div>
                 <div onClick={(event)=>{ event.stopPropagation();}} id="filter-box" style = { {'backgroundColor':'#d6e6fa','position':'absolute','width':'100%','display':'none','zIndex':'1000',padding:'10px',boxShadow:'2px 11px 8px 1px rgba(0, 0, 0, 0.14), 2px 5px 13px 1px rgba(0, 0, 0, 0.2), 4px 5px 16px 0px rgba(0, 0, 0, 0.12)'} } className = "ibox search-box report-details">
                     <div className="row" style={{marginLeft:"0px",minHeight:'210px'}}>
-                        <div className="col-lg-12" style={{float:'right'}}>
+                        <div className="col-xs-12" style={{float:'right'}}>
                             <span style={{float:"right"}}>
                                 <button className="btn btn-flat btn-primary" onClick={() => {
                                         let componet = this;
@@ -344,7 +530,7 @@ export default class DocsSinglePageIndex extends React.Component {
                                             selectedFacilities:[],
                                             docName:'',
                                             docTypes:[],
-                                            listSize: "10",
+                                            listSize: "400",
                                         }, () => componet.onPageChange() );
                                         this.query = {
                                             $and: [],
@@ -355,7 +541,7 @@ export default class DocsSinglePageIndex extends React.Component {
                                 </button>
                             </span>
                         </div>
-                        <div className="col-lg-12" style={{borderBottom:'1px solid #BDBDBD',paddingBottom:'10px'}}>
+                        <div className="col-xs-12" style={{borderBottom:'1px solid #BDBDBD',paddingBottom:'10px'}}>
                             <div className="row">
                                 {_.map(this.state.facilities,( facility, idx ) => {
                                     return <div key={idx} className="col-xs-3" style={idx>3?{marginTop:'8px',paddingRight:'10px'}:{paddingRight:'10px'}}>
@@ -383,9 +569,9 @@ export default class DocsSinglePageIndex extends React.Component {
                                 })}
                             </div>
                         </div>
-                        <div className="col-lg-12" style={{borderBottom:'1px solid #BDBDBD',paddingBottom:'10px'}}>
+                        <div className="col-xs-12" style={{borderBottom:'1px solid #BDBDBD',paddingBottom:'10px'}}>
                             <div className="row">
-                                <div className="col-lg-4" style={{padding:'10px'}}>
+                                <div className="col-xs-4" style={{padding:'10px'}}>
                                     <Text
                                         placeholder="Document Name"
                                         value={this.state.docName}
@@ -405,7 +591,7 @@ export default class DocsSinglePageIndex extends React.Component {
                                         }}
                                     />
                                 </div>
-                                <div className="col-lg-8" style={{paddingLeft:'10px',marginTop:'10px',borderLeft:'1px solid rgb(189, 189, 189)'}}>
+                                <div className="col-xs-8" style={{paddingLeft:'10px',marginTop:'10px',borderLeft:'1px solid rgb(189, 189, 189)'}}>
                                     <div className="row">
                                         <div className="col-xs-12">
                                             <h4 style={{fontSize:'15px',fontWeight:'300'}}>Document Type</h4>
@@ -438,20 +624,20 @@ export default class DocsSinglePageIndex extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-12">
+                        <div className="col-xs-12">
                             <div className="row">
-                                <div className="col-lg-3">
+                                <div className="col-xs-3">
                                     <Select
                                         placeholder={"Select list size"}
                                         value={this.state.listSize}
-                                        items={[ "10", "25", "50", "100" ]}
+                                        items={[ "10", "25", "50", "100", "200", "400" ]}
                                         onChange={ ( listSize ) => {
                                             let componet = this;
-                                            this.setState({ listSize: listSize || "10" },() => componet.onPageChange())
+                                            this.setState({ listSize: listSize || "400" },() => componet.onPageChange())
                                         }}
                                         />
                                 </div>
-                                <div className="col-lg-9">
+                                <div className="col-xs-9">
                                     <span style={{float: "right"}}>
                                         { this.state.previousPage != -1?
                                             <button
@@ -498,48 +684,40 @@ export default class DocsSinglePageIndex extends React.Component {
                     </div>
                 </div>
 				<div className="row" style={{marginLeft:'0px',marginTop:'20px'}}>
-                    {this.state.path?<div className={'col-xs-12'} style={{display:'inline',padding:'10px',backgroundColor:'#d6e6fa'}}>
-                        {this.state.path && this.state.path.documents?<span style={{paddingRight:'10px'}}><a style={{color:'#0152b5',fontSize:'15px'}} onClick={this.state.path.documents.onClick}>{this.state.path.documents.name}</a><i style={{marginLeft:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i></span>:null}
-                        {this.state.path && this.state.path.facility?<span style={{paddingRight:'10px'}}><a style={{color:'#0152b5',fontSize:'15px'}} onClick={this.state.path.facility.onClick}>{this.state.path.facility.name}</a><i style={{marginLeft:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i></span>:null}
-                        {this.state.path && this.state.path.docType?<span style={{paddingRight:'10px'}}><a style={{color:'#0152b5',fontSize:'15px'}} onClick={this.state.path.docType.onClick}>{this.state.path.docType.name}</a><i style={{marginLeft:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i></span>:null}
+                    {this.state.path?<div className={'col-xs-12'} style={{display:'inline',padding:'10px 10px 10px 0px'}}>
+                        {this.state.path && this.state.path.documents?<span><a title="Root directory" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.documents.onClick}>{this.state.path.documents.name}</a></span>:null}
+                        {this.state.path && this.state.path.facility?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Facility" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.facility.onClick}>{this.state.path.facility.name}</a></span>:null}
+                        {this.state.path && this.state.path.service?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Service" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.service.onClick}>{this.state.path.service.name}</a></span>:null}
+                        {this.state.path && this.state.path.buildingDocType?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Building Documents" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.buildingDocType.onClick}>{this.state.path.buildingDocType.name}</a></span>:null}
+                        {this.state.path && this.state.path.subService?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Sub-service" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.subService.onClick}>{this.state.path.subService.name}</a></span>:null}
+                        {this.state.path && this.state.path.docType?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Doc-type" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.docType.onClick}>{this.state.path.docType.name}</a></span>:null}
                     </div>:null}
-                    {currentFolders?_.map(currentFolders, ( folder, idx ) => {
-                        if(folder.content){
-                            let totalDoc = 0;
-                            let content = folder.content;
-                            _.map(content,(cont,i)=>{
-                                if(cont.content){
-                                    totalDoc = totalDoc + cont.content.length
-                                }else{
-                                    totalDoc = totalDoc + 1
-                                }
-                            })
-                            return <div key={idx} className="col-xs-2" style={{marginTop:'20px',textAlign:'center'}}>
-                                <i title = {"Total documents :"+totalDoc} onDoubleClick={()=>{
-                                    $("body").disableSelection()
-                                    //let sel=window.getSelection();
-                                    //if(sel && sel.removeAllRanges)
-                                    //sel.removeAllRanges() ;
-                                    this.onClickFolder(folder)
-                                }} className="fa fa-folder" aria-hidden="true" style={{cursor:'pointer',color:'#fad95f',fontSize:'90px',textShadow:'1px 1px 1px black',marginLeft:'20px'}}></i>
-                                <div className="folder-name" style={{marginLeft:'23px',maxWidth:'50%',minWidth:'150px',display:'inline-block'}}>{folder.name}</div>
+                    {currentFolders && currentFolders.length>0?<div className="col-xs-12" style={{display:'block',paddingLeft:'0px'}}>
+                            {!currentFolders[0].content?<div style={{marginBottom:'10px'}}><DocIconHeader onlyTags={true}/></div>:null}
+                            <div style={{padding:"14px 24px 14px 24px",borderBottom:"1px solid #ddd",backgroundColor:"#eee",fontWeight:"bold"}}>
+                                <span style={{display:"inline-block",minWidth:"18px",paddingRight:"30px"}}>&nbsp;</span>
+                                <span style={{display:"inline-block",width:"20%",minWidth:"20px"}}>Name</span>
+                                <span style={{display:"inline-block",width:"1%",minWidth:"20px",paddingLeft:"10px"}}></span>
                             </div>
-                        }
-                    }):null}
-                    <div className="col-lg-12" style={currentFolders && currentFolders[0] && !currentFolders[0].content?{display:'block',paddingLeft:'0px'}:{display:'none',paddingLeft:'0px'}}>
-                        <DocIconHeader />
-                        <div style={{backgroundColor: "#fff"}}>
-                            {currentFolders?_.map(currentFolders, ( doc, idx ) => {
-                                return <DocIcon
-                                    key = { idx }
-                                    item = { doc }
-                                    role = {role}
-                                    model = {Teams}
-                                    onChange = { (doc) => { this.handleChange( idx, doc ) } }
-                                    />
-                            }):null}
-                        </div>
-                    </div>
+                            <div style={{backgroundColor:"#fff"}}>
+                                {currentFolders?_.map(currentFolders, ( folder, idx ) => {
+                                        return (<div key={idx}>
+                                            <DocDirectory
+                                                idx={idx}
+                                                folder={folder}
+                                                currentFolders={currentFolders}
+                                                role={role}
+                                                onClickFolder={(folder,currentFolders)=>{
+                                                    this.onClickFolder(folder,currentFolders)
+                                                }}
+                                                onChange={()=>{
+                                                    this.handleChange(idx)
+                                                }}
+                                            />
+                                        </div>)
+                                }):null}
+                            </div>
+                        </div>:<div className="col-xs-12" style={{display:'block',marginLeft:'-10px'}}><h4>No documents.</h4></div>}
 				</div>
 			</div>
 		);
