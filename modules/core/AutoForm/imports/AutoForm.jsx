@@ -91,17 +91,14 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit(haveToIssue) {
+	submit( shouldIssue ) {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				if(haveToIssue == true){
-					item.haveToIssue = true
-				}
-				this.props.onSubmit( item );
+				this.props.onSubmit( item, shouldIssue );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
@@ -140,7 +137,7 @@ class AutoForm extends React.Component {
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
 					// remove fields that do not meet condition from being added to collection
-					delete item[key];
+					//delete item[key];
 					return;
 				}
 			}
@@ -246,20 +243,34 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
-							{this.state.submitText && this.state.submitText == "Issue"?<button
+							{
+								
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
 								type 		= "button"
 								className 	= "btn btn-flat btn-primary"
 								onClick 	= { ( ) => { this.submit(true) } }
-								>
+							>
+
 								{this.state.submitText}
-							</button>:null}
+
+							</button>
+
+							:null
+
+							}
+
 							<button
 								type 		= "button"
 								className 	= "btn btn-flat btn-primary"
 								onClick 	= { ( ) => { this.submit() } }
 							>
+
 								{this.props.submitText?this.props.submitText:'Submit'}
+
 							</button>
+							
 						</div>
 
 
