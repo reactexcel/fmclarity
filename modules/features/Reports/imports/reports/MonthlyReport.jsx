@@ -20,7 +20,7 @@ export default MonthlyReport = React.createClass( {
 	getInitialState() {
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = ""
+		let facility = Session.getSelectedFacility()
 		// console.log(facility);
 
 		return ( {
@@ -36,14 +36,14 @@ export default MonthlyReport = React.createClass( {
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
-	},
-	componentDidMount(){
-		$(".fc-left").hide();
-		$(".fc-right").hide();
-		$(".test").css({"marginTop":"160px"});
+		let docString = this.docReactiveUpdate();
+		this.setState({docString})
+		let commentString = this.reportReactiveUpdate();
+		this.setState({commentString})
 	},
 
 	componentWillUnmount(){
+		PubSub.publish('stop', "test");
 		$(".fc-left").show();
 		$(".fc-right").show();
 	},
@@ -54,13 +54,9 @@ export default MonthlyReport = React.createClass( {
 			})
 	},
 
-	componentWillMount(){
-		let docString = this.docReactiveUpdate();
-		this.setState({docString})
-		let commentString = this.reportReactiveUpdate();
-		this.setState({commentString})
-	},
 	componentDidMount(){
+		$(".fc-left").hide();
+		$(".fc-right").hide();
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -79,9 +75,6 @@ export default MonthlyReport = React.createClass( {
 					})
 				}
 			},1000)
-	},
-	componentWillUnmount(){
-		PubSub.publish('stop', "test");
 	},
 	docReactiveUpdate(){
 		let docs = Documents.find({"type":"Contract"}).fetch();
@@ -215,7 +208,9 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	render() {
-		let team = Session.getSelectedTeam(),
+				$(".fc-left").hide();
+		let team = this.state.team,
+				facility = this.state.facility,
         user = Meteor.user(),
         requests = null,
         facilities = null,
@@ -240,9 +235,6 @@ export default MonthlyReport = React.createClass( {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
     }
-
-		let facility = this.state.facility;
-		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
 			<div>
 				<div id="toggleButton">
