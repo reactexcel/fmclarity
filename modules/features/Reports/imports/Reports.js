@@ -45,6 +45,7 @@ Reports.register( {
 	content: RequestActivityChart
 } )
 
+
 Reports.register( {
 	id: "mbm-service-image",
 	name: "MBM Service Image",

@@ -102,12 +102,11 @@ const RequestSchema = {
                     return {
                         items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ],
                         afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-
-                                } };
+                            // prefill value with zero for defect
+                            if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                request.costThreshold= '0';
+                            }
+                        } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
                         let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
@@ -130,7 +129,7 @@ const RequestSchema = {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ],
                                 afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect" ], request.type )) {
+                                if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                     request.costThreshold= '0';
                                 }
 
@@ -414,7 +413,6 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
-                          console.log(props);
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
@@ -694,20 +692,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -717,23 +715,24 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
-            input: Currency,
+            defaultValue: ( item ) => {
+                // get the default value from the team and return that as default costThreshold
+                let team = Session.getSelectedTeam();
+                if( team && ( team.defaultWorkOrderValue != null ) ) {
+                    return  team.defaultWorkOrderValue;
+                }
+                // if none exists return 0
+                return '0';
+            },
+            // input: Currency,
             input: (props)=>{
                 return <Currency {...props}
                     onChange={(value)=>{
-                        props.onChange(value);
-                        let cost_withIn_teamCost = true
-                        let supplierPresent = props.item.supplier == null || _.isEmpty(props.item.supplier) ? false : true
-                        let team = Session.getSelectedTeam();
-                        if(team.defaultCostThreshold){
-                            cost_withIn_teamCost = false;
-                            let actualCost = value;
-                            actualCost = actualCost.replace (",","");
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                            cost_withIn_teamCost = actualCost <= team.defaultCostThreshold ? true : false;
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
                         }
-                        onServiceChange = (cost_withIn_teamCost == true && supplierPresent == true) ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        props.onChange( value );
                     }}
                 />
             },
@@ -770,7 +769,7 @@ const RequestSchema = {
 
                     }
                 } else {
-                    request.costThreshold = '500';
+                    // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
@@ -958,16 +957,13 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                let toReturn = false;
                 if ( facilities.length <= 1 ) {
-                    //return false;
-                    toReturn = false
+                    return false;
                 }
-                //return true;
-                toReturn = true
-                return toReturn;
+                return true;
             }
         },
 
