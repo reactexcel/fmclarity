@@ -2,9 +2,10 @@ import React from "react";
 import ReactDom from "react-dom";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
+import { Reports } from '/modules/models/Reports';
+import { Documents } from '/modules/models/Documents';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 import moment from 'moment';
-import Reports from '../Reports.js';
 import MBMServiceImages from '../reports/MBMServiceImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
@@ -18,10 +19,84 @@ export default MonthlyReport = React.createClass( {
 		let facility = Session.getSelectedFacility();
 
 		return ( {
+			currentDoc:'',
+			docString:'',
+			commentString:'',
 			expandall: false,
 			team,
 			facility
 		} )
+	},
+
+	componentWillMount(){
+		let docString = this.docReactiveUpdate();
+		this.setState({docString})
+		let commentString = this.reportReactiveUpdate();
+		this.setState({commentString})
+	},
+	componentDidMount(){
+		let update = setInterval(()=>{
+
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let updatedString = this.docReactiveUpdate();
+				let updatedComment = this.reportReactiveUpdate();
+				if(updatedString != this.state.docString){
+					this.setState({
+						docString : updatedString
+					})
+				}
+				if(updatedComment != this.state.commentString){
+					this.setState({
+						commentString : updatedComment
+					})
+				}
+			},1000)
+	},
+	componentWillUnmount(){
+		PubSub.publish('stop', "test");
+	},
+	docReactiveUpdate(){
+		let docs = Documents.find({"type":"Contract"}).fetch();
+		// console.log(docs.stringfy());
+		// console.log(docs);
+		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+		let docString = " "
+		aa.map((d)=>{
+			docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+			if(d.hasOwnProperty("subServiceType")){
+				if(d.subServiceType.hasOwnProperty("name")){
+					docString = docString + d.subServiceType.name
+				}
+			}
+			if(d.hasOwnProperty("supplier")){
+				if(d.supplier.hasOwnProperty("name")){
+					docString = docString + d.supplier.name
+				}
+			}
+			if(d.hasOwnProperty("comment")){
+					docString = docString + d.comment
+			}
+		})
+		return docString
+	},
+	reportReactiveUpdate(){
+		let query = {};
+		query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+		query[ "team._id" ] = this.state.team ? this.state.team._id : null;
+		query["createdAt"] = {
+			$gte: moment().subtract(1, "months").startOf("month").toDate(),
+			$lte: moment().subtract(0, "months").endOf("month").toDate( )
+		};
+		let comments = Reports.find(query).fetch();
+
+		comments = comments.filter((c) => c.hasOwnProperty("service"));
+		let commentString = " "
+		comments.map((c)=>{
+			commentString = commentString + c.comment
+		})
+		return commentString
 	},
 
 	archiveChart(){
