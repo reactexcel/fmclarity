@@ -34,18 +34,15 @@ export default MonthlyReport = React.createClass( {
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
+		let docString = this.docReactiveUpdate();
+		this.setState({docString})
+		let commentString = this.reportReactiveUpdate();
+		this.setState({commentString})
 	},
 	componentWillReceiveProps(){
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
-	},
-
-	componentWillMount(){
-		let docString = this.docReactiveUpdate();
-		this.setState({docString})
-		let commentString = this.reportReactiveUpdate();
-		this.setState({commentString})
 	},
 	componentDidMount(){
 		let update = setInterval(()=>{
