@@ -35,13 +35,14 @@ export default MonthlyReport = React.createClass( {
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
-	},
-	componentDidMount(){
-		$(".fc-left").hide();
-		$(".fc-right").hide();
+		let docString = this.docReactiveUpdate();
+		this.setState({docString})
+		let commentString = this.reportReactiveUpdate();
+		this.setState({commentString})
 	},
 
 	componentWillUnmount(){
+		PubSub.publish('stop', "test");
 		$(".fc-left").show();
 		$(".fc-right").show();
 	},
@@ -52,13 +53,9 @@ export default MonthlyReport = React.createClass( {
 			})
 	},
 
-	componentWillMount(){
-		let docString = this.docReactiveUpdate();
-		this.setState({docString})
-		let commentString = this.reportReactiveUpdate();
-		this.setState({commentString})
-	},
 	componentDidMount(){
+		$(".fc-left").hide();
+		$(".fc-right").hide();
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -77,9 +74,6 @@ export default MonthlyReport = React.createClass( {
 					})
 				}
 			},1000)
-	},
-	componentWillUnmount(){
-		PubSub.publish('stop', "test");
 	},
 	docReactiveUpdate(){
 		let docs = Documents.find({"type":"Contract"}).fetch();
@@ -208,7 +202,8 @@ export default MonthlyReport = React.createClass( {
 
 	render() {
 				$(".fc-left").hide();
-		let team = Session.getSelectedTeam(),
+		let team = this.state.team,
+				facility = this.state.facility,
         user = Meteor.user(),
         requests = null,
         facilities = null,
