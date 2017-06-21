@@ -18,7 +18,7 @@ export default MonthlyReport = React.createClass( {
 	getInitialState() {
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = ""
+		let facility = Session.getSelectedFacility()
 		// console.log(facility);
 
 		return ( {
@@ -196,8 +196,6 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	render() {
-		let facility = this.state.facility;
-		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
 			<div>
 				<div id="toggleButton">
