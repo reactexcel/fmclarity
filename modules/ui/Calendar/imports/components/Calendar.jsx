@@ -27,7 +27,6 @@ class Calendar extends React.Component {
         if ( requests == null ) {
             return;
         }
-
         var colors = {
             "Scheduled": "#70aaee",
             "Standard": "#0152b5",
@@ -35,26 +34,25 @@ class Calendar extends React.Component {
             "Critical": "#d0021b",
             "Closed": "#000000",
             "Booking": "#ef6c00",
-            "PMP": "#333333",
+            "PPM": "#333333",
         };
 
         var events = this.events.events;
         events.length = 0;
 
         requests.map( ( request ) => {
-            if ( request.dueDate ) {
+            if(request.type=="Booking" && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
                 let title = null;
-                if ( request.type == 'Preventative' ) {
-                    title = request.name;
-                } else if ( request.code ) {
+                if(request.code){
                     title = `#${request.code} ${request.name}`
                 } else {
                     title = request.name;
                 }
-                let newEvent = {
+                events.push({
                     title: title,
                     color: colors[ request.priority ],
-                    start: request.dueDate,
+                    start: request.bookingPeriod.startTime,
+                    end: request.bookingPeriod.endTime,
                     allDay: false,
                     request: {
                         _id: request._id,
@@ -62,14 +60,37 @@ class Calendar extends React.Component {
                         name: request.name
                     },
                     tooltip:request.priority
-                    //url:i.getUrl()
+                })
+            } else {
+                if ( request.dueDate ) {
+                    let title = null;
+                    if ( request.type == 'Preventative' ) {
+                        title = request.name;
+                    } else if ( request.code ) {
+                        title = `#${request.code} ${request.name}`
+                    } else {
+                        title = request.name;
+                    }
+                    let newEvent = {
+                        title: title,
+                        color: colors[ request.priority ],
+                        start: request.dueDate,
+                        allDay: false,
+                        request: {
+                            _id: request._id,
+                            code: request.code,
+                            name: request.name
+                        },
+                        tooltip:request.priority
+                        //url:i.getUrl()
+                    }
+                    if(request.type == 'Booking' && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        newEvent.start = request.bookingPeriod.startTime
+                        newEvent.end = request.bookingPeriod.endTime
+                        newEvent.allDay = false
+                    }
+                    events.push( newEvent );
                 }
-                if(request.type == 'Booking' && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
-                    newEvent.start = request.bookingPeriod.startTime
-                    newEvent.end = request.bookingPeriod.endTime
-                    newEvent.allDay = false
-                }
-                events.push( newEvent );
             }
         } );
         $( '#calendar' ).fullCalendar( 'removeEventSource', events );
@@ -125,7 +146,7 @@ class Calendar extends React.Component {
                 if(event.length > 0){
                     event.map( ( evt,id ) => {
                         if(view.name == "agendaWeek" && event[id].end == null){
-                            event[id].allDay = true;
+                            event[id].allDay = false;
                         }else{
                             event[id].allDay = false;
                         }
@@ -133,7 +154,19 @@ class Calendar extends React.Component {
                 }
             },
             eventRender: function(event, element) {
-                $('.fc-scroller').css('overflow','scroll');
+                setTimeout(function(){
+                    $('.fc-popover').css('max-height','360px');
+                    $('.fc-popover').css('overflow','auto');
+                    let position = $('.fc-popover').position()
+                    if(position){
+                        if(position.top < 0 ){
+                            $('.fc-popover').css('top','0px');
+                        }
+                        if(position.left > 300 ){
+                            $('.fc-popover').css('left','300px');
+                        }
+                    }
+                }, 10);
             }
         } );
         this._addEvents( this.props );

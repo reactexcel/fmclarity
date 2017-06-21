@@ -20,6 +20,7 @@ const createRule = new Action( {
 
 
 function createNewComplianceRule( newRule ) {
+  // console.log(newRule,"new Rule");
     if( newRule.document ){
         newRule.docType = newRule.document.type;
         newRule.docName = newRule.document.name;
@@ -29,6 +30,7 @@ function createNewComplianceRule( newRule ) {
     var facility = newRule.facility;
     if ( facility ) {
         var services = facility.servicesRequired;
+        services =  _.filter(services, service => service != null);
         //get index of the selected service
         var idx = -1;
         for ( var i in services ) {
@@ -39,6 +41,26 @@ function createNewComplianceRule( newRule ) {
         }
         if ( idx >= 0 ) {
             var service = services[ idx ];
+            // start-- check for sub service -----
+            let isSubService = false;
+            let subservices = [];
+            let subserviceId = -1;
+            if( service.children && service.children.length > 0 ){
+                subservices = service.children;
+            }
+            if( subservices.length > 0 && newRule.subservice && newRule.subservice && newRule.subservice.name ){
+                for ( var k in subservices ) {
+                    if ( subservices[ k ].name == newRule.subservice.name ) {
+                        subserviceId = k;
+                        break;
+                    }
+                }
+                if( subserviceId != -1 ){
+                    isSubService = subservices[subserviceId];
+                }
+            }
+            // end-- check for sub service -----
+
             //console.log( { service, idx } );
             if ( !service.data ) {
                 service.data = {};
@@ -57,7 +79,12 @@ function createNewComplianceRule( newRule ) {
             if ( newRule.service ) {
                 copy.service = _.pick( newRule.service, 'name' );
             }
-            service.data.complianceRules.push( copy );
+
+            if( isSubService == false ){   // existing code of adding in service
+                service.data.complianceRules.push( copy );
+            }else{
+                service.children[subserviceId].data.complianceRules.push( copy )
+            }
             services[ idx ] = service;
         }
         facility.setServicesRequired( services );

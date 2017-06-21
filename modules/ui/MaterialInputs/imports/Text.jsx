@@ -54,7 +54,10 @@ const Text = React.createClass( {
     },
 
     componentWillReceiveProps( newProps ) {
-        // this.refs.input.value = newProps.value;
+        let input = this.refs.input,
+            caret = input.selectionStart;
+        this.refs.input.value = newProps.value;
+        input.setSelectionRange( caret, caret );
     },
 
     render() {
@@ -62,7 +65,6 @@ const Text = React.createClass( {
             used = false,
             invalid = false,
             classes = [ "input" ];
-
         if ( value != null && value.length != 0 ) {
             used = true;
             classes.push( "used" );
