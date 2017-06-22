@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDom from "react-dom";
-import Loader from 'react-loader';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Calendar } from '/modules/ui/Calendar';
@@ -60,6 +59,9 @@ export default MonthlyReport = React.createClass( {
 	componentDidMount(){
 		$(".fc-left").hide();
 		$(".fc-right").hide();
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -240,7 +242,6 @@ export default MonthlyReport = React.createClass( {
     }
 		return (
 			<div>
-				<Loader loaded={this.state.loaded}>
 				<div id="toggleButton">
 					<button className="btn btn-flat"  onClick={this.printChart}>
 						<i className="fa fa-print" aria-hidden="true"></i>
@@ -271,7 +272,6 @@ export default MonthlyReport = React.createClass( {
 				<MBMDefectImages/>
 			</div>
 		</div>
-	</Loader>
 	</div>
 		)
 	}

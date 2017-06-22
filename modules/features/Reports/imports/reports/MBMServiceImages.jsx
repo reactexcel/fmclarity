@@ -18,6 +18,11 @@ const MBMServiceImages = React.createClass( {
   componentWillReceiveProps(){
     this.updateImages();
   },
+  componentDidMount(){
+    setTimeout(function(){
+      $(".loader").hide();
+    },2000)
+  },
     updateImages(){
       var user, team, facility, requests, data = [];
           var user = Meteor.user();

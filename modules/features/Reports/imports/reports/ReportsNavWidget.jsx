@@ -7,17 +7,8 @@ import { Documents } from '/modules/models/Documents';
 import moment from 'moment';
 
 export default ReportsNavWidget = React.createClass( {
-	componentWillMount () {
-		$('document').ready(function(){
-			// console.log('qqqqqqqqqqqqqqqqqqqq');
-			$('.report_loader').click(function(){
-				// console.log('s==========ssssssssssssss');
-			});
-
-		});
-	},
  	abc(id){
-		// console.log('sssssssssssssss');
+		console.log('sssssssssssssss');
 		$(".loader").show();
 		setTimeout(function(){
 			FlowRouter.go("/report/"+id+"/");
@@ -49,7 +40,7 @@ export default ReportsNavWidget = React.createClass( {
 			<div>
 		        {/*<ActionsMenu items={this.getMenu()} icon="eye" />*/}
 		        <div className="ibox-title">
-		        	<h2 onClick={()=>this.abc()}>Available Reports</h2>
+		        	<h2>Available Reports</h2>
 		        </div>
 		        <div className="ibox-content" style={{padding:"0px"}}>
 					<div className="row">
