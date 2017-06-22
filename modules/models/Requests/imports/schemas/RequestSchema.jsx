@@ -906,7 +906,6 @@ const RequestSchema = {
             input: Select,
 
             options: ( request ) => {
-
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
