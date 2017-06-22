@@ -33,7 +33,9 @@ export default MonthlyReport = React.createClass( {
 	},
 	componentWillMount(){
 	 console.log($(".loader"));
-	//  $(".loader").show();
+	 setTimeout(function(){
+		  $(".loader").show();
+	 },200)
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
@@ -47,7 +49,9 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-right").hide();
 		$(".test").css({"marginTop":"160px"});
 		this.setState({ loaded: true });
-		// $(".loader").hide();
+		// setTimeout(function(){
+		// 	$(".loader").hide();
+		// },2000)
 	},
 
 	componentWillUnmount(){

@@ -67,7 +67,10 @@ const RequestsStatusReport = React.createClass( {
 		$("#fab").show();
 		PubSub.publish('stop', "test");
 	},
-	componentWillUpdate(){
+	componentDidMount(){
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 	let update = setInterval(()=>{
 
 			PubSub.subscribe( 'stop', (msg,data) => {

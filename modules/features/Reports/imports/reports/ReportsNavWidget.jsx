@@ -9,19 +9,19 @@ import moment from 'moment';
 export default ReportsNavWidget = React.createClass( {
 	componentWillMount () {
 		$('document').ready(function(){
-			console.log('qqqqqqqqqqqqqqqqqqqq');
+			// console.log('qqqqqqqqqqqqqqqqqqqq');
 			$('.report_loader').click(function(){
-				console.log('s==========ssssssssssssss');
-				alert('ssssssssssss');
-				// $(".loader").show();
+				// console.log('s==========ssssssssssssss');
 			});
 
 		});
 	},
  	abc(id){
-		console.log('sssssssssssssss');
+		// console.log('sssssssssssssss');
 		$(".loader").show();
-		FlowRouter.go("/report/"+id+"/");
+		setTimeout(function(){
+			FlowRouter.go("/report/"+id+"/");
+		},2000)
 	},
 	render() {
 		// <a  style={{color:"#111"}} href={"/report/"+id+"/"}>{report.name}</a>

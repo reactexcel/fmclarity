@@ -129,7 +129,7 @@ const MBMServiceImages = React.createClass( {
                                             if( element ) {
                                                 imgs.push( element);
                                                 imgs.unshift(
-                                                  <div className="col-sm-12" style={{borderTop:"1px solid black"}} key = {idx + 25000}>
+                                                  <div className="col-sm-12" style={{borderTop:"1px solid black"}} key = {idx + 25000 +idz}>
                                                     <h3>
                                                         {d.name}
                                                     </h3>
