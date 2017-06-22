@@ -88,7 +88,8 @@ const MBMBuildingServiceReport = React.createClass( {
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
-
+						console.log(services);
+						services = services.filter((val) => val != null && val.name != "" || null || undefined)
             d = services.map( function( s, idx ){
 							let finalComment
 							let currentMonth = false
@@ -126,52 +127,58 @@ const MBMBuildingServiceReport = React.createClass( {
 	},
 	componentWillMount(){
 		$("#fab").hide();
-		let query = {};
-		query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
-		query[ "team._id" ] = this.state.team ? this.state.team._id : null;
-		query["createdAt"] = {
-			$gte: moment().subtract(1, "months").startOf("month").toDate(),
-			$lte: moment().subtract(0, "months").endOf("month").toDate( )
-		};
-		let comments = Reports.find(query).fetch();
-
-	 	comments = comments.filter((c) => c.hasOwnProperty("service"));
-		let commentString = " "
-		comments.map((c)=>{
-			commentString = commentString + c.comment
-		})
-		this.setState({commentString})
-	},
-
-	componentWillUpdate(){
-	let update = setInterval(()=>{
-
-			PubSub.subscribe( 'stop', (msg,data) => {
-				clearInterval(update)
-			});
+		if(!this.props.MonthlyReport){
 			let query = {};
-			query[ "facility._id" ] = this.state.facility._id;
-			query[ "team._id" ] = this.state.team._id;
+			query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+			query[ "team._id" ] = this.state.team ? this.state.team._id : null;
 			query["createdAt"] = {
 				$gte: moment().subtract(1, "months").startOf("month").toDate(),
 				$lte: moment().subtract(0, "months").endOf("month").toDate( )
 			};
 			let comments = Reports.find(query).fetch();
 
-		 	comments = comments.filter((c) => c.hasOwnProperty("service"));
-			let UpdatedString = " "
+			comments = comments.filter((c) => c.hasOwnProperty("service"));
+			let commentString = " "
 			comments.map((c)=>{
-				UpdatedString = UpdatedString + c.comment
+				commentString = commentString + c.comment
 			})
-			if(UpdatedString != this.state.commentString){
-				this.setState({
-					commentString : UpdatedString
+			this.setState({commentString})
+		}
+	},
+
+	componentDidMount(){
+		if(!this.props.MonthlyReport){
+			let update = setInterval(()=>{
+
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let query = {};
+				query[ "facility._id" ] = this.state.facility._id;
+				query[ "team._id" ] = this.state.team._id;
+				query["createdAt"] = {
+					$gte: moment().subtract(1, "months").startOf("month").toDate(),
+					$lte: moment().subtract(0, "months").endOf("month").toDate( )
+				};
+				let comments = Reports.find(query).fetch();
+
+				comments = comments.filter((c) => c.hasOwnProperty("service"));
+				let UpdatedString = " "
+				comments.map((c)=>{
+					UpdatedString = UpdatedString + c.comment
 				})
-			}
-		},1000)
+				if(UpdatedString != this.state.commentString){
+					this.setState({
+						commentString : UpdatedString
+					})
+				}
+			},1000)
+		}
 	},
 
 	printChart(){
+		$(".body-background").css({"position":"relative"});
+		$(".page-wrapper-inner").css({"display":"block"});
 		var component = this;
 		component.setState( {
 			expandall: true
@@ -182,18 +189,9 @@ const MBMBuildingServiceReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 		},200);
-
-		setTimeout(function(){
-			Modal.show( {
-					content: <DocViewEdit
-			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly Report" + ' ' + '(' + moment().format('MMMM YYYY') + ')'}}
-			onChange = { (data) => { console.log("onChangeHandler"); }}
-			model={Facilities}
-			team = {Session.getSelectedTeam()}/>
-			} )
-
-		},1000);
 	},
 
 	getChartConfiguration() {

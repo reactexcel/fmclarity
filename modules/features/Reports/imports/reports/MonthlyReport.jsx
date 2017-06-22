@@ -5,10 +5,10 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Facilities } from '/modules/models/Facilities';
 import { Calendar } from '/modules/ui/Calendar';
 import { Files } from '/modules/models/Files';
+import { Reports } from '/modules/models/Reports';
 import { Documents } from '/modules/models/Documents';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 import moment from 'moment';
-import Reports from '../Reports.js';
 import MBMServiceImages from '../reports/MBMServiceImages.jsx';
 import MBMDefectImages from '../reports/MBMDefectImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
@@ -21,10 +21,13 @@ export default MonthlyReport = React.createClass( {
 	getInitialState() {
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = ""
+		let facility = Session.getSelectedFacility()
 		// console.log(facility);
 
 		return ( {
+			currentDoc:'',
+			docString:'',
+			commentString:'',
 			expandall: false,
 			team,
 			facility,
@@ -32,29 +35,17 @@ export default MonthlyReport = React.createClass( {
 		} )
 	},
 	componentWillMount(){
-	 console.log($(".loader"));
-	 setTimeout(function(){
-		  $(".loader").show();
-	 },200)
 		this.setState({
 			facility:Session.getSelectedFacility()
 		})
-	},
-	componentWillUpdate(){
-				// $(".loader").show();
-	},
-
-	componentDidMount(){
-		$(".fc-left").hide();
-		$(".fc-right").hide();
-		$(".test").css({"marginTop":"160px"});
-		this.setState({ loaded: true });
-		// setTimeout(function(){
-		// 	$(".loader").hide();
-		// },2000)
+		let docString = this.docReactiveUpdate();
+		this.setState({docString})
+		let commentString = this.reportReactiveUpdate();
+		this.setState({commentString})
 	},
 
 	componentWillUnmount(){
+		PubSub.publish('stop', "test");
 		$(".fc-left").show();
 		$(".fc-right").show();
 	},
@@ -66,6 +57,70 @@ export default MonthlyReport = React.createClass( {
 			})
 	},
 
+	componentDidMount(){
+		$(".fc-left").hide();
+		$(".fc-right").hide();
+		let update = setInterval(()=>{
+
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let updatedString = this.docReactiveUpdate();
+				let updatedComment = this.reportReactiveUpdate();
+				if(updatedString != this.state.docString){
+					this.setState({
+						docString : updatedString
+					})
+				}
+				if(updatedComment != this.state.commentString){
+					this.setState({
+						commentString : updatedComment
+					})
+				}
+			},1000)
+	},
+	docReactiveUpdate(){
+		let docs = Documents.find({"type":"Contract"}).fetch();
+		// console.log(docs.stringfy());
+		// console.log(docs);
+		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+		let docString = " "
+		aa.map((d)=>{
+			docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+			if(d.hasOwnProperty("subServiceType")){
+				if(d.subServiceType.hasOwnProperty("name")){
+					docString = docString + d.subServiceType.name
+				}
+			}
+			if(d.hasOwnProperty("supplier")){
+				if(d.supplier.hasOwnProperty("name")){
+					docString = docString + d.supplier.name
+				}
+			}
+			if(d.hasOwnProperty("comment")){
+					docString = docString + d.comment
+			}
+		})
+		return docString
+	},
+	reportReactiveUpdate(){
+		let query = {};
+		query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+		query[ "team._id" ] = this.state.team ? this.state.team._id : null;
+		query["createdAt"] = {
+			$gte: moment().subtract(1, "months").startOf("month").toDate(),
+			$lte: moment().subtract(0, "months").endOf("month").toDate( )
+		};
+		let comments = Reports.find(query).fetch();
+
+		comments = comments.filter((c) => c.hasOwnProperty("service"));
+		let commentString = " "
+		comments.map((c)=>{
+			commentString = commentString + c.comment
+		})
+		return commentString
+	},
+
 	archiveChart(){
 		var component = this;
 		component.setState( {
@@ -75,6 +130,8 @@ export default MonthlyReport = React.createClass( {
 		setTimeout(function(){
 			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
 			$(".test").removeAttr("style");
+			$(".body-background").css({"position":"relative"});
+			$(".page-wrapper-inner").css({"display":"block"});
 			$("#toggleButton").hide();
 			$("#toggleButton2").hide();
 			$(".contact-card-avatar").hide()
@@ -89,6 +146,8 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 			Modal.show( {
 			content: <DocViewEdit
 			item = {{reportType : "Monthly Report" ,type : "Report" , name : "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss')}}
@@ -104,10 +163,13 @@ export default MonthlyReport = React.createClass( {
 
 	printChart(){
 		$(".test").removeAttr("style");
+		var component = this;
+		document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
+		$(".body-background").css({"position":"relative"});
+		$(".page-wrapper-inner").css({"display":"block"});
 		$("#toggleButton").hide();
 		$("#toggleButton2").hide();
 		$(".contact-card-avatar").hide()
-		var component = this;
 		component.setState( {
 			expandall: true
 		} );
@@ -121,6 +183,8 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inline-block"});
 		},200);
 	},
 
@@ -147,7 +211,9 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	render() {
-		let team = Session.getSelectedTeam(),
+				$(".fc-left").hide();
+		let team = this.state.team,
+				facility = this.state.facility,
         user = Meteor.user(),
         requests = null,
         facilities = null,
@@ -172,9 +238,6 @@ export default MonthlyReport = React.createClass( {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
     }
-
-		let facility = this.state.facility;
-		let imgThumb = facility.thumb.hasOwnProperty("_id") ? facility.thumb._id : null
 		return (
 			<div>
 				<Loader loaded={this.state.loaded}>

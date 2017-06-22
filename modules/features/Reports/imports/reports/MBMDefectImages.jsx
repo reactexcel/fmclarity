@@ -250,7 +250,7 @@ const CommentRequest = React.createClass( {
 	render() {
 		let item = this.state.commentData;
 		return (
-				<div className = "test">
+				<div className = "test" style={{marginTop:"160px"}}>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>

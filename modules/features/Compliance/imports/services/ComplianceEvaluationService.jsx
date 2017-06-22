@@ -303,11 +303,12 @@ ComplianceEvaluationService = new function() {
             }
             let serviceReq ;
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter( (val) => rule.service.name === val?val.name:null )
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -330,13 +331,11 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r,callback) {
+                    let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                     let team = Session.getSelectedTeam();
                     let newRequest = Requests.create( {
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
+                        facility: preSelectedFacility,
                         team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
@@ -347,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -358,10 +357,9 @@ ComplianceEvaluationService = new function() {
                     'facility._id': rule.facility._id,
                     name: rule.event,
                     "service.name": rule.service.name,
-                    status: {$in:["PMP"]}
+                    status: {$in:["PMP","PPM"]}
                 }
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
-                //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
 
@@ -371,8 +369,9 @@ ComplianceEvaluationService = new function() {
                 serviceReq;
 
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val?val.name:null )
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
             if ( event ) {
@@ -381,13 +380,13 @@ ComplianceEvaluationService = new function() {
             }
             if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
+                    type:"Ad-Hoc",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
                 previousRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
+                    type:"Ad-Hoc",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:previousDate
@@ -416,7 +415,7 @@ ComplianceEvaluationService = new function() {
                                                 if (previousRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { previousRequest }/>
+                                                        content: <RequestPanel item = { previousRequest } />
                                                     } );
                                            }}
                                            >
@@ -466,7 +465,7 @@ ComplianceEvaluationService = new function() {
 
             let q = {
                 "facility._id": facility._id,
-                status: "PMP",
+                status: {$in:["PMP","PPM"]},
                 "service.name": rule.service.name,
                 name: rule.event
             };
@@ -510,7 +509,7 @@ ComplianceEvaluationService = new function() {
                 loader: false,
                 resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
+                    console.log('attempting to resolve' );
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
