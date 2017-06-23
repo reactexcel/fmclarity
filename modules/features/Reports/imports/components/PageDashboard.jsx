@@ -29,7 +29,6 @@ function PageDashboard( props ) {
 	Perf.stop();
     Perf.printInclusive();
     */
-	console.log(Meteor.user().getRole(),"User role");
 	return (
 		<div className="dashboard-page animated fadeIn">
 			<FacilityFilter items = { facilities } selectedItem = { facility }/>
