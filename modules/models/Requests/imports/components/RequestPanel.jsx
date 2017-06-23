@@ -62,8 +62,9 @@ export default RequestPanel = React.createClass( {
     },
 
     componentWillMount() {
+        console.log(this.data,"this.data");
         //Perf.start();
-        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+        this.data.nextRequest && this.data.nextRequest.status != 'Close' ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest && this.data.previousRequest.status != 'Close' ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
