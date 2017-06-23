@@ -319,6 +319,11 @@ Requests.methods( {
         method: actionComplete
     },
 
+    invoice: {
+        authentication: true,
+        method: actionInvoice
+    },
+
     getCompleteRequest: {
         authentication: true,
         method: ( team, user ) => {
@@ -696,10 +701,18 @@ function checkIssuePermissions( role, user, request ) {
     if ( request.type != 'Preventative' && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
+            requestIsInvoice = request.invoiceDetails;
             baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
         if( !team ) {
             throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
             return;
+        }
+        else if(requestIsInvoice){
+        let supplier = Teams.findOne( request.supplier._id ),
+            userRole = supplier.getMemberRole( user );
+            if (_.contains( [ 'supplier manager', 'supplier fmc support', 'manager' ], userRole ) ){
+                userCanIssue = true;
+            }
         }
         else if( baseBuilding ) {
             if( role == 'property manager' ) {
@@ -771,45 +784,52 @@ function actionIssue( request ) {
             code = team.getNextWOCode();
         }
     }
-
-    Meteor.call( 'Issues.save', request, {
-        status: "Issued",
-        issuedAt: new Date(),
-        code: code,
-        members: getMembersDefaultValue( request )
-    } );
-
+    if (request.invoiceDetails) {
+        request.invoiceDetails.status = 'Issued';
+        Meteor.call( 'Issues.save', request );
+    }
+    else{
+        Meteor.call( 'Issues.save', request, {
+            status: "Issued",
+            issuedAt: new Date(),
+            code: code,
+            members: getMembersDefaultValue( request )
+        } );
+    }
 
     request = Requests.findOne( request._id );
 
     if ( request ) {
         request.updateSupplierManagers();
         request = Requests.findOne( request._id );
+        var title = request.invoiceDetails ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
             message: {
                 verb: "issued",
-                subject: "Work order #" + request.code + " has been issued",
+                subject: title + " has been issued",
                 body: description
             }
         } );
-
-        var team = request.getTeam();
-        request.distributeMessage( {
-            recipientRoles: [ "supplier manager" ],
-            suppressOriginalPost: true,
-            message: {
-                verb: "issued",
-                subject: "New work request from " + " " + team.getName(),
-                read: false,
-                digest: false,
-                emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
-                    var token = LoginService.generateLoginToken( recipient, expiry );
-                    return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+        if (!request.invoiceDetails) {
+            var team = request.getTeam();
+            request.distributeMessage( {
+                recipientRoles: [ "supplier manager" ],
+                suppressOriginalPost: true,
+                message: {
+                    verb: "issued",
+                    subject: "New work request from " + " " + team.getName(),
+                    read: false,
+                    digest: false,
+                    emailBody: function( recipient ) {
+                        var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
+                        var token = LoginService.generateLoginToken( recipient, expiry );
+                        return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                    }
                 }
-            }
-        } );
+            } );
+        }
+        
 
         return request;
     }
@@ -1004,6 +1024,22 @@ function actionComplete( request ) {
         } );
 
     }
+
+    return request;
+}
+
+function actionInvoice( request ) {
+
+    if ( request.invoiceDetails ) {
+        
+        if ( request.invoiceDetails.invoice ) {
+            request.attachments.push( request.invoiceDetails.invoice );
+        }
+    }
+    request.invoiceDetails.status = 'New';
+    Meteor.call( 'Issues.save', request );
+    request = Requests.findOne( request._id );
+    console.log('updated request',request);
 
     return request;
 }

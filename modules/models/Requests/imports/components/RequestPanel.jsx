@@ -118,11 +118,16 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         nextDateString = null,
         previousDateString = null,
         requestIsBaseBuilding = false,
-        requestIsPurchaseOrder = false;
+        requestIsPurchaseOrder = false,
+        requestIsInvoice = false;
 
     if( request.service && request.service.data ) {
         requestIsBaseBuilding = request.service.data.baseBuilding;
         requestIsPurchaseOrder = request.service.data.purchaseOrder;
+    }
+
+    if (request.invoiceDetails) {
+        requestIsInvoice = true;
     }
 
     if ( request.type == 'Preventative' ) {
@@ -152,6 +157,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         } else {
             title = "New " + title;
         }
+    }
+    if(requestIsInvoice) {
+        title = ` Invoice # ${request.invoiceDetails.invoiceNumber}`;
     }
 
     let url = '/requests/print/' + request._id;
@@ -202,19 +210,36 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <h2>${request.costThreshold}</h2>
                             : null }
 
-                            { request.issuedAt ?
-                            <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
-                            : null }
+                            {requestIsInvoice ?
+                                <div>
+                                <span><b>Invoice Date</b> <span>{formatDate(request.invoiceDetails.invoiceDate)}</span><br/></span>
+                                <span><b>Due Date</b> <span>{formatDate(request.invoiceDetails.dueDate)}</span><br/></span>
+                                
+                                <span
+                                style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
+                                className   = { "label label-"+request.invoiceDetails.status}
+                            >
 
-                            { request.dueDate ?
-                            <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
-                            : null }
+                                {request.invoiceDetails.status}
 
-                            { request.priority ?
-                            <span><b>Priority</b> <span>{request.priority}</span><br/></span>
-                            : null }
+                            </span>
+                                </div>
+                                :
+                                <div>
 
-                            <span
+                                { request.issuedAt ?
+                                <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
+                                : null }
+
+                                { request.dueDate ?
+                                <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                                : null }
+
+                                { request.priority ?
+                                <span><b>Priority</b> <span>{request.priority}</span><br/></span>
+                                : null }
+
+                                <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                                 className   = { "label label-"+request.status}
                             >
@@ -222,6 +247,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 {request.status}
 
                             </span>
+
+                                </div>
+                            }
+
+                            
+
+                            
 
                     </div>
                 </div>
@@ -244,6 +276,27 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             </div>
 
             <table>
+            {requestIsInvoice
+                ?
+                <tbody>
+                    <tr>
+                        <th>Details</th>
+                        <td>{ request.invoiceDetails.details || <i>unnamed</i> }</td>
+                    </tr>
+                    <tr>
+                        <th>Service</th>
+                        <td>{ request.service.name || <i>unnamed</i> }</td>
+                    </tr>
+                    <tr>
+                        <th>GST</th>
+                        <td>{ request.invoiceDetails.gst || <i>unnamed</i> }</td>
+                    </tr>
+                    <tr>
+                        <th>Total</th>
+                        <td>{ request.invoiceDetails.totalPayable || request.costThreshold }</td>
+                    </tr>
+                </tbody>
+                :
                 <tbody>
                 <tr>
                     <th>Summary</th>
@@ -333,6 +386,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         </td>
                     </tr> : null }
                 </tbody>
+            }
+
             </table>
 
             <Tabs tabs={[

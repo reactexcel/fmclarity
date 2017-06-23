@@ -4,6 +4,7 @@
  */
 
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
+import InvoiceDetailsSchema from './InvoiceDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 
@@ -782,6 +783,11 @@ const RequestSchema = {
         closeDetails: {
             type: "object",
             subschema: CloseDetailsSchema
+        },
+
+        invoiceDetails: {
+            type: "object",
+            subschema: InvoiceDetailsSchema
         },
 
         //////////////////////////////////////////////////

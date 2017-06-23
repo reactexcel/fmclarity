@@ -446,7 +446,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'In Progress', 'Issued' ], request.status )
+        return _.contains( [ 'In Progress', 'Issued' ], request.status) && !request.invoiceDetails
     },
     action: [
         'complete request',
@@ -463,6 +463,39 @@ Actions.addAccessRule( {
         //'reverse request',
     ],
     role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'facility manager' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && (request.invoiceDetails && request.invoiceDetails.status=='Issued')
+    },
+    action: [
+        'reissue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !request.invoiceDetails;
+    },
+    action: [
+        'invoice request',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return request.invoiceDetails && request.invoiceDetails.status=='New';
+    },
+    action: [
+        'issue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
     rule: { alert: true }
 } )
 

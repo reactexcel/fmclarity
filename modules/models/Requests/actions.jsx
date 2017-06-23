@@ -192,6 +192,36 @@ const issue = new Action( {
     }
 } )
 
+// issues an invoice
+const issueInvoice = new Action( {
+    name: "issue invoice",
+    type: 'request',
+    verb: "issued an invoice",
+    label: "Issue",
+    action: ( request, callback ) => {
+        // I think this is quite a good model for how these actions should be structured
+        // we might even reach a point where it can be action: 'Issues.issue'?
+        Meteor.call( 'Issues.issue', request );
+        callback( request );
+        request.markAsUnread();
+    }
+} )
+
+// reissues an invoice
+const reissueInvoice = new Action( {
+    name: "reissue invoice",
+    type: 'request',
+    verb: "reissued an invoice",
+    label: "ReIssue",
+    action: ( request, callback ) => {
+        // I think this is quite a good model for how these actions should be structured
+        // we might even reach a point where it can be action: 'Issues.issue'?
+        Meteor.call( 'Issues.issue', request );
+        callback( request );
+        request.markAsUnread();
+    }
+} )
+
 const accept = new Action( {
     name: "accept request",
     type: 'request',
@@ -346,6 +376,49 @@ const complete = new Action( {
     }
 } )
 
+const invoice = new Action( {
+    name: 'invoice request',
+    type: 'request',
+    verb: "invoiced a work order",
+    label: "Invoice",
+    action: ( request ) => {
+        if(request.callback && !_.isEmpty(request.callback)){
+            var callback = request.callback;
+            request = _.omit(request,'callback');
+        }
+        var invoiceNumber = "";
+        request.invoiceDetails = {};
+        request.invoiceDetails.details = request.name ? request.name : "";
+        if ( request.supplier ) {
+            let supplier = Teams.findOne( {
+                _id: request.supplier._id
+            } );
+            invoiceNumber = supplier.getNextInvoiceNumber();
+            request.invoiceDetails.invoiceNumber = invoiceNumber;
+            }
+        Modal.show( {
+            content: <AutoForm
+            title = "Create an Invoice for the completed work order."
+            model = { Requests }
+            item = { request }
+            form = {
+                [ 'invoiceDetails' ]
+            }
+            onSubmit = {
+                ( request ) => {
+                    Modal.hide();
+                    Meteor.call( 'Issues.invoice', request );
+                    if(callback){
+                        callback( request );
+                    }
+                    request.markAsUnread();
+                }
+            }
+            />
+        } )
+    }
+} )
+
 const close = new Action( {
     name: "close request",
     type: 'request',
@@ -472,6 +545,9 @@ export {
     getQuote,
     sendQuote,
     complete,
+    invoice,
+    issueInvoice,
+    reissueInvoice,
     //close,
     reopen,
     //reverse,
