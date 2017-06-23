@@ -1039,7 +1039,6 @@ function actionInvoice( request ) {
     request.invoiceDetails.status = 'New';
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );
-    console.log('updated request',request);
 
     return request;
 }
