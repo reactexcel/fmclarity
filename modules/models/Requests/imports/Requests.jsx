@@ -918,7 +918,7 @@ function actionComplete( request ) {
         }
     }
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
