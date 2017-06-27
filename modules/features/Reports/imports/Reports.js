@@ -1,4 +1,5 @@
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
+import BookingReport from './reports/BookingReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
@@ -17,6 +18,12 @@ const Reports = {
 		return this.dict;
 	}
 }
+
+Reports.register( {
+	id: "booking-status",
+	name: "Booking Report",
+	content: BookingReport
+} )
 
 Reports.register( {
 	id: "requests-status",
