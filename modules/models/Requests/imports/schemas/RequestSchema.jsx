@@ -115,12 +115,12 @@ const RequestSchema = {
                                 } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                 }
@@ -345,13 +345,17 @@ const RequestSchema = {
                     areas = facility ? facility.areas : null
                 }
                 return {
-                    items: areas
+                    items: areas,
+                    readOnly: item.type == 'Key Request',
                 }
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
+                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
+                }
+                if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
+                    val = user.apartment;
                 }
                 return val;
             },
@@ -500,7 +504,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' || request.type =='Incident' ) {
+                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -781,7 +785,7 @@ const RequestSchema = {
             type: "number",
             size: 6,
             defaultValue: ( item ) => {
-                if(item.type == "Incident"){
+                if(item.type && _.contains(['Key Request','Incident'],item.type)){
                     return '0';
                 }
                 // get the default value from the team and return that as default costThreshold
