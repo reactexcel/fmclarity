@@ -42,7 +42,7 @@ export default MonthlyReport = React.createClass( {
 				if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
 					return (
 						<div  key={_id}>
-							<div style= {{fontSize:"30px",fontWeight:"500",textAlign:"center",marginTop:"3%"}}>Monthly Report ({moment().format('MMMM YYYY')}) For {facility.name}</div>
+							<div style= {{fontSize:"30px",fontWeight:"500",textAlign:"center",marginTop:"3%"}}>Monthly Report for {facility.name} for {moment().format('MMMM YYYY')} </div>
 							<div style={{margin:"26% 0 4% 0",fontSize:"25px",fontWeight:"500",textAlign:"center",color:"darkgrey"}}>{address.streetNumber +" " + address.streetName +" " + address.streetType +"," + address.city +" " + address.state +" " + address.postcode}</div>
 							<div style={{margin:"0 0 50% 17%"}}><img src={url} style={{ height:"30%", width:"80%" }} /></div>
 						</div>
