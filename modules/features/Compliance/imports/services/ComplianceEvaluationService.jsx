@@ -476,27 +476,21 @@ ComplianceEvaluationService = new function() {
             let passed = false;
             let summary = "failed"
             if(request && previousDate && nextDate){
-                let nextRequest = request.findCloneAt( nextDate );
-                let previousRequest = request.findCloneAt( previousDate );
-                if((nextRequest && nextRequest.status == "Issued") || (previousRequest && previousRequest.status == "Issued")){
-                    let dueDateTimeStamp = nextDate.getTime()
-                    let currentTimeStamp = new Date().getTime()
-                    if(dueDateTimeStamp>currentTimeStamp){
-                        message = {
-                            summary: summary,
-                            //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                            detail: 'PPM work order not yet completed. Click here to view '+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+'PPM work order'
-                        }
-                    }else{
-                        message = {
-                            summary: summary,
-                            detail: 'Last Overdue '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next Due '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                        }
-                    }
-                }else{
+                let dueDateTimeStamp = nextDate.getTime()
+                let currentTimeStamp = new Date().getTime()
+                if(dueDateTimeStamp>currentTimeStamp){
+                    summary = "passed"
+                    passed = true
                     message = {
                         summary: summary,
-                        detail: "No PPM work order exists. Click here to issue/create the "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM work order."
+                        detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                    }
+                }else{
+                    passed = false
+                    summary = "failed"
+                    message = {
+                        summary: summary,
+                        detail: 'Last Overdue '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next Due '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
                     }
                 }
             }else if(!request){
