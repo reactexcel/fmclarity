@@ -45,6 +45,7 @@ export default MonthlyReport = React.createClass( {
 		PubSub.publish('stop', "test");
 		$(".fc-left").show();
 		$(".fc-right").show();
+		$(".facility-list-tile").show()
 	},
 
 	componentWillReceiveProps(){
@@ -52,10 +53,10 @@ export default MonthlyReport = React.createClass( {
 				facility:Session.getSelectedFacility()
 			})
 	},
-
 	componentDidMount(){
 		$(".fc-left").hide();
 		$(".fc-right").hide();
+		$(".facility-list-tile").hide()
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -228,6 +229,7 @@ export default MonthlyReport = React.createClass( {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
     }
+		
 		return (
 			<div>
 				<div id="toggleButton">
