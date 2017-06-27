@@ -1249,7 +1249,7 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    if ( request.supplier && request.supplier._id ) {
+                    /*if ( request.supplier && request.supplier._id ) {
                         let team = Session.getSelectedTeam();
                         if( team._id == request.supplier._id ) {
                             let userRole = Meteor.user().getRole();
@@ -1257,6 +1257,18 @@ const RequestSchema = {
                                 return true;
                             }
                         }
+                    }
+                    return false;*/
+                    let role = Meteor.user().getRole();
+                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
+                        return false;
+                    }
+                    let team = Session.getSelectedTeam();
+                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+                        return true;
+                    }
+                    if(_.contains( [ "portfolio manager", 'manager'], role )){
+                        return true;
                     }
                     return false;
                 },
