@@ -303,11 +303,12 @@ ComplianceEvaluationService = new function() {
             }
             let serviceReq ;
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -330,13 +331,11 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r,callback) {
+                    let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                     let team = Session.getSelectedTeam();
                     let newRequest = Requests.create( {
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
+                        facility: preSelectedFacility,
                         team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
@@ -347,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -370,8 +369,9 @@ ComplianceEvaluationService = new function() {
                 serviceReq;
 
             if(facility && facility.hasOwnProperty("servicesRequired")){
-              if(facility.servicesRequired.length > 0){
-                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
             if ( event ) {
@@ -972,14 +972,17 @@ ComplianceEvaluationService = new function() {
         var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
         if ( service.children ) {
-            var numSubservices = 0;
-            var totalPassed = 0;
-            var totalFailed = 0;
-            var subservice = _.map(service.children, ( subservice, idx) => {
-                var subResult = evaluateService( subservice, facility );
-                numSubservices += subResult.numRules;
-                totalPassed += subResult.numPassed;
-                totalFailed += subResult.numFailed;
+            let numSubservices = 0,
+                totalPassed = 0,
+                totalFailed = 0;
+
+            let subservice = _.map(service.children, ( subservice, idx) => {
+                let subResult = evaluateService( subservice, facility );
+                if( subResult ) {
+                    numSubservices += subResult.numRules;
+                    totalPassed += subResult.numPassed;
+                    totalFailed += subResult.numFailed;
+                }
                 return subResult;
             });
             numRules = service.data.complianceRules.length + numSubservices;

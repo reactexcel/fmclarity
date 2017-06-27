@@ -1,2483 +1,1778 @@
 export default DefaultComplianceRule = {
-    "Fire Protection": [ {
-        /*"service": {
-            name: "Fire Protection"
+    "Building Maintenance Unit": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "docType": "Contract",
+            "docName": "Building Maintenance Unit contract"
         },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "FPS Service Report"
-    }, {
-        "service": {
-            name: "Fire Protection"
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "event": "Building Maintenance Unit PPM"
         },
-        "type": "Document is current",
-        docType: "Contract",
-        "docName": "Fire Doors Contract"
-    }, {
-        "service": {
-            name: "Fire Protection"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "docType": "Registration",
+            "docName": "BMU registration renewal"
         },
-        "type": "Document is current",
-        docType: "Service Report",
-        "docName": "Fire Doors Service reports"
-    }, {
-        "service": {
-            name: "Fire Protection"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "docType": "Assessment",
+            "docName": "BMU risk assessment"
         },
-        "type": "Document is current",
-        "docName": "Defects rectified from fire door"
-    }, {
-        "service": {
-            name: "Fire Protection"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "event": "Building Maintenance Unit Major maintenance",
+            "frequency": {
+                "number": 10,
+                "unit": "years",
+                "repeats": 6
+            }
         },
-        "type": "PPM exists",
-        "event": "Fire Doors"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM exists"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM exists",
-        "event": "Sprinklers serviced"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "5",
-            "unit": "years"
-        },
-        "event": "Sprinklers serviced"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "1",
-            "unit": "years"
-        },
-        "event": "Pumpset annual test"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "1",
-            "unit": "years"
-        },
-        "event": "Hydrants serviced"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "1",
-            "unit": "months"
-        },
-        "event": "Hydrant valves tested"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "2",
-            "unit": "years"
-        },
-        "event": "Water storage tanks checked"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM event completed",
-        "frequency": {
-            "repeats": "6",
-            "number": "1",
-            "unit": "years"
-        },
-        "event": "Fire detection and alarm systems tested"
-    }, {*/
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Fire Protection contract is current"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "PPM exists",
-        "event": "Fire Protection PPM exists for monthly maintenance"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Fire Protection service reports exist"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Sprinklers"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Building Maintenance Unit"
+            },
+            "docType": "Registration",
+            "docName": "Building Maintenance Unit registration"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Cleaning": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cleaning"
+            },
+            "subService": {
+                "name": "Waste Removal"
+            },
+            "docType": "Contract",
+            "docName": "Cleaning contract"
         },
-        "subservice": {
-            name: "Sprinklers"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cleaning"
+            },
+            "docType": "Contract",
+            "docName": "Cleaning contract"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cleaning"
+            },
+            "docType": "Registration",
+            "docSubType": "Testing & Tagging certificate",
+            "docName": "Cleaning Test and Tag certificates"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Cooling Tower Systems & Water Treatment": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Risk Management Plan"
+            },
+            "docType": "Management Plan",
+            "docName": "Risk Management Plan (RMP)"
         },
-        "subservice": {
-            name: "Sprinklers"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Risk Management Plan"
+            },
+            "docType": "Assessment",
+            "docName": "RMP Review"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Risk Management Plan"
+            },
+            "docType": "Confirmation",
+            "docName": "RMP review compliance report"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Risk Management Plan"
+            },
+            "docType": "Audit",
+            "docName": "RMP Audit"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Water Testing"
+            },
+            "docType": "Contract",
+            "docName": "Cooling Tower Systems & Water Treatment contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Water Testing"
+            },
+            "event": "Cooling Tower Systems & Water Treatment Water Testing PPM schedule"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Water Treatment"
+            },
+            "docType": "Contract",
+            "docName": "Cooling Tower Systems & Water Treatment contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "subService": {
+                "name": "Water Treatment"
+            },
+            "event": "Cooling Tower Systems & Water Treatment Water Treatment PPM schedule"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Cooling Tower Systems & Water Treatment"
+            },
+            "docType": "Registration",
+            "docName": "Cooling tower registration"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Electrical Services": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Lighting - Emergency & Exit"
+            },
+            "docType": "Contract",
+            "docName": "Electrical Services contract"
         },
-        "subservice": {
-            name: "Sprinklers"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Lighting - Emergency & Exit"
+            },
+            "event": "Electrical Services Lighting - Emergency & Exit 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers 10 yearly  maintenance",
-        frequency: {
-            "number": "10",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Generator"
+            },
+            "docType": "Contract",
+            "docName": "Electrical Services contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Generator"
+            },
+            "event": "Electrical Services Generator PPM schedule"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Generator"
+            },
+            "event": "Generator Load Test",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Lightning Protection"
+            },
+            "event": "Electrical Services Lightning Protection Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Residual Current Devices"
+            },
+            "event": "Electrical Services Residual Current Devices Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Switchboard"
+            },
+            "event": "Electrical Services Switchboard Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Testing & Tagging"
+            },
+            "event": "Testing & Tagging",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Thermographic Scanning"
+            },
+            "event": "Electrical Services Thermographic Scanning Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "subService": {
+                "name": "Uninterruptible Power Supply"
+            },
+            "event": "UPS maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "docType": "Contract",
+            "docName": "Electrical Services contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "event": "Electrical Services  PPM schedule"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Electrical Services"
+            },
+            "docType": "SWMS",
+            "docName": "Risk assessment"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Emergency  Management": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Contract",
+            "docName": "Emergency  Management contract"
         },
-        "subservice": {
-            name: "Sprinklers"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Procedure",
+            "docName": "Emergency Response Procedures"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers 25 yearly  maintenance",
-        frequency: {
-            "number": "25",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Plan",
+            "docName": "Images of evacuation diagrams installed"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "event": "Annual emergency evacuation training exercise",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Log",
+            "docSubType": "Warden training",
+            "docName": "Warden training log"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Log",
+            "docSubType": "Chief Warden training",
+            "docName": "Chief warden training log"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Emergency  Management"
+            },
+            "docType": "Register",
+            "docName": "Emergency Planning Committee (EPC) meeting"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Essential Safety Measures": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "subService": {
+                "name": "Egress"
+            },
+            "docType": "Contract",
+            "docName": "Essential Safety Measures contract"
         },
-        "subservice": {
-            name: "Sprinklers"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "docType": "Contract",
+            "docName": "Essential Safety Measures contract"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Sprinklers 30 yearly  maintenance",
-        frequency: {
-            "number": "30",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "event": "Essential Safety Measures  PPM schedule"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "event": "Essential Safety Measures  Annual review and audit",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "docType": "Report",
+            "docName": "Annual essential safety measures report (AESMR)*"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Essential Safety Measures"
+            },
+            "docType": "Certificate",
+            "docName": "Maintenance determination/occupancy permit"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Fire Protection": [
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Emergency Planning"
+            },
+            "event": "Fire Protection Emergency Planning 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
         },
-        "subservice": {
-            name: "Pumpsets"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Emergency Planning"
+            },
+            "event": "Fire Protection Emergency Planning Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Pumpsets 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Extinguishers"
+            },
+            "event": "Fire Protection Extinguishers 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Extinguishers"
+            },
+            "event": "Fire Protection Extinguishers Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Extinguishers"
+            },
+            "event": "Fire Protection Extinguishers 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Dampers"
+            },
+            "event": "Fire Protection Dampers Quarterly maintenance**",
+            "frequency": {
+                "number": 3,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Dampers"
+            },
+            "event": "Fire Protection Dampers 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Dampers"
+            },
+            "event": "Fire Protection Dampers Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Dampers"
+            },
+            "event": "Fire Protection Dampers 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Blankets"
+            },
+            "event": "Fire Protection Blankets 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Detection & Alarm Systems"
+            },
+            "event": "Fire Protection Detection & Alarm Systems 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Detection & Alarm Systems"
+            },
+            "event": "Fire Protection Detection & Alarm Systems Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Detection & Alarm Systems"
+            },
+            "event": "Fire Protection Detection & Alarm Systems 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Fire Doors"
+            },
+            "event": "Fire Protection Fire Doors 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Fire Doors"
+            },
+            "docType": "Contract",
+            "docName": "Fire Protection contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Fire Doors"
+            },
+            "event": "Fire Protection Fire Doors PPM schedule"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Fire Hose Reels"
+            },
+            "event": "Fire Protection Fire Hose Reels 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Hydrant Valves"
+            },
+            "event": "Fire Protection Hydrant Valves 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Hydrant Valves"
+            },
+            "event": "Fire Protection Hydrant Valves Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Hydrants"
+            },
+            "event": "Fire Protection Hydrants Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Hydrants"
+            },
+            "event": "Fire Protection Hydrants 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Lay Flat Hose"
+            },
+            "event": "Fire Protection Lay Flat Hose Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Passive Fire & Smoke Systems"
+            },
+            "event": "Fire Protection Passive Fire & Smoke Systems Quarterly maintenance**",
+            "frequency": {
+                "number": 3,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Passive Fire & Smoke Systems"
+            },
+            "event": "Fire Protection Passive Fire & Smoke Systems 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Passive Fire & Smoke Systems"
+            },
+            "event": "Fire Protection Passive Fire & Smoke Systems Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Pumpsets"
+            },
+            "event": "Fire Protection Pumpsets 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Pumpsets"
+            },
+            "event": "Fire Protection Pumpsets Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Pumpsets"
+            },
+            "event": "Fire Protection Pumpsets 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Pumpsets"
+            },
+            "event": "Fire Protection Pumpsets 10 yearly  maintenance",
+            "frequency": {
+                "number": 10,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Special Hazard Systems"
+            },
+            "event": "Fire Protection Special Hazard Systems 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Special Hazard Systems"
+            },
+            "event": "Fire Protection Special Hazard Systems Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Special Hazard Systems"
+            },
+            "event": "Fire Protection Special Hazard Systems 10 yearly  maintenance",
+            "frequency": {
+                "number": 10,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers 5 yearly  maintenance",
+            "frequency": {
+                "number": 5,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers 10 yearly  maintenance",
+            "frequency": {
+                "number": 10,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers 25 yearly  maintenance"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Sprinklers"
+            },
+            "event": "Fire Protection Sprinklers 30 yearly  maintenance"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Water Storage Tanks"
+            },
+            "event": "Fire Protection Water Storage Tanks 6-monthly maintenance",
+            "frequency": {
+                "number": 6,
+                "unit": "months",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Water Storage Tanks"
+            },
+            "event": "Fire Protection Water Storage Tanks Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "subService": {
+                "name": "Water Storage Tanks"
+            },
+            "event": "Fire Protection Water Storage Tanks 10 yearly  maintenance",
+            "frequency": {
+                "number": 10,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "docType": "Contract",
+            "docName": "Fire Protection contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Fire Protection"
+            },
+            "event": "Fire Protection  PPM monthly schedule"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "High Access": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "High Access"
+            },
+            "subService": {
+                "name": "Anchor points"
+            },
+            "docType": "Contract",
+            "docName": "High Access contract"
         },
-        "subservice": {
-            name: "Pumpsets"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "High Access"
+            },
+            "subService": {
+                "name": "Façade"
+            },
+            "docType": "Audit",
+            "docName": "Façade audit/inspection"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Pumpsets Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "High Access"
+            },
+            "subService": {
+                "name": "Height Safety"
+            },
+            "docType": "Report",
+            "docName": "Height safety assessment"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "High Access"
+            },
+            "subService": {
+                "name": "Height Safety"
+            },
+            "docType": "Confirmation",
+            "docName": "Height safety recommendations completed"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Heating, Ventilation & Air Conditioning": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "subService": {
+                "name": "Chillers"
+            },
+            "docType": "Registration",
+            "docName": "Plant registraton renewal (Chiller)"
         },
-        "subservice": {
-            name: "Pumpsets"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "subService": {
+                "name": "Kitchen Exhausts"
+            },
+            "event": "Heating, Ventilation & Air Conditioning Kitchen Exhausts Annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Pumpsets 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "subService": {
+                "name": "Pressure Vessels"
+            },
+            "docType": "Registration",
+            "docName": "Plant registraton renewal (Pressure vessels)"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "docType": "Contract",
+            "docName": "Heating, Ventilation & Air Conditioning contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "event": "Heating, Ventilation & Air Conditioning  PPM schedule"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "docType": "SWMS",
+            "docName": "Risk assessment"
+        },
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Heating, Ventilation & Air Conditioning"
+            },
+            "event": "Heating, Ventilation & Air Conditioning Full function fire test",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Lifts & Escalators": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Lifts & Escalators"
+            },
+            "docType": "Contract",
+            "docName": "Lifts & Escalators contract"
         },
-        "subservice": {
-            name: "Pumpsets"
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Lifts & Escalators"
+            },
+            "event": "Lifts & Escalators  PPM schedule"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Pumpsets 10 yearly  maintenance",
-        frequency: {
-            "number": "10",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Lifts & Escalators"
+            },
+            "event": "Annual Lift/escalator audit",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Lifts & Escalators"
+            },
+            "docType": "Audit",
+            "docName": "Lift/escalator audit"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Lifts & Escalators"
+            },
+            "docType": "Registration",
+            "docName": "Lift registration"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Plumbing": [
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Plumbing"
+            },
+            "subService": {
+                "name": "Backflow Prevention Valves"
+            },
+            "event": "Backflow prevention valve annual maintenance",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
         },
-        "subservice": {
-            name: "Hydrants"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Plumbing"
+            },
+            "subService": {
+                "name": "Potable Water Tank"
+            },
+            "event": "Potable water tank annual clean",
+            "frequency": {
+                "number": 1,
+                "unit": "years",
+                "repeats": 6
+            }
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Hydrants Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "PPM event completed",
+            "service": {
+                "name": "Plumbing"
+            },
+            "subService": {
+                "name": "Thermostatic Mixer Valves"
+            },
+            "event": "Thermostatic mixer valves annual test"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Plumbing"
+            },
+            "docType": "Contract",
+            "docName": "Plumbing contract"
+        },
+        {
+            "type": "PPM exists",
+            "service": {
+                "name": "Plumbing"
+            },
+            "event": "Plumbing  PPM schedule"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Security": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Security"
+            },
+            "docType": "Contract",
+            "docName": "Security contract"
         },
-        "subservice": {
-            name: "Hydrants"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Hydrants 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Security"
+            },
+            "docType": "Register",
+            "docSubType": "Incident register",
+            "docName": "Incident register"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Underground Petroleum Storage Systems": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "subService": {
+                "name": "Groundwater Monitoring"
+            },
+            "docType": "Report",
+            "docSubType": "Validation Report",
+            "docName": "Groundwater monitoring validation report"
         },
-        "subservice": {
-            name: "Hydrant valves"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "subService": {
+                "name": "Leak Detection"
+            },
+            "docType": "Report",
+            "docSubType": "Validation Report",
+            "docName": "Leak detection system report"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Hydrant valves 6 monthly  maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "subService": {
+                "name": "Leak Detection"
+            },
+            "docType": "Log",
+            "docName": "Leak detection log data"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "docType": "Contract",
+            "docName": "Underground Petroleum Storage Systems contract"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "docType": "Management Plan",
+            "docName": "Environmental management plan"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Underground Petroleum Storage Systems"
+            },
+            "docType": "Report",
+            "docSubType": "Validation Report",
+            "docName": "Decommissioning/validation test reports"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Hydrant valves"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Hydrant valves Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
+    ],
+    "Utilities": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Utilities"
+            },
+            "subService": {
+                "name": "Energy Management"
+            },
+            "docType": "Certificate",
+            "docName": "Building Energy Efficiency Certificate"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
+    ],
+    "Workplace Health & Safety": [
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Asbestos & Hazardous Materials"
+            },
+            "docType": "Audit",
+            "docName": "Asbestos/Haz mat register audit"
         },
-        "subservice": {
-            name: "Water storage tanks"
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Asbestos & Hazardous Materials"
+            },
+            "docType": "Register",
+            "docName": "Asbestos/Haz mat register included in induction"
         },
-        "type": "PPM event completed",
-        "event": "Fire Protection Water storage tanks 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Asbestos & Hazardous Materials"
+            },
+            "docType": "Management Plan",
+            "docName": "Asbestos/Haz Mat Management Management plan"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Asbestos & Hazardous Materials"
+            },
+            "docType": "Procedure",
+            "docName": "Occupant notification process"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Confined Spaces"
+            },
+            "docType": "Register",
+            "docName": "Confined Spaces register"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Confined Spaces"
+            },
+            "docType": "Confirmation",
+            "docName": "Confined Spaces identified and signposted"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Confined Spaces"
+            },
+            "docType": "Procedure",
+            "docName": "Permit entry procedures in place"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Contractor Management"
+            },
+            "docType": "Procedure",
+            "docSubType": "Restricted access",
+            "docName": "Restricted access procedures"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Critical Environment"
+            },
+            "docType": "Audit",
+            "docName": "Critical Environment audit"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Critical Environment"
+            },
+            "docType": "Register",
+            "docName": "Equipment schedule"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Critical Environment"
+            },
+            "docType": "Procedure",
+            "docName": "Critical Environment procedures"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Register",
+            "docName": "Dangerous goods register"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "MSDS",
+            "docName": "Dangerous Goods & Hazardous Substances MSDS"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Confirmation",
+            "docSubType": "Signage",
+            "docName": "Dangerous Goods & Hazardous Substances Signage in place"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Confirmation",
+            "docSubType": "Manifest",
+            "docName": "Dangerous goods manifest in-situ"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Licence",
+            "docName": "Dangerous goods license"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Assessment",
+            "docName": "Dangerous goods risk review"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Confirmation",
+            "docSubType": "Spill bins",
+            "docName": "Emergency spill bins in place"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Dangerous Goods & Hazardous Substances"
+            },
+            "docType": "Confirmation",
+            "docSubType": "Bunding",
+            "docName": "Liquid substances are bunded to requirements"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Grease Trap Disposal"
+            },
+            "docType": "Contract",
+            "docName": "Grease Trap Disposal contract"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Hazardous Waste"
+            },
+            "docType": "Register",
+            "docName": "Hazardous waste register"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Hazardous Waste"
+            },
+            "docType": "Certificate",
+            "docName": "Hazardous waste removal certificates"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Indoor Air Quality"
+            },
+            "docType": "Report",
+            "docName": "Annual IAQ test"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Property Risk"
+            },
+            "docType": "Certificate",
+            "docSubType": "Certificate of Occupancy",
+            "docName": "Cert of Occupancy/Final Inspection/ESM determination"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Property Risk"
+            },
+            "docType": "Contract",
+            "docName": "Workplace Health & Safety Property Risk contract"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Property Risk"
+            },
+            "docType": "Audit",
+            "docName": "Property Risk audit"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Property Risk"
+            },
+            "docType": "Confirmation",
+            "docName": "Property Risk  audit compliance report"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Radio Frequency Radiation"
+            },
+            "docType": "Assessment",
+            "docName": "Radio Frequency Radiation Risk assessment"
+        },
+        {
+            "type": "Document exists",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Radio Frequency Radiation"
+            },
+            "docType": "Procedure",
+            "docName": "Radio Frequency Radiation Restricted access procedures"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Radio Frequency Radiation"
+            },
+            "docType": "Contract",
+            "docName": "Radio Frequency Radiation contract"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Slip Test"
+            },
+            "docType": "Report",
+            "docName": "Slip Test"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Slip Test"
+            },
+            "docType": "Confirmation",
+            "docName": "Slip test compliance report"
+        },
+        {
+            "type": "Document is current",
+            "service": {
+                "name": "Workplace Health & Safety"
+            },
+            "subService": {
+                "name": "Trade Waste"
+            },
+            "docType": "Contract",
+            "docName": "Trade waste agreements"
         }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Water storage tanks"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Water storage tanks Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Water storage tanks"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Water storage tanks 10 yearly  maintenance",
-        frequency: {
-            "number": "10",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire detection and alarm systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire detection and alarm systems 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire detection and alarm systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire detection and alarm systems Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire detection and alarm systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire detection and alarm systems 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Special hazard systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Special hazard systems 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Special hazard systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Special hazard systems Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Special hazard systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Special hazard systems 10 yearly  maintenance",
-        frequency: {
-            "number": "10",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Lay flat hose"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Lay flat hose Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire hose reels"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire hose reels 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Extinguishers"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Extinguishers 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Extinguishers"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Extinguishers Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Extinguishers"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Extinguishers 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire Blankets"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire Blankets 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Passive Fire & Smoke Systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Passive Fire & Smoke Systems Quarterly maintenance**",
-        frequency: {
-            "number": "3",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Passive Fire & Smoke Systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Passive Fire & Smoke Systems 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Passive Fire & Smoke Systems"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Passive Fire & Smoke Systems Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire and smoke control features of mechanical devices"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire and smoke control features of mechanical devices Quarterly maintenance**",
-        frequency: {
-            "number": "3",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire and smoke control features of mechanical devices"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire and smoke control features of mechanical devices 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire and smoke control features of mechanical devices"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire and smoke control features of mechanical devices Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire and smoke control features of mechanical devices"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire and smoke control features of mechanical devices 5 yearly  maintenance",
-        frequency: {
-            "number": "5",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Emergency planning in facilities"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Emergency planning in facilities 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Emergency planning in facilities"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Emergency planning in facilities Annual maintenance",
-        frequency: {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire Doors"
-        },
-        "type": "PPM event completed",
-        "event": "Fire Protection Fire Doors 6-monthly maintenance",
-        frequency: {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire Doors"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Fire Protection contract is current"
-    }, {
-        "service": {
-            name: "Fire Protection"
-        },
-        "subservice": {
-            name: "Fire Doors"
-        },
-        "type": "PPM exists",
-        "event": "Fire Protection PPM exists"
-    } ],
-
-   /* "Air-conditioning": [ {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Mechanical Services & Air-conditioning Contract"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "PPM exists",
-        "event": "Mechanical Services & Air-conditioning"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Mechanical Services & Air-conditioning Services reports"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Risk assessment (frequency??)"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Plant registraton renewal (Chiller)"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Plant registraton renewal (Pressure vessels)"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Mechanical plant risk assessment"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Compliant full function fire test (FFFT)"
-    }, {
-        "service": {
-            name: "Air-conditioning"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Exhaust ducting clean included on contract"
-    }, ],*/
-
-    "Electrical Services": [ /*{
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Electrical Services Contract"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Electrical Services"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Electrical Services reports"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Electrical Services RCD Test"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Annual switchboard maintenance"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Electrical system thermographic scan"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Lightning protection annual check"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Testing & Tagging"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "UPS maintenance"
-    },*/ {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Electrical Services contract is current"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "PPM exists",
-        "event": "Electrical Services PPM exists"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "type": "Document exists",
-        "docType": "SWMS",
-        "docName": "Risk assessment exists"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "RCDs"
-        },
-        "type": "PPM event completed",
-        "event": "Electrical Services RCDs Annual maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Switchboard"
-        },
-        "type": "PPM event completed",
-        "event": "Electrical Services Switchboard Annual maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Thermographic scan"
-        },
-        "type": "PPM event completed",
-        "event": "Electrical Services Thermographic scan Annual maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Lightning protection"
-        },
-        "type": "PPM event completed",
-        "event": "Electrical Services Lightning protection Annual maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Testing & Tagging"
-        },
-        "type": "PPM event completed",
-        "event": "Testing & Tagging",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "UPS"
-        },
-        "type": "PPM event completed",
-        "event": "UPS maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Emergency & Exit Lighting"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Electrical Services contract is current"
-        /*"frequency": {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }*/
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Emergency & Exit Lighting"
-        },
-        "type": "PPM event completed",
-        "event": "Electrical Services Emergency & Exit Lighting 6-monthly maintenance",
-        "frequency": {
-            "number": "6",
-            "unit": "months",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Generator"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Electrical Services contract is current"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Generator"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Generator"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Electrical service reports exist"
-    }, {
-        "service": {
-            name: "Electrical Services"
-        },
-        "subservice": {
-            name: "Generator"
-        },
-        "type": "PPM event completed",
-        "event": "Generator Load Test",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    } ],
-    /*"Generator": [ {
-        "service": {
-            name: "Generator"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Generator Contract"
-    }, {
-        "service": {
-            name: "Generator"
-        },
-        "type": "PPM exists",
-        "event": "Generator"
-    }, {
-        "service": {
-            name: "Generator"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Generator service reports on file"
-    }, {
-        "service": {
-            name: "Generator"
-        },
-        "type": "Document exists",
-        "docName": "Generator Load Test"
-    } ],*/
-
-   /* "Emergency & Exit Lighting": [ {
-        "service": {
-            name: "Emergency & Exit Lighting"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Emergency & Exit Lighting Contract"
-    }, {
-        "service": {
-            name: "Emergency & Exit Lighting"
-        },
-        "type": "PPM exists",
-        "event": "Emergency & Exit Lighting"
-    }, {
-        "service": {
-            name: "Emergency & Exit Lighting"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Emergency & Exit Lighting service reports on file"
-    } ],*/
-
-    /*"Water Coolers": [ {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Water Treatment Contract"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Cooling tower registration"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "PPM exists",
-        "event": "Water Treatment"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Water Treatment service reports on file"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Water Testing Contract"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Water Testing registration"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "PPM exists",
-        "event": "Water Testing"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "PPM exists",
-        "event": "Water Testing Risk Management Plan date"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "PPM exists",
-        "event": "Water Testing RMP Review"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "PPM exists",
-        "event": "Water Testing RMP Audit"
-    }, {
-        "service": {
-            name: "Water Coolers"
-        },
-        "type": "Document exists",
-        "docName": "Water Testing actions within RMP review addressed"
-    } ],*/
-
-    "Plumbing": [ {
-        "service": {
-            name: "Plumbing"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Plumbing contract is current"
-    }, /*{
-        "service": {
-            name: "Plumbing"
-        },
-        "type": "PPM exists",
-        "event": "Plumbing"
-    }, {
-        "service": {
-            name: "Plumbing"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Plumbing service reports on file"
-    },*/ {
-        "service": {
-            name: "Plumbing"
-        },
-        "subservice": {
-            name: "Potable water tank"
-        },
-        "type": "PPM event completed",
-        "event": "Potable water tank annual clean",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Plumbing"
-        },
-        "subservice": {
-            name: "Backflow prevention valves"
-        },
-        "type": "PPM event completed",
-        "event": "Backflow prevention valve annual maintenance date",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Plumbing"
-        },
-        "subservice": {
-            name: "Thermostatic mixer valves"
-        },
-        "type": "PPM event completed",
-        "event": "Thermostatic mixer valves annual test "
-    }, {
-        "service": {
-            name: "Plumbing"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Plumbing"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Plumbing service reports exist"
-    }, ],
-    "Lifts & Escalators": [ {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Lifts & Escalators contract is current"
-    }, /*{
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "Report",
-        "docName": "Service reports on file"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Lift hazard and risk assessment completed (frequency? Ask lift consultants)"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "Registration",
-        "docName": "Lift registration renewal date"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Lift audit conducted"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Egress Contract"
-    },*/ {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Lifts & Escalators service reports exist"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "PPM event completed",
-        "event": "Annual Lift/escalator audit",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Lift/escalator audit"
-    }, {
-        "service": {
-            name: "Lifts & Escalators"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Lift registration renewal date"
-    } ],
-    "Essential Safety Measures": [ {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "event": "Essential Safety Measures contract is current"
-    }, {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "event": "Annual essential safety measures report (AESMR)*"
-    }, {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "Document exists",
-        "docType": "Certificate",
-        "event": "Maintenance determination/occupancy permit on file"
-    }, /*{
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Review and audit"
-    }, {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "PPM exists",
-        "event": "Review and audit"
-    }, */{
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "type": "PPM event completed",
-        "event": "Essential Safety Measures Annual review and audit",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Essential Safety Measures"
-        },
-        "subservice": {
-            name: "Egress"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "event": "Essential Safety Measures contract is current"
-    } ],
-
-    "Emergency Management Procedures": [ {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Emergency Management Procedures contract is current"
-    }, {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document is current",
-        "docType": "Procedure",
-        "docName": "Emergency Response Procedures prepared"
-    }, {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document exists",
-        "docType": "Plan",
-        "docName": "Evacuation diagrams installed"
-    }, /*{
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Emergency evacuation training exercise"
-    },*/ {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document is current",
-        "docType": "Log",
-        "docSubType": "Warden training",
-        "docName": "Warden training log"
-    }, {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document is current",
-        "docType": "Log",
-        "docSubType": "Chief Warden training",
-        "docName": "Chief warden training log"
-    }, {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "Document is current",
-        "docType": "Register",
-        "docName": "Emergency Planning Committee (EPC) meeting"
-    }, {
-        "service": {
-            name: "Emergency Management Procedures"
-        },
-        "type": "PPM event completed",
-        "event": "Annual emergency evacuation training exercise",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    } ],
-
-    /*"Asbestos & Hazardous Materials": [ {
-        "service": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Asbestos/Haz mat register audit"
-    }, {
-        "service": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Asbestos/Haz mat register included in induction"
-    }, {
-        "service": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Asbestos/Haz Mat Management Management plan prepared"
-    }, {
-        "service": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Occupant notification process complete"
-    } ],*/
-
-    /*"Confined Spaces": [ {
-        "service": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Confined Spaces register available"
-    }, {
-        "service": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Confined Spaces identified and signposted"
-    }, {
-        "service": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Permit entry procedures in place"
-    } ],*/
-
-    /*"Indoor Air Quality (IAQ)": [ {
-        "service": {
-            name: "Indoor Air Quality (IAQ)"
-        },
-        "type": "Document is current",
-        "docType": "",
-        "docName": "Annual IAQ test"
-    } ],*/
-
-    /*"Structrual/Roof Safety": [ {
-        "service": {
-            name: "Structrual/Roof Safety"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Anchor Point contract"
-    }, {
-        "service": {
-            name: "Structrual/Roof Safety"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Height safety assessment completed"
-    }, {
-        "service": {
-            name: "Structrual/Roof Safety"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Height safety recommendations completed"
-    }, {
-        "service": {
-            name: "Structrual/Roof Safety"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Façade audit/inspection"
-    } ],*/
-
-    "Building Maintenance Unit": [ {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Building Maintenance Unit contract is current"
-    }, {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "PPM exists",
-        "event": "Building Maintenance Unit PPM exists"
-    }, /*{
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    },*/ {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "BMU registration renewal"
-    }, {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "Document is current",
-        "docType": "Assessment",
-        "docName": "BMU risk assessment has been conducted"
-    }, {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "PPM event completed",
-        "event": "Major maintenance routine",
-        "frequency": {
-            "number": "10",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "Building Maintenance Unit"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "BMU registration"
-    } ],
-
-    /*"Dangerous Goods & Hazardous Substances": [ {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Register of dangerous goods on file"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "MSDS",
-        "docName": "MSDS available for all products"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Placarding & HAZCHEM signage is present"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Dangerous goods manifest established and accessible"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Dangerous goods license"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Dangerous goods risk review"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Emergency spill bins in place"
-    }, {
-        "service": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Liquid substances are bunded to requirements"
-    } ],*/
-
-    "Underground Petroleum Storage Systems (UPSS)": [ {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Underground Petroleum Storage Systems (UPSS) contract is current"
-    }, {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "type": "Document is current",
-        "docType": "Management Plan",
-        "docName": "Environmental management plan prepared"
-    }, {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "subservice": {
-            name: "Leak detection"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "docSubType": "Validation Report",
-        "docName": "Leak detection system installed"
-    }, {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "subservice": {
-            name: "Leak detection"
-        },
-        "type": "Document is current",
-        "docType": "Log",
-        "docName": "Leak detection log data, incl SIRA, on file"
-    }, {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "subservice": {
-            name: "Groundwater monitoring"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "docSubType": "Validation Report",
-        "docName": "Groundwater monitoring installed"
-    }, {
-        "service": {
-            name: "Underground Petroleum Storage Systems (UPSS)"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "docSubType": "Validation Report",
-        "docName": "Decommissioning/validation test reports on file"
-    } ],
-
-    /*"Radio Frequency Radiation (RFR)": [ {
-        "service": {
-            name: "Radio Frequency Radiation (RFR)"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Risk assessment on file"
-    }, {
-        "service": {
-            name: "Radio Frequency Radiation (RFR)"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Restricted access procedures in place"
-    }, {
-        "service": {
-            name: "Radio Frequency Radiation (RFR)"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Risk Review contract"
-    } ],*/
-
- /*   "Environmental Risk Management": [ {
-        "service": {
-            name: "Environmental Risk Management"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Trade waste agreements in place"
-    }, {
-        "service": {
-            name: "Environmental Risk Management"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Hazardous waste register"
-    }, {
-        "service": {
-            name: "Environmental Risk Management"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Hazardous waste removal certificates on file"
-    }, {
-        "service": {
-            name: "Environmental Risk Management"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Grease trap disposal contract"
-    }, ],*/
-
-
-    /*"OHS": [ {
-        "service": {
-            name: "OHS"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Risk audit contract"
-    }, {
-        "service": {
-            name: "OHS"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Critical Environment procedures in place"
-    }, {
-        "service": {
-            name: "OHS"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Last audit"
-    }, {
-        "service": {
-            name: "OHS"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Compliant audit"
-    }, {
-        "service": {
-            name: "OHS"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Slip Test"
-    } ],*/
-
-    /*"Critical Environment": [ {
-        "service": {
-            name: "Critical Environment"
-        },
-        "type": "Document exists",
-        "docType": "",
-        "docName": "Equipment schedule"
-    }, {
-        "service": {
-            name: "Critical Environment"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Critical Environment procedures in place"
-    } ],*/
-
-
-    "Security": [ {
-        "service": {
-            name: "Security"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Security contract is current"
-    }, {
-        "service": {
-            name: "Security"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docSubType": "Incident register",
-        "docName": "Incident register in place"
-    } ],
-
-    "Cleaning": [ {
-        "service": {
-            name: "Cleaning"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Cleaning contract is current"
-    }, {
-        "service": {
-            name: "Cleaning"
-        },
-        "subservice": {
-            name: "Waste removal"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Cleaning contract is current"
-    }, {
-        "service": {
-            name: "Cleaning"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docSubType": "Testing & Tagging certificate",
-        "docName": "Cleaning Test and Tag certificate current"
-    } ],
-
-    /*"House Rules": [ {
-        "service": {
-            name: "House Rules"
-        },
-        "type": "Document exists",
-        "docType": "House Rules",
-        "docName": "Tenant receipt of House Rules"
-    } ],*/
-
-    /*"Contractor Management": [ {
-        "service": {
-            name: "Contractor Management"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Contractor management and induction system in place"
-    }, {
-        "service": {
-            name: "Contractor Management"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Restricted access procedures"
-    }, {
-        "service": {
-            name: "Contractor Management"
-        },
-        "type": "Document exists",
-        "docType": "Registration",
-        "docName": "Contracts register operational"
-    } ],*/
-    "HVAC": [ {
-        "service": {
-            name: "HVAC"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "HVAC contract is current"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "type": "PPM exists",
-        "event": "HVAC PPM exists"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' HVAC service reports exist"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "type": "Document exists",
-        "docType": "SWMS",
-        "docName": "Risk assessment exists"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "type": "PPM event completed",
-        "event": "HVAC Full function fire test",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "subservice": {
-            name: "Chillers"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Plant registraton renewal (Chiller)"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "subservice": {
-            name: "Pressure Vessels"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Plant registraton renewal (Pressure vessels)"
-    }, {
-        "service": {
-            name: "HVAC"
-        },
-        "subservice": {
-            name: "Kitchen Exhausts"
-        },
-        "type": "PPM event completed",
-        "event": "HVAC Kitchen Exhausts Annual maintenance",
-        "frequency": {
-            "number": "1",
-            "unit": "years",
-            "repeats": "1"
-        }
-    } ],
-    "Cooling Tower Systems & Water Treatment": [ {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Treatment"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Cooling Tower Systems & Water Treatment contract is current"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Treatment"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Treatment"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Cooling Tower Systems & Water Treatment service reports exist"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "type": "Document is current",
-        "docType": "Registration",
-        "docName": "Cooling tower registration expiry date"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Testing"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Cooling Tower Systems & Water Treatment contract is current"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Testing"
-        },
-        "type": "PPM exists",
-        "event": "PPM schedule has been established"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "Water Testing"
-        },
-        "type": "Compliance level",
-        "docType": "Service Report",
-        "docName": "12 months' Cooling Tower Systems & Water Treatment service reports exist"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "RMP"
-        },
-        "type": "Document is current",
-        "docType": "Management Plan",
-        "docName": "Risk Management Plan (RMP)"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "RMP"
-        },
-        "type": "Document is current",
-        "docType": "Assessment",
-        "docName": "RMP Review"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "RMP"
-        },
-        "type": "Document is current",
-        "docType": "Confirmation",
-        "docName": "RMP review compliant"
-    }, {
-        "service": {
-            name: "Cooling Tower Systems & Water Treatment"
-        },
-        "subservice": {
-            name: "RMP"
-        },
-        "type": "Document is current",
-        "docType": "Audit",
-        "docName": "RMP Audit"
-    } ],
-    "Utilities": [ {
-        "service": {
-            name: "Utilities"
-        },
-        "type": "Document is current",
-        "docType": "Certificate",
-        "docName": "Building Energy Efficiency Certificate"
-    },
-    {
-        "service": {
-            name: "Utilities"
-        },
-        "subservice": {
-            name: "Electricity"
-        },
-        "type": "Compliance level",
-        "docType": "Invoice",
-        "docName": "Utilities - Electricity Monthly Invoice"
-    },
-    {
-        "service": {
-            name: "Utilities"
-        },
-        "subservice": {
-            name: "Gas"
-        },
-        "type": "Compliance level",
-        "docType": "Invoice",
-        "docName": "Utilities - Gas Monthly Invoice"
-    } ],
-
-    "WHS & Risk Management": [ /*{
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "type": "Document exists",
-        "docType": "Certificate",
-        "docSubType": "Certificate of Occupancy",
-        "docName": "Cert of Occupancy/Final Inspection/ESM determination"
-    },*/ {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Property risk"
-        },
-        "type": "Document exists",
-        "docType": "Certificate",
-        "docSubType": "Certificate of Occupancy",
-        "docName": "Cert of Occupancy/Final Inspection/ESM determination"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Property risk"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "WHS & Risk Management Property risk contract is current"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Property risk"
-        },
-        "type": "Document is current",
-        "docType": "Audit",
-        "docName": "Last audit"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Property risk"
-        },
-        "type": "Document is current",
-        "docType": "Audit",
-        "docName": "Last audit"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Property risk"
-        },
-        "type": "Document is current",
-        "docType": "Confirmation",
-        "docName": "Compliant audit"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Slip test"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "docName": "Slip Test"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Slip test"
-        },
-        "type": "Document is current",
-        "docType": "Confirmation",
-        "docName": "Slip test compliance"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document is current",
-        "docType": "Audit",
-        "docName": "Asbestos/Haz mat register audit"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Asbestos/Haz mat register included in induction"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "Management Plan",
-        "docName": "Asbestos/Haz Mat Management Management plan prepared"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Asbestos & Hazardous Materials"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Occupant notification process complete"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Confined Spaces register available"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "Confirmation",
-        "docName": "Confined Spaces identified and signposted"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Confined Spaces"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Permit entry procedures in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Indoor Air Quality"
-        },
-        "type": "Document is current",
-        "docType": "Report",
-        "docName": "Annual IAQ test"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Dangerous goods register"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document is current",
-        "docType": "MSDS",
-        "docName": "MSDS available"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Confirmation",
-        "docSubType": "Signage",
-        "docName": "Signage in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Confirmation",
-        "docSubType": "Manifest",
-        "docName": "Dangerous goods manifest in-situ"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document is current",
-        "docType": "Licence",
-        "docName": "Dangerous goods license"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document is current",
-        "docType": "Assessment",
-        "docName": "Dangerous goods risk review"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Confirmation",
-        "docSubType": "Spill bins",
-        "docName": "Emergency spill bins in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Dangerous Goods & Hazardous Substances"
-        },
-        "type": "Document exists",
-        "docType": "Confirmation",
-        "docSubType": "Bunding",
-        "docName": "Liquid substances are bunded to requirements"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Radio Frequency Radiation"
-        },
-        "type": "Document exists",
-        "docType": "Assessment",
-        "docName": "Risk assessment on file"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Radio Frequency Radiation"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Restricted access procedures in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Radio Frequency Radiation"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "WHS & Risk Management contract is current"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Trade Waste"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "Trade waste agreements in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Hazardous Waste"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Hazardous waste register"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Hazardous Waste"
-        },
-        "type": "Document exists",
-        "docType": "Certificate",
-        "docName": "Hazardous waste removal certificates on file"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Grease trap disposal"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "WHS & Risk Management contract is current"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Critical Environment"
-        },
-        "type": "Document exists",
-        "docType": "Audit",
-        "docName": "Critical Environment audit completed"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Critical Environment"
-        },
-        "type": "Document exists",
-        "docType": "Register",
-        "docName": "Equipment schedule"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Critical Environment"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docName": "Critical Environment procedures in place"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "House Rules"
-        },
-        "type": "Compliance level",
-        "docType": "Confirmation",
-        "docName": "Tenant(s) confirmation of House Rules"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Contractor Management"
-        },
-        "type": "Compliance level",
-        "docType": "Induction",
-        "docName": "All contractors are inducted"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Contractor Management"
-        },
-        "type": "Document exists",
-        "docType": "Procedure",
-        "docSubType": "Restricted access",
-        "docName": "Restricted access procedures"
-    }, {
-        "service": {
-            name: "WHS & Risk Management"
-        },
-        "subservice": {
-            name: "Contractor Management"
-        },
-        "type": "Compliance level",
-        "docType": "Contract",
-        "docName": "Contracts  <50% complete"
-    } ],
-    "High Access": [ {
-        "service": {
-            name: "High Access"
-        },
-        "subservice": {
-            name: "Anchor points"
-        },
-        "type": "Document is current",
-        "docType": "Contract",
-        "docName": "High Access contract is current"
-    }, {
-        "service": {
-            name: "High Access"
-        },
-        "subservice": {
-            name: "Height safety"
-        },
-        "type": "Document exists",
-        "docType": "Report",
-        "docName": "Height safety assessment"
-    }, {
-        "service": {
-            name: "High Access"
-        },
-        "subservice": {
-            name: "Height safety"
-        },
-        "type": "Document exists",
-        "docType": "Service Report",
-        "docName": "Height safety recommendations completed"
-    }, {
-        "service": {
-            name: "High Access"
-        },
-        "subservice": {
-            name: "Façade"
-        },
-        "type": "Document is current",
-        "docType": "Audit",
-        "docName": "Façade audit/inspection"
-    } ]
-};
+    ]
+}
