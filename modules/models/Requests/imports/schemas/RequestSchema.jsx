@@ -94,7 +94,7 @@ const RequestSchema = {
                 return "Ad-hoc";
             },
             input: Select,
-            options: () => {
+            options: (item) => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
@@ -134,15 +134,22 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                }
-
+                                    // prefill value with zero for defect
+                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                        request.costThreshold= '0';
+                                        request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };
+                                    }
+                                    if(request.type == 'Incident'){
+                                        request.costThreshold= '0';
+                                        request.priority = 'Urgent';
+                                        request.supplier = Session.getSelectedTeam();
+                                    }
                                 }
                          };
                     }
@@ -534,31 +541,31 @@ const RequestSchema = {
                         request.supplier = null;
                         request.subservice = null;
                         if (request && request.service && request.service.data ) {
-                            let supplier = request.service.data.supplier,
-                                defaultSupplier = null;
+                                let supplier = request.service.data.supplier,
+                                    defaultSupplier = null;
 
-                            if ( supplier ) {
-                                if ( supplier._id ) {
-                                    defaultSupplier = Teams.findOne( supplier._id );
-                                }
-                                if ( !defaultSupplier && supplier.name ) {
-                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                }
-                                request.supplier = defaultSupplier;
-                                if( request.supplier && onServiceChange ) {
-                                    onServiceChange( request.supplier );
-                                }
-                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
-                                    request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                if ( supplier ) {
+                                    if ( supplier._id ) {
+                                        defaultSupplier = Teams.findOne( supplier._id );
+                                    }
+                                    if ( !defaultSupplier && supplier.name ) {
+                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                    }
+                                    request.supplier = defaultSupplier;
+                                    if( request.supplier && onServiceChange ) {
+                                        onServiceChange( request.supplier );
+                                    }
+                                    if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                        request.supplierContacts = request.service.data.defaultContact;
+                                    } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                    } else {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    }
                                 } else {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    request.supplier = null;
+                                    request.subservice = null;
                                 }
-                            } else {
-                                request.supplier = null;
-                                request.subservice = null;
-                            }
                         }
                     }
                 }
