@@ -45,6 +45,7 @@ export default MonthlyReport = React.createClass( {
 			})
 	},
 	componentDidMount(){
+		$(".facility-list-tile").hide()
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -66,6 +67,7 @@ export default MonthlyReport = React.createClass( {
 	},
 	componentWillUnmount(){
 		PubSub.publish('stop', "test");
+		$(".facility-list-tile").show()
 	},
 	docReactiveUpdate(){
 		let docs = Documents.find({"type":"Contract"}).fetch();
