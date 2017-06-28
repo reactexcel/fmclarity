@@ -35,7 +35,6 @@ export default RequestPanel = React.createClass( {
 
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -62,7 +61,7 @@ export default RequestPanel = React.createClass( {
 
     componentWillMount() {
         //Perf.start();
-        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {

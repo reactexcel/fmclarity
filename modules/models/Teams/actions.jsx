@@ -217,7 +217,7 @@ const createRequest = new Action( {
                     callback? callback( newRequest ): null;
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-                                <RequestPanel item = { /*newRequest*/  request}/>
+                                <RequestPanel item = { /*newRequest*/  request} callback={callback}/>
                             </DropFileContainer>
                     } );
                 }
