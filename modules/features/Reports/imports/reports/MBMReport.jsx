@@ -39,70 +39,74 @@ const RequestsStatusReport = React.createClass( {
 		}
 	},
 	componentWillMount(){
-		let docs = Documents.find({"type":"Contract"}).fetch();
-		// console.log(docs.stringfy());
-		console.log(docs);
-		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
-		let docString = " "
-		aa.map((d)=>{
-			docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
-			if(d.hasOwnProperty("subServiceType")){
-				if(d.subServiceType.hasOwnProperty("name")){
-					docString = docString + d.subServiceType.name
+		if(!this.props.MonthlyReport){
+			let docs = Documents.find({"type":"Contract"}).fetch();
+			// console.log(docs.stringfy());
+			// console.log(docs);
+			let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+			let docString = " "
+			aa.map((d)=>{
+				docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+				if(d.hasOwnProperty("subServiceType")){
+					if(d.subServiceType.hasOwnProperty("name")){
+						docString = docString + d.subServiceType.name
+					}
 				}
-			}
-			if(d.hasOwnProperty("supplier")){
-				if(d.supplier.hasOwnProperty("name")){
-					docString = docString + d.supplier.name
+				if(d.hasOwnProperty("supplier")){
+					if(d.supplier.hasOwnProperty("name")){
+						docString = docString + d.supplier.name
+					}
 				}
-			}
-			if(d.hasOwnProperty("comment")){
+				if(d.hasOwnProperty("comment")){
 					docString = docString + d.comment
-			}
-		})
-		this.setState({currentDoc : docs , docString})
+				}
+			})
+			this.setState({currentDoc : docs , docString})
+		}
 		$("#fab").hide();
 	},
 	componentWillUnmount(){
 		$("#fab").show();
 		PubSub.publish('stop', "test");
 	},
-	componentWillUpdate(){
-	let update = setInterval(()=>{
+	componentDidMount(){
+		if(!this.props.MonthlyReport){
+			let update = setInterval(()=>{
 
-			PubSub.subscribe( 'stop', (msg,data) => {
-				clearInterval(update)
-			});
-			let serverDoc = Documents.find({"type":"Contract"}).fetch();
-			let aa = serverDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
-			let updatedString = " "
-			aa.map((d)=>{
-				updatedString = updatedString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
-				if(d.hasOwnProperty("subServiceType")){
-					if(d.subServiceType.hasOwnProperty("name")){
-						updatedString = updatedString + d.subServiceType.name
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let serverDoc = Documents.find({"type":"Contract"}).fetch();
+				let aa = serverDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+				let updatedString = " "
+				aa.map((d)=>{
+					updatedString = updatedString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+					if(d.hasOwnProperty("subServiceType")){
+						if(d.subServiceType.hasOwnProperty("name")){
+							updatedString = updatedString + d.subServiceType.name
+						}
 					}
-				}
-				if(d.hasOwnProperty("supplier")){
-					if(d.supplier.hasOwnProperty("name")){
-						updatedString = updatedString + d.supplier.name
+					if(d.hasOwnProperty("supplier")){
+						if(d.supplier.hasOwnProperty("name")){
+							updatedString = updatedString + d.supplier.name
+						}
 					}
-				}
-				if(d.hasOwnProperty("comment")){
+					if(d.hasOwnProperty("comment")){
 						updatedString = updatedString + d.comment
+					}
+				})
+				if(updatedString != this.state.docString){
+					this.setState({
+						docString : updatedString
+					})
 				}
-			})
-			if(updatedString != this.state.docString){
-				this.setState({
-					docString : updatedString
-				})
-			}
-			if(serverDoc.length != this.state.currentDoc.length){
-				this.setState({
-					currentDoc : serverDoc
-				})
-			}
-		},1000)
+				if(serverDoc.length != this.state.currentDoc.length){
+					this.setState({
+						currentDoc : serverDoc
+					})
+				}
+			},1000)
+		}
 	},
 
 	getMeteorData() {
@@ -223,9 +227,9 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							console.log(docs);
+							// console.log(docs);
 							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
-							console.log(docs,"filtered");
+							// console.log(docs,"filtered");
 						}
 						let amount = null;
 						if ( docs.length > 0) {
@@ -385,7 +389,7 @@ const RequestsStatusReport = React.createClass( {
 		let fields = this.fields
 		return (
 			<div>
-				<div style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
+				<div id = "toggleButton2" style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
 					this.handleClick(null);
 				}}>+ Add Contract</div>
                 <h3>Service Contract</h3>
