@@ -93,6 +93,9 @@ export default DocumentSchema = {
 				view: FacilityListTile
 			}
 		},
+		condition:(item) => {
+			return item.type != 'Insurance';
+		}
 	},
 
 	request: {

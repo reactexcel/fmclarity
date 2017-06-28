@@ -1,4 +1,5 @@
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
+import BookingReport from './reports/BookingReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
@@ -19,6 +20,12 @@ const Reports = {
 }
 
 Reports.register( {
+	id: "booking-status",
+	name: "Booking Report",
+	content: BookingReport
+} )
+
+Reports.register( {
 	id: "requests-status",
 	name: "Requests Status Report",
 	content: RequestsStatusReport
@@ -36,6 +43,7 @@ Reports.register( {
 	content: RequestActivityChart
 } )
 
+/*
 Reports.register( {
 	id: "mbm-service-image",
 	name: "MBM Service Image",
@@ -53,5 +61,5 @@ Reports.register( {
 	name: "MBM Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
 } )
-
+*/
 export default Reports;

@@ -30,12 +30,18 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		statusFilter = { "status": 'Close' };
 		includeComplete = true;
 	}
+	else if ( selectedStatus == 'Cancelled' ) {
+		statusFilter = { "status": 'Cancelled' };
+		includeComplete = true;
+	}
 	else {
 		selectedStatus = 'Open';
 		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
 	}
 
-	Meteor.subscribe( 'User: Requests, Facilities', { includeComplete } );
+	if( includeComplete ) {
+		Meteor.subscribe( 'Requests: Complete' );
+	}
 
 
 	if ( selectedRequestId ) {

@@ -12,6 +12,8 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 
+import CreateTeamRequest from './imports/actions/CreateTeamRequest';
+
 const create = new Action( {
     name: 'create team',
     label: "Create team",
@@ -96,8 +98,6 @@ const createFacility = new Action( {
     }
 } )
 
-// now that we are evaluating people based on their role in the request then we can perhaps actually
-// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -119,17 +119,18 @@ const createRequest = new Action( {
             form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
+            onChange = {()=>{callback("update")}}
             onSubmit = {
                 ( newRequest ) => {
                     if(newRequest.type == "Booking"){
-                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                        Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
 
-                    Modal.replace( {
+                    /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest } callback={callback}/>
                             </DropFileContainer>
-                    } );
+                    } );*/
 
                     let owner = Meteor.user();
 
@@ -143,7 +144,6 @@ const createRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
                     if ( newRequest.type != 'Preventative' && hasSupplier ) {
-                        method = 'Issues.issue';
                         let team = Teams.findOne( newRequest.team._id ),
                             role = team.getMemberRole( owner ),
                             baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
@@ -162,7 +162,6 @@ const createRequest = new Action( {
                                 method = 'Issues.issue';
                             }
                             else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-                                method = 'Issues.create';
                                 let relation = team.getMemberRelation( owner ),
                                     costString = newRequest.costThreshold,
                                     memberThreshold = null,
@@ -193,9 +192,11 @@ const createRequest = new Action( {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }
 
-                                if( cost > costThreshold ) {
-                                    method = 'Issues.create';
+                                if( cost <= costThreshold || newRequest.haveToIssue == true ) {
+                                    method = 'Issues.issue';
+                                    newRequest = _.omit(newRequest,'haveToIssue')
                                 }
+
                                 /*if( parseInt(relation.threshold) < 1 ) {
                                     method = 'Issues.create';
                                 }
@@ -209,15 +210,16 @@ const createRequest = new Action( {
                             }
 
                         }
-                        if(newRequest.haveToIssue == true){
-                            method = 'Issues.issue';
-                            newRequest = _.omit(newRequest,'haveToIssue')
-                        }
                     }
                     Meteor.call( method, newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
+                    Modal.replace( {
+                        content: <DropFileContainer model={Requests} request={request}>
+                                <RequestPanel item = { /*newRequest*/  request}/>
+                            </DropFileContainer>
+                    } );
                 }
             }
             />
@@ -387,6 +389,7 @@ export {
 
     createFacility,
     createRequest,
+    CreateTeamRequest,
     createDocument,
 
     createMember,
