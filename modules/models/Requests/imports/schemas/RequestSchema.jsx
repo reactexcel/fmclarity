@@ -54,6 +54,9 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
+            condition: (item)=>{
+                return item.type != 'Booking';
+            },
             description: (item)=>{
                 let workRequest = "work request";
                 if(!_.isEmpty(item.type)){
@@ -880,7 +883,7 @@ const RequestSchema = {
                 if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
                     return false;
                 }
-                if (request.type=='Incident') {
+                if ( _.contains(['Incident','Booking'],request.type)) {
                     return false;
                 }
                 return true;
@@ -1052,7 +1055,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length <= 1 || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -1403,6 +1406,29 @@ const RequestSchema = {
                     let role = Meteor.user().getRole();
                     return _.indexOf( [ "manager", "portfolio manager", "team portfolio manager", "team manager" ], role ) > -1;
                 }
+            },
+
+            memberName: {
+                type: "string",
+                label: "Member name",
+                description: "Name of member",
+                input: Text,
+                size: 6,
+                required: true,
+                defaultValue: (item)=>{
+                    return item.type == 'Booking' ? Meteor.user().getName() : null;
+                },
+                condition:"Booking" 
+            },
+
+            numberOfPersons: {
+                type: "number",
+                label: "Number of persons",
+                description: "Number of persons",
+                input: Text,
+                size: 6,
+                required: true,
+                condition:"Booking" 
             },
 
             footer: {

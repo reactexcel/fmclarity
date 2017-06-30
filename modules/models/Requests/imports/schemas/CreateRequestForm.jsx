@@ -36,6 +36,9 @@ export default CreateRequestForm = [
 	//'requireServiceReport',
 	//'requireInvoice',
 
+	'memberName',
+	'numberOfPersons',
+
 	'description',
 	'incidentFurtherComments',
 
