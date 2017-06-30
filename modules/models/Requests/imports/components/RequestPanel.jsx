@@ -215,7 +215,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             : null }
 
                             { request.dueDate ?
-                            <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            <span style={{color : "red"}}><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
                             : null }
 
                             { request.priority ?
