@@ -10,6 +10,7 @@ import NavigationDrawerContainer from '../containers/NavigationDrawerContainer.j
 import TopNavigationBarContainer from '../containers/TopNavigationBarContainer.jsx';
 import FloatingActionButtonContainer from '../containers/FloatingActionButtonContainer.jsx';
 import CircularProgressExampleSimple from '/modules/ui/Loader/loader';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 /**
  * @class           LayoutMain
@@ -24,11 +25,36 @@ function LayoutMain( props ) {
     return (
         <MuiThemeProvider muiTheme = { getMuiTheme() }>
         <div>
-          <div className="loader"  style={{ height: '100%', width: '100%', position: 'fixed', zIndex: '1000', left: '0', top: '0', backgroundColor: ' rgba(0,0,0, 0.9)', overflow: 'hidden', opacity: '1.5' }}>
-            <div style={{position:"absolute",zIndex:"20000",right:"50%",top:"50%"}}>
-            				<CircularProgressExampleSimple/>
-            </div>
-          </div>
+          <div className = "loader" style = {
+      				{
+      					background: "rgba(0,0,0,0.5)",
+      					position: "fixed",
+      					zIndex: 5000,
+      					left: "0px",
+      					right: "0px",
+      					top: "0px",
+      					bottom: "0px",
+      					textAlign: "center"
+      				}
+      			} >
+      			<div style = {
+      				{
+      					position: "absolute",
+      					width: "100px",
+      					marginLeft: "-50px",
+      					left: "50%",
+      					top: "50%",
+      					marginTop: "-50px"
+      				}
+      			} >
+      			<RefreshIndicator
+      					size = { 100 }
+      					left = { 0 }
+      					top = { 0 }
+      					status = "loading"
+      			/>
+      			</div>
+      			</div>
             <div className = "body-background"/>
             <NavigationDrawerContainer/>
             <TopNavigationBarContainer/>
