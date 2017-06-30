@@ -18,12 +18,12 @@ import { Stepper } from '/modules/ui/Stepper';
 import { Select } from '/modules/ui/MaterialInputs';
 
 /**
- * @class           TeamStepper
+ * @class           TeamStepper2
  * @memberOf        module:models/Teams
  * @todo            Remove tour, add additional instructions into stepper
  */
 
-const TeamStepper = React.createClass( {
+const TeamStepper2 = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
@@ -39,15 +39,8 @@ const TeamStepper = React.createClass( {
         } else {
             viewersTeam = Session.getSelectedTeam();
         }
-
-        //getting value of item from state instead of props
         if ( this.state.item && this.state.item._id ) {
             viewingTeam = Teams.findOne( this.state.item._id );
-            /*
-            if(viewingTeam.type == "contractor"){
-                Teams.schema.email.required=false;
-            }
-            */
             if(!_.isEmpty(this.state.item.preActiveService)){
                 let preService = _.filter( viewingTeam.services, ( ser ) => ser.name == this.state.item.preActiveService.name );
                 if (preService.length > 0) {
@@ -79,10 +72,6 @@ const TeamStepper = React.createClass( {
                 viewingTeam = Teams.findOne( query );
             }
         }
-
-        //if this team is a member of a group, group may be included as one of the props
-        //this functionality will become deprecated when suppliers are saved as user contacts
-        //note that we are erroneously assuming that the group is a facility when it may not always be
         group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
         console.log(viewingTeam,"viewingTeam");
         return {
@@ -130,6 +119,13 @@ const TeamStepper = React.createClass( {
             facility: this.props.facility,
             item: this.props.item,
             teamType: this.props.teamType || null,
+            viewingTeam:{
+                owner:{
+                    name:Session.getSelectedTeam().name,
+                    type:"team",
+                    _id:Session.getSelectedTeam()._id
+                }
+            }
         }
     },
     //Update the state of ui
@@ -159,7 +155,6 @@ const TeamStepper = React.createClass( {
                         group.addSupplier( invitee );
                     }*/
                     this.setItem( invitee );
-                    console.log(invitee,"invitee");
                     if ( this.props.onChange ) {
                         this.props.onChange( invitee );
                     }
@@ -182,6 +177,32 @@ const TeamStepper = React.createClass( {
             } );
 
         }
+    },
+
+    handleInviteSupplier( supplier = {} ){
+        var viewersTeam = this.data.viewersTeam
+        let supplierId = supplier._id || Random.id();
+        viewersTeam.inviteSupplier( this.state.viewingTeam.name, supplierId, ( invitee ) => {
+            invitee = Teams.collection._transform( invitee );
+            this.setItem( invitee );
+            console.log(invitee,"invitee");
+            if ( this.props.onChange ) {
+                this.props.onChange( invitee );
+            }
+
+            if ( !invitee.email ) {
+                this.setState( { shouldShowMessage: true } );
+            } else {
+                Modal.hide();
+            }
+
+        }, null );
+        setTimeout(function () {
+            //quick fix to manually add supplier to a team. better solution needed
+            if (Session.getSelectedFacility()) {
+                Session.getSelectedFacility().addSupplier(supplier);
+            }
+        },2000);
     },
 
     setThumb( thumb ) {
@@ -218,6 +239,7 @@ const TeamStepper = React.createClass( {
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
+        console.log(query,"query");
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
         if ( searchTeams.length > 0 ) {
             this.setState( { foundTeams: true } );
@@ -228,51 +250,47 @@ const TeamStepper = React.createClass( {
 
         }
     },
+    checkSupplierName(name){
+        event.preventDefault();
+        let query = {name:name};
+        if ( this.state.teamType ) {
+            query.type = this.state.teamType
+        }
+        console.log(query,"query");
+        searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
+        console.log(searchTeams,"searchTeams");
+        if ( searchTeams.length > 0 ) {
+            this.setState( {
+                foundTeams: true,
+                messageToShow:{
+                    message:"Supplier with this name already exist.",
+                    color:"#e11d60"
+                }
+             } );
+            console.log(searchTeams,"team found");
+            return true;
+
+        } else {
+            console.log("team not found");
+            this.setState( {
+                foundTeams: false,
+                messageToShow: null
+             } );
+            this.handleInviteSupplier();
+            return true;
+        }
+    },
 
     render() {
-        var viewingTeam = this.data.viewingTeam;
+        console.log(this.data.viewingTeam,"this.data.viewingTeam");
+        console.log(this.state.viewingTeam,"this.state.viewingTeam");
+        var viewingTeam = this.data.viewingTeam ? this.data.viewingTeam : (_.omit(this.state.viewingTeam,"_id"));
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
         console.log(viewingTeam,"viewingTeam in render");
-        if ( !viewingTeam ) {
-            if (showFilter == true) {
-                return (
-                    <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier = {(supplier)=>{
-                        if(this.props.onChange){
-                            this.props.onChange(supplier)
-                        }
-                    }}/>
-                )
-            }
-            return (
-                <form style={{padding:"15px"}} className="form-inline">
-                    <div className="form-group">
-                        <b>Lets search to see if this team already has an account.</b>
-                        {teamsFound ? <Select items={searchTeams} view={ContactCard} onChange={this.handleTeamChange} placeholder={"Select "+(this.props.title?this.props.title:"Supplier")+" from dropdown"}/> : null }
-                        <h2><input className="inline-form-control" ref="invitation" placeholder="Team name"/></h2>
-                        <button type = "submit" style = { { width:0, opacity:0} } onClick = { this.checkName }>Invite</button>
-                    </div>
-                </form>
-            )
-        }
-        console.log(viewingTeam,"viewingTeam");
-        /*
-        if(viewingTeam.type == "contractor"){
-            Teams.schema.email.required=false;
-        }
-        */
-
-        /*
-        else if ( !viewingTeam.canSave() )
-        {
-            return (
-                <TeamViewDetail item={viewingTeam} />
-            )
-        }
-        */
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
@@ -292,17 +310,54 @@ const TeamStepper = React.createClass( {
                 <Stepper
                   submitForm = {
                     ( callback ) => {
+                        let supplierFound = false;
+                        if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
+                            console.log("submitForm");
+                            supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
+                        }
+                        console.log(supplierFound,"supplierFound");
+                        if(supplierFound==false){
+                            console.log("run-------------------");
+                            if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
+                              this.submitFormCallback( ( errorList ) => {
+                                this.submitFormCallbackForWorkOrder( ( error ) => {
+                                  let keys = Object.keys( error );
+                                  _.forEach( keys, ( k ) => {
+                                    errorList[ k ] = error[ k ];
+                                  } );
+                                  callback( errorList );
+                                } );
+                              } );
+                          }
+                        }
+
+
+                        /*if(!_.isEmpty(this.state.viewingTeam.name) && _.isEmpty(this.data.viewingTeam)){
+                            console.log("submitForm");
+                            supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
+                        }*/
+                        /*console.log(this.state.viewingTeam,"viewingTeam");
                       if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
                         this.submitFormCallback( ( errorList ) => {
-                          this.submitFormCallbackForWorkOrder( ( error ) => {
-                            let keys = Object.keys( error );
-                            _.forEach( keys, ( k ) => {
-                              errorList[ k ] = error[ k ];
-                            } );
-                            callback( errorList );
-                          } );
+                            let supplierFound = false;
+                            console.log(errorList,_.isEmpty(errorList),"errorList 111");
+                            if(_.isEmpty(errorList) && _.isEmpty(this.data.viewingTeam)){
+                                if(!_.isEmpty(this.state.viewingTeam.name)){
+                                    supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
+                                }
+                            }
+                            if(supplierFound == false){
+                                this.submitFormCallbackForWorkOrder( ( error ) => {
+                                    console.log("now");
+                                      let keys = Object.keys( error );
+                                        _.forEach( keys, ( k ) => {
+                                          errorList[ k ] = error[ k ];
+                                        } );
+                                      callback( errorList );
+                                } );
+                            }
                         } );
-                      }
+                    }*/
                     }
                   }
                   onFinish = { () => {
@@ -324,6 +379,10 @@ const TeamStepper = React.createClass( {
                                             hideSubmit = { true }
                                             onChange =  { ( newItem ) => {
                                                 console.log(this.data.viewingTeam,"this.data.viewingTeam");
+                                                console.log(newItem,"newItem");
+                                                this.setState({
+                                                    viewingTeam: newItem.item
+                                                })
                                                 /*
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;
@@ -357,7 +416,7 @@ const TeamStepper = React.createClass( {
                                             }
                                         />
                                     </div>
-                                    <div className = "col-sm-5"><ThumbView item = { viewingTeam.thumb } onChange = { this.setThumb } /></div>
+                                    <div className = "col-sm-5"><ThumbView item = { viewingTeam && viewingTeam.thumb } onChange = { this.setThumb } /></div>
                                     <div className = "col-sm-12">
                                         <AutoForm
                                             model = { Teams }
@@ -369,23 +428,26 @@ const TeamStepper = React.createClass( {
                                         /> <br />
                                     </div>
                                     </div>,
-                        guide:      <div>Enter the basic account info here including your teams name, address and image.</div>
+                        guide:      <div>
+                                        <div>Enter the basic account info here including your teams name, address and image.</div>
+                                        <div>{ this.state.messageToShow?<b style={{color:this.state.messageToShow.color}}>{this.state.messageToShow.message}</b>:null}</div>
+                                    </div>
                     },{
                         tab:        <span id = "documents-tab">Documents</span>,
-                        content:    <AutoForm model = { Teams } item = { viewingTeam } form = { ["documents"] } hideSubmit = { true } />,
+                        content:    (viewingTeam._id?<AutoForm model = { Teams } item = { viewingTeam } form = { ["documents"] } hideSubmit = { true } />:null),
                         guide:      <div>Formal documentation related to the team can be added here. This typically includes insurance and professional registrations.</div>
                     },{
                         tab:        <span id = "members-tab">Members</span>,
-                        content:    <ContactList
+                        content:    (viewingTeam._id?<ContactList
                                         team        = { viewingTeam }
                                         group       = { viewingTeam }
                                         filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } }
                                         defaultRole = "staff"
-                                    />,
+                                    />:null),
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
                     },{
                         tab:        <span id = "services-provided-tab">Services provided</span>,
-                        content:    <ServicesProvidedEditor item = { viewingTeam } save = { viewingTeam.setServicesProvided.bind(viewingTeam) }/>,
+                        content:    (viewingTeam._id?<ServicesProvidedEditor item = { viewingTeam } save = { viewingTeam.setServicesProvided.bind(viewingTeam) }/>:null),
                         guide:      <div>Click on a service name to modify it, or click in the suppliers column to add a default supplier for that service.</div>
                     }
                 ]}/>
@@ -394,4 +456,4 @@ const TeamStepper = React.createClass( {
     }
 } );
 
-export default TeamStepper;
+export default TeamStepper2;
