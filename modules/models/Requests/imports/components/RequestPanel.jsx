@@ -12,7 +12,7 @@ import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
-import { TeamActions } from '/modules/models/Teams';
+import { Teams, TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
@@ -23,7 +23,6 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -36,7 +35,6 @@ export default RequestPanel = React.createClass( {
 
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -63,7 +61,7 @@ export default RequestPanel = React.createClass( {
 
     componentWillMount() {
         //Perf.start();
-        this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
@@ -164,6 +162,15 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
+    /*let group = Teams.findOne({'_id':request.supplier._id});
+    console.log(Meteor.user(),"member");
+    console.log(supplier,"supplier");
+    console.log(request.supplier,"request.supplier");
+    console.log(group,"request.supplier=>group");
+    let role = RBAC.getRole( cont, realEstateAgency );
+    console.log(role,"role RBAC");
+    role = supplier.getMemberRole( Meteor.user() );
+    console.log(role,"role");*/
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -184,7 +191,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( Meteor.user().getRole()=="staff" ? null : supplier ) : supplier) : contact }/>
+
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
