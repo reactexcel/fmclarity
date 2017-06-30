@@ -98,7 +98,7 @@ Requests.save.before( ( request ) => {
         request.priority = "Booking";
     }
 
-    if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
+    if ( request.costThreshold && ( request.costThreshold.length === 0 || ( _.isString( request.costThreshold ) && !request.costThreshold.trim() ) ) ) {
         request.costThreshold = 0;
     }
 
@@ -918,7 +918,7 @@ function actionComplete( request ) {
         }
     }
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
