@@ -8,6 +8,7 @@ import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
 export default function TopNavigationBar( props ) {
 
     import { NotificationList } from '/modules/models/Messages';
+    $(".loader").children("div").children("div").css({backgroundColor:"",boxShadow:""})
     $(".loader").hide();
     setTimeout( () => {
 
