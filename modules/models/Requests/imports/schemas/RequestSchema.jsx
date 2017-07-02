@@ -528,6 +528,9 @@ const RequestSchema = {
                     }
                 }
                 if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
+                    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
+                        return true;
+                    }
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
