@@ -163,6 +163,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
+    isNot = request.type=='Key Request' && Meteor.user().getRole()=='manager';
+    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
+        return true;
+    }
     /*let group = Teams.findOne({'_id':request.supplier._id});
     console.log(Meteor.user(),"member");
     console.log(supplier,"supplier");
@@ -268,10 +272,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 }
 
                 { teamType=='fm' && request.service && request.type != 'Booking' ?
-                <tr>
-                    <th>Service</th>
-                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
-                </tr>
+                request.type=='Key Request' ?
+                Meteor.user().getRole()=='manager'?
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>: null
+                    :
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>
                 : null
                 }
 

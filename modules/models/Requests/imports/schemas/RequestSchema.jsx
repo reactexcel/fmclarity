@@ -123,6 +123,17 @@ const RequestSchema = {
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
+                                    if (request.type == "Key Request") {
+                                        var services = Session.getSelectedTeam().getAvailableServices();
+                                        for (var i = 0; i < services.length; i++) {
+                                            var name = services[i].name;
+                                            if (name.indexOf('keys') !== -1) {
+                                                request.service = services[i];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
                                 }
                                 else{
                                     request.area = request.area ? request.area : null;
@@ -355,7 +366,7 @@ const RequestSchema = {
                     val = user.profile.tenancy;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment;
+                    val = user.apartment ? user.apartment : null;
                 }
                 return val;
             },
@@ -479,6 +490,18 @@ const RequestSchema = {
             },
             size: 6,
             type: "object",
+            defaultValue: ( item ) => {
+                if (item.type == "Key Request") {
+                    var services = Session.getSelectedTeam().getAvailableServices();
+                    for (var i = 0; i < services.length; i++) {
+                        var name = services[i].name;
+                        if (name.indexOf('keys') !== -1) {
+                            item.service = services[i];
+                            break;
+                        }
+                    }
+                }
+            },
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
