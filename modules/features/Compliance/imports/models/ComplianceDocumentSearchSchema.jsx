@@ -3,7 +3,7 @@ import { Text, TextArea, Select, DateInput, Currency, Switch } from '/modules/ui
 
 export default ComplianceDocumentSearchSchema = {
     name: {
-		label: "Document name",
+		label: "Description",
 		type: "string",
 		input: Text,
         description:"It's an optional field",

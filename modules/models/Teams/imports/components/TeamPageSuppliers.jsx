@@ -27,13 +27,15 @@ class TeamPageSuppliers extends React.Component {
         }
     }
     componentWillMount(){
-        Perf.start();
+        //Perf.start();
     }
 
     componentDidMount(){
+        /*
         Perf.stop();
         console.log('output suppliers page load time');
         Perf.printInclusive();
+        */
     }
 
     showModal( callback ) {

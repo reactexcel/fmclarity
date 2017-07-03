@@ -12,7 +12,7 @@ import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
-import { TeamActions } from '/modules/models/Teams';
+import { Teams, TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
@@ -23,7 +23,6 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -36,7 +35,6 @@ export default RequestPanel = React.createClass( {
 
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -44,7 +42,7 @@ export default RequestPanel = React.createClass( {
 
                 if( facility ) {
                     realEstateAgency = facility.getRealEstateAgency();
-                    console.log( realEstateAgency );
+                    //console.log( realEstateAgency );
                 }
 
                 contact = request.getContact();
@@ -57,24 +55,26 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+        let callback = this.props.callback
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
-        Perf.start();
+        //Perf.start();
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing mount load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
     componentDidUpdate() {
-        Perf.stop();
+        /*Perf.stop();
         console.log('Outputing update load time analysis for request panel...');
-        Perf.printInclusive();
+        Perf.printInclusive();*/
         // Perf.printWasted();
     },
 
@@ -84,22 +84,20 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
-
-    //console.log( facility );
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
     function showUserModal( selectedUser ) {
-            
+
             Modal.show( {
                 content: <UserPanel
                     item    = { selectedUser }
                     team    = { Session.get( 'selectedTeam' ) }
                     group   = { facility }/>
             } )
-        
+
     }
 
     function showMoreUsers() {
@@ -127,12 +125,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
-
         if ( nextDate ) {
-            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
         }
         if ( previousDate ) {
-            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM YYYY' );
         }
 
     } else {
@@ -164,7 +161,16 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         }
 
     } ) : null;
-    request.readBy=_.uniq(request.readBy, '_id'); 
+    request.readBy=_.uniq(request.readBy, '_id');
+    /*let group = Teams.findOne({'_id':request.supplier._id});
+    console.log(Meteor.user(),"member");
+    console.log(supplier,"supplier");
+    console.log(request.supplier,"request.supplier");
+    console.log(group,"request.supplier=>group");
+    let role = RBAC.getRole( cont, realEstateAgency );
+    console.log(role,"role RBAC");
+    role = supplier.getMemberRole( Meteor.user() );
+    console.log(role,"role");*/
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -185,7 +191,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( Meteor.user().getRole()=="staff" ? null : supplier ) : supplier) : contact }/>
+
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
@@ -239,7 +246,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                   </div>
                 </div>
                 <div className="col-md-11">
-                  <WorkflowButtons actions = { RequestActions } item = { request }/>
+                  <WorkflowButtons actions = { RequestActions } item = { request } callback={callback}/>
                 </div>
               </div>
             </div>
@@ -330,12 +337,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 })}
 
                             </ul>
-                            
+
                         </td>
                     </tr> : null }
                 </tbody>
             </table>
-            
+
             <Tabs tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,

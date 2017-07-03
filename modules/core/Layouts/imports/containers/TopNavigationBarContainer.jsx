@@ -16,6 +16,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'User: Teams' );
     Meteor.subscribe( 'Users' );
     Meteor.subscribe( 'Teams' );
+    Meteor.subscribe( 'Reports' );
 
     ////////////////////////////////////////
     //Meteor.subscribe( 'Request: Files' );

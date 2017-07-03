@@ -22,6 +22,7 @@ export default AreaDetailsSchema = {
                 item.hour = null;
                 item.week = null;
                 item.month = null;
+                item.daySelector = (item.type == "Booking" ? item.daySelector : null);
                 //item.tenant = null;
                 item.nla = null;
                 item.areaUnit = null;
@@ -128,6 +129,8 @@ export default AreaDetailsSchema = {
                                             selected[d].select = !selected[d].select;
                                             if(!selected[d].select){
                                                 selected[d].time = "";
+                                                selected[d].startTime = "";
+                                                selected[d].endTime = "";
                                             }
                                             for ( let i in weekDays ){
                                                 let day = weekDays[i];
@@ -135,6 +138,8 @@ export default AreaDetailsSchema = {
                                                     selected[day].select = selected[d].select;
                                                     if(!selected[day].select){
                                                         selected[day].time = "";
+                                                        selected[day].startTime = "";
+                                                        selected[day].endTime = "";
                                                     }
                                                 }
                                             }
@@ -142,11 +147,15 @@ export default AreaDetailsSchema = {
                                             if( selected['M-F'].select ) {
                                                 selected['M-F'].select = false;
                                                 selected['M-F'].time = "";
+                                                selected['M-F'].startTime = "";
+                                                selected['M-F'].endTime = "";
                                             }
                                             if ( selected[d] != null ) {
                                                 selected[d].select = !selected[d].select;
                                                 if(!selected[d].select){
                                                     selected[d].time = "";
+                                                    selected[d].startTime = "";
+                                                    selected[d].endTime = "";
                                                 }
                                             }
                                         }
@@ -158,20 +167,26 @@ export default AreaDetailsSchema = {
                             </div>
                             <div className="col-sm-10">
                                 <StartEndTimePicker onChange={
-                                        ( time ) => {
+                                        ( time, startTime, endTime ) => {
                                             if ( d == 'M-F' ) {
                                                 selected[d].select = true;
                                                 selected[d].time = time;
+                                                selected[d].startTime = startTime;
+                                                selected[d].endTime = endTime;
                                                 for ( let i in weekDays ){
                                                     let day = weekDays[i];
                                                     if ( selected[ day ] != null ) {
                                                         selected[day].select = selected[d].select;
                                                         selected[day].time = selected[d].time;
+                                                        selected[day].startTime = startTime;
+                                                        selected[day].endTime = endTime;
                                                     }
                                                 }
                                             } else {
                                                 selected[d].select = true;
                                                 selected[d].time = time;
+                                                selected[d].startTime = startTime;
+                                                selected[d].endTime = endTime;
                                             }
                                             props.onChange(selected);
                                         }

@@ -50,7 +50,6 @@ const Requests = new Model( {
                                 memberRoles = roles.actors[ member._id ];
 
                             //console.log( memberRoles );
-
                             if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
                                 //remove everyone who isn't pm
                                 for( let i in memberRoles ) {
@@ -91,16 +90,15 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
     if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
     }
 
-    if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
+    if ( request.costThreshold && ( request.costThreshold.length === 0 || ( _.isString( request.costThreshold ) && !request.costThreshold.trim() ) ) ) {
         request.costThreshold = 0;
     }
 
@@ -192,9 +190,10 @@ Requests.methods( {
         helper: ( request ) => {
             let user = Meteor.user(),
                 team = Session.getSelectedTeam(),
+                userRole = team.getMemberRole( user ),
                 query = null;
 
-            if( Teams.isServiceTeam( team ) ) {
+            if( Teams.isServiceTeam( team ) || userRole == 'fmc support'  ) {
                 query = {
                     'inboxId.query._id': request._id
                 }
@@ -205,7 +204,7 @@ Requests.methods( {
                         { 'inboxId.query._id': user._id },
                         { 'target.query._id': request._id }
                     ]
-                }                
+                }
             }
 
             let messages = Messages.findAll( query, { sort: { createdAt: 1 } } );
@@ -235,13 +234,21 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
+
             let status = 'New';
+
+            // The description field simply carries the value to be sent to the notification or comment.
+            // After extracting that value we clear it because we don't want to save the description value.
+            let description = request.description;
+            request.description = null;
+
+            // Cost threshold should be numeric - perhaps there is a better way to enforce this in the schema... anyone?
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
 
             if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -260,11 +267,9 @@ Requests.methods( {
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
-
             if ( newRequestId ) {
                 newRequest = Requests.findOne( newRequestId );
             }
-
             if ( newRequest ) {
                 let owner = null;
                 if ( newRequest.owner ) {
@@ -275,7 +280,7 @@ Requests.methods( {
                         verb: "created",
                         read: false,
                         subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: newRequest.description
+                        body: description
                     }
                 } );
             }
@@ -284,7 +289,7 @@ Requests.methods( {
     },
 
     issue: {
-        authentication: true,
+        authentication: checkIssuePermissions,
         method: actionIssue
     },
 
@@ -410,7 +415,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
@@ -457,7 +462,7 @@ Requests.methods( {
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
-                for ( var i = 0; i < repeats; i++ ) {
+                for ( var i = 0; i <= repeats; i++ ) {
 
                     if ( dueDate.isAfter() ) {
                         return dueDate.subtract( period ).toDate();
@@ -471,9 +476,11 @@ Requests.methods( {
     findCloneAt: {
         authentication: true,
         helper: ( request, dueDate ) => {
+            let facility = request.getFacility();
             return Requests.findOne( {
+                "facility._id": facility._id,
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -499,9 +506,11 @@ Requests.methods( {
                 nextRequest = null;
 
             if ( nextDate ) {
+                let facility = request.getFacility();
                 nextRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -516,9 +525,11 @@ Requests.methods( {
             previousRequest = null;
 
             if ( previousDate ) {
+                let facility = request.getFacility();
                 previousRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -677,12 +688,78 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
+function checkIssuePermissions( role, user, request ) {
+
+    let hasSupplier = request.supplier && request.supplier._id,
+        userCanIssue = false;
+
+    if ( request.type != 'Preventative' && hasSupplier ) {
+        let team = Teams.findOne( request.team._id ),
+            role = team.getMemberRole( user ),
+            baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
+        if( !team ) {
+            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+            return;
+        }
+        else if( baseBuilding ) {
+            if( role == 'property manager' ) {
+                userCanIssue = true;
+            }
+        }
+        else if( !baseBuilding ) {
+
+            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                userCanIssue = true;
+            }
+            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
+                let relation = team.getMemberRelation( user ),
+                    costString = request.costThreshold,
+                    memberThreshold = null,
+                    costThreshold = null;
+
+                if( relation ) {
+                    memberThreshold = relation.issueThresholdValue;
+                    if( _.isString( memberThreshold ) ) {
+                        memberThreshold = memberThreshold.replace(',','');
+                    }
+                }
+
+                // strips out commas
+                //  this is a hack due to an inadequete implementation of number formatting
+                //  needs a refactor
+                if( _.isString( costString ) ) {
+                    costString = costString.replace(',','')
+                }
+
+                let cost = parseInt( costString );
+
+                // this is the value saved in the member team relation
+                if( memberThreshold ) {
+                    costThreshold = parseInt( memberThreshold );
+                }
+                // this is the threshold value from the global team configuration
+                else if( team.defaultCostThreshold ) {
+                    costThreshold = parseInt( team.defaultCostThreshold );
+                }
+
+                if( cost <= costThreshold ) {
+                    userCanIssue = true;
+                }
+            }
+
+        }
+    }            
+    return userCanIssue;
+}
+
 
 function actionIssue( request ) {
-
     let code = null,
         userId = Meteor.user(),
+        description = request.description,
         user = Users.findOne( userId._id );
+
+    request.description = null;
 
     if ( request ) {
         if ( request.code ) {
@@ -713,6 +790,7 @@ function actionIssue( request ) {
             message: {
                 verb: "issued",
                 subject: "Work order #" + request.code + " has been issued",
+                body: description
             }
         } );
 
@@ -726,7 +804,7 @@ function actionIssue( request ) {
                 read: false,
                 digest: false,
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 13 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }
@@ -796,7 +874,7 @@ function getMembersDefaultValue( item ) {
                 let role = member.getRole( facility );
 
                 if ( role == 'property manager' ) {
-                    if ( item.service.data && item.service.data.baseBuilding ) {
+                    if ( item.service && item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
@@ -839,15 +917,12 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
-
-        console.log( 'further work required' );
 
         var closer = Meteor.user(),
             closerRole = closer.getRole();
@@ -942,7 +1017,7 @@ function actionSendReminder( requests ) {
             message: {
                 subject: "Overdue Work order #" + request.code + " reminder",
                 emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                    var expiry = moment( request.dueDate ).add( { days: 4 } ).toDate();
                     var token = LoginService.generateLoginToken( recipient, expiry );
                     return DocMessages.render( OverdueWorkOrderEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
                 }

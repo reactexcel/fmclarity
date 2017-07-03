@@ -6,6 +6,7 @@
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
+import IncidentCommentSchema from './IncidentCommentSchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
@@ -15,8 +16,7 @@ import { FileExplorer } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
-
+import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -54,12 +54,24 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
-            description: "A brief, descriptive, title for the work request"
+            description: (item)=>{
+                let workRequest = "work request";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type + " details"
+                }
+                return "A brief, descriptive, title for the " + workRequest;
+            }
         },
 
         code: {
             label: "Code",
-            description: "The unique code for this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The unique code for this"+ workRequest +"request";
+            },
             type: "number",
             input: Text,
             defaultValue: getJobCode,
@@ -72,7 +84,7 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
-            size: 6,
+            size: 12,
             required: true,
             defaultValue: () => {
                 let team = Session.get( 'selectedTeam' );
@@ -82,21 +94,33 @@ const RequestSchema = {
                 return "Ad-hoc";
             },
             input: Select,
-            options: () => {
+            options: (item) => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+                                if(request.type == 'Incident'){
+                                    request.priority = 'Urgent';
+                                    request.supplier = Session.getSelectedTeam();
+                                }
+
+                                } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                 }
@@ -108,7 +132,26 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                                afterChange: ( request ) => {
+                                    // prefill value with zero for defect
+                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                        request.costThreshold= '0';
+                                        request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };
+                                    }
+                                    if(request.type == 'Incident'){
+                                        request.costThreshold= '0';
+                                        request.priority = 'Urgent';
+                                        request.supplier = Session.getSelectedTeam();
+                                    }
+                                }
+                         };
                     }
                 }
             }
@@ -116,9 +159,21 @@ const RequestSchema = {
 
         priority: {
             label: "Priority",
-            description: "The urgency of the requested work",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The urgency of the "+ workRequest +" request";
+            },
             type: "string",
-            defaultValue: "Standard",
+            defaultValue: (item) =>{
+                let priority = "Standard";
+                if(item.type == 'Incident'){
+                    priority = 'Urgent'
+                }
+                return priority;
+            },
             required: true,
             condition: ( request ) => {
                 if ( request.type == "Preventative" || request.type == 'Booking' ) {
@@ -196,15 +251,70 @@ const RequestSchema = {
         //////////////////////////////////////////////////
         // Facility dependant properties
         //////////////////////////////////////////////////
+        location: {
+            label: "Where did it happen?",
+            type: "string",
+            input: Text,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        incidentVictim: {
+            label: "Who did it happen to?",
+            type: "string",
+            input: Text,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        reporter: {
+            label: "Reporter",
+            description: "Who reported the incident",
+            type: "object",
+            input: Select,
+            required: true,
+            options: ( request ) => {
+                    request = Requests.collection._transform( request );
 
+                    let team = request.getFacility() || request.getTeam(),
+                        members = team.getMembers();
+                    return {
+                        items: members,
+                        view: ContactCard
+                    }
+            },
+            condition: "Incident"
+        },
+        reporterContact: {
+            label: "Reporter Contact ",
+            type: "string",
+            input: TextArea,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        incidentFurtherComments: {
+            type: "object",
+            subschema: IncidentCommentSchema,
+            condition: "Incident"
+        },
         level: {
             label: "Location - Area",
             size: 4,
             type: "object",
-            input: Select,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.area = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
+                if (item.type=="Incident") {
+                    return false;
+                }
                 return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
@@ -217,20 +327,42 @@ const RequestSchema = {
                     let allArea = facility ? facility.areas : []
                     allArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
-                            areas.push(area)
+                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                areas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        areas.push(area)
+                                    }
+                                } else if(area2.children && area2.children.length > 0){
+                                    area2.children.map(( area3, idx3) => {
+                                        if(area3.data && area3.data.areaDetails  && area3.data.areaDetails.type == "Bookable"){
+                                            if(_.find(areas, function(obj){ return obj.name == area.name; }) == undefined){
+                                                areas.push(area)
+                                            }
+                                        }
+                                    })
+                                }
+                            })
                         }
                     })
                 } else {
                     areas = facility ? facility.areas : null
                 }
                 return {
-                    items: areas
+                    items: areas,
+                    readOnly: item.type == 'Key Request',
                 }
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
+                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
+                }
+                if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
+                    val = user.apartment;
                 }
                 return val;
             },
@@ -240,18 +372,51 @@ const RequestSchema = {
             label: "Sub-area",
             size: 4,
             type: "object",
-            input: Select,
+            required: false,
+            input:( props ) => {
+                return <Select {...props}
+                        onChange={( value ) => {
+                            props.item.identifier = {};
+                            props.onChange(value);
+                        }}/>
+            } ,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' );
-                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.area );
+                if(
+                    item.type == "Booking"
+                    && item.level
+                    && item.level.data
+                    && item.level.data.areaDetails
+                    && item.level.data.areaDetails.type != "Bookable"
+                )
+                {
+                    RequestSchema.area.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
+                let selectedTeam = Session.get( 'selectedTeam' ),
+                    teamType = null;
+                if ( selectedTeam ) {
+                    teamType = selectedTeam.type;
+                }
+                return teamType == 'fm' || !_.isEmpty( item.area );
             },
             options: ( item ) => {
                 let subAreas = [];
                 if(item.type == "Booking"){
-                    let allSubArea = item.level && item.level.children ? item.level.children : [];
+                    let allSubArea = item.level && item.level.children ? item.level.children : []
                     allSubArea.map( ( area, idx ) => {
                         if(area.data && area.data.areaDetails && area.data.areaDetails.type == "Bookable"){
-                            subAreas.push(area)
+                            if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                subAreas.push(area)
+                            }
+                        } else if(area.children && area.children.length > 0){
+                            area.children.map(( area2, idx2) => {
+                                if(area2.data && area2.data.areaDetails  && area2.data.areaDetails.type == "Bookable"){
+                                    if(_.find(subAreas, function(obj){ return obj.name == area.name; }) == undefined){
+                                        subAreas.push(area)
+                                    }
+                                }
+                            })
                         }
                     } )
                 } else {
@@ -269,9 +434,26 @@ const RequestSchema = {
             size: 4,
             type: "object",
             input: Select,
+            required:false,
             condition: ( item ) => {
-                let selectedTeam = Session.get( 'selectedTeam' );
-                return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.identifier );
+                if(
+                    item.type == "Booking"
+                    && item.area
+                    && item.area.data
+                    && item.area.data.areaDetails
+                    && item.area.data.areaDetails.type != "Bookable"
+                )
+                {
+                    RequestSchema.identifier.required = true;
+                } else {
+                    RequestSchema.area.required = false;
+                }
+                let selectedTeam = Session.get( 'selectedTeam' ),
+                    teamType = null;
+                if ( selectedTeam ) {
+                    teamType = selectedTeam.type;
+                }
+                return teamType == 'fm' || !_.isEmpty( item.identifier );
             },
             options: ( item ) => {
                 let subAreas =[];
@@ -295,13 +477,28 @@ const RequestSchema = {
 
         service: {
             label: "Service",
-            description: "The category of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The category of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
-                            onServiceChange = props.changeSubmitText
+                            let team = Session.getSelectedTeam();
+                            let costAbleToIssue = true;
+                            if(team.defaultCostThreshold){
+                                costAbleToIssue = false;
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                            }
+                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -314,7 +511,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -341,32 +538,34 @@ const RequestSchema = {
                         if ( request == null || Teams.isServiceTeam( selectedTeam ) ) {
                             return;
                         }
-                        if ( request.service.data ) {
-                            let supplier = request.service.data.supplier,
-                                defaultSupplier = null;
+                        request.supplier = null;
+                        request.subservice = null;
+                        if (request && request.service && request.service.data ) {
+                                let supplier = request.service.data.supplier,
+                                    defaultSupplier = null;
 
-                            if ( supplier ) {
-                                if ( supplier._id ) {
-                                    defaultSupplier = Teams.findOne( supplier._id );
-                                }
-                                if ( !defaultSupplier && supplier.name ) {
-                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                }
-                                request.supplier = defaultSupplier;
-                                if( request.supplier && onServiceChange ) {
-                                    onServiceChange( request.supplier );
-                                }
-                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
-                                    request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                if ( supplier ) {
+                                    if ( supplier._id ) {
+                                        defaultSupplier = Teams.findOne( supplier._id );
+                                    }
+                                    if ( !defaultSupplier && supplier.name ) {
+                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                    }
+                                    request.supplier = defaultSupplier;
+                                    if( request.supplier && onServiceChange ) {
+                                        onServiceChange( request.supplier );
+                                    }
+                                    if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                        request.supplierContacts = request.service.data.defaultContact;
+                                    } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                    } else {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    }
                                 } else {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    request.supplier = null;
+                                    request.subservice = null;
                                 }
-                            } else {
-                                request.supplier = null;
-                                request.subservice = null;
-                            }
                         }
                     }
                 }
@@ -375,7 +574,13 @@ const RequestSchema = {
 
         subservice: {
             label: "Subservice",
-            description: "The subcategory of work required",
+            description: (item) =>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The subcategory of "+ workRequest +" request";
+            },
             size: 6,
             type: "object",
             input: Select,
@@ -442,7 +647,13 @@ const RequestSchema = {
 
         issueComment: {
             label: "Comment",
-            description: "Comment about the issuing of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the issuing of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: true,
@@ -450,7 +661,13 @@ const RequestSchema = {
 
         acceptComment: {
             label: "Comment",
-            description: "Comment about the acceptance of this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "Comment about the acceptance of this"+ workRequest +"request";
+            },
             type: "string",
             input: TextArea,
             required: false,
@@ -531,12 +748,13 @@ const RequestSchema = {
         occupancy: {
             label: "Base Building",
             description: "Specify occupancy type",
-            size: 6,
+            size: 12,
             defaultValue: ( item ) => {
                 return item.service && item.service.data && item.service.data.baseBuilding;
             },
             condition: ( item ) => {
-                return _.contains(['Ad-hoc', 'Defect'], item.type);
+                let role = Meteor.user().getRole();
+                return _.contains(['Ad-hoc', 'Defect'], item.type) && !_.contains(['staff', 'resident'], role) && item.status=='Issued';
             },
             input(props){
                 let value = false,
@@ -550,20 +768,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -573,11 +791,64 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
-            input: Currency,
+            defaultValue: ( item ) => {
+                if(item.type && _.contains(['Key Request','Incident'],item.type)){
+                    return '0';
+                }
+                // get the default value from the team and return that as default costThreshold
+                let team = Session.getSelectedTeam();
+                if( team && ( team.defaultWorkOrderValue != null ) ) {
+                    return  team.defaultWorkOrderValue;
+                }
+                // if none exists return 0
+                return '0';
+            },
+            // input: Currency,
+            input: (props)=>{
+                return <Currency {...props}
+                    onChange={(value)=>{
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
+                        }
+                        props.onChange( value );
+                    }}
+                />
+            },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect", "Incident" ], request.type ) ) {
                     return false;
+                }
+                if(request.type == "Booking"){
+                    request.costThreshold = '0';
+                    let selectedAreaDetail = null;
+                    if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
+                        selectedAreaDetail = request.identifier.data.areaDetails
+                    } else if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    } else if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+
+                    if(selectedAreaDetail != null){
+                        let unit = selectedAreaDetail.unit,
+                            cost = parseInt(_.isEmpty(selectedAreaDetail.cost)?0:selectedAreaDetail.cost),
+                            bookingIncreament = 0;
+                        if(unit == 'Hours'){
+                            bookingIncreament = selectedAreaDetail.hour.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Days'){
+                            bookingIncreament = selectedAreaDetail.day.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Months'){
+                            bookingIncreament = selectedAreaDetail.month.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Weeks'){
+                            bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
+                        }
+                        bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
+
+                    }
+                } else {
+                    // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
                 if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
@@ -606,10 +877,56 @@ const RequestSchema = {
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
+                    return false;
+                }
+                if (request.type=='Incident') {
                     return false;
                 }
                 return true;
+            }
+        },
+
+        incidenceDate: {
+            type: "date",
+            label: "When did it happen?",
+            description: "The date and time the incident occured",
+            input: DateTime,
+            size: 6,
+            required: true,
+            defaultValue: getDefaultDueDate,
+            condition: "Incident"
+        },
+
+        bookingPeriod: {
+            type: "object",
+            label: "Booking period",
+            description: "Select the booking period",
+            input: (props) => {
+                return  <CalendarPeriod
+                            onChangeValue={(value)=>{
+                                props.onChange(value);
+                            }}
+                            {...props}
+                        />
+            },
+
+            size: 12,
+            required: true,
+            defaultValue: {},
+            condition: (request)=>{
+                if(request.type == "Booking" && request.level && request.level.name){
+                    if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
+                        let hours = duration.asHours();
+                        request.duration = hours.toString();
+                    } else {
+                        request.duration = ''
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
 
@@ -640,7 +957,13 @@ const RequestSchema = {
 
         team: {
             label: "Client",
-            description: "The team who created this work request",
+            description: (item)=>{
+                let workRequest = "work";
+                if(!_.isEmpty(item.type)){
+                    workRequest = item.type
+                }
+                return "The team who created this"+ workRequest +"request";
+            },
             type: "object",
             input: Select,
             options: ( item ) => {
@@ -676,7 +999,6 @@ const RequestSchema = {
             input: Select,
 
             options: ( request ) => {
-
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
@@ -727,6 +1049,7 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
                 if ( facilities.length <= 1 ) {
@@ -746,26 +1069,41 @@ const RequestSchema = {
             },
             condition: ( request ) => {
 
-                let selectedTeam = Session.get( 'selectedTeam' );
+                let team = Session.getSelectedTeam();
                 //do not show for booking, contractors, staff or resident
-                return (
-                    ( request.type != 'Booking' && Teams.isServiceTeam( selectedTeam ) ) ?
-                    ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
-                )
+                if( request.type != 'Booking' ) {
+                    if( Teams.isFacilityTeam( team ) ) {
+                        if( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
+                if ( item.type == 'Incident' ) {
+                    return team;
+                }
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
-                return team;
             },
             input:( props ) => {
                 return <Select {...props}
-                        onChange={( value ) => {
-                            props.changeSubmitText(value);
-                            props.onChange(value);
-                        }}/>
+                    onChange={( value ) => {
+                        let team = Session.getSelectedTeam();
+                        let costAbleToIssue = true;
+                        if(team.defaultCostThreshold){
+                            costAbleToIssue = false;
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        props.onChange(value);
+                    }}/>
             } ,
             options: ( item ) => {
                 let facility = null,
@@ -774,6 +1112,9 @@ const RequestSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
+                    /*if( facility ) {
+                        console.log( facility.getSuppliers() );
+                    }*/
                 }
 
                 return {
@@ -800,7 +1141,6 @@ const RequestSchema = {
                         }
                     },
                     afterChange: ( request, supplier ) => {
-                        //console.log( supplier );
                         if( !supplier ) {
                             request.supplierContacts = [];
                         }
@@ -831,7 +1171,8 @@ const RequestSchema = {
                     (
                         request.status != 'Issued' &&
                         request.type != 'Booking' &&
-                        Teams.isServiceTeam( selectedTeam )
+                        //Teams.isServiceTeam( selectedTeam )
+                        Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
                 )
@@ -919,11 +1260,17 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
+                    /*if ( request.supplier && request.supplier._id ) {
+                        let team = Session.getSelectedTeam();
+                        if( team._id == request.supplier._id ) {
+                            let userRole = Meteor.user().getRole();
+                            if( _.contains( [ 'portfolio manager', 'manager' ], userRole ) ) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;*/
                     let role = Meteor.user().getRole();
-                    /*if ( request.type == 'Preventative' || role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
-                        console.log("1111")
-                        return false;
-                    }*/
                     if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
                         return false;
                     }
@@ -934,14 +1281,23 @@ const RequestSchema = {
                     if(_.contains( [ "portfolio manager", 'manager'], role )){
                         return true;
                     }
+                    return false;
                 },
                 input: Select,
                 type: "object",
                 options: ( request ) => {
                     request = Requests.collection._transform( request );
-                    //let supplier = request.getSupplier(),
-                    let supplier = Session.getSelectedTeam(),
-                        members = Teams.getMembers( supplier );
+
+                    let members = null,
+                        supplier = null;
+
+                    if( request.supplier && request.supplier._id ) {
+                        let supplier = Teams.findOne( request.supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers();
+                        }
+                    }
+
                     return {
                         items: members,
                         view: ContactCard,
@@ -951,17 +1307,24 @@ const RequestSchema = {
                             label: "Add New",
                             onAddNewItem: ( callback ) => {
                                 import { Users, UserViewEdit } from '/modules/models/Users';
-                                let team = Session.getSelectedTeam();
-                                Modal.show( {
-                                    content: <UserViewEdit group={ team } team={ team } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
-                                } )
+                                if( supplier ) {
+                                    Modal.show( {
+                                        content: <UserViewEdit group={ supplier } team={ supplier } addPersonnel={ ( newAssignee ) => callback( newAssignee ) }/>
+                                    } )
+                                }
                             }
                         },
                         afterChange: ( item ) => {
+                            if( !item.members ) {
+                                item.members = [];
+                            }
                             let found = false;
                             if ( item.assignee && item.assignee._id ) {
+
                                 import { Users } from '/modules/models/Users';
+
                                 let assignee = Users.findOne( item.assignee._id );
+
                                 for ( i in item.members ) {
                                     let member = item.members[ i ];
                                     if ( member.role == "assignee" ) {
@@ -989,7 +1352,13 @@ const RequestSchema = {
 
             members: {
                 label: "Contacts",
-                description: "Stakeholders for this work request",
+                description: (item)=>{
+                    let workRequest = "work";
+                    if(!_.isEmpty(item.type)){
+                        workRequest = item.type
+                    }
+                    return "Stakeholders for this"+ workRequest +"request";
+                },
             },
 
             documents: {
@@ -1063,9 +1432,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1079,10 +1447,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1131,6 +1499,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

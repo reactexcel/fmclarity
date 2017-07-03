@@ -83,6 +83,7 @@ export default MessageView = React.createClass( {
     render() {
         let message = this.data.message || {},
             owner = this.data.owner || Meteor.user(),
+            target = message.getTarget ? message.getTarget() : null,
             createdAt = message.createdAt,
             used = false,
             hideContext = message.type=='comment'&&this.data.messageIsInContext;
@@ -134,12 +135,16 @@ export default MessageView = React.createClass( {
 
                         <div className="message-footer">
                             <small className="text-muted">{moment(createdAt).format('MMM Do YYYY, h:mm:ss a')}</small>
-                            {message.verb=='completed' ?
-                            <div>
-                            <small className="text-muted pull-right">Attended - {moment(message.getTarget().closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
-                            <small className="text-muted pull-right">Completed - {moment(message.getTarget().closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')}</small>
-                            </div>
-                             : null}
+                            {
+                                message.verb == 'completed'
+                                && target
+                                && target.closeDetails ?
+                                <div>
+                                    <small className="text-muted pull-right">Attended - {moment(target.closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
+                                    <small className="text-muted pull-right">Completed - {moment(target.closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')}</small>
+                                </div>
+                                :null
+                            }
                         </div>
                     </div>
                 </div>
