@@ -22,6 +22,12 @@ function LayoutMain( props ) {
     e.preventDefault();
     $("#drop-box").css("display","block");;
   })
+  const style = {
+  refresh: {
+    backgroundColor: '',
+    boxShadow: '',
+  },
+};
     return (
         <MuiThemeProvider muiTheme = { getMuiTheme() }>
         <div>
@@ -52,6 +58,7 @@ function LayoutMain( props ) {
       					left = { 0 }
       					top = { 0 }
       					status = "loading"
+                style = {style.refresh}
       			/>
       			</div>
       			</div>
