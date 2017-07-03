@@ -210,17 +210,23 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <h2>${request.costThreshold}</h2>
                             : null }
 
-                            { request.issuedAt ?
+                            { request.type == "Ad-Hoc" && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.dueDate ?
+                            { request.type == "Ad-Hoc" && request.dueDate ?
                             <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            : null }
+
+                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
                             { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
+
+
 
                             <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
