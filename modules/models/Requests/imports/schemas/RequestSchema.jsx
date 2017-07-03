@@ -137,13 +137,20 @@ const RequestSchema = {
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                         request.costThreshold= '0';
+                                        /*request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };*/
                                         request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
                                             repeats: (request.type == 'Preventative' ? 10 : ""),
                                             period: "",
                                             endDate: "",
                                             unit: (request.type == 'Preventative' ? "years" : "")
-                                        };
+                                        }
                                     }
                                     if(request.type == 'Incident'){
                                         request.costThreshold= '0';
@@ -205,12 +212,165 @@ const RequestSchema = {
         },
 
         frequency: {
-            /*label: "Frequency",
-            description: "The frequency with which this job should occur",*/
-            condition: "Preventative",
-            subschema: RequestFrequencySchema,
+            label: "Frequency",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                return (
+                    <Select
+    	      			placeholder = { props.placeholder }
+    	      			item = { props.item }
+    	      			items = { props.items }
+                        errors = { props.errors }
+    	      			value = { props.value.unit }
+    	      			onChange = { (item) => {
+                            props.onChange(item)
+                        }}
+    	    		/>
+                );
+            },
+            condition: (request)=>{
+                if(request.type == "Preventative"){
+                    return true;
+                }else{
+                    return false
+                }
+            },
+            //subschema: RequestFrequencySchema,
             required: true,
             type: "object",
+            //type: "string",
+            //nextRow: true,
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Daily', val: "days" },
+                    { name: 'Weekly', val: "weeks" },
+                    { name: 'Fortnightly', val: "fortnights" },
+                    { name: 'Monthly', val: "months" },
+                    { name: 'Quarterly', val: "quarters" },
+                    { name: 'Annually', val: "years" },
+                    { name: 'Custom', val: "custom" },
+                ],
+                afterChange( item ) {
+                    frequency = item.frequency;
+                    item.frequency = !_.isEmpty(frequency)?{
+                        number: 1,
+                        repeats: 10,
+                        period: "",
+                        endDate: "",
+                        unit: frequency
+                    }:{};
+                }
+            },
+        },
+
+        number: {
+            label: "Repeats every...",
+            description: "The number of days, weeks, months etc.",
+            input: (props) =>{
+                return <Text
+                    placeholder = { props.placeholder }
+                    description = { props.description }
+                    errors = { props.errors }
+                    fieldName = { props.fieldName }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.number }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            type: "number",
+            size: 6,
+            options: {
+                afterChange( item ) {
+                    item.frequency.number = item.number;
+                    item = _.omit(item,"number");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        period: {
+            label: "Period",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                props.item.frequency.period = props.item.frequency.period ? props.item.frequency.period : ( props.item.frequency.unit === "custom" ? "months" : "" );
+                return (
+                    <Select
+    					placeholder = { props.placeholder }
+    		        	item = { props.item }
+    		        	items = { props.items }
+    		        	value = { props.item.frequency.period ? props.item.frequency.period : "months" }
+    		        	onChange = { item => props.onChange(item) } />
+                )
+            },
+            defaultValue: "months",
+            type: "string",
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Day', val: "days" },
+                    { name: 'Week', val: "weeks" },
+                    { name: 'Fortnight', val: "fortnights" },
+                    { name: 'Month', val: "months" },
+                    { name: 'Quarter', val: "quarters" },
+                    { name: 'Year', val: "years" },
+                ],
+                //afterChange: item => { period = item.period; },
+                afterChange( item ) {
+                    item.frequency.period = item.period;
+                    item = _.omit(item,"period");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        endDate: {
+            label: 'End date',
+            size: 6,
+            //input: DateInput,
+            input: (props)=>{
+                return <DateInput
+                    placeholder = { props.placeholder }
+                    errors = { props.errors }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.endDate }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            options: {
+                afterChange( item ) {
+                    item.frequency.endDate = item.endDate;
+                    item = _.omit(item,"endDate");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
         },
 
         duration: {

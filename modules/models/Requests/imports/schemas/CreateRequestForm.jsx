@@ -5,7 +5,7 @@ export default CreateRequestForm = [
 
 	'facility',
 
-	'location', 
+	'location',
 	'incidentVictim',
 	'reporter',
 	'reporterContact',
@@ -28,6 +28,9 @@ export default CreateRequestForm = [
 	'dueDate',
 
 	'frequency',
+	'number',
+	'period',
+	'endDate',
 	'incidenceDate',
 	'duration',
 
