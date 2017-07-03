@@ -276,7 +276,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
 
                 { nextDateString?
-                <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
                     <td>
                         <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
@@ -290,7 +290,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null }
 
                 { previousDateString?
-                <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
                     <td>
                         { previousDateString ?
