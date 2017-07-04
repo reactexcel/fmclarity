@@ -405,7 +405,6 @@ ComplianceEvaluationService = new function() {
                        passed: true,
                        message: {
                            summary: "passed",
-                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
@@ -423,7 +422,7 @@ ComplianceEvaluationService = new function() {
                                                <div>
                                                    <span>Last Completed <b>{ previousDateString }</b> </span>
                                                    { previousRequest ?
-                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } { /*previousRequest.getTimeliness()*/ }</span>
+                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } </span>
                                                    : "N/A" }
                                                </div>
                                            : <div>Last Completed N/A</div> }
@@ -442,7 +441,7 @@ ComplianceEvaluationService = new function() {
                                                <div>
                                                    <span>Next Due <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
-                                                       <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
+                                                       <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } </span>
                                                    : "N/A"}
                                                </div>
                                            : <div>Next Due N/A</div> }
@@ -477,29 +476,59 @@ ComplianceEvaluationService = new function() {
             let passed = false;
             let summary = "failed"
             if(request && previousDate && nextDate){
-                let dueDateTimeStamp = nextDate.getTime()
-                let currentTimeStamp = new Date().getTime()
-                if(dueDateTimeStamp>currentTimeStamp){
-                    summary = "passed"
-                    passed = true
+                let nextRequest = request.findCloneAt( nextDate ),
+                    previousRequest = request.findCloneAt(previousDate),
+                    nextDateString = moment( nextDate ).format('ddd Do MMM YYYY'),
+                    previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
+                if (nextRequest || previousRequest) {
+                    summary = previousRequest ? "failed" : (nextRequest && nextRequest.status == "Issued" ? "passed" : "failed"),
+                    passed = previousRequest ? false : (nextRequest && nextRequest.status == "Issued" ? true : false),
                     message = {
                         summary: summary,
-                        detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                        //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                        detail: (previousRequest? 'Last Overdue '+previousDateString+'':'Last completed '+previousDateString+'')+' ➡️️ '+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
                     }
                 }else{
-                    passed = false
-                    summary = "failed"
                     message = {
                         summary: summary,
-                        detail: 'Last Overdue '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next Due '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                        detail: "No PPM WO issued. Click here to issue "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM WO"
                     }
                 }
 
+                return _.extend( {}, defaultResult, {
+                    passed: passed,
+                    message: message,
+                    loader: false,
+                    resolve: function(r, callback) {
+                        let team = Session.getSelectedTeam();
+                        if(previousRequest){
+                            Modal.show( {
+                                id: `viewRequest-${event._id}`,
+                                content: <RequestPanel item = { previousRequest } callback={callback}/>
+                            } );
+                        }else if(nextRequest){
+                            if(nextRequest.status == "Issued"){
+                                Modal.show( {
+                                    id: `viewRequest-${event._id}`,
+                                    content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                } );
+                            }else{
+                                Modal.show( {
+                                    id: `viewRequest-${event._id}`,
+                                    content: <RequestPanel item = { request } callback={callback}/>
+                                } );
+                            }
+                        }else if(request){
+                            Modal.show( {
+                                id: `viewRequest-${request._id}`,
+                                content: <RequestPanel item = { request } callback={callback}/>
+                            } );
+                        }
+                    }
+                } )
             }else if(!request){
                 message = {
                     summary: summary,
-                    //detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                    //detail: "Set up PPM"
                     detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
                 }
             }
@@ -531,10 +560,181 @@ ComplianceEvaluationService = new function() {
                         } );
                         TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
-                    //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
         },
+        /*"PPM event completed": function( rule, facility, service ) {
+            var event, query;
+            if ( rule.event ) {
+                query = {
+                    'facility._id': rule.facility._id,
+                    name: rule.event,
+                    "service.name": rule.service.name,
+                    status: {$in:["PMP","PPM"]}
+                }
+                if (rule.subservice) query["subservice.name"] = rule.subservice.name;
+                event = Requests.findOne( query );
+            }
+
+            let nextDate,
+                previousDate,
+                frequency,
+                serviceReq;
+
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
+            }
+            if ( event ) {
+                nextDate = event.getNextDate(),
+                previousDate = event.getPreviousDate();
+            }
+            console.log(event,"event 11111111");
+            console.log(nextDate,"nextDate 111111");
+            console.log(previousDate,"previousDate 111111");
+            if ( event ) {
+                let nextRequest = Requests.findOne( _.extend( query, {
+                    type:"Preventative",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
+                    status: {$in:["Complete","Issued"]},
+                    dueDate:nextDate
+                })),
+                previousRequest = Requests.findOne( _.extend( query, {
+                    type:"Preventative",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
+                    status: {$in:["Complete","Issued"]},
+                    dueDate:previousDate
+                })),
+                nextDateString = null,
+                frequency = event.frequency || {},
+                previousDateString = null;
+               if( nextDate ) {
+                   nextDateString = moment( nextDate ).format('ddd Do MMM YYYY');
+               }
+               if( previousDate ) {
+                   previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
+               }
+               console.log(nextRequest,"nextRequest");
+               console.log(previousRequest,"previousRequest");
+               if (nextRequest || previousRequest) {
+                   return _.extend( {}, defaultResult, {
+                       passed: previousRequest ? (previousRequest.status == "Complete" ? true : false) : (nextRequest ? true : false),
+                       message: {
+                           summary: previousRequest ? (previousRequest.status == "Complete" ? "passed" : "failed") : (nextRequest ? "passed" : "failed"),
+                           //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' ),
+                           detail: (previousRequest ? (( previousRequest.status == "Complete"?'Last completed ':'Last overdue ')+previousDateString) : '')+' ➡️️ '+(nextRequest ? (nextRequest.status == "Complete"?"Next completed ":"Next due ")+nextDateString : '')
+                           //summary: "passed",
+                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                        },
+                        data: event,
+                        resolve: function(r, callback) {
+                            if (previousRequest){
+                                if(previousRequest.status != "Complete"){
+                                    Modal.show( {
+                                        id: `viewRequest-${event._id}`,
+                                        content: <RequestPanel item = { previousRequest } callback={callback}/>
+                                    } );
+                                }else{
+                                    if(nextRequest){
+                                        if(nextRequest.status == "Complete" || nextRequest.status == "Issued"){
+                                            Modal.show( {
+                                                id: `viewRequest-${event._id}`,
+                                                content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                            } );
+                                        }else{
+                                            Modal.show( {
+                                                id: `viewRequest-${event._id}`,
+                                                content: <RequestPanel item = { event } callback={callback}/>
+                                            } );
+                                        }
+                                    }
+                                }
+                            }else{
+                                if(nextRequest){
+                                    if(nextRequest.status == "Complete" || nextRequest.status == "Issued"){
+                                        Modal.show( {
+                                            id: `viewRequest-${event._id}`,
+                                            content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                        } );
+                                    }else{
+                                        Modal.show( {
+                                            id: `viewRequest-${event._id}`,
+                                            content: <RequestPanel item = { event } callback={callback}/>
+                                        } );
+                                    }
+                                }
+                            }
+                        }
+                    } )
+               }
+
+            }
+            console.log(event,"second");
+            let q = {
+                "facility._id": facility._id,
+                status: {$in:["PMP","PPM"]},
+                "service.name": rule.service.name,
+                name: rule.event
+            };
+            if (rule.subservice){
+                 q["subservice.name"] = rule.subservice.name;
+            }
+            let request = Requests.findOne( q );
+            console.log(request,"request");
+            console.log(previousDate,"previousDate");
+            console.log(nextDate,"nextDate");
+            let message = {}
+            let passed = false;
+            let summary = "failed"
+            if(request && previousDate && nextDate){
+                passed = false
+                summary = "failed"
+                message = {
+                    summary: summary,
+                    //detail: 'Last Overdue '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next Due '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                    detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
+                }
+            }else{
+                    console.log("@@@@@@@@@@@@@");
+                message = {
+                    summary: summary,
+                    detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
+                }
+            }
+                console.log(message,"message");
+            return _.extend( {}, defaultResult, {
+                passed: passed,
+                message: message,
+                loader: false,
+                resolve: function(r, callback) {
+                    let team = Session.getSelectedTeam();
+                    console.log('attempting to resolve' );
+                    // If PPM event exists.
+                    if ( request ) {
+                        Modal.show( {
+                            id: `viewRequest-${request._id}`,
+                            content: <RequestPanel item = { request } callback={callback}/>
+                        } );
+                    } else if ( !request ) { // If no PPM event exists.
+                        let preSelectedFacility = Facilities.findOne({ _id: facility._id });
+                        let newRequest = Requests.create( {
+                            facility: preSelectedFacility,
+                            team: team,
+                            type: 'Preventative',
+                            priority: 'Scheduled',
+                            status: 'PMP',
+                            name: rule.event,
+                            frequency: frequency,
+                            service: serviceReq[0],
+                            subservice: rule.subservice || {},
+                        } );
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                    }
+                    //    Meteor.call( 'Issues.save', newRequest );
+                }
+            } )
+        },*/
         "Compliance level": function( rule, facility, service ){
             let allServices = Session.getSelectedFacility().servicesRequired
             let selectedService = _.filter(allServices, service => service != null);

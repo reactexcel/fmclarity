@@ -230,7 +230,7 @@ export default DataTable = React.createClass( {
 								if(docs.length > 0){
 									docs = _.filter(docs,d => !d.subServiceType || !d.subServiceType.name)
 									if(docs.length > 1){
-										docs = _.filter(docs,d => !d.subServiceType.name)
+										docs = _.filter(docs,d => !d.subServiceType || !d.subServiceType.name)
 									}
 									// *****checing for parent supplier same as child supplier******//
 									// if(readRow._item && readRow._item.children &&  readRow._item.children.length > 0){

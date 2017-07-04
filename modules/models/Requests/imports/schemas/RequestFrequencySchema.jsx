@@ -13,7 +13,9 @@ export default RequestFrequencySchema = {
 	      			item = { props.item }
 	      			items = { props.items }
 	      			value = { props.value }
-	      			onChange = { item => props.onChange(item) }
+	      			onChange = { (item) => {
+                        props.onChange(item)
+                    }}
 	    		/>
             );
         },
