@@ -183,7 +183,6 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             'owner._id': 1,
             'owner.name': 1,
             priority: 1,
-            reporter: 1,
             reporterContact: 1,
             service: 1,
             subservice: 1,
