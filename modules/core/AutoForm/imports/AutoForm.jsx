@@ -274,7 +274,7 @@ class AutoForm extends React.Component {
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
 							{
-								
+
 							this.state.submitText && this.state.submitText == "Issue"?
 
 							<button
@@ -300,7 +300,7 @@ class AutoForm extends React.Component {
 								{this.props.submitText?this.props.submitText:'Submit'}
 
 							</button>
-							
+
 						</div>
 
 

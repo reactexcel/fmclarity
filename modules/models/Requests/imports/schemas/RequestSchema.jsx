@@ -362,7 +362,7 @@ const RequestSchema = {
                     val = user.profile.tenancy;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment;
+                    val = user.areas;
                 }
                 return val;
             },

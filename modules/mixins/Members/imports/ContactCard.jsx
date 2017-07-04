@@ -11,7 +11,6 @@ export default function ContactCard( props ) {
 		team = props.team,
 		view = null,
 		role = null;
-
 	if ( contact && contact.getProfile ) {
 		profile = contact.getProfile();
 	}

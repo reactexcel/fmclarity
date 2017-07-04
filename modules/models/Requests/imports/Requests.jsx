@@ -748,7 +748,7 @@ function checkIssuePermissions( role, user, request ) {
             }
 
         }
-    }            
+    }
     return userCanIssue;
 }
 

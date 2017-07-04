@@ -437,7 +437,7 @@ const UserSchema = {
 							return;
 						}
 						item.level = null;
-						item.apartment = null;
+						item.areas = null;
 						item.propertyManager = null;
 						item.realEstateAgency = null;
 						currentState = item;
@@ -463,14 +463,14 @@ const UserSchema = {
 				return {
 					items: item.facility ? item.facility.areas : null,
 					afterChange: ( item ) => {
-						item.apartment = item.propertyManager  = item.realEstateAgency = null;
+						item.areas = item.propertyManager  = item.realEstateAgency = null;
 					}
 				}
 			}
 		},
 
 
-		apartment: {
+		areas: {
 			label: "Address 2",
 			optional: true,
 			type:"object",
@@ -496,11 +496,11 @@ const UserSchema = {
 			type: "object",
 			input: Select,
 			condition: ( item ) => {
-				return role === "resident" && item.apartment ? ( item.apartment.children ? true : false ) : false;
+				return role === "resident" && item.areas ? ( item.areas.children ? true : false ) : false;
 			},
 			options: ( item ) => {
 				return {
-					items: item.apartment ? item.apartment.children : null
+					items: item.areas ? item.areas.children : null
 				}
 			}
 		},
@@ -698,7 +698,7 @@ function updatePropertyManager( item ) {
 
 	let areas = item.facility.areas,
 		level = item.level,
-		apartment = item.apartment;
+		apartment = item.areas;
 		currentState = item;
 	for ( i in level.children || [] ) {
 		if ( level.children[i].name === apartment.name ) {
