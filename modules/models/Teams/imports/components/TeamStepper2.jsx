@@ -298,7 +298,7 @@ const TeamStepper2 = React.createClass( {
                 <b>Team not found, please enter the details to add to your contact.</b>
                 : null }
 
-                <h2 style = { { marginTop:"0px" } }>Edit team</h2>
+                <h2 style = { { marginTop:"0px" } }>Add team</h2>
 
                 { viewingTeam.owner ?
                 <div>
