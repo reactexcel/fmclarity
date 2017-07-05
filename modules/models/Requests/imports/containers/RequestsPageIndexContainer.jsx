@@ -78,6 +78,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		selectedStatus,
 		selectedRequest,
 		contextFilter,
+		statusFilter,
 		user
 	}
 }, RequestsPageIndex );
