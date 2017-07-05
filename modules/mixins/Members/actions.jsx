@@ -20,6 +20,7 @@ const edit = new Action( {
 	label: "Edit member",
 	type: [ 'team', 'user' ],
 	action: ( group, member, onUpdate ) => {
+		console.log("1111111");
 		import { UserPanel, UserViewEdit } from '/modules/models/Users';
 		Modal.show( {
 			content: <UserViewEdit item = { member } group = { group } onUpdate = { onUpdate }/>
