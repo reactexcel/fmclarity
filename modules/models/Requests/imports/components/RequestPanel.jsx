@@ -178,7 +178,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <div className="wo-detail">
                 <div className="row">
-                    {_.contains(["staff", "tenant", "residents", undefined], userRole) ? null : <div className="col-md-6 col-xs-6">
+                    {_.contains(["staff", "tenant", "resident", undefined], userRole) ? null : <div className="col-md-6 col-xs-6">
                         {/* Show supplier name when user is client (fm),
                             otherwise show client name for supplier user */}
                         <h2>
