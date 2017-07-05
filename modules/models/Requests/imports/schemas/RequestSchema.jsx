@@ -251,42 +251,24 @@ const RequestSchema = {
         //////////////////////////////////////////////////
         // Facility dependant properties
         //////////////////////////////////////////////////
+        incidentVictim: {
+            label: "Who did it happen to & what's their contact details?",
+            type: "string",
+            input: Text,
+            size: 12,
+            required: true,
+            condition: "Incident"
+        },
         location: {
             label: "Where did it happen?",
             type: "string",
-            input: Text,
+            input: TextArea,
             size: 6,
             required: true,
-            condition: "Incident"
-        },
-        incidentVictim: {
-            label: "Who did it happen to?",
-            type: "string",
-            input: Text,
-            size: 6,
-            required: true,
-            condition: "Incident"
-        },
-        reporter: {
-            label: "Reporter",
-            description: "Who reported the incident",
-            type: "object",
-            input: Select,
-            required: true,
-            options: ( request ) => {
-                    request = Requests.collection._transform( request );
-
-                    let team = request.getFacility() || request.getTeam(),
-                        members = team.getMembers();
-                    return {
-                        items: members,
-                        view: ContactCard
-                    }
-            },
             condition: "Incident"
         },
         reporterContact: {
-            label: "Reporter Contact ",
+            label: "Reporter Contact details",
             type: "string",
             input: TextArea,
             size: 6,
@@ -1070,6 +1052,9 @@ const RequestSchema = {
             condition: ( request ) => {
 
                 let team = Session.getSelectedTeam();
+                if ( request.type == 'Incident' ) {
+                    return false;
+                }
                 //do not show for booking, contractors, staff or resident
                 if( request.type != 'Booking' ) {
                     if( Teams.isFacilityTeam( team ) ) {
@@ -1083,9 +1068,9 @@ const RequestSchema = {
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
-                if ( item.type == 'Incident' ) {
+                /*if ( item.type == 'Incident' ) {
                     return team;
-                }
+                }*/
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
@@ -1170,7 +1155,7 @@ const RequestSchema = {
                 return (
                     (
                         request.status != 'Issued' &&
-                        request.type != 'Booking' &&
+                        !_.contains(['Booking','Incident'],request.type) &&
                         //Teams.isServiceTeam( selectedTeam )
                         Teams.isFacilityTeam( selectedTeam )
                     ) ?
