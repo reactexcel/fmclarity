@@ -33,12 +33,18 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	else if ( selectedStatus == 'Booking' ){
 		statusFilter = { "status": 'Booking' };
 	}
+	else if ( selectedStatus == 'Cancelled' ) {
+		statusFilter = { "status": 'Cancelled' };
+		includeComplete = true;
+	}
 	else {
 		selectedStatus = 'Open';
 		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
 	}
 
-	Meteor.subscribe( 'User: Requests, Facilities', { includeComplete } );
+	if( includeComplete ) {
+		Meteor.subscribe( 'Requests: Complete' );
+	}
 
 
 	if ( selectedRequestId ) {
@@ -76,6 +82,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		selectedStatus,
 		selectedRequest,
 		contextFilter,
+		statusFilter,
 		user
 	}
 }, RequestsPageIndex );

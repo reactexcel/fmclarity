@@ -22,6 +22,7 @@ export default AreaDetailsSchema = {
                 item.hour = null;
                 item.week = null;
                 item.month = null;
+                item.daySelector = (item.type == "Booking" ? item.daySelector : null);
                 //item.tenant = null;
                 item.nla = null;
                 item.areaUnit = null;

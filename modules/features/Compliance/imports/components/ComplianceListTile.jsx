@@ -96,7 +96,7 @@ export default ComplianceListTile = React.createClass( {
         }
         if ( _.contains(serviceDocType, rule.docType) ) rule.document.serviceType = rule.service.name;
     }
-    
+
     let service = facility.servicesRequired.filter((ser)=> ser!= null && ser.name === rule.service.name)
     rule.service = service[0]
     Modal.show( {

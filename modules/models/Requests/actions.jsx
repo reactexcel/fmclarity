@@ -43,7 +43,7 @@ const edit = new Action( {
     name: "edit request",
     type: 'request',
     label: "Edit",
-    action: ( preRequest ) => {
+    action: ( preRequest, callback ) => {
         let previousRequest = Object.assign( {}, preRequest );
         let oldRequest = Object.assign( {}, preRequest );
         Modal.show( {
@@ -426,7 +426,7 @@ const reopen = new Action( {
     name: "reopen request",
     type: 'request',
     label: "Reopen",
-    action: ( request ) => {
+    action: ( request, callback ) => {
         Modal.show( {
             content: <AutoForm
             model = { Requests }
@@ -447,6 +447,7 @@ const reopen = new Action( {
                         }
                     } );
                     request.markAsUnread();
+                    callback( request );
                 }
             }
             />

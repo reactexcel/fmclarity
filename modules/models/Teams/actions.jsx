@@ -12,6 +12,8 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 
+import CreateTeamRequest from './imports/actions/CreateTeamRequest';
+
 const create = new Action( {
     name: 'create team',
     label: "Create team",
@@ -96,8 +98,6 @@ const createFacility = new Action( {
     }
 } )
 
-// now that we are evaluating people based on their role in the request then we can perhaps actually
-// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -119,6 +119,7 @@ const createRequest = new Action( {
             form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
+            onChange = {()=>{callback("update")}}
             onSubmit = {
                 ( newRequest ) => {
                     if(newRequest.type == "Booking"){
@@ -216,7 +217,7 @@ const createRequest = new Action( {
                     callback? callback( newRequest ): null;
                     Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-                                <RequestPanel item = { /*newRequest*/  request}/>
+                                <RequestPanel item = { /*newRequest*/  request} callback={callback}/>
                             </DropFileContainer>
                     } );
                 }
@@ -388,6 +389,7 @@ export {
 
     createFacility,
     createRequest,
+    CreateTeamRequest,
     createDocument,
 
     createMember,
