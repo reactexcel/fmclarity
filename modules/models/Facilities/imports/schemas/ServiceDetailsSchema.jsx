@@ -100,13 +100,16 @@ export default ServiceDetailsSchema = {
         label: "Default supplier",
         size: 12,
         input: Select,
-        options( item ) {
+        options(item){
             let facility = Session.getSelectedFacility();
             return {
                 items: facility.getSuppliers(),
-                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
-                                        <ContactCard {...props} />
-                                    </div>,
+                view: ( props ) => {
+                    return (<div style={ { cursor: "default", height: "inherit", } }>
+                                            <ContactCard {...props} />
+                                        </div>)
+                },
+                /*
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -129,6 +132,7 @@ export default ServiceDetailsSchema = {
                         } )
                     }
                 },
+                */
                 afterChange( item ) {
                     item.defaultContact = [];
                 }
@@ -200,7 +204,7 @@ export default ServiceDetailsSchema = {
                                     }} title="Remove tag">&times;</span>
                                 <ContactCard item={sc}/>
                             </div>))}
-                    </div> < /div>
+                    </div> </div>
             )
         },
         options( item ) {

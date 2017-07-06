@@ -53,7 +53,16 @@ ComplianceEvaluationService = new function() {
     var evaluators = {
         //can pass in facility and service for more efficient calculation
         "Document exists": function( rule, facility, service ) {
-            //  console.log({rule});
+             let houseRule = false;
+             let reqService
+             let reqSubService
+             if(rule.service.name === "House Rules"){
+               houseRule = true;
+               if(facility.hasOwnProperty("servicesRequired")){
+                 reqService = facility.servicesRequired != undefined && facility.servicesRequired.length > 0 ? facility.servicesRequired.filter((service) => service != null && service.name === "WHS & Risk Management") : ''
+                 reqSubService = reqService.length > 0 && reqService[0].children.length > 0 ? reqService[0].children.filter((sub)=> sub.name === "House Rules") : ''
+               }
+             }
             var docCount = null,
                 docs = null,
                 docName = null,
@@ -67,6 +76,17 @@ ComplianceEvaluationService = new function() {
                         { name: { $regex: rule.docName || "", $options: "i" } }
                     ]
                 };
+                if(houseRule){
+                  query = rule.document && rule.document.query ?
+                  JSON.parse( rule.document.query ) : {
+                      "facility._id": facility[ "_id" ],
+                      $and: [
+                          { type: "Confirmation" },
+                          { 'serviceType.name': 'WHS & Risk Management'},
+                          { 'subServiceType.name': 'House Rules'}
+                      ]
+                  };
+                }
 
             //----- Solution for "370 Docklands Dve"
             while(_.isString(query)) {
@@ -91,8 +111,6 @@ ComplianceEvaluationService = new function() {
                 let doc = docs[ docCount - 1 ];
                 docName = doc.name;
             }
-            //   console.log({count: docCount});
-            //   console.log(query);
             if ( docCount ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
@@ -141,8 +159,9 @@ ComplianceEvaluationService = new function() {
                             team: { _id, name },
                             owner: { type, _id, name },
                             name: rule.docName,
-                            type: rule.docType,
-                            serviceType: rule.service,
+                            type: houseRule ? "Confirmation" :rule.docType,
+                            serviceType: houseRule ? reqService[0] : rule.service,
+                            subServiceType: houseRule ? reqSubService[0] : ''
                         } );
                     if ( rule.docSubType ) {
                         if ( rule.docType == "Insurance" ) newDocument.insuranceType = rule.docSubType;
@@ -167,7 +186,6 @@ ComplianceEvaluationService = new function() {
             } )
         },
         "Document is current": function( rule, facility, service ) {
-            //console.log( rule );
             // if( !rule || !rule.document ) {
             //     return;
             // }
@@ -202,8 +220,6 @@ ComplianceEvaluationService = new function() {
                 query.$and.push( { expiryDate: today } );
             }
             doc = query && Documents.findOne( query );
-            //    console.log({count: docCount});
-            //    console.log(query);
             if ( doc ) {
                 return _.extend( {}, defaultResult, {
                     passed: true,
@@ -267,8 +283,7 @@ ComplianceEvaluationService = new function() {
                 }
             } )
         },
-        "PPM schedule established": function( rule, facility, service ) {
-            //console.log(rule);
+        "PPM exists": function( rule, facility, service ) {
             if ( !facility ) {
                 return _.extend( {}, defaultResult, {
                     passed: false,
@@ -286,7 +301,14 @@ ComplianceEvaluationService = new function() {
                     }
                 } )
             }
-            var requestCurser = Requests.find( { 'facility._id': facility._id, 'service.name': rule.service.name, type: "Preventative" } );
+            let serviceReq ;
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
+              }
+            }
+            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Preventative" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -294,7 +316,7 @@ ComplianceEvaluationService = new function() {
                     passed: true,
                     message: {
                         summary: "passed",
-                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP events setup"
+                        detail: numEvents + " " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PMP exists"
                     },
                     resolve: function() {
                         let establishedRequest = requests[ numEvents - 1 ];
@@ -309,25 +331,22 @@ ComplianceEvaluationService = new function() {
                     detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
                 },
                 loader: true,
-                resolve: function() {
+                resolve: function(r,callback) {
+                    let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
                     let newRequest = Requests.create( {
-                        facility: {
-                            _id: facility._id,
-                            name: facility.name
-                        },
+                        facility: preSelectedFacility,
                         team: team,
                         type: 'Preventative',
                         priority: 'Scheduled',
-                        status: 'PMP',
+                        status: 'PPM',
                         name: rule.event,
                         frequency: rule.frequency,
-                        service: rule.service,
+                        service: serviceReq[0],
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, null, newRequest ).run();
+                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
                 }
             } )
         },
@@ -338,24 +357,37 @@ ComplianceEvaluationService = new function() {
                     'facility._id': rule.facility._id,
                     name: rule.event,
                     "service.name": rule.service.name,
-                    status: {$in:["PMP"]}
+                    status: {$in:["PMP","PPM"]}
                 }
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
-                //event = Requests.findOne(rule.event._id);
                 event = Requests.findOne( query );
             }
+
+            let nextDate,
+                previousDate,
+                frequency,
+                serviceReq;
+
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              let allServices = _.filter(facility.servicesRequired, service => service != null);
+              if(allServices.length > 0){
+                serviceReq = allServices.filter((val) => rule.service.name === val.name)
+              }
+            }
             if ( event ) {
-                let nextDate = event.getNextDate(),
+                nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
+            }
+            if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
+                    type:"Ad-Hoc",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
                 previousRequest = Requests.findOne( _.extend( query, {
-                    type: "Ad-Hoc",
-                    priority: {$in:["PPM","PMP"]},
+                    type:"Ad-Hoc",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:previousDate
                 })),
@@ -363,17 +395,16 @@ ComplianceEvaluationService = new function() {
                 frequency = event.frequency || {},
                 previousDateString = null;
                if( nextDate ) {
-                   nextDateString = moment( nextDate ).format('DD/MM/YY');
+                   nextDateString = moment( nextDate ).format('ddd Do MMM YYYY');
                }
                if( previousDate ) {
-                   previousDateString = moment( previousDate ).format('DD/MM/YY');
+                   previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
                }
                if (nextRequest || previousRequest) {
                    return _.extend( {}, defaultResult, {
                        passed: true,
                        message: {
                            summary: "passed",
-                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
                            detail: function(){
                                return (
                                    <div style={{width:"95%", marginTop:"-25px", marginLeft:"55px"}}>
@@ -387,14 +418,14 @@ ComplianceEvaluationService = new function() {
                                                     } );
                                            }}
                                            >
-                                           {( previousDateString || previousRequest) ?
-                                                <div>
-                                                    <span>Last completed <b>{ previousDateString }</b> </span>
-                                                    {previousRequest ?
-                                                        <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status }</span>
-                                                    : null}
-                                                </div>
-                                            : <div>Last completed N/A</div>}
+                                           {( previousDateString && previousRequest) ?
+                                               <div>
+                                                   <span>Last Completed <b>{ previousDateString }</b> </span>
+                                                   { previousRequest ?
+                                                       <span className = {`label label-${previousRequest.status}`}>{ previousRequest.status } </span>
+                                                   : "N/A" }
+                                               </div>
+                                           : <div>Last Completed N/A</div> }
                                        </div>
                                        <div className = "issue-summary-col" style = {{width:"45%"}}
                                            onClick={(e) => {
@@ -402,88 +433,316 @@ ComplianceEvaluationService = new function() {
                                                 if (nextRequest)
                                                     Modal.show( {
                                                         id: `viewRequest-${event._id}`,
-                                                        content: <RequestPanel item = { nextRequest } />
+                                                        content: <RequestPanel item = { nextRequest }/>
                                                     } );
                                            }}
                                            >
-                                           { (nextDateString || nextRequest) ?
+                                           { (nextDateString && nextRequest) ?
                                                <div>
-                                                   <span>Next <b>{ nextDateString }</b> </span>
+                                                   <span>Next Due <b>{ nextDateString }</b> </span>
                                                    { nextRequest ?
-                                                       <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { /*nextRequest.getTimeliness()*/ }</span>
-                                                   : null}
+                                                       <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } </span>
+                                                   : "N/A"}
                                                </div>
-                                           : <div>Next N/A</div> }
+                                           : <div>Next Due N/A</div> }
                                        </div>
                                    </div>
                                 );
                             }
                         },
                         data: event,
-                        resolve: function() {
+                        resolve: function(r, callback) {
                             Modal.show( {
                                 id: `viewRequest-${event._id}`,
-                                content: <RequestPanel item = { event } />
+                                content: <RequestPanel item = { event } callback={callback}/>
                             } );
                         }
                     } )
                }
 
             }
+
+            let q = {
+                "facility._id": facility._id,
+                status: {$in:["PMP","PPM"]},
+                "service.name": rule.service.name,
+                name: rule.event
+            };
+            if (rule.subservice){
+                 q["subservice.name"] = rule.subservice.name;
+            }
+            let request = Requests.findOne( q );
+            let message = {}
+            let passed = false;
+            let summary = "failed"
+            if(request && previousDate && nextDate){
+                let nextRequest = request.findCloneAt( nextDate ),
+                    previousRequest = request.findCloneAt(previousDate),
+                    nextDateString = moment( nextDate ).format('ddd Do MMM YYYY'),
+                    previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
+                if (nextRequest || previousRequest) {
+                    summary = previousRequest ? "failed" : (nextRequest && nextRequest.status == "Issued" ? "passed" : "failed"),
+                    passed = previousRequest ? false : (nextRequest && nextRequest.status == "Issued" ? true : false),
+                    message = {
+                        summary: summary,
+                        //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                        detail: (previousRequest? 'Last Overdue ➡️️ '+previousDateString+'':'')+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
+                    }
+                }else{
+                    message = {
+                        summary: summary,
+                        detail: "No PPM WO issued. Click here to issue "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM WO"
+                    }
+                }
+
+                return _.extend( {}, defaultResult, {
+                    passed: passed,
+                    message: message,
+                    loader: false,
+                    resolve: function(r, callback) {
+                        let team = Session.getSelectedTeam();
+                        if(previousRequest){
+                            Modal.show( {
+                                id: `viewRequest-${event._id}`,
+                                content: <RequestPanel item = { previousRequest } callback={callback}/>
+                            } );
+                        }else if(nextRequest){
+                            if(nextRequest.status == "Issued"){
+                                Modal.show( {
+                                    id: `viewRequest-${event._id}`,
+                                    content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                } );
+                            }else{
+                                Modal.show( {
+                                    id: `viewRequest-${event._id}`,
+                                    content: <RequestPanel item = { request } callback={callback}/>
+                                } );
+                            }
+                        }else if(request){
+                            Modal.show( {
+                                id: `viewRequest-${request._id}`,
+                                content: <RequestPanel item = { request } callback={callback}/>
+                            } );
+                        }
+                    }
+                } )
+            }else if(!request){
+                message = {
+                    summary: summary,
+                    detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
+                }
+            }
             return _.extend( {}, defaultResult, {
-                passed: false,
-                message: {
-                    summary: "failed",
-                    detail: "Set up " + ( rule.service.name ? ( rule.service.name + " " ) : "" ) + "PPM"
-                },
+                passed: passed,
+                message: message,
                 loader: false,
-                resolve: function() {
+                resolve: function(r, callback) {
                     let team = Session.getSelectedTeam();
-                    console.log( 'attempting to resolve' );
-                    let q = {
-                        "facility._id": facility._id,
-                        status: "PMP",
-                        "service.name": rule.service.name,
-                        name: rule.event
-                    };
-                    if (rule.subservice) q["subservice.name"] = rule.subservice.name;
-                    let request = Requests.findOne( q );
+                    console.log('attempting to resolve' );
                     // If PPM event exists.
                     if ( request ) {
                         Modal.show( {
                             id: `viewRequest-${request._id}`,
-                            content: <RequestPanel item = { request } />
+                            content: <RequestPanel item = { request } callback={callback}/>
                         } );
                     } else if ( !request ) { // If no PPM event exists.
+                        let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                         let newRequest = Requests.create( {
-                            facility: {
-                                _id: facility._id,
-                                name: facility.name
-                            },
+                            facility: preSelectedFacility,
                             team: team,
                             type: 'Preventative',
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: rule.frequency,
-                            service: rule.service,
+                            frequency: frequency,
+                            service: serviceReq[0],
                             subservice: rule.subservice || {},
                         } );
-                        TeamActions.createRequest.bind( team, null, newRequest ).run();
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                    }
+                }
+            } )
+        },
+        /*"PPM event completed": function( rule, facility, service ) {
+            var event, query;
+            if ( rule.event ) {
+                query = {
+                    'facility._id': rule.facility._id,
+                    name: rule.event,
+                    "service.name": rule.service.name,
+                    status: {$in:["PMP","PPM"]}
+                }
+                if (rule.subservice) query["subservice.name"] = rule.subservice.name;
+                event = Requests.findOne( query );
+            }
+
+            let nextDate,
+                previousDate,
+                frequency,
+                serviceReq;
+
+            if(facility && facility.hasOwnProperty("servicesRequired")){
+              if(facility.servicesRequired.length > 0){
+                serviceReq = facility.servicesRequired.filter((val) => rule.service.name === val.name)
+              }
+            }
+            if ( event ) {
+                nextDate = event.getNextDate(),
+                previousDate = event.getPreviousDate();
+            }
+            console.log(event,"event 11111111");
+            console.log(nextDate,"nextDate 111111");
+            console.log(previousDate,"previousDate 111111");
+            if ( event ) {
+                let nextRequest = Requests.findOne( _.extend( query, {
+                    type:"Preventative",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
+                    status: {$in:["Complete","Issued"]},
+                    dueDate:nextDate
+                })),
+                previousRequest = Requests.findOne( _.extend( query, {
+                    type:"Preventative",
+                    priority: {$in:["PPM","PMP","Scheduled"]},
+                    status: {$in:["Complete","Issued"]},
+                    dueDate:previousDate
+                })),
+                nextDateString = null,
+                frequency = event.frequency || {},
+                previousDateString = null;
+               if( nextDate ) {
+                   nextDateString = moment( nextDate ).format('ddd Do MMM YYYY');
+               }
+               if( previousDate ) {
+                   previousDateString = moment( previousDate ).format('ddd Do MMM YYYY');
+               }
+               console.log(nextRequest,"nextRequest");
+               console.log(previousRequest,"previousRequest");
+               if (nextRequest || previousRequest) {
+                   return _.extend( {}, defaultResult, {
+                       passed: previousRequest ? (previousRequest.status == "Complete" ? true : false) : (nextRequest ? true : false),
+                       message: {
+                           summary: previousRequest ? (previousRequest.status == "Complete" ? "passed" : "failed") : (nextRequest ? "passed" : "failed"),
+                           //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' ),
+                           detail: (previousRequest ? (( previousRequest.status == "Complete"?'Last completed ':'Last overdue ')+previousDateString) : '')+' ➡️️ '+(nextRequest ? (nextRequest.status == "Complete"?"Next completed ":"Next due ")+nextDateString : '')
+                           //summary: "passed",
+                           //detail: `${previousRequest?'Last completed '+moment( previousDate ).format( 'ddd Do MMM' )+' ➡️️ ':""}Next due date is ${moment( nextDate ).format( 'ddd Do MMM' )}`
+                        },
+                        data: event,
+                        resolve: function(r, callback) {
+                            if (previousRequest){
+                                if(previousRequest.status != "Complete"){
+                                    Modal.show( {
+                                        id: `viewRequest-${event._id}`,
+                                        content: <RequestPanel item = { previousRequest } callback={callback}/>
+                                    } );
+                                }else{
+                                    if(nextRequest){
+                                        if(nextRequest.status == "Complete" || nextRequest.status == "Issued"){
+                                            Modal.show( {
+                                                id: `viewRequest-${event._id}`,
+                                                content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                            } );
+                                        }else{
+                                            Modal.show( {
+                                                id: `viewRequest-${event._id}`,
+                                                content: <RequestPanel item = { event } callback={callback}/>
+                                            } );
+                                        }
+                                    }
+                                }
+                            }else{
+                                if(nextRequest){
+                                    if(nextRequest.status == "Complete" || nextRequest.status == "Issued"){
+                                        Modal.show( {
+                                            id: `viewRequest-${event._id}`,
+                                            content: <RequestPanel item = { nextRequest } callback={callback}/>
+                                        } );
+                                    }else{
+                                        Modal.show( {
+                                            id: `viewRequest-${event._id}`,
+                                            content: <RequestPanel item = { event } callback={callback}/>
+                                        } );
+                                    }
+                                }
+                            }
+                        }
+                    } )
+               }
+
+            }
+            console.log(event,"second");
+            let q = {
+                "facility._id": facility._id,
+                status: {$in:["PMP","PPM"]},
+                "service.name": rule.service.name,
+                name: rule.event
+            };
+            if (rule.subservice){
+                 q["subservice.name"] = rule.subservice.name;
+            }
+            let request = Requests.findOne( q );
+            console.log(request,"request");
+            console.log(previousDate,"previousDate");
+            console.log(nextDate,"nextDate");
+            let message = {}
+            let passed = false;
+            let summary = "failed"
+            if(request && previousDate && nextDate){
+                passed = false
+                summary = "failed"
+                message = {
+                    summary: summary,
+                    //detail: 'Last Overdue '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next Due '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
+                    detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
+                }
+            }else{
+                    console.log("@@@@@@@@@@@@@");
+                message = {
+                    summary: summary,
+                    detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"
+                }
+            }
+                console.log(message,"message");
+            return _.extend( {}, defaultResult, {
+                passed: passed,
+                message: message,
+                loader: false,
+                resolve: function(r, callback) {
+                    let team = Session.getSelectedTeam();
+                    console.log('attempting to resolve' );
+                    // If PPM event exists.
+                    if ( request ) {
+                        Modal.show( {
+                            id: `viewRequest-${request._id}`,
+                            content: <RequestPanel item = { request } callback={callback}/>
+                        } );
+                    } else if ( !request ) { // If no PPM event exists.
+                        let preSelectedFacility = Facilities.findOne({ _id: facility._id });
+                        let newRequest = Requests.create( {
+                            facility: preSelectedFacility,
+                            team: team,
+                            type: 'Preventative',
+                            priority: 'Scheduled',
+                            status: 'PMP',
+                            name: rule.event,
+                            frequency: frequency,
+                            service: serviceReq[0],
+                            subservice: rule.subservice || {},
+                        } );
+                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
                     //    Meteor.call( 'Issues.save', newRequest );
                 }
             } )
-        },
+        },*/
         "Compliance level": function( rule, facility, service ){
-          //console.log(rule,"*-*-**--*-*-*-*-*");
             let allServices = Session.getSelectedFacility().servicesRequired
             let selectedService = _.filter(allServices, service => service != null);
             selectedService = _.filter(selectedService, service => service.name === rule.service.name);
             let query = {
                 "facility._id": rule.facility._id,
                 "service.name": rule.service.name,
-                "priority": "PMP",
+                "priority": "Scheduled",
                 "status": "Complete",
             },
             docQuery = {
@@ -507,7 +766,6 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let request = Requests.findOne(query);
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (request) {
                         if (request.closeDetails && request.closeDetails.serviceReport && request.closeDetails.serviceReport._id){
                             count++;
@@ -521,16 +779,13 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
-                        //console.log(test,"===========");
                         count++;
                       }
                     }
 
                 }
-                 //console.log(count);
                 //  console.log(Documents.find( {
                 //   "facility._id": rule.facility._id,
                 //   "serviceType.name": rule.service.name,
@@ -575,13 +830,12 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Invoice"){
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     query["closeDetails.completionDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let request = Requests.findOne(query);
-                    // //console.log(request, "Invoice", rule.service.name );
                     if (request) {
                         if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
                             count++;
@@ -589,22 +843,19 @@ ComplianceEvaluationService = new function() {
                     }
 
                 }
-                for (let i=0; i<=12; i++  ) {
+                for (let i=0; i<12; i++  ) {
                     docQuery["applicablePeriodStartDate"] = {
                         "$gte": new moment().subtract(i, "months").startOf("months").toDate(),
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
-                        // console.log(Session.getSelectedFacility(),test,"===========");
                         count++;
                       }
                     }
 
                 }
-                 //console.log(count);
                 //  console.log(Documents.find( {
                 //   "facility._id": rule.facility._id,
                 //   "serviceType.name": rule.service.name,
@@ -618,7 +869,7 @@ ComplianceEvaluationService = new function() {
                         passed: true,
                         message: {
                             summary: "passed",
-                            detail: count + " out of 12 Invoice"
+                            detail: count + " out of 12 Invoices"
                         },
                     } )
                 }
@@ -626,7 +877,7 @@ ComplianceEvaluationService = new function() {
                       passed: false,
                       message: {
                           summary: "failed",
-                          detail: count + " out of 12 Invoice"
+                          detail: count + " out of 12 Invoices"
                       },
                       resolve: function(r,update) {
                           let type = "team",
@@ -649,7 +900,7 @@ ComplianceEvaluationService = new function() {
                   } )
             }
             if ( rule.docType == "Confirmation"){
-              console.log(Session.getSelectedFacility());
+              // console.log(Session.getSelectedFacility());
 
                 // for (let i=0; i<=12; i++  ) {
                     // docQuery["issueDate"] = {
@@ -657,8 +908,6 @@ ComplianceEvaluationService = new function() {
                     //     "$lte": new moment().subtract(0, "months").endOf("months").toDate()
                     // }
                     let test = Documents.find(docQuery).fetch();
-                    //console.log(test,"===========");
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
                         count++;
@@ -707,7 +956,6 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let request = Requests.findOne(query);
-                    // console.log(request, "Invoice", rule.service.name );
                     if (request) {
                         if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
                             count++;
@@ -721,8 +969,6 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    //console.log(test,"===========");
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
                         count++;
@@ -772,7 +1018,6 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let request = Requests.findOne(query);
-                    // console.log(request, "Invoice", rule.service.name );
                     if (request) {
                         if (request.closeDetails && request.closeDetails.invoice && request.closeDetails.invoice._id){
                             count++;
@@ -786,8 +1031,6 @@ ComplianceEvaluationService = new function() {
                         "$lte": new moment().subtract(i, "months").endOf("months").toDate()
                     }
                     let test = Documents.find(docQuery).fetch();
-                    //console.log(test,"===========");
-                    // console.log(request, "Service Requests", rule.service.name );
                     if (test) {
                       if(test.length > 0){
                         count++;
@@ -857,7 +1100,6 @@ ComplianceEvaluationService = new function() {
                     }
                 })
                 let per= ( ( count / suppliers.length ) * 100 );
-                //console.log({per},suppliers.length);
                 if ( per >= 50) {
                     return _.extend( {}, defaultResult, {
                         passed: true,
@@ -922,7 +1164,6 @@ ComplianceEvaluationService = new function() {
             }
             results.all.push( result );
         } )
-        //console.log({results}, "evaluate");
         return results;
     }
 
@@ -932,17 +1173,18 @@ ComplianceEvaluationService = new function() {
         }
         var numRules = 0, numPassed = 0, numFailed = 0, percPassed = 0, passed = false;
         var results = evaluate( service.data.complianceRules );
-        // console.log(results,"2");
         if ( service.children ) {
-            var numSubservices = 0;
-            var totalPassed = 0;
-            var totalFailed = 0;
-            var subservice = _.map(service.children, ( subservice, idx) => {
-                var subResult = evaluateService( subservice, facility );
-                // console.log(subResult,"1");
-                numSubservices += subResult.numRules;
-                totalPassed += subResult.numPassed;
-                totalFailed += subResult.numFailed;
+            let numSubservices = 0,
+                totalPassed = 0,
+                totalFailed = 0;
+
+            let subservice = _.map(service.children, ( subservice, idx) => {
+                let subResult = evaluateService( subservice, facility );
+                if( subResult ) {
+                    numSubservices += subResult.numRules;
+                    totalPassed += subResult.numPassed;
+                    totalFailed += subResult.numFailed;
+                }
                 return subResult;
             });
             numRules = service.data.complianceRules.length + numSubservices;
@@ -1000,7 +1242,6 @@ ComplianceEvaluationService = new function() {
      *
      */
     function evaluateServices( services ) {
-      console.log(services,"evaluateServices");
         let rules = [],
             results = { passed: [], failed: [] },
             overall = {},
@@ -1012,7 +1253,6 @@ ComplianceEvaluationService = new function() {
             passed = false;
             overallServiceresults = [];
             facility = Session.getSelectedFacility();
-            //console.log(facility,"facility");
         overallServiceresults = services.map( ( service, idx ) => {
 
             // if the service has no data don't include in calculations
@@ -1026,7 +1266,6 @@ ComplianceEvaluationService = new function() {
             } else {
                 results.failed.push( result );
             }
-            //console.log(result, idx);
             //rules = rules.concat( service.data.complianceRules );
             numRules += result.numRules;
             numPassed += result.numPassed;
@@ -1038,7 +1277,6 @@ ComplianceEvaluationService = new function() {
         // numRules = rules.length;
         // numPassed = overall.passed.length;
         // numFailed = overall.failed.length;
-        //console.log({numRules, numPassed, numFailed});
         if ( numRules ) {
             percPassed = Math.ceil( ( numPassed / numRules ) * 100 );
         }

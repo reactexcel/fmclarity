@@ -20,7 +20,7 @@ export default PMPList = React.createClass({
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        var statusFilter = {"status":"PMP"};
+        var statusFilter = {"status":"PPM"};
         var customFilter = this.props.filter;
         var filter = {$and:[statusFilter,customFilter]};
         var ungroupedRequests = Meteor.user().getRequests(filter);

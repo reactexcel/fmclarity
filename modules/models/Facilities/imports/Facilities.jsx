@@ -132,9 +132,7 @@ Facilities.actions( {
         authentication:true,
         method: function(selectedFacility, level, area, identifier, booking){
             let facility = Facilities.findOne({'_id':selectedFacility._id})
-            console.log(facility,"facility")
             let areas = facility.areas;
-            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
             if(level && level.data){
                 for(var i in areas){
                     if(areas[i].name == level.name){
@@ -146,7 +144,7 @@ Facilities.actions( {
                                     let identifier2 = subArea[j].children;
                                     if(identifier && identifier.data){
                                         for(var k in identifier2){
-                                            if(identifier[k].name == identifier.name){
+                                            if(identifier2[k].name == identifier.name){
                                                 if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
                                                     if(areas[i].children[j].children[k].totalBooking){
                                                         areas[i].children[j].children[k].totalBooking.push(booking);
@@ -184,7 +182,6 @@ Facilities.actions( {
                     }
                 }
             }
-            console.log(areas,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
@@ -280,15 +277,12 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-          // console.log(facility,rules);
             let services = clearComplianceRules( facility );
-            // console.log(services,"after clear compliance");
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
                 let serviceIndex = null;
                 for ( var i in services ) {
-                  // console.log(services[ i ].name ,key,"For loop");
                     if ( services[ i ].name == key ) {
                         service = services[ i ];
                         serviceIndex = i;
@@ -296,7 +290,6 @@ Facilities.actions( {
                     }
                 }
 
-                // console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
@@ -411,7 +404,6 @@ Facilities.actions( {
 
                 }
             }
-            console.log(services,"final services");
             Meteor.call( 'Facilities.save', facility, {
                 servicesRequired: services
             } );
@@ -590,15 +582,20 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
+                let suppliers = facility.suppliers;
+                if (!suppliers || !_.isArray(suppliers)) {
+                    suppliers = [];
+                }
+                suppliers.push({
+                    _id:supplier._id,
+                    name:supplier.name,
+                    email:supplier.email
+                });
                 Facilities.update( facility._id, {
-                    $push: {
-                        suppliers: {
-                            _id: supplier._id,
-                            name: supplier.name
-                        }
+                    $set: {
+                        suppliers: suppliers
                     }
                 } );
-                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },
@@ -717,7 +714,11 @@ Facilities.actions( {
         method: ( facility, supplier, service ) => {
             let services = facility.servicesRequired,
                 index = null;
-            for (var i = 0; i < services.length; i++) {
+            for ( let i in services ) {
+                if( !services[i] ) {
+                    console.log( `Facility service ${i} is invalid`);
+                    continue;
+                }
                 if ( services[i].name == service.name ) {
                     if (!services[i].data) {
                         services[i].data = [];

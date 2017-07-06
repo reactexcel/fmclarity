@@ -42,7 +42,7 @@ const edit = new Action( {
     name: "edit request",
     type: 'request',
     label: "Edit",
-    action: ( request ) => {
+    action: ( request, callback ) => {
         let oldRequest = Object.assign( {}, request );
         Modal.show( {
             content:
@@ -318,7 +318,11 @@ const complete = new Action( {
     type: 'request',
     verb: "completed a work order",
     label: "Complete",
-    action: ( request, callback ) => {
+    action: ( request ) => {
+        if(request.callback && !_.isEmpty(request.callback)){
+            var callback = request.callback;
+            request = _.omit(request,'callback');
+        }
         Modal.show( {
             content: <AutoForm
             title = "All done? Great! We just need a few details to finalise the job."
@@ -331,7 +335,9 @@ const complete = new Action( {
                 ( request ) => {
                     Modal.hide();
                     Meteor.call( 'Issues.complete', request );
-                    callback( request );
+                    if(callback){
+                        callback( request );
+                    }
                     request.markAsUnread();
                 }
             }
@@ -379,7 +385,7 @@ const reopen = new Action( {
     name: "reopen request",
     type: 'request',
     label: "Reopen",
-    action: ( request ) => {
+    action: ( request, callback ) => {
         Modal.show( {
             content: <AutoForm
             model = { Requests }
@@ -400,6 +406,7 @@ const reopen = new Action( {
                         }
                     } );
                     request.markAsUnread();
+                    callback( request );
                 }
             }
             />

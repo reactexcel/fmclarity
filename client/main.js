@@ -80,7 +80,7 @@ function loadBrowerCompatibilityScript(  ){
             }
             else{
             const script = document.createElement("script");
-            script.src = "http://browser-update.org/update.min.js";
+            script.src = "https://browser-update.org/update.min.js";
             script.type = "text/javascript";
             script.async = true;
             document.body.appendChild(script);
@@ -281,7 +281,7 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
 
-        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
+        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'PPM', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
