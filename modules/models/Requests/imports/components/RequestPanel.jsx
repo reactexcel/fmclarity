@@ -36,7 +36,6 @@ export default RequestPanel = React.createClass( {
 
         if ( this.props.item && this.props.item._id ) {
             request = Requests.findOne( this.props.item._id );
-
             if ( request ) {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
@@ -75,7 +74,11 @@ export default RequestPanel = React.createClass( {
 
     componentWillMount() {
         //Perf.start();
+<<<<<<< HEAD
         // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+=======
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+>>>>>>> 3f5359fc8971937e87ed04eb4c6e40f5341937b7
     },
 
     componentDidMount() {
@@ -176,6 +179,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
+    let userRole = Meteor.user().getRole();
     /*let group = Teams.findOne({'_id':request.supplier._id});
     console.log(Meteor.user(),"member");
     console.log(supplier,"supplier");
@@ -190,7 +194,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <div className="wo-detail">
                 <div className="row">
-                    <div className="col-md-6 col-xs-6">
+                    {_.contains(["staff", "tenant", "resident", undefined], userRole) ? null : <div className="col-md-6 col-xs-6">
                         {/* Show supplier name when user is client (fm),
                             otherwise show client name for supplier user */}
                         <h2>
@@ -205,14 +209,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( Meteor.user().getRole()=="staff" ? null : supplier ) : supplier) : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( userRole=="staff" ? null : supplier ) : supplier) : contact }/>
 
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
                         { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
-                    </div>
-                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
+                    </div>}
+                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
                             <h2>{title}</h2>
 
@@ -224,17 +228,23 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <h2>${request.costThreshold}</h2>
                             : null }
 
-                            { request.issuedAt ?
+                            { request.type == "Ad-Hoc" && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.dueDate ?
+                            { request.type == "Ad-Hoc" && request.dueDate ?
                             <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            : null }
+
+                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
                             { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
+
+
 
                             <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
@@ -290,7 +300,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
 
                 { nextDateString?
-                <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
                     <td>
                         <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
@@ -304,7 +314,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null }
 
                 { previousDateString?
-                <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
                     <td>
                         { previousDateString ?

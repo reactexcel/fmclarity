@@ -18,6 +18,12 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 		//console.log( user );
 		user.selectTeam( team );
 	}
+	const style = {
+	refresh: {
+		backgroundColor: '',
+		boxShadow: '',
+	},
+};
 
 	if ( !team ) {
 		return ( <div style = {
@@ -47,7 +53,8 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 					left = { 0 }
 					top = { 0 }
 					status = "loading"
-			/> 
+					style = {style.refresh}
+			/>
 			</div>
 			</div>
 		)
@@ -90,7 +97,7 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 
 				{/*******************************************/
 
-				validActionNames.map( ( actionName ) => { 
+				validActionNames.map( ( actionName ) => {
 
 					let action 		= UserMenuActions.actions[ actionName ],
 						icon        = action.icon,

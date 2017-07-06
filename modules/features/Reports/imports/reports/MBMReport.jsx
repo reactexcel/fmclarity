@@ -70,9 +70,11 @@ const RequestsStatusReport = React.createClass( {
 		PubSub.publish('stop', "test");
 	},
 	componentDidMount(){
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 		if(!this.props.MonthlyReport){
 			let update = setInterval(()=>{
-
 				PubSub.subscribe( 'stop', (msg,data) => {
 					clearInterval(update)
 				});
