@@ -108,6 +108,9 @@ const ResidentDetails = React.createClass( {
 		});
  		return sortedList
 	},
+	componentDidUpdate(){
+		$(".loader").hide();
+	},
 
 	render() {
 		if ( this.data.residents.length == 0 ) {

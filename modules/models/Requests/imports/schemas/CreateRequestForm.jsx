@@ -5,14 +5,14 @@ export default CreateRequestForm = [
 
 	'facility',
 
-	/* location */
+	'name',
+	'reporterContact', 
+	'incidentVictim',
+	'location',
 	'level',
 	'area',
 	'identifier',
 	'bookingPeriod',
-
-	'name',
-
 	'service',
 	'subservice',
 	'supplier',
@@ -25,6 +25,7 @@ export default CreateRequestForm = [
 	'dueDate',
 
 	'frequency',
+	'incidenceDate',
 	'duration',
 
 	'costThreshold',
@@ -33,6 +34,7 @@ export default CreateRequestForm = [
 	//'requireInvoice',
 
 	'description',
+	'incidentFurtherComments',
 
 	'attachments',
 	'footer'

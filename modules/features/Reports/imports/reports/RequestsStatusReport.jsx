@@ -174,6 +174,9 @@ const RequestsStatusReport = React.createClass( {
     		dataset:newdata,
     	});
     },
+	componentDidUpdate(){
+		$(".loader").hide();
+	},
 
 	render() {
 		var data = this.data.reportData.requests;

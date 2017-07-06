@@ -1,9 +1,13 @@
+import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import ResidentDetails from './reports/ResidentDetails.jsx';
+import BookingReport from './reports/BookingReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
+import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
+import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
 
 const Reports = {
@@ -32,6 +36,12 @@ Reports.register( {
 } )
 
 Reports.register( {
+	id: "monthly-report",
+	name: "Monthly Report" + ' ' + '-' + ' ' + moment().format('MMMM YYYY'),
+	content: MonthlyReport
+} )
+
+Reports.register( {
     id: "request-breakdown-chart",
     name: "Request Breakdown Chart",
     content: RequestBreakdownChart
@@ -42,6 +52,7 @@ Reports.register( {
 	name: "Request Activity Chart",
 	content: RequestActivityChart
 } )
+
 
 Reports.register( {
 	id: "mbm-service-image",
