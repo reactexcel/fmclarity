@@ -162,6 +162,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
+    let userRole = Meteor.user().getRole();
     /*let group = Teams.findOne({'_id':request.supplier._id});
     console.log(Meteor.user(),"member");
     console.log(supplier,"supplier");
@@ -176,7 +177,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             <div className="wo-detail">
                 <div className="row">
-                    <div className="col-md-6 col-xs-6">
+                    {_.contains(["staff", "tenant", "resident", undefined], userRole) ? null : <div className="col-md-6 col-xs-6">
                         {/* Show supplier name when user is client (fm),
                             otherwise show client name for supplier user */}
                         <h2>
@@ -191,14 +192,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( Meteor.user().getRole()=="staff" ? null : supplier ) : supplier) : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( userRole=="staff" ? null : supplier ) : supplier) : contact }/>
 
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
                         { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
-                    </div>
-                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
+                    </div>}
+                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
                             <h2>{title}</h2>
 
