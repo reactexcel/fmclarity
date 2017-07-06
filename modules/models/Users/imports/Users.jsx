@@ -228,6 +228,13 @@ Users.actions( {
                     repeats : 10,
                     unit : "months"
                   },
+                  monthly: {
+                    endDate:"",
+                    number: 1,
+                    period:"months",
+                    repeats : 10,
+                    unit : "months"
+                  },
                   quarters: {
                     endDate:"",
                     number: 3,

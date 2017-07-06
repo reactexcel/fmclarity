@@ -18,11 +18,18 @@ const MBMServiceImages = React.createClass( {
   componentWillReceiveProps(){
     this.updateImages();
   },
+  componentDidMount(){
+    setTimeout(function(){
+      $(".loader").hide();
+    },2000)
+  },
     updateImages(){
       var user, team, facility, requests, data = [];
           var user = Meteor.user();
   		if ( user ) {
-  			var q = {};
+  			var q = {
+          			type:{$ne:'Defect'}
+        };
   			team = Session.getSelectedTeam();
   			facility = Session.getSelectedFacility();
   			if ( facility ) {
@@ -38,7 +45,7 @@ const MBMServiceImages = React.createClass( {
                        $gte: moment().startOf("month").toDate(),
                        $lte: moment().endOf("month").toDate()
                    };
-                  q['status'] = {$in:['Completed', "Issued", "Closed"]};
+                  q['status'] = {$in:['Completed', "Issued", "Closed" , "New"]};
                   for (var i in services) {
                       q['service.name'] = services[i].name;
                       let requests = Requests.findAll(q);
@@ -82,7 +89,7 @@ const MBMServiceImages = React.createClass( {
             if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
                 return (
                     <div className="col-sm-3 report-thumb" key={_id}>
-                        <img src={url} style={{ height:"100%", width:"100%" }} />
+                        <img src={url} style={{ height:"150px", width:"200px" }} />
                         <span
                             className="remove-img"
                             title="Remove image"
@@ -100,18 +107,15 @@ const MBMServiceImages = React.createClass( {
 	render() {
 		return (
 			<div>
-                <button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
-					<i className="fa fa-print" aria-hidden="true"></i>
-				</button>
+        {this.props.MonthlyReport ? null :
+					<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+						<i className="fa fa-print" aria-hidden="true"></i>
+					</button>
+				}
                 <div className="ibox-content">
                     {this.state.data.map( ( d, idx ) => {
                         return(
-                            <div className="row" key={idx} style={{marginTop:"20px", borderBottom:"1px solid #aaa", paddingBottom:"5px"}}>
-                                <div className="col-sm-12">
-                                    <h3>
-                                        {d.name}
-                                    </h3>
-                                </div>
+                            <div className="row" key={idx}>
                                 {_.flatten(d.requests.map( (r, idy) => {
                                     let imgs = [];
                                     if (r.attachments && r.attachments.length) {
@@ -129,6 +133,12 @@ const MBMServiceImages = React.createClass( {
                                             // console.log(element);
                                             if( element ) {
                                                 imgs.push( element);
+                                                imgs.unshift(
+                                                  <div className="col-sm-12" style={{borderTop:"1px solid black"}} key = {idx + 25000 +idz}>
+                                                    <h3>
+                                                        {d.name}
+                                                    </h3>
+                                                </div>)
                                             }
                                         });
                                     }

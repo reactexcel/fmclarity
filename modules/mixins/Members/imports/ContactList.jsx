@@ -117,7 +117,7 @@ export default ContactList = React.createClass( {
 			            </div>
 		            )
 			    }):null}
-			    
+
 			</div>
 		)
 	}
