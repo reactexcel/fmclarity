@@ -701,18 +701,19 @@ function checkIssuePermissions( role, user, request ) {
     if ( request.type != 'Preventative' && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
-            requestIsInvoice = request.invoiceDetails;
+            requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
             baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
-        if( !team ) {
-            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
-            return;
-        }
-        else if(requestIsInvoice){
+
+        if(requestIsInvoice){
         let supplier = Teams.findOne( request.supplier._id ),
             userRole = supplier.getMemberRole( user );
             if (_.contains( [ 'supplier manager', 'supplier fmc support', 'manager' ], userRole ) ){
                 userCanIssue = true;
             }
+        }
+        if( !team ) {
+            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+            return;
         }
         else if( baseBuilding ) {
             if( role == 'property manager' ) {
@@ -770,7 +771,8 @@ function actionIssue( request ) {
     let code = null,
         userId = Meteor.user(),
         description = request.description,
-        user = Users.findOne( userId._id );
+        user = Users.findOne( userId._id ),
+        requestIsInvoice = request && request.invoiceDetails && request.invoiceDetails.details;
 
     request.description = null;
 
@@ -784,7 +786,7 @@ function actionIssue( request ) {
             code = team.getNextWOCode();
         }
     }
-    if (request.invoiceDetails) {
+    if (requestIsInvoice) {
         request.invoiceDetails.status = 'Issued';
         Meteor.call( 'Issues.save', request );
     }
@@ -802,16 +804,16 @@ function actionIssue( request ) {
     if ( request ) {
         request.updateSupplierManagers();
         request = Requests.findOne( request._id );
-        var title = request.invoiceDetails ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
+        var title = request.invoiceDetails && request.invoiceDetails.invoiceNumber ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
             message: {
                 verb: "issued",
-                subject: title + " has been issued",
+                subject: title+ " has been issued",
                 body: description
             }
         } );
-        if (!request.invoiceDetails) {
+        if (!requestIsInvoice) {
             var team = request.getTeam();
             request.distributeMessage( {
                 recipientRoles: [ "supplier manager" ],
@@ -1030,7 +1032,7 @@ function actionComplete( request ) {
 
 function actionInvoice( request ) {
 
-    if ( request.invoiceDetails ) {
+    if ( request.invoiceDetails && request.invoiceDetails.details ) {
         
         if ( request.invoiceDetails.invoice ) {
             request.attachments.push( request.invoiceDetails.invoice );

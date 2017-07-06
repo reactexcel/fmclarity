@@ -446,7 +446,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'In Progress', 'Issued' ], request.status) && !request.invoiceDetails
+        return _.contains( [ 'In Progress', 'Issued' ], request.status) && (request.status != 'Complete')
     },
     action: [
         'complete request',
@@ -479,7 +479,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'Complete' ], request.status) && !request.invoiceDetails;
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details);
     },
     action: [
         'invoice request',

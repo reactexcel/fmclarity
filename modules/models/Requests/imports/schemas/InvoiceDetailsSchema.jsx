@@ -81,7 +81,6 @@ export default InvoiceDetailsSchema = {
         type: "string",
         input: Select,
         readonly: true,
-        defaultValue: "New",
         condition( item ) {
             return false;
         },

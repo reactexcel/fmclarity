@@ -126,7 +126,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         requestIsPurchaseOrder = request.service.data.purchaseOrder;
     }
 
-    if (request.invoiceDetails) {
+    if (request.invoiceDetails && request.invoiceDetails.details) {
         requestIsInvoice = true;
     }
 
