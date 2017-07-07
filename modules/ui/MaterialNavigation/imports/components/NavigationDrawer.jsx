@@ -19,6 +19,10 @@ class NavigationDrawer extends React.Component {
 		}
 	}
 
+	componentWillMount(){
+	$(".loader").hide();	
+	}
+
 	selectRoute( route ) {
 		this.setState( {
 			selectedRouteName: route.name
@@ -34,7 +38,7 @@ class NavigationDrawer extends React.Component {
 				$( 'body' ).addClass( 'nav-drawer-closed' );
 				Session.set('currentDeviceView', 'mobile');
 			}
-			
+
 		}
 		else{
 			Session.set('currentDeviceView', 'desktop');
@@ -56,16 +60,16 @@ class NavigationDrawer extends React.Component {
 		        }
 	        }, 200);
 	    });
-		
+
 	}
-	
+
 	componentDidMount() {
 		this.toggleDeviceView();
 	}
 
 	render() {
 		import { Routes } from '/modules/core/Actions'; // moved here because of circular dependency
-		let { userRole, routes, team } = this.props, 
+		let { userRole, routes, team } = this.props,
 			{ selectedRouteName } = this.state;
 
 		if ( !team || routes == null || routes.length <= 1 ) {
@@ -83,7 +87,7 @@ class NavigationDrawer extends React.Component {
 
 			{/*******************************************/
 
-			validRouteNames.map( ( routeName ) => { 
+			validRouteNames.map( ( routeName ) => {
 
 				let route = routes.actions[ routeName ];
 
@@ -105,9 +109,9 @@ class NavigationDrawer extends React.Component {
 
 				return (
 				<li key = { routeName } className = { classes.join(' ') }>
-					<a onClick = { () => { 
+					<a onClick = { () => {
 						this.selectRoute( route )
-						this.toggleDeviceView() 
+						this.toggleDeviceView()
 					} } >
 						<i className = { icon }></i>
 						<span>{ label }</span>

@@ -28,6 +28,9 @@ const MBMDefectImages = React.createClass( {
   componentWillReceiveProps(){
     this.updateImages();
   },
+  componentDidMount(){
+    	$(".loader").hide();
+  },
     updateImages(){
       var user, team, facility, requests, data = [];
           var user = Meteor.user();
