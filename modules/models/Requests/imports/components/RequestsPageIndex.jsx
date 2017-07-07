@@ -32,7 +32,7 @@ export default class RequestsPageIndex extends Component {
 			currentPage: 0,
 			nextPage: 1,
 			previousPage: -1,
-			listSize: "2",
+			listSize: "25",
 			statusFilter:props.statusFilter,
 			contextFilter:props.contextFilter,
 			totalPage: 1,
