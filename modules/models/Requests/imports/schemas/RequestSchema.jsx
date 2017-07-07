@@ -110,6 +110,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 } };
@@ -141,6 +143,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 }
@@ -332,6 +336,9 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
+                if (request.type=="Incident") {
+                    return val;
+                }
                 if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
                 }
