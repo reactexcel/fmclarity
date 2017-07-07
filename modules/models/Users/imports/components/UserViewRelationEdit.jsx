@@ -16,12 +16,7 @@ export default UserViewRelationEdit = React.createClass( {
 		member = this.props.member;
 		group = this.props.group;
 		group.setMemberRole( member, role );
-		if (_.contains(['manager', 'caretaker'], role)) {
-			this.handleThresholdValueChange("2000");
-		}
-		else{
-			this.handleThresholdValueChange(null);
-		}
+		this.handleThresholdValueChange(null);
 		
 		if ( !_.contains([ "portfolio manager" ], role) ) {
 			Users.update( { _id: member._id}, { $set: { role: role } } );
