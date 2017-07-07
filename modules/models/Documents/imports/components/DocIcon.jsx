@@ -144,8 +144,12 @@ export default function DocIcon( props ) {
                                          ( event ) => {
                                              event.stopPropagation();
                                              item.dueDate = docAlmostExpires ? item.expiryDate : moment(new Date()).add( { days: 1 } ).toDate();
-                                                 runaction( DocActions.createUpdateRequest.bind( item ) );
-                                                 props.onChange();
+                                                 FlowRouter.go('requests');
+                                                 setTimeout(function () {
+                                                     runaction( DocActions.createUpdateRequest.bind( item ) );
+                                                     props.onChange();
+                                                 },200);
+                                                 
 
                                          }
                                      }>
