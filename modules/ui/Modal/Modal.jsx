@@ -151,9 +151,9 @@ export default Modal = React.createClass( {
                 <div className="modal-header">
                 <span data-dismiss = "modal" style={{float:"left",zIndex:4000,cursor:"pointer",fontSize:"20px",color:"#fff",width:"40px"}}> &nbsp;&nbsp;<i className="fa fa-arrow-left" ></i></span>
                 </div>
-                
+
                   {q.content}
-                  
+
                 </div>
               </div>
             })
