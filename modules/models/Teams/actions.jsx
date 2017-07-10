@@ -123,9 +123,9 @@ const createRequest = new Action( {
             onSubmit = {
                 ( newRequest ) => {
                     if(newRequest.type == "Booking"){
+                        newRequest = _.omit(newRequest,'bookingRules')
                         Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
-
                     /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest } callback={callback}/>

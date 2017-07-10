@@ -6,12 +6,13 @@ export default CreateRequestForm = [
 	'facility',
 
 	'name',
-	'reporterContact', 
+	'reporterContact',
 	'incidentVictim',
 	'location',
 	'level',
 	'area',
 	'identifier',
+	'bookingRules',
 	'bookingPeriod',
 	'service',
 	'subservice',
@@ -32,9 +33,9 @@ export default CreateRequestForm = [
 
 	//'requireServiceReport',
 	//'requireInvoice',
-
 	'description',
 	'incidentFurtherComments',
+    'readBookingInstructions',
 
 	'attachments',
 	'footer'

@@ -266,8 +266,8 @@ FacilityAreasEditorInner = React.createClass( {
                                                         form = { ["areaDetails"] }
                                                         onSubmit={
                                                           ( item ) => {
-                                                            component.save();
-                                                            Modal.hide();
+                                                              component.save();
+                                                              Modal.hide();
                                                           }
                                                         }
                                                       />
