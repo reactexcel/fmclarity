@@ -192,9 +192,7 @@ export default DataTable = React.createClass( {
 								{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 								{ cols.map( (col,colIdx) => {
 									let styles = unreadRow[col].style?unreadRow[col].style:{}
-									//if(colIdx == 0){
 										styles.paddingLeft = '10px';
-									//}
 									return (
 										<td
 											className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
@@ -252,9 +250,7 @@ export default DataTable = React.createClass( {
 													{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 													{ cols.map( (col,colIdx) => {
 														let styles = readRow[col].style?readRow[col].style:{}
-														//if(colIdx == 0){
 															styles.paddingLeft = '10px';
-														//}
 														return (
 															<td
 																className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
@@ -311,9 +307,7 @@ export default DataTable = React.createClass( {
 											{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 											{ cols.map( (col,colIdx) => {
 												let styles = readRow[col].style?readRow[col].style:{}
-													//if(colIdx == 0){
-														styles.paddingLeft = '10px';
-													//}
+													styles.paddingLeft = '10px';
 												return (
 													<td
 														className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
