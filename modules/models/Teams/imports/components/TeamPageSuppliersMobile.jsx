@@ -3,6 +3,7 @@ import { ContactCard } from '/modules/mixins/Members';
 import { FacilityFilter } from '/modules/models/Facilities';
 import { Teams, TeamActions, TeamPanel, TeamStepper } from '/modules/models/Teams';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
+import RaisedButton from 'material-ui/RaisedButton';
 
 // FacilityPageIndex
 //
@@ -67,9 +68,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<button className="btn btn-flat" style={{'background':'#b8e986','boxShadow':'1px 1px 1px 1px #808080'}} onClick = { () => this.addSupplier() } >
-							Add new supplier
-						</button>
+						<RaisedButton backgroundColor={"#b8e986"} label="Add new supplier" onClick={() => this.addSupplier()}/>
 					</span>
 				</div>
 			</div>
