@@ -297,12 +297,12 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
     if ( members ) {
         members.map( ( m ) => {
-            if ( 
-                !filter || 
-                !m.role || 
-                filter.role == m.role || 
-                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
-                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) || 
+            if (
+                !filter ||
+                !m.role ||
+                filter.role == m.role ||
+                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ||
+                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) ||
                 ( filter.role.$ne && filter.role.$ne != m.role )
             ) {
                 if ( !m ) {
