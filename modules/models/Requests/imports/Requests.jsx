@@ -897,7 +897,6 @@ function getMembersDefaultValue( item ) {
 
 
 function actionComplete( request ) {
-
     if ( request.closeDetails ) {
         if( request.closeDetails.jobCancelled == true ){
             request.closeDetails.furtherQuoteValue = 0;
@@ -957,14 +956,14 @@ function actionComplete( request ) {
         //I think this needs to be replaced with distribute message
 
         //previous request WO# change to show the WO# of new request
-        request.distributeMessage( {
+        /*request.distributeMessage( {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
                 target: newRequest.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
         } );
 
@@ -976,9 +975,9 @@ function actionComplete( request ) {
                 target: request.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
-        } );
+        } );*/
 
         let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
