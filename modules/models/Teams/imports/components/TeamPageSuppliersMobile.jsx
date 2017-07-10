@@ -68,7 +68,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<RaisedButton backgroundColor={"#b8e986"} label="Add new supplier" onClick={() => this.addSupplier()}/>
+						<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} buttonStyle={{lineHeight:'30px'}} label="Add new supplier" onClick={() => this.addSupplier()}/>
 					</span>
 				</div>
 			</div>
