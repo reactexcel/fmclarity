@@ -75,7 +75,6 @@ export default UserViewEdit = React.createClass( {
 	//  in /modules/models/Users/actions.jsx
 	handleInvite( event ) {
 		event.preventDefault();
-
 		let { team, group, role } = this.data,
 		//	role = this.props.role;
 			input = this.refs.invitationEmail;
@@ -250,7 +249,9 @@ export default UserViewEdit = React.createClass( {
 	                	<button
 	                    	type 		= "button"
 	                    	className 	= "btn btn-primary"
-	                    	onClick 	= { ( ) => { /*non-idiomatic access to sibling*/this.refs.form.submit() } }
+	                    	onClick 	= { ( ) => {
+								this.refs.form.submit()
+							} }
 	                  	>
 	                  	Done
 	                	</button>

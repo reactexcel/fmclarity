@@ -340,8 +340,8 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy;
+                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
+                    val = user.profile.tenancy.level;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
                     val = user.apartment;
@@ -493,7 +493,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
+                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -574,7 +574,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder') {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;

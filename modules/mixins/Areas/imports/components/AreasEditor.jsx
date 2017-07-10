@@ -118,6 +118,7 @@ FacilityAreasEditorInner = React.createClass( {
             selection: selection
         } );
         this.save();
+        Modal.hide();
     },
 
     updateItem( col, idx, event ) {
