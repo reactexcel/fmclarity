@@ -24,7 +24,6 @@ export default class RequestsPageIndex extends Component {
 
 	constructor(props){
 		super(props);
-
 		this.state = {
 			user : props.user,
 			requests: props.requests,
