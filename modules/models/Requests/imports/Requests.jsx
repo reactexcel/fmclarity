@@ -25,6 +25,13 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
+ if ( Meteor.isServer ) {
+    Meteor.publish( 'Requests', () => {
+        return Requests.find();
+    } );
+ }
+
+
 const Requests = new Model( {
     schema: RequestSchema,
     collection: "Issues",
@@ -748,7 +755,7 @@ function checkIssuePermissions( role, user, request ) {
             }
 
         }
-    }            
+    }
     return userCanIssue;
 }
 
