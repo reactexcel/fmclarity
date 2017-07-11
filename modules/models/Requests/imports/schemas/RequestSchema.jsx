@@ -516,14 +516,10 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-<<<<<<< HEAD
-                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
+                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
                     if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
                         return true;
                     }
-=======
-                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
->>>>>>> 62c12e7aac936f7ee116e621214c75564fab9af4
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
