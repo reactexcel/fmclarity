@@ -94,7 +94,7 @@ const RequestSchema = {
                 return "Ad-hoc";
             },
             input: Select,
-            options: () => {
+            options: (item) => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
@@ -117,12 +117,12 @@ const RequestSchema = {
                                 } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                 }
@@ -136,17 +136,25 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                    request.area = null;
-                                    request.level = null;
-                                }
 
+                                    // prefill value with zero for defect
+                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                        request.costThreshold= '0';
+                                        request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };
+                                    }
+                                    if(request.type == 'Incident'){
+                                        request.costThreshold= '0';
+                                        request.priority = 'Urgent';
+                                        request.supplier = Session.getSelectedTeam();
+                                        request.area = null;
+                                        request.level = null;
+                                    }
                                 }
                          };
                     }
@@ -331,7 +339,8 @@ const RequestSchema = {
                     areas = facility ? facility.areas : null
                 }
                 return {
-                    items: areas
+                    items: areas,
+                    readOnly: item.type == 'Key Request',
                 }
             },
             defaultValue: (request ) => {
@@ -339,8 +348,11 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
-                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
+                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy;
+                }
+                if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
+                    val = user.apartment;
                 }
                 return val;
             },
@@ -489,7 +501,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' || request.type =='Incident' ) {
+                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -519,31 +531,31 @@ const RequestSchema = {
                         request.supplier = null;
                         request.subservice = null;
                         if (request && request.service && request.service.data ) {
-                            let supplier = request.service.data.supplier,
-                                defaultSupplier = null;
+                                let supplier = request.service.data.supplier,
+                                    defaultSupplier = null;
 
-                            if ( supplier ) {
-                                if ( supplier._id ) {
-                                    defaultSupplier = Teams.findOne( supplier._id );
-                                }
-                                if ( !defaultSupplier && supplier.name ) {
-                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                }
-                                request.supplier = defaultSupplier;
-                                if( request.supplier && onServiceChange ) {
-                                    onServiceChange( request.supplier );
-                                }
-                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
-                                    request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                if ( supplier ) {
+                                    if ( supplier._id ) {
+                                        defaultSupplier = Teams.findOne( supplier._id );
+                                    }
+                                    if ( !defaultSupplier && supplier.name ) {
+                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                    }
+                                    request.supplier = defaultSupplier;
+                                    if( request.supplier && onServiceChange ) {
+                                        onServiceChange( request.supplier );
+                                    }
+                                    if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                        request.supplierContacts = request.service.data.defaultContact;
+                                    } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                    } else {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    }
                                 } else {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    request.supplier = null;
+                                    request.subservice = null;
                                 }
-                            } else {
-                                request.supplier = null;
-                                request.subservice = null;
-                            }
                         }
                     }
                 }
@@ -770,7 +782,7 @@ const RequestSchema = {
             type: "number",
             size: 6,
             defaultValue: ( item ) => {
-                if(item.type == "Incident"){
+                if(item.type && _.contains(['Key Request','Incident'],item.type)){
                     return '0';
                 }
                 // get the default value from the team and return that as default costThreshold
@@ -1241,7 +1253,7 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    if ( request.supplier && request.supplier._id ) {
+                    /*if ( request.supplier && request.supplier._id ) {
                         let team = Session.getSelectedTeam();
                         if( team._id == request.supplier._id ) {
                             let userRole = Meteor.user().getRole();
@@ -1249,6 +1261,18 @@ const RequestSchema = {
                                 return true;
                             }
                         }
+                    }
+                    return false;*/
+                    let role = Meteor.user().getRole();
+                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
+                        return false;
+                    }
+                    let team = Session.getSelectedTeam();
+                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+                        return true;
+                    }
+                    if(_.contains( [ "portfolio manager", 'manager'], role )){
+                        return true;
                     }
                     return false;
                 },
