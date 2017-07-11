@@ -9,20 +9,22 @@ export default InvoiceDetailsSchema = {
         size: 6,
     },
 
-    invoiceDate: {
-        label: "Invoice date",
+    dueDate: {
+        label: "Due date",
         input: DateTime,
         size: 6,
+        type: 'date',
         required: true,
         defaultValue: () => {
             return new Date();
         },
     },
 
-    dueDate: {
-        label: "Due date",
+    invoiceDate: {
+        label: "Invoice date",
         input: DateTime,
         size: 6,
+        type: 'date',
         required: true,
         defaultValue: () => {
             return new Date();

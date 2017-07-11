@@ -396,6 +396,7 @@ const invoice = new Action( {
             invoiceNumber = supplier.getNextInvoiceNumber();
             request.invoiceDetails.invoiceNumber = invoiceNumber;
             }
+            request.invoiceDetails.invoiceDate = new Date();
         Modal.show( {
             content: <AutoForm
             title = "Create an Invoice for the completed work order."
