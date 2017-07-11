@@ -80,10 +80,12 @@ export default class RequestsPageIndex extends Component {
 
 	pagingRequest(listSize,currentPage){
 		let user = this.state.user
-		let query = [ {
-			'members._id': user._id
-		} ]
-
+		let query = [];
+        if(Meteor.user().getRole() != "fmc support"){
+			query.push({
+				'members._id': user._id
+			})
+		}
 		if ( user.role == 'admin' ) {
 			query = [ { _id: { $ne: null } } ]
 		}
@@ -95,7 +97,6 @@ export default class RequestsPageIndex extends Component {
 		if ( this.props.contextFilter ) {
 			query.push( this.props.contextFilter );
 		}
-
 		//perform query
 		var requests = Requests.find( {
 			$and: query
