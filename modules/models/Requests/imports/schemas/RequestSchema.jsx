@@ -94,7 +94,7 @@ const RequestSchema = {
                 return "Ad-hoc";
             },
             input: Select,
-            options: () => {
+            options: (item) => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
@@ -145,15 +145,22 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                }
-
+                                    // prefill value with zero for defect
+                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                        request.costThreshold= '0';
+                                        request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };
+                                    }
+                                    if(request.type == 'Incident'){
+                                        request.costThreshold= '0';
+                                        request.priority = 'Urgent';
+                                        request.supplier = Session.getSelectedTeam();
+                                    }
                                 }
                          };
                     }
@@ -255,42 +262,24 @@ const RequestSchema = {
         //////////////////////////////////////////////////
         // Facility dependant properties
         //////////////////////////////////////////////////
+        incidentVictim: {
+            label: "Who did it happen to & what's their contact details?",
+            type: "string",
+            input: Text,
+            size: 12,
+            required: true,
+            condition: "Incident"
+        },
         location: {
             label: "Where did it happen?",
             type: "string",
-            input: Text,
+            input: TextArea,
             size: 6,
             required: true,
-            condition: "Incident"
-        },
-        incidentVictim: {
-            label: "Who did it happen to?",
-            type: "string",
-            input: Text,
-            size: 6,
-            required: true,
-            condition: "Incident"
-        },
-        reporter: {
-            label: "Reporter",
-            description: "Who reported the incident",
-            type: "object",
-            input: Select,
-            required: true,
-            options: ( request ) => {
-                    request = Requests.collection._transform( request );
-
-                    let team = request.getFacility() || request.getTeam(),
-                        members = team.getMembers();
-                    return {
-                        items: members,
-                        view: ContactCard
-                    }
-            },
             condition: "Incident"
         },
         reporterContact: {
-            label: "Reporter Contact ",
+            label: "Reporter Contact details",
             type: "string",
             input: TextArea,
             size: 6,
@@ -560,31 +549,31 @@ const RequestSchema = {
                         request.supplier = null;
                         request.subservice = null;
                         if (request && request.service && request.service.data ) {
-                            let supplier = request.service.data.supplier,
-                                defaultSupplier = null;
+                                let supplier = request.service.data.supplier,
+                                    defaultSupplier = null;
 
-                            if ( supplier ) {
-                                if ( supplier._id ) {
-                                    defaultSupplier = Teams.findOne( supplier._id );
-                                }
-                                if ( !defaultSupplier && supplier.name ) {
-                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                }
-                                request.supplier = defaultSupplier;
-                                if( request.supplier && onServiceChange ) {
-                                    onServiceChange( request.supplier );
-                                }
-                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
-                                    request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                if ( supplier ) {
+                                    if ( supplier._id ) {
+                                        defaultSupplier = Teams.findOne( supplier._id );
+                                    }
+                                    if ( !defaultSupplier && supplier.name ) {
+                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                    }
+                                    request.supplier = defaultSupplier;
+                                    if( request.supplier && onServiceChange ) {
+                                        onServiceChange( request.supplier );
+                                    }
+                                    if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                        request.supplierContacts = request.service.data.defaultContact;
+                                    } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                    } else {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    }
                                 } else {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    request.supplier = null;
+                                    request.subservice = null;
                                 }
-                            } else {
-                                request.supplier = null;
-                                request.subservice = null;
-                            }
                         }
                     }
                 }
@@ -1089,6 +1078,9 @@ const RequestSchema = {
             condition: ( request ) => {
 
                 let team = Session.getSelectedTeam();
+                if ( request.type == 'Incident' ) {
+                    return false;
+                }
                 //do not show for booking, contractors, staff or resident
                 if( request.type != 'Booking' ) {
                     if( Teams.isFacilityTeam( team ) ) {
@@ -1102,9 +1094,9 @@ const RequestSchema = {
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
-                if ( item.type == 'Incident' ) {
+                /*if ( item.type == 'Incident' ) {
                     return team;
-                }
+                }*/
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
@@ -1189,7 +1181,7 @@ const RequestSchema = {
                 return (
                     (
                         request.status != 'Issued' &&
-                        request.type != 'Booking' &&
+                        !_.contains(['Booking','Incident'],request.type) &&
                         //Teams.isServiceTeam( selectedTeam )
                         Teams.isFacilityTeam( selectedTeam )
                     ) ?

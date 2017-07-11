@@ -414,6 +414,7 @@ export default DocumentSchema = {
 		options: {
 			items:[
 				'Validation Report',
+				'Monthly Report'
 			],
 		},
 		size: 6,
