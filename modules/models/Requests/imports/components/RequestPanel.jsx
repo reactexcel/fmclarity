@@ -3,6 +3,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Inbox } from '/modules/models/Messages';
 import { AutoForm } from '/modules/core/AutoForm';
+import { Modal } from '/modules/ui/Modal';
 import { AddressLink, BillingDetails } from '/modules/models/Facilities';
 import { WorkflowButtons } from '/modules/core/WorkflowHelper';
 import { ContactDetails, ContactList } from '/modules/mixins/Members';
@@ -180,6 +181,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     console.log(role,"role RBAC");
     role = supplier.getMemberRole( Meteor.user() );
     console.log(role,"role");*/
+    var invLength = request.invoiceDetails && request.invoiceDetails.invoiceNumber && request.invoiceDetails.invoiceNumber.length;
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
@@ -209,13 +211,32 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     </div>}
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
-                            <h2>{title}</h2>
+                            {requestIsInvoice ? <span>
+                                <h2 className="edit-link">Invoice #
+                                    <input size={invLength} onChange   = { (event) => { 
+                                        request.invoiceDetails.invoiceNumber = event.currentTarget.value ? event.currentTarget.value : request.invoiceDetails.invoiceNumber;
+                                        Requests.save.call( request );
+                                        
+                                        setTimeout(function(){ 
+                                            Bert.alert({
+                                              title: 'Success',
+                                              message: 'Invoice number updated',
+                                              type: 'info',
+                                              style: 'growl-top-right',
+                                              icon: 'fa-check'
+                                            }); 
+                                        }, 500);
+                                    } }  
+                                        type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input> 
+                                    </h2>
+                                </span> 
+                                : <h2>{title}</h2>}
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
                             { request.type == 'Ad-hoc' &&
                               request.costThreshold &&
-                              Meteor.user().getRole() != 'staff' ?
+                              Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
                             : null }
                             

@@ -280,6 +280,10 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
+        let requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+        if (requestIsInvoice) {
+            return false;
+        }
 
         if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'PPM', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
@@ -402,7 +406,12 @@ Actions.addAccessRule( {
         ( request ) => {
             let user = Meteor.user(),
                 team = request.getTeam(),
-                teamRole = team.getMemberRole( user );
+                teamRole = team.getMemberRole( user ),
+                requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+
+            if (requestIsInvoice) {
+                return false;
+            }
 
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
@@ -456,7 +465,9 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'Complete' },
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details)
+    },
     action: [
         //'close request',
         'reopen request',

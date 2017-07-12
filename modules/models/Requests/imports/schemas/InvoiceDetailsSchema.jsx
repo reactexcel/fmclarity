@@ -1,4 +1,5 @@
 import { DateTime, Select, Switch, FileField, TextArea, Text, Currency } from '/modules/ui/MaterialInputs';
+import { FileExplorer } from '/modules/models/Files';
 import React from "react";
 
 export default InvoiceDetailsSchema = {
@@ -42,7 +43,7 @@ export default InvoiceDetailsSchema = {
         label: "Total Payable( ex GST )",
         type: "number",
         input: (props)=>{
-                return <Currency {...props}
+                return <Text {...props}
                     onChange={(value)=>{
                         // null should equate to 0
                         if( !value ) {
@@ -59,22 +60,57 @@ export default InvoiceDetailsSchema = {
     },
 
     gst: {
-        input: Currency,
         required: true,
         label: "GST",
+        type: "number",
+        input: (props)=>{
+                return <Text {...props}
+                    onChange={(value)=>{
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
+                        }
+                        value = parseInt(value);
+                        let totalPayable = value * 10,
+                            totalPayablePlusGst = totalPayable + value;
+                            
+                        props.item.totalPayable = totalPayable;
+                        props.item.totalPayablePlusGst = totalPayablePlusGst;
+                        props.onChange( value );
+                    }}
+                />
+            },
         size: 6,
     },
 
     totalPayablePlusGst: {
-        input: Currency,
         required: true,
         label: "Total Payable( incl GST )",
+        type: "number",
+        input: (props)=>{
+                return <Text {...props}
+                    onChange={(value)=>{
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
+                        }
+                        value = parseInt(value);
+                        let totalPayable = (100*value)/110,
+                            gst = 0.1*totalPayable;
+
+                        props.item.totalPayable = totalPayable;
+                        props.item.gst = gst;
+                        props.onChange( value );
+                    }}
+                />
+            },
         size: 6,
     },
 
     invoice: {
         label: "Invoice Attachment",
-        input: FileField,
+        type: "array",
+        input: FileExplorer
     },
     status: {
 
