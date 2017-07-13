@@ -37,6 +37,10 @@ class AutoForm extends React.Component {
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
 
+	componentDidMount(){
+		let self = this;
+		setTimeout(function() { self.checkBookingAreas('type') }, 100);
+	}
 	/**
 	 * Takes the condition field from a schema and a document item and returns true if the item passes the condition
 	 * @param 		{object} condition
@@ -56,6 +60,30 @@ class AutoForm extends React.Component {
 			this.props.onChange( newState );
 		}
 		this.setState( newState );
+	}
+
+	checkBookingAreas(key){
+		if(key == 'type' || key == 'facility'){
+			let item = this.props.item;
+			if(item && item.type && item.type == "Booking" && !_.isEmpty(item.facility)){
+				let { keys, schema } = this.form;
+				let formItem = this.form.item,
+				    areaLevels = ['level','area','identifier'],
+					foundAreas = [];
+				areaLevels.map( ( area ) => {
+					let { options } = schema[ area ];
+					if ( _.isFunction( options ) ) {
+						options = options( formItem );
+					}
+					if(!_.isEmpty(options) && !_.isEmpty(options.items) && options.items.length > 0){
+						foundAreas.push(area)
+					}
+				})
+				if(foundAreas.length == 0){
+					window.alert("Oops, no bookable areas available");
+				}
+			}
+		}
 	}
 
 	/**
@@ -91,14 +119,14 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit() {
+	submit( shouldIssue ) {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				this.props.onSubmit( item );
+				this.props.onSubmit( item, shouldIssue );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
@@ -198,9 +226,6 @@ class AutoForm extends React.Component {
 				if ( !item[ key ] ) {
 					item[ key ] = '';
 				}
-				if(key === 'facility'){
-					item [key] = Session.getSelectedFacility();
-				}
 
 				if ( Input == null ) {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
@@ -214,7 +239,9 @@ class AutoForm extends React.Component {
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => {
+							    let self = this;
 								form.updateField( key, update, modifiers )
+								setTimeout(function() { self.checkBookingAreas(key) }, 100);
 							} }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
@@ -226,6 +253,7 @@ class AutoForm extends React.Component {
 							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
+							edit = {this.props.edit ? this.props.edit : false}
 
 										  { ...options}
 						/>
@@ -247,18 +275,38 @@ class AutoForm extends React.Component {
 				{ this.getForm() }
 
 		        { !this.props.hideSubmit ?
+						<div style={ {textAlign:"right", clear:"both"}}>
+							{
 
-				<div style={ {textAlign:"right", clear:"both"}}>
-					<button
-						type 		= "button"
-						className 	= "btn btn-flat btn-primary"
-						onClick 	= { ( ) => { this.submit() } }
-					>
+							this.state.submitText && this.state.submitText == "Issue"?
 
-						{this.state.submitText?this.state.submitText:
-						    (this.props.submitText?this.props.submitText:'Submit')}
-					</button>
-				</div>
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
+
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit() } }
+							>
+
+								{this.props.submitText?this.props.submitText:'Submit'}
+
+							</button>
+
+						</div>
+
+
 
 				: this.props.submitFormOnStepperNext ?
 

@@ -69,14 +69,20 @@ const createUpdateRequest = new Action( {
 	type: 'request',
 	action: ( doc ) => {
 		 team = Session.getSelectedTeam();
+         let owner = team.getOwner(),
+         supplier = {
+                        _id: owner._id,
+                        name: owner.profile ? owner.profile.name : owner.name
+                    };
 		let item = Requests.create( {
                     team: team,
                     type: 'Reminder',
                     priority: 'Urgent',
-                    dueDate: moment(doc.expiryDate).subtract( { months: 1 } ).toDate(),
+                    dueDate: doc.dueDate,
                     name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
                     service: doc.serviceType ? doc.serviceType : null,
-                    supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
+                    supplier: supplier,
+                    // supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
                 } );
 		newItem = Requests.create( item );
         Modal.show( {
@@ -99,6 +105,12 @@ const createUpdateRequest = new Action( {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
+
+                    /*this seems to override supplier selected by user at supplier dropdown
+                    newRequest.supplier = {
+                        _id: owner._id,
+                        name: owner.profile ? owner.profile.name : owner.name
+                    };*/
 
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
@@ -144,7 +156,7 @@ const createUpdateRequest = new Action( {
 
                                 if( relation.threshold ) {
                                     costThreshold = parseInt( relation.threshold );
-                                }                                
+                                }
                                 else if( team.defaultCostThreshold ) {
                                     costThreshold = parseInt( team.defaultCostThreshold );
                                 }

@@ -12,42 +12,56 @@ const MBMServiceImages = React.createClass( {
             expandall: false,
           };
     },
-	componentWillReceiveProps() {
-
-		var user, team, facility, requests, data = [];
-        var user = Meteor.user();
-		if ( user ) {
-			var q = {};
-			team = Session.getSelectedTeam();
-			facility = Session.getSelectedFacility();
-			if ( facility ) {
-				let services = facility.servicesRequired;
-                q['facility._id'] = facility._id;
-                // q['closeDetails.completionDate'] = {
-                //     $gte: moment().startOf("month").toDate(),
-                //     $lte: moment().endOf("month").toDate()
-                // };
-                 q['dueDate'] = {
-                     $gte: moment().startOf("month").toDate(),
-                     $lte: moment().endOf("month").toDate()
-                 };
-                q['status'] = {$in:['Completed', "Issued", "Closed"]};
-                for (var i in services) {
-                    q['service.name'] = services[i].name;
-                    let requests = Requests.findAll(q);
-                    if (requests.length){
-                        data.push({
-                            name: services[i].name,
-                            requests: requests
-                        })
-                    }
-                }
-			}
-		}
-		this.setState({
-            data
-        })
+	componentWillMount() {
+    this.updateImages();
 	},
+  componentWillReceiveProps(){
+    this.updateImages();
+  },
+  componentDidMount(){
+    setTimeout(function(){
+      $(".loader").hide();
+    },2000)
+  },
+    updateImages(){
+      var user, team, facility, requests, data = [];
+          var user = Meteor.user();
+  		if ( user ) {
+  			var q = {
+          			type:{$ne:'Defect'}
+        };
+  			team = Session.getSelectedTeam();
+  			facility = Session.getSelectedFacility();
+  			if ( facility ) {
+  				let services = facility.servicesRequired;
+          // console.log(services);
+          services = services.filter((val)=> val != null)
+                  q['facility._id'] = facility._id;
+                  // q['closeDetails.completionDate'] = {
+                  //     $gte: moment().startOf("month").toDate(),
+                  //     $lte: moment().endOf("month").toDate()
+                  // };
+                   q['dueDate'] = {
+                       $gte: moment().startOf("month").toDate(),
+                       $lte: moment().endOf("month").toDate()
+                   };
+                  q['status'] = {$in:['Completed', "Issued", "Closed" , "New"]};
+                  for (var i in services) {
+                      q['service.name'] = services[i].name;
+                      let requests = Requests.findAll(q);
+                      if (requests.length){
+                          data.push({
+                              name: services[i].name,
+                              requests: requests
+                          })
+                      }
+                  }
+  			}
+  		}
+  		this.setState({
+              data
+          })
+    },
     printChart(){
 		var component = this;
 		component.setState( {
@@ -75,7 +89,7 @@ const MBMServiceImages = React.createClass( {
             if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
                 return (
                     <div className="col-sm-3 report-thumb" key={_id}>
-                        <img src={url} style={{ height:"100%", width:"100%" }} />
+                        <img src={url} style={{ height:"150px", width:"200px" }} />
                         <span
                             className="remove-img"
                             title="Remove image"
@@ -93,22 +107,19 @@ const MBMServiceImages = React.createClass( {
 	render() {
 		return (
 			<div>
-                <button className="btn btn-flat pull-left noprint" onClick={this.printChart}>
-					<i className="fa fa-print" aria-hidden="true"></i>
-				</button>
+        {this.props.MonthlyReport ? null :
+					<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+						<i className="fa fa-print" aria-hidden="true"></i>
+					</button>
+				}
                 <div className="ibox-content">
                     {this.state.data.map( ( d, idx ) => {
                         return(
-                            <div className="row" key={idx} style={{marginTop:"20px", borderBottom:"1px solid #aaa", paddingBottom:"5px"}}>
-                                <div className="col-sm-12">
-                                    <h3>
-                                        {d.name}
-                                    </h3>
-                                </div>
+                            <div className="row" key={idx}>
                                 {_.flatten(d.requests.map( (r, idy) => {
                                     let imgs = [];
                                     if (r.attachments && r.attachments.length) {
-                                        imgs.push(<div className="row" style={{marginLeft:"5px"}}>
+                                        imgs.push(<div className="row" key={idy} style={{marginLeft:"5px"}}>
                                             <div className="col-sm-12" style={{paddingTop:"20px", marginBottom:"5px", fontWeight:"500"}}>
                                                 <span>#WO: <em>{r.code}</em></span>
                                                 <span style={{paddingLeft:"10px"}}>
@@ -119,8 +130,15 @@ const MBMServiceImages = React.createClass( {
                                         );
                                         r.attachments.map( (attach, idz) => {
                                             let element = this.getImage(attach._id);
+                                            // console.log(element);
                                             if( element ) {
                                                 imgs.push( element);
+                                                imgs.unshift(
+                                                  <div className="col-sm-12" style={{borderTop:"1px solid black"}} key = {idx + 25000 +idz}>
+                                                    <h3>
+                                                        {d.name}
+                                                    </h3>
+                                                </div>)
                                             }
                                         });
                                     }

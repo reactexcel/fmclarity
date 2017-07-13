@@ -165,7 +165,6 @@ class FormController {
 	 * @param 			{function} callback
 	 */
 	save( item, onBeforeSave, onAfterSave ) {
-
 		if ( this.validate( item ) ) {
 			// if validation passes we will assume update will work
 			//  and trigger callbacks before saving the data
@@ -186,6 +185,7 @@ class FormController {
 						onAfterSave( this.item );
 					}
 				} );
+			Modal.hide();
 		}
 	}
 

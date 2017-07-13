@@ -32,8 +32,8 @@ function actionGetQuote( request, user ) {
 
 function actionEdit( request, user ) {
 	if ( request.type == "Preventative" ) {
-		request.status = "PMP";
-		request.priority = "Scheduled";
+		request.status = "PPM";
+		request.priority = "PPM";
 	}
 	Requests.save.call( request );
 }
@@ -78,8 +78,8 @@ Requests.workflow.addState( [ 'Draft' ], {
 
 		method: function( request ) {
 			if ( request.type == "Preventative" ) {
-				request.status = "PMP";
-				request.priority = "Scheduled";
+				request.status = "PPM";
+				request.priority = "PPM";
 			} else {
 				request.status = "New";
 			}
@@ -137,7 +137,7 @@ Requests.workflow.addState( [ 'Draft' ], {
 //////////////////////////////////////////////////////
 // PMP
 //////////////////////////////////////////////////////
-Requests.workflow.addState( [ 'PMP' ], {
+Requests.workflow.addState( [ 'PPM' ], {
 
 	edit: {
 		label: 'Edit',
@@ -188,8 +188,8 @@ Requests.workflow.addState( [ 'PMP' ], {
 
 		method: function( request ) {
 			if ( request.type == "Preventative" ) {
-				request.status = "PMP";
-				request.priority = "Scheduled";
+				request.status = "PPM";
+				request.priority = "PPM";
 			} else {
 				request.status = "New";
 			}
@@ -625,13 +625,13 @@ function actionComplete( request ) {
 			}
 		} );
 
-		newRequest.distributeMessage( {
+		/*newRequest.distributeMessage( {
 			message: {
 				verb: "requested a follow up to " + request.getName(),
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
 				body: newRequest.description
 			}
-		} );
+		} );*/
 	} else {
 
 		request.distributeMessage( {

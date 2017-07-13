@@ -6,6 +6,7 @@
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
+import IncidentCommentSchema from './IncidentCommentSchema.jsx';
 
 import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
@@ -93,21 +94,33 @@ const RequestSchema = {
                 return "Ad-hoc";
             },
             input: Select,
-            options: () => {
+            options: (item) => {
                 let role = Meteor.user().getRole(),
                     team = Session.get( 'selectedTeam' ),
                     user = Meteor.user();
 
                 if ( Teams.isServiceTeam( team ) ) {
-                    return { items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder' ] };
+                    return {
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        afterChange: ( request ) => {
+                                // prefill value with zero for defect
+                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
+                                    request.costThreshold= '0';
+                                }
+                                if(request.type == 'Incident'){
+                                    request.priority = 'Urgent';
+                                    request.supplier = Session.getSelectedTeam();
+                                }
+
+                                } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ];
+                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy" ], request.type )) {
+                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                 }
@@ -119,7 +132,26 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder' ] };
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                                afterChange: ( request ) => {
+                                    // prefill value with zero for defect
+                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                        request.costThreshold= '0';
+                                        request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };
+                                    }
+                                    if(request.type == 'Incident'){
+                                        request.costThreshold= '0';
+                                        request.priority = 'Urgent';
+                                        request.supplier = Session.getSelectedTeam();
+                                    }
+                                }
+                         };
                     }
                 }
             }
@@ -135,7 +167,13 @@ const RequestSchema = {
                 return "The urgency of the "+ workRequest +" request";
             },
             type: "string",
-            defaultValue: "Standard",
+            defaultValue: (item) =>{
+                let priority = "Standard";
+                if(item.type == 'Incident'){
+                    priority = 'Urgent'
+                }
+                return priority;
+            },
             required: true,
             condition: ( request ) => {
                 if ( request.type == "Preventative" || request.type == 'Booking' ) {
@@ -213,7 +251,35 @@ const RequestSchema = {
         //////////////////////////////////////////////////
         // Facility dependant properties
         //////////////////////////////////////////////////
-
+        incidentVictim: {
+            label: "Who did it happen to & what's their contact details?",
+            type: "string",
+            input: Text,
+            size: 12,
+            required: true,
+            condition: "Incident"
+        },
+        location: {
+            label: "Where did it happen?",
+            type: "string",
+            input: TextArea,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        reporterContact: {
+            label: "Reporter Contact details",
+            type: "string",
+            input: TextArea,
+            size: 6,
+            required: true,
+            condition: "Incident"
+        },
+        incidentFurtherComments: {
+            type: "object",
+            subschema: IncidentCommentSchema,
+            condition: "Incident"
+        },
         level: {
             label: "Location - Area",
             size: 4,
@@ -228,6 +294,9 @@ const RequestSchema = {
             required: true,
             condition: ( item ) => {
                 let selectedTeam = Session.get( 'selectedTeam' );
+                if (item.type=="Incident") {
+                    return false;
+                }
                 return Teams.isFacilityTeam( selectedTeam ) || !_.isEmpty( item.level );
             },
             options: ( item ) => {
@@ -265,13 +334,17 @@ const RequestSchema = {
                     areas = facility ? facility.areas : null
                 }
                 return {
-                    items: areas
+                    items: areas,
+                    readOnly: item.type == 'Key Request',
                 }
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant', 'resident' ], user.getRole() ) ) {
-                    val = user.profile.tenancy;
+                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
+                    val = user.profile.tenancy.level;
+                }
+                if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
+                    val = user.apartment;
                 }
                 return val;
             },
@@ -398,8 +471,16 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
-                            props.item.occupancy = value.data.baseBuilding ? value.data.baseBuilding : false;
-                            onServiceChange = props.changeSubmitText
+                            let team = Session.getSelectedTeam();
+                            let costAbleToIssue = true;
+                            if(team.defaultCostThreshold){
+                                costAbleToIssue = false;
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                            }
+                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
             } ,
@@ -412,7 +493,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -441,32 +522,32 @@ const RequestSchema = {
                         }
                         request.supplier = null;
                         request.subservice = null;
-                        if ( request.service.data ) {
-                            let supplier = request.service.data.supplier,
-                                defaultSupplier = null;
+                        if (request && request.service && request.service.data ) {
+                                let supplier = request.service.data.supplier,
+                                    defaultSupplier = null;
 
-                            if ( supplier ) {
-                                if ( supplier._id ) {
-                                    defaultSupplier = Teams.findOne( supplier._id );
-                                }
-                                if ( !defaultSupplier && supplier.name ) {
-                                    defaultSupplier = Teams.findOne( { name: supplier.name } );
-                                }
-                                request.supplier = defaultSupplier;
-                                if( request.supplier && onServiceChange ) {
-                                    onServiceChange( request.supplier );
-                                }
-                                if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
-                                    request.supplierContacts = request.service.data.defaultContact;
-                                } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                if ( supplier ) {
+                                    if ( supplier._id ) {
+                                        defaultSupplier = Teams.findOne( supplier._id );
+                                    }
+                                    if ( !defaultSupplier && supplier.name ) {
+                                        defaultSupplier = Teams.findOne( { name: supplier.name } );
+                                    }
+                                    request.supplier = defaultSupplier;
+                                    if( request.supplier && onServiceChange ) {
+                                        onServiceChange( request.supplier );
+                                    }
+                                    if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
+                                        request.supplierContacts = request.service.data.defaultContact;
+                                    } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'portfolio manager' } );
+                                    } else {
+                                        request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    }
                                 } else {
-                                    request.supplierContacts = defaultSupplier.getMembers( { role: 'manager' } );
+                                    request.supplier = null;
+                                    request.subservice = null;
                                 }
-                            } else {
-                                request.supplier = null;
-                                request.subservice = null;
-                            }
                         }
                     }
                 }
@@ -493,7 +574,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder') {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -669,20 +750,20 @@ const RequestSchema = {
 
                 return(
                     <div className="row">
-                    <div className="col-xs-12">
-                    <br/><br/>
-                    <Switch
-                        value = { value }
-                        placeholder = "Base Building"
-                        labelInactive = "Tenant"
-                        onChange = { ( val ) =>{
-                            props.item.occupancy = val;
-                            props.item.service.data.baseBuilding = val;
-                            props.item.service.data.tenancy = !val;
-                        }
-                    }
-                    />
-                    </div>
+                        <div className="col-xs-12">
+                            <br/><br/>
+                            <Switch
+                                value = { value }
+                                placeholder = "Base Building"
+                                labelInactive = "Tenant"
+                                onChange = { ( val ) =>{
+                                    props.item.occupancy = val;
+                                    props.item.service.data.baseBuilding = val;
+                                    props.item.service.data.tenancy = !val;
+                                }
+                            }
+                            />
+                        </div>
                     </div>
                     )
             }
@@ -692,14 +773,99 @@ const RequestSchema = {
             label: "Value",
             type: "number",
             size: 6,
-            defaultValue: '500',
-            input: Currency,
+            defaultValue: ( item ) => {
+                if(item.type && _.contains(['Key Request','Incident'],item.type)){
+                    return '0';
+                }
+                // get the default value from the team and return that as default costThreshold
+                let team = Session.getSelectedTeam();
+                if( team && ( team.defaultWorkOrderValue != null ) ) {
+                    return  team.defaultWorkOrderValue;
+                }
+                // if none exists return 0
+                return '0';
+            },
+            // input: Currency,
+            input: (props)=>{
+                return <Currency {...props}
+                    onChange={(value)=>{
+                        // null should equate to 0
+                        if( !value ) {
+                            value = '0';
+                        }
+                        props.onChange( value );
+                    }}
+                    readOnly = {(props.edit && props.edit == true) && (props.item && props.item.status == "Booking") ? true : false}
+                />
+            },
             condition: ( request ) => {
-                if ( _.contains( [ "Defect", "Preventative" ], request.type ) ) {
+                if ( _.contains( [ "Defect", "Incident" ], request.type ) ) {
                     return false;
                 }
+                if(request.type == "Booking"){
+                    request.costThreshold = '0';
+                    let selectedAreaDetail = null;
+
+
+                    /*if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+                    if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    }
+                    if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
+                        selectedAreaDetail = request.identifier.data.areaDetails
+                    }*/
+
+
+                    let facility = Facilities.findOne( request.facility._id )
+                    let parentArea = null,
+                        childArea = null;
+                    if(request.level && request.level.name){
+                        _.map( facility.areas, ( ar, i ) => {
+                            if(ar.name == request.level.name){
+                                parentArea = ar;
+                                selectedAreaDetail = ar.data && ar.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.area && request.area.name){
+                        _.map( parentArea.children, ( child, i ) => {
+                            if(child.name == request.area.name){
+                                childArea = child;
+                                selectedAreaDetail = child.data && child.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.identifier && request.identifier.name){
+                        _.map( childArea.children, ( subChild, i ) => {
+                            if(subChild.name == request.identifier.name){
+                                selectedAreaDetail = subChild.data && subChild.data.areaDetails;
+                            }
+                        })
+                    }
+
+                    if(selectedAreaDetail != null){
+                        let unit = selectedAreaDetail.unit,
+                            cost = parseInt(_.isEmpty(selectedAreaDetail.cost)?0:selectedAreaDetail.cost),
+                            bookingIncreament = 0;
+                        if(unit == 'Hours'){
+                            bookingIncreament = selectedAreaDetail.hour.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Days'){
+                            bookingIncreament = selectedAreaDetail.day.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Months'){
+                            bookingIncreament = selectedAreaDetail.month.replace(/[^\d.-]/g, '');
+                        } else if(unit == 'Weeks'){
+                            bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
+                        }
+                        bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
+                    }
+                } else {
+                    // request.costThreshold = '500';
+                }
                 let role = Meteor.user().getRole();
-                if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
+                if ( (role == 'staff' || role == 'tenant' || role == 'resident') && request.type != "Booking") {
                     return false;
                 }
                 return true;
@@ -724,12 +890,30 @@ const RequestSchema = {
             required: true,
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
+                if(request.type=='Booking'){
+                    request.dueDate = ""
+                    return false;
+                }
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) /*&& request.type !='Booking'*/ ) {
+                    return false;
+                }
+                if (request.type=='Incident') {
                     return false;
                 }
                 return true;
             }
+        },
+
+        incidenceDate: {
+            type: "date",
+            label: "When did it happen?",
+            description: "The date and time the incident occured",
+            input: DateTime,
+            size: 6,
+            required: true,
+            defaultValue: getDefaultDueDate,
+            condition: "Incident"
         },
 
         bookingPeriod: {
@@ -737,10 +921,237 @@ const RequestSchema = {
             label: "Booking period",
             description: "Select the booking period",
             input: (props) => {
+                let items = props.item;
+                let bookableTimeSlot = null;
+        		let previousBookingEvents = [];
+        		let bookingFor = null
+        		if(items && items.identifier && items.identifier.data){
+        			if(items.identifier.data.areaDetails && items.identifier.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.identifier.data.areaDetails.daySelector;
+        			}
+        			if(items.identifier.totalBooking){
+        				items.identifier.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.identifier.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.identifier.name
+        		} else if(items && items.area && items.area.data) {
+        			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.area.data.areaDetails.daySelector;
+        			}
+        			if(items.area.totalBooking){
+        				items.area.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.area.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+                    bookingFor = items.area.name;
+        		} else if(items && items.level && items.level.data) {
+        			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.level.data.areaDetails.daySelector;
+        			}
+        			if(items.level.totalBooking){
+        				items.level.totalBooking.map((booking)=>{
+                            let bookingFound = 0;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.level.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.level.name;
+        		}
+
+        		let businessHours = [];
+
+                let extra = moment().format('YYYY-MM-DD') + ' ';
+        		let showSecondEvent = true
+        		if(bookableTimeSlot && bookableTimeSlot.Sun && bookableTimeSlot.Sun.startTime && bookableTimeSlot.Sun.endTime && bookableTimeSlot.Sun.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sun.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: moment(bookableTimeSlot.Sun.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sun.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Mon && bookableTimeSlot.Mon.startTime && bookableTimeSlot.Mon.endTime  && bookableTimeSlot.Mon.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Mon.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: moment(bookableTimeSlot.Mon.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Mon.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Tue && bookableTimeSlot.Tue.startTime && bookableTimeSlot.Tue.endTime  && bookableTimeSlot.Tue.select == true){
+        		    showSecondEvent = true
+        			if (moment(bookableTimeSlot.Tue.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: moment(bookableTimeSlot.Tue.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Tue.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Wed && bookableTimeSlot.Wed.startTime && bookableTimeSlot.Wed.endTime  && bookableTimeSlot.Wed.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Wed.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: moment(bookableTimeSlot.Wed.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Wed.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Thu && bookableTimeSlot.Thu.startTime && bookableTimeSlot.Thu.endTime  && bookableTimeSlot.Thu.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Thu.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: moment(bookableTimeSlot.Thu.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Thu.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Fri && bookableTimeSlot.Fri.startTime && bookableTimeSlot.Fri.endTime  && bookableTimeSlot.Fri.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Fri.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: moment(bookableTimeSlot.Fri.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Fri.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Sat && bookableTimeSlot.Sat.startTime && bookableTimeSlot.Sat.endTime  && bookableTimeSlot.Sat.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sat.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: moment(bookableTimeSlot.Sat.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sat.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		let bookingDetails = {
+        			businessHours:businessHours,
+        			previousBookingEvents:previousBookingEvents,
+        			bookingFor:bookingFor
+        		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
                                 props.onChange(value);
                             }}
+                            bookingDetails = {bookingDetails}
                             {...props}
                         />
             },
@@ -750,6 +1161,13 @@ const RequestSchema = {
             defaultValue: {},
             condition: (request)=>{
                 if(request.type == "Booking" && request.level && request.level.name){
+                    if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
+                        let duration = moment.duration(moment(request.bookingPeriod.endTime).diff(moment(request.bookingPeriod.startTime)));
+                        let hours = duration.asHours();
+                        request.duration = hours.toString();
+                    } else {
+                        request.duration = ''
+                    }
                     return true;
                 } else {
                     return false;
@@ -826,7 +1244,6 @@ const RequestSchema = {
             input: Select,
 
             options: ( request ) => {
-
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
@@ -877,6 +1294,7 @@ const RequestSchema = {
                 }
             },
             condition: ( request ) => {
+                //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
                 if ( facilities.length <= 1 ) {
@@ -897,6 +1315,9 @@ const RequestSchema = {
             condition: ( request ) => {
 
                 let team = Session.getSelectedTeam();
+                if ( request.type == 'Incident' ) {
+                    return false;
+                }
                 //do not show for booking, contractors, staff or resident
                 if( request.type != 'Booking' ) {
                     if( Teams.isFacilityTeam( team ) ) {
@@ -910,6 +1331,9 @@ const RequestSchema = {
             },
             defaultValue: ( item ) => {
                 let team = Session.getSelectedTeam();
+                /*if ( item.type == 'Incident' ) {
+                    return team;
+                }*/
                 if( Teams.isServiceTeam( team ) ) {
                     return team;
                 }
@@ -917,7 +1341,15 @@ const RequestSchema = {
             input:( props ) => {
                 return <Select {...props}
                     onChange={( value ) => {
-                        props.changeSubmitText(value);
+                        let team = Session.getSelectedTeam();
+                        let costAbleToIssue = true;
+                        if(team.defaultCostThreshold){
+                            costAbleToIssue = false;
+                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                        }
+                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                         props.onChange(value);
                     }}/>
             } ,
@@ -986,7 +1418,8 @@ const RequestSchema = {
                 return (
                     (
                         request.status != 'Issued' &&
-                        request.type != 'Booking' &&
+                        !_.contains(['Booking','Incident'],request.type) &&
+                        //Teams.isServiceTeam( selectedTeam )
                         Teams.isFacilityTeam( selectedTeam )
                     ) ?
                     ( !_.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) ) : false
@@ -1075,7 +1508,7 @@ const RequestSchema = {
                 label: "Assignee",
                 description: "The individual who has been allocated to this job",
                 condition: ( request ) => {
-                    if ( request.supplier && request.supplier._id ) {
+                    /*if ( request.supplier && request.supplier._id ) {
                         let team = Session.getSelectedTeam();
                         if( team._id == request.supplier._id ) {
                             let userRole = Meteor.user().getRole();
@@ -1083,6 +1516,18 @@ const RequestSchema = {
                                 return true;
                             }
                         }
+                    }
+                    return false;*/
+                    let role = Meteor.user().getRole();
+                    if (role == 'caretaker' || role == 'staff' || role == 'resident' || role == 'tenant' ) {
+                        return false;
+                    }
+                    let team = Session.getSelectedTeam();
+                    if ( request.supplier && ( team._id == request.supplier._id || team.name == request.supplier.name ) ) {
+                        return true;
+                    }
+                    if(_.contains( [ "portfolio manager", 'manager'], role )){
+                        return true;
                     }
                     return false;
                 },
@@ -1235,9 +1680,8 @@ const RequestSchema = {
                             default:
 
                         }
-                        period = props.item.frequency.number > 1?
-                            ( period || props.item.frequency.period ) + "s":
-                            ( period || props.item.frequency.period );
+                        period = period || props.item.frequency.period;
+                        period = formatSingularPlural(period);
                     }
                     return (
                         <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -1251,10 +1695,10 @@ const RequestSchema = {
                                     </div>:(
                                         props.item.frequency.period && props.item.frequency.endDate?
                                         <div>
-                                            {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                            {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                         </div>:
                                         <div>
-                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                            {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || formatSingularPlural(props.item.frequency.unit)} until stopped`:null}
                                         </div>
                                     )
                                 )
@@ -1303,6 +1747,13 @@ const RequestSchema = {
 
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
+        }
+
+        function formatSingularPlural(str) {
+            if (str.slice(-1)=='s') {
+                str =  str.substring(0, str.length-1)+"(s)";
+            }
+            return str;
         }
 
         export default RequestSchema;

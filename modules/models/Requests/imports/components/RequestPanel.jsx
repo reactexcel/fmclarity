@@ -12,7 +12,7 @@ import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
 import { Requests, RequestActions } from '/modules/models/Requests';
-import { TeamActions } from '/modules/models/Teams';
+import { Teams, TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
 
@@ -23,7 +23,6 @@ export default RequestPanel = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let request = null,
             nextRequest = null,
             previousRequest = null,
@@ -35,8 +34,8 @@ export default RequestPanel = React.createClass( {
             owner = null;
 
         if ( this.props.item && this.props.item._id ) {
-            request = Requests.findOne( this.props.item._id );
-
+            //request = Requests.findOne( this.props.item._id );
+            request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -57,12 +56,13 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
-        
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner }
+        let callback = this.props.callback
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
         //Perf.start();
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
@@ -85,9 +85,7 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner } ) => {
-
-    //console.log( facility );
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
     function formatDate( date ) {
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
@@ -128,12 +126,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     if ( request.type == 'Preventative' ) {
         title = 'PPM';
-
         if ( nextDate ) {
-            nextDateString = moment( nextDate ).format( 'ddd Do MMM' );
+            nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
         }
         if ( previousDate ) {
-            previousDateString = moment( previousDate ).format( 'ddd Do MMM' );
+            previousDateString = moment( previousDate ).format( 'ddd Do MMM YYYY' );
         }
 
     } else {
@@ -166,12 +163,22 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
+    let userRole = Meteor.user().getRole();
+    /*let group = Teams.findOne({'_id':request.supplier._id});
+    console.log(Meteor.user(),"member");
+    console.log(supplier,"supplier");
+    console.log(request.supplier,"request.supplier");
+    console.log(group,"request.supplier=>group");
+    let role = RBAC.getRole( cont, realEstateAgency );
+    console.log(role,"role RBAC");
+    role = supplier.getMemberRole( Meteor.user() );
+    console.log(role,"role");*/
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
             <div className="wo-detail">
                 <div className="row">
-                    <div className="col-md-6 col-xs-6">
+                    {_.contains(["staff", "tenant", "resident", undefined], userRole) ? null : <div className="col-md-6 col-xs-6">
                         {/* Show supplier name when user is client (fm),
                             otherwise show client name for supplier user */}
                         <h2>
@@ -186,13 +193,14 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         {/* Show supplier contact details when user is client (fm),
                             otherwise show client details for supplier user */}
-                        <ContactDetails item = { teamType == "fm" ? supplier : contact }/>
+                        <ContactDetails item = { teamType == "fm" ? ( request.status == "New" ? ( userRole=="staff" ? null : supplier ) : supplier) : contact }/>
+
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
                         { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
-                    </div>
-                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right'}}>
+                    </div>}
+                    <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
                             <h2>{title}</h2>
 
@@ -204,17 +212,23 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <h2>${request.costThreshold}</h2>
                             : null }
 
-                            { request.issuedAt ?
+                            { request.type == "Ad-Hoc" && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.dueDate ?
+                            { request.type == "Ad-Hoc" && request.dueDate ?
                             <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            : null }
+
+                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
                             { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
+
+
 
                             <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
@@ -240,7 +254,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                   </div>
                 </div>
                 <div className="col-md-11">
-                  <WorkflowButtons actions = { RequestActions } item = { request }/>
+                  <WorkflowButtons actions = { RequestActions } item = { request } callback={callback}/>
                 </div>
               </div>
             </div>
@@ -270,7 +284,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
 
                 { nextDateString?
-                <tr onClick = { () => { RequestActions.view.run( nextRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( nextRequest ) } }>
                     <th>Next Due</th>
                     <td>
                         <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
@@ -284,7 +298,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null }
 
                 { previousDateString?
-                <tr onClick = { () => { RequestActions.view.run( previousRequest ) } }>
+                <tr style={{'cursor':'pointer'}} title="Select" onClick = { () => { RequestActions.view.run( previousRequest ) } }>
                     <th>Previous</th>
                     <td>
                         { previousDateString ?
@@ -300,10 +314,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { request.type == 'Booking' && request.duration ?
+                { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
-                    <th>Duration</th>
-                    <td>{request.duration}</td>
+                    <th style={{width:"110px"}}>Booking Period</th>
+                    <td>{(request.bookingPeriod.startTime? moment().format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment().format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
                 </tr>
                 : null }
 

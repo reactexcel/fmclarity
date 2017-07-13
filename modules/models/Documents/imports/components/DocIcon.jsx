@@ -24,8 +24,7 @@ export default function DocIcon( props ) {
 				onChange = { (data) => { props.onChange(data); }}
 				model={props.model}
 				selectedItem={props.selectedItem}
-				team = {props.team}
-        add = {props.add ? props.add : false}/>
+				team = {props.team}/>
         } )
     }
 
@@ -101,7 +100,7 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
-			<span style={{display:"inline-block",width:"46%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
+			<span style={{display:"inline-block",width:"45%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
 			{ _.contains(['fmc support', "portfolio manager" ], props.role ) ?
 				<span style={{display:"inline-block",width:"5%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
@@ -127,16 +126,16 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
-            { docAlmostExpires  ?
-                item.serviceType && item.serviceType.data && item.serviceType.data.request ?
-                    <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+            { docAlmostExpires || docExpired  ?
+                item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
+                    <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                         <a   href={url}
                              className   = "btn btn-flat"
                              title="View Update request"
                              >
                              <span><i className="fa fa-eye" aria-hidden="true"></i></span>
                          </a>
-                    </span>:<span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                    </span>:<span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                                  <button
                                      type        = "button"
                                      className   = "btn btn-flat"
@@ -144,8 +143,13 @@ export default function DocIcon( props ) {
                                      onClick={
                                          ( event ) => {
                                              event.stopPropagation();
-                                                 runaction( DocActions.createUpdateRequest.bind( item ) );
-                                                 props.onChange();
+                                             item.dueDate = docAlmostExpires ? item.expiryDate : moment(new Date()).add( { days: 1 } ).toDate();
+                                                 FlowRouter.go('requests');
+                                                 setTimeout(function () {
+                                                     runaction( DocActions.createUpdateRequest.bind( item ) );
+                                                     props.onChange();
+                                                 },200);
+                                                 
 
                                          }
                                      }>

@@ -5,6 +5,7 @@ import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
 import { Requests, CreateRequestForm } from '/modules/models/Requests';
+import {Facilities} from '/modules/models/Facilities';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
@@ -29,7 +30,7 @@ const view = new Action( {
         Modal.show( {
             id: `viewRequest-${request._id}`,
             content: //<DropFileContainer request={request} model={Requests}>
-                <RequestPanel item = { request } />
+                <RequestPanel item = { request } callback={callback}/>
                 //</DropFileContainer>
         } )
         callback( request );
@@ -42,15 +43,18 @@ const edit = new Action( {
     name: "edit request",
     type: 'request',
     label: "Edit",
-    action: ( request ) => {
-        let oldRequest = Object.assign( {}, request );
+    action: ( preRequest, callback ) => {
+        let previousRequest = Object.assign( {}, preRequest );
+        let oldRequest = Object.assign( {}, preRequest );
         Modal.show( {
             content:
                 <AutoForm
             title = "Edit Request"
+            edit = {true}
             model = { Requests }
-            item = { request }
+            item = { previousRequest }
             form = { CreateRequestForm }
+            submitText="Save"
             onSubmit = {
                 ( request ) => {
                     // this should really be in a Request action called 'update' or something
@@ -62,7 +66,10 @@ const edit = new Action( {
                     request.description = null;
 
                     request.costThreshold = request.costThreshold == '' ? 0 : request.costThreshold;
-
+                    if(request.haveToIssue == true){
+                        request.status = "Issued"
+                        request = _.omit(request,'haveToIssue')
+                    }
                     Requests.save.call( request );
 
                     Modal.hide();
@@ -126,6 +133,44 @@ const deleteFunction = new Action( {
     shouldConfirm: true,
     verb: 'deleted request',
     action: ( request, callback ) => {
+        if(request.status == "Booking"){
+            let facility = Facilities.findOne({'_id':request.facility._id})
+            let areas = facility.areas;
+            	for(var i in areas){
+                    if(areas[i].totalBooking && areas[i].totalBooking.length>0){
+                        let bookingToRemove = areas[i].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                        if(bookingToRemove>=0){
+                            areas[i].totalBooking.splice( bookingToRemove, 1 );
+                            break;
+                        }
+                    }
+                    if(areas[i].children && areas[i].children.length>0){
+                        for(var j in areas[i].children){
+                            if(areas[i].children[j].totalBooking && areas[i].children[j].totalBooking.length>0){
+                                let bookingToRemove = areas[i].children[j].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                if(bookingToRemove>=0){
+                                    areas[i].children[j].totalBooking.splice( bookingToRemove, 1 );
+                                    break;
+                                }
+                            }
+                            if(areas[i].children[j].children && areas[i].children[j].children.length>0){
+                                for(var k in areas[i].children[j].children){
+                                    if(areas[i].children[j].children[k].totalBooking && areas[i].children[j].children[k].totalBooking.length>0){
+                                        let bookingToRemove = areas[i].children[j].children[k].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                        if(bookingToRemove>=0){
+                                            areas[i].children[j].children[k].totalBooking.splice( bookingToRemove, 1 );
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                Facilities.update( { _id: facility._id }, { $set: { "areas": areas } } );
+        }
         Requests.update( request._id, { $set: { status: 'Deleted' } } );
         Modal.hide();
         request = Requests.collection._transform( request );
@@ -314,7 +359,11 @@ const complete = new Action( {
     type: 'request',
     verb: "completed a work order",
     label: "Complete",
-    action: ( request, callback ) => {
+    action: ( request ) => {
+        if(request.callback && !_.isEmpty(request.callback)){
+            var callback = request.callback;
+            request = _.omit(request,'callback');
+        }
         Modal.show( {
             content: <AutoForm
             title = "All done? Great! We just need a few details to finalise the job."
@@ -327,7 +376,9 @@ const complete = new Action( {
                 ( request ) => {
                     Modal.hide();
                     Meteor.call( 'Issues.complete', request );
-                    callback( request );
+                    if(callback){
+                        callback( request );
+                    }
                     request.markAsUnread();
                 }
             }
@@ -375,7 +426,7 @@ const reopen = new Action( {
     name: "reopen request",
     type: 'request',
     label: "Reopen",
-    action: ( request ) => {
+    action: ( request, callback ) => {
         Modal.show( {
             content: <AutoForm
             model = { Requests }
@@ -396,6 +447,7 @@ const reopen = new Action( {
                         }
                     } );
                     request.markAsUnread();
+                    callback( request );
                 }
             }
             />

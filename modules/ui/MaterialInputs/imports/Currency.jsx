@@ -20,10 +20,12 @@ const Currency = React.createClass( {
 		if ( this.props.onClear ) {
 			this.props.onClear()
 		}
-		/*if ( this.props.onChange ) {
+		if ( this.props.onChange ) {
 			this.props.onChange( null );
-		}*/
+		}
 		this.refs.input.value = "";
+		this.props.value = null;
+		this.toggleCurrencyHolder();
 	},
 
 	handleSelect( event ) {
@@ -33,9 +35,10 @@ const Currency = React.createClass( {
 	},
 
 	formatNum(obj) {
-		  if (obj) {  // object exist
-		     var val = obj.value;
+		// if object exists
+		if ( obj ) {
 
+		    var val = obj.value;
 		    val = val.replace(/,/g, "")
 		    obj.value = "";
 		    val += '';
@@ -70,25 +73,24 @@ const Currency = React.createClass( {
 		        obj.value = "0.0"+val
 		      }
 		    }*/
-		  }
-		},
+		}
+	},
 
 	handleKeyUp(event){
 		//allow navigation around textbox using arrow keys
-    if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40)
-    {
-        return;
-    }
+    	if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40) {
+        	return;
+    	}
 		this.formatNum(event.target);
 
 	},
+
 	handleOnBlur(event){
 		this.toggleCurrencyHolder();
 		// format number and delimit multiple 0's eg 0000, 0000.0002, 0002 etc
 		var curval = this.refs.input.value.replace(/,/g , "");
 		this.refs.input.value=Number(curval);
 		this.formatNum(this.refs.input);
-
 	},
 
 	CheckNumeric(e) {
@@ -111,7 +113,7 @@ const Currency = React.createClass( {
 			$('.currency-holder').show();
 		}
 		if ( this.refs.input.value.length == 0 ) {
-			$('.currency-holder').toggle('display');
+			$('.currency-holder').hide();
 		}
 	},
 
@@ -119,21 +121,28 @@ const Currency = React.createClass( {
 		this.handleChange = _.debounce( this.handleChange, 200 );
 		if(this.refs.input.value.length > 0){
 			$('.currency-holder').show();
+		}else{
+			$('.currency-holder').hide();
 		}
 	},
 
 	componentWillReceiveProps( newProps ) {
 		this.refs.input.value = newProps.value;
+		if(this.refs.input.value.length > 0){
+			$('.currency-holder').show();
+		}else{
+			$('.currency-holder').hide();
+		}
 	},
 
 
 	render() {
-		let { value, errors } = this.props,
+		let { value, errors, readOnly } = this.props,
 			used = false,
 			invalid = false,
 			classes = [ "input" ];
 
-		if ( value != null && value.length != 0 ) {
+		if ( value != null ) {
 			used = true;
 			classes.push( "used" );
 		}
@@ -155,18 +164,25 @@ const Currency = React.createClass( {
       			type 			= "text"
       			defaultValue	= { value }
       			onChange 		= { this.handleChange }
-      			onSelect		= { this.handleSelect }
+      			onSelect		= { ()=>{
+				    readOnly && readOnly == true ? '' : this.handleSelect
+				}}
       			onKeyUp			= { this.handleKeyUp }
       			onKeyDown		= { this.CheckNumeric }
-      			onFocus			= { this.toggleCurrencyHolder }
+      			onFocus			= { ()=>{
+					readOnly && readOnly == true ? '' : this.toggleCurrencyHolder
+				} }
       			onBlur			= { this.handleOnBlur }
+				readOnly		= { readOnly }
       		/>
 
 	        {
         	used?
     		<div
     			className	= "close-button"
-    			onClick		= { this.handleClear }>
+    			onClick		= { () =>{
+				    readOnly && readOnly == true ? '' : this.handleClear
+				}}>
     			&times;
     		</div>
         	:null

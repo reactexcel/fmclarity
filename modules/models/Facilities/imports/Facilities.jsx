@@ -130,11 +130,15 @@ Facilities.actions( {
     },
     updateBookingForArea: {
         authentication:true,
-        method: function(selectedFacility, level, area, identifier, booking){
+        method: function(newRequest){
+            let selectedFacility = newRequest.facility,
+                level = newRequest.level,
+                area = newRequest.area,
+                identifier = newRequest.identifier,
+                booking = newRequest.bookingPeriod;
+                booking.bookingId = newRequest._id;
             let facility = Facilities.findOne({'_id':selectedFacility._id})
-            console.log(facility,"facility")
             let areas = facility.areas;
-            console.log(facility,level, area, identifier, booking,"updateBookingForArea")
             if(level && level.data){
                 for(var i in areas){
                     if(areas[i].name == level.name){
@@ -146,7 +150,7 @@ Facilities.actions( {
                                     let identifier2 = subArea[j].children;
                                     if(identifier && identifier.data){
                                         for(var k in identifier2){
-                                            if(identifier[k].name == identifier.name){
+                                            if(identifier2[k].name == identifier.name){
                                                 if(areas[i].children[j].children[k].data.areaDetails && areas[i].children[j].children[k].data.areaDetails.type == "Bookable"){
                                                     if(areas[i].children[j].children[k].totalBooking){
                                                         areas[i].children[j].children[k].totalBooking.push(booking);
@@ -184,7 +188,6 @@ Facilities.actions( {
                     }
                 }
             }
-            console.log(areas,"last")
             Facilities.update( facility._id, {
                 $set: {
                     areas: areas
@@ -280,9 +283,7 @@ Facilities.actions( {
     setupCompliance: {
         authentication: true,
         method: function( facility, rules ) {
-
             let services = clearComplianceRules( facility );
-
             for ( key in rules ) {
                 let rule = rules[ key ];
                 let service = null;
@@ -295,7 +296,6 @@ Facilities.actions( {
                     }
                 }
 
-                //console.log( { key, service, serviceIndex } );
                 if ( service != null && serviceIndex != null ) {
 
                     rule.map( ( r, idx ) => {
@@ -588,15 +588,20 @@ Facilities.actions( {
         method: function( facility, supplier ) {
             //console.log("addSupplier");
             if ( supplier && supplier._id ) {
+                let suppliers = facility.suppliers;
+                if (!suppliers || !_.isArray(suppliers)) {
+                    suppliers = [];
+                }
+                suppliers.push({
+                    _id:supplier._id,
+                    name:supplier.name,
+                    email:supplier.email
+                });
                 Facilities.update( facility._id, {
-                    $push: {
-                        suppliers: {
-                            _id: supplier._id,
-                            name: supplier.name
-                        }
+                    $set: {
+                        suppliers: suppliers
                     }
                 } );
-                //console.log(Facilities.findOne({"_id": facility._id}),"facility");
             }
         }
     },
@@ -710,6 +715,58 @@ Facilities.actions( {
         }
     },
 
+    setDefaultSupplier: {
+        authentication: true,
+        method: ( facility, supplier, service ) => {
+            let services = facility.servicesRequired,
+                index = null;
+            for ( let i in services ) {
+                if( !services[i] ) {
+                    console.log( `Facility service ${i} is invalid`);
+                    continue;
+                }
+                if ( services[i].name == service.name ) {
+                    if (!services[i].data) {
+                        services[i].data = [];
+                    }
+                    services[i].data.supplier = supplier;
+                    let members = [];
+                    if( supplier && supplier._id ) {
+                        import { Teams } from '/modules/models/Teams';
+                        supplier = Teams.findOne( supplier._id );
+                        if( supplier ) {
+                            members = supplier.getMembers( { "role": "manager" } );
+                            if ( members.length ) {
+                                let dsc = members[0];
+                                services[i].data.defaultContact = [{
+                                    _id: dsc._id,
+                                    name: dsc.name || dsc.profile.name,
+                                    role: "supplier manager",
+                                    email: dsc.email || dsc.profile.email,
+                                }];
+
+                            }
+                        }
+                    }
+                    index = i;
+                    //console.log(services[i]);
+                    break;
+                }
+            }
+            Facilities.update( facility._id, {
+                    $set: {
+                        servicesRequired: services,
+                    }
+                }
+            )
+            return {
+                index,
+                service: services[index],
+                supplier,
+            }
+        }
+    },
+
     invitePropertyManager: {
         authentication: true,
         method: invitePropertyManager,
@@ -800,6 +857,7 @@ function sendMemberInvite( facility, recipient, team ) {
 
 function clearComplianceRules( facility ) {
     let services = facility.servicesRequired;
+    services =  _.filter(services, service => service != null);
     if ( services ) {
         services.map( ( service, idx ) => {
             if ( !services[ idx ].data ) {

@@ -25,6 +25,13 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
+ if ( Meteor.isServer ) {
+    Meteor.publish( 'Requests', () => {
+        return Requests.find();
+    } );
+ }
+
+
 const Requests = new Model( {
     schema: RequestSchema,
     collection: "Issues",
@@ -50,7 +57,6 @@ const Requests = new Model( {
                                 memberRoles = roles.actors[ member._id ];
 
                             //console.log( memberRoles );
-
                             if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
                                 //remove everyone who isn't pm
                                 for( let i in memberRoles ) {
@@ -91,16 +97,15 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
     if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
     }
 
-    if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
+    if ( request.costThreshold && ( request.costThreshold.length === 0 || ( _.isString( request.costThreshold ) && !request.costThreshold.trim() ) ) ) {
         request.costThreshold = 0;
     }
 
@@ -236,16 +241,21 @@ Requests.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-            let status = 'New',
-                description = request.description;
 
+            let status = 'New';
+
+            // The description field simply carries the value to be sent to the notification or comment.
+            // After extracting that value we clear it because we don't want to save the description value.
+            let description = request.description;
             request.description = null;
+
+            // Cost threshold should be numeric - perhaps there is a better way to enforce this in the schema... anyone?
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
 
             if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -264,11 +274,9 @@ Requests.methods( {
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
-
             if ( newRequestId ) {
                 newRequest = Requests.findOne( newRequestId );
             }
-
             if ( newRequest ) {
                 let owner = null;
                 if ( newRequest.owner ) {
@@ -288,7 +296,7 @@ Requests.methods( {
     },
 
     issue: {
-        authentication: true,
+        authentication: checkIssuePermissions,
         method: actionIssue
     },
 
@@ -393,7 +401,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -409,7 +468,7 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
@@ -440,7 +499,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -456,15 +566,20 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
+                let originalDueDate =  moment( request.dueDate );
                 for ( var i = 0; i <= repeats; i++ ) {
 
-                    if ( dueDate.isAfter() ) {
+                    if ( dueDate.isAfter() && dueDate.isAfter(request.createdAt) ) {
+                      if(moment(dueDate).subtract( period ).isAfter(request.createdAt)){
                         return dueDate.subtract( period ).toDate();
+                      }else{
+                        return
+                      }
                     }
                     dueDate = dueDate.add( period );
                 }
@@ -475,9 +590,11 @@ Requests.methods( {
     findCloneAt: {
         authentication: true,
         helper: ( request, dueDate ) => {
+            let facility = request.getFacility();
             return Requests.findOne( {
+                "facility._id": facility._id,
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -503,9 +620,11 @@ Requests.methods( {
                 nextRequest = null;
 
             if ( nextDate ) {
+                let facility = request.getFacility();
                 nextRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -520,9 +639,11 @@ Requests.methods( {
             previousRequest = null;
 
             if ( previousDate ) {
+                let facility = request.getFacility();
                 previousRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -681,9 +802,72 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
+function checkIssuePermissions( role, user, request ) {
+
+    let hasSupplier = request.supplier && request.supplier._id,
+        userCanIssue = false;
+
+    if ( request.type != 'Preventative' && hasSupplier ) {
+        let team = Teams.findOne( request.team._id ),
+            role = team.getMemberRole( user ),
+            baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
+        if( !team ) {
+            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+            return;
+        }
+        else if( baseBuilding ) {
+            if( role == 'property manager' ) {
+                userCanIssue = true;
+            }
+        }
+        else if( !baseBuilding ) {
+
+            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                userCanIssue = true;
+            }
+            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
+                let relation = team.getMemberRelation( user ),
+                    costString = request.costThreshold,
+                    memberThreshold = null,
+                    costThreshold = null;
+
+                if( relation ) {
+                    memberThreshold = relation.issueThresholdValue;
+                    if( _.isString( memberThreshold ) ) {
+                        memberThreshold = memberThreshold.replace(',','');
+                    }
+                }
+
+                // strips out commas
+                //  this is a hack due to an inadequete implementation of number formatting
+                //  needs a refactor
+                if( _.isString( costString ) ) {
+                    costString = costString.replace(',','')
+                }
+
+                let cost = parseInt( costString );
+
+                // this is the value saved in the member team relation
+                if( memberThreshold ) {
+                    costThreshold = parseInt( memberThreshold );
+                }
+                // this is the threshold value from the global team configuration
+                else if( team.defaultCostThreshold ) {
+                    costThreshold = parseInt( team.defaultCostThreshold );
+                }
+
+                if( cost <= costThreshold ) {
+                    userCanIssue = true;
+                }
+            }
+
+        }
+    }
+    return userCanIssue;
+}
+
 
 function actionIssue( request ) {
-
     let code = null,
         userId = Meteor.user(),
         description = request.description,
@@ -804,7 +988,7 @@ function getMembersDefaultValue( item ) {
                 let role = member.getRole( facility );
 
                 if ( role == 'property manager' ) {
-                    if ( item.service.data && item.service.data.baseBuilding ) {
+                    if ( item.service && item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
@@ -827,7 +1011,6 @@ function getMembersDefaultValue( item ) {
 
 
 function actionComplete( request ) {
-
     if ( request.closeDetails ) {
         if( request.closeDetails.jobCancelled == true ){
             request.closeDetails.furtherQuoteValue = 0;
@@ -847,15 +1030,12 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
-
-        console.log( 'further work required' );
 
         var closer = Meteor.user(),
             closerRole = closer.getRole();
@@ -890,14 +1070,14 @@ function actionComplete( request ) {
         //I think this needs to be replaced with distribute message
 
         //previous request WO# change to show the WO# of new request
-        request.distributeMessage( {
+        /*request.distributeMessage( {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
                 target: newRequest.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
         } );
 
@@ -909,9 +1089,9 @@ function actionComplete( request ) {
                 target: request.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
-        } );
+        } );*/
 
         let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
