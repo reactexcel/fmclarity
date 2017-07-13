@@ -90,7 +90,7 @@ export default class RequestsPageIndex extends Component {
 	pagingRequest(listSize,currentPage){
 		let user = Meteor.user();
 		let query = [];
-        if( user != "fmc support" ) {
+        if( user.getRole() != "fmc support" ) {
 			query.push( {
 				'members._id': user._id
 			} );
