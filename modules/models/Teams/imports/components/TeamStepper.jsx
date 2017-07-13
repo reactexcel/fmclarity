@@ -331,7 +331,15 @@ const TeamStepper = React.createClass( {
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
+                                                // console.log(item,team);
                                                 if(this.data.viewer.role === "fmc support"){
+                                                  // console.log("working");
+                                                  item.members = [{
+                                                    _id : this.data.viewer._id,
+                                                    role : "fmc support",
+                                                    name :  this.data.viewer.profile.name
+                                                  }]
+                                                }else{
                                                   // console.log("working");
                                                   // console.log(item,item.members);
                                                   item.members = [{
