@@ -169,7 +169,7 @@ export default class RequestsPageIndex extends Component {
 				return null
 			}
 		})
-
+		
 		return (
 			<div>
 				<div className = "row">
@@ -177,7 +177,7 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3 desktop-only">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Cancelled' ] } selectedItem = { selectedStatus } />
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Booking', 'Cancelled' ] } selectedItem = { selectedStatus } />
 					</div>
 				</div>
 

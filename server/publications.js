@@ -164,6 +164,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
             _id: 1,
             area: 1,
             attachments: 1,
+            bookingPeriod:1,
             'assignee._id': 1,
             'assignee.name': 1,
             closeDetails: 1,

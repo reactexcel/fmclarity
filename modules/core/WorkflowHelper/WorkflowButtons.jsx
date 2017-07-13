@@ -1,6 +1,7 @@
 import React from "react";
 import { Actions } from '/modules/core/Actions';
 import WorkflowActions from './WorkflowActions.jsx';
+import { Requests, RequestActions } from '/modules/models/Requests';
 
 export default function WorkflowButtons( { actions, item, callback } ) {
     let width = "100px"
@@ -31,7 +32,6 @@ export default function WorkflowButtons( { actions, item, callback } ) {
     return (
         <div>
             { actionNames.map( ( actionName, idx ) => {
-
                 let action = actions[ actionName ],
                     permitted = ( !action.authenticate || action.authenticate() ),
                     classes = ['btn','btn-flat'];
