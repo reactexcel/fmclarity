@@ -154,38 +154,50 @@ const WeeklyCalendar = React.createClass( {
                 dow: [0]
 			}],*/
 			select: function(start, end, ev) {
-				let startTime = start._d
-				let endTime = end._d
-				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
-				let getCurrentTime = self.getCurrentTime(start, end)
-				/*if(timeDiff>1800000){
-        			$("#bookingCalendar").fullCalendar('unselect');
-      			} else {*/
-					startTime = moment(startTime)
-					startTime._d = getCurrentTime.startTime
-					endTime = moment(endTime)
-					endTime._d = getCurrentTime.endTime
-					let newEvent = {
-						id:0,
-						title: 'Your Booking',
-		      			start: startTime,
-		      			end: endTime,
-		      			allDay: false,
-		      			editable:true,
-						overlap:false,
-						tooltip: 'Your Booking'
-					}
-					$('#bookingCalendar').fullCalendar('removeEvents',0);
-					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
-					$( "#bookingCalendar" ).fullCalendar( 'addEventSource', [newEvent] );
-					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
+				if(moment(start._d).isBefore(moment(new Date()))) {
+					 $('#bookingCalendar').fullCalendar('unselect');
+			        Bert.alert({
+						  title: 'Operation not allowed',
+						  message: 'Event date is in the past.',
+						  type: 'danger',
+						  style: 'growl-top-right',
+						  icon: 'fa-ban'
+						});
+			    }
+			    else{
+			    	let startTime = start._d
+					let endTime = end._d
+					let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
+					let getCurrentTime = self.getCurrentTime(start, end)
+					/*if(timeDiff>1800000){
+	        			$("#bookingCalendar").fullCalendar('unselect');
+	      			} else {*/
+						startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
+						let newEvent = {
+							id:0,
+							title: 'Your Booking',
+			      			start: startTime,
+			      			end: endTime,
+			      			allDay: false,
+			      			editable:true,
+							overlap:false,
+							tooltip: 'Your Booking'
 						}
-					})
-				//}
+						$('#bookingCalendar').fullCalendar('removeEvents',0);
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						$( "#bookingCalendar" ).fullCalendar( 'addEventSource', [newEvent] );
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					//}
+			    }
     		},
     		eventClick: function(event) {
     		},
