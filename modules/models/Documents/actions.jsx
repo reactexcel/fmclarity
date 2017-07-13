@@ -70,10 +70,21 @@ const createUpdateRequest = new Action( {
 	action: ( doc ) => {
 		 team = Session.getSelectedTeam();
          let owner = team.getOwner(),
-         supplier = {
+             user = Meteor.user(),
+             supplier = {
+                            _id: Meteor.userId(), 
+                            name: user.profile ? user.profile.name : user.name 
+                        };
+         
+        if (doc.supplier) {
+            supplier = doc.supplier;
+        }
+        else if (owner) {
+            supplier = {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
+        }
 		let item = Requests.create( {
                     team: team,
                     type: 'Reminder',
