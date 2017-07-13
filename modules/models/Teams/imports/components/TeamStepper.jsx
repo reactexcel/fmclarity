@@ -174,7 +174,7 @@ const TeamStepper = React.createClass( {
                         Session.getSelectedFacility().addSupplier(supplier);
                     }
                 },2000);
-                
+
 
             } );
 
@@ -227,6 +227,7 @@ const TeamStepper = React.createClass( {
     },
 
     render() {
+      console.log(this.props ,this.data);
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
@@ -329,11 +330,22 @@ const TeamStepper = React.createClass( {
                                             submitFormOnStepperNext = { true }
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
+                                                // console.log(this.data.viewer);
+                                                if(this.data.viewer.role === "fmc support"){
+                                                  // console.log("working");
+                                                  // console.log(item,item.members);
+                                                  item.members = [{
+                                                    _id : this.data.viewer._id,
+                                                    role : "portfolio manager",
+                                                    name :  this.data.viewer.profile.name
+                                                  }]
+                                                }
+                                                // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
                                                 }
-                                                
+
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
                                                       role: role ? role : "manager",
