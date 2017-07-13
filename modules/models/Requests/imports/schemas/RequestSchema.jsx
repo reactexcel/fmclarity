@@ -124,7 +124,7 @@ const RequestSchema = {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                     if (request.type == "Key Request") {
-                                        var services = Session.getSelectedTeam().getAvailableServices();
+                                        var services = Session.getSelectedFacility().servicesRequired;
                                         for (var i = 0; i < services.length; i++) {
                                             var name = services[i].name;
                                             if (name.indexOf('keys') !== -1) {
@@ -481,7 +481,7 @@ const RequestSchema = {
             type: "object",
             defaultValue: ( item ) => {
                 if (item.type == "Key Request") {
-                    var services = Session.getSelectedTeam().getAvailableServices();
+                    var services = Session.getSelectedFacility().servicesRequired;
                     for (var i = 0; i < services.length; i++) {
                         var name = services[i].name;
                         if (name.indexOf('keys') !== -1) {

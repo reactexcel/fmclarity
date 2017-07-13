@@ -162,10 +162,6 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     } ) : null;
     request.readBy=_.uniq(request.readBy, '_id');
-    isNot = request.type=='Key Request' && Meteor.user().getRole()=='manager';
-    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
-        return true;
-    }
     let userRole = Meteor.user().getRole();
     /*let group = Teams.findOne({'_id':request.supplier._id});
     console.log(Meteor.user(),"member");
@@ -176,6 +172,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     console.log(role,"role RBAC");
     role = supplier.getMemberRole( Meteor.user() );
     console.log(role,"role");*/
+    console.log(request,"request")
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 
