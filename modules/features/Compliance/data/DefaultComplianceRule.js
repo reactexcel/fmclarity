@@ -58,7 +58,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cleaning"
             },
-            "subService": {
+            "subservice": {
                 "name": "Waste Removal"
             },
             "docType": "Contract",
@@ -88,7 +88,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Risk Management Plan"
             },
             "docType": "Management Plan",
@@ -99,7 +99,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Risk Management Plan"
             },
             "docType": "Assessment",
@@ -110,7 +110,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Risk Management Plan"
             },
             "docType": "Confirmation",
@@ -121,7 +121,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Risk Management Plan"
             },
             "docType": "Audit",
@@ -132,7 +132,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Testing"
             },
             "docType": "Contract",
@@ -143,7 +143,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Testing"
             },
             "event": "Cooling Tower Systems & Water Treatment Water Testing PPM schedule"
@@ -153,7 +153,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Treatment"
             },
             "docType": "Contract",
@@ -164,7 +164,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Cooling Tower Systems & Water Treatment"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Treatment"
             },
             "event": "Cooling Tower Systems & Water Treatment Water Treatment PPM schedule"
@@ -184,7 +184,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Lighting - Emergency & Exit"
             },
             "docType": "Contract",
@@ -195,7 +195,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Lighting - Emergency & Exit"
             },
             "event": "Electrical Services Lighting - Emergency & Exit 6-monthly maintenance",
@@ -210,7 +210,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Generator"
             },
             "docType": "Contract",
@@ -221,7 +221,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Generator"
             },
             "event": "Electrical Services Generator PPM schedule"
@@ -231,7 +231,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Generator"
             },
             "event": "Generator Load Test",
@@ -246,7 +246,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Lightning Protection"
             },
             "event": "Electrical Services Lightning Protection Annual maintenance",
@@ -261,7 +261,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Residual Current Devices"
             },
             "event": "Electrical Services Residual Current Devices Annual maintenance",
@@ -276,7 +276,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Switchboard"
             },
             "event": "Electrical Services Switchboard Annual maintenance",
@@ -291,7 +291,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Testing & Tagging"
             },
             "event": "Testing & Tagging",
@@ -306,7 +306,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Thermographic Scanning"
             },
             "event": "Electrical Services Thermographic Scanning Annual maintenance",
@@ -321,7 +321,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Electrical Services"
             },
-            "subService": {
+            "subservice": {
                 "name": "Uninterruptible Power Supply"
             },
             "event": "UPS maintenance",
@@ -425,7 +425,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Essential Safety Measures"
             },
-            "subService": {
+            "subservice": {
                 "name": "Egress"
             },
             "docType": "Contract",
@@ -481,7 +481,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Emergency Planning"
             },
             "event": "Fire Protection Emergency Planning 6-monthly maintenance",
@@ -496,7 +496,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Emergency Planning"
             },
             "event": "Fire Protection Emergency Planning Annual maintenance",
@@ -511,7 +511,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Extinguishers"
             },
             "event": "Fire Protection Extinguishers 6-monthly maintenance",
@@ -526,7 +526,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Extinguishers"
             },
             "event": "Fire Protection Extinguishers Annual maintenance",
@@ -541,7 +541,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Extinguishers"
             },
             "event": "Fire Protection Extinguishers 5 yearly  maintenance",
@@ -556,7 +556,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dampers"
             },
             "event": "Fire Protection Dampers Quarterly maintenance**",
@@ -571,7 +571,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dampers"
             },
             "event": "Fire Protection Dampers 6-monthly maintenance",
@@ -586,7 +586,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dampers"
             },
             "event": "Fire Protection Dampers Annual maintenance",
@@ -601,7 +601,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dampers"
             },
             "event": "Fire Protection Dampers 5 yearly  maintenance",
@@ -616,7 +616,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Blankets"
             },
             "event": "Fire Protection Blankets 6-monthly maintenance",
@@ -631,7 +631,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Detection & Alarm Systems"
             },
             "event": "Fire Protection Detection & Alarm Systems 6-monthly maintenance",
@@ -646,7 +646,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Detection & Alarm Systems"
             },
             "event": "Fire Protection Detection & Alarm Systems Annual maintenance",
@@ -661,7 +661,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Detection & Alarm Systems"
             },
             "event": "Fire Protection Detection & Alarm Systems 5 yearly  maintenance",
@@ -676,7 +676,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Fire Doors"
             },
             "event": "Fire Protection Fire Doors 6-monthly maintenance",
@@ -691,7 +691,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Fire Doors"
             },
             "docType": "Contract",
@@ -702,7 +702,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Fire Doors"
             },
             "event": "Fire Protection Fire Doors PPM schedule"
@@ -712,7 +712,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Fire Hose Reels"
             },
             "event": "Fire Protection Fire Hose Reels 6-monthly maintenance",
@@ -727,7 +727,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hydrant Valves"
             },
             "event": "Fire Protection Hydrant Valves 6-monthly maintenance",
@@ -742,7 +742,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hydrant Valves"
             },
             "event": "Fire Protection Hydrant Valves Annual maintenance",
@@ -757,7 +757,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hydrants"
             },
             "event": "Fire Protection Hydrants Annual maintenance",
@@ -772,7 +772,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hydrants"
             },
             "event": "Fire Protection Hydrants 5 yearly  maintenance",
@@ -787,7 +787,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Lay Flat Hose"
             },
             "event": "Fire Protection Lay Flat Hose Annual maintenance",
@@ -802,7 +802,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Passive Fire & Smoke Systems"
             },
             "event": "Fire Protection Passive Fire & Smoke Systems Quarterly maintenance**",
@@ -817,7 +817,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Passive Fire & Smoke Systems"
             },
             "event": "Fire Protection Passive Fire & Smoke Systems 6-monthly maintenance",
@@ -832,7 +832,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Passive Fire & Smoke Systems"
             },
             "event": "Fire Protection Passive Fire & Smoke Systems Annual maintenance",
@@ -847,7 +847,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Pumpsets"
             },
             "event": "Fire Protection Pumpsets 6-monthly maintenance",
@@ -862,7 +862,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Pumpsets"
             },
             "event": "Fire Protection Pumpsets Annual maintenance",
@@ -877,7 +877,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Pumpsets"
             },
             "event": "Fire Protection Pumpsets 5 yearly  maintenance",
@@ -892,7 +892,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Pumpsets"
             },
             "event": "Fire Protection Pumpsets 10 yearly  maintenance",
@@ -907,7 +907,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Special Hazard Systems"
             },
             "event": "Fire Protection Special Hazard Systems 6-monthly maintenance",
@@ -922,7 +922,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Special Hazard Systems"
             },
             "event": "Fire Protection Special Hazard Systems Annual maintenance",
@@ -937,7 +937,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Special Hazard Systems"
             },
             "event": "Fire Protection Special Hazard Systems 10 yearly  maintenance",
@@ -952,7 +952,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers 6-monthly maintenance",
@@ -967,7 +967,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers Annual maintenance",
@@ -982,7 +982,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers 5 yearly  maintenance",
@@ -997,7 +997,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers 10 yearly  maintenance",
@@ -1012,7 +1012,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers 25 yearly  maintenance"
@@ -1022,7 +1022,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Sprinklers"
             },
             "event": "Fire Protection Sprinklers 30 yearly  maintenance"
@@ -1032,7 +1032,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Storage Tanks"
             },
             "event": "Fire Protection Water Storage Tanks 6-monthly maintenance",
@@ -1047,7 +1047,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Storage Tanks"
             },
             "event": "Fire Protection Water Storage Tanks Annual maintenance",
@@ -1062,7 +1062,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Fire Protection"
             },
-            "subService": {
+            "subservice": {
                 "name": "Water Storage Tanks"
             },
             "event": "Fire Protection Water Storage Tanks 10 yearly  maintenance",
@@ -1094,7 +1094,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "High Access"
             },
-            "subService": {
+            "subservice": {
                 "name": "Anchor points"
             },
             "docType": "Contract",
@@ -1105,7 +1105,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "High Access"
             },
-            "subService": {
+            "subservice": {
                 "name": "Façade"
             },
             "docType": "Audit",
@@ -1116,7 +1116,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "High Access"
             },
-            "subService": {
+            "subservice": {
                 "name": "Height Safety"
             },
             "docType": "Report",
@@ -1127,7 +1127,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "High Access"
             },
-            "subService": {
+            "subservice": {
                 "name": "Height Safety"
             },
             "docType": "Confirmation",
@@ -1140,7 +1140,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Heating, Ventilation & Air Conditioning"
             },
-            "subService": {
+            "subservice": {
                 "name": "Chillers"
             },
             "docType": "Registration",
@@ -1151,7 +1151,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Heating, Ventilation & Air Conditioning"
             },
-            "subService": {
+            "subservice": {
                 "name": "Kitchen Exhausts"
             },
             "event": "Heating, Ventilation & Air Conditioning Kitchen Exhausts Annual maintenance",
@@ -1166,7 +1166,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Heating, Ventilation & Air Conditioning"
             },
-            "subService": {
+            "subservice": {
                 "name": "Pressure Vessels"
             },
             "docType": "Registration",
@@ -1259,7 +1259,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Plumbing"
             },
-            "subService": {
+            "subservice": {
                 "name": "Backflow Prevention Valves"
             },
             "event": "Backflow prevention valve annual maintenance",
@@ -1274,7 +1274,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Plumbing"
             },
-            "subService": {
+            "subservice": {
                 "name": "Potable Water Tank"
             },
             "event": "Potable water tank annual clean",
@@ -1289,7 +1289,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Plumbing"
             },
-            "subService": {
+            "subservice": {
                 "name": "Thermostatic Mixer Valves"
             },
             "event": "Thermostatic mixer valves annual test"
@@ -1335,7 +1335,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Underground Petroleum Storage Systems"
             },
-            "subService": {
+            "subservice": {
                 "name": "Groundwater Monitoring"
             },
             "docType": "Report",
@@ -1347,7 +1347,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Underground Petroleum Storage Systems"
             },
-            "subService": {
+            "subservice": {
                 "name": "Leak Detection"
             },
             "docType": "Report",
@@ -1359,7 +1359,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Underground Petroleum Storage Systems"
             },
-            "subService": {
+            "subservice": {
                 "name": "Leak Detection"
             },
             "docType": "Log",
@@ -1397,7 +1397,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Utilities"
             },
-            "subService": {
+            "subservice": {
                 "name": "Energy Management"
             },
             "docType": "Certificate",
@@ -1410,7 +1410,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Asbestos & Hazardous Materials"
             },
             "docType": "Audit",
@@ -1421,7 +1421,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Asbestos & Hazardous Materials"
             },
             "docType": "Register",
@@ -1432,7 +1432,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Asbestos & Hazardous Materials"
             },
             "docType": "Management Plan",
@@ -1443,7 +1443,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Asbestos & Hazardous Materials"
             },
             "docType": "Procedure",
@@ -1454,7 +1454,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Confined Spaces"
             },
             "docType": "Register",
@@ -1465,7 +1465,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Confined Spaces"
             },
             "docType": "Confirmation",
@@ -1476,7 +1476,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Confined Spaces"
             },
             "docType": "Procedure",
@@ -1487,7 +1487,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Contractor Management"
             },
             "docType": "Procedure",
@@ -1499,7 +1499,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Critical Environment"
             },
             "docType": "Audit",
@@ -1510,7 +1510,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Critical Environment"
             },
             "docType": "Register",
@@ -1521,7 +1521,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Critical Environment"
             },
             "docType": "Procedure",
@@ -1532,7 +1532,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Register",
@@ -1543,7 +1543,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "MSDS",
@@ -1554,7 +1554,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Confirmation",
@@ -1566,7 +1566,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Confirmation",
@@ -1578,7 +1578,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Licence",
@@ -1589,7 +1589,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Assessment",
@@ -1600,7 +1600,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Confirmation",
@@ -1612,7 +1612,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Dangerous Goods & Hazardous Substances"
             },
             "docType": "Confirmation",
@@ -1624,7 +1624,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Grease Trap Disposal"
             },
             "docType": "Contract",
@@ -1635,7 +1635,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hazardous Waste"
             },
             "docType": "Register",
@@ -1646,7 +1646,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Hazardous Waste"
             },
             "docType": "Certificate",
@@ -1657,7 +1657,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Indoor Air Quality"
             },
             "docType": "Report",
@@ -1668,7 +1668,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Property Risk"
             },
             "docType": "Certificate",
@@ -1680,7 +1680,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Property Risk"
             },
             "docType": "Contract",
@@ -1691,7 +1691,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Property Risk"
             },
             "docType": "Audit",
@@ -1702,7 +1702,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Property Risk"
             },
             "docType": "Confirmation",
@@ -1713,7 +1713,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Radio Frequency Radiation"
             },
             "docType": "Assessment",
@@ -1724,7 +1724,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Radio Frequency Radiation"
             },
             "docType": "Procedure",
@@ -1735,7 +1735,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Radio Frequency Radiation"
             },
             "docType": "Contract",
@@ -1746,7 +1746,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Slip Test"
             },
             "docType": "Report",
@@ -1757,7 +1757,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Slip Test"
             },
             "docType": "Confirmation",
@@ -1768,7 +1768,7 @@ export default DefaultComplianceRule = {
             "service": {
                 "name": "Workplace Health & Safety"
             },
-            "subService": {
+            "subservice": {
                 "name": "Trade Waste"
             },
             "docType": "Contract",

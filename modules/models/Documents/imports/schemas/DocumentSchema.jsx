@@ -93,6 +93,9 @@ export default DocumentSchema = {
 				view: FacilityListTile
 			}
 		},
+		condition:(item) => {
+			return item.type != 'Insurance';
+		}
 	},
 
 	request: {
@@ -411,6 +414,7 @@ export default DocumentSchema = {
 		options: {
 			items:[
 				'Validation Report',
+				'Monthly Report'
 			],
 		},
 		size: 6,

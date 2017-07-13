@@ -25,6 +25,13 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
+ if ( Meteor.isServer ) {
+    Meteor.publish( 'Requests', () => {
+        return Requests.find();
+    } );
+ }
+
+
 const Requests = new Model( {
     schema: RequestSchema,
     collection: "Issues",
@@ -748,7 +755,7 @@ function checkIssuePermissions( role, user, request ) {
             }
 
         }
-    }            
+    }
     return userCanIssue;
 }
 
@@ -897,7 +904,6 @@ function getMembersDefaultValue( item ) {
 
 
 function actionComplete( request ) {
-
     if ( request.closeDetails ) {
         if( request.closeDetails.jobCancelled == true ){
             request.closeDetails.furtherQuoteValue = 0;
@@ -918,7 +924,7 @@ function actionComplete( request ) {
         }
     }
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
@@ -957,14 +963,14 @@ function actionComplete( request ) {
         //I think this needs to be replaced with distribute message
 
         //previous request WO# change to show the WO# of new request
-        request.distributeMessage( {
+        /*request.distributeMessage( {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
                 target: newRequest.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
         } );
 
@@ -976,9 +982,9 @@ function actionComplete( request ) {
                 target: request.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
-        } );
+        } );*/
 
         let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {

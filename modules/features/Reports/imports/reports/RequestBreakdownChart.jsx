@@ -105,16 +105,16 @@ const RequestBreakdownChart = React.createClass( {
 		component.setState( {
 			expandall: true
 		} );
-		
+
 		setTimeout(function(){
-			window.print();	
+			window.print();
 			component.setState( {
 				expandall: false
 			} );
 		},200);
 
-		
-		
+
+
 	},
 
 	getMenu() {
@@ -180,7 +180,7 @@ const RequestBreakdownChart = React.createClass( {
 			}
 		} ];
 	},
-	
+
 	getChartConfiguration() {
 		//console.log(this.data);
 		return {
@@ -214,7 +214,7 @@ const RequestBreakdownChart = React.createClass( {
 				legend: {
 					display: false
 				}
-				/*                
+				/*
 				scaleBeginAtZero: true,
 				scaleShowGridLines: true,
 				scaleGridLineColor: "rgba(0,0,0,.05)",
@@ -257,6 +257,9 @@ const RequestBreakdownChart = React.createClass( {
 
 	componentDidMount() {
 		this.resetChart();
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 	},
 
 	componentDidUpdate() {

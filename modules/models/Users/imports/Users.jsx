@@ -165,7 +165,6 @@ Users.actions( {
 
         // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
-
             let query = [ {
                 'members._id': user._id
             } ]
@@ -222,6 +221,13 @@ Users.actions( {
                     unit : "fortnights"
                   },
                   months: {
+                    endDate:"",
+                    number: 1,
+                    period:"months",
+                    repeats : 10,
+                    unit : "months"
+                  },
+                  monthly: {
                     endDate:"",
                     number: 1,
                     period:"months",
