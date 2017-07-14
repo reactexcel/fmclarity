@@ -33,6 +33,12 @@ const AreasEditor = React.createClass( {
         }
     },
 
+    getInitialState() {
+        return {
+            renderAgain: false
+        }
+    },
+
     sortAreas(arr) {
         let sortedList = arr.sort( (a, b) => {
             if( a && a.name && b && b.name ) {
@@ -43,6 +49,19 @@ const AreasEditor = React.createClass( {
                 return 0;
             }
         });
+        //return sortedList
+        sortedList.map((a1,i)=>{
+            if(!_.isEmpty(sortedList[i].children)){
+                sortedList[i].children = _.without(sortedList[i].children,null)
+                sortedList[i].children = this.sortAreas(sortedList[i].children)
+                sortedList[i].children.map((a2,j)=>{
+                    if(!_.isEmpty(sortedList[i].children[j].children)){
+                        sortedList[i].children[j].children = _.without(sortedList[i].children[j].children,null)
+                        sortedList[i].children[j].children = this.sortAreas(sortedList[i].children[j].children)
+                    }
+                })
+            }
+        })
         return sortedList
     },
 
@@ -50,7 +69,7 @@ const AreasEditor = React.createClass( {
         let areas = this.data.areas;
             areas = _.without(areas,null);
             areas = this.sortAreas(areas);
-        areas.map((a1,i)=>{
+        /*areas.map((a1,i)=>{
             if(!_.isEmpty(areas[i].children)){
                 areas[i].children = _.without(areas[i].children,null)
                 areas[i].children = this.sortAreas(areas[i].children)
@@ -61,9 +80,12 @@ const AreasEditor = React.createClass( {
                     }
                 })
             }
-        })
+        })*/
         return (
-            <FacilityAreasEditorInner facility = { this.data.facility } areas = { areas }/>
+            <FacilityAreasEditorInner facility = { this.data.facility } areas = { areas } sortArea={(area)=>{
+                this.sortAreas(area)
+                this.setState({})
+            }}/>
         )
     }
 } )
@@ -275,6 +297,9 @@ FacilityAreasEditorInner = React.createClass( {
                                                 value={a.name||undefined}
                                                 readOnly={!editable}
                                                 onChange={component.updateItem.bind(component,0,idx)}
+                                                onBlur={()=>{
+                                                    component.props.sortArea(component.state.selection[0].children)
+                                                }}
                                                 onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
                                             {editable?<span className="areas-selector-delete-icon"
                                               onClick = {
@@ -333,6 +358,9 @@ FacilityAreasEditorInner = React.createClass( {
                                               value={b.name||undefined}
                                               readOnly={!editable}
                                               onChange={component.updateItem.bind(component,1,idx)}
+                                              onBlur={()=>{
+                                                  component.props.sortArea(component.state.selection[0].children)
+                                              }}
                                               onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
                                             {editable?<span className="areas-selector-delete-icon"
                                               //onClick={component.removeItem.bind(component,1,idx)}
@@ -392,6 +420,9 @@ FacilityAreasEditorInner = React.createClass( {
                                           value={c.name||undefined}
                                           readOnly={!editable}
                                           onChange={component.updateItem.bind(component,2,idx)}
+                                          onBlur={()=>{
+                                              component.props.sortArea(component.state.selection[0].children)
+                                          }}
                                           onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
                                           />
                                         {editable?<span className="areas-selector-delete-icon"
