@@ -24,21 +24,20 @@ class UserPanel extends React.Component {
 		}
 	}
 
-	getMenu() {
-
+	getMenu(role) {
 		const onUpdate = ( newItem ) => {
 			this.setState ( { item : newItem } );
 		}
-		
+
 		let user = this.props.item,
 			group = this.props.group || Session.getSelectedTeam(),
 			menuItems = [];
 		let actionNames = Object.keys( UserPanelActions.actions ),
 			validActions = Actions.filter( actionNames, group );
-
 		for( actionName in validActions ) {
 			let action = validActions[ actionName ];
-			menuItems.push( action.bind( group, user, onUpdate ) );
+			let shouldConfirm = actionName == 'login as user' && role && role == "fmc support" ? true : false;
+			menuItems.push( action.bind( {shouldConfirm:shouldConfirm}, group,  user, onUpdate  ) );
 		}
 
 		return menuItems;
@@ -59,7 +58,6 @@ class UserPanel extends React.Component {
 	}
 
 	render() {
-
 		let profile = null,
 			availableServices = null,
 			contact = this.state.item,
@@ -96,11 +94,11 @@ class UserPanel extends React.Component {
 							<span>{ relation.role }<br/></span>
 						: null }
 
-						{/*{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.threshold) ? 
+						{/*{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.threshold) ?
 													<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
 													 : null}*/}
 
-						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue) ? 
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue) ?
 							<span><b>WO Issue Threshold Value</b> {relation.issueThresholdValue}<br/></span>
 							 : null}
 
@@ -130,7 +128,7 @@ class UserPanel extends React.Component {
 					</div>
 			    </div>
 			    { !hideMenu ?
-            		<Menu items = { this.getMenu() } />
+            		<Menu items = { this.getMenu(relation&&relation.role ? relation.role : null) } />
             	: null }
 			</div>
 		)
