@@ -525,9 +525,17 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: frequency,
+                            frequency: frequency?frequency:{
+                                number: 1,
+                                repeats: 10,
+                                period: "",
+                                endDate: "",
+                                unit: "years"
+                            },
                             service: serviceReq[0],
                             subservice: rule.subservice || {},
+                            supplier: serviceReq[0].data.supplier,
+                            supplierContacts: serviceReq[0].data.defaultContact
                         } );
                         TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }
