@@ -42,7 +42,7 @@ export default function Contact2Line( props ) {
 
 			{
 			tenancy?
-			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>
+			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{ typeof tenancy === 'object' ? (tenancy.level && tenancy.level.name ? tenancy.level.name : '') + (tenancy.area && tenancy.area.name ? ', '+tenancy.area.name : '') + (tenancy.identifier && tenancy.identifier.name ? ', '+tenancy.identifier.name : '') : tenancy}</span>
 			:null
 			}
 

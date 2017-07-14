@@ -340,8 +340,8 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy;
+                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
+                    val = user.profile.tenancy.level;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
                     val = user.apartment;
@@ -554,7 +554,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
+                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -635,7 +635,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder') {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -856,6 +856,7 @@ const RequestSchema = {
                         }
                         props.onChange( value );
                     }}
+                    readOnly = {(props.edit && props.edit == true) && (props.item && props.item.status == "Booking") ? true : false}
                 />
             },
             condition: ( request ) => {
@@ -865,12 +866,44 @@ const RequestSchema = {
                 if(request.type == "Booking"){
                     request.costThreshold = '0';
                     let selectedAreaDetail = null;
+
+
+                    /*if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+                    if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    }
                     if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
                         selectedAreaDetail = request.identifier.data.areaDetails
-                    } else if(request.area && request.area.data && request.area.data.areaDetails){
-                        selectedAreaDetail = request.area.data.areaDetails
-                    } else if(request.level && request.level.data && request.level.data.areaDetails){
-                        selectedAreaDetail = request.level.data.areaDetails
+                    }*/
+
+
+                    let facility = Facilities.findOne( request.facility._id )
+                    let parentArea = null,
+                        childArea = null;
+                    if(request.level && request.level.name){
+                        _.map( facility.areas, ( ar, i ) => {
+                            if(ar.name == request.level.name){
+                                parentArea = ar;
+                                selectedAreaDetail = ar.data && ar.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.area && request.area.name){
+                        _.map( parentArea.children, ( child, i ) => {
+                            if(child.name == request.area.name){
+                                childArea = child;
+                                selectedAreaDetail = child.data && child.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.identifier && request.identifier.name){
+                        _.map( childArea.children, ( subChild, i ) => {
+                            if(subChild.name == request.identifier.name){
+                                selectedAreaDetail = subChild.data && subChild.data.areaDetails;
+                            }
+                        })
                     }
 
                     if(selectedAreaDetail != null){
@@ -888,13 +921,12 @@ const RequestSchema = {
                         }
                         bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
                         request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
-
                     }
                 } else {
                     // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
-                if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
+                if ( (role == 'staff' || role == 'tenant' || role == 'resident') && request.type != "Booking") {
                     return false;
                 }
                 return true;
@@ -919,8 +951,12 @@ const RequestSchema = {
             required: true,
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
+                if(request.type=='Booking'){
+                    request.dueDate = ""
+                    return false;
+                }
                 let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) /*&& request.type !='Booking'*/ ) {
                     return false;
                 }
                 if (request.type=='Incident') {
@@ -946,10 +982,237 @@ const RequestSchema = {
             label: "Booking period",
             description: "Select the booking period",
             input: (props) => {
+                let items = props.item;
+                let bookableTimeSlot = null;
+        		let previousBookingEvents = [];
+        		let bookingFor = null
+        		if(items && items.identifier && items.identifier.data){
+        			if(items.identifier.data.areaDetails && items.identifier.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.identifier.data.areaDetails.daySelector;
+        			}
+        			if(items.identifier.totalBooking){
+        				items.identifier.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.identifier.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.identifier.name
+        		} else if(items && items.area && items.area.data) {
+        			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.area.data.areaDetails.daySelector;
+        			}
+        			if(items.area.totalBooking){
+        				items.area.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.area.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+                    bookingFor = items.area.name;
+        		} else if(items && items.level && items.level.data) {
+        			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.level.data.areaDetails.daySelector;
+        			}
+        			if(items.level.totalBooking){
+        				items.level.totalBooking.map((booking)=>{
+                            let bookingFound = 0;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.level.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.level.name;
+        		}
+
+        		let businessHours = [];
+
+                let extra = moment().format('YYYY-MM-DD') + ' ';
+        		let showSecondEvent = true
+        		if(bookableTimeSlot && bookableTimeSlot.Sun && bookableTimeSlot.Sun.startTime && bookableTimeSlot.Sun.endTime && bookableTimeSlot.Sun.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sun.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: moment(bookableTimeSlot.Sun.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sun.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Mon && bookableTimeSlot.Mon.startTime && bookableTimeSlot.Mon.endTime  && bookableTimeSlot.Mon.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Mon.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: moment(bookableTimeSlot.Mon.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Mon.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Tue && bookableTimeSlot.Tue.startTime && bookableTimeSlot.Tue.endTime  && bookableTimeSlot.Tue.select == true){
+        		    showSecondEvent = true
+        			if (moment(bookableTimeSlot.Tue.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: moment(bookableTimeSlot.Tue.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Tue.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Wed && bookableTimeSlot.Wed.startTime && bookableTimeSlot.Wed.endTime  && bookableTimeSlot.Wed.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Wed.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: moment(bookableTimeSlot.Wed.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Wed.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Thu && bookableTimeSlot.Thu.startTime && bookableTimeSlot.Thu.endTime  && bookableTimeSlot.Thu.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Thu.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: moment(bookableTimeSlot.Thu.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Thu.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Fri && bookableTimeSlot.Fri.startTime && bookableTimeSlot.Fri.endTime  && bookableTimeSlot.Fri.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Fri.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: moment(bookableTimeSlot.Fri.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Fri.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Sat && bookableTimeSlot.Sat.startTime && bookableTimeSlot.Sat.endTime  && bookableTimeSlot.Sat.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sat.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: moment(bookableTimeSlot.Sat.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sat.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		let bookingDetails = {
+        			businessHours:businessHours,
+        			previousBookingEvents:previousBookingEvents,
+        			bookingFor:bookingFor
+        		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
                                 props.onChange(value);
                             }}
+                            bookingDetails = {bookingDetails}
                             {...props}
                         />
             },

@@ -9,6 +9,7 @@ export default RequestsPageAllContainer = createContainer( ( params ) => {
 	let team = Session.getSelectedTeam(),
 		facility = Session.getSelectedFacility(),
 		requests = Requests.findAll(),
+		user = Meteor.user();
 		facilities = null;
 
 	if ( team ) {
@@ -21,7 +22,8 @@ export default RequestsPageAllContainer = createContainer( ( params ) => {
 		team,
 		facility,
 		facilities,
-		requests
+		requests,
+		user
 	}
 
 }, RequestsPageIndex );
