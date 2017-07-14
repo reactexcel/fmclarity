@@ -45,7 +45,7 @@ class Calendar extends React.Component {
                 let title = null;
                 if(request.code){
                     title = `#${request.code} ${request.name}`
-                } else {
+                }else{
                     title = request.name;
                 }
                 events.push({
@@ -53,15 +53,15 @@ class Calendar extends React.Component {
                     color: colors[ request.priority ],
                     start: request.bookingPeriod.startTime,
                     end: request.bookingPeriod.endTime,
-                    allDay: false,
+                    allDay: true,
                     request: {
                         _id: request._id,
                         code: request.code,
                         name: request.name
                     },
                     tooltip:request.priority
-                })
-            } else {
+                });
+            } else{
                 if ( request.dueDate ) {
                     let title = null;
                     if ( request.type == 'Preventative' ) {
@@ -71,27 +71,22 @@ class Calendar extends React.Component {
                     } else {
                         title = request.name;
                     }
-                    let newEvent = {
+                    events.push( {
                         title: title,
                         color: colors[ request.priority ],
                         start: request.dueDate,
-                        allDay: false,
+                        start: request.dueDate,
+                        allDay: true,
                         request: {
                             _id: request._id,
                             code: request.code,
                             name: request.name
-                        },
-                        tooltip:request.priority
+                        }
                         //url:i.getUrl()
-                    }
-                    if(request.type == 'Booking' && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
-                        newEvent.start = request.bookingPeriod.startTime
-                        newEvent.end = request.bookingPeriod.endTime
-                        newEvent.allDay = false
-                    }
-                    events.push( newEvent );
+                    } );
                 }
             }
+
         } );
         $( '#calendar' ).fullCalendar( 'removeEventSource', events );
         $( '#calendar' ).fullCalendar( 'addEventSource', events );

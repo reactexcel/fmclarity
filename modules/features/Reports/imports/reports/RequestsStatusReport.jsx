@@ -176,6 +176,9 @@ const RequestsStatusReport = React.createClass( {
     },
 
 	render() {
+		setTimeout(function(){
+				$(".loader").hide();
+			},2000)
 		var data = this.data.reportData.requests;
 
 		if ( !data ) {

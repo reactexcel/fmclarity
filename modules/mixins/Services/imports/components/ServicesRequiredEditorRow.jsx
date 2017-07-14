@@ -86,6 +86,12 @@ const ServicesRequiredEditorRow = React.createClass( {
 			content: <TeamStepper item = { supplier } facility = { facility } onChange = { this.updateSupplier }/>
 		} )
 	},
+	removeService(){
+		if(this.props.onChange){
+			this.props.onChange(null);
+				Modal.hide();
+			}
+	},
 
 	render() {
 		service = this.data.service;
@@ -115,6 +121,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 									Modal.show({
 										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
+												<button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={this.removeService}>&times; Delete</button>
 												<h1>{'Service Parameters - '+this.data.service.name}</h1>
 											</div>
 											<AutoForm
@@ -131,7 +138,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-					{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
+					{/*!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null*/}
 				</div>
 				<div style={{width:"30%", float:"left"}}>
 					<div className="services-editor-col services-editor-col-supplier" style={{width:"100%",cursor: "default"}}>

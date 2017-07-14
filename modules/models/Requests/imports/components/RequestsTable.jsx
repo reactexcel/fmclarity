@@ -1,7 +1,7 @@
 import React from "react";
 
 import { DataTable } from '/modules/ui/DataTable';
-import { RequestActions } from '/modules/models/Requests';
+import { Requests, RequestActions } from '/modules/models/Requests';
 
 import { ContactAvatarSmall } from '/modules/mixins/Members';
 
@@ -125,7 +125,6 @@ export default function RequestsTable( { requests, filter, columns } ) {
 			}
 		},
     }
-
     if ( filter ) {
         requests = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
@@ -142,7 +141,9 @@ export default function RequestsTable( { requests, filter, columns } ) {
         requiredColumns.map(function(col){
             newCols[col] = this.fields[col];
         });
-
+        if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) == "Booking"){
+			newCols = _.omit(newCols,"Due");
+		}
     return (
         <div className = "request-table">
         <DataTable
@@ -155,7 +156,6 @@ export default function RequestsTable( { requests, filter, columns } ) {
                     let team = Session.getSelectedTeam();
                     let supplier = request.supplier;
                     RequestActions.view.run( request )
-
                 }
             }
         />
