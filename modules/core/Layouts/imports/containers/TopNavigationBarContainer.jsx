@@ -26,7 +26,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'User: Messages' );
     // could test moving this below loading team and only including facilities if supplier
     Meteor.subscribe( 'User: Requests, Facilities', { includeFacilities: true } );
-
+    Meteor.subscribe( 'Requests: Last 10 Complete' );
     /*These need to be reduced*/
     Meteor.subscribe( 'Documents' );
     Meteor.subscribe( 'Files' );
