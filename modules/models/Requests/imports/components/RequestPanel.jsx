@@ -87,7 +87,10 @@ export default RequestPanel = React.createClass( {
 
 const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
-    function formatDate( date ) {
+    function formatDate( date, onlyDate ) {
+        if(onlyDate && onlyDate == true){
+            return moment( date ).format( 'ddd Do MMM' );
+        }
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
     function showUserModal( selectedUser ) {
@@ -217,7 +220,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             : null }
 
                             { request.type == "Ad-Hoc" && request.dueDate ?
-                            <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+                            <span><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
                             : null }
 
                             { request.type != "Ad-Hoc" && request.createdAt ?
