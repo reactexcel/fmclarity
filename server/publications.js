@@ -22,8 +22,16 @@ Meteor.publish( 'User: Teams', function() {
         teamIds.push( team._id );
     } );
 
+    return teamsCursor;
 } );
 
+Meteor.publish( 'Team: Last 10 Created', function( ) {
+    let teamsCursor = Teams.find( { _id: { $ne: null } }, {
+        sort: { createdAt: -1 },
+        limit: 10
+    } );
+    return teamsCursor;
+} );
 
 Meteor.publish( 'Team: Facilities', function( teamId ) {
     let facilitiesCursor = Facilities.find( {
@@ -62,7 +70,7 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
 } );
 
 
-Meteor.publish( 'Requests: Last 50 Complete', function( ) {
+Meteor.publish( 'Request: Last 10 Complete', function( ) {
 
     console.log( this.userId );
 
@@ -73,7 +81,7 @@ Meteor.publish( 'Requests: Last 50 Complete', function( ) {
         sort: {
             createdAt: -1
         },
-        limit: 50, 
+        limit: 10, 
         fields: {
             _id: 1,
             area: 1,
