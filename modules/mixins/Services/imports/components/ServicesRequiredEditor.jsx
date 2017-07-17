@@ -138,7 +138,7 @@ const ServicesRequiredEditor = React.createClass( {
 			services.push( {
 				name: ""
 			} );
-            services = this.sortServices(services)
+            //services = this.sortServices(services)
 			this.setState( {
 				services: services
 			}, () => {
@@ -238,7 +238,6 @@ const ServicesRequiredEditor = React.createClass( {
 					if( !service ) {
 						return <li key = {idx}></li>;
 					}
-
 					let expanded = this.state.expanded[ service.name ],
 						size = services.length,
 						key = size+'-'+idx;
@@ -254,14 +253,20 @@ const ServicesRequiredEditor = React.createClass( {
 										<div className="services-editor-row">
 
 											<ServicesRequiredEditorRow
-                                                id={"service-"+idx}
+                                                id              = {"service-"+idx}
 												facility 		= { facility }
 												service 		= { service }
 												readOnly 		= { readOnly }
-												clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
-												onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
-                                                onKeyDown  ={ evt => this.handleKeyDown( evt, services, "#service-", idx ) }
-                                                suppliers  ={this.state.suppliers}
+												clickExpand 	= { () => {this.toggleExpanded( service.name ) } }
+												onChange 		= { (service) => {this.updateService( idx ,service)/* added @param {service} to the function */} }
+                                                onKeyDown       = { evt => this.handleKeyDown( evt, services, "#service-", idx ) }
+                                                suppliers       = {this.state.suppliers}
+                                                sortService     = {()=>{
+                                                    let s =  this.sortServices(services)
+                                                    this.setState( {
+                                        				services: s
+                                        			})
+                                                }}
 											/>
 
 										</div>
@@ -280,8 +285,14 @@ const ServicesRequiredEditor = React.createClass( {
 																	service 	= { subservice }
 																	readOnly 	= { readOnly }
 																	onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }
-                                                                    onKeyDown  ={ evt => this.handleKeyDown( evt, service.children, "#subservice-", idx, subIdx ) }
-                                                                    suppliers  ={this.state.suppliers}
+                                                                    onKeyDown   ={ evt => this.handleKeyDown( evt, service.children, "#subservice-", idx, subIdx ) }
+                                                                    suppliers   ={this.state.suppliers}
+                                                                    sortService = {()=>{
+                                                                        let s =  this.sortServices(services)
+                                                                        this.setState( {
+                                                            				services: s
+                                                            			})
+                                                                    }}
                                                                 />
 															</div>
 														)
