@@ -129,9 +129,7 @@ const FileView = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		//console.log('updating');
 		if ( this.data.file && !this.data.file.isUploaded() ) {
-			//console.log('rendering');
 			$( this.refs.progress )
 				.val( this.data.file.uploadProgress() )
 				.trigger( "change" );

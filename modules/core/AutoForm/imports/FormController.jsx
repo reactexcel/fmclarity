@@ -164,15 +164,14 @@ class FormController {
 	 * @param 			{Document} item
 	 * @param 			{function} callback
 	 */
-	save( item, callback ) {
-
+	save( item, onBeforeSave, onAfterSave ) {
 		if ( this.validate( item ) ) {
 			// if validation passes we will assume update will work
 			//  and trigger callbacks before saving the data
 			if ( Meteor.isClient ) {
 				this.triggerCallbacks();
-				if ( callback ) {
-					callback( this.item );
+				if ( onBeforeSave ) {
+					onBeforeSave( this.item );
 				}
 			}
 
@@ -181,13 +180,12 @@ class FormController {
 				.then( ( savedItem ) => {
 					Object.assign( this.item, savedItem );
 					/* should only happen if different from before */
-					/*
-					this.triggerCallbacks();
-					if ( callback ) {
-						callback( this.item );
+					//this.triggerCallbacks();
+					if ( onAfterSave ) {
+						onAfterSave( this.item );
 					}
-					*/
 				} );
+			Modal.hide();
 		}
 	}
 

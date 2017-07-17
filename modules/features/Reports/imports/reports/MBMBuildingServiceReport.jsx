@@ -1,9 +1,13 @@
 import React from "react";
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
+import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
+import { Facilities } from '/modules/models/Facilities';
+import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
 import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
@@ -21,12 +25,18 @@ const MBMBuildingServiceReport = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getInitialState() {
+		let	user = Meteor.user();
+		let team = user.getSelectedTeam();
+		let facility = Session.getSelectedFacility();
 		var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
 		var title = startDate.format( "[since] MMMM YYYY" )
 		return ( {
 			startDate: startDate,
 			title: title,
-			expandall: false
+			expandall: false,
+			team,
+			facility,
+			commentString :""
 		} )
 	},
 
@@ -37,7 +47,7 @@ const MBMBuildingServiceReport = React.createClass( {
 			status:{$ne:'Deleted'}
 		}
 
-		var facility = Session.get( 'selectedFacility' );
+		var facility = Session.getSelectedFacility();;
 		if ( facility ) {
 			query[ "facility._id" ] = facility._id;
 		}
@@ -62,17 +72,45 @@ const MBMBuildingServiceReport = React.createClass( {
             set.unshift( requestCursor.count() );
             labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
         }
+				let commentQuery = {}
+				commentQuery[ "facility._id" ] = facility._id;
+				commentQuery[ "team._id" ] = team._id;
+				commentQuery["createdAt"] = {
+					$gte: moment().subtract(0, "months").startOf("month").toDate(),
+					$lte: moment().subtract(0, "months").endOf("month").toDate( )
+				};
+				let currentMonthComment = Reports.find(commentQuery).fetch();
+				commentQuery["createdAt"] = {
+					$gte: moment().subtract(1, "months").startOf("month").toDate(),
+					$lte: moment().subtract(1, "months").endOf("month").toDate( )
+				};
+				let previousMonthComment = Reports.find(commentQuery).fetch();
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
+						console.log(services);
+						services = services.filter((val) => val != null && val.name != "" || null || undefined)
             d = services.map( function( s, idx ){
-                let dataset = queries.map( function(q){
-                    q["service.name"] = s.name;
-                    return Requests.find( q ).count();
-                });
-                return <SingleServiceRequest serviceName={s.name} set={dataset} labels={labels} key={idx} id={idx}/>
+							let finalComment
+							let currentMonth = false
+							if(s != null){
+								let previousMonthServiceComment = previousMonthComment.filter((val) => val.service === s.name);
+								let presentMonthServiceComment = currentMonthComment.filter((val) => val.service === s.name);
+								if(presentMonthServiceComment.length > 0){
+									currentMonth = true
+									finalComment = presentMonthServiceComment
+								}else{
+									currentMonth = false
+									finalComment = previousMonthServiceComment
+								}
+								let dataset = queries.map( function(q){
+									q["service.name"] = s.name;
+									return Requests.find( q ).count();
+								});
+								return <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>
+							}
             });
-            console.log(d);
+            //console.log(d);
         }
 
 		return {
@@ -83,8 +121,64 @@ const MBMBuildingServiceReport = React.createClass( {
 			ready: handle.ready()
 		}
 	},
+	componentWillUnmount(){
+		$("#fab").show();
+		PubSub.publish('stop', "test");
+	},
+	componentWillMount(){
+		$("#fab").hide();
+		if(!this.props.MonthlyReport){
+			let query = {};
+			query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+			query[ "team._id" ] = this.state.team ? this.state.team._id : null;
+			query["createdAt"] = {
+				$gte: moment().subtract(1, "months").startOf("month").toDate(),
+				$lte: moment().subtract(0, "months").endOf("month").toDate( )
+			};
+			let comments = Reports.find(query).fetch();
+
+			comments = comments.filter((c) => c.hasOwnProperty("service"));
+			let commentString = " "
+			comments.map((c)=>{
+				commentString = commentString + c.comment
+			})
+			this.setState({commentString})
+		}
+	},
+
+	componentDidMount(){
+		if(!this.props.MonthlyReport){
+			let update = setInterval(()=>{
+
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let query = {};
+				query[ "facility._id" ] = this.state.facility._id;
+				query[ "team._id" ] = this.state.team._id;
+				query["createdAt"] = {
+					$gte: moment().subtract(1, "months").startOf("month").toDate(),
+					$lte: moment().subtract(0, "months").endOf("month").toDate( )
+				};
+				let comments = Reports.find(query).fetch();
+
+				comments = comments.filter((c) => c.hasOwnProperty("service"));
+				let UpdatedString = " "
+				comments.map((c)=>{
+					UpdatedString = UpdatedString + c.comment
+				})
+				if(UpdatedString != this.state.commentString){
+					this.setState({
+						commentString : UpdatedString
+					})
+				}
+			},1000)
+		}
+	},
 
 	printChart(){
+		$(".body-background").css({"position":"relative"});
+		$(".page-wrapper-inner").css({"display":"block"});
 		var component = this;
 		component.setState( {
 			expandall: true
@@ -95,10 +189,9 @@ const MBMBuildingServiceReport = React.createClass( {
 			component.setState( {
 				expandall: false
 			} );
+			$(".body-background").css({"position":"fixed"});
+			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 		},200);
-
-
-
 	},
 
 	getChartConfiguration() {
@@ -172,14 +265,16 @@ const MBMBuildingServiceReport = React.createClass( {
 		}
 		return (
 			<div>
-			<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
-			    <i className="fa fa-print" aria-hidden="true"></i>
-			</button>
+				{this.props.MonthlyReport ? null :
+					<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+						<i className="fa fa-print" aria-hidden="true"></i>
+					</button>
+				}
 				<div className="ibox-title">
 					<h2>Building Service Requests {facility&&facility.name?" for "+facility.name: (facilities && facilities.length=='1') ? "for "+ facilities[0].name : " for all facilities"}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
+					<div style={{width:"830px","height":"450px",paddingLeft:"20%",paddingTop:"8%"}}>
 						<canvas id="bar-chart"></canvas>
 					</div>
 				</div>
@@ -201,8 +296,17 @@ const SingleServiceRequest = React.createClass( {
 	getInitialState() {
 		return ( {
 			expandall: false,
-			comment: ""
+			comment: this.props.commentData.length > 0 ? this.props.commentData[0].comment : "",
+			commentData:this.props.commentData.length > 0 ? this.props.commentData[0] : {},
+			currentMonth: this.props.currentMonth
 		} )
+	},
+	componentWillReceiveProps(props){
+	this.setState({
+		comment: props.commentData.length > 0 ? props.commentData[0].comment : "",
+		commentData:props.commentData.length > 0 ? props.commentData[0] : {},
+		currentMonth:props.currentMonth
+	})
 	},
 	getChartConfiguration() {
 		return {
@@ -261,6 +365,9 @@ const SingleServiceRequest = React.createClass( {
 
 	componentDidMount() {
 		this.resetChart();
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 	},
 
 	componentDidUpdate() {
@@ -295,40 +402,85 @@ const SingleServiceRequest = React.createClass( {
 				$lte: new moment().endOf("month").toDate()
 			}
 		} );
-		// console.log(data,  this.props.serviceName);
+
 		return data;
+	},
+	handleComment(item){
+		let	user = Meteor.user();
+		let team = user.getSelectedTeam();
+		let facility = Session.getSelectedFacility();
+		let commentSchema = {
+			service : this.props.serviceName,
+			team : {
+				_id : team._id
+			},
+			facility :{
+				_id : facility._id
+			},
+			comment : this.state.comment.trim()
+		}
+		if(item){
+
+			if(!item._id){
+				let test = this.state.comment.trim()
+
+				if(test != "" || null || undefined){
+					Reports.save.call(commentSchema);
+				}
+
+			}else{
+				item["comment"] = this.state.comment;
+				let test = this.state.comment.trim()
+
+				if(test != "" || null || undefined){
+					if(this.state.currentMonth){
+						console.log("current");
+						Reports.save.call(item);
+				}else{
+						console.log("previousMonthComment");
+						Reports.save.call(commentSchema);
+					}
+				}
+
+			}
+		}
 	},
 
 	render() {
 		let data = this.getData();
+		let item = this.state.commentData;
 		return (
-			<div style={ { marginTop: "55px", marginBottom: "10px", borderTop:"2px solid"  } }>
+			<div style={ { marginTop: "100px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
 					<h2>Requests for {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
-					<div>
-						<canvas id={"bar-chart-" + this.props.id}></canvas>
+					<div style={{width:"830px","height":"400px",paddingLeft:"20%",paddingTop:"5%"}}>
+						<canvas id={"bar-chart-" + this.props.id} style={{width:"630px","height":"300px"}}></canvas>
 					</div>
 				</div>
 				<div className="data-table">
 					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
-						<DataTable items={data.length ? data : [{name:""}]} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+						<DataTable items={data.length ? data : [{name:""}]} onClick={()=>{
+							console.log("onClickHandler");
+						}} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 					</div>
 				</div>
-				<div style={ { marginTop: "5px", marginBottom: "-15px" } }>
+				<div style={ { marginTop: "20px", marginBottom: "-15px",height:"100px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
-							<button className="btn btn-flat" onClick={() => {
+							<button className="btn btn-flat" onClick={(e) => {
 									let edited = this.state.showEditor;
 									let component = this;
 									this.setState({
 										showEditor: !this.state.showEditor
 									}, () => {
 										if ( !edited ){
-											console.log("edited", component );
+											//console.log("edited", component );
 											$(component.refs.textarea.refs.input).focus();
+										}else{
+											this.handleComment(item);
 										}
 									})
 								}}>
@@ -343,6 +495,7 @@ const SingleServiceRequest = React.createClass( {
 						{this.state.showEditor?
 							<TextArea
 								ref="textarea"
+								style={{height:"50px"}}
 								value={this.state.comment}
 								onChange={( value ) => {this.setState({ comment: value })}}
 								/>:

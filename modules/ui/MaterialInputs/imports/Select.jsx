@@ -108,8 +108,8 @@ const Select = React.createClass( {
   	},
 
  	sortObject(arr) {
- 		let sortedList = arr.sort( (a, b) => {
-			if( a && a.name && b && b.name ) {
+ 		let sortedList = arr.sort(function(a, b){
+			if(a != null && a.name != null && b != null && b.name != null){
 	 			var textA = a.name.toUpperCase();
     			var textB = b.name.toUpperCase();
     			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
@@ -252,12 +252,9 @@ const Select = React.createClass( {
 						}
 					}
 					if(key==9){
-						//$('ul#open > li').removeClass('onFocus')
-						if($selected.length){
-							$selected.click();
-						}
-						this.setOpen( false )
+						$selected.click();
 					}
+					this.setOpen( false )
 				}}>
 
 				<span className = { "dropdown-toggle "+classes.join(' ') }>

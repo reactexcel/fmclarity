@@ -89,7 +89,6 @@ const RequestsStatusReport = React.createClass( {
 		// 		val: <span>	<i style = {{width:"15px", color: color, fontSize: "11px"}} className = {"fa fa-arrow-up"}></i>{item.priority}</span>,
 		// 	}
 		// },
-		//Status: "status",
 		Status:  ( item ) => {
 			let color = "#4d4d4d";
 			if ( item.status == "Closed") {
@@ -145,6 +144,7 @@ const RequestsStatusReport = React.createClass( {
 
 			if ( duration ) {
 				let val = {};
+				val.duration = duration;
 				val.originalVal = parseInt( duration.asMinutes() );
 				val.val = duration.humanize();
 				if ( val.originalVal < 0 ) {
@@ -176,6 +176,9 @@ const RequestsStatusReport = React.createClass( {
     },
 
 	render() {
+		setTimeout(function(){
+				$(".loader").hide();
+			},2000)
 		var data = this.data.reportData.requests;
 
 		if ( !data ) {

@@ -321,6 +321,7 @@ function inviteMember( team, email, ext ) {
         ext.callback ? ext.callback( user, found ) : "";
         return {
             user: user,
+            userIsNew: false,
             found: found
         }
     } else {
@@ -346,6 +347,7 @@ function inviteMember( team, email, ext ) {
                 } );
                 return {
                     user: user,
+                    userIsNew: true,
                     found: true
                 }
             }
@@ -357,34 +359,36 @@ function inviteMember( team, email, ext ) {
 }
 
 function sendMemberInvite( team, recipient ) {
-    let body = ReactDOMServer.renderToStaticMarkup(
-        React.createElement( TeamInviteEmailTemplate, {
-            team: team,
-            user: recipient,
-            token: LoginService.generatePasswordResetToken( recipient )
-        } )
-    );
-
-    /*
-        getEmail( notification ) {
-        // we need to see the notification to do this
+    if( Meteor.isServer ) {
         let body = ReactDOMServer.renderToStaticMarkup(
-                React.createElement( EmailMessageView, { notification } )
-           );
+            React.createElement( TeamInviteEmailTemplate, {
+                team: team,
+                user: recipient,
+                token: LoginService.generatePasswordResetToken( recipient )
+            } )
+        );
 
-        let { recipient } = notification;
-        console.log( body );
-        return {
-            to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
-            from:"FM Clarity <no-reply@fmclarity.com>",
-            subject:"FM Clarity notification",
-            emailBody:body
-        }
-    }*/
-    Meteor.call( 'Messages.sendEmail', recipient, {
-        subject: team.name + " has invited you to join FM Clarity",
-        emailBody: body
-    } )
+        /*
+            getEmail( notification ) {
+            // we need to see the notification to do this
+            let body = ReactDOMServer.renderToStaticMarkup(
+                    React.createElement( EmailMessageView, { notification } )
+               );
+
+            let { recipient } = notification;
+            console.log( body );
+            return {
+                to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
+                from:"FM Clarity <no-reply@fmclarity.com>",
+                subject:"FM Clarity notification",
+                emailBody:body
+            }
+        }*/
+        Meteor.call( 'Messages.sendEmail', recipient, {
+            subject: team.name + " has invited you to join FM Clarity",
+            emailBody: body
+        } )
+    }
 }
 
 function sendSupplierInvite( supplier, inviter ) {
@@ -457,6 +461,43 @@ Teams.helpers( {
         } );
         */
         return this.counters.WO;
+    },
+
+    getNextInvoiceNumber() {
+        Number.prototype.pad = function(size) {
+          var s = String(this);
+          while (s.length < (size || 2)) {s = "0" + s;}
+          return s;
+        }
+        if ( !this.counters ) {
+            this.counters = {};
+        }
+        if ( !this.counters.INV ) {
+            this.counters.INV = 0;
+        }
+        var nameInitials = this.getNameInitials();
+        var invoiceNumber = "";
+        this.counters.INV = this.counters.INV + 1;
+        Teams.save.call( this );
+        var paddedCounter = ( this.counters.INV ).pad(3);
+        invoiceNumber = nameInitials + paddedCounter.toString();
+        return invoiceNumber;
+    },
+
+    getNameInitials(){
+        let names = [],
+            name = this.name,
+            initials = "";
+        if ( name != null ) {
+            names = name.trim().split( ' ' );
+            if ( names.length == 1 ) {
+                initials = names[0].substr(0, 3);
+            }
+            if ( names.length >= 2 ) {
+                initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ];
+            } 
+        }
+        return initials.toUpperCase();
     },
 
     //duplicate this in the publish functions

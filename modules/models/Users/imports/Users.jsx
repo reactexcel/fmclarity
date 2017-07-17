@@ -165,7 +165,6 @@ Users.actions( {
 
         // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
-
             let query = [ {
                 'members._id': user._id
             } ]
@@ -199,20 +198,121 @@ Users.actions( {
                         $and: query
                     } )
                     .fetch();
-
+                let time = {
+                  days: {
+                    endDate:"",
+                    number: 1,
+                    period:"days",
+                    repeats : 30,
+                    unit : "days"
+                  },
+                  weeks: {
+                    endDate:"",
+                    number: 1,
+                    period:"weeks",
+                    repeats : 10,
+                    unit : "weeks"
+                  },
+                  fortnights: {
+                    endDate:"",
+                    number: 2,
+                    period:"weeks",
+                    repeats : 10,
+                    unit : "fortnights"
+                  },
+                  months: {
+                    endDate:"",
+                    number: 1,
+                    period:"months",
+                    repeats : 10,
+                    unit : "months"
+                  },
+                  monthly: {
+                    endDate:"",
+                    number: 1,
+                    period:"months",
+                    repeats : 10,
+                    unit : "months"
+                  },
+                  quarters: {
+                    endDate:"",
+                    number: 3,
+                    period:"months",
+                    repeats : 10,
+                    unit : "quarters"
+                  },
+                  years: {
+                    endDate:"",
+                    number: 1,
+                    period:"years",
+                    repeats : 10,
+                    unit : "years"
+                  },
+                }
                 PMPRequests.map( ( r ) => {
-                    if ( r.frequency ) {
+                  // console.log(r);
+                    if ( r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats") ) {
+                      if(r.frequency.unit === "custom"){
+                        let temp = r.frequency ;
+                        r.frequency = time[r.frequency.period];
+                        r.frequency.number = temp.number;
+                        r.frequency.endDate = temp.endDate;
                         var date = moment( r.dueDate );
                         var repeats = parseInt( r.frequency.repeats );
                         var period = {};
                         period[ r.frequency.unit ] = parseInt( r.frequency.number );
-                        //console.log(period);
-                        for ( var i = 0; i < repeats; i++ ) {
+                        // console.log(period);
+                        if(r.frequency.endDate != ""){
+                          for ( var i = 0; i < repeats; i++ ) {
                             var copy = Object.assign( {}, r ); //_.omit(r,'_id');
-                            copy.dueDate = date.add( period ).toDate();
+                            copy.dueDate = date.add(1 * r.frequency.number , r.frequency.period).toDate();
+                             const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+                            // console.log(diff_in_dates_in_days);
+                            if(diff_in_dates_in_days > 0){
+                              return
+                            }else{
+                              copy = Requests.collection._transform( copy );
+                              requests.push( copy );
+                            }
+                          }
+                        }else{
+                          for ( var i = 0; i < repeats; i++ ) {
+                            var copy = Object.assign( {}, r ); //_.omit(r,'_id');
+                            copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
                             copy = Requests.collection._transform( copy );
                             requests.push( copy );
+                          }
                         }
+                      }else{
+                        // console.log(r);
+                        r.frequency = time[r.frequency.unit];
+                        var date = moment( r.dueDate );
+                        var repeats = parseInt( r.frequency.repeats );
+                        var period = {};
+                        period[ r.frequency.unit ] = parseInt( r.frequency.number );
+                        // console.log(period);
+                        if(r.frequency.endDate != ""){
+                          for ( var i = 0; i < repeats; i++ ) {
+                            var copy = Object.assign( {}, r ); //_.omit(r,'_id');
+                            copy.dueDate = date.add(1 * r.frequency.number , r.frequency.period).toDate();
+                             const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+                            // console.log(diff_in_dates_in_days);
+                            if(diff_in_dates_in_days > 0){
+                              return
+                            }else{
+                              copy = Requests.collection._transform( copy );
+                              requests.push( copy );
+                            }
+                          }
+                        }else{
+                          for ( var i = 0; i < repeats; i++ ) {
+                            var copy = Object.assign( {}, r ); //_.omit(r,'_id');
+                            copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
+                            copy = Requests.collection._transform( copy );
+                            requests.push( copy );
+                          }
+                        }
+                      }
                     }
                 } )
             }
@@ -256,6 +356,9 @@ Meteor.methods( {
         if ( Meteor.isServer ) {
             Accounts.sendEnrollmentEmail( userId );
         }
+    },
+    'User.checkExists': function( query ) {
+        return Users.find( query ).count();
     },
     'User.getRole': () => {
         return Meteor.user().getRole();
