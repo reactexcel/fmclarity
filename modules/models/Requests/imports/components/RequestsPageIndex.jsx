@@ -44,50 +44,56 @@ export default class RequestsPageIndex extends Component {
 	}
 
 	componentWillReceiveProps( props ){
-		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
-		let count = [0]
-		let i
-		for( i=1; i <= totalPage - 1 ; i++ ){
-			count.push(i)
-		}
-		this.setState({
-			totalPage ,count
-		},()=>{
+		let requests = this.props.requests,
+			listSize = this.state.listSize;
 
-			let listSize = this.state.listSize
-			let currentPage = this.state.currentPage
+		if( !requests ) {
+			return;
+		}
+
+		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
+		let count = [0];
+
+		for( let i = 1; i <= totalPage - 1 ; i++ ){
+			count.push(i);
+		}
+
+		this.setState( { totalPage ,count }, () => {
+			let listSize = this.state.listSize;
+			let currentPage = this.state.currentPage;
 			this.pagingRequest(listSize,currentPage);
-		})
-		// console.log(props,this.state);
+		} );
 	}
 
 	componentWillMount() {
-		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
-		let count = [0]
-		let i
-		for( i=1; i <= totalPage - 1 ; i++ ){
-			count.push(i)
-		}
-		this.setState({
-			totalPage ,count
-		},()=>{
+		let requests = this.props.requests,
+			listSize = this.state.listSize;
 
-			let listSize = this.state.listSize
-			let currentPage = this.state.currentPage
+		if( !requests ) {
+			return;
+		}
+
+		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
+		let count = [0];
+
+		for( let i = 1; i <= totalPage - 1 ; i++ ){
+			count.push(i);
+		}
+
+		this.setState( { totalPage ,count }, () => {
+			let listSize = this.state.listSize;
+			let currentPage = this.state.currentPage;
 			this.pagingRequest(listSize,currentPage);
-		})
+		} );
 	}
 
 	pagingRequest(listSize,currentPage){
-		let user = this.state.user
+		let user = Meteor.user();
 		let query = [];
-        if(Meteor.user().getRole() != "fmc support"){
-			query.push({
+        if( user.getRole() != "fmc support" ) {
+			query.push( {
 				'members._id': user._id
-			})
-		}
-		if ( user.role == 'admin' ) {
-			query = [ { _id: { $ne: null } } ]
+			} );
 		}
 
 		//if filter passed to function then add that to the query
@@ -101,9 +107,9 @@ export default class RequestsPageIndex extends Component {
 		var requests = Requests.find( {
 			$and: query
 		},  {
-					limit: parseInt(listSize ),
-					skip: (currentPage * parseInt( listSize )),
-			} )
+			limit: parseInt(listSize ),
+			skip: (currentPage * parseInt( listSize )),
+		} )
 		.fetch( {
 			sort: {
 				createdAt: 1

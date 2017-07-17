@@ -326,6 +326,11 @@ Requests.methods( {
         method: actionComplete
     },
 
+    invoice: {
+        authentication: true,
+        method: actionInvoice
+    },
+
     getCompleteRequest: {
         authentication: true,
         method: ( team, user ) => {
@@ -401,7 +406,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -417,7 +473,7 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
@@ -448,7 +504,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -464,15 +571,20 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
+                let originalDueDate =  moment( request.dueDate );
                 for ( var i = 0; i <= repeats; i++ ) {
 
-                    if ( dueDate.isAfter() ) {
+                    if ( dueDate.isAfter() && dueDate.isAfter(request.createdAt) ) {
+                      if(moment(dueDate).subtract( period ).isAfter(request.createdAt)){
                         return dueDate.subtract( period ).toDate();
+                      }else{
+                        return
+                      }
                     }
                     dueDate = dueDate.add( period );
                 }
@@ -703,7 +815,16 @@ function checkIssuePermissions( role, user, request ) {
     if ( request.type != 'Preventative' && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
+            requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
             baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
+
+        if(requestIsInvoice){
+        let supplier = Teams.findOne( request.supplier._id ),
+            userRole = supplier.getMemberRole( user );
+            if (_.contains( [ 'supplier manager', 'supplier fmc support', 'manager' ], userRole ) ){
+                userCanIssue = true;
+            }
+        }
         if( !team ) {
             throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
             return;
@@ -764,7 +885,8 @@ function actionIssue( request ) {
     let code = null,
         userId = Meteor.user(),
         description = request.description,
-        user = Users.findOne( userId._id );
+        user = Users.findOne( userId._id ),
+        requestIsInvoice = request && request.invoiceDetails && request.invoiceDetails.details;
 
     request.description = null;
 
@@ -778,45 +900,52 @@ function actionIssue( request ) {
             code = team.getNextWOCode();
         }
     }
-
-    Meteor.call( 'Issues.save', request, {
-        status: "Issued",
-        issuedAt: new Date(),
-        code: code,
-        members: getMembersDefaultValue( request )
-    } );
-
+    if (requestIsInvoice) {
+        request.invoiceDetails.status = 'Issued';
+        Meteor.call( 'Issues.save', request );
+    }
+    else{
+        Meteor.call( 'Issues.save', request, {
+            status: "Issued",
+            issuedAt: new Date(),
+            code: code,
+            members: getMembersDefaultValue( request )
+        } );
+    }
 
     request = Requests.findOne( request._id );
 
     if ( request ) {
         request.updateSupplierManagers();
         request = Requests.findOne( request._id );
+        var title = request.invoiceDetails && request.invoiceDetails.invoiceNumber ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
             message: {
                 verb: "issued",
-                subject: "Work order #" + request.code + " has been issued",
+                subject: title+ " has been issued",
                 body: description
             }
         } );
-
-        var team = request.getTeam();
-        request.distributeMessage( {
-            recipientRoles: [ "supplier manager" ],
-            suppressOriginalPost: true,
-            message: {
-                verb: "issued",
-                subject: "New work request from " + " " + team.getName(),
-                read: false,
-                digest: false,
-                emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
-                    var token = LoginService.generateLoginToken( recipient, expiry );
-                    return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+        if (!requestIsInvoice) {
+            var team = request.getTeam();
+            request.distributeMessage( {
+                recipientRoles: [ "supplier manager" ],
+                suppressOriginalPost: true,
+                message: {
+                    verb: "issued",
+                    subject: "New work request from " + " " + team.getName(),
+                    read: false,
+                    digest: false,
+                    emailBody: function( recipient ) {
+                        var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
+                        var token = LoginService.generateLoginToken( recipient, expiry );
+                        return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                    }
                 }
-            }
-        } );
+            } );
+        }
+        
 
         return request;
     }
@@ -1010,6 +1139,21 @@ function actionComplete( request ) {
         } );
 
     }
+
+    return request;
+}
+
+function actionInvoice( request ) {
+
+    if ( request.invoiceDetails && request.invoiceDetails.details ) {
+        
+        if ( request.invoiceDetails.invoice ) {
+            request.attachments.push( request.invoiceDetails.invoice );
+        }
+    }
+    request.invoiceDetails.status = 'New';
+    Meteor.call( 'Issues.save', request );
+    request = Requests.findOne( request._id );
 
     return request;
 }

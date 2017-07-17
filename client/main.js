@@ -280,6 +280,10 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
+        let requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+        if (requestIsInvoice) {
+            return false;
+        }
 
         if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'PPM', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
@@ -402,7 +406,12 @@ Actions.addAccessRule( {
         ( request ) => {
             let user = Meteor.user(),
                 team = request.getTeam(),
-                teamRole = team.getMemberRole( user );
+                teamRole = team.getMemberRole( user ),
+                requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+
+            if (requestIsInvoice) {
+                return false;
+            }
 
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
@@ -446,7 +455,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'In Progress', 'Issued' ], request.status )
+        return _.contains( [ 'In Progress', 'Issued' ], request.status) && (request.status != 'Complete')
     },
     action: [
         'complete request',
@@ -456,13 +465,48 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'Complete' },
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details)
+    },
     action: [
         //'close request',
         'reopen request',
         //'reverse request',
     ],
     role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'facility manager' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && (request.invoiceDetails && request.invoiceDetails.status=='Issued')
+    },
+    action: [
+        'reissue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details);
+    },
+    action: [
+        'invoice request',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return request.invoiceDetails && request.invoiceDetails.status=='New';
+    },
+    action: [
+        'issue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
     rule: { alert: true }
 } )
 

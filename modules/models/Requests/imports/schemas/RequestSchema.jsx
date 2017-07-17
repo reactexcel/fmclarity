@@ -4,6 +4,7 @@
  */
 
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
+import InvoiceDetailsSchema from './InvoiceDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 import IncidentCommentSchema from './IncidentCommentSchema.jsx';
@@ -877,6 +878,11 @@ const RequestSchema = {
             subschema: CloseDetailsSchema
         },
 
+        invoiceDetails: {
+            type: "object",
+            subschema: InvoiceDetailsSchema
+        },
+
         //////////////////////////////////////////////////
         // Dates & timing
         //////////////////////////////////////////////////
@@ -885,7 +891,20 @@ const RequestSchema = {
             type: "date",
             label: "Due/Start Date",
             description: "Latest date that the work can be completed",
-            input: DateTime,
+            //input: DateTime,
+            input: (props)=>{
+                return props.item.type == "Preventative" || props.item.status == "Issued" ? <DateInput
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                /> :<DateTime
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                />
+            },
             size: 6,
             required: true,
             defaultValue: getDefaultDueDate,
