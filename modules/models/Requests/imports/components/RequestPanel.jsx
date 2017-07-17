@@ -217,23 +217,23 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             {requestIsInvoice ? <span>
                                 <h2 className="edit-link">Invoice #
-                                    <input size={invLength} onChange   = { (event) => { 
+                                    <input size={invLength} onChange   = { (event) => {
                                         request.invoiceDetails.invoiceNumber = event.currentTarget.value ? event.currentTarget.value : request.invoiceDetails.invoiceNumber;
                                         Requests.save.call( request );
-                                        
-                                        setTimeout(function(){ 
+
+                                        setTimeout(function(){
                                             Bert.alert({
                                               title: 'Success',
                                               message: 'Invoice number updated',
                                               type: 'info',
                                               style: 'growl-top-right',
                                               icon: 'fa-check'
-                                            }); 
+                                            });
                                         }, 500);
-                                    } }  
-                                        type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input> 
+                                    } }
+                                        type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input>
                                     </h2>
-                                </span> 
+                                </span>
                                 : <h2>{title}</h2>}
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
@@ -243,12 +243,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
                             : null }
-                            
+
                             {requestIsInvoice ?
                                 <div>
                                 <span><b>Invoice Date</b> <span>{formatDate(request.invoiceDetails.invoiceDate)}</span><br/></span>
                                 <span><b>Due Date</b> <span>{formatDate(request.invoiceDetails.dueDate)}</span><br/></span>
-                                
+
                                 <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                                 className   = { "label label-"+request.invoiceDetails.status}
@@ -291,9 +291,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 </div>
                             }
 
-                            
 
-                            
+
+
 
                     </div>
                 </div>
@@ -394,7 +394,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment().format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment().format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
                 </tr>
                 : null }
 
