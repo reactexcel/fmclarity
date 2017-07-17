@@ -12,10 +12,13 @@ const WeeklyCalendar = React.createClass( {
 
 	_onTimeSlotAllotment(event, delta, revertFunc){
 		let bookedEvent = this.events.events;
+		let getCurrentTime = {};
 		let bookingStartTime = event.start._d
 			bookingStartTime = moment(bookingStartTime).subtract({hours:5,minutes:30})
+			getCurrentTime.startTime = bookingStartTime._d;
 		let bookingEndTime = event.end._d
 			bookingEndTime = moment(bookingEndTime).subtract({hours:5,minutes:30})
+			getCurrentTime.endTime = bookingEndTime._d;
 			bookingStartTime = new Date(bookingStartTime).getTime()
 			bookingEndTime = new Date(bookingEndTime).getTime()
 
@@ -34,6 +37,12 @@ const WeeklyCalendar = React.createClass( {
 					ableToBook =  false;
 				} else {
 					ableToBook =  true;
+					if(this.props.areaDetails.bookingAdvanceDay && this.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
+						ableToBook = this.checkBookingOnThisDay(getCurrentTime,this.props.areaDetails)
+					}
+					if(ableToBook == false){
+						window.alert("Oops, unable to book. You are able to book only "+ this.props.areaDetails.bookingAdvanceDay +" "+ this.props.areaDetails.unit+ " before.")
+					}
 				}
 			}
 			if( ableToBook == false ){
@@ -42,6 +51,7 @@ const WeeklyCalendar = React.createClass( {
 		}
 		return ableToBook;
 	},
+
 	componentWillUnmount(){
 		this.props.setValue(this.state.value);
 	},
@@ -60,6 +70,39 @@ const WeeklyCalendar = React.createClass( {
 				startTime:startTime,
 				endTime:endTime
 			}
+	},
+
+	checkBookingOnThisDay(getCurrentTime,areaDetails){
+		if(areaDetails.unit == "Hours"){
+			if( moment().diff(getCurrentTime.startTime, 'hours') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'hours') > (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Days"){
+			if( moment().diff(getCurrentTime.startTime, 'days') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'days') > (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Weeks"){
+			if( moment().diff(getCurrentTime.startTime, 'weeks') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'weeks') > (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Months"){
+			if( moment().diff(getCurrentTime.startTime, 'months') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'months') > (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return true;
+		}
 	},
 
     componentDidMount() {
@@ -158,6 +201,15 @@ const WeeklyCalendar = React.createClass( {
 				let endTime = end._d
 				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
 				let getCurrentTime = self.getCurrentTime(start, end)
+				let bookable = true;
+				if(self.props.areaDetails.bookingAdvanceDay && self.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
+					bookable = self.checkBookingOnThisDay(getCurrentTime,self.props.areaDetails)
+				}
+				if( bookable == false ){
+					$('.fc-time-grid-event').css('display','none');
+					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+					window.alert("Oops, unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.")
+				}else{
 				/*if(timeDiff>1800000){
         			$("#bookingCalendar").fullCalendar('unselect');
       			} else {*/
@@ -185,7 +237,7 @@ const WeeklyCalendar = React.createClass( {
 							endTime:endTime,
 						}
 					})
-				//}
+				}
     		},
     		eventClick: function(event) {
     		},
