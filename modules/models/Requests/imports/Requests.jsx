@@ -892,7 +892,11 @@ function actionIssue( request ) {
 
     if ( request ) {
         if ( request.code ) {
-            code = request.code;
+            //code = request.code;
+            let team = Teams.findOne( {
+                _id: request.team._id
+            } );
+            code = team.getNextWOCode();
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id
@@ -945,7 +949,7 @@ function actionIssue( request ) {
                 }
             } );
         }
-        
+
 
         return request;
     }
@@ -1146,7 +1150,7 @@ function actionComplete( request ) {
 function actionInvoice( request ) {
 
     if ( request.invoiceDetails && request.invoiceDetails.details ) {
-        
+
         if ( request.invoiceDetails.invoice ) {
             request.attachments.push( request.invoiceDetails.invoice );
         }
