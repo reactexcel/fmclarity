@@ -210,28 +210,33 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
     let team = null,
         role = null,
         user = Users.findOne( this.userId ),
-        query = {
-            'members._id': this.userId
-        };
+        query = [];
 
     if( teamId ) {
         team = Teams.findOne( teamId );
         role = team.getMemberRole( user );
-        if( role == 'fmc support' ) {
-            query = { _id: {$ne:null} }
+        query.push( { $or: [
+            { 'team._id': teamId },
+            { 'supplier._id': teamId },
+            { 'realEstateAgency._id': teamId }
+        ] } );
+        console.log( role );
+        if( !_.contains( [ 'fmc support', 'portfolio manager' ], role ) ) {
+            query.push( {
+                'members._id': this.userId
+            } )
         }
     }
 
     if ( !includeComplete ) {
-        query = {
+        query.push ( {
             $and: [
                 { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
-                query
             ]
-        };
+        } );
     }
 
-    let requestsCursor = Requests.find( query, {
+    let requestsCursor = Requests.find( { $and: query }, {
         sort: {
             createdAt: -1
         },
