@@ -251,6 +251,7 @@ class AutoForm extends React.Component {
 							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
+							edit = {this.props.edit ? this.props.edit : false}
 
 										  { ...options}
 						/>
@@ -274,7 +275,7 @@ class AutoForm extends React.Component {
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
 							{
-								
+
 							this.state.submitText && this.state.submitText == "Issue"?
 
 							<button
@@ -300,7 +301,7 @@ class AutoForm extends React.Component {
 								{this.props.submitText?this.props.submitText:'Submit'}
 
 							</button>
-							
+
 						</div>
 
 

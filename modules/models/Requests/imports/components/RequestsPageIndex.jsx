@@ -24,7 +24,6 @@ export default class RequestsPageIndex extends Component {
 
 	constructor(props){
 		super(props);
-
 		this.state = {
 			user : props.user,
 			requests: props.requests,
@@ -32,62 +31,92 @@ export default class RequestsPageIndex extends Component {
 			currentPage: 0,
 			nextPage: 1,
 			previousPage: -1,
-			listSize: "10",
+			listSize: "25",
 			statusFilter:props.statusFilter,
 			contextFilter:props.contextFilter,
-			totalPage: 1
+			totalPage: 1,
+			count:[0],
+			countLimit:9,
+			countLimitBelow:0,
+			countLimitAbove:9
 		};
 
 	}
 
 	componentWillReceiveProps( props ){
+		let requests = this.props.requests,
+			listSize = this.state.listSize;
+
+		if( !requests ) {
+			return;
+		}
+
 		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
-		this.setState({
-			totalPage
-		})
-		this.pagingRequest(props);
-		// console.log(props,this.state);
+		let count = [0];
+
+		for( let i = 1; i <= totalPage - 1 ; i++ ){
+			count.push(i);
+		}
+
+		this.setState( { totalPage ,count }, () => {
+			let listSize = this.state.listSize;
+			let currentPage = this.state.currentPage;
+			this.pagingRequest(listSize,currentPage);
+		} );
 	}
 
 	componentWillMount() {
+		let requests = this.props.requests,
+			listSize = this.state.listSize;
+
+		if( !requests ) {
+			return;
+		}
+
 		let totalPage = Math.ceil( this.props.requests.length /  parseInt( this.state.listSize ) );
-		this.setState({
-			totalPage
-		})
-		this.pagingRequest(this.props);
+		let count = [0];
+
+		for( let i = 1; i <= totalPage - 1 ; i++ ){
+			count.push(i);
+		}
+
+		this.setState( { totalPage ,count }, () => {
+			let listSize = this.state.listSize;
+			let currentPage = this.state.currentPage;
+			this.pagingRequest(listSize,currentPage);
+		} );
 	}
 
-	pagingRequest(props){
-		let user = this.state.user
-		let query = [ {
-			'members._id': user._id
-		} ]
-
-		if ( user.role == 'admin' ) {
-			query = [ { _id: { $ne: null } } ]
+	pagingRequest(listSize,currentPage){
+		let user = Meteor.user();
+		let query = [];
+        if( user.getRole() != "fmc support" ) {
+			query.push( {
+				'members._id': user._id
+			} );
 		}
 
 		//if filter passed to function then add that to the query
-		if ( props.statusFilter ) {
-			query.push( props.statusFilter );
+		if ( this.props.statusFilter ) {
+			query.push( this.props.statusFilter );
 		}
-		if ( props.contextFilter ) {
-			query.push( props.contextFilter );
+		if ( this.props.contextFilter ) {
+			query.push( this.props.contextFilter );
 		}
 
 		//perform query
 		var requests = Requests.find( {
 			$and: query
 		},  {
-					limit: parseInt( this.state.listSize ),
-					skip: (this.state.currentPage * parseInt(  this.state.listSize )),
+					limit: parseInt(listSize ),
+					skip: (currentPage * parseInt( listSize )),
 			} )
 		.fetch( {
 			sort: {
 				createdAt: 1
 			}
 		} );
-		// console.log(requests,"test");
+
 		this.setState({
 			requests
 		})
@@ -115,6 +144,39 @@ export default class RequestsPageIndex extends Component {
 			RequestActions.view.run( selectedRequest );
 		}
 
+		let paginationButton = this.state.count.map((val,i) => {
+			if(this.state.totalPage > this.state.countLimit){
+				if(i >= this.state.countLimitBelow && i <= this.state.countLimitAbove){
+					return <a onClick={() => {
+						let componet = this,
+						previousPage = val - 1,
+						currentPage = val ,
+						nextPage = val + 1 ;
+						componet.setState({
+							currentPage,
+							previousPage,
+							nextPage,
+						},() => componet.pagingRequest(this.state.listSize,currentPage))
+					}} className = {i === this.state.currentPage ? "active" : ""} key = {i}>{val + 1 }</a>
+				}
+			}else if (this.state.totalPage < this.state.countLimit) {
+				return <a onClick={() => {
+					let componet = this,
+					previousPage = val - 1,
+					currentPage = val ,
+					nextPage = val + 1 ;
+					componet.setState({
+						currentPage,
+						previousPage,
+						nextPage,
+					},() => componet.pagingRequest(this.state.listSize,currentPage))
+				}} className = {i === this.state.currentPage ? "active" : ""} key = {i}>{val + 1 }</a>
+			}
+			else{
+				return null
+			}
+		})
+		
 		return (
 			<div>
 				<div className = "row">
@@ -122,91 +184,81 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3 desktop-only">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Cancelled' ] } selectedItem = { selectedStatus } />
+						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Booking', 'Cancelled' ] } selectedItem = { selectedStatus } />
 					</div>
-					{ /*user.getRole && user.getRole() == 'fmc support' ?
-						<div className="col-xs-offset-9 col-xs-3" >
-							<Switch
-								value={ this.state.active}
-								onChange={ ( active ) => {
-									if( active ) {
-										let now  = new Date(),
-											requests = _.filter( this.state.requests, (r) => moment( r.dueDate ).isBefore( now ) );
-										this.setState( { active: active, requests: requests } );
-									} else {
-											this.setState( { active: active, requests: this.props.requests } );
-									}
-								}}>
-								Show Overdue Work Order only
-							</Switch>
-						</div> : null
-					*/ }
 				</div>
+
 				<div className="col-xs-12">
 						<div className="row">
-								<div className="col-xs-3">
-									<span>Select list size</span>
-										<Select
-												value={this.state.listSize}
-												items={["10", "25", "50", "100", "200", "400" ]}
-												onChange={ ( listSize ) => {
-														let componet = this;
-														let totalPage = Math.ceil( this.props.requests.length /  parseInt( listSize || "400" ) );
-														this.setState({
-															 listSize: listSize || "400" ,
-															 currentPage: 0,
-															 nextPage: 1,
-															 previousPage: -1,
-															 totalPage
-														 },() => componet.pagingRequest(componet.props))
-												}}
-												/>
-								</div>
-								<div className="col-xs-9">
-										<span style={{float: "right"}}>
-											{this.state.currentPage > 0 ?
-														<button
-																title="Go to previous page"
-																className="btn btn-flat btn-primary"
-																onClick={() => {
-																		let componet = this,
-																				nextPage = this.state.currentPage,
-																				currentPage = this.state.previousPage,
-																				previousPage = this.state.previousPage -1;
-																		componet.setState({
-																				currentPage,
-																				previousPage,
-																				nextPage,
-																		},() => componet.pagingRequest(componet.props))
-																}}>
-																<i className="fa fa-backward"></i>
-																 <span> Previous</span>
-														</button> : null
-													}
-													{
-														this.state.totalPage - 1 != this.state.currentPage ?
-														<button
-																title="Go to next page"
-																className="btn btn-flat btn-primary"
-																onClick={() => {
-																		let componet = this
-																				previousPage = this.state.currentPage;
-																				currentPage = this.state.nextPage,
-																				nextPage = this.state.nextPage + 1,
-																		componet.setState({
-																				currentPage,
-																				previousPage,
-																				nextPage,
-																		},() => componet.pagingRequest(componet.props))
-																}}>
-																<i className="fa fa-forward"></i>
-																<span> Next</span>
-														</button>: null }
-										</span>
-								</div>
+								<div className="col-xs-12" style={{marginTop:"50px",textAlign:"center"}}>
+									<div className="paginationRequest">
+	     							<a style={{fontSize:"20px",padding:"4px 16px"}} onClick={() => {
+											if(this.state.currentPage === 0){
+												return
+											}else if (this.state.totalPage > this.state.countLimit && this.state.currentPage === this.state.countLimitBelow){
+												let componet = this,
+												countLimitBelow = this.state.countLimitBelow - 1,
+												countLimitAbove = this.state.countLimitAbove - 1,
+												nextPage = this.state.currentPage,
+												currentPage = this.state.previousPage,
+												previousPage = this.state.previousPage -1;
+												componet.setState({
+													countLimitBelow,
+													countLimitAbove,
+													currentPage,
+													previousPage,
+													nextPage,
+													},() => componet.pagingRequest(this.state.listSize,currentPage)
+												)
+											}else{
+												let componet = this,
+												nextPage = this.state.currentPage,
+												currentPage = this.state.previousPage,
+												previousPage = this.state.previousPage -1;
+												componet.setState({
+													currentPage,
+													previousPage,
+													nextPage,
+												},() => componet.pagingRequest(this.state.listSize,currentPage))
+											}
+										}}>&laquo;</a>
+										{paginationButton}
+	     							<a style={{fontSize:"20px",padding:"4px 16px"}} onClick={() => {
+											if(this.state.currentPage === this.state.totalPage - 1){
+												return
+											}else if (this.state.totalPage > this.state.countLimit && this.state.currentPage === this.state.countLimitAbove){
+												let componet = this,
+												countLimitBelow = this.state.countLimitBelow + 1,
+												countLimitAbove = this.state.countLimitAbove + 1,
+												previousPage = this.state.currentPage,
+												currentPage = this.state.nextPage,
+												nextPage = this.state.nextPage + 1 ;
+												componet.setState({
+													countLimitBelow,
+													countLimitAbove,
+													currentPage,
+													previousPage,
+													nextPage,
+													},() => componet.pagingRequest(this.state.listSize,currentPage)
+												)
+											}
+											else{
+												let componet = this,
+												previousPage = this.state.currentPage,
+												currentPage = this.state.nextPage,
+												nextPage = this.state.nextPage + 1 ;
+												componet.setState({
+													currentPage,
+													previousPage,
+													nextPage,
+												},() => componet.pagingRequest(this.state.listSize,currentPage))
+											}
+										}} >&raquo;</a>
+	   							</div>
+							</div>
 						</div>
 				</div>
-				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
+				<div className = "issue-page animated fadeIn" style = { {paddingTop:"20px"} }>
 					<div className = "ibox">
 						<RequestsTable requests = { this.state.requests }/>
 					</div>
