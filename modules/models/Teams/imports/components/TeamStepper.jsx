@@ -336,7 +336,7 @@ const TeamStepper = React.createClass( {
                                                 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "manager",
+                                                      role: role ? role : "portfolio manager",
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
