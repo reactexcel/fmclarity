@@ -103,14 +103,13 @@ export default class RequestsPageIndex extends Component {
 		if ( this.props.contextFilter ) {
 			query.push( this.props.contextFilter );
 		}
-
 		//perform query
 		var requests = Requests.find( {
 			$and: query
 		},  {
-					limit: parseInt(listSize ),
-					skip: (currentPage * parseInt( listSize )),
-			} )
+			limit: parseInt(listSize ),
+			skip: (currentPage * parseInt( listSize )),
+		} )
 		.fetch( {
 			sort: {
 				createdAt: 1

@@ -201,19 +201,26 @@ Meteor.publish( 'Requests: Complete', function( ) {
     return requestsCursor;
 } );
 
-Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, includeFacilities } ) {
+Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplete, includeFacilities } ) {
 
     import { Users } from '/modules/models/Users';
-    let user = Users.findOne( this.userId );
+    import { Teams } from '/modules/models/Teams';
 
-    let query = {
-        'members._id': this.userId
+
+    let team = null,
+        role = null,
+        user = Users.findOne( this.userId ),
+        query = {
+            'members._id': this.userId
+        };
+
+    if( teamId ) {
+        team = Teams.findOne( teamId );
+        role = team.getMemberRole( user );
+        if( role == 'fmc support' ) {
+            query = { _id: {$ne:null} }
+        }
     }
-
-    if( user && user.role == 'admin' ) {
-        query = { _id: {$ne:null} }
-    }
-
 
     if ( !includeComplete ) {
         query = {
