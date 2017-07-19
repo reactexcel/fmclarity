@@ -1031,13 +1031,7 @@ function actionComplete( request ) {
 }
 
 function actionInvoice( request ) {
-
-    if ( request.invoiceDetails && request.invoiceDetails.details ) {
-        
-        if ( request.invoiceDetails.invoice ) {
-            request.attachments.push( request.invoiceDetails.invoice );
-        }
-    }
+    
     request.invoiceDetails.status = 'New';
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );

@@ -109,6 +109,7 @@ export default InvoiceDetailsSchema = {
 
     invoice: {
         label: "Invoice Attachment",
+        required: true,
         type: "array",
         input: FileExplorer
     },
