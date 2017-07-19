@@ -266,7 +266,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             : null }
 
                             { request.type == "Ad-Hoc" && request.dueDate ?
-                            <span><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+
+                            <span style={{color : "red"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+
                             : null }
 
                             { request.type != "Ad-Hoc" && request.createdAt ?
