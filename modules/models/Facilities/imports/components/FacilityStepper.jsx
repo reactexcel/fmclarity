@@ -90,7 +90,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
             facility.name = locname;
         }
 
-
+        $('#address_area').html('');
         ReactDOM.render( <AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] } onNext = { onNext } hideSubmit = { true } submitFormOnStepperNext = { true }/>, document.getElementById( 'address_area' ) );
     }
     /*
@@ -144,13 +144,13 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
                                         />
                                         <div id="address_area">
                                             <AutoForm
-                                                model       = { Facilities }
-                                                item        = { facility }
-                                                form        = { ["name", "type", "address", "operatingTimes" ] }
-                                                onNext      = { onNext }
-                                                hideSubmit  = { true }
-                                                submitFormOnStepperNext = { true }
-                                              />
+                                                    model       = { Facilities }
+                                                    item        = { facility }
+                                                    form        = { ["name", "type", "address", "operatingTimes" ] }
+                                                    onNext      = { onNext }
+                                                    hideSubmit  = { true }
+                                                    submitFormOnStepperNext = { true }
+                                                  />
                                         </div>
                                         </div>
                                         <div className = "col-sm-5">
