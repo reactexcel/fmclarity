@@ -326,11 +326,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     </tr>
                     <tr>
                         <th>GST</th>
-                        <td>{ request.invoiceDetails.gst || <i>unnamed</i> }</td>
+                        <td>${ formatToCurrency(request.invoiceDetails.gst.toString()) || <i>unnamed</i> }</td>
                     </tr>
                     <tr>
                         <th>Total</th>
-                        <td>{ request.invoiceDetails.totalPayable || request.costThreshold }</td>
+                        <td>${ formatToCurrency(request.invoiceDetails.totalPayable.toString()) || formatToCurrency(request.costThreshold.toString()) }</td>
                     </tr>
                 </tbody>
                 :
