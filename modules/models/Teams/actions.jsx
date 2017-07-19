@@ -391,6 +391,7 @@ export {
     createRequest,
     CreateTeamRequest,
     createDocument,
+    removeSupplier,
 
     createMember,
     viewMember,

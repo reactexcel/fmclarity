@@ -130,7 +130,13 @@ Facilities.actions( {
     },
     updateBookingForArea: {
         authentication:true,
-        method: function(selectedFacility, level, area, identifier, booking){
+        method: function(newRequest){
+            let selectedFacility = newRequest.facility,
+                level = newRequest.level,
+                area = newRequest.area,
+                identifier = newRequest.identifier,
+                booking = newRequest.bookingPeriod;
+                booking.bookingId = newRequest._id;
             let facility = Facilities.findOne({'_id':selectedFacility._id})
             let areas = facility.areas;
             if(level && level.data){
@@ -599,6 +605,23 @@ Facilities.actions( {
             }
         }
     },
+
+    removeSupplier: {
+        authentication: true,
+        method: function( facility, supplier ) {
+            if ( supplier && supplier._id ) {
+                Facilities.update( facility._id, {
+                    $pull: {
+                        suppliers: {
+                            _id: supplier._id,
+                            name: supplier.name
+                        }
+                    }
+                } );
+            }
+        }
+    },
+
 
 
 
