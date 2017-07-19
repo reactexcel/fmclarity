@@ -1,4 +1,4 @@
-import { DateTime, Select, Switch, FileField, TextArea, Text, Currency } from '/modules/ui/MaterialInputs';
+import { DateInput, Select, Switch, FileField, TextArea, Text, Currency } from '/modules/ui/MaterialInputs';
 import { FileExplorer } from '/modules/models/Files';
 import React from "react";
 
@@ -12,7 +12,7 @@ export default InvoiceDetailsSchema = {
 
     dueDate: {
         label: "Due date",
-        input: DateTime,
+        input: DateInput,
         size: 6,
         type: 'date',
         required: true,
@@ -23,7 +23,7 @@ export default InvoiceDetailsSchema = {
 
     invoiceDate: {
         label: "Invoice date",
-        input: DateTime,
+        input: DateInput,
         size: 6,
         type: 'date',
         required: true,
@@ -34,8 +34,8 @@ export default InvoiceDetailsSchema = {
 
     details: {
         label: "Invoice details",
-        input: Text,
-        size: 6,
+        input: TextArea,
+        size: 12,
         required: true,
     },
 
@@ -43,13 +43,13 @@ export default InvoiceDetailsSchema = {
         label: "Total Payable( ex GST )",
         type: "number",
         input: (props)=>{
-                return <Text {...props}
+                return <Currency {...props}
                     onChange={(value)=>{
                         // null should equate to 0
                         if( !value ) {
                             value = '0';
                         }
-                        value = parseInt(value);
+                        value = parseInt(value.replace(/,/g, ''));
                         props.item.gst = 0.1 * value;
                         props.item.totalPayablePlusGst = value + props.item.gst;
                         props.onChange( value );
@@ -64,7 +64,7 @@ export default InvoiceDetailsSchema = {
         label: "GST",
         type: "number",
         input: (props)=>{
-                return <Text {...props}
+                return <Currency {...props}
                     onChange={(value)=>{
                         // null should equate to 0
                         if( !value ) {
@@ -88,7 +88,7 @@ export default InvoiceDetailsSchema = {
         label: "Total Payable( incl GST )",
         type: "number",
         input: (props)=>{
-                return <Text {...props}
+                return <Currency {...props}
                     onChange={(value)=>{
                         // null should equate to 0
                         if( !value ) {

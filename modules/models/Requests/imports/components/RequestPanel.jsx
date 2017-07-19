@@ -207,7 +207,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
-                        { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
+                        { teamType=="contractor" ? <span style={{right:'0px'}}>{ billingOrderNumber }</span> : null }
                     </div>}
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
@@ -229,6 +229,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                     } }  
                                         type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input> 
                                     </h2>
+                                    <span>{ billingOrderNumber }</span>
                                 </span> 
                                 : <h2>{title}</h2>}
 
