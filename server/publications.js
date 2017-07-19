@@ -201,30 +201,42 @@ Meteor.publish( 'Requests: Complete', function( ) {
     return requestsCursor;
 } );
 
-Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, includeFacilities } ) {
+Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplete, includeFacilities } ) {
 
     import { Users } from '/modules/models/Users';
-    let user = Users.findOne( this.userId );
+    import { Teams } from '/modules/models/Teams';
 
-    let query = {
-        'members._id': this.userId
+
+    let team = null,
+        role = null,
+        user = Users.findOne( this.userId ),
+        query = [];
+
+    if( teamId ) {
+        team = Teams.findOne( teamId );
+        role = team.getMemberRole( user );
+        query.push( { $or: [
+            { 'team._id': teamId },
+            { 'supplier._id': teamId },
+            { 'realEstateAgency._id': teamId }
+        ] } );
+        console.log( role );
+        if( !_.contains( [ 'fmc support', 'portfolio manager' ], role ) ) {
+            query.push( {
+                'members._id': this.userId
+            } )
+        }
     }
-
-    if( user && user.role == 'admin' ) {
-        query = { _id: {$ne:null} }
-    }
-
 
     if ( !includeComplete ) {
-        query = {
+        query.push ( {
             $and: [
                 { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
-                query
             ]
-        };
+        } );
     }
 
-    let requestsCursor = Requests.find( query, {
+    let requestsCursor = Requests.find( { $and: query }, {
         sort: {
             createdAt: -1
         },
