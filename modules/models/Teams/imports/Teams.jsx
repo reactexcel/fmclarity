@@ -495,7 +495,7 @@ Teams.helpers( {
             }
             if ( names.length >= 2 ) {
                 initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ];
-            } 
+            }
         }
         return initials.toUpperCase();
     },
