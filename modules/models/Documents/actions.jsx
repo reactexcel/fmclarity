@@ -93,12 +93,13 @@ const createUpdateRequest = new Action( {
                     name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
                     service: doc.serviceType ? doc.serviceType : null,
                     supplier: supplier,
+                    costThreshold: '0',
                     // supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
                 } );
 		newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
-            title = "Please tell us what needs to be updated."
+            title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
             form = { CreateDocUpdateRequestForm  }
             item = { newItem }

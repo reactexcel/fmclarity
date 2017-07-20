@@ -147,6 +147,7 @@ const RequestSchema = {
                                     }
                                     if (request.type == 'Reminder') {
                                         request.costThreshold = '0';
+                                        request.priority = 'Urgent';
                                     }
                                     if(request.type == 'Incident'){
                                         request.costThreshold= '0';
@@ -172,7 +173,7 @@ const RequestSchema = {
             type: "string",
             defaultValue: (item) =>{
                 let priority = "Standard";
-                if(item.type == 'Incident'){
+                if(_.contains(['Incident', 'Reminder'])){
                     priority = 'Urgent'
                 }
                 return priority;
