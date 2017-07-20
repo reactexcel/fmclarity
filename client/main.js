@@ -11,7 +11,7 @@ function loadExternalScripts() {
 
     loadBrowerCompatibilityScript();// load browser-update.org browser compatibility script
     fixIEirregularScroll();// fixes internet explorer problem of scrolling fixed html elements which brings messy displays
-    
+
     loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
 
@@ -56,7 +56,7 @@ function isIE () {
 }
 
 function loadBrowerCompatibilityScript(  ){
-    
+
 	window.$buoop = {
 		vs:{
 			i:10,
@@ -85,7 +85,7 @@ function loadBrowerCompatibilityScript(  ){
             script.async = true;
             document.body.appendChild(script);
             }
-		    
+
 		});
 }
 loadExternalScripts();
@@ -170,9 +170,25 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
-            role = team.getMemberRole( user );
+            role = user.getRole();
 
         return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+
+    action: [
+        'remove supplier',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
         'edit team',

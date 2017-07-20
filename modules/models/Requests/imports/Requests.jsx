@@ -399,7 +399,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -415,7 +466,7 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
@@ -446,7 +497,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -462,15 +564,20 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
+                let originalDueDate =  moment( request.dueDate );
                 for ( var i = 0; i <= repeats; i++ ) {
 
-                    if ( dueDate.isAfter() ) {
+                    if ( dueDate.isAfter() && dueDate.isAfter(request.createdAt) ) {
+                      if(moment(dueDate).subtract( period ).isAfter(request.createdAt)){
                         return dueDate.subtract( period ).toDate();
+                      }else{
+                        return
+                      }
                     }
                     dueDate = dueDate.add( period );
                 }
@@ -762,7 +869,7 @@ function checkIssuePermissions( role, user, request ) {
             }
 
         }
-    }            
+    }
     return userCanIssue;
 }
 
@@ -778,7 +885,11 @@ function actionIssue( request ) {
 
     if ( request ) {
         if ( request.code ) {
-            code = request.code;
+            //code = request.code;
+            let team = Teams.findOne( {
+                _id: request.team._id
+            } );
+            code = team.getNextWOCode();
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id
@@ -831,7 +942,7 @@ function actionIssue( request ) {
                 }
             } );
         }
-        
+
 
         return request;
     }
@@ -919,7 +1030,6 @@ function getMembersDefaultValue( item ) {
 
 
 function actionComplete( request ) {
-
     if ( request.closeDetails ) {
         if( request.closeDetails.jobCancelled == true ){
             request.closeDetails.furtherQuoteValue = 0;
@@ -979,14 +1089,14 @@ function actionComplete( request ) {
         //I think this needs to be replaced with distribute message
 
         //previous request WO# change to show the WO# of new request
-        request.distributeMessage( {
+        /*request.distributeMessage( {
             message: {
                 verb: "raised follow up",
                 subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
                 target: newRequest.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
         } );
 
@@ -998,9 +1108,9 @@ function actionComplete( request ) {
                 target: request.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
-        } );
+        } );*/
 
         let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
@@ -1031,7 +1141,6 @@ function actionComplete( request ) {
 }
 
 function actionInvoice( request ) {
-    
     request.invoiceDetails.status = 'New';
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );

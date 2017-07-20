@@ -35,7 +35,8 @@ export default RequestPanel = React.createClass( {
             owner = null;
 
         if ( this.props.item && this.props.item._id ) {
-            request = Requests.findOne( this.props.item._id );
+            //request = Requests.findOne( this.props.item._id );
+            request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
@@ -87,7 +88,10 @@ export default RequestPanel = React.createClass( {
 
 const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
 
-    function formatDate( date ) {
+    function formatDate( date, onlyDate ) {
+        if(onlyDate && onlyDate == true){
+            return moment( date ).format( 'ddd Do MMM' );
+        }
         return moment( date ).format( 'ddd Do MMM, h:mm a' );
     }
     function showUserModal( selectedUser ) {
@@ -213,21 +217,21 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             {requestIsInvoice ? <span>
                                 <h2 className="edit-link">Invoice #
-                                    <input size={invLength} onChange   = { (event) => { 
+                                    <input size={invLength} onChange   = { (event) => {
                                         request.invoiceDetails.invoiceNumber = event.currentTarget.value ? event.currentTarget.value : request.invoiceDetails.invoiceNumber;
                                         Requests.save.call( request );
-                                        
-                                        setTimeout(function(){ 
+
+                                        setTimeout(function(){
                                             Bert.alert({
                                               title: 'Success',
                                               message: 'Invoice number updated',
                                               type: 'info',
                                               style: 'growl-top-right',
                                               icon: 'fa-check'
-                                            }); 
+                                            });
                                         }, 500);
-                                    } }  
-                                        type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input> 
+                                    } }
+                                        type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input>
                                     </h2>
                                     <span>{ billingOrderNumber }</span>
                                 </span> 
@@ -240,12 +244,12 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
                             : null }
-                            
+
                             {requestIsInvoice ?
                                 <div>
                                 <span><b>Invoice Date</b> <span>{formatDate(request.invoiceDetails.invoiceDate)}</span><br/></span>
                                 <span><b>Due Date</b> <span>{formatDate(request.invoiceDetails.dueDate)}</span><br/></span>
-                                
+
                                 <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
                                 className   = { "label label-"+request.invoiceDetails.status}
@@ -263,7 +267,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             : null }
 
                             { request.type == "Ad-Hoc" && request.dueDate ?
-                            <span><b>Due</b> <span>{formatDate(request.dueDate)}</span><br/></span>
+
+                            <span style={{color : "red"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+
                             : null }
 
                             { request.type != "Ad-Hoc" && request.createdAt ?
@@ -288,9 +294,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 </div>
                             }
 
-                            
 
-                            
+
+
 
                     </div>
                 </div>
@@ -388,10 +394,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null }
 
-                { request.type == 'Booking' && request.duration ?
+                { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
-                    <th>Duration</th>
-                    <td>{request.duration}</td>
+                    <th style={{width:"110px"}}>Booking Period</th>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
                 </tr>
                 : null }
 

@@ -38,6 +38,7 @@ export default AreaDetailsSchema = {
     "unit": {
         label: 'Unit',
         type: 'string',
+        required: true,
         size: 6,
         input: Select,
         options: {
@@ -55,6 +56,7 @@ export default AreaDetailsSchema = {
     day: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4", "5", "6" ]
@@ -70,6 +72,7 @@ export default AreaDetailsSchema = {
     hour: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [
@@ -103,7 +106,6 @@ export default AreaDetailsSchema = {
                 "Fri": { select: false, time: "" },
                 "Sat": { select: false, time: "" }
             };
-            console.log( selected );
             return (
                 <div className="row" style={{ margin: "20px"}}>
                      {days.map( ( d, id )=>{
@@ -205,6 +207,7 @@ export default AreaDetailsSchema = {
     month: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" ]
@@ -220,6 +223,7 @@ export default AreaDetailsSchema = {
     week: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4" ]

@@ -7,6 +7,7 @@ import { Switch } from '/modules/ui/MaterialInputs';
 import ReactDOM from 'react-dom'
 import moment from 'moment';
 import Chip from 'material-ui/Chip';
+import RaisedButton from 'material-ui/RaisedButton';
 
 export default class SupplierFilter extends React.Component {
     constructor(props) {
@@ -265,23 +266,28 @@ export default class SupplierFilter extends React.Component {
                 <div className="row">
                     <div className="col-xs-12" style={{float:"left"}}>
                         <span style={{float: "left"}}>
-    						<button className="btn btn-flat" onClick={(event)=>{
-                                event.stopPropagation();
-                                if($('#filter-box').css('display') == 'none'){
-                                    $('#filter-box').css('display','block')
-                                    $('#arrow-icon').css('display','block')
-                                    $('#filter-details').css('display','none')
-                                } else {
-                                    $('#filter-box').css('display','none')
-                                    $('#arrow-icon').css('display','none')
-                                    $('#filter-details').css('display','block')
-                                }
-                                $('.chip svg').css('height','16px');
-                                $('.chip svg').css('width','16px');
-                                $('.chip svg').css('margin','4px 4px 0px -8px');
-                            }}>
-    							<i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Suppliers
-    						</button>
+                            <RaisedButton
+                                label="Filter Suppliers"
+                                backgroundColor={"#b8e986"}
+                                labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}}
+                                buttonStyle={{lineHeight:'30px'}}
+                                icon={<i className="fa fa-filter" style={{'marginLeft':'12px',fontSize:'16px',marginTop:"-5px"}}></i>}
+                                onClick={(event)=>{
+                                    event.stopPropagation();
+                                    if($('#filter-box').css('display') == 'none'){
+                                        $('#filter-box').css('display','block')
+                                        $('#arrow-icon').css('display','block')
+                                        $('#filter-details').css('display','none')
+                                    } else {
+                                        $('#filter-box').css('display','none')
+                                        $('#arrow-icon').css('display','none')
+                                        $('#filter-details').css('display','block')
+                                    }
+                                    $('.chip svg').css('height','16px');
+                                    $('.chip svg').css('width','16px');
+                                    $('.chip svg').css('margin','4px 4px 0px -8px');
+                                }}
+                            />
     					</span>
                     </div>
                 </div>
