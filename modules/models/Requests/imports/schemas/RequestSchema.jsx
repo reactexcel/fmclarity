@@ -111,6 +111,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 } };
@@ -135,6 +137,7 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
+
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                         request.costThreshold= '0';
@@ -150,6 +153,8 @@ const RequestSchema = {
                                         request.costThreshold= '0';
                                         request.priority = 'Urgent';
                                         request.supplier = Session.getSelectedTeam();
+                                        request.area = null;
+                                        request.level = null;
                                     }
                                 }
                          };
@@ -341,6 +346,9 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
+                if (request.type=="Incident") {
+                    return val;
+                }
                 if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy.level;
                 }
