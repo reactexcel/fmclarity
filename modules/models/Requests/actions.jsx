@@ -158,18 +158,18 @@ const cancel = new Action( {
                 [ 'rejectComment' ]
             }
             onSubmit = {
-                ( request ) => {
-                    Requests.update( request._id, { $set: { status: 'Cancelled' } } );
+                ( reqst ) => {
+                    Requests.update( reqst._id, { $set: { status: 'Cancelled' } } );
                     Modal.hide();
-                    request = Requests.collection._transform( request );
-                    request.distributeMessage( {
+                    reqst = Requests.collection._transform( reqst );
+                    reqst.distributeMessage( {
                         message: {
                             verb: "cancelled",
-                            subject: `Work order ${request.code} has been cancelled`,
-                            body: request.rejectComment
+                            subject: `Work order ${reqst.code} has been cancelled`,
+                            body: reqst.rejectComment
                         }
                     } );
-                    callback( request );
+                    callback( reqst );
                 }
             }
             />
