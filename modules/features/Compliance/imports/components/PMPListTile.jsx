@@ -51,7 +51,7 @@ const PMPListTile = React.createClass( {
                 due every {`${frequency.number||''} ${frequency.unit=="custom"?frequency.period:frequency.unit||''}`}
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { previousDateString && previousRequest ?
+                { previousDateString && previousRequest && previousRequest.status != "Deleted"?
                     <span onClick = { () => { previousRequest ? RequestActions.view.run( previousRequest ) : RequestActions.view.run( request ) } } >
                         <span>previous <b>{ previousDateString }</b> </span>
                         { previousRequest ?
@@ -61,7 +61,7 @@ const PMPListTile = React.createClass( {
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-                { nextDateString && nextRequest ?
+                { nextDateString && nextRequest && nextRequest.status != "Deleted"?
                     <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
                         <span>next due <b>{ nextDateString }</b> </span>
                         { nextRequest ?
