@@ -120,6 +120,28 @@ export default DocumentSchema = {
 		},
 	},
 
+	reminder: {
+		input: Select,
+		label: "Document Update Reminder",
+		optional: true,
+		description: "Reminder request to update document",
+		type: "object",
+
+		options: ( item ) => {
+			if ( item.facility ) {
+				let request = Requests.find( { "facility._id": item.facility._id } ).fetch();
+				return {
+					items: ( request.length ? request : null ),
+					view: ContactCard
+				}
+			} else {
+				return {
+					items: ( null ),
+				}
+			}
+		},
+	},
+
 	gst: {
 		input: Currency,
 		optional: true,

@@ -90,7 +90,7 @@ export default function DocIcon( props ) {
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
-    var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
+    var url = item.reminder && item.reminder._id ? 'requests/'+item.reminder._id : "";
     let docAlmostExpires = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
     let docExpired = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
     return (
@@ -127,7 +127,7 @@ export default function DocIcon( props ) {
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
             { docAlmostExpires || docExpired  ?
-                item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
+                item.reminder && item.reminder._id ? 
                     <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                         <a   href={url}
                              className   = "btn btn-flat"

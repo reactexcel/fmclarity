@@ -187,7 +187,7 @@ const createUpdateRequest = new Action( {
                     let docRequest = {
                     	_id: newRequest._id,
                     }
-                    doc.serviceType.data.request = docRequest;
+                    doc.reminder = docRequest;
                     Documents.save.call(doc);
                     //callback( newRequest );
                 }
