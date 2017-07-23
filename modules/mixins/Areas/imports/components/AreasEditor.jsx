@@ -52,16 +52,19 @@ FacilityAreasEditorInner = React.createClass( {
     },
 
     componentWillReceiveProps( props ) {
-        let stateToSet = {}
-        stateToSet.selection = [ { name: "Root", children: props.areas } ]
         if ( props.facility._id != this.state.facility._id ) {
-            stateToSet.facility = props.facility
+            this.setState( {
+                facility: props.facility,
+                selection: [ { name: "Root", children: props.areas } ]
+            } )
         }
         if( this.state.sort ){
-            stateToSet.facility = props.facility
-            stateToSet['sort'] = false;
+          this.setState( {
+              facility: props.facility,
+              selection: [ { name: "Root", children: props.areas } ],
+              sort: false,
+          } )
         }
-        this.setState(stateToSet)
     },
 
     selectItem( col, item ) {
