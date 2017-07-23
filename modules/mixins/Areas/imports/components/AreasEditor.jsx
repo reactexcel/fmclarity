@@ -257,31 +257,29 @@ FacilityAreasEditorInner = React.createClass( {
                                                 onChange={component.updateItem.bind(component,0,idx)}
                                                 onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
                                             {editable?<span className="areas-selector-delete-icon"
-                                              onClick = {
-                                                () => {
+                                                onClick = {() => {
                                                     if(activeBooking == false){
                                                         Modal.show({
-                                                          content:  <div style={{padding:'20px'}}>
-                                                            <div>
-                                                              <h1>Area information: {a.name||""} </h1>
-                                                            </div>
-                                                            <AutoForm
-                                                              model = { Facilities }
-                                                              item = { a.data }
-                                                              form = { ["areaDetails"] }
-                                                              onSubmit={
-                                                                ( item ) => {
-                                                                  component.save();
-                                                                  Modal.hide();
+                                                            content:  <div style={{padding:'20px'}}>
+                                                                <div>
+                                                                    {editable ? <button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={component.removeItem.bind(component,0,idx)}>&times; Delete</button>:null}
+                                                                    <h1>Area information: {a.name||""} </h1>
+                                                                </div>
+                                                                <AutoForm
+                                                                    model = { Facilities }
+                                                                    item = { a.data }
+                                                                    form = { ["areaDetails"] }
+                                                                    onSubmit={( item ) => {
+                                                                        component.save();
+                                                                        Modal.hide();
+                                                                    }
                                                                 }
-                                                              }
                                                             />
-                                                          </div>
+                                                            </div>
                                                         })
                                                     }else{
                                                         component.preventBooking()
                                                     }
-
                                                 } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
                                               {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={()=>{
                                                   activeBooking == true ? component.preventBooking() : component.removeItem(0,idx)
