@@ -248,6 +248,7 @@ class AutoForm extends React.Component {
 							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
+							edit = {this.props.edit ? this.props.edit : false}
 
 										  { ...options}
 						/>

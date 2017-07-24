@@ -486,7 +486,7 @@ ComplianceEvaluationService = new function() {
                     message = {
                         summary: summary,
                         //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                        detail: (previousRequest? 'Last Overdue '+previousDateString+'':'Last completed '+previousDateString+'')+' ➡️️ '+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
+                        detail: (previousRequest? 'Last Overdue ➡️️ '+previousDateString+'':'')+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
                     }
                 }else{
                     message = {
@@ -554,9 +554,17 @@ ComplianceEvaluationService = new function() {
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
-                            frequency: frequency,
+                            frequency: frequency?frequency:{
+                                number: 1,
+                                repeats: 10,
+                                period: "",
+                                endDate: "",
+                                unit: "years"
+                            },
                             service: serviceReq[0],
                             subservice: rule.subservice || {},
+                            supplier: serviceReq[0].data.supplier,
+                            supplierContacts: serviceReq[0].data.defaultContact
                         } );
                         TeamActions.createRequest.bind( team, callback, newRequest ).run();
                     }

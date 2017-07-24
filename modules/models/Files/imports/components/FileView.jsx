@@ -180,7 +180,7 @@ const FileView = React.createClass( {
     					textAlign: 'center',
     					width: '180px',
     					height: '104px',
-    					overflow: 'hidden',
+    					overflow: 'visible',
     					marginRight: '10px',
     					marginTop: '10px',
     					position: 'relative',
@@ -192,7 +192,7 @@ const FileView = React.createClass( {
 						<div title="Upload file" style={{paddingTop:"25%",color:"#999"}} className="text">
 							<i className="fa fa-cloud-upload" style={{fontSize:"40px"}}></i>
 							<br/>
-							<span><strong>Choose a file</strong> or drag it here.</span>
+							{this.props && this.props.uploadFieldName ? <span>{this.props.uploadFieldName}</span>:<span><strong>Choose a file</strong> or drag it here.</span> }
 						</div>
 					</div>
 				}

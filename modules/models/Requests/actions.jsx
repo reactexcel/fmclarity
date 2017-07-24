@@ -5,6 +5,7 @@ import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
 import { Requests, CreateRequestForm } from '/modules/models/Requests';
+import {Facilities} from '/modules/models/Facilities';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
@@ -42,14 +43,16 @@ const edit = new Action( {
     name: "edit request",
     type: 'request',
     label: "Edit",
-    action: ( request, callback ) => {
-        let oldRequest = Object.assign( {}, request );
+    action: ( preRequest, callback ) => {
+        let previousRequest = Object.assign( {}, preRequest );
+        let oldRequest = Object.assign( {}, preRequest );
         Modal.show( {
             content:
                 <AutoForm
             title = "Edit Request"
+            edit = {true}
             model = { Requests }
-            item = { request }
+            item = { previousRequest }
             form = { CreateRequestForm }
             submitText="Save"
             onSubmit = {
@@ -130,6 +133,44 @@ const deleteFunction = new Action( {
     shouldConfirm: true,
     verb: 'deleted request',
     action: ( request, callback ) => {
+        if(request.status == "Booking"){
+            let facility = Facilities.findOne({'_id':request.facility._id})
+            let areas = facility.areas;
+            	for(var i in areas){
+                    if(areas[i].totalBooking && areas[i].totalBooking.length>0){
+                        let bookingToRemove = areas[i].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                        if(bookingToRemove>=0){
+                            areas[i].totalBooking.splice( bookingToRemove, 1 );
+                            break;
+                        }
+                    }
+                    if(areas[i].children && areas[i].children.length>0){
+                        for(var j in areas[i].children){
+                            if(areas[i].children[j].totalBooking && areas[i].children[j].totalBooking.length>0){
+                                let bookingToRemove = areas[i].children[j].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                if(bookingToRemove>=0){
+                                    areas[i].children[j].totalBooking.splice( bookingToRemove, 1 );
+                                    break;
+                                }
+                            }
+                            if(areas[i].children[j].children && areas[i].children[j].children.length>0){
+                                for(var k in areas[i].children[j].children){
+                                    if(areas[i].children[j].children[k].totalBooking && areas[i].children[j].children[k].totalBooking.length>0){
+                                        let bookingToRemove = areas[i].children[j].children[k].totalBooking.map(function(o) { return o.bookingId; }).indexOf(request._id);
+                                        if(bookingToRemove>=0){
+                                            areas[i].children[j].children[k].totalBooking.splice( bookingToRemove, 1 );
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                Facilities.update( { _id: facility._id }, { $set: { "areas": areas } } );
+        }
         Requests.update( request._id, { $set: { status: 'Deleted' } } );
         Modal.hide();
         request = Requests.collection._transform( request );
@@ -183,6 +224,36 @@ const issue = new Action( {
     type: 'request',
     verb: "issued a work order",
     label: "Issue",
+    action: ( request, callback ) => {
+        // I think this is quite a good model for how these actions should be structured
+        // we might even reach a point where it can be action: 'Issues.issue'?
+        Meteor.call( 'Issues.issue', request );
+        callback( request );
+        request.markAsUnread();
+    }
+} )
+
+// issues an invoice
+const issueInvoice = new Action( {
+    name: "issue invoice",
+    type: 'request',
+    verb: "issued an invoice",
+    label: "Issue",
+    action: ( request, callback ) => {
+        // I think this is quite a good model for how these actions should be structured
+        // we might even reach a point where it can be action: 'Issues.issue'?
+        Meteor.call( 'Issues.issue', request );
+        callback( request );
+        request.markAsUnread();
+    }
+} )
+
+// reissues an invoice
+const reissueInvoice = new Action( {
+    name: "reissue invoice",
+    type: 'request',
+    verb: "reissued an invoice",
+    label: "ReIssue",
     action: ( request, callback ) => {
         // I think this is quite a good model for how these actions should be structured
         // we might even reach a point where it can be action: 'Issues.issue'?
@@ -346,6 +417,50 @@ const complete = new Action( {
     }
 } )
 
+const invoice = new Action( {
+    name: 'invoice request',
+    type: 'request',
+    verb: "invoiced a work order",
+    label: "Invoice",
+    action: ( request ) => {
+        if(request.callback && !_.isEmpty(request.callback)){
+            var callback = request.callback;
+            request = _.omit(request,'callback');
+        }
+        var invoiceNumber = "";
+        request.invoiceDetails = {};
+        request.invoiceDetails.details = request.name ? request.name : "";
+        if ( request.supplier ) {
+            let supplier = Teams.findOne( {
+                _id: request.supplier._id
+            } );
+            invoiceNumber = supplier.getNextInvoiceNumber();
+            request.invoiceDetails.invoiceNumber = invoiceNumber;
+            }
+            request.invoiceDetails.invoiceDate = new Date();
+        Modal.show( {
+            content: <AutoForm
+            title = "Create an Invoice for the completed work order."
+            model = { Requests }
+            item = { request }
+            form = {
+                [ 'invoiceDetails' ]
+            }
+            onSubmit = {
+                ( request ) => {
+                    Modal.hide();
+                    Meteor.call( 'Issues.invoice', request );
+                    if(callback){
+                        callback( request );
+                    }
+                    request.markAsUnread();
+                }
+            }
+            />
+        } )
+    }
+} )
+
 const close = new Action( {
     name: "close request",
     type: 'request',
@@ -473,6 +588,9 @@ export {
     getQuote,
     sendQuote,
     complete,
+    invoice,
+    issueInvoice,
+    reissueInvoice,
     //close,
     reopen,
     //reverse,
