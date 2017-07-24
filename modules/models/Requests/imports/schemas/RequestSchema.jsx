@@ -13,7 +13,7 @@ import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 import { Requests } from '/modules/models/Requests';
 import { DocExplorer } from '/modules/models/Documents';
-import { FileExplorer } from '/modules/models/Files';
+import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
@@ -111,6 +111,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 } };
@@ -135,6 +137,7 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
+
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                         request.costThreshold= '0';
@@ -150,6 +153,8 @@ const RequestSchema = {
                                         request.costThreshold= '0';
                                         request.priority = 'Urgent';
                                         request.supplier = Session.getSelectedTeam();
+                                        request.area = null;
+                                        request.level = null;
                                     }
                                 }
                          };
@@ -341,6 +346,9 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
+                if (request.type=="Incident") {
+                    return val;
+                }
                 if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy.level;
                 }
@@ -349,6 +357,67 @@ const RequestSchema = {
                 }
                 return val;
             },
+        },
+
+        bookingRules:{
+            label: "Booking rules/instructions",
+            size: 4,
+            type: "string",
+            input: (props) =>{
+                return <div style={{marginTop:"20px"}}><a
+                    title = {"Read"}
+                    onClick={()=>{
+                        let item = props.item;
+                        let file,isImage,extension;
+                        if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            file = item.level.data.areaDetails.attachments[0]
+                        }
+                        if( item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            file = item.area.data.areaDetails.attachments[0]
+                        }
+                        if( item.identifier && item.identifier.data && item.identifier.data.areaDetails && item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            file = item.identifier.data.areaDetails.attachments[0]
+                        }
+                        if(!_.isEmpty(file)){
+                            file = Files.findOne( file._id );
+                            extension = file.extension();
+                            isImage = file.isImage() && extension != 'tif';
+                        }
+                        if ( isImage ) {
+                            Modal.show( {
+                    			content: <img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={file.url()} />
+                    		} )
+            			} else if ( file ) {
+                            let win = window.open( file.url(), '_blank' );
+                    		win.focus();
+            			}
+                    }}>Booking rules/instructions</a>
+                </div>
+            },
+            condition: (item)=>{
+                let toReturn = false;
+                if(item.type == "Booking"){
+                    if(item.level && item.level.data && item.level.data.areaDetails){
+                        toReturn = false;
+                        if(item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.area && item.area.data && item.area.data.areaDetails){
+                        toReturn = false;
+                        if( item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.identifier && item.identifier.data && item.identifier.data.areaDetails){
+                        toReturn = false;
+                        if( item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    return toReturn;
+                }
+            }
         },
 
         area: {
