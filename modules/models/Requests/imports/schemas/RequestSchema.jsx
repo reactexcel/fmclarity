@@ -433,6 +433,23 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
+        reporter: {
+             label: "Reporter",
+             description: "Who reported the incident",
+             type: "object",
+             input: Select,
+             required: true,
+             options: ( request ) => {
+                     request = Requests.collection._transform( request );
+                     let team = request.getFacility() || request.getTeam(),
+                         members = team.getMembers();
+                     return {
+                         items: members,
+                         view: ContactCard
+                     }
+             },
+             condition: "Incident"
+         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
