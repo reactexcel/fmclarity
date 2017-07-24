@@ -28,7 +28,7 @@ class UserPanel extends React.Component {
 		const onUpdate = ( newItem ) => {
 			this.setState ( { item : newItem } );
 		}
-
+        let logedInUser = Meteor.user();
 		let user = this.props.item,
 			group = this.props.group || Session.getSelectedTeam(),
 			menuItems = [];
@@ -36,10 +36,19 @@ class UserPanel extends React.Component {
 			validActions = Actions.filter( actionNames, group );
 		for( actionName in validActions ) {
 			let action = validActions[ actionName ];
-			let shouldConfirm = actionName == 'login as user' && role && role == "fmc support" ? true : false;
-			menuItems.push( action.bind( {shouldConfirm:shouldConfirm}, group,  user, onUpdate  ) );
+			let shouldConfirm = actionName == 'login as user' && logedInUser.getRole() == "fmc support" ? true : false;
+			let a = action.bind( {shouldConfirm:shouldConfirm}, group,  user, onUpdate  )
+			if(actionName == 'login as user'){
+				a.uniqueAlertLabel = "Login as "+user.profile.name+' ?'
+			}
+			if( _.isEmpty(a.uniqueAlertLabel)){
+				menuItems.push( a );
+			}else{
+				if(_.contains(['fmc support'],logedInUser.getRole())){
+					menuItems.push( a );
+				}
+			}
 		}
-
 		return menuItems;
 
 		/*
@@ -80,7 +89,6 @@ class UserPanel extends React.Component {
 		if ( contact.getAvailableServices ) {
 			availableServices = contact.getAvailableServices();
 		}
-
 		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
 		return (
 			<div className="business-card">
