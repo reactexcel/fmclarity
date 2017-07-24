@@ -87,7 +87,6 @@ export default RequestPanel = React.createClass( {
 
 
 const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
-
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
             return moment( date ).format( 'ddd Do MMM' );
@@ -238,7 +237,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-                            { request.type == 'Ad-hoc' &&
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" &&
                               request.costThreshold &&
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
@@ -261,17 +260,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 :
                                 <div>
 
-                                { request.type == "Ad-Hoc" && request.issuedAt ?
+                                { (request.type == 'Ad-hoc' || "Ad-Hoc") && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.type == "Ad-Hoc" && request.dueDate ?
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" && request.dueDate ?
 
                             <span style={{color : moment(request.dueDate).isBefore() ? "red":"black"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
 
                             : null }
 
-                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            { request.type != 'Ad-hoc' && request.type !="Ad-Hoc" && request.createdAt ?
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
