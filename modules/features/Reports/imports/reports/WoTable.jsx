@@ -1,6 +1,6 @@
 import React from "react";
 import moment from 'moment';
-import { Requests } from '/modules/models/Requests';
+import { Requests,RequestActions } from '/modules/models/Requests';
 import { Files } from '/modules/models/Files';
 import { Reports } from '/modules/models/Reports';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -76,14 +76,14 @@ const WoTable = React.createClass( {
         removedImg.push(key);
         this.setState({ removedImg });
     },
-    handleRemoveWO( r ){
-		var message = confirm( 'Are you sure you want to delete this WO?' );
-    console.log(message,r);
-    if(message){
-      r["status"]="Deleted"
-      Requests.save.call(r)
-    }
-    },
+    // handleRemoveWO( r ){
+		// var message = confirm( 'Are you sure you want to delete this WO?' );
+    // console.log(message,r);
+    // if(message){
+    //   r["status"]="Deleted"
+    //   Requests.save.call(r)
+    // }
+    // },
     getImage( _id ){
 
         let file = Files.findOne({_id});
@@ -190,75 +190,29 @@ const WoTable = React.createClass( {
                         }
                         return (
                           <tr key={idx + idy} className="row-WO">
-                            <td>{r.code}</td>
-                            <td>
-                              <span
-                                style={{right:"200px"}}
-                                className="remove-WO"
-                                title="Remove image"
-                                onClick={() => this.handleRemoveWO(r)}
-                                >
-                                  &times;
-                                </span>
+                            <td onClick={()=>{
+                              r["tabIndex"]= 0
+                              RequestActions.view.run( r )
+                            }}></td>
+                            <td style={{width:"45%"}} onClick={()=>{
+                              r["tabIndex"]= 0
+                              RequestActions.view.run( r )
+                            }}>
+                              <label style={{position:"absolute",left:"40px",cursor:"pointer"}}>{r.code}</label>
                               <span style={{
                                 color:"#0152b5",
-                                fontSize:"20px",
+                                fontSize:"10px",
                                 fontWeight:"900",
                                 float:"right",
                                 cursor:"pointer"
-                              }} onClick={()=>{$(".add"+r.code).show()}}>+</span>
-                              <div className = {"add"+r.code}  style = {
-                                  {
-                                    background: "rgba(0,0,0,0.5)",
-                                    position: "fixed",
-                                    zIndex: 5000,
-                                    left: "0px",
-                                    right: "0px",
-                                    top: "0px",
-                                    bottom: "0px",
-                                    textAlign: "center",
-                                    display:"none"
-                                  }
-                                } >
-                                <span
-                                  style={{top:"70px",right:"37px",fontSize:"50px",height:"55px",width:"55px",cursor:"pointer",display:"block"}}
-                                  className="remove-img"
-                                  title="Remove image"
-                                  onClick={() => {
-                                    $(".add"+r.code).hide();
-                                  }}
-                                  >
-                                    &times;
-                                  </span>
-                                <div style = {
-                                  {
-                                    position: "absolute",
-                                    background:"white",
-                                    borderRadius:"3px",
-                                    left: "45%",
-                                    top: "50%",
-                                    marginTop: "-50px"
-                                  }
-                                } >
-
-                                <AutoForm model = { Requests } item = { r } form = { ['attachments'] }  afterSubmit={ ( r) => {
-                                  $(".add"+r.code).hide();
-                                  r.distributeMessage( {
-                                    recipientRoles: [ 'team manager', 'facility manager', 'supplier manager', 'assignee' ],
-                                    message: {
-                                      verb: "uploaded a file to",
-                                      subject: "A new file has been uploaded" + ( owner ? ` by ${owner.getName()}` : '' ),
-                                      body: r.description
-                                    }
-                                  } );
-                                  r.markAsUnread();
-                                } }  />
-                                </div>
-                                </div>
-
-                              <div>{r.name}</div>
-                              <div>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
-                              <div>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>
+                              }} onClick={(e)=>{
+                                e.stopPropagation();
+                                r["tabIndex"]= 1
+                                RequestActions.view.run( r )
+                              }}>+ Add-image</span>
+                              <div style={{cursor:"pointer"}}>{r.name}</div>
+                              <div style={{cursor:"pointer"}}>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
+                              <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>
                               {imgs}
                             </td>
                             <td>{r.costThreshold}</td>

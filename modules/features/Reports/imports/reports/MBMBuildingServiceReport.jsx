@@ -509,7 +509,7 @@ const SingleServiceRequest = React.createClass( {
 					</div>
 				</div>
 				<div className="data-table">
-					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
+					<div style={{marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
 						<WoTable service={this.props.serviceName}/>
 					</div>
 				</div>
