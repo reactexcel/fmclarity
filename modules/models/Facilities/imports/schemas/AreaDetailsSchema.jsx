@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
 import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker } from '/modules/ui/MaterialInputs';
+import { FileExplorer } from '/modules/models/Files';
 export default AreaDetailsSchema = {
     type: {
         label: 'Type',
@@ -38,6 +39,7 @@ export default AreaDetailsSchema = {
     "unit": {
         label: 'Unit',
         type: 'string',
+        required: true,
         size: 6,
         input: Select,
         options: {
@@ -55,6 +57,7 @@ export default AreaDetailsSchema = {
     day: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4", "5", "6" ]
@@ -70,6 +73,7 @@ export default AreaDetailsSchema = {
     hour: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [
@@ -103,7 +107,6 @@ export default AreaDetailsSchema = {
                 "Fri": { select: false, time: "" },
                 "Sat": { select: false, time: "" }
             };
-            console.log( selected );
             return (
                 <div className="row" style={{ margin: "20px"}}>
                      {days.map( ( d, id )=>{
@@ -205,6 +208,7 @@ export default AreaDetailsSchema = {
     month: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" ]
@@ -220,6 +224,7 @@ export default AreaDetailsSchema = {
     week: {
         label: 'Booking increment',
         size: 6,
+        required: true,
         input: Select,
         options( item ) {
             let items = [ "1", "2", "3", "4" ]
@@ -377,5 +382,22 @@ export default AreaDetailsSchema = {
         label: "Area description",
         size: 12,
         input: Text,
-    }
+    },
+    attachments: {
+		label: "Attachments",
+		input: (props)=>{
+            return <FileExplorer
+                    {...props}
+                    uploadNewFile = {props.item && props.item.attachments && props.item.attachments.length ? true : undefined}
+                    uploadFieldName="Drop Booking Rules/Instructions here or browse"
+                    onChange={(val)=>{
+                        props.onChange(val)
+                    }}
+            />
+        },
+        //input: FileExplorer,
+        condition(item){
+            return item.type === "Bookable";
+        }
+	},
 }

@@ -625,13 +625,13 @@ function actionComplete( request ) {
 			}
 		} );
 
-		newRequest.distributeMessage( {
+		/*newRequest.distributeMessage( {
 			message: {
 				verb: "requested a follow up to " + request.getName(),
 				subject: closer.getName() + " requested a follow up to " + request.getName(),
 				body: newRequest.description
 			}
-		} );
+		} );*/
 	} else {
 
 		request.distributeMessage( {
