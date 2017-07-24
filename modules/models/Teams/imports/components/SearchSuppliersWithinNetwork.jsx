@@ -134,6 +134,9 @@ export default class SearchSuppliersWithinNetwork extends Component {
                     if ( !invitee.email ) {
                         //this.setState( { shouldShowMessage: true } );
                     } else {
+                        if(this.props.onSaveSupplier){
+                            this.props.onSaveSupplier(supplier)
+                        }
                         Modal.hide();
                     }
 
@@ -173,7 +176,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
     render(){
         let idList = []
 		let { suppliers, facility, showMsg } = this.state;
-		idList = _.pluck(facility.suppliers, '_id');
+		idList = facility ? _.pluck(facility.suppliers, '_id') : [];
         return (
             <div style={{minWidth:'800px'}}>
                 <div style = { {padding:"5px 15px 20px 15px"} } >

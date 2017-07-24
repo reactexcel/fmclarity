@@ -174,7 +174,7 @@ const TeamStepper = React.createClass( {
                         Session.getSelectedFacility().addSupplier(supplier);
                     }
                 },2000);
-                
+
 
             } );
 
@@ -333,10 +333,10 @@ const TeamStepper = React.createClass( {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
                                                 }
-                                                
+
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "manager",
+                                                      role: role ? role : "portfolio manager",
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
