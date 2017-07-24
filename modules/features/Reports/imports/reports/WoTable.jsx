@@ -93,7 +93,7 @@ const WoTable = React.createClass( {
             url = file.url();
             if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
                 return (
-                  <div className="col-sm-7 report-thumb" style={{padding:"0"}} key={_id}>
+                  <div className="col-sm-6 report-thumb" style={{padding:"0"}} key={_id}>
                     {/* <span
                       style={{top:"5px",left:"180px"}}
                       className="remove-img"
@@ -102,7 +102,7 @@ const WoTable = React.createClass( {
                       >
                         &times;
                       </span> */}
-                      <img src={url} style={{ height:"150px", width:"200px" }} />
+                      <img src={url} style={{ height:"150px", width:"180px" }} />
                   </div>
                 );
             }
@@ -204,7 +204,8 @@ const WoTable = React.createClass( {
                                 fontSize:"10px",
                                 fontWeight:"900",
                                 float:"right",
-                                cursor:"pointer"
+                                cursor:"pointer",
+                                padding:"5px"
                               }} onClick={(e)=>{
                                 e.stopPropagation();
                                 r["tabIndex"]= 1
