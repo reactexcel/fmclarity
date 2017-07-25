@@ -1,7 +1,7 @@
 import React from "react";
 import { ContactCard } from '/modules/mixins/Members';
 import { FacilityFilter } from '/modules/models/Facilities';
-import { Teams, TeamActions, TeamPanel, TeamStepper, TeamStepper2 } from '/modules/models/Teams';
+import { Teams, TeamActions, TeamPanel, TeamStepper, SupplierStepper } from '/modules/models/Teams';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
 // FacilityPageIndex
@@ -27,14 +27,13 @@ export default class TeamPageSuppliersMobile extends React.Component {
 		} )
 	}
 
-	addSupplier(createNew){
+	addSupplier({addNewSupplier}){
 		let facility = Session.getSelectedFacility();
 
         Modal.show( {
             content: <DropFileContainer model = { Teams }>
-				{createNew?<TeamStepper2 item = { null } onChange = { ( supplier ) => {
+				{addNewSupplier?<SupplierStepper item = { null } onChange = { ( supplier ) => {
                 	if( facility ) {
-						console.log(facility,"Teamstepper2 change");
                 		facility.addSupplier( supplier );
                 	}
                 }}
@@ -73,7 +72,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<button className="btn btn-flat" onClick = { () => this.addSupplier(true) } >
+						<button className="btn btn-flat" onClick = { () => this.addSupplier({addNewSupplier:true}) } >
 							Add new supplier
 						</button>
 					</span>

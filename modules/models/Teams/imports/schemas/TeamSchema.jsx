@@ -31,14 +31,11 @@ export default TeamSchema = {
                     props.onChange(val)
                 }}
                 onBlur={(val)=>{
-                    console.log(val,props,"onblur");
                     if(!_.isEmpty(props.item.name)){
                         let query = {name:props.item.name};
                         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
                         if ( searchTeams.length > 0 ) {
-                            console.log(searchTeams,"team found");
                         }else{
-                            console.log(searchTeams,"team not found");
                         }
                     }
                 }}

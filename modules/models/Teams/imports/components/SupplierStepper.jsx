@@ -18,17 +18,16 @@ import { Stepper } from '/modules/ui/Stepper';
 import { Select } from '/modules/ui/MaterialInputs';
 
 /**
- * @class           TeamStepper2
+ * @class           SupplierStepper
  * @memberOf        module:models/Teams
  * @todo            Remove tour, add additional instructions into stepper
  */
 
-const TeamStepper2 = React.createClass( {
+const SupplierStepper = React.createClass( {
 
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        console.log("getMeteorData");
         let viewer = Meteor.user(),
             viewersTeam = null,
             viewingTeam = null,
@@ -73,7 +72,6 @@ const TeamStepper2 = React.createClass( {
             }
         }
         group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
-        console.log(viewingTeam,"viewingTeam");
         return {
             viewer: viewer,
             viewersTeam: viewersTeam,
@@ -120,6 +118,7 @@ const TeamStepper2 = React.createClass( {
             item: this.props.item,
             teamType: this.props.teamType || null,
             viewingTeam:{
+                type:'contractor',
                 owner:{
                     name:Session.getSelectedTeam().name,
                     type:"team",
@@ -135,57 +134,12 @@ const TeamStepper2 = React.createClass( {
         } );
     },
 
-    handleInvite( supplier = {} ) {
-
-        var viewersTeam = this.data.viewersTeam;
-        var group = this.data.group;
-        var input = this.refs.invitation;
-        var searchName = supplier.name ? supplier.name : input.value;
-        if ( !searchName ) {
-            alert( 'Please enter a valid name.' );
-        } else {
-            //this.setState( { searchName: searchName} );
-            this.setState( { searchName: searchName }, () => {
-                input.value = '';
-                let supplierId = supplier._id || Random.id();
-                viewersTeam.inviteSupplier( searchName, supplierId, ( invitee ) => {
-                    invitee = Teams.collection._transform( invitee );
-
-                    /*if ( group && group.addSupplier ) {
-                        group.addSupplier( invitee );
-                    }*/
-                    this.setItem( invitee );
-                    if ( this.props.onChange ) {
-                        this.props.onChange( invitee );
-                    }
-
-                    if ( !invitee.email ) {
-                        this.setState( { shouldShowMessage: true } );
-                    } else {
-                        Modal.hide();
-                    }
-
-                }, null );
-                setTimeout(function () {
-                    //quick fix to manually add supplier to a team. better solution needed
-                    if (Session.getSelectedFacility()) {
-                        Session.getSelectedFacility().addSupplier(supplier);
-                    }
-                },2000);
-
-
-            } );
-
-        }
-    },
-
     handleInviteSupplier( supplier = {} ){
         var viewersTeam = this.data.viewersTeam
         let supplierId = supplier._id || Random.id();
-        viewersTeam.inviteSupplier( this.state.viewingTeam.name, supplierId, ( invitee ) => {
+        viewersTeam.inviteSupplier( this.state.viewingTeam, supplierId, ( invitee ) => {
             invitee = Teams.collection._transform( invitee );
             this.setItem( invitee );
-            console.log(invitee,"invitee");
             if ( this.props.onChange ) {
                 this.props.onChange( invitee );
             }
@@ -193,7 +147,7 @@ const TeamStepper2 = React.createClass( {
             if ( !invitee.email ) {
                 this.setState( { shouldShowMessage: true } );
             } else {
-                Modal.hide();
+                //Modal.hide();
             }
 
         }, null );
@@ -221,44 +175,14 @@ const TeamStepper2 = React.createClass( {
     onNextWorkOrder( callback ) {
         this.submitFormCallbackForWorkOrder = callback;
     },
-    handleTeamChange( team ) {
 
-        this.handleInvite( team );
-
-    },
-
-    checkName( event ) {
-        event.preventDefault();
-        var inputName = this.refs.invitation.value;
-        let query = {
-            name: {
-                $regex: inputName,
-                $options: 'i'
-            }
-        };
-        if ( this.state.teamType ) {
-            query.type = this.state.teamType
-        }
-        console.log(query,"query");
-        searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
-        if ( searchTeams.length > 0 ) {
-            this.setState( { foundTeams: true } );
-
-        } else {
-            this.setState( { foundTeams: false } );
-            this.handleInvite();
-
-        }
-    },
     checkSupplierName(name){
         event.preventDefault();
         let query = {name:name};
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
-        console.log(query,"query");
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
-        console.log(searchTeams,"searchTeams");
         if ( searchTeams.length > 0 ) {
             this.setState( {
                 foundTeams: true,
@@ -267,30 +191,25 @@ const TeamStepper2 = React.createClass( {
                     color:"#e11d60"
                 }
              } );
-            console.log(searchTeams,"team found");
             return true;
 
         } else {
-            console.log("team not found");
             this.setState( {
                 foundTeams: false,
                 messageToShow: null
              } );
             this.handleInviteSupplier();
-            return true;
+            return false;
         }
     },
 
     render() {
-        console.log(this.data.viewingTeam,"this.data.viewingTeam");
-        console.log(this.state.viewingTeam,"this.state.viewingTeam");
         var viewingTeam = this.data.viewingTeam ? this.data.viewingTeam : (_.omit(this.state.viewingTeam,"_id"));
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
-        console.log(viewingTeam,"viewingTeam in render");
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
@@ -312,52 +231,11 @@ const TeamStepper2 = React.createClass( {
                     ( callback ) => {
                         let supplierFound = false;
                         if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
-                            console.log("submitForm");
                             supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
-                        }
-                        console.log(supplierFound,"supplierFound");
-                        if(supplierFound==false){
-                            console.log("run-------------------");
-                            if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
-                              this.submitFormCallback( ( errorList ) => {
-                                this.submitFormCallbackForWorkOrder( ( error ) => {
-                                  let keys = Object.keys( error );
-                                  _.forEach( keys, ( k ) => {
-                                    errorList[ k ] = error[ k ];
-                                  } );
-                                  callback( errorList );
-                                } );
-                              } );
-                          }
-                        }
-
-
-                        /*if(!_.isEmpty(this.state.viewingTeam.name) && _.isEmpty(this.data.viewingTeam)){
-                            console.log("submitForm");
-                            supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
-                        }*/
-                        /*console.log(this.state.viewingTeam,"viewingTeam");
-                      if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
-                        this.submitFormCallback( ( errorList ) => {
-                            let supplierFound = false;
-                            console.log(errorList,_.isEmpty(errorList),"errorList 111");
-                            if(_.isEmpty(errorList) && _.isEmpty(this.data.viewingTeam)){
-                                if(!_.isEmpty(this.state.viewingTeam.name)){
-                                    supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
-                                }
+                            if(supplierFound==false){
+                                callback({})
                             }
-                            if(supplierFound == false){
-                                this.submitFormCallbackForWorkOrder( ( error ) => {
-                                    console.log("now");
-                                      let keys = Object.keys( error );
-                                        _.forEach( keys, ( k ) => {
-                                          errorList[ k ] = error[ k ];
-                                        } );
-                                      callback( errorList );
-                                } );
-                            }
-                        } );
-                    }*/
+                        }
                     }
                   }
                   onFinish = { () => {
@@ -378,8 +256,6 @@ const TeamStepper2 = React.createClass( {
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             onChange =  { ( newItem ) => {
-                                                console.log(this.data.viewingTeam,"this.data.viewingTeam");
-                                                console.log(newItem,"newItem");
                                                 this.setState({
                                                     viewingTeam: newItem.item
                                                 })
@@ -456,4 +332,4 @@ const TeamStepper2 = React.createClass( {
     }
 } );
 
-export default TeamStepper2;
+export default SupplierStepper;

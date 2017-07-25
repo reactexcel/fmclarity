@@ -19,7 +19,6 @@ export default Stepper = React.createClass( {
     },
 
     selectNext( evt, done ) {
-        console.log("selectNext");
         var idx = parseInt( this.state.active );
         if ( this.props.submitForm && ( idx == 0 || done == true ) ) {
             this.props.submitForm( ( err ) => {

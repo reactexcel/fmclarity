@@ -28,7 +28,6 @@ const TeamStepper = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-        console.log("getMeteorData");
         let viewer = Meteor.user(),
             viewersTeam = null,
             viewingTeam = null,
@@ -84,7 +83,6 @@ const TeamStepper = React.createClass( {
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
         group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
-        console.log(viewingTeam,"viewingTeam");
         return {
             viewer: viewer,
             viewersTeam: viewersTeam,
@@ -159,7 +157,6 @@ const TeamStepper = React.createClass( {
                         group.addSupplier( invitee );
                     }*/
                     this.setItem( invitee );
-                    console.log(invitee,"invitee");
                     if ( this.props.onChange ) {
                         this.props.onChange( invitee );
                     }
@@ -236,7 +233,6 @@ const TeamStepper = React.createClass( {
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
-        console.log(viewingTeam,"viewingTeam in render");
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
@@ -258,7 +254,6 @@ const TeamStepper = React.createClass( {
                 </form>
             )
         }
-        console.log(viewingTeam,"viewingTeam");
         /*
         if(viewingTeam.type == "contractor"){
             Teams.schema.email.required=false;
@@ -323,7 +318,6 @@ const TeamStepper = React.createClass( {
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
                                             onChange =  { ( newItem ) => {
-                                                console.log(this.data.viewingTeam,"this.data.viewingTeam");
                                                 /*
                                                 if(newItem.item.type == "contractor"){
                                                     Teams.schema.email.required=false;
