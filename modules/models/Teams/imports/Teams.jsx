@@ -464,6 +464,43 @@ Teams.helpers( {
         return this.counters.WO;
     },
 
+    getNextInvoiceNumber() {
+        Number.prototype.pad = function(size) {
+          var s = String(this);
+          while (s.length < (size || 2)) {s = "0" + s;}
+          return s;
+        }
+        if ( !this.counters ) {
+            this.counters = {};
+        }
+        if ( !this.counters.INV ) {
+            this.counters.INV = 0;
+        }
+        var nameInitials = this.getNameInitials();
+        var invoiceNumber = "";
+        this.counters.INV = this.counters.INV + 1;
+        Teams.save.call( this );
+        var paddedCounter = ( this.counters.INV ).pad(3);
+        invoiceNumber = nameInitials + paddedCounter.toString();
+        return invoiceNumber;
+    },
+
+    getNameInitials(){
+        let names = [],
+            name = this.name,
+            initials = "";
+        if ( name != null ) {
+            names = name.trim().split( ' ' );
+            if ( names.length == 1 ) {
+                initials = names[0].substr(0, 3);
+            }
+            if ( names.length >= 2 ) {
+                initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ];
+            }
+        }
+        return initials.toUpperCase();
+    },
+
     //duplicate this in the publish functions
     //for that matter can use this function directly in publich (just return cursor instead of items)
     getManagerFacilities() {

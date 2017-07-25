@@ -9,9 +9,11 @@ import { Documents } from '/modules/models/Documents'
 import { Select } from '/modules/ui/MaterialInputs';
 import {Teams} from '/modules/models/Teams';
 import { Facilities,FacilityListTile } from '/modules/models/Facilities';
+import RaisedButton from 'material-ui/RaisedButton';
 import DocTypes from '../schemas/DocTypes.jsx';
 import DocumentSchema from '../schemas/DocumentSchema.jsx';
 import moment from 'moment';
+
 
 export default class DocsSinglePageIndex extends React.Component {
     constructor(props) {
@@ -497,18 +499,24 @@ export default class DocsSinglePageIndex extends React.Component {
 			<div className='col-xs-12' style={{paddingTop:'10px'}}>
                 <div className="row">
                     <div className="col-xs-12">
-                        <button className="btn btn-flat" onClick={(event)=>{
-                            event.stopPropagation();
-                            if($('#filter-box').css('display') == 'none'){
-                                $('#filter-box').css('display','block')
-                                $('#arrow-icon').css('display','block')
-                                //$('#filter-details').css('display','none')
-                            } else {
-                                $('#filter-box').css('display','none')
-                                $('#arrow-icon').css('display','none')
-                                //$('#filter-details').css('display','block')
-                            }
-                        }} ><i className="fa fa-filter" style={{'marginRight':'7px',fontSize:'16px'}}></i>Filter Documents</button>
+                        <RaisedButton
+                            label="Filter Documents"
+                            backgroundColor={"#b8e986"}
+                            labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}}
+                            icon={<i className="fa fa-filter" style={{'marginLeft':'12px',fontSize:'16px',marginTop:"-5px"}}></i>}
+                            onClick={(event)=>{
+                                event.stopPropagation();
+                                if($('#filter-box').css('display') == 'none'){
+                                    $('#filter-box').css('display','block')
+                                    $('#arrow-icon').css('display','block')
+                                    //$('#filter-details').css('display','none')
+                                } else {
+                                    $('#filter-box').css('display','none')
+                                    $('#arrow-icon').css('display','none')
+                                    //$('#filter-details').css('display','block')
+                                }
+                            }}
+                        />
                     </div>
                 </div>
                 <div className="row">
