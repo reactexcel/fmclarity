@@ -8,7 +8,6 @@ import moment from 'moment';
 
 export default ReportsNavWidget = React.createClass( {
  	abc(id){
-		console.log('sssssssssssssss');
 		$(".loader").show();
 		setTimeout(function(){
 			FlowRouter.go("/report/"+id+"/");

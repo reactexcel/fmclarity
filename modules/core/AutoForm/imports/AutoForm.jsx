@@ -151,7 +151,7 @@ class AutoForm extends React.Component {
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength,nextRow } = schema[ key ],
 				placeholder = label,
 				Input = null;
 			// Create default value for this field
@@ -177,7 +177,6 @@ class AutoForm extends React.Component {
 			if ( _.isFunction( description ) ) {
 				description = description( item );
 			}
-
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
 				let { subschema, size = 12, ...others } = schema[ key ];
@@ -228,9 +227,7 @@ class AutoForm extends React.Component {
 				if ( Input == null ) {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
-
 				return (
-
 					<div key = { key } className = { `col-sm-${size}` } >
 						<Input
 
