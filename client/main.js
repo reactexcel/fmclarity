@@ -1,7 +1,8 @@
+"use strict";
+
 import { DocHead } from 'meteor/kadira:dochead';
-
 import { Actions } from '/modules/core/Actions';
-
+import { Menus } from '/modules/core/Menus';
 import { Modal } from '/modules/ui/Modal';
 
 import React from 'react';
@@ -617,7 +618,7 @@ Actions.addAccessRule( {
 } )
 */
 
-UserPanelActions = Actions.clone( [
+Menus.UserPanelActions = Actions.clone( [
     'edit member',
     'remove member',
     'invite member',
@@ -631,7 +632,7 @@ TeamPanelActions = Actions.clone( [
 ] );
 */
 
-UserMenuActions = Actions.clone( [
+Menus.UserMenuActions = Actions.clone( [
     'edit team',
     'create team',
     'migrate schema',
@@ -640,12 +641,12 @@ UserMenuActions = Actions.clone( [
     'logout'
 ] );
 
-FacilityMenuActions = Actions.clone( [
+Menus.FacilityMenuActions = Actions.clone( [
     'edit facility',
     'destroy facility'
 ] );
 
-FloatingActionButtonActions = Actions.clone( [
+Menus.FloatingActionButtonActions = Actions.clone( [
     'create team request',
     'create team facility',
     //'create team',

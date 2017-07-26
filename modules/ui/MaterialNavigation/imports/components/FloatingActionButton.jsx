@@ -1,4 +1,7 @@
 import React from 'react';
+//import { Menus } from '/modules/core/Actions';
+
+import { Menus } from '/modules/core/Menus';
 
 export default class FloatingActionButton extends React.Component {
 
@@ -22,7 +25,7 @@ export default class FloatingActionButton extends React.Component {
         return (
             <div className="fab-panel noprint" id="fab">
 			 { actions.map( ( actionName, idx ) => {
-				 let action = FloatingActionButtonActions.actions[ actionName ]
+				 let action = Menus.FloatingActionButtonActions.actions[ actionName ]
 			 	return (
 					<button
 						key = { idx }

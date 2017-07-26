@@ -32,12 +32,17 @@ export default RequestPanel = React.createClass( {
             contact = null,
             facility = null,
             realEstateAgency = null,
-            owner = null;
+            owner = null,
+            date_diff = null ;
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
+              if(this.props.item.hasOwnProperty("start")){
+                date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
+              }
+
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -49,21 +54,31 @@ export default RequestPanel = React.createClass( {
 
                 contact = request.getContact();
                 supplier = request.getSupplier();
-                if ( request.type == 'Preventative' ) {
+                // console.log(request);
+                if ( request.type == 'Preventative') {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
+                if(date_diff === 0 && request.type == 'Preventative'){
+                  let lastdate = request.getPreviousDate();
+                  let adhocRequest = request.findCloneAt( lastdate );
+                  if(adhocRequest != undefined || null){
+                    request = adhocRequest
+                  }
+                }
             }
         }
         let callback = this.props.callback
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
+        return { date_diff ,request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
         //Perf.start();
-        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
+        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
     },
 
     componentDidMount() {
