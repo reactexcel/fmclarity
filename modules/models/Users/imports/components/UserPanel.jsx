@@ -10,6 +10,7 @@ import { Actions } from '/modules/core/Actions';
 import { UserActions } from '/modules/models/Users';
 import { MemberActions } from '/modules/mixins/Members';
 import { TeamActions } from '/modules/models/Teams';
+import { Menus } from '/modules/core/Menus';
 
 /**
  * @class 			UserPanel
@@ -32,7 +33,7 @@ class UserPanel extends React.Component {
 		let user = this.props.item,
 			group = this.props.group || Session.getSelectedTeam(),
 			menuItems = [];
-		let actionNames = Object.keys( UserPanelActions.actions ),
+		let actionNames = Object.keys( Menus.UserPanelActions.actions ),
 			validActions = Actions.filter( actionNames, group );
 		for( actionName in validActions ) {
 			let action = validActions[ actionName ];

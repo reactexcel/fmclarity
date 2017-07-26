@@ -7,6 +7,7 @@ import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
 import { Actions } from '/modules/core/Actions';
+import { Menus } from '/modules/core/Menus';
 
 /**
  * @class           UserProfileMenu
@@ -60,7 +61,7 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 		)
 	}
 
-	let actionNames = Object.keys( UserMenuActions.actions ),
+	let actionNames = Object.keys( Menus.UserMenuActions.actions ),
 		validActions = Actions.filter( actionNames, team ),
 		validActionNames = Object.keys( validActions );
 
@@ -99,7 +100,7 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 
 				validActionNames.map( ( actionName ) => {
 
-					let action 		= UserMenuActions.actions[ actionName ],
+					let action 		= Menus.UserMenuActions.actions[ actionName ],
 						icon        = action.icon,
 						label       = action.label;
 
