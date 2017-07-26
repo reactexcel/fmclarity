@@ -52,6 +52,10 @@ const CronJobs = {
             requests = requestsCursor.fetch();
 
         requests.forEach( ( request, i ) => {
+          let Team = (request.team && request.team.hasOwnProperty("_id")) ? request.team._id : false
+          if(!Team){
+            return
+          }
             let team = Teams.collection.findOne( { _id: request.team._id } ),
                 coopyRequest = Object.assign( {}, request )
             code = null,
@@ -88,6 +92,7 @@ const CronJobs = {
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
                 coopyRequest.type = 'Ad-Hoc';
+                coopyRequest.issuedAt = new Date();
 
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
                 collection.insert( coopyRequest );
