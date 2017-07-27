@@ -120,7 +120,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'portfolio manager', 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
