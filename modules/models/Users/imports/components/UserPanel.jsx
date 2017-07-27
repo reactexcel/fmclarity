@@ -24,23 +24,31 @@ class UserPanel extends React.Component {
 		}
 	}
 
-	getMenu() {
-
+	getMenu(role) {
 		const onUpdate = ( newItem ) => {
 			this.setState ( { item : newItem } );
 		}
-
+        let logedInUser = Meteor.user();
 		let user = this.props.item,
 			group = this.props.group || Session.getSelectedTeam(),
 			menuItems = [];
 		let actionNames = Object.keys( UserPanelActions.actions ),
 			validActions = Actions.filter( actionNames, group );
-
 		for( actionName in validActions ) {
 			let action = validActions[ actionName ];
-			menuItems.push( action.bind( group, user, onUpdate ) );
+			let shouldConfirm = actionName == 'login as user' && logedInUser.getRole() == "fmc support" ? true : false;
+			let a = action.bind( {shouldConfirm:shouldConfirm}, group,  user, onUpdate  )
+			if(actionName == 'login as user'){
+				a.uniqueAlertLabel = "Login as "+user.profile.name+' ?'
+			}
+			if( _.isEmpty(a.uniqueAlertLabel)){
+				menuItems.push( a );
+			}else{
+				if(_.contains(['fmc support'],logedInUser.getRole())){
+					menuItems.push( a );
+				}
+			}
 		}
-
 		return menuItems;
 
 		/*
@@ -72,7 +80,6 @@ class UserPanel extends React.Component {
 	}
 
 	render() {
-
 		let profile = null,
 			availableServices = null,
 			contact = this.state.item,
@@ -144,7 +151,7 @@ class UserPanel extends React.Component {
 					</div>
 			    </div>
 			    { !hideMenu ?
-            		<Menu items = { this.getMenu() } />
+            		<Menu items = { this.getMenu(relation&&relation.role ? relation.role : null) } />
             	: null }
 			</div>
 		)

@@ -30,6 +30,9 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		statusFilter = { "status": 'Close' };
 		includeComplete = true;
 	}
+	else if ( selectedStatus == 'Booking' ){
+		statusFilter = { "status": 'Booking' };
+	}
 	else if ( selectedStatus == 'Cancelled' ) {
 		statusFilter = { "status": 'Cancelled' };
 		includeComplete = true;
@@ -64,7 +67,8 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	}
 
 	if ( user != null ) {
-		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }/*, { expandPMP: true } */);
+	    // could test moving this below loading team and only including facilities if supplier
+		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
 		//requests = user.getRequests();
 		//console.log( requests );
 	}
