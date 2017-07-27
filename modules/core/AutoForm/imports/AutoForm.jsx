@@ -6,7 +6,9 @@
 import React from "react";
 import { Text } from '/modules/ui/MaterialInputs';
 import FormController from './FormController.jsx';
-import { Modal } from '/modules/ui/Modal'
+import { Modal } from '/modules/ui/Modal';
+
+	import { Documents, DocExplorer } from '/modules/models/Documents';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -148,6 +150,9 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
+			if(key == 'documents'){
+				schema[key].input = DocExplorer;
+			}
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
