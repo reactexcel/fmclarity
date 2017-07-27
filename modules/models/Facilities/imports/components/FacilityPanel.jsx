@@ -19,8 +19,6 @@ import { Facilities, FacilityActions, PropertyManagerDetails, BillingAddressDeta
 import FacilityStepper from './FacilityStepper.jsx';
 import { Modal } from '/modules/ui/Modal';
 
-import { Menus } from '/modules/core/Menus';
-
 /**
  * @class 			FacilityPanel
  * @memberOf		module:models/Facilities
@@ -33,7 +31,7 @@ function FacilityPanel( { item } ) {
         thumbUrl = null,
         menuItems = [];
 
-    let actionNames = Object.keys( Menus.FacilityMenuActions.actions ),
+    let actionNames = Object.keys( FacilityMenuActions.actions ),
         validActions = Actions.filter( actionNames, facility );
 
     if ( facility.getThumbUrl ) {
