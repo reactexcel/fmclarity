@@ -32,12 +32,17 @@ export default RequestPanel = React.createClass( {
             contact = null,
             facility = null,
             realEstateAgency = null,
-            owner = null;
+            owner = null,
+            date_diff = null ;
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
+              if(this.props.item.hasOwnProperty("start")){
+                date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
+              }
+
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -49,21 +54,31 @@ export default RequestPanel = React.createClass( {
 
                 contact = request.getContact();
                 supplier = request.getSupplier();
-                if ( request.type == 'Preventative' ) {
+                // console.log(request);
+                if ( request.type == 'Preventative') {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
+                if(date_diff === 0 && request.type == 'Preventative'){
+                  let lastdate = request.getPreviousDate();
+                  let adhocRequest = request.findCloneAt( lastdate );
+                  if(adhocRequest != undefined || null){
+                    request = adhocRequest
+                  }
+                }
             }
         }
         let callback = this.props.callback
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
+        return { date_diff ,request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
     },
 
     componentWillMount() {
         //Perf.start();
-        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
+        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
     },
 
     componentDidMount() {
@@ -87,7 +102,6 @@ export default RequestPanel = React.createClass( {
 
 
 const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
-
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
             return moment( date ).format( 'ddd Do MMM' );
@@ -239,7 +253,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-                            { request.type == 'Ad-hoc' &&
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" &&
                               request.costThreshold &&
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
@@ -262,17 +276,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 :
                                 <div>
 
-                                { request.type == "Ad-Hoc" && request.issuedAt ?
+                                { (request.type == 'Ad-hoc' || "Ad-Hoc") && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.type == "Ad-Hoc" && request.dueDate ?
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" && request.dueDate ?
 
-                            <span style={{color : "red"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+                            <span style={{color : moment(request.dueDate).isBefore() ? "red":"black"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
 
                             : null }
 
-                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            { request.type != 'Ad-hoc' && request.type !="Ad-Hoc" && request.createdAt ?
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
