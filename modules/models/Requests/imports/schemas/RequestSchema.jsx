@@ -125,12 +125,14 @@ const RequestSchema = {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
                                     if (request.type == "Key Request") {
-                                        var services = Session.getSelectedFacility().servicesRequired;
-                                        for (var i = 0; i < services.length; i++) {
-                                            var name = services[i].name;
-                                            if (name.indexOf('keys') !== -1) {
-                                                request.service = services[i];
-                                                break;
+                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                                        if(services){
+                                            for (var i = 0; i < services.length; i++) {
+                                                var name = services[i].name;
+                                                if (name.indexOf('keys') !== -1) {
+                                                    request.service = services[i];
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -482,12 +484,14 @@ const RequestSchema = {
             type: "object",
             defaultValue: ( item ) => {
                 if (item.type == "Key Request") {
-                    var services = Session.getSelectedFacility().servicesRequired;
-                    for (var i = 0; i < services.length; i++) {
-                        var name = services[i].name;
-                        if (name.indexOf('keys') !== -1) {
-                            item.service = services[i];
-                            break;
+                    var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                    if (services) {
+                        for (var i = 0; i < services.length; i++) {
+                            var name = services[i].name;
+                            if (name.indexOf('keys') !== -1) {
+                                item.service = services[i];
+                                break;
+                            }
                         }
                     }
                 }
