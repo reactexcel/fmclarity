@@ -71,19 +71,10 @@ const createUpdateRequest = new Action( {
 		 team = Session.getSelectedTeam();
          let owner = team.getOwner(),
              user = Meteor.user(),
-             supplier = {
-                            _id: Meteor.userId(), 
-                            name: user.profile ? user.profile.name : user.name 
-                        };
+             supplier = null;
          
         if (doc.supplier) {
             supplier = doc.supplier;
-        }
-        else if (owner) {
-            supplier = {
-                        _id: owner._id,
-                        name: owner.profile ? owner.profile.name : owner.name
-                    };
         }
 		let item = Requests.create( {
                     team: team,
