@@ -58,7 +58,6 @@ export default ChildDataTable = React.createClass( {
 
 		return (
 				<tr className = "data-grid-row" onClick ={this.handleEdit}>
-					<td className="data-grid-select-col">&nbsp;&nbsp;</td>
 					<td style={{paddingLeft:"22px"}}>{data.four}</td>
 					<td style={{paddingLeft:"10px"}}>{data.three}</td>
 					<td style={{paddingLeft:"10px"}}>{data.one}</td>

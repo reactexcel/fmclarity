@@ -4,8 +4,8 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 
 	function runAction( item, e ) {
 		if ( item.shouldConfirm || item.verb ) {
-			if( item.verb.shouldConfirm || item.shouldConfirm ){
-				var message = confirm( item.label + ". Are you sure?" );
+			if( (item.verb && item.verb.shouldConfirm) || item.shouldConfirm ){
+				var message = confirm( item.uniqueAlertLabel ? item.uniqueAlertLabel : item.label + ". Are you sure?" );
 				if ( message != true ) {
 					return;
 				}

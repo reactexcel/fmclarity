@@ -1,8 +1,9 @@
 import React from "react";
 import { ContactCard } from '/modules/mixins/Members';
 import { FacilityFilter } from '/modules/models/Facilities';
-import { TeamActions } from '/modules/models/Teams';
-import TeamPanel from './TeamPanel.jsx';
+import { Teams, TeamActions, TeamPanel, TeamStepper } from '/modules/models/Teams';
+import { DropFileContainer } from '/modules/ui/MaterialInputs';
+import RaisedButton from 'material-ui/RaisedButton';
 
 // FacilityPageIndex
 //
@@ -28,16 +29,20 @@ export default class TeamPageSuppliersMobile extends React.Component {
 	}
 
 	addSupplier(){
-		let viewersTeam = Session.getSelectedTeam();
-		TeamActions.create.bind(null, this.addSupplierToGroup.bind(this)).run();
+		let facility = Session.getSelectedFacility();
+
+        Modal.show( {
+            content: <DropFileContainer model = { Teams }>
+                <TeamStepper item = { null } onChange = { ( supplier ) => {
+                	if( facility ) {
+                		facility.addSupplier( supplier );
+                	}
+                }}
+                />
+            </DropFileContainer>
+        } )
 	}
 
-	addSupplierToGroup( supplier ){
-		facility = Session.getSelectedFacility();
-		if( facility ) {
-			facility.addSupplier( supplier );
-		}
-	}
 	render() {
 		let { team, facility, facilities, suppliers, ...other } = this.props;
 
@@ -63,9 +68,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<button className="btn btn-flat" onClick={this.addSupplier.bind(this)}>
-							Add new supplier
-						</button>
+						<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} buttonStyle={{lineHeight:'30px'}} label="Add new supplier" onClick={() => this.addSupplier()}/>
 					</span>
 				</div>
 			</div>

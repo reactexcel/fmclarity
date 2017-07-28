@@ -111,7 +111,7 @@ export default ComplianceRuleSchema = {
         condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
-        label: "PMP event name",
+        label: "PPM event name",
         input: Select,
         condition: [ "PPM event completed", "PPM exists" ],
         options( item ) {
@@ -157,14 +157,14 @@ export default ComplianceRuleSchema = {
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            let status  = lastWO.length && lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ].status;
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
-            let status = lastWO.length && lastWO[lastWO.length - 1].status;
             return (
                 lastWO.length ? ( <div>
                     <span>
                         <a className="link" href={"javascript:void(0);"} onClick={() => {
-                                RequestActions.view.bind(lastWO[lastWO.length - 1]).run()
+                                RequestActions.view.bind(lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ]).run()
                             }}>
                             Previous work order link
                         </a>
@@ -186,12 +186,12 @@ export default ComplianceRuleSchema = {
             let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
-            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
+            let status = nextWO.length && nextWO[nextWO.length - 1].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[nextWO.length > 1 ? nextWO.length - 2: 0]).run()
+                   RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
                  }
                }> Next work order link </a>
             </span>
@@ -234,9 +234,8 @@ export default ComplianceRuleSchema = {
                     default:
 
                 }
-                period = props.item.frequency.number > 1?
-                    ( period || props.item.frequency.period ) + "s":
-                    ( period || props.item.frequency.period );
+                period = period || props.item.frequency.period;
+                period = formatSingularPlural(period);
             }
             return (
                 <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -250,10 +249,10 @@ export default ComplianceRuleSchema = {
                             </div>:(
                                 props.item.frequency.period && props.item.frequency.endDate?
                                 <div>
-                                    {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                    {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                 </div>:
                                 <div>
-                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || props.item.frequency.unit?formatSingularPlural(props.item.frequency.unit):null} until stopped`:null}
                                 </div>
                             )
                         )
@@ -263,4 +262,10 @@ export default ComplianceRuleSchema = {
         },
         condition: "PPM event completed",
     }
+}
+function formatSingularPlural(str) {
+    if (str.slice(-1)=='s') {
+        str =  str.substring(0, str.length-1)+"(s)";
+    }
+    return str;
 }

@@ -103,7 +103,7 @@ export default ServiceDetailsSchema = {
         options(item){
             let facility = Session.getSelectedFacility();
             return {
-                items: facility.getSuppliers(),
+                items: facility && facility.getSuppliers() ? facility.getSuppliers() : [],
                 view: ( props ) => {
                     return (<div style={ { cursor: "default", height: "inherit", } }>
                                             <ContactCard {...props} />
@@ -202,7 +202,7 @@ export default ServiceDetailsSchema = {
                                     }} title="Remove tag">&times;</span>
                                 <ContactCard item={sc}/>
                             </div>))}
-                    </div> < /div>
+                    </div> </div>
             )
         },
         options( item ) {

@@ -12,6 +12,8 @@ import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 
+import CreateTeamRequest from './imports/actions/CreateTeamRequest';
+
 const create = new Action( {
     name: 'create team',
     label: "Create team",
@@ -96,8 +98,6 @@ const createFacility = new Action( {
     }
 } )
 
-// now that we are evaluating people based on their role in the request then we can perhaps actually
-// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -119,18 +119,18 @@ const createRequest = new Action( {
             form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
+            onChange = { () => { callback("update") } }
             onSubmit = {
                 ( newRequest ) => {
-                    console.log(newRequest,"newRequest");
                     if(newRequest.type == "Booking"){
-                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                        Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
 
-                    Modal.replace( {
+                    /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-                                <RequestPanel item = { newRequest }/>
+                                <RequestPanel item = { newRequest } callback={callback}/>
                             </DropFileContainer>
-                    } );
+                    } );*/
 
                     let owner = Meteor.user();
 
@@ -139,90 +139,15 @@ const createRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
-                    // this is a big of a mess - for starters it would be better placed in the create method
-                    //  and then perhaps in its own function "canAutoIssue( request )"
-                    let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.create';
-                        console.log(hasSupplier,"hasSupplier");
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
-                        method = 'Issues.issue';
-                        let team = Teams.findOne( newRequest.team._id ),
-                            role = team.getMemberRole( owner ),
-                            baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-                        if( !team ) {
-                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
-                            return;
-                        }
-                        else if( baseBuilding ) {
-                            if( role == 'property manager' ) {
-                                method = 'Issues.issue';
-                            }
-                        }
-                        else if( !baseBuilding ) {
-
-                            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.issue';
-                            }
-                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-                                method = 'Issues.create';
-                                let relation = team.getMemberRelation( owner ),
-                                    costString = newRequest.costThreshold,
-                                    memberThreshold = null,
-                                    costThreshold = null;
-
-                                if( relation ) {
-                                    memberThreshold = relation.issueThresholdValue;
-                                    if( _.isString( memberThreshold ) ) {
-                                        memberThreshold = memberThreshold.replace(',','');
-                                    }
-                                }
-
-                                // strips out commas
-                                //  this is a hack due to an inadequete implementation of number formatting
-                                //  needs a refactor
-                                if( _.isString( costString ) ) {
-                                    costString = costString.replace(',','')
-                                }
-
-                                let cost = parseInt( costString );
-
-                                // this is the value saved in the member team relation
-                                if( memberThreshold ) {
-                                    costThreshold = parseInt( memberThreshold );
-                                }
-                                // this is the threshold value from the global team configuration
-                                else if( team.defaultCostThreshold ) {
-                                    costThreshold = parseInt( team.defaultCostThreshold );
-                                }
-
-                                if( cost > costThreshold ) {
-                                    method = 'Issues.create';
-                                }
-                                /*if( parseInt(relation.threshold) < 1 ) {
-                                    method = 'Issues.create';
-                                }
-                                if(newRequest.haveToIssue == true){
-                                    method = 'Issues.issue';
-                                }
-                                if( method == 'Issues.issue' ) {
-                                    console.log('new threshold='+newThreshold.toString());
-                                    team.setMemberThreshold( owner, newThreshold.toString() );
-                                }*/
-                            }
-
-                        }
-                        if(newRequest.haveToIssue == true){
-                            method = 'Issues.issue';
-                            newRequest = _.omit(newRequest,'haveToIssue')
-                        }
-                    }
-                    console.log("11111111");
-                    Meteor.call( method, newRequest );
-                    console.log("22222222");
+                    Meteor.call( 'Issues.create', newRequest );
                     let request = Requests.findOne( { _id: newRequest._id } );
-                    console.log(request,"request");
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
+                    Modal.replace( {
+                        content: <DropFileContainer model = { Requests } request = { request }>
+                                <RequestPanel item = { /*newRequest*/  request} callback = { callback }/>
+                            </DropFileContainer>
+                    } );
                 }
             }
             />
@@ -392,7 +317,9 @@ export {
 
     createFacility,
     createRequest,
+    CreateTeamRequest,
     createDocument,
+    removeSupplier,
 
     createMember,
     viewMember,
