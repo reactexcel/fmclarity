@@ -2,40 +2,35 @@ export default CreateRequestForm = [
 	/*'team',*/
 	'type',
 	/* 'occupancy', */
-
 	'facility',
-
-	'name',
-	'reporterContact', 
-	'incidentVictim',
 	'location',
+	'incidentVictim',
+	'reporter',
+	'name',
+	'reporterContact',
 	'level',
 	'area',
 	'identifier',
+	'bookingRules',
 	'bookingPeriod',
 	'service',
 	'subservice',
 	'supplier',
-
 	'supplierContact',
-
 	'assignee',
-
 	'priority',
 	'dueDate',
-
 	'frequency',
+	'number',
+	'period',
+	'endDate',
 	'incidenceDate',
 	'duration',
-
 	'costThreshold',
-
 	//'requireServiceReport',
 	//'requireInvoice',
-
 	'description',
 	'incidentFurtherComments',
-
 	'attachments',
 	'footer'
 
