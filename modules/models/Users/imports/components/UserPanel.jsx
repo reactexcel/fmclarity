@@ -71,8 +71,9 @@ class UserPanel extends React.Component {
 			availableServices = null,
 			contact = this.state.item,
 			thumbUrl = null,
-			hideMenu = this.props.hideMenu;
-
+			userRole = Meteor.user().getRole()
+			//hideMenu = this.props.hideMenu;
+            hideMenu = !_.contains(['fmc support','portfolio manager'],userRole)
 		if ( !contact ) {
 			return <div/>
 		}
