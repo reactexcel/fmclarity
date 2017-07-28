@@ -3,7 +3,7 @@ import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
 
 let period = null;
 export default RequestFrequencySchema = {
-    unit: {
+    /*unit: {
         label: "Frequency",
         description: "The unit (days, weeks, months etc) of the repeats",
         input( props ) {
@@ -39,7 +39,7 @@ export default RequestFrequencySchema = {
                 item.endDate = "";
             }
         },
-    },
+    },*/
 
     number: {
         label: "Repeats every...",
