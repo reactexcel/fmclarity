@@ -102,7 +102,7 @@ Routes.addAccessRule( {
     action: [
         'user-docs',
     ],
-    role: [ 'fmc support', 'caretaker', 'facility manager', 'portfolio manager', 'property manager' ],
+    role: [ 'fmc support', 'caretaker', 'facility manager', 'portfolio manager', 'property manager', 'manager' ],
     condition: teamTypeIsRealEstateOrTenancy
 } )
 
