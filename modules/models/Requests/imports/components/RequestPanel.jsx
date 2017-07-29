@@ -145,7 +145,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     } else {
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
-        } else if ( teamType == 'fm' ) {
+        }
+        else if (request.type == 'Incident') {
+            title = 'Incident';
+        }
+         else if ( teamType == 'fm' ) {
             if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
@@ -273,6 +277,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
+                            { request.type == "Incident" && request.incidenceDate ?
+                            <span><b>Incident Date</b> <span>{formatDate(request.incidenceDate)}</span><br/></span>
+                            : null }
+
                             { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
@@ -351,10 +359,34 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 : null
                 }
 
-                { teamType=='fm' && request.service && request.type != 'Booking' ?
+                { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 <tr>
                     <th>Service</th>
                     <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.incidentVictim ?
+                <tr>
+                    <th>Who did it happen to?</th>
+                    <td>{request.incidentVictim}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.reporterContact ?
+                <tr>
+                    <th>Reporter Contact details</th>
+                    <td>{request.reporterContact}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.location ?
+                <tr>
+                    <th>Where did it happen?</th>
+                    <td>{request.location}</td>
                 </tr>
                 : null
                 }
