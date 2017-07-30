@@ -72,7 +72,7 @@ export default UserViewRelationEdit = React.createClass( {
 			let role = relation.role,
 			threshold = relation.issueThresholdValue ? relation.issueThresholdValue : "",
 			currentUserRelation = group.getMemberRelation( Meteor.user() );
-			console.log({'currentUserRelation':currentUserRelation,'role':role, 'userRole':userRole});
+			
 			return (
 				<div>
 				<Select
@@ -82,7 +82,7 @@ export default UserViewRelationEdit = React.createClass( {
 					placeholder 	= "Role"
 				/>
 
-				{(_.contains(['portfolio manager','fmc support'], userRole) || _.contains(['portfolio manager','fmc support'], currentUserRelation.role)) && 
+				{(_.contains(['portfolio manager','fmc support'], userRole) ) && 
 				_.contains(['manager','caretaker'], role)? 
 				<Text
 					value			= { threshold }
