@@ -26,9 +26,25 @@ const WoTable = React.createClass( {
 
 	componentWillMount() {
     this.updateImages();
+    let query = {
+      "facility._id" : this.state.facility._id ,
+      service: this.props.service,
+      type : "toggle"}
+    let RemovedWoKeys =  Reports.findOne(query);
+    this.setState({
+      removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
+    })
 	},
   componentWillReceiveProps(){
     this.updateImages();
+    let query = {
+      "facility._id" : this.state.facility._id ,
+      service: this.props.service,
+      type : "toggle"}
+    let RemovedWoKeys =  Reports.findOne(query);
+    this.setState({
+      removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
+    })
   },
   componentDidMount(){
     	$(".loader").hide();
@@ -71,20 +87,58 @@ const WoTable = React.createClass( {
               data
           })
     },
-    handleRemove( key ){
-        let { removedImg } = this.state;
-        removedImg.push(key);
-        this.setState({ removedImg });
+    handleReload(){
+      var facility = this.state.facility
+      let query = {
+        "facility._id" : facility._id ,
+        service: this.props.service,
+        type : "toggle"}
+      let RemovedWoKeys =  Reports.findOne(query);
+      if(RemovedWoKeys){
+        RemovedWoKeys.keys = [] ;
+        this.setState({
+          removedImg : RemovedWoKeys.keys
+        },()=>{
+          Reports.save.call(RemovedWoKeys);
+        })
+      }else{
+        return
+      }
+
     },
-    // handleRemoveWO( r ){
-		// var message = confirm( 'Are you sure you want to delete this WO?' );
-    // console.log(message,r);
-    // if(message){
-    //   r["status"]="Deleted"
-    //   Requests.save.call(r)
-    // }
-    // },
-    getImage( _id ){
+    handleRemove( key,r ){
+        var facility = this.state.facility
+        let query = {
+          "facility._id" : facility._id ,
+          service: r.service.name,
+          type : "toggle"}
+        let RemovedWoKeys =  Reports.findOne(query);
+        console.log(RemovedWoKeys);
+
+        if(!RemovedWoKeys){
+          let item = {
+            facility : {
+              _id : facility._id
+            } ,
+            service : r.service.name,
+            keys:[key],
+            type : "toggle"
+          }
+          this.setState({
+            removedImg : item.keys
+          },()=>{
+            Reports.save.call(item);
+          })
+        }else{
+          RemovedWoKeys.keys.push(key);
+          this.setState({
+            removedImg : RemovedWoKeys.keys
+          },()=>{
+            Reports.save.call(RemovedWoKeys);
+          })
+        }
+    },
+    getImage( _id ,r){
 
         let file = Files.findOne({_id});
         let url = null;
@@ -94,14 +148,16 @@ const WoTable = React.createClass( {
             if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
                 return (
                   <div className="col-sm-6 report-thumb" style={{padding:"0"}} key={_id}>
-                    {/* <span
-                      style={{top:"5px",left:"180px"}}
+                    <span
+                      style={{top:"5px",left:"160px"}}
                       className="remove-img"
-                      title="Remove image"
-                      onClick={() => this.handleRemove(_id)}
+                      title="Hide image"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        this.handleRemove(_id,r)}}
                       >
                         &times;
-                      </span> */}
+                      </span>
                       <img src={url} style={{ height:"150px", width:"180px" }} />
                   </div>
                 );
@@ -160,6 +216,16 @@ const WoTable = React.createClass( {
 
 		return (
 			<div className = "defectTable">
+        <div style={{
+          color:"#0152b5",
+          fontSize:"10px",
+          fontWeight:"900",
+          cursor:"pointer",
+          padding:"10px 0 0 15px"
+              }} onClick={(e)=>{
+                e.stopPropagation();
+                this.handleReload();
+              }}>Reload</div>
                 <div className="ibox-content">
                   <table>
                     <thead>
@@ -168,6 +234,7 @@ const WoTable = React.createClass( {
                     <th>Summary & Images</th>
                     <th>Value</th>
                     <th>Comments</th>
+                    <th>Opt</th>
                   </tr>
                   </thead>
                 <tbody>
@@ -176,28 +243,28 @@ const WoTable = React.createClass( {
                     return(
 
                       _.flatten(d.requests.map( (r, idy) => {
-
+                        if(!_.contains(this.state.removedImg, r._id) ){
                           let imgs = [];
                           let owner = r.getOwner();
                           if (r.attachments && r.attachments.length) {
-                          r.attachments.map( (attach, idz) => {
-                            let element = this.getImage(attach._id);
-                            // console.log(element);
-                            if( element ) {
-                              imgs.push( element);
-                            }
-                          });
-                        }
-                        return (
-                          <tr key={idx + idy} className="row-WO">
-                            <td onClick={()=>{
-                              r["tabIndex"]= 0
-                              RequestActions.view.run( r )
-                            }}></td>
-                            <td style={{width:"45%"}} onClick={()=>{
-                              r["tabIndex"]= 0
-                              RequestActions.view.run( r )
-                            }}>
+                            r.attachments.map( (attach, idz) => {
+                              let element = this.getImage(attach._id,r);
+                              // console.log(element);
+                              if( element ) {
+                                imgs.push( element);
+                              }
+                            });
+                          }
+                          return (
+                            <tr key={idx + idy} className="row-WO">
+                              <td onClick={()=>{
+                                r["tabIndex"]= 0
+                                RequestActions.view.run( r )
+                              }}></td>
+                              <td style={{width:"45%"}} onClick={()=>{
+                                r["tabIndex"]= 0
+                                RequestActions.view.run( r )
+                              }}>
                               <label style={{position:"absolute",left:"40px",cursor:"pointer"}}>{r.code}</label>
                               <span style={{
                                 color:"#0152b5",
@@ -218,7 +285,19 @@ const WoTable = React.createClass( {
                             </td>
                             <td>{r.costThreshold}</td>
                             <td key ={idx + idy + 20}>{this.getComment(r)}</td>
-                            </tr>)
+                            <td  style={{
+                              color:"#0152b5",
+                              fontSize:"10px",
+                              fontWeight:"900",
+                              cursor:"pointer",
+                              padding:"5px"
+                            }} onClick={(e)=>{
+                              e.stopPropagation();
+                              this.handleRemove(r._id,r)
+                            }}>hide</td>
+                          </tr>)
+                        }
+                        return null ;
                       }), true)
                 )
               })}
