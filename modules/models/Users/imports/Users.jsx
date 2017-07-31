@@ -172,12 +172,12 @@ Users.actions( {
 
             if( team ) {
                 teamId = team._id;
-                query.push( { 
+                query.push( {
                     $or: [
                         { 'team._id': teamId },
                         { 'supplier._id': teamId },
                         { 'realEstateAgency._id': teamId }
-                    ] 
+                    ]
                 } );
             }
 
