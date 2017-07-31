@@ -354,10 +354,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
                 :
                 <tbody>
-                <tr>
-                    <th>Summary</th>
-                    <td>{ request.name || <i>unnamed</i> }</td>
-                </tr>
+                
+                    { request.type == 'Booking' ?
+                    <tr>
+                        <th>Booked By</th>
+                        <td>{ request.memberName || <i>unnamed</i> }</td>
+                    </tr>:
+                    <tr>
+                        <th>Summary</th>
+                        <td>{ request.name || <i>unnamed</i> }</td>
+                    </tr>
+                }
 
                 { request.getLocationString() ?
                 <tr>
