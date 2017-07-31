@@ -34,11 +34,17 @@ export default RequestPanel = React.createClass( {
             realEstateAgency = null,
             owner = null,
             defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
+            date_diff = null ;
+
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
+              if(this.props.item.hasOwnProperty("start")){
+                date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
+              }
+
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -50,21 +56,33 @@ export default RequestPanel = React.createClass( {
 
                 contact = request.getContact();
                 supplier = request.getSupplier();
-                if ( request.type == 'Preventative' ) {
+                // console.log(request);
+                if ( request.type == 'Preventative') {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
+                if(date_diff === 0 && request.type == 'Preventative'){
+                  let lastdate = request.getPreviousDate();
+                  let adhocRequest = request.findCloneAt( lastdate );
+                  if(adhocRequest != undefined || null){
+                    request = adhocRequest
+                  }
+                }
             }
         }
         let callback = this.props.callback
+
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
+
     },
 
     componentWillMount() {
         //Perf.start();
-        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
+        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
     },
 
     componentDidMount() {
@@ -342,10 +360,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
                 :
                 <tbody>
-                <tr>
-                    <th>Summary</th>
-                    <td>{ request.name || <i>unnamed</i> }</td>
-                </tr>
+
+                    { request.type == 'Booking' ?
+                    <tr>
+                        <th>Booked By</th>
+                        <td>{ request.memberName || <i>unnamed</i> }</td>
+                    </tr>:
+                    <tr>
+                        <th>Summary</th>
+                        <td>{ request.name || <i>unnamed</i> }</td>
+                    </tr>
+                }
 
                 { request.getLocationString() ?
                 <tr>
