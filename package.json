@@ -13,6 +13,7 @@
     "material-ui": "0.15.2",
     "meteor-node-stubs": "^0.2.3",
     "moment": "^2.15.2",
+    "prop-types": "^15.5.10",
     "pubsub-js": "^1.5.7",
     "react": "15.3.2",
     "react-addons-create-fragment": "15.3.2",
@@ -26,6 +27,8 @@
     "react-addons-update": "15.3.2",
     "react-dom": "15.3.2",
     "react-geosuggest": "^2.0.0",
+    "react-komposer": "^2.0.0",
+    "react-loader": "^2.4.2",
     "react-mounter": "^1.2.0",
     "react-search-input": "^0.10.4",
     "react-tap-event-plugin": "^1.0.0"

@@ -103,13 +103,12 @@ export default ServiceDetailsSchema = {
         options(item){
             let facility = Session.getSelectedFacility();
             return {
-                items: facility.getSuppliers(),
+                items: facility && facility.getSuppliers() ? facility.getSuppliers() : [],
                 view: ( props ) => {
                     return (<div style={ { cursor: "default", height: "inherit", } }>
                                             <ContactCard {...props} />
                                         </div>)
                 },
-                /*
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -132,7 +131,6 @@ export default ServiceDetailsSchema = {
                         } )
                     }
                 },
-                */
                 afterChange( item ) {
                     item.defaultContact = [];
                 }

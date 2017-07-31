@@ -69,7 +69,7 @@ const ContactAvatarSmall = React.createClass( {
 	render() {
 		return (
 			<div className="contact-card-avatar">
-				<div title={this.data.name} style={this.data.style}>{this.data.initials}</div>
+				<div className="contact-card-avatar-child" title={this.data.name} style={this.data.style}>{this.data.initials}</div>
 			</div>
 		)
 	}

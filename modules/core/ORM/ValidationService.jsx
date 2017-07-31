@@ -59,7 +59,8 @@ function validate( doc, schema, errors ) {
 					validate( doc[ key ], rule.subschema, errors );
 
 				} else {
-
+                    if(key == "frequency"){
+					}
 					// otherwise look up the validation function and execute it
 					let validationFunction = validators[ rule.type ];
 					if ( validationFunction == null ) {
@@ -74,7 +75,6 @@ function validate( doc, schema, errors ) {
 			}
 		}
 	} );
-
 	return errors;
 }
 

@@ -29,7 +29,8 @@ export default MonthlyReport = React.createClass( {
 			commentString:'',
 			expandall: false,
 			team,
-			facility
+			facility,
+			loaded: false, profile: null
 		} )
 	},
 	componentWillMount(){
@@ -49,7 +50,8 @@ export default MonthlyReport = React.createClass( {
 		$(".facility-list-tile").show()
 	},
 
-	componentWillReceiveProps(){
+	componentWillReceiveProps(props){
+				// $(".loader").hide();
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
@@ -58,6 +60,9 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-left").hide();
 		$(".fc-right").hide();
 		$(".facility-list-tile").hide()
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {
@@ -236,7 +241,7 @@ export default MonthlyReport = React.createClass( {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
     }
-		
+
 		return (
 			<div>
 				<div id="toggleButton">

@@ -6,7 +6,9 @@
 import React from "react";
 import { Text } from '/modules/ui/MaterialInputs';
 import FormController from './FormController.jsx';
-import { Modal } from '/modules/ui/Modal'
+import { Modal } from '/modules/ui/Modal';
+
+	import { Documents, DocExplorer } from '/modules/models/Documents';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -62,7 +64,7 @@ class AutoForm extends React.Component {
 		this.setState( newState );
 	}
 
-	checkBookingAreas(key){
+	checkBookingAreas( key ) {
 		if(key == 'type' || key == 'facility'){
 			let item = this.props.item;
 			if(item && item.type && item.type == "Booking" && !_.isEmpty(item.facility)){
@@ -119,14 +121,14 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit( shouldIssue ) {
+	submit() {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				this.props.onSubmit( item, shouldIssue );
+				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
@@ -148,10 +150,13 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
+			if(key == 'documents'){
+				schema[key].input = DocExplorer;
+			}
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength,nextRow } = schema[ key ],
 				placeholder = label,
 				Input = null;
 			// Create default value for this field
@@ -177,7 +182,6 @@ class AutoForm extends React.Component {
 			if ( _.isFunction( description ) ) {
 				description = description( item );
 			}
-
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
 				let { subschema, size = 12, ...others } = schema[ key ];
@@ -228,9 +232,7 @@ class AutoForm extends React.Component {
 				if ( Input == null ) {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
-
 				return (
-
 					<div key = { key } className = { `col-sm-${size}` } >
 						<Input
 
@@ -251,6 +253,7 @@ class AutoForm extends React.Component {
 							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
+							edit = {this.props.edit ? this.props.edit : false}
 
 										  { ...options}
 						/>

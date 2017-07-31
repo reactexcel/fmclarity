@@ -94,7 +94,7 @@ AccessGroups.exposed.add( {
 				else{
 					mount( LayoutBlank, { content: <Page403 /> } );
 				}
-				
+
 			} else {
 				FlowRouter.go( '/' + redirect );
 			}
@@ -109,7 +109,8 @@ AccessGroups.loggedIn.add( {
 	icon: 'fa fa-sign-out',
 	action() {
 		Meteor.logout( function() {
-			FlowRouter.go( '/' );
+			FlowRouter.go( '/login' );
+			location.reload();
 		} );
 	}
 } );
