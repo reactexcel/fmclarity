@@ -68,7 +68,6 @@ const AdminPageIndex = React.createClass( {
 
 		routeKeys.sort();
 		actionKeys.sort();
-
 		return (
 			<div>
 
@@ -124,7 +123,7 @@ const AdminPageIndex = React.createClass( {
 							</table>
 						</div>
 					</div>
-				</div> 
+				</div>
 
 				<div className = "col-md-6">
 					<div className = "ibox">
@@ -147,13 +146,13 @@ const AdminPageIndex = React.createClass( {
 										<tr className = "data-grid-row" key = { key }>
 											<td className = "data-grid-select-col"></td>
 
-											<td className = "data-grid-cell" 
+											<td className = "data-grid-cell"
 												onClick={ () => {
 													Actions.run( key, ...args );
 												}}
 											>
 													{key}
-											({ args.map( 
+											({ args.map(
 												(arg, idx) => {
 													let name = null;
 													if( !arg ) {

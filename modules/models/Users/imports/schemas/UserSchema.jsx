@@ -47,6 +47,9 @@ const UserProfileSchema = {
 		label: "Position",
 		input: Text,
 		type: "string",
+		condition: ( item ) => {
+			return role !== "resident";
+		},
 	},
 	email: {
 		label: "Email address",
