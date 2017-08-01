@@ -417,7 +417,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm a'):'')}</td>
                 </tr>
                 : null }
 
