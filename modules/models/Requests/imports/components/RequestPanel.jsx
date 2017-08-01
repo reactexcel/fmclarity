@@ -381,10 +381,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 }
 
                 { teamType=='fm' && request.service && request.type != 'Booking' ?
-                <tr>
-                    <th>Service</th>
-                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
-                </tr>
+                request.type=='Key Request' ?
+                Meteor.user().getRole()=='manager'?
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>: null
+                    :
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>
                 : null
                 }
 
