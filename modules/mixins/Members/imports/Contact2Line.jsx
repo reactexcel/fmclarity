@@ -34,7 +34,13 @@ export default function Contact2Line( props ) {
 		tenancy = resident_tenancy
 		}
 	}
-
+	//temp flag to ensure that tenancy renders as a string only. issue occurs in prod.
+	if (typeof tenancy === 'string' || tenancy instanceof String){
+		tenancy = tenancy;
+	}
+	else{
+		tenancy = "";
+	}
 
 
 	return (
@@ -70,7 +76,6 @@ export default function Contact2Line( props ) {
 	        }
 
 	        </span>}
-
 	    </span>
 	)
 }

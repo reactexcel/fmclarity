@@ -4,6 +4,7 @@
  */
 
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
+import InvoiceDetailsSchema from './InvoiceDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 import IncidentCommentSchema from './IncidentCommentSchema.jsx';
@@ -12,7 +13,7 @@ import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 import { Requests } from '/modules/models/Requests';
 import { DocExplorer } from '/modules/models/Documents';
-import { FileExplorer } from '/modules/models/Files';
+import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
@@ -54,6 +55,9 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
+            condition: (item)=>{
+                return item.type != 'Booking';
+            },
             description: (item)=>{
                 let workRequest = "work request";
                 if(!_.isEmpty(item.type)){
@@ -110,6 +114,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 } };
@@ -134,21 +140,31 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
+
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                         request.costThreshold= '0';
+                                        /*request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };*/
                                         request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
                                             repeats: (request.type == 'Preventative' ? 10 : ""),
                                             period: "",
                                             endDate: "",
                                             unit: (request.type == 'Preventative' ? "years" : "")
-                                        };
+                                        }
                                     }
                                     if(request.type == 'Incident'){
                                         request.costThreshold= '0';
                                         request.priority = 'Urgent';
                                         request.supplier = Session.getSelectedTeam();
+                                        request.area = null;
+                                        request.level = null;
                                     }
                                 }
                          };
@@ -205,12 +221,165 @@ const RequestSchema = {
         },
 
         frequency: {
-            /*label: "Frequency",
-            description: "The frequency with which this job should occur",*/
-            condition: "Preventative",
-            subschema: RequestFrequencySchema,
+            label: "Frequency",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                return (
+                    <Select
+    	      			placeholder = { props.placeholder }
+    	      			item = { props.item }
+    	      			items = { props.items }
+                        errors = { props.errors }
+    	      			value = { props.value.unit }
+    	      			onChange = { (item) => {
+                            props.onChange(item)
+                        }}
+    	    		/>
+                );
+            },
+            condition: (request)=>{
+                if(request.type == "Preventative"){
+                    return true;
+                }else{
+                    return false
+                }
+            },
+            //subschema: RequestFrequencySchema,
             required: true,
             type: "object",
+            //type: "string",
+            //nextRow: true,
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Daily', val: "days" },
+                    { name: 'Weekly', val: "weeks" },
+                    { name: 'Fortnightly', val: "fortnights" },
+                    { name: 'Monthly', val: "months" },
+                    { name: 'Quarterly', val: "quarters" },
+                    { name: 'Annually', val: "years" },
+                    { name: 'Custom', val: "custom" },
+                ],
+                afterChange( item ) {
+                    frequency = item.frequency;
+                    item.frequency = !_.isEmpty(frequency)?{
+                        number: 1,
+                        repeats: 10,
+                        period: "",
+                        endDate: "",
+                        unit: frequency
+                    }:{};
+                }
+            },
+        },
+
+        number: {
+            label: "Repeats every...",
+            description: "The number of days, weeks, months etc.",
+            input: (props) =>{
+                return <Text
+                    placeholder = { props.placeholder }
+                    description = { props.description }
+                    errors = { props.errors }
+                    fieldName = { props.fieldName }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.number }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            type: "number",
+            size: 6,
+            options: {
+                afterChange( item ) {
+                    item.frequency.number = item.number;
+                    item = _.omit(item,"number");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        period: {
+            label: "Period",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                props.item.frequency.period = props.item.frequency.period ? props.item.frequency.period : ( props.item.frequency.unit === "custom" ? "months" : "" );
+                return (
+                    <Select
+    					placeholder = { props.placeholder }
+    		        	item = { props.item }
+    		        	items = { props.items }
+    		        	value = { props.item.frequency.period ? props.item.frequency.period : "months" }
+    		        	onChange = { item => props.onChange(item) } />
+                )
+            },
+            defaultValue: "months",
+            type: "string",
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Day', val: "days" },
+                    { name: 'Week', val: "weeks" },
+                    { name: 'Fortnight', val: "fortnights" },
+                    { name: 'Month', val: "months" },
+                    { name: 'Quarter', val: "quarters" },
+                    { name: 'Year', val: "years" },
+                ],
+                //afterChange: item => { period = item.period; },
+                afterChange( item ) {
+                    item.frequency.period = item.period;
+                    item = _.omit(item,"period");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        endDate: {
+            label: 'End date',
+            size: 6,
+            //input: DateInput,
+            input: (props)=>{
+                return <DateInput
+                    placeholder = { props.placeholder }
+                    errors = { props.errors }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.endDate }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            options: {
+                afterChange( item ) {
+                    item.frequency.endDate = item.endDate;
+                    item = _.omit(item,"endDate");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
         },
 
         duration: {
@@ -267,6 +436,23 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
+        reporter: {
+             label: "Reporter",
+             description: "Who reported the incident",
+             type: "object",
+             input: Select,
+             required: true,
+             options: ( request ) => {
+                     request = Requests.collection._transform( request );
+                     let team = request.getFacility() || request.getTeam(),
+                         members = team.getMembers();
+                     return {
+                         items: members,
+                         view: ContactCard
+                     }
+             },
+             condition: "Incident"
+         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
@@ -340,14 +526,78 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
-                if ( user.profile.tenancy && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy;
+                if (request.type=="Incident") {
+                    return val;
+                }
+                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
+                    val = user.profile.tenancy.level;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
                     val = user.apartment;
                 }
                 return val;
             },
+        },
+
+        bookingRules:{
+            label: "Booking rules/instructions",
+            size: 4,
+            type: "string",
+            input: (props) =>{
+                return <div style={{marginTop:"20px"}}><a
+                    title = {"Read"}
+                    onClick={()=>{
+                        let item = props.item;
+                        let file,isImage,extension;
+                        if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            file = item.level.data.areaDetails.attachments[0]
+                        }
+                        if( item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            file = item.area.data.areaDetails.attachments[0]
+                        }
+                        if( item.identifier && item.identifier.data && item.identifier.data.areaDetails && item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            file = item.identifier.data.areaDetails.attachments[0]
+                        }
+                        if(!_.isEmpty(file)){
+                            file = Files.findOne( file._id );
+                            extension = file.extension();
+                            isImage = file.isImage() && extension != 'tif';
+                        }
+                        if ( isImage ) {
+                            Modal.show( {
+                    			content: <img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={file.url()} />
+                    		} )
+            			} else if ( file ) {
+                            let win = window.open( file.url(), '_blank' );
+                    		win.focus();
+            			}
+                    }}>Booking rules/instructions</a>
+                </div>
+            },
+            condition: (item)=>{
+                let toReturn = false;
+                if(item.type == "Booking"){
+                    if(item.level && item.level.data && item.level.data.areaDetails){
+                        toReturn = false;
+                        if(item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.area && item.area.data && item.area.data.areaDetails){
+                        toReturn = false;
+                        if( item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.identifier && item.identifier.data && item.identifier.data.areaDetails){
+                        toReturn = false;
+                        if( item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    return toReturn;
+                }
+            }
         },
 
         area: {
@@ -493,7 +743,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( _.contains(['Booking','Key Request','Incident'],request.type) ) {
+                if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -574,7 +824,7 @@ const RequestSchema = {
                         services = team.getAvailableServices()
                     }
                 }
-                if ( request.type == 'Booking' ) {
+                if ( request.type == 'Booking' || request.type == 'Reminder') {
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -795,6 +1045,7 @@ const RequestSchema = {
                         }
                         props.onChange( value );
                     }}
+                    readOnly = {(props.edit && props.edit == true) && (props.item && props.item.status == "Booking") ? true : false}
                 />
             },
             condition: ( request ) => {
@@ -804,12 +1055,44 @@ const RequestSchema = {
                 if(request.type == "Booking"){
                     request.costThreshold = '0';
                     let selectedAreaDetail = null;
+
+
+                    /*if(request.level && request.level.data && request.level.data.areaDetails){
+                        selectedAreaDetail = request.level.data.areaDetails
+                    }
+                    if(request.area && request.area.data && request.area.data.areaDetails){
+                        selectedAreaDetail = request.area.data.areaDetails
+                    }
                     if(request.identifier && request.identifier.data && request.identifier.data.areaDetails){
                         selectedAreaDetail = request.identifier.data.areaDetails
-                    } else if(request.area && request.area.data && request.area.data.areaDetails){
-                        selectedAreaDetail = request.area.data.areaDetails
-                    } else if(request.level && request.level.data && request.level.data.areaDetails){
-                        selectedAreaDetail = request.level.data.areaDetails
+                    }*/
+
+
+                    let facility = Facilities.findOne( request.facility._id )
+                    let parentArea = null,
+                        childArea = null;
+                    if(request.level && request.level.name){
+                        _.map( facility.areas, ( ar, i ) => {
+                            if(ar.name == request.level.name){
+                                parentArea = ar;
+                                selectedAreaDetail = ar.data && ar.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.area && request.area.name){
+                        _.map( parentArea.children, ( child, i ) => {
+                            if(child.name == request.area.name){
+                                childArea = child;
+                                selectedAreaDetail = child.data && child.data.areaDetails;
+                            }
+                        })
+                    }
+                    if(request.identifier && request.identifier.name){
+                        _.map( childArea.children, ( subChild, i ) => {
+                            if(subChild.name == request.identifier.name){
+                                selectedAreaDetail = subChild.data && subChild.data.areaDetails;
+                            }
+                        })
                     }
 
                     if(selectedAreaDetail != null){
@@ -827,13 +1110,12 @@ const RequestSchema = {
                         }
                         bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
                         request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
-
                     }
                 } else {
                     // request.costThreshold = '500';
                 }
                 let role = Meteor.user().getRole();
-                if ( role == 'staff' || role == 'tenant' || role == 'resident' ) {
+                if ( (role == 'staff' || role == 'tenant' || role == 'resident') && request.type != "Booking") {
                     return false;
                 }
                 return true;
@@ -845,6 +1127,11 @@ const RequestSchema = {
             subschema: CloseDetailsSchema
         },
 
+        invoiceDetails: {
+            type: "object",
+            subschema: InvoiceDetailsSchema
+        },
+
         //////////////////////////////////////////////////
         // Dates & timing
         //////////////////////////////////////////////////
@@ -853,16 +1140,33 @@ const RequestSchema = {
             type: "date",
             label: "Due/Start Date",
             description: "Latest date that the work can be completed",
-            input: DateTime,
+            //input: DateTime,
+            input: (props)=>{
+                return props.item.type == "Preventative" || props.item.status == "Issued" ? <DateInput
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                /> :<DateTime
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                />
+            },
             size: 6,
             required: true,
             defaultValue: getDefaultDueDate,
             condition: ( request ) => {
-                let role = Meteor.user().getRole();
-                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) && request.type !='Booking' ) {
+                if(request.type=='Booking'){
+                    request.dueDate = ""
                     return false;
                 }
-                if (request.type=='Incident') {
+                let role = Meteor.user().getRole();
+                if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) /*&& request.type !='Booking'*/ ) {
+                    return false;
+                }
+                if ( _.contains(['Incident','Booking'],request.type)) {
                     return false;
                 }
                 return true;
@@ -885,10 +1189,237 @@ const RequestSchema = {
             label: "Booking period",
             description: "Select the booking period",
             input: (props) => {
+                let items = props.item;
+                let bookableTimeSlot = null;
+        		let previousBookingEvents = [];
+        		let bookingFor = null
+        		if(items && items.identifier && items.identifier.data){
+        			if(items.identifier.data.areaDetails && items.identifier.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.identifier.data.areaDetails.daySelector;
+        			}
+        			if(items.identifier.totalBooking){
+        				items.identifier.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.identifier.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.identifier.name
+        		} else if(items && items.area && items.area.data) {
+        			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.area.data.areaDetails.daySelector;
+        			}
+        			if(items.area.totalBooking){
+        				items.area.totalBooking.map((booking)=>{
+                            let bookingFound;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.area.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+                    bookingFor = items.area.name;
+        		} else if(items && items.level && items.level.data) {
+        			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
+        				bookableTimeSlot = items.level.data.areaDetails.daySelector;
+        			}
+        			if(items.level.totalBooking){
+        				items.level.totalBooking.map((booking)=>{
+                            let bookingFound = 0;
+                            if(!_.isEmpty(booking.bookingId)){
+                                bookingFound = Requests.findOne({'_id':booking.bookingId,'status':'Booking'})
+                                if(bookingFound && bookingFound.bookingPeriod && bookingFound.bookingPeriod.startTime && bookingFound.bookingPeriod.endTime){
+                                    previousBookingEvents.push({
+                						id:1,
+                						title:items.level.name,
+                						start:moment(bookingFound.bookingPeriod.startTime),
+                						end:moment(bookingFound.bookingPeriod.endTime),
+                						allDay:false,
+                						editable:false,
+                						color:"#ef6c00",
+                						overlap:false,
+                						tooltip:"Already Booked",
+                					})
+                                }
+                            }
+        				})
+        			}
+        			bookingFor = items.level.name;
+        		}
+
+        		let businessHours = [];
+
+                let extra = moment().format('YYYY-MM-DD') + ' ';
+        		let showSecondEvent = true
+        		if(bookableTimeSlot && bookableTimeSlot.Sun && bookableTimeSlot.Sun.startTime && bookableTimeSlot.Sun.endTime && bookableTimeSlot.Sun.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sun.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: moment(bookableTimeSlot.Sun.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sun.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 0 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Mon && bookableTimeSlot.Mon.startTime && bookableTimeSlot.Mon.endTime  && bookableTimeSlot.Mon.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Mon.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: moment(bookableTimeSlot.Mon.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Mon.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 1 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Tue && bookableTimeSlot.Tue.startTime && bookableTimeSlot.Tue.endTime  && bookableTimeSlot.Tue.select == true){
+        		    showSecondEvent = true
+        			if (moment(bookableTimeSlot.Tue.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: moment(bookableTimeSlot.Tue.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Tue.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 2 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Wed && bookableTimeSlot.Wed.startTime && bookableTimeSlot.Wed.endTime  && bookableTimeSlot.Wed.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Wed.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: moment(bookableTimeSlot.Wed.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Wed.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 3 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Thu && bookableTimeSlot.Thu.startTime && bookableTimeSlot.Thu.endTime  && bookableTimeSlot.Thu.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Thu.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: moment(bookableTimeSlot.Thu.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Thu.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 4 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Fri && bookableTimeSlot.Fri.startTime && bookableTimeSlot.Fri.endTime  && bookableTimeSlot.Fri.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Fri.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: moment(bookableTimeSlot.Fri.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Fri.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 5 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		if(bookableTimeSlot && bookableTimeSlot.Sat && bookableTimeSlot.Sat.startTime && bookableTimeSlot.Sat.endTime  && bookableTimeSlot.Sat.select == true){
+        			showSecondEvent = true
+        			if (moment(bookableTimeSlot.Sat.endTime).isBetween(moment(extra + '00:00'), moment(extra + '01:00'))){
+        				showSecondEvent = false
+        			}
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: moment(bookableTimeSlot.Sat.startTime).format("HH:mm"),
+        				end: moment(bookableTimeSlot.Sat.endTime).format("HH:mm"),
+        				showSecondEvent:showSecondEvent
+        			})
+        		} else {
+        			businessHours.push({
+        				dow: [ 6 ],
+        				start: '00:01',
+        				end: '00:01',
+        				showSecondEvent:true
+        			})
+        		}
+        		let bookingDetails = {
+        			businessHours:businessHours,
+        			previousBookingEvents:previousBookingEvents,
+        			bookingFor:bookingFor
+        		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
                                 props.onChange(value);
                             }}
+                            bookingDetails = {bookingDetails}
                             {...props}
                         />
             },
@@ -1034,7 +1565,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length <= 1 || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -1388,6 +1919,29 @@ const RequestSchema = {
                     let role = Meteor.user().getRole();
                     return _.indexOf( [ "manager", "portfolio manager", "team portfolio manager", "team manager" ], role ) > -1;
                 }
+            },
+
+            memberName: {
+                type: "string",
+                label: "Member name",
+                description: "Name of member",
+                input: Text,
+                size: 6,
+                required: true,
+                defaultValue: (item)=>{
+                    return item.type == 'Booking' ? Meteor.user().getName() : null;
+                },
+                condition:"Booking" 
+            },
+
+            numberOfPersons: {
+                type: "number",
+                label: "Number of persons",
+                description: "Number of persons",
+                input: Text,
+                size: 6,
+                required: true,
+                condition:"Booking" 
             },
 
             footer: {

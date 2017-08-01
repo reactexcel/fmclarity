@@ -190,11 +190,11 @@ const RequestsStatusReport = React.createClass( {
     		dataset:newdata,
     	});
     },
+	componentDidUpdate(){
+		$(".loader").hide();
+	},
 
 	render() {
-		setTimeout(function(){
-				$(".loader").hide();
-			},2000)
 		var data = this.data.reportData.requests;
 		if ( !data ) {
 			return <div/>

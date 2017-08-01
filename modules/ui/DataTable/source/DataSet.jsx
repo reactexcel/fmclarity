@@ -170,6 +170,11 @@ export default function DataSet( items ) {
 					newObj.Supplier = {
 						val: obj.Supplier && obj.Supplier.val && obj.Supplier.val.props && obj.Supplier.val.props.children && obj.Supplier.val.props.children.props && obj.Supplier.val.props.children.props.item && obj.Supplier.val.props.children.props.item.name ? obj.Supplier.val.props.children.props.item.name : ''
 					}
+				}
+				if(newObj.Name){
+					newObj.Name = {
+						val: obj.Name && obj.Name.val && obj.Name.val.props && obj.Name.val.props.children && obj.Name.val.props.children.props && obj.Name.val.props.children.props.item && obj.Name.val.props.children.props.item.profile && obj.Name.val.props.children.props.item.profile.name ? obj.Name.val.props.children.props.item.profile.name : ''
+					}
 				}*/
 				newObj = _.omit(newObj,'_item')
 				dataForCSV.push(newObj)

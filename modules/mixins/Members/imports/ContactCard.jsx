@@ -4,7 +4,6 @@ import ContactAvatarSmall from './ContactAvatarSmall.jsx';
 import Contact2Line from './Contact2Line.jsx';
 
 export default function ContactCard( props ) {
-
 	let contact = props.item,
 		profile = props.item,
 		group = props.group,

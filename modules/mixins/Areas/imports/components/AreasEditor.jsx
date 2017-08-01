@@ -322,6 +322,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   Modal.show({
                                                     content:  <div style={{padding:'20px'}}>
                                                     <div>
+                                                    {editable ? <button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={component.removeItem.bind(component,1,idx)}>&times; Delete</button>:null}
                                                       <h1>Area information: {b.name}</h1>
                                                     </div>
                                                     <AutoForm
@@ -338,7 +339,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   </div>
                                                 })
                                               } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                              {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
+                                              {/*editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null*/}
                                             </div>
                                         </div>
                                       </div>
@@ -387,6 +388,7 @@ FacilityAreasEditorInner = React.createClass( {
                                               Modal.show({
                                                 content:  <div style={{padding:'20px'}}>
                                                 <div>
+                                                {editable ? <button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={component.removeItem.bind(component,2,idx)}>&times; Delete</button>:null}
                                                   <h1>Area information: {c.name}</h1>
                                                 </div>
                                                 <AutoForm
@@ -404,7 +406,7 @@ FacilityAreasEditorInner = React.createClass( {
                                             })
                                             //  component.removeItem.bind(component,0,idx)
                                           } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                          {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
+                                          {/*editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null*/}
                                         </div>
                                     </div>
                                   </div>
