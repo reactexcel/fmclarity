@@ -177,20 +177,21 @@ const SupplierStepper = React.createClass( {
     },
 
     checkSupplierName(name){
-        event.preventDefault();
+        //event.preventDefault();
         let query = {name:name};
         if ( this.state.teamType ) {
             query.type = this.state.teamType
         }
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
         if ( searchTeams.length > 0 ) {
+            $(".modal").animate({ scrollTop: 0 }, "fast");
             this.setState( {
                 foundTeams: true,
                 messageToShow:{
                     message:"Supplier with this name already exist.",
                     color:"#e11d60"
                 }
-             } );
+            } );
             return true;
 
         } else {
@@ -229,12 +230,12 @@ const SupplierStepper = React.createClass( {
                 <Stepper
                   submitForm = {
                     ( callback ) => {
-                        let supplierFound = false;
-                        if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
-                            supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
-                            if(supplierFound==false){
-                                callback({})
-                            }
+                        if( this.submitFormCallback){
+                            this.submitFormCallback( ( errorList ) => {
+                                if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
+                                    callback({})
+                                }
+                            })
                         }
                     }
                   }
@@ -267,6 +268,15 @@ const SupplierStepper = React.createClass( {
                                                 }
                                             }
                                             submitFormOnStepperNext = { true }
+                                            onSubmit = {(item,callback)=>{
+                                                let supplierFound = false;
+                                                if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
+                                                    supplierFound = this.checkSupplierName(this.state.viewingTeam.name);
+                                                    if(supplierFound==false){
+                                                        callback({})
+                                                    }
+                                                }
+                                            }}
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
                                                 if (Session.getSelectedFacility()) {

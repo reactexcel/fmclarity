@@ -22,7 +22,7 @@ class AutoForm extends React.Component {
 	/**
 	 * @param 		{object} props
 	 */
-	constructor( props ) { 
+	constructor( props ) {
 		super( props );
 		let { model, form, item, errors } = props;
 
@@ -101,10 +101,12 @@ class AutoForm extends React.Component {
 			}
 			if ( this.props.onSubmit ) {
 				if ( this.form.validate( item ) ) {
-					this.props.onSubmit( item );
+					this.props.onSubmit( item, (newItem)=>{
+						callback( newItem );
+					} );
 				}
 				if ( this.props.afterSubmit ) {
-					this.props.afterSubmit( newItem )
+					this.props.afterSubmit( item )
 				}
 			} else {
 				this.form.save( item, ( newItem ) => {

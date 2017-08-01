@@ -29,7 +29,6 @@ export default class TeamPageSuppliersMobile extends React.Component {
 	}
 
 	addSupplier({addNewSupplier}){
-		console.log(addNewSupplier,"addNewSupplier");
 		let facility = Session.getSelectedFacility();
 
         Modal.show( {
