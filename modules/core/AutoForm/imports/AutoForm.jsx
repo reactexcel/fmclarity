@@ -6,7 +6,9 @@
 import React from "react";
 import { Text } from '/modules/ui/MaterialInputs';
 import FormController from './FormController.jsx';
-import { Modal } from '/modules/ui/Modal'
+import { Modal } from '/modules/ui/Modal';
+
+	import { Documents, DocExplorer } from '/modules/models/Documents';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -20,7 +22,7 @@ class AutoForm extends React.Component {
 	/**
 	 * @param 		{object} props
 	 */
-	constructor( props ) {
+	constructor( props ) { 
 		super( props );
 		let { model, form, item, errors } = props;
 
@@ -62,7 +64,7 @@ class AutoForm extends React.Component {
 		this.setState( newState );
 	}
 
-	checkBookingAreas(key){
+	checkBookingAreas( key ) {
 		if(key == 'type' || key == 'facility'){
 			let item = this.props.item;
 			if(item && item.type && item.type == "Booking" && !_.isEmpty(item.facility)){
@@ -119,14 +121,14 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit( shouldIssue ) {
+	submit() {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				this.props.onSubmit( item, shouldIssue );
+				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
 				this.props.afterSubmit( item )
@@ -148,6 +150,9 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
+			if(key == 'documents'){
+				schema[key].input = DocExplorer;
+			}
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
@@ -271,23 +276,6 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
-							{
-
-							this.state.submitText && this.state.submitText == "Issue"?
-
-							<button
-								type 		= "button"
-								className 	= "btn btn-flat btn-primary"
-								onClick 	= { ( ) => { this.submit(true) } }
-							>
-
-								{this.state.submitText}
-
-							</button>
-
-							:null
-
-							}
 
 							<button
 								type 		= "button"

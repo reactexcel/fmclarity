@@ -16,8 +16,6 @@ import { DocActions } from '/modules/models/Documents';
 import { FloatingActionButton } from '/modules/ui/MaterialNavigation';
 import { Actions } from '/modules/core/Actions';
 
-import { Menus } from '/modules/core/Menus';
-
 /**
  * @class 			FloatingActionButtonContainer
  * @memberOf 		module:core/Layouts
@@ -27,7 +25,7 @@ const FloatingActionButtonContainer = createContainer( ( { params } ) => {
 	let team = Session.getSelectedTeam();
 
 	if ( Meteor.user() && team ){
-		let actionNames = Object.keys( Menus.FloatingActionButtonActions.actions ),
+		let actionNames = Object.keys( FloatingActionButtonActions.actions ),
 			validActions = Actions.filter( actionNames, team ),
 			validActionNames = Object.keys( validActions );
 		return {

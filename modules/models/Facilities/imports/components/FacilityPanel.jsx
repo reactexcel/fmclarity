@@ -19,8 +19,6 @@ import { Facilities, FacilityActions, PropertyManagerDetails, BillingAddressDeta
 import FacilityStepper from './FacilityStepper.jsx';
 import { Modal } from '/modules/ui/Modal';
 
-import { Menus } from '/modules/core/Menus';
-
 /**
  * @class 			FacilityPanel
  * @memberOf		module:models/Facilities
@@ -33,7 +31,7 @@ function FacilityPanel( { item } ) {
         thumbUrl = null,
         menuItems = [];
 
-    let actionNames = Object.keys( Menus.FacilityMenuActions.actions ),
+    let actionNames = Object.keys( FacilityMenuActions.actions ),
         validActions = Actions.filter( actionNames, facility );
 
     if ( facility.getThumbUrl ) {
@@ -69,8 +67,7 @@ function FacilityPanel( { item } ) {
 		} )
 
 	  }
-
-
+    
     return (
 
 		<div>
@@ -122,7 +119,7 @@ function FacilityPanel( { item } ) {
 					},{
 						hide:       !facility.canAddMember(),
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList  group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						hide:       !facility.canAddTenant()||teamType!='fm',
 						tab:        <span id="tenants-tab">Tenants</span>,
