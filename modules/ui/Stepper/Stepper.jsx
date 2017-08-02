@@ -41,7 +41,7 @@ export default Stepper = React.createClass( {
         } else {
 
             this.selectTab( idx + 1 );
-            
+
         }
 
         if ( this.state.active >= this.props.tabs.length - 1 ) {

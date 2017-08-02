@@ -41,7 +41,13 @@ const WeeklyCalendar = React.createClass( {
 						ableToBook = this.checkBookingOnThisDay(getCurrentTime,this.props.areaDetails)
 					}
 					if(ableToBook == false){
-						window.alert("Oops, unable to book. You are able to book only "+ this.props.areaDetails.bookingAdvanceDay +" "+ this.props.areaDetails.unit+ " before.")
+						Bert.alert({
+			  				title: 'Oops, Operation not allowed',
+			  				message: "Unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				type: 'danger',
+			  				style: 'growl-top-right',
+			  				icon: 'fa-ban'
+						});
 					}
 				}
 			}
@@ -197,88 +203,127 @@ const WeeklyCalendar = React.createClass( {
                 dow: [0]
 			}],*/
 			select: function(start, end, ev) {
-				let startTime = start._d
-				let endTime = end._d
-				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
-				let getCurrentTime = self.getCurrentTime(start, end)
-				let bookable = true;
-				if(self.props.areaDetails.bookingAdvanceDay && self.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
-					bookable = self.checkBookingOnThisDay(getCurrentTime,self.props.areaDetails)
-				}
-				if( bookable == false ){
-					$('.fc-time-grid-event').css('display','none');
-					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
-					window.alert("Oops, unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.")
+				if(moment(start._d).isBefore(moment(new Date()))) {
+	 				$('#bookingCalendar').fullCalendar('unselect');
+					Bert.alert({
+		  				title: 'Operation not allowed',
+		  				message: 'Event date is in the past.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
 				}else{
-				/*if(timeDiff>1800000){
-        			$("#bookingCalendar").fullCalendar('unselect');
-      			} else {*/
-					startTime = moment(startTime)
-					startTime._d = getCurrentTime.startTime
-					endTime = moment(endTime)
-					endTime._d = getCurrentTime.endTime
-					let newEvent = {
-						id:0,
-						title: 'Your Booking',
-		      			start: startTime,
-		      			end: endTime,
-		      			allDay: false,
-		      			editable:true,
-						overlap:false,
-						tooltip: 'Your Booking'
+					let startTime = start._d
+					let endTime = end._d
+					let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
+					let getCurrentTime = self.getCurrentTime(start, end)
+					let bookable = true;
+					if(self.props.areaDetails.bookingAdvanceDay && self.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
+						bookable = self.checkBookingOnThisDay(getCurrentTime,self.props.areaDetails)
 					}
-					$('#bookingCalendar').fullCalendar('removeEvents',0);
-					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
-					$( "#bookingCalendar" ).fullCalendar( 'addEventSource', [newEvent] );
-					$('#bookingCalendar').fullCalendar( 'refetchEvents' );
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
+					if( bookable == false ){
+						$('.fc-time-grid-event').css('display','none');
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						Bert.alert({
+			  				title: 'Oops, Operation not allowed',
+			  				message: "Unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				type: 'danger',
+			  				style: 'growl-top-right',
+			  				icon: 'fa-ban'
+						});
+					}else{
+					/*if(timeDiff>1800000){
+	        			$("#bookingCalendar").fullCalendar('unselect');
+	      			} else {*/
+						startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
+						let newEvent = {
+							id:0,
+							title: 'Your Booking',
+			      			start: startTime,
+			      			end: endTime,
+			      			allDay: false,
+			      			editable:true,
+							overlap:false,
+							tooltip: 'Your Booking'
 						}
-					})
+						$('#bookingCalendar').fullCalendar('removeEvents',0);
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						$( "#bookingCalendar" ).fullCalendar( 'addEventSource', [newEvent] );
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					}
 				}
     		},
     		eventClick: function(event) {
     		},
     		eventDrop: function (event, delta, revertFunc) {
-				let value = self._onTimeSlotAllotment(event, delta, revertFunc);
-				if(value == false){
-					revertFunc();
-				} else {
-					let getCurrentTime = self.getCurrentTime(event.start,event.end)
-					let startTime = event.start._d
-					    startTime = moment(startTime)
-						startTime._d = getCurrentTime.startTime
-					let endTime = event.end._d
-						endTime = moment(endTime)
-						endTime._d = getCurrentTime.endTime
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
-						}
-					})
+				if(moment(event.start._d).isBefore(moment(new Date()))) {
+	 				revertFunc();
+					Bert.alert({
+		  				title: 'Operation not allowed',
+		  				message: 'Event date is in the past.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
+				}else{
+					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
+					if(value == false){
+						revertFunc();
+					} else {
+						let getCurrentTime = self.getCurrentTime(event.start,event.end)
+						let startTime = event.start._d
+						    startTime = moment(startTime)
+							startTime._d = getCurrentTime.startTime
+						let endTime = event.end._d
+							endTime = moment(endTime)
+							endTime._d = getCurrentTime.endTime
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					}
 				}
     		},
 			eventResize: function(event, delta, revertFunc) {
-      			let value = self._onTimeSlotAllotment(event, delta, revertFunc);
-				if(value == false){
-					revertFunc();
-				} else {
-					let getCurrentTime = self.getCurrentTime(event.start,event.end)
-					let startTime = event.start._d
-					    startTime = moment(startTime)
-						startTime._d = getCurrentTime.startTime
-					let endTime = event.end._d
-						endTime = moment(endTime)
-						endTime._d = getCurrentTime.endTime
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
-						}
-					})
+				if(moment(event.start._d).isBefore(moment(new Date()))) {
+	 				revertFunc();
+					Bert.alert({
+		  				title: 'Operation not allowed',
+		  				message: 'Event date is in the past.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
+				}else{
+					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
+					if(value == false){
+						revertFunc();
+					} else {
+						let getCurrentTime = self.getCurrentTime(event.start,event.end)
+						let startTime = event.start._d
+						    startTime = moment(startTime)
+							startTime._d = getCurrentTime.startTime
+						let endTime = event.end._d
+							endTime = moment(endTime)
+							endTime._d = getCurrentTime.endTime
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					}
 				}
     		},
             eventAfterRender: function(event, element, view) {

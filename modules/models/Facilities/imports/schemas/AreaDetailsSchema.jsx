@@ -3,6 +3,8 @@ import moment from 'moment';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
 import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker, NumericText } from '/modules/ui/MaterialInputs';
+import { FileExplorer } from '/modules/models/Files';
+
 export default AreaDetailsSchema = {
     type: {
         label: 'Type',
@@ -400,5 +402,22 @@ export default AreaDetailsSchema = {
         label: "Area description",
         size: 12,
         input: Text,
-    }
+    },
+    attachments: {
+		label: "Attachments",
+		input: (props)=>{
+            return <FileExplorer
+                    {...props}
+                    uploadNewFile = {props.item && props.item.attachments && props.item.attachments.length ? true : undefined}
+                    uploadFieldName="Drop Booking Rules/Instructions here or browse"
+                    onChange={(val)=>{
+                        props.onChange(val)
+                    }}
+            />
+        },
+        //input: FileExplorer,
+        condition(item){
+            return item.type === "Bookable";
+        }
+	},
 }
