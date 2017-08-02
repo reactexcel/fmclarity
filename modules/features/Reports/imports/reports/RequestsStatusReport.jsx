@@ -202,7 +202,7 @@ const RequestsStatusReport = React.createClass( {
 
 		let { team, showFacilityName } = this.data, { facility, service } = this.state;
 		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
-		let styleForPDF = '<style type="text/css" media="print">.table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #last-head {text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #pre-col {text-align:left; border-right:1px solid black; border-bottom:1px solid black; padding-left: 0px;  padding-right: 10px;} .Summary{min-width:320px;} .Supplier{min-width:120px;} .Service{min-w-width:120px;} #last-col {text-align:left; border-bottom:1px solid black;  padding-left: 0px;  padding-right: 10px;}</style>';
+		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; } .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #last-head {text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #pre-col {text-align:left; border-right:1px solid black; border-bottom:1px solid black; padding-left: 0px;  padding-right: 10px;} .Summary{min-width:320px;} .Supplier{min-width:120px;} .Service{min-w-width:120px;} #last-col {text-align:left; border-bottom:1px solid black;  padding-left: 0px;  padding-right: 10px;}</style>';
 		//let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : '')+'Status Report '+(this.state.startDate || this.state.endDate ?'for ('+(this.state.startDate? moment( this.state.startDate ).format('DD/MM/YY'):'')+' -'(this.state.endDate? moment( this.state.endDate ).format('DD/MM/YY'):'')+' )':'')
 		let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : 'All Facility ')+'Status Report '+((this.state.startDate || this.state.endDate)?('for ('+(this.state.startDate ? moment( this.state.startDate ).format('DD/MM/YY'):'')+' - '+(this.state.endDate ? moment( this.state.endDate ).format('DD/MM/YY'):'')+')'):'')
 		let pdfName = (this.state.facility ? this.state.facility.name+'_' : 'All Facility_')+'Status Report '+((this.state.startDate || this.state.endDate)?('_('+(this.state.startDate ? moment( this.state.startDate ).format('DD-MM-YY'):'')+' to '+(this.state.endDate ? moment( this.state.endDate ).format('DD-MM-YY'):'')+')'):'')
@@ -217,7 +217,7 @@ const RequestsStatusReport = React.createClass( {
 
 					<h2>Status Report</h2>
 	                {this.state.dataset ? <div>
-					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
+					<Menu items = { [ download(this.state.dataset,pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 					<div className="row">
 						<div className="col-md-4">
