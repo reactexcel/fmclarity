@@ -196,7 +196,7 @@ const RequestsStatusReport = React.createClass( {
 					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable) ] } />
 				</div>:null}
 					<div className="row">
-						<div className="col-md-4">
+						{/*<div className="col-md-4">
 
 							<Select
 								placeholder = "Team"
@@ -212,7 +212,7 @@ const RequestsStatusReport = React.createClass( {
 								} }
 							/>
 
-						</div>
+						</div>*/}
 						<div className="col-md-3">
 							{console.log(team,team.getFacilities() )}
 							<Select
@@ -220,10 +220,15 @@ const RequestsStatusReport = React.createClass( {
 								value       = { facility }
 								items       = { team ? team.getFacilities() : null }
 								onChange    = { ( facility ) => {
-									this.setState( {
+									let stateToSet = {
 										facility: facility,
 										showFacilityName: false
-									} ) } }
+									}
+									if(_.isEmpty(facility)){
+										stateToSet.service = null;
+									}
+									this.setState( stateToSet )
+								} }
 							/>
 
 						</div>
@@ -233,13 +238,13 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Service"
 								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
-								onChange    = { ( service ) => { this.setState( { service } ) } }
+								onChange    = { ( service ) => {
+									this.setState( { service } )
+								} }
 							/>
 
 						</div>
-					</div>
-					<div className="row">
-						<div className="col-md-4">
+						<div className="col-md-3">
 
 							<DateTime
 								placeholder = "Start Date"
@@ -248,7 +253,7 @@ const RequestsStatusReport = React.createClass( {
 							/>
 
 						</div>
-						<div className="col-md-4">
+						<div className="col-md-3">
 
 							<DateTime
 								placeholder = "End Date"
@@ -257,7 +262,6 @@ const RequestsStatusReport = React.createClass( {
 							/>
 
 						</div>
-
 					</div>
 
 				</div>
