@@ -6,7 +6,7 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
-import { Actions, Routes } from '/modules/core/Actions';
+import { Actions } from '/modules/core/Actions';
 
 /**
  * @class           UserProfileMenu

@@ -32,7 +32,6 @@ const CreateTeamRequest = new Action( {
 		            model = { Requests }
 		            form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
 		            item = { newItem }
-		            submitText="Save"
 		            onSubmit = {
 		                ( newRequest, requestShouldIssue ) => {
 		                    if(newRequest.type == "Booking"){
@@ -45,21 +44,15 @@ const CreateTeamRequest = new Action( {
 		                            </DropFileContainer>
 		                    } );
 
-		                    let owner = Meteor.user(),
-		                    	method = 'Issues.create';
+		                    let owner = Meteor.user();
 
 		                    newRequest.owner = {
 		                        _id: owner._id,
 		                        name: owner.profile ? owner.profile.name : owner.name
 		                    };
 
-		                    newRequest = Requests.collection._transform( newRequest );
+		                    Meteor.call( 'Issues.create', newRequest );
 
-		                    if( newRequest.canIssue( owner ) && requestShouldIssue ) {
-		                    	method = 'Issues.issue';
-		                    }
-
-		                    Meteor.call( method, newRequest );
 		                    let request = Requests.findOne( { _id: newRequest._id } );
 		                    request.markAsUnread();
 		                    callback? callback( newRequest ): null;

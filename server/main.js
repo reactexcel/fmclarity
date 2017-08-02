@@ -9,7 +9,7 @@ Meteor.startup( function() {
         smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
 
     process.env.ROOT_URL = 'https://app.fmclarity.com';
-    process.env.MAIL_URL = "smtp://" + smtpUsername + ":" + encodeURIComponent( smtpPassword ) + "@email-smtp.us-west-2.amazonaws.com:465/";
+    process.env.MAIL_URL = "smtps://" + smtpUsername + ":" + encodeURIComponent( smtpPassword ) + "@email-smtp.us-west-2.amazonaws.com:465/";
 
     SyncedCron.config( {
         log: true,

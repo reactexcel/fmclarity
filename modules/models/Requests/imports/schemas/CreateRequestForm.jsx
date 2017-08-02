@@ -29,6 +29,9 @@ export default CreateRequestForm = [
 	'costThreshold',
 	//'requireServiceReport',
 	//'requireInvoice',
+
+	'memberName',
+	'numberOfPersons',
 	'description',
 	'incidentFurtherComments',
 	'attachments',
