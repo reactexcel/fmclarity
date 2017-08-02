@@ -173,35 +173,7 @@ const WeeklyCalendar = React.createClass( {
                 right: 'next'
             },
 			selectOverlap: false,
-			/*header: {
-      			left: 'prev,next today prevYear nextYear',
-      			center: 'title',
-      			right: 'agendaWeek,month,agendaDay'
-    		},*/
 		    events: calendarEvents,
-			/*events:[{
-				title: 'sunday',
-                allDay: false,
-                start:"01:00",
-                end:"24:00",
-				editable:false,
-                dow: [0]
-			},{
-				title: 'sunday',
-                allDay: false,
-                start:"24:00",
-                end:"24:59",
-				editable:false,
-                dow: [6]
-			}],*/
-			/*events:[{
-				title: 'sunday',
-                allDay: false,
-                start:"00:00",
-                end:"24:00",
-				editable:false,
-                dow: [0]
-			}],*/
 			select: function(start, end, ev) {
 				if(moment(start._d).isBefore(moment(new Date()))) {
 	 				$('#bookingCalendar').fullCalendar('unselect');
@@ -327,15 +299,11 @@ const WeeklyCalendar = React.createClass( {
 				}
     		},
             eventAfterRender: function(event, element, view) {
-                //if(event.type == 'unAvailable'){
                     $(element).css('width','105%');
 					$(element).css('left','-2px');
-					//$(element).css('right','-3px');
-                //}
             },
             eventMouseover: function(data, event, view){
                 let tooltip;
-                //if(data.type == "unAvailable"){
 				if(data.tooltip != undefined){
                     tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + data.tooltip + '</div>';
                     $("body").append(tooltip);
@@ -348,7 +316,6 @@ const WeeklyCalendar = React.createClass( {
                         $('.tooltiptopicevent').css('left', e.pageX + 20);
                     });
 				}
-                //}
             },
             eventMouseout: function (data, event, view) {
                 $(this).css('z-index', 0);

@@ -89,7 +89,6 @@ class AutoForm extends React.Component {
 		  				style: 'growl-top-right',
 		  				icon: 'fa-ban'
 					});
-					//window.alert("Oops, no bookable areas available");
 				}
 			}
 		}
