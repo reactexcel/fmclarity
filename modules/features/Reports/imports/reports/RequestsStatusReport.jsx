@@ -110,8 +110,8 @@ const RequestsStatusReport = React.createClass( {
 		Issue: "name",
 		Issued: "issuedAt",
 		Due: "dueDate",
-		//Supplier: "supplier.name",
-		Supplier: ( item ) => {
+		Supplier: "supplier.name",
+		/*Supplier: ( item ) => {
 			let supplier = item.getSupplier();
 			if( supplier != null ){
 				return {
@@ -121,7 +121,7 @@ const RequestsStatusReport = React.createClass( {
 			return {
 				val: <span/>
 			}
-		},
+		},*/
 		Service: ( item ) => {
 			if ( item.service ) {
 				return { val: item.service.name + ( item.subservice && item.subservice.name ? ( " - " + item.subservice.name ) : "" ) };
