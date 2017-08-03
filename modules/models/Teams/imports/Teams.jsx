@@ -252,13 +252,13 @@ function getSuppliers() {
         .fetch();
 }
 
-function inviteSupplier( team, searchName, id, callback ) {
+function inviteSupplier( team, viewingTeam, id, callback ) {
+    let searchName = viewingTeam.name ? viewingTeam.name : viewingTeam
     let supplier = null;
 
     if ( id ) {
         supplier = Teams.findOne( id );
     }
-
     searchName = searchName.trim();
     if ( !supplier ) {
         //  supplier = Meteor.call( "Teams.create", {
@@ -266,6 +266,7 @@ function inviteSupplier( team, searchName, id, callback ) {
             _id: id,
             type: "contractor",
             name: searchName,
+            email: viewingTeam.email,
             owner: {
                 _id: team._id,
                 name: team.name,

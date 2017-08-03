@@ -130,6 +130,18 @@ const RequestSchema = {
                                     request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
                                     request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
                                     request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
+                                    if (request.type == "Key Request") {
+                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                                        if(services){
+                                            for (var i = 0; i < services.length; i++) {
+                                                var name = services[i].name;
+                                                if (name.indexOf('keys') !== -1) {
+                                                    request.service = services[i];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                                 else{
                                     /*request.area = request.area ? request.area : null;
@@ -719,6 +731,20 @@ const RequestSchema = {
             },
             size: 6,
             type: "object",
+            defaultValue: ( item ) => {
+                if (item.type == "Key Request") {
+                    var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                    if (services) {
+                        for (var i = 0; i < services.length; i++) {
+                            var name = services[i].name;
+                            if (name.indexOf('keys') !== -1) {
+                                item.service = services[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
@@ -745,6 +771,9 @@ const RequestSchema = {
                     }
                 }
                 if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
+                    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
+                        return true;
+                    }
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
