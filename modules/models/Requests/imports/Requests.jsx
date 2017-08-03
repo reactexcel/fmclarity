@@ -34,7 +34,8 @@ const Requests = new Model( {
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    return "work order #" + this.code + ' "' + this.getName() + '"';
+                    var title = this.invoiceDetails && this.invoiceDetails.invoiceNumber ? "invoice #" + this.invoiceDetails.invoiceNumber : "work order #" + this.code;
+                    return title + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
