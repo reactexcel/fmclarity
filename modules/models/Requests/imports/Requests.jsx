@@ -16,6 +16,7 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
@@ -1142,6 +1143,25 @@ function actionComplete( request ) {
 
 function actionInvoice( request ) {
     request.invoiceDetails.status = 'New';
+    if ( request.invoiceDetails && request.invoiceDetails.invoice ) {
+        var files = request.invoiceDetails.invoice;
+        for (var i = 0; i < files.length; i++) {
+            var file = Files.findOne({_id:files[i]._id});
+            var filename = file && file.original && file.original.name;
+            var fileExists = false;
+            for (var x = 0; x < request.attachments.length; x++) {
+                
+                let f = Files.findOne({_id:request.attachments[x]._id}),
+                fname = f && f.original && f.original.name; 
+                if (filename == fname) {
+                    fileExists =  true;
+                }
+            }
+            if (!fileExists) {
+                request.attachments.push( files[i] );
+              }
+        }
+    }
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );
 

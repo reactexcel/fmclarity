@@ -10,6 +10,7 @@ import {Facilities} from '/modules/models/Facilities';
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
@@ -473,6 +474,25 @@ const editInvoice = new Action( {
             submitText="Save"
             onSubmit = {
                 ( request ) => {
+                    if ( request.invoiceDetails.invoice ) {
+                        $.each( request.invoiceDetails.invoice, function( key, value ) {
+                          //request.attachments.push( value );
+                          let file = Files.findOne({_id:value._id}),
+                              filename = file && file.original && file.original.name,
+                              fileExists = false;
+                          $.each(request.attachments, function(k, v){
+                            let f = Files.findOne({_id:v._id});
+                            fname = f && f.original && f.original.name; 
+                            if (filename == fname) {
+                                fileExists =  true;
+                            }
+                          });
+                          if (!fileExists) {
+                            request.attachments.push( value );
+                          }
+
+                        });
+                    }
                     Requests.save.call( request ).then((request)=>{
                         Modal.hide();
                     });
