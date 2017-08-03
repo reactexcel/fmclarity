@@ -252,13 +252,13 @@ function getSuppliers() {
         .fetch();
 }
 
-function inviteSupplier( team, searchName, id, callback ) {
+function inviteSupplier( team, viewingTeam, id, callback ) {
+    let searchName = viewingTeam.name ? viewingTeam.name : viewingTeam
     let supplier = null;
 
     if ( id ) {
         supplier = Teams.findOne( id );
     }
-
     searchName = searchName.trim();
     if ( !supplier ) {
         //  supplier = Meteor.call( "Teams.create", {
@@ -266,6 +266,7 @@ function inviteSupplier( team, searchName, id, callback ) {
             _id: id,
             type: "contractor",
             name: searchName,
+            email: viewingTeam.email,
             owner: {
                 _id: team._id,
                 name: team.name,
@@ -461,6 +462,43 @@ Teams.helpers( {
         } );
         */
         return this.counters.WO;
+    },
+
+    getNextInvoiceNumber() {
+        Number.prototype.pad = function(size) {
+          var s = String(this);
+          while (s.length < (size || 2)) {s = "0" + s;}
+          return s;
+        }
+        if ( !this.counters ) {
+            this.counters = {};
+        }
+        if ( !this.counters.INV ) {
+            this.counters.INV = 0;
+        }
+        var nameInitials = this.getNameInitials();
+        var invoiceNumber = "";
+        this.counters.INV = this.counters.INV + 1;
+        Teams.save.call( this );
+        var paddedCounter = ( this.counters.INV ).pad(3);
+        invoiceNumber = nameInitials + paddedCounter.toString();
+        return invoiceNumber;
+    },
+
+    getNameInitials(){
+        let names = [],
+            name = this.name,
+            initials = "";
+        if ( name != null ) {
+            names = name.trim().split( ' ' );
+            if ( names.length == 1 ) {
+                initials = names[0].substr(0, 3);
+            }
+            if ( names.length >= 2 ) {
+                initials = names[ 0 ][ 0 ] + names[ 1 ][ 0 ];
+            }
+        }
+        return initials.toUpperCase();
     },
 
     //duplicate this in the publish functions

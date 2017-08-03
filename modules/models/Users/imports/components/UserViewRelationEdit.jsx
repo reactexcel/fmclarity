@@ -67,7 +67,6 @@ export default UserViewRelationEdit = React.createClass( {
 				roles.push("fmc support");
 			}
 		}
-
 		if ( relation ) {
 			let role = relation.role,
 			threshold = relation.issueThresholdValue ? relation.issueThresholdValue : "",
@@ -92,6 +91,8 @@ export default UserViewRelationEdit = React.createClass( {
 				</div>
 			)
 
+		}else{
+			return <div></div>
 		}
 	}
 } );

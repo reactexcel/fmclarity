@@ -8,7 +8,8 @@ export default function Contact2Line( props ) {
 		tenancyVariables = [],
 		facility_name = "",
 		level = "",
-		apartment = "";
+		apartment = "",
+		removeEmail = props.removeEmail;
 
 	if ( contact ) {
 		profile = contact.getProfile ? contact.getProfile() : ( contact.profile ? contact.profile : contact );
@@ -33,7 +34,13 @@ export default function Contact2Line( props ) {
 		tenancy = resident_tenancy
 		}
 	}
-
+	//temp flag to ensure that tenancy renders as a string only. issue occurs in prod.
+	if (typeof tenancy === 'string' || tenancy instanceof String){
+		tenancy = tenancy;
+	}
+	else{
+		tenancy = "";
+	}
 
 
 	return (
@@ -42,7 +49,7 @@ export default function Contact2Line( props ) {
 
 			{
 			tenancy?
-			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{tenancy}</span>
+			<span>&nbsp;<i className="fa fa-home"></i>&nbsp;{ typeof tenancy === 'object' ? (tenancy.level && tenancy.level.name ? tenancy.level.name : '') + (tenancy.area && tenancy.area.name ? ', '+tenancy.area.name : '') + (tenancy.identifier && tenancy.identifier.name ? ', '+tenancy.identifier.name : '') : tenancy}</span>
 			:null
 			}
 
@@ -53,7 +60,7 @@ export default function Contact2Line( props ) {
 			}
 
 			<br/>
-	        <span className="contact-card-line-2">
+			{removeEmail?null:<span className="contact-card-line-2">
 
 	        {
 	        profile.email?
@@ -68,7 +75,7 @@ export default function Contact2Line( props ) {
 	        :null
 	        }
 
-	        </span>
+	        </span>}
 	    </span>
 	)
 }
