@@ -257,17 +257,13 @@ export default MonthlyReport = React.createClass( {
 			<div style={{paddingBottom:"6%",marginTop:"8%"}}>
 				<MBMReport MonthlyReport/>
 			</div>
-			<div className="ibox">
+			<div style={{width:"600px",marginLeft:"200px"}}>
 				<div className="ibox-content" style={{padding:"7px",marginBottom:"5%"}}>
 					<Calendar requests = { requests } />
 				</div>
 			</div>
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
 				<MBMBuildingServiceReport MonthlyReport/>
-			</div>
-			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
-				<span style={{fontSize:"26px",fontWeight:"500"}}>Building Photos</span>
-				<MBMServiceImages MonthlyReport/>
 			</div>
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>
 				<span style={{fontSize:"26px",fontWeight:"500"}}>Defects Table</span>

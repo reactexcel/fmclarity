@@ -142,7 +142,6 @@ Meteor.publish( 'Requests: Complete', function( ) {
     console.log( this.userId );
 
     let requestsCursor = Requests.find( {
-            'members._id': this.userId,
             status: 'Complete'
         }, {
         sort: {
@@ -265,9 +264,11 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
             incidentVictim: 1,
             issuedAt: 1,
             level: 1,
+            memberName: 1,
             location: 1,
             members: 1,
             name: 1,
+            numberOfPersons: 1,
             'owner._id': 1,
             'owner.name': 1,
             priority: 1,

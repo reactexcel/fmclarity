@@ -346,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                    TeamActions.createRequest.run( team, callback, newRequest );
                 }
             } )
         },
@@ -566,7 +566,7 @@ ComplianceEvaluationService = new function() {
                             supplier: serviceReq[0].data.supplier,
                             supplierContacts: serviceReq[0].data.defaultContact
                         } );
-                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                        TeamActions.createRequest.run( team, callback, newRequest );
                     }
                 }
             } )
