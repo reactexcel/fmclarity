@@ -141,7 +141,7 @@ const RequestSchema = {
                                             }
                                         }
                                     }
-                                    
+
                                 }
                                 else{
                                     request.area = request.area ? request.area : null;
@@ -1595,7 +1595,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 || request.type == 'Booking' ) {
+                if ( facilities.length <= 1 ) {
                     return false;
                 }
                 return true;
@@ -1961,7 +1961,7 @@ const RequestSchema = {
                 defaultValue: (item)=>{
                     return item.type == 'Booking' ? Meteor.user().getName() : null;
                 },
-                condition:"Booking" 
+                condition:"Booking"
             },
 
             numberOfPersons: {
@@ -1971,7 +1971,7 @@ const RequestSchema = {
                 input: Text,
                 size: 6,
                 required: true,
-                condition:"Booking" 
+                condition:"Booking"
             },
 
             footer: {

@@ -202,43 +202,65 @@ const WeeklyCalendar = React.createClass( {
     		eventClick: function(event) {
     		},
     		eventDrop: function (event, delta, revertFunc) {
-				let value = self._onTimeSlotAllotment(event, delta, revertFunc);
-				if(value == false){
+				if(moment(event.start._d).isBefore(moment(new Date()))) {
 					revertFunc();
-				} else {
-					let getCurrentTime = self.getCurrentTime(event.start,event.end)
-					let startTime = event.start._d
-					    startTime = moment(startTime)
-						startTime._d = getCurrentTime.startTime
-					let endTime = event.end._d
-						endTime = moment(endTime)
-						endTime._d = getCurrentTime.endTime
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
-						}
-					})
+			        Bert.alert({
+						  title: 'Operation not allowed',
+						  message: 'Event date is in the past.',
+						  type: 'danger',
+						  style: 'growl-top-right',
+						  icon: 'fa-ban'
+						});
+			    }else{
+					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
+					if(value == false){
+						revertFunc();
+					} else {
+						let getCurrentTime = self.getCurrentTime(event.start,event.end)
+						let startTime = event.start._d
+						    startTime = moment(startTime)
+							startTime._d = getCurrentTime.startTime
+						let endTime = event.end._d
+							endTime = moment(endTime)
+							endTime._d = getCurrentTime.endTime
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					}
 				}
     		},
 			eventResize: function(event, delta, revertFunc) {
-      			let value = self._onTimeSlotAllotment(event, delta, revertFunc);
-				if(value == false){
+				if(moment(event.start._d).isBefore(moment(new Date()))) {
 					revertFunc();
-				} else {
-					let getCurrentTime = self.getCurrentTime(event.start,event.end)
-					let startTime = event.start._d
-					    startTime = moment(startTime)
-						startTime._d = getCurrentTime.startTime
-					let endTime = event.end._d
-						endTime = moment(endTime)
-						endTime._d = getCurrentTime.endTime
-					self.setState({
-						value:{
-							startTime:startTime,
-							endTime:endTime,
-						}
-					})
+			        Bert.alert({
+						  title: 'Operation not allowed',
+						  message: 'Event date is in the past.',
+						  type: 'danger',
+						  style: 'growl-top-right',
+						  icon: 'fa-ban'
+						});
+			    }else{
+					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
+					if(value == false){
+						revertFunc();
+					} else {
+						let getCurrentTime = self.getCurrentTime(event.start,event.end)
+						let startTime = event.start._d
+						    startTime = moment(startTime)
+							startTime._d = getCurrentTime.startTime
+						let endTime = event.end._d
+							endTime = moment(endTime)
+							endTime._d = getCurrentTime.endTime
+						self.setState({
+							value:{
+								startTime:startTime,
+								endTime:endTime,
+							}
+						})
+					}
 				}
     		},
             eventAfterRender: function(event, element, view) {
