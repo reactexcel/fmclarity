@@ -2,6 +2,8 @@ import { DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select, ABN, Phone } from '/modules/ui/MaterialInputs';
 import { Facilities, AddressSchema } from '/modules/models/Facilities';
 import { ServiceDefaults } from '/modules/mixins/Services';
+import React from "react";
+import { Teams } from '/modules/models/Teams';
 
 //import { Facilities } from '/modules/models/Facilities';
 
@@ -21,7 +23,24 @@ export default TeamSchema = {
     name: {
         type: "string",
         label: "Company Name",
-        input: Text,
+        //input: Text,
+        input: (props)=>{
+            return <Text
+                {...props}
+                onChange={(val)=>{
+                    props.onChange(val)
+                }}
+                onBlur={(val)=>{
+                    if(!_.isEmpty(props.item.name)){
+                        let query = {name:props.item.name};
+                        searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
+                        if ( searchTeams.length > 0 ) {
+                        }else{
+                        }
+                    }
+                }}
+            />
+        },
         required: true,
     },
 
