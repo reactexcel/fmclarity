@@ -99,7 +99,7 @@ export default class DocsSinglePageIndex extends React.Component {
             );
             let folders = [];
             for(var idx in documents){
-                if(documents[idx].facility && documents[idx].facility._id && documents[idx].type){
+                if(documents[idx].facility && documents[idx].facility._id && _.contains(ids,documents[idx].facility._id) && documents[idx].type){
                     let facilityAlreadyExist = folders.filter(function(obj){
                         return obj._id == documents[idx].facility._id
                     })
