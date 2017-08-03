@@ -227,18 +227,24 @@ const TeamStepper = React.createClass( {
     },
 
     render() {
-      console.log(this.props ,this.data);
+
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
+
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
                     <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier = {(supplier)=>{
+
+                      this.setState({
+                        item:supplier
+                      })
                         if(this.props.onChange){
+
                             this.props.onChange(supplier)
                         }
                     }}/>
@@ -332,7 +338,8 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 // console.log(item,team);
-                                                if(this.data.viewer.role === "fmc support"){
+                                                if(item.type === "fm"){
+                                                  if(this.data.viewer.role === "fmc support"){
                                                   // console.log("working");
                                                   item.members = [{
                                                     _id : this.data.viewer._id,
@@ -348,10 +355,16 @@ const TeamStepper = React.createClass( {
                                                     name :  this.data.viewer.profile.name
                                                   }]
                                                 }
+                                              }
                                                 // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
+                                                }
+                                                if(this.props.test){
+                                                  if(this.props.onChange){
+                                                    this.props.onChange(item)
+                                                  }
                                                 }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
@@ -364,6 +377,7 @@ const TeamStepper = React.createClass( {
                                                       }
                                                     }
                                                    );
+
                                                    if (role == "property manager") {
                                                        this.props.onChange && this.props.onChange( item );
                                                    }

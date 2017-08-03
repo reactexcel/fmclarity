@@ -22,7 +22,7 @@ class AutoForm extends React.Component {
 	/**
 	 * @param 		{object} props
 	 */
-	constructor( props ) { 
+	constructor( props ) {
 		super( props );
 		let { model, form, item, errors } = props;
 

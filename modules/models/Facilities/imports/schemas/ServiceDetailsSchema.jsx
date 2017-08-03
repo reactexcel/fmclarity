@@ -117,6 +117,7 @@ export default ServiceDetailsSchema = {
                         import { TeamStepper } from '/modules/models/Teams';
                         Modal.show( {
                             content: <TeamStepper
+                                test
                                 facility = { facility }
                                 showFilter={true}
                                 onChange = {

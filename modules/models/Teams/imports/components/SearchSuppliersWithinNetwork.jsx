@@ -131,14 +131,11 @@ export default class SearchSuppliersWithinNetwork extends Component {
                         }
                         TeamActions.edit.bind(invitee).run();
                     }
-                    if ( !invitee.email ) {
-                        //this.setState( { shouldShowMessage: true } );
-                    } else {
+
                         if(this.props.onSaveSupplier){
-                            this.props.onSaveSupplier(supplier)
+                            this.props.onSaveSupplier(invitee)
                         }
                         Modal.hide();
-                    }
 
                 }, null );
             } );
