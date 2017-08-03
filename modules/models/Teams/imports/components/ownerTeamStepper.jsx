@@ -334,7 +334,7 @@ const OwnerTeamStepper = React.createClass( {
     },
 
     render() {
-      console.log(this.props ,this.data);
+
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
@@ -377,6 +377,7 @@ const OwnerTeamStepper = React.createClass( {
             )
         }
         */
+        console.log(viewingTeam.owner , this.state.newUser);
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
@@ -457,6 +458,7 @@ const OwnerTeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 console.log(item,viewingTeam);
+                                                item.owner = viewingTeam.owner
                                                 if(item.members && item.members.length){
                                                   let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
                                                   if(!arr.length > 0 ){
