@@ -116,6 +116,7 @@ class Calendar extends React.Component {
                     RequestActions.view.run( event.request );
                 }
             },
+            displayEventTime: false,
             eventLimit: true,
             /*header: {
                 left: 'prev',
