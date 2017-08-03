@@ -60,7 +60,7 @@ export default function Contact2Line( props ) {
 			}
 
 			<br/>
-	        {removeEmail?null:<span className="contact-card-line-2">
+			{removeEmail?null:<span className="contact-card-line-2">
 
 	        {
 	        profile.email?
@@ -75,7 +75,7 @@ export default function Contact2Line( props ) {
 	        :null
 	        }
 
-			</span>}
+	        </span>}
 	    </span>
 	)
 }
