@@ -256,7 +256,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             { request.type == 'Ad-hoc' || "Ad-Hoc" &&
                               request.costThreshold &&
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
-                            <h2>${request.costThreshold}</h2>
+                            <h2>${requestIsInvoice ? formatToCurrency(request.invoiceDetails.totalPayable.toString()) : request.costThreshold}</h2>
                             : null }
 
                             {requestIsInvoice ?
