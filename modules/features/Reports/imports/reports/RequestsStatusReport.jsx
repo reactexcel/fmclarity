@@ -27,27 +27,34 @@ const RequestsStatusReport = React.createClass( {
 	getInitialState() {
 		return {
 			service: null,
+			showServiceField:true,
 			startDate: null,
 			endDate: null,
-			showFacilityName: true,
+			showFacilityField: true,
 			dataset:null,
+			selectedStatus:null,
+			showStatusField:true,
 		}
 	},
 
 	getMeteorData() {
 
-		var user, team, facility, requests, data = {};
+		var user, team, facility, requests, status, data = {};
 		user = Meteor.user();
 		if ( user ) {
 			var q = {};
 			team = user.getSelectedTeam();
 			facility = this.state.facility || user.getSelectedFacility();
 			service = this.state.service;
+			status = this.state.selectedStatus;
 			if ( facility ) {
 				q[ "facility._id" ] = facility._id;
 			}
 			if ( service ) {
 				q[ "service.name" ] = service.name;
+			}
+			if( status ){
+				q[ "status" ] = status;
 			}
 			if ( this.state.startDate || this.state.endDate ) {
 				q.issuedAt = {};
@@ -66,7 +73,9 @@ const RequestsStatusReport = React.createClass( {
 			team: team,
 			facility: facility,
 			reportData: data,
-			showFacilityName: this.state.showFacilityName,
+			showFacilityField: this.state.showFacilityField,
+			showStatusField: this.state.showStatusField,
+			showServiceField: this.state.showServiceField
 		}
 	},
 
@@ -184,8 +193,10 @@ const RequestsStatusReport = React.createClass( {
 			return <div/>
 		}
 
-		let { team, showFacilityName } = this.data, { facility, service } = this.state;
-		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
+		let { team, showFacilityField, showStatusField, showServiceField } = this.data, { facility, service } = this.state;
+		let fields = showFacilityField ? this.fields : _.omit( this.fields, "Facility" );
+		    fields = showStatusField ? fields : _.omit(fields, "Status");
+			fields = showServiceField ? fields : _.omit(fields, "Service");
 
 		return (
 			<div>
@@ -207,23 +218,26 @@ const RequestsStatusReport = React.createClass( {
 									this.setState( {
 										facility: null,
 										service: null,
-										showFacilityName: true
+										showFacilityField: true
 									} )
 								} }
 							/>
 
 						</div>
 						<div className="col-md-3">
-							{console.log(team,team.getFacilities() )}
 							<Select
 								placeholder = "Facility"
 								value       = { facility }
 								items       = { team ? team.getFacilities() : null }
 								onChange    = { ( facility ) => {
-									this.setState( {
+									let stateToSet = {
 										facility: facility,
-										showFacilityName: false
-									} ) } }
+										showFacilityField: _.isEmpty(facility) ? true : false
+									}
+									stateToSet.service = _.isEmpty(facility) ? null : this.state.service;
+									stateToSet.showServiceField = _.isEmpty(stateToSet.service) ? true : false;
+									this.setState( stateToSet )
+								} }
 							/>
 
 						</div>
@@ -233,12 +247,30 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Service"
 								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
-								onChange    = { ( service ) => { this.setState( { service } ) } }
+								onChange    = { ( service ) => {
+									this.setState( {
+										service: service,
+										showServiceField: _.isEmpty(service) ? true : false
+									 } )
+								} }
 							/>
 
 						</div>
 					</div>
 					<div className="row">
+						<div className="col-md-4">
+							<Select
+								placeholder = "Status"
+				                value       = { this.state.selectedStatus }
+				                items       = { [ "Booking", "Completed", "Deleted", "Issued", "New", "PMP", "PPM" ] }
+				                onChange    = { ( item ) => {
+									this.setState({
+										selectedStatus: item,
+										showStatusField: _.isEmpty(item) ? true : false
+									})
+				                } }
+				            />
+						</div>
 						<div className="col-md-4">
 
 							<DateTime
