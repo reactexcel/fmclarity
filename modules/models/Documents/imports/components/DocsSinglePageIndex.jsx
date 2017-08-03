@@ -99,7 +99,7 @@ export default class DocsSinglePageIndex extends React.Component {
             );
             let folders = [];
             for(var idx in documents){
-                if(documents[idx].facility && documents[idx].facility._id && documents[idx].type){
+                if(documents[idx].facility && documents[idx].facility._id && _.contains(ids,documents[idx].facility._id) && documents[idx].type){
                     let facilityAlreadyExist = folders.filter(function(obj){
                         return obj._id == documents[idx].facility._id
                     })
@@ -503,7 +503,6 @@ export default class DocsSinglePageIndex extends React.Component {
                             label="Filter Documents"
                             backgroundColor={"#b8e986"}
                             labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}}
-                            buttonStyle={{lineHeight:'30px'}}
                             icon={<i className="fa fa-filter" style={{'marginLeft':'12px',fontSize:'16px',marginTop:"-5px"}}></i>}
                             onClick={(event)=>{
                                 event.stopPropagation();
