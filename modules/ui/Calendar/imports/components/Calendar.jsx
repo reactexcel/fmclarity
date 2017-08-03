@@ -5,6 +5,7 @@
 
 import React from "react";
 import { RequestActions } from '/modules/models/Requests';
+import moment from 'moment'
 
 /**
  * An ui component that renders a calendar with requests appearing as events.
@@ -13,16 +14,22 @@ import { RequestActions } from '/modules/models/Requests';
  * @param           {object} props
  * @param           {string} props.example
  * @todo            Create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
- */
-class Calendar extends React.Component {
 
+ */
+const eventt = []
+
+class Calendar extends React.Component {
     /**
      * Takes the retrieved data and adds events to the calendar
      * @memberOf    module:ui/Calendar.Calendar
      * @private
      */
     _addEvents( { requests } ) {
-
+        let calendarView = $('#calendar').fullCalendar('getView');
+        let allDays = true;
+        if( _.contains(['agendaWeek','agendaDay'],calendarView.name) ){
+            allDays = false;
+        }
         if ( requests == null ) {
             return;
         }
@@ -31,7 +38,7 @@ class Calendar extends React.Component {
             "Standard": "#0152b5",
             "Urgent": "#f5a623",
             "Critical": "#d0021b",
-            "Closed": "#000000",
+            "Close": "#000000",
             "Booking": "#ef6c00",
             "PPM": "#333333",
         };
@@ -40,32 +47,57 @@ class Calendar extends React.Component {
         events.length = 0;
 
         requests.map( ( request ) => {
-          // console.log(request);
-            if ( request.dueDate ) {
+            if(request.type=="Booking" && request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime){
                 let title = null;
-                if ( request.type == 'Preventative' ) {
-                    title = request.name;
-                } else if ( request.code ) {
+                if(request.code){
                     title = `#${request.code} ${request.name}`
-                } else {
+                }else{
                     title = request.name;
                 }
-                events.push( {
+                events.push({
                     title: title,
                     color: colors[ request.priority ],
-                    start: request.dueDate,
-                    allDay: true,
+                    start: request.bookingPeriod.startTime,
+                    end: request.bookingPeriod.endTime,
+                    allDay: allDays,
                     request: {
                         _id: request._id,
                         code: request.code,
-                        name: request.name
+                        name: request.name,
+                        start:request.dueDate
+                    },
+                    tooltip:request.priority
+                });
+            } else{
+                if ( request.dueDate ) {
+                    let title = null;
+                    if ( request.type == 'Preventative' ) {
+                        title = request.name;
+                    } else if ( request.code ) {
+                        title = `#${request.code} ${request.name}`
+                    } else {
+                        title = request.name;
                     }
-                    //url:i.getUrl()
-                } );
+                    events.push( {
+                        title: title,
+                        color: colors[ request.priority ],
+                        start: request.dueDate,
+                        allDay: allDays,
+                        request: {
+                            _id: request._id,
+                            code: request.code,
+                            name: request.name
+                        },
+                        tooltip:request.priority
+                        //url:i.getUrl()
+                    } );
+                }
             }
+
         } );
-        $( this.refs.calendar ).fullCalendar( 'removeEventSource', events );
-        $( this.refs.calendar ).fullCalendar( 'addEventSource', events );
+        this.eventt = events;
+        $( '#calendar' ).fullCalendar( 'removeEventSource', events );
+        $( '#calendar' ).fullCalendar( 'addEventSource', events );
     }
 
     /**
@@ -73,10 +105,11 @@ class Calendar extends React.Component {
      * @memberOf    module:ui/Calendar.Calendar
      */
     componentDidMount() {
+        let self = this;
         this.events = {
             events: []
         };
-        $( this.refs.calendar ).fullCalendar( {
+        $( '#calendar' ).fullCalendar( {
             //height:500,
             eventClick( event ) {
                 if ( event.request ) {
@@ -84,10 +117,64 @@ class Calendar extends React.Component {
                 }
             },
             eventLimit: true,
-            header: {
+            /*header: {
                 left: 'prev',
                 center: 'title,today',
                 right: 'next'
+            }*/
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            defaultView: 'month',
+            eventMouseover: function(data, event, view){
+                let tooltip;
+                    tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + 'PRIORITY :'+'<b>'+ data.tooltip +'</b>'+ '</div>';
+                    $("body").append(tooltip);
+                    $(this).mouseover(function (e) {
+                        $(this).css('z-index', 10000);
+                        $('.tooltiptopicevent').fadeIn('500');
+                        $('.tooltiptopicevent').fadeTo('10', 1.9);
+                    }).mousemove(function (e) {
+                        $('.tooltiptopicevent').css('top', e.pageY + 10);
+                        $('.tooltiptopicevent').css('left', e.pageX + 20);
+                    });
+            },
+            eventMouseout: function (data, event, view) {
+                $(this).css('z-index', 0);
+                $('.tooltiptopicevent').remove();
+            },
+            viewRender: function(view) {
+                //let event = $("#calendar").fullCalendar('clientEvents');
+                let event = self.eventt;
+                if(event && event.length > 0){
+                    event.map( ( evt,id ) => {
+                        if((view.name == "agendaWeek" || view.name == "agendaDay")/* && event[id].end == null*/){
+                            event[id].allDay = false;
+                        }else{
+                            event[id].allDay = true;
+                        }
+                    })
+                    self.eventt = event;
+                    self._addEvents( self.props );
+					$('#calendar').fullCalendar( 'refetchEvents' );
+                }
+            },
+            eventRender: function(event, element) {
+                setTimeout(function(){
+                    $('.fc-popover').css('max-height','360px');
+                    $('.fc-popover').css('overflow','auto');
+                    let position = $('.fc-popover').position()
+                    if(position){
+                        if(position.top < 0 ){
+                            $('.fc-popover').css('top','0px');
+                        }
+                        if(position.left > 300 ){
+                            $('.fc-popover').css('left','300px');
+                        }
+                    }
+                }, 10);
             }
         } );
         this._addEvents( this.props );
@@ -108,7 +195,7 @@ class Calendar extends React.Component {
      */
     render() {
         return (
-            <div ref="calendar"></div>
+            <div ref="calendar" id="calendar"></div>
         )
     }
 }

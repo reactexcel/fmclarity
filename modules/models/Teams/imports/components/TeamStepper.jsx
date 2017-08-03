@@ -28,7 +28,6 @@ const TeamStepper = React.createClass( {
     mixins: [ ReactMeteorData ],
 
     getMeteorData() {
-
         let viewer = Meteor.user(),
             viewersTeam = null,
             viewingTeam = null,
@@ -48,6 +47,24 @@ const TeamStepper = React.createClass( {
                 Teams.schema.email.required=false;
             }
             */
+            if(!_.isEmpty(this.state.item.preActiveService)){
+                let preService = _.filter( viewingTeam.services, ( ser ) => ser.name == this.state.item.preActiveService.name );
+                if (preService.length > 0) {
+                    for(var i in viewingTeam.services){
+                        if(viewingTeam.services[i].name == this.state.item.preActiveService.name){
+                            viewingTeam.services[i].active = true;
+                            break;
+                        }
+                    }
+                }else{
+                    var array = $.map(viewingTeam.services, function(value, index) {
+                        return [value];
+                    });
+                    viewingTeam.services = array;
+                    this.state.item.preActiveService.active = true;
+                    viewingTeam.services.push(this.state.item.preActiveService)
+                }
+            }
             if ( !viewingTeam && this.state.searchName ) {
                 let query = {
                     name: {
@@ -66,7 +83,6 @@ const TeamStepper = React.createClass( {
         //this functionality will become deprecated when suppliers are saved as user contacts
         //note that we are erroneously assuming that the group is a facility when it may not always be
         group = this.props.group ? Facilities.findOne( this.props.group._id ) : null;
-
         return {
             viewer: viewer,
             viewersTeam: viewersTeam,
@@ -152,6 +168,14 @@ const TeamStepper = React.createClass( {
                     }
 
                 }, null );
+                setTimeout(function () {
+                    //quick fix to manually add supplier to a team. better solution needed
+                    if (Session.getSelectedFacility()) {
+                        Session.getSelectedFacility().addSupplier(supplier);
+                    }
+                },2000);
+
+
             } );
 
         }
@@ -203,13 +227,13 @@ const TeamStepper = React.createClass( {
     },
 
     render() {
+      console.log(this.props ,this.data);
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
-        console.log({showFilter});
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
@@ -231,7 +255,6 @@ const TeamStepper = React.createClass( {
                 </form>
             )
         }
-
         /*
         if(viewingTeam.type == "contractor"){
             Teams.schema.email.required=false;
@@ -306,9 +329,33 @@ const TeamStepper = React.createClass( {
                                             submitFormOnStepperNext = { true }
                                             afterSubmit = { ( item ) => {
                                                 team = Teams.collection._transform(item);
+                                                // console.log(this.data.viewer);
+                                                // console.log(item,team);
+                                                if(this.data.viewer.role === "fmc support"){
+                                                  // console.log("working");
+                                                  item.members = [{
+                                                    _id : this.data.viewer._id,
+                                                    role : "fmc support",
+                                                    name :  this.data.viewer.profile.name
+                                                  }]
+                                                }else{
+                                                  // console.log("working");
+                                                  // console.log(item,item.members);
+                                                  item.members = [{
+                                                    _id : this.data.viewer._id,
+                                                    role : "portfolio manager",
+                                                    name :  this.data.viewer.profile.name
+                                                  }]
+                                                }
+                                                // console.log( Meteor.user(),item,team,"------------------------");
+                                                if (Session.getSelectedFacility()) {
+                                                    //quick fix to manually add supplier to a team. better solution needed
+                                                    Session.getSelectedFacility().addSupplier(item);
+                                                }
+
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "manager",
+                                                      role: role ? role : "portfolio manager",
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,

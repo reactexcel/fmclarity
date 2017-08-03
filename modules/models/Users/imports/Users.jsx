@@ -166,12 +166,19 @@ Users.actions( {
         // as this function is same as publication is there a way to DRY it?
         helper: function( user, filter, options = { expandPMP: false } ) {
 
-            let query = [ {
-                'members._id': user._id
-            } ]
+            let query = [],
+                team = Session.getSelectedTeam(),
+                teamId = null;
 
-            if ( user.role == 'admin' ) {
-                query = [ { _id: { $ne: null } } ]
+            if( team ) {
+                teamId = team._id;
+                query.push( { 
+                    $or: [
+                        { 'team._id': teamId },
+                        { 'supplier._id': teamId },
+                        { 'realEstateAgency._id': teamId }
+                    ] 
+                } );
             }
 
             //if filter passed to function then add that to the query
@@ -222,6 +229,13 @@ Users.actions( {
                     unit : "fortnights"
                   },
                   months: {
+                    endDate:"",
+                    number: 1,
+                    period:"months",
+                    repeats : 10,
+                    unit : "months"
+                  },
+                  monthly: {
                     endDate:"",
                     number: 1,
                     period:"months",

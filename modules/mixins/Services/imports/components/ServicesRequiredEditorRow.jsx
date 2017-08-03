@@ -86,6 +86,12 @@ const ServicesRequiredEditorRow = React.createClass( {
 			content: <TeamStepper item = { supplier } facility = { facility } onChange = { this.updateSupplier }/>
 		} )
 	},
+	removeService(){
+		if(this.props.onChange){
+			this.props.onChange(null);
+				Modal.hide();
+			}
+	},
 
 	render() {
 		service = this.data.service;
@@ -128,10 +134,11 @@ const ServicesRequiredEditorRow = React.createClass( {
 													}
 												}
 											/>
+											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}>&times; Delete</button>
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-					{!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null}
+					{/*!readOnly?<span title="Remove" className="services-editor-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={onChange.bind(null,null)}>&times;</span>:null*/}
 				</div>
 				<div style={{width:"30%", float:"left"}}>
 					<div className="services-editor-col services-editor-col-supplier" style={{width:"100%",cursor: "default"}}>

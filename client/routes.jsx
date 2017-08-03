@@ -92,10 +92,17 @@ Routes.addAccessRule( {
 Routes.addAccessRule( {
     action: [
         'abc',
-        'global suppliers',
-        'user-docs',
+        'global suppliers'
     ],
     role: [ 'fmc support' ],
+    condition: teamTypeIsRealEstateOrTenancy
+} )
+
+Routes.addAccessRule( {
+    action: [
+        'user-docs',
+    ],
+    role: [ 'fmc support', 'caretaker', 'facility manager', 'portfolio manager', 'property manager', 'manager' ],
     condition: teamTypeIsRealEstateOrTenancy
 } )
 

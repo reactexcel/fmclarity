@@ -47,6 +47,9 @@ const UserProfileSchema = {
 		label: "Position",
 		input: Text,
 		type: "string",
+		condition: ( item ) => {
+			return role !== "resident";
+		},
 	},
 	email: {
 		label: "Email address",
@@ -75,9 +78,56 @@ const UserProfileSchema = {
 	},
 	tenancy: {
 		label: "Tenancy",
-		input: Text,
+		//input: Text,
+
+		input: (props)=>{
+			let facility = Session.getSelectedFacility();
+			    facility = facility && facility._id  ? facility : Meteor.user().getTeam().getFacilities()[0]
+			return <div style={{marginTop:'20px',border:'1px solid #e0d7d7'}}>
+				<h1 style={{color:'#aaaaaa',width:'49px',marginTop:'-8px',marginLeft:'10px',fontSize:'13px',fontWeight:'400',backgroundColor:'white'}}>Tenancy</h1>
+				<div className="row" style={{padding:'0px 10px 0px 10px'}}>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Location - Areas"}
+							value = {props.item.tenancy && props.item.tenancy.level && props.item.tenancy.level.name ? props.item.tenancy.level : null}
+							onChange = {(val)=>{
+								props.item.tenancy.level = val;
+								props.onChange({level:val})
+							}}
+							items={ facility && facility.areas ? facility.areas : [] }
+						/>
+					</div>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Sub - Area"}
+							value = {props.item.tenancy && props.item.tenancy.area && props.item.tenancy.area.name ? props.item.tenancy.area : null}
+							onChange = {(val)=>{
+								props.item.tenancy.area = val;
+								props.onChange({ level:props.item.tenancy.level, area:val })
+							}}
+							items={ props.item.tenancy && props.item.tenancy.level && props.item.tenancy.level.children && props.item.tenancy.level.children.length ? props.item.tenancy.level.children : [] }
+						/>
+					</div>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Identifier"}
+							value = {props.item.tenancy && props.item.tenancy.identifier && props.item.tenancy.identifier.name ? props.item.tenancy.identifier : null}
+							onChange = {(val)=>{
+								props.item.tenancy.identifier = val;
+								props.onChange({ level:props.item.tenancy.level, area:props.item.tenancy.area, identifier:val})
+							}}
+							items={ props.item.tenancy && props.item.tenancy.area && props.item.tenancy.area.children && props.item.tenancy.area.children.length ? props.item.tenancy.area.children : [] }
+						/>
+					</div>
+				</div>
+			</div>
+		},
 		optional: true,
-		type: "string",
+		//type: "string",
+		type: "object",
 		condition: ( item ) => {
 				//group = user.getSelectedFacility() || user.getSelectedTeam();
 

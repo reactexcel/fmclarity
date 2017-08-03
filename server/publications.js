@@ -22,8 +22,16 @@ Meteor.publish( 'User: Teams', function() {
         teamIds.push( team._id );
     } );
 
+    return teamsCursor;
 } );
 
+Meteor.publish( 'Team: Last 10 Created', function( ) {
+    let teamsCursor = Teams.find( { _id: { $ne: null } }, {
+        sort: { createdAt: -1 },
+        limit: 10
+    } );
+    return teamsCursor;
+} );
 
 Meteor.publish( 'Team: Facilities', function( teamId ) {
     let facilitiesCursor = Facilities.find( {
@@ -43,6 +51,7 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
             'team.name': 1,
             name: 1,
             members: 1,
+            suppliers: 1,
             operatingTimes: 1,
             'owner._id': 1,
             'owner.name': 1,
@@ -61,29 +70,80 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
 } );
 
 
-Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, includeFacilities } ) {
+Meteor.publish( 'Request: Last 10 Complete', function( ) {
 
-    import { Users } from '/modules/models/Users';
-    let user = Users.findOne( this.userId );
+    console.log( this.userId );
 
-    let query = {
-        'members._id': this.userId
-    }
+    let requestsCursor = Requests.find( {
+            'members._id': this.userId,
+            status: 'Complete'
+        }, {
+        sort: {
+            createdAt: -1
+        },
+        limit: 10, 
+        fields: {
+            _id: 1,
+            area: 1,
+            attachments: 1,
+            'assignee._id': 1,
+            'assignee.name': 1,
+            closeDetails: 1,
+            code: 1,
+            costThreshold: 1,
+            createdAt: 1,
+            description: 1,
+            dueDate: 1,
+            duration: 1,
+            eta: 1,
+            'facility._id': 1,
+            'facility.name': 1,
+            'facility.thumb': 1,
+            frequency: 1,
+            identifier: 1,
+            issuedAt: 1,
+            level: 1,
+            members: 1,
+            name: 1,
+            'owner._id': 1,
+            'owner.name': 1,
+            priority: 1,
+            service: 1,
+            subservice: 1,
+            'supplier._id': 1,
+            'supplier.name': 1,
+            supplierContacts: 1,
+            status: 1,
+            'team._id': 1,
+            'team.name': 1,
+            type: 1,
+            unreadRecipents: 1,
+        }
+    } );
 
-    if( user && user.role == 'admin' ) {
-        query = { _id: {$ne:null} }
-    }
+    /*
+    requestsCursor.forEach( ( r ) => {
+        if( r.status == 'Complete' ) {
+            console.log( r.name );
+        }
+        else {
+            console.log( r.status );
+        }
+    } );
+    */
 
-    if ( !includeComplete ) {
-        query = {
-            $and: [
-                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
-                query
-            ]
-        };
-    }
+    return requestsCursor;
+} );
 
-    let requestsCursor = Requests.find( query, {
+
+
+Meteor.publish( 'Requests: Complete', function( ) {
+
+    console.log( this.userId );
+
+    let requestsCursor = Requests.find( {
+            status: 'Complete'
+        }, {
         sort: {
             createdAt: -1
         },
@@ -113,6 +173,106 @@ Meteor.publish( 'User: Requests, Facilities', function( { includeComplete, inclu
             'owner._id': 1,
             'owner.name': 1,
             priority: 1,
+            service: 1,
+            subservice: 1,
+            'supplier._id': 1,
+            'supplier.name': 1,
+            supplierContacts: 1,
+            status: 1,
+            'team._id': 1,
+            'team.name': 1,
+            type: 1,
+            unreadRecipents: 1,
+        }
+    } );
+
+    /*
+    requestsCursor.forEach( ( r ) => {
+        if( r.status == 'Complete' ) {
+            console.log( r.name );
+        }
+        else {
+            console.log( r.status );
+        }
+    } );
+    */
+
+    return requestsCursor;
+} );
+
+Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplete, includeFacilities } ) {
+
+    import { Users } from '/modules/models/Users';
+    import { Teams } from '/modules/models/Teams';
+
+
+    let team = null,
+        role = null,
+        user = Users.findOne( this.userId ),
+        query = [];
+
+    if( teamId ) {
+        team = Teams.findOne( teamId );
+        role = team.getMemberRole( user );
+        query.push( { $or: [
+            { 'team._id': teamId },
+            { 'supplier._id': teamId },
+            { 'realEstateAgency._id': teamId }
+        ] } );
+        console.log( role );
+        if( !_.contains( [ 'fmc support', 'portfolio manager' ], role ) ) {
+            query.push( {
+                'members._id': this.userId
+            } )
+        }
+    }
+
+    if ( !includeComplete ) {
+        query.push ( {
+            $and: [
+                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
+            ]
+        } );
+    }
+
+    let requestsCursor = Requests.find( { $and: query }, {
+        sort: {
+            createdAt: -1
+        },
+        fields: {
+            _id: 1,
+            area: 1,
+            attachments: 1,
+            bookingPeriod:1,
+            'assignee._id': 1,
+            'assignee.name': 1,
+            closeDetails: 1,
+            code: 1,
+            costThreshold: 1,
+            createdAt: 1,
+            description: 1,
+            dueDate: 1,
+            duration: 1,
+            eta: 1,
+            'facility._id': 1,
+            'facility.name': 1,
+            'facility.thumb': 1,
+            frequency: 1,
+            identifier: 1,
+            incidenceDate: 1,
+            incidentFurtherComments: 1,
+            incidentVictim: 1,
+            issuedAt: 1,
+            level: 1,
+            memberName: 1,
+            location: 1,
+            members: 1,
+            name: 1,
+            numberOfPersons: 1,
+            'owner._id': 1,
+            'owner.name': 1,
+            priority: 1,
+            reporterContact: 1,
             service: 1,
             subservice: 1,
             'supplier._id': 1,
