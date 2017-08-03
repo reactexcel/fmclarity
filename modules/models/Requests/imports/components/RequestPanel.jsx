@@ -32,12 +32,19 @@ export default RequestPanel = React.createClass( {
             contact = null,
             facility = null,
             realEstateAgency = null,
-            owner = null;
+            owner = null,
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
+            date_diff = null ;
+
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
             if ( request ) {
+              if(this.props.item.hasOwnProperty("start")){
+                date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
+              }
+
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -49,21 +56,33 @@ export default RequestPanel = React.createClass( {
 
                 contact = request.getContact();
                 supplier = request.getSupplier();
-                if ( request.type == 'Preventative' ) {
+                // console.log(request);
+                if ( request.type == 'Preventative') {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
+                if(date_diff === 0 && request.type == 'Preventative'){
+                  let lastdate = request.getPreviousDate();
+                  let adhocRequest = request.findCloneAt( lastdate );
+                  if(adhocRequest != undefined || null){
+                    request = adhocRequest
+                  }
+                }
             }
         }
         let callback = this.props.callback
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
+
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
+
     },
 
     componentWillMount() {
         //Perf.start();
-        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
+        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
+
     },
 
     componentDidMount() {
@@ -86,7 +105,8 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback } ) => {
+
 
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
@@ -242,7 +262,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
 
-                            { request.type == 'Ad-hoc' &&
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" &&
                               request.costThreshold &&
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
                             <h2>${request.costThreshold}</h2>
@@ -265,15 +285,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                 :
                                 <div>
 
-                                { request.type == "Ad-Hoc" && request.issuedAt ?
+                                { (request.type == 'Ad-hoc' || "Ad-Hoc") && request.issuedAt ?
                             <span><b>Issued</b> <span>{formatDate(request.issuedAt)}</span><br/></span>
                             : null }
 
-                            { request.type == "Ad-Hoc" && request.dueDate ?
-                            <span><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+                            { request.type == 'Ad-hoc' || "Ad-Hoc" && request.dueDate ?
+
+                            <span style={{color : moment(request.dueDate).isBefore() ? "red":"black"}}><b>Due</b> <span>{request.status == "Issued" ? formatDate(request.dueDate,true):formatDate(request.dueDate)}</span><br/></span>
+
                             : null }
 
-                            { request.type != "Ad-Hoc" && request.createdAt ?
+                            { request.type != 'Ad-hoc' && request.type !="Ad-Hoc" && request.createdAt ?
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
@@ -346,10 +368,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
                 :
                 <tbody>
-                <tr>
-                    <th>Summary</th>
-                    <td>{ request.name || <i>unnamed</i> }</td>
-                </tr>
+
+                    { request.type == 'Booking' ?
+                    <tr>
+                        <th>Booked By</th>
+                        <td>{ request.memberName || <i>unnamed</i> }</td>
+                    </tr>:
+                    <tr>
+                        <th>Summary</th>
+                        <td>{ request.name || <i>unnamed</i> }</td>
+                    </tr>
+                }
 
                 { request.getLocationString() ?
                 <tr>
@@ -358,12 +387,19 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-
+                
                 { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
-                <tr>
-                    <th>Service</th>
-                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
-                </tr>
+                request.type=='Key Request' ?
+                Meteor.user().getRole()=='manager'?
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>: null
+                    :
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>
                 : null
                 }
 
@@ -426,7 +462,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm a'):'')}</td>
                 </tr>
                 : null }
 
@@ -462,7 +498,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             </table>
 
-            <Tabs tabs={[
+            <Tabs defaultIndex = {defaultIndex} tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>

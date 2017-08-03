@@ -63,7 +63,8 @@ class Calendar extends React.Component {
                     request: {
                         _id: request._id,
                         code: request.code,
-                        name: request.name
+                        name: request.name,
+                        start:request.dueDate
                     },
                     tooltip:request.priority
                 });
