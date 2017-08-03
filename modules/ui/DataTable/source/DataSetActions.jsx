@@ -1,12 +1,12 @@
 import React from 'react';
 import DataSet from './DataSet.jsx';
 
-function download( dataset, fileDetails ) {
+function download( dataset, fileDetails  ) {
 	return {
 		label: "Download",
 		authentication: true,
 		run: () => {
-			dataset.download(fileDetails);
+			dataset.download( fileDetails );
 		},
 		notification: () => {
 			///blah
