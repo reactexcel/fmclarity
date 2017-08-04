@@ -58,7 +58,6 @@ Reports.collection.allow( {
 if ( Meteor.isServer ) {
     Reports.collection._ensureIndex( { 'team._id': 1 } );
     Reports.collection._ensureIndex( { 'facility._id': 1 } );
-    Reports.collection._ensureIndex( { 'request._id': 1 } );
 }
 
 Reports.actions( {

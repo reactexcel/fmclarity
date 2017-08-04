@@ -39,6 +39,7 @@ const PageDashboardContainer = createContainer( ( params ) => {
     if ( user != null ) {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+        // console.log(requests);
     }
 
     return {

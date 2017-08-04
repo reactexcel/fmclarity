@@ -25,7 +25,6 @@ AccessGroups.loggedIn.add( {
     name: 'report',
     path: '/report/:reportId',
     action( params ) {
-        console.log( params );
         mount( LayoutMain, {
             content: <ReportsPageSingleContainer id = {params.reportId} />
         } );

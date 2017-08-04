@@ -39,60 +39,76 @@ const RequestsStatusReport = React.createClass( {
 		}
 	},
 	componentWillMount(){
-		let docs = Documents.find({"type":"Contract"}).fetch();
-		// console.log(docs.stringfy());
-		console.log(docs);
-		let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
-		let docString = " "
-		aa.map((d)=>{
-			docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
-			if(d.hasOwnProperty("subServiceType")){
-				if(d.subServiceType.hasOwnProperty("name")){
-					docString = docString + d.subServiceType.name
+		if(!this.props.MonthlyReport){
+			let docs = Documents.find({"type":"Contract"}).fetch();
+			// console.log(docs.stringfy());
+			// console.log(docs);
+			let aa = docs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+			let docString = " "
+			aa.map((d)=>{
+				docString = docString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+				if(d.hasOwnProperty("subServiceType")){
+					if(d.subServiceType.hasOwnProperty("name")){
+						docString = docString + d.subServiceType.name
+					}
 				}
-			}
-			if(d.hasOwnProperty("comment")){
+				if(d.hasOwnProperty("supplier")){
+					if(d.supplier.hasOwnProperty("name")){
+						docString = docString + d.supplier.name
+					}
+				}
+				if(d.hasOwnProperty("comment")){
 					docString = docString + d.comment
-			}
-		})
-		this.setState({currentDoc : docs , docString})
+				}
+			})
+			this.setState({currentDoc : docs , docString})
+		}
 		$("#fab").hide();
 	},
 	componentWillUnmount(){
 		$("#fab").show();
 		PubSub.publish('stop', "test");
 	},
-	componentWillUpdate(){
-	let update = setInterval(()=>{
-
-			PubSub.subscribe( 'stop', (msg,data) => {
-				clearInterval(update)
-			});
-			let serverDoc = Documents.find({"type":"Contract"}).fetch();
-			let aa = serverDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
-			let updatedString = " "
-			aa.map((d)=>{
-				updatedString = updatedString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
-				if(d.hasOwnProperty("subServiceType")){
-					if(d.subServiceType.hasOwnProperty("name")){
-						updatedString = updatedString + d.subServiceType.name
+	componentDidMount(){
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
+		if(!this.props.MonthlyReport){
+			let update = setInterval(()=>{
+				PubSub.subscribe( 'stop', (msg,data) => {
+					clearInterval(update)
+				});
+				let serverDoc = Documents.find({"type":"Contract"}).fetch();
+				let aa = serverDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+				let updatedString = " "
+				aa.map((d)=>{
+					updatedString = updatedString + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
+					if(d.hasOwnProperty("subServiceType")){
+						if(d.subServiceType.hasOwnProperty("name")){
+							updatedString = updatedString + d.subServiceType.name
+						}
 					}
-				}
-				if(d.hasOwnProperty("comment")){
+					if(d.hasOwnProperty("supplier")){
+						if(d.supplier.hasOwnProperty("name")){
+							updatedString = updatedString + d.supplier.name
+						}
+					}
+					if(d.hasOwnProperty("comment")){
 						updatedString = updatedString + d.comment
+					}
+				})
+				if(updatedString != this.state.docString){
+					this.setState({
+						docString : updatedString
+					})
 				}
-			})
-			if(updatedString != this.state.docString){
-				this.setState({
-					docString : updatedString
-				})
-			}
-			if(serverDoc.length != this.state.currentDoc.length){
-				this.setState({
-					currentDoc : serverDoc
-				})
-			}
-		},1000)
+				if(serverDoc.length != this.state.currentDoc.length){
+					this.setState({
+						currentDoc : serverDoc
+					})
+				}
+			},1000)
+		}
 	},
 
 	getMeteorData() {
@@ -152,21 +168,47 @@ const RequestsStatusReport = React.createClass( {
 	fields: {
         "Service Type": "name",
         "Contractor Name": ( item ) => {
-				let supplier = item.data?item.data.supplier:item.supplier;
-				if( supplier != null ){
-				let string = supplier.name
-				if(string != undefined || null){
-					supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
-				}
-				// console.log(supplier);
-				return {
-					val: <ContactCard item={supplier} />,
-					name: supplier.name
-				}
-			}
-			return {
-				val: <span/>
-			}
+					let query
+					if(Object.keys(item).length > 3){
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"serviceType.name":item.name
+						}
+					}else{
+						query = {
+							"facility._id" : Session.getSelectedFacility()._id,
+							"type":"Contract",
+							"subServiceType.name":item.name
+						}
+					}
+					let docs = Documents.find(query).fetch();
+					if(docs.length > 0){
+
+						if(Object.keys(item).length > 3){
+							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
+						}
+
+						//console.log(docs);
+						if(docs.length > 0 && docs[0].hasOwnProperty("supplier")){
+							console.log(docs[0].supplier);
+							let supplier = docs[0].supplier
+							if( supplier != null ){
+								let string = supplier.name
+								if(string != undefined || null){
+									supplier['name'] = string.length > 30 ? string.substring(0, 30) + "..." : string
+								}
+								// console.log(supplier);
+								return {
+									val: <ContactCard item={supplier} />,
+									name: supplier.name
+								}
+							}
+							return {
+								val: <span/>
+							}
+						}
+					}
 		},
         "Annual Amount": ( item ) => {
 					let query
@@ -187,13 +229,13 @@ const RequestsStatusReport = React.createClass( {
 					if(docs.length > 0){
 
 						if(Object.keys(item).length > 3){
-							console.log(docs);
+							// console.log(docs);
 							docs = _.filter(docs,d => d.hasOwnProperty("subServiceType") ? !d.subServiceType.name : !d.subServiceType)
-							console.log(docs,"filtered");
+							// console.log(docs,"filtered");
 						}
 						let amount = null;
 						if ( docs.length > 0) {
-							amount = docs[0].totalValue;
+							amount = docs[docs.length - 1].totalValue;
 							return {
 								val: `$${amount}`
 							};
@@ -226,9 +268,9 @@ const RequestsStatusReport = React.createClass( {
 						}
 
 						//console.log(docs);
-						if(docs.length > 0 && docs[0].hasOwnProperty("comment")){
+						if(docs.length > 0 && docs[docs.length - 1].hasOwnProperty("comment")){
 							return {
-								val : docs[0].comment
+								val : docs[docs.length - 1].comment
 							}
 						}
 						return {
@@ -259,11 +301,11 @@ const RequestsStatusReport = React.createClass( {
 						}
 						if (docs.length > 0) {
 							let status = "Not Executed"
-							if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate != ''){
+							if(docs[docs.length - 1].clientExecutedDate != '' && docs[docs.length - 1].supplierExecutedDate != ''){
 								status = "Fully Executed"
-							}else if(docs[0].clientExecutedDate != '' && docs[0].supplierExecutedDate == ''){
+							}else if(docs[docs.length - 1].clientExecutedDate != '' && docs[docs.length - 1].supplierExecutedDate == ''){
 								status = "Client Executed"
-							}else if (docs[0].clientExecutedDate == '' && docs[0].supplierExecutedDate != '') {
+							}else if (docs[docs.length - 1].clientExecutedDate == '' && docs[docs.length - 1].supplierExecutedDate != '') {
 								status = "Supplier Executed"
 							}
 							// if ( moment(expiryDate).isBefore(moment().endOf("day")) ) {
@@ -300,7 +342,7 @@ const RequestsStatusReport = React.createClass( {
 						}
 						let expiryDate = null;
 						if ( docs.length > 0) {
-							expiryDate = docs[0].expiryDate;
+							expiryDate = docs[docs.length - 1].expiryDate;
 							if(expiryDate){
 								return {
 									val: moment(expiryDate).format("DD-MMM-YY")
@@ -349,7 +391,7 @@ const RequestsStatusReport = React.createClass( {
 		let fields = this.fields
 		return (
 			<div>
-				<div style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
+				<div id = "toggleButton2" style={{float:"right",marginRight:"1%",fontWeight:"600",color:"#0152b5",cursor:"pointer"}} onClick={()=>{
 					this.handleClick(null);
 				}}>+ Add Contract</div>
                 <h3>Service Contract</h3>
