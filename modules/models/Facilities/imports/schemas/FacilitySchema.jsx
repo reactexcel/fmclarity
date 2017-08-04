@@ -91,6 +91,11 @@ const FacilitySchema = {
 		size: 6
 	},
 
+	hiddenWO: {
+		label: "RemovedWo",
+		description: "Hidden work orders and Img from the report"
+	},
+
 	operatingTimes: {
 		label: "Operating times",
 		description: "When this site is open",

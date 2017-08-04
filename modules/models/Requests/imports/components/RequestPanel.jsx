@@ -33,7 +33,9 @@ export default RequestPanel = React.createClass( {
             facility = null,
             realEstateAgency = null,
             owner = null,
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
             date_diff = null ;
+
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
@@ -71,7 +73,9 @@ export default RequestPanel = React.createClass( {
             }
         }
         let callback = this.props.callback
-        return { date_diff ,request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
+
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
+
     },
 
     componentWillMount() {
@@ -101,7 +105,9 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback } ) => {
+
+
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
             return moment( date ).format( 'Do MMM YYYY' );
@@ -355,7 +361,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
                 :
                 <tbody>
-                
+
                     { request.type == 'Booking' ?
                     <tr>
                         <th>Booked By</th>
@@ -376,10 +382,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 }
 
                 { teamType=='fm' && request.service && request.type != 'Booking' ?
-                <tr>
-                    <th>Service</th>
-                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
-                </tr>
+                request.type=='Key Request' ?
+                Meteor.user().getRole()=='manager'?
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>: null
+                    :
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>
                 : null
                 }
 
@@ -418,7 +431,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm a'):'')}</td>
                 </tr>
                 : null }
 
@@ -454,7 +467,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             </table>
 
-            <Tabs tabs={[
+            <Tabs defaultIndex = {defaultIndex} tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>
