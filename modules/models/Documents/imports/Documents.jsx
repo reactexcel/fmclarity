@@ -10,6 +10,7 @@ import { Members } from '/modules/mixins/Members';
 
 import DocumentSchema from './schemas/DocumentSchema.jsx';
 
+import moment from 'moment';
 /**
  * @memberOf		module:models/Documents
  */
@@ -82,6 +83,16 @@ Documents.actions( {
             if ( doc.team && doc.team._id ) {
                 return Requests.findOne( {"team._id" : doc.team._id} );
             }
+        }
+    },
+    getReminder: {
+        authentication: true,
+        helper: ( doc ) => {
+
+            import { Requests } from '/modules/models/Requests';
+            let reminderName =  "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD');
+            return Requests.findOne( { name: reminderName, type: 'Reminder' } );
+            
         }
     },
     destroy: {

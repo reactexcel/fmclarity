@@ -81,7 +81,7 @@ const createUpdateRequest = new Action( {
                     type: 'Reminder',
                     priority: 'Urgent',
                     dueDate: doc.dueDate,
-                    name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
+                    name: "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD'),
                     service: doc.serviceType ? doc.serviceType : null,
                     supplier: supplier,
                     costThreshold: '0',
