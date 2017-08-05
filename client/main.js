@@ -156,6 +156,7 @@ Actions.addAccessRule( {
     },
     action: [
         'create team request',
+        'create team PPM request'
     ],
     role: [
         'staff',

@@ -559,7 +559,7 @@ const clone = new Action( {
             _id: Random.id(),
             dueDate: dueDate,
             status: 'Issued',
-            type: 'Ad-Hoc'
+            type: 'Ad-hoc'
         } );
 
         Modal.replace( {

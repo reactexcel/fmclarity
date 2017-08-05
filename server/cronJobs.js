@@ -87,7 +87,7 @@ const CronJobs = {
                 coopyRequest.dueDate = nextDueDate;
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
-                coopyRequest.type = 'Ad-Hoc';
+                coopyRequest.type = 'Ad-hoc';
 
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
                 collection.insert( coopyRequest );

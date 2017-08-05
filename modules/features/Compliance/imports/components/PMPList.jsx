@@ -2,6 +2,7 @@ import React from "react";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import PMPGroup from './PMPGroup.jsx';
+import { TeamActions } from '/modules/models/Teams';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -35,8 +36,13 @@ export default PMPList = React.createClass({
 	render(){
 		var requests = this.data.requests;
         var keys = _.keys(this.data.requests).sort();
+        let team = Session.getSelectedTeam();
 		return (
 			<div>
+        <div style={{margin:"10px",fontWeight:"700",cursor:"pointer"}} onClick={()=>{
+          TeamActions.createPPMRequest.run( team );
+
+        }}>+ Create PPM</div>
 				{keys.map((k,idx)=>{
                     return (
                         <div key={idx}>
