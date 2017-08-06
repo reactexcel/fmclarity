@@ -21,13 +21,13 @@ function UsersPageIndex( props ) {
 					return (
 						<div className = "col-sm-4" key = { idx } >
 							<div className="contact-list-item">
-								<div 
-									className = "active-link" 
-									onClick = { 
+								<div
+									className = "active-link"
+									onClick = {
 										() => { TeamActions.viewMember.run( team, user ) }
 									}
 								>
-									<ContactCard 
+									<ContactCard
 										item = { user }
 									/>
 
@@ -37,7 +37,7 @@ function UsersPageIndex( props ) {
 					)
 				} ) }
 				</div>
-			</div> 
+			</div>
 		</div>
 	)
 }

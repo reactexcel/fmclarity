@@ -606,6 +606,23 @@ Facilities.actions( {
         }
     },
 
+    removeSupplier: {
+        authentication: true,
+        method: function( facility, supplier ) {
+            if ( supplier && supplier._id ) {
+                Facilities.update( facility._id, {
+                    $pull: {
+                        suppliers: {
+                            _id: supplier._id,
+                            name: supplier.name
+                        }
+                    }
+                } );
+            }
+        }
+    },
+
+
 
 
     /**

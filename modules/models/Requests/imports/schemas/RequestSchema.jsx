@@ -4,6 +4,7 @@
  */
 
 import CloseDetailsSchema from './CloseDetailsSchema.jsx';
+import InvoiceDetailsSchema from './InvoiceDetailsSchema.jsx';
 import RequestLocationSchema from './RequestLocationSchema.jsx';
 import RequestFrequencySchema from './RequestFrequencySchema.jsx';
 import IncidentCommentSchema from './IncidentCommentSchema.jsx';
@@ -12,7 +13,7 @@ import { Teams } from '/modules/models/Teams';
 import { Users } from '/modules/models/Users';
 import { Requests } from '/modules/models/Requests';
 import { DocExplorer } from '/modules/models/Documents';
-import { FileExplorer } from '/modules/models/Files';
+import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
@@ -54,6 +55,9 @@ const RequestSchema = {
             required: true,
             maxLength: 90,
             input: Text,
+            condition: (item)=>{
+                return item.type != 'Booking';
+            },
             description: (item)=>{
                 let workRequest = "work request";
                 if(!_.isEmpty(item.type)){
@@ -110,6 +114,8 @@ const RequestSchema = {
                                 if(request.type == 'Incident'){
                                     request.priority = 'Urgent';
                                     request.supplier = Session.getSelectedTeam();
+                                    request.area = null;
+                                    request.level = null;
                                 }
 
                                 } };
@@ -123,6 +129,19 @@ const RequestSchema = {
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
                                     request.area= user.apartment ? user.apartment : null;
                                     request.level= user.level ? user.level : null;
+                                    if (request.type == "Key Request") {
+                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                                        if(services){
+                                            for (var i = 0; i < services.length; i++) {
+                                                var name = services[i].name;
+                                                if (name.indexOf('keys') !== -1) {
+                                                    request.service = services[i];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
                                 }
                                 else{
                                     request.area = request.area ? request.area : null;
@@ -134,21 +153,31 @@ const RequestSchema = {
                     } else {
                         return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
+
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
                                         request.costThreshold= '0';
+                                        /*request.frequency = {
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            period: "",
+                                            endDate: "",
+                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                        };*/
                                         request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
                                             repeats: (request.type == 'Preventative' ? 10 : ""),
                                             period: "",
                                             endDate: "",
                                             unit: (request.type == 'Preventative' ? "years" : "")
-                                        };
+                                        }
                                     }
                                     if(request.type == 'Incident'){
                                         request.costThreshold= '0';
                                         request.priority = 'Urgent';
                                         request.supplier = Session.getSelectedTeam();
+                                        request.area = null;
+                                        request.level = null;
                                     }
                                 }
                          };
@@ -205,12 +234,165 @@ const RequestSchema = {
         },
 
         frequency: {
-            /*label: "Frequency",
-            description: "The frequency with which this job should occur",*/
-            condition: "Preventative",
-            subschema: RequestFrequencySchema,
+            label: "Frequency",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                return (
+                    <Select
+    	      			placeholder = { props.placeholder }
+    	      			item = { props.item }
+    	      			items = { props.items }
+                        errors = { props.errors }
+    	      			value = { props.value.unit }
+    	      			onChange = { (item) => {
+                            props.onChange(item)
+                        }}
+    	    		/>
+                );
+            },
+            condition: (request)=>{
+                if(request.type == "Preventative"){
+                    return true;
+                }else{
+                    return false
+                }
+            },
+            //subschema: RequestFrequencySchema,
             required: true,
             type: "object",
+            //type: "string",
+            //nextRow: true,
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Daily', val: "days" },
+                    { name: 'Weekly', val: "weeks" },
+                    { name: 'Fortnightly', val: "fortnights" },
+                    { name: 'Monthly', val: "months" },
+                    { name: 'Quarterly', val: "quarters" },
+                    { name: 'Annually', val: "years" },
+                    { name: 'Custom', val: "custom" },
+                ],
+                afterChange( item ) {
+                    frequency = item.frequency;
+                    item.frequency = !_.isEmpty(frequency)?{
+                        number: 1,
+                        repeats: 10,
+                        period: "",
+                        endDate: "",
+                        unit: frequency
+                    }:{};
+                }
+            },
+        },
+
+        number: {
+            label: "Repeats every...",
+            description: "The number of days, weeks, months etc.",
+            input: (props) =>{
+                return <Text
+                    placeholder = { props.placeholder }
+                    description = { props.description }
+                    errors = { props.errors }
+                    fieldName = { props.fieldName }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.number }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            type: "number",
+            size: 6,
+            options: {
+                afterChange( item ) {
+                    item.frequency.number = item.number;
+                    item = _.omit(item,"number");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        period: {
+            label: "Period",
+            description: "The unit (days, weeks, months etc) of the repeats",
+            input( props ) {
+                props.item.frequency.period = props.item.frequency.period ? props.item.frequency.period : ( props.item.frequency.unit === "custom" ? "months" : "" );
+                return (
+                    <Select
+    					placeholder = { props.placeholder }
+    		        	item = { props.item }
+    		        	items = { props.items }
+    		        	value = { props.item.frequency.period ? props.item.frequency.period : "months" }
+    		        	onChange = { item => props.onChange(item) } />
+                )
+            },
+            defaultValue: "months",
+            type: "string",
+            size: 6,
+            options: {
+                items: [
+                    { name: 'Day', val: "days" },
+                    { name: 'Week', val: "weeks" },
+                    { name: 'Fortnight', val: "fortnights" },
+                    { name: 'Month', val: "months" },
+                    { name: 'Quarter', val: "quarters" },
+                    { name: 'Year', val: "years" },
+                ],
+                //afterChange: item => { period = item.period; },
+                afterChange( item ) {
+                    item.frequency.period = item.period;
+                    item = _.omit(item,"period");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
+        },
+
+        endDate: {
+            label: 'End date',
+            size: 6,
+            //input: DateInput,
+            input: (props)=>{
+                return <DateInput
+                    placeholder = { props.placeholder }
+                    errors = { props.errors }
+                    item = { props.item }
+                    items = { props.items }
+                    value = { props.item.frequency.endDate }
+                    onChange = { (item) => {
+                        props.onChange(item)
+                    }}
+                />
+            },
+            options: {
+                afterChange( item ) {
+                    item.frequency.endDate = item.endDate;
+                    item = _.omit(item,"endDate");
+                    //number = item.number;
+                }
+            },
+            //condition: item => item.unit === "custom",
+            condition: (request)=>{
+                if(request.frequency && request.frequency.unit == "custom"){
+                    return true;
+                }
+                return false;
+            }
         },
 
         duration: {
@@ -267,6 +449,23 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
+        reporter: {
+             label: "Reporter",
+             description: "Who reported the incident",
+             type: "object",
+             input: Select,
+             required: true,
+             options: ( request ) => {
+                     request = Requests.collection._transform( request );
+                     let team = request.getFacility() || request.getTeam(),
+                         members = team.getMembers();
+                     return {
+                         items: members,
+                         view: ContactCard
+                     }
+             },
+             condition: "Incident"
+         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
@@ -340,14 +539,78 @@ const RequestSchema = {
             },
             defaultValue: (request ) => {
                 let user = Meteor.user(), val=null;
+                if (request.type=="Incident") {
+                    return val;
+                }
                 if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
                     val = user.profile.tenancy.level;
                 }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment;
+                    val = user.apartment ? user.apartment : null;
                 }
                 return val;
             },
+        },
+
+        bookingRules:{
+            label: "Booking rules/instructions",
+            size: 4,
+            type: "string",
+            input: (props) =>{
+                return <div style={{marginTop:"20px"}}><a
+                    title = {"Read"}
+                    onClick={()=>{
+                        let item = props.item;
+                        let file,isImage,extension;
+                        if(item.level && item.level.data && item.level.data.areaDetails && item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            file = item.level.data.areaDetails.attachments[0]
+                        }
+                        if( item.area && item.area.data && item.area.data.areaDetails && item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            file = item.area.data.areaDetails.attachments[0]
+                        }
+                        if( item.identifier && item.identifier.data && item.identifier.data.areaDetails && item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            file = item.identifier.data.areaDetails.attachments[0]
+                        }
+                        if(!_.isEmpty(file)){
+                            file = Files.findOne( file._id );
+                            extension = file.extension();
+                            isImage = file.isImage() && extension != 'tif';
+                        }
+                        if ( isImage ) {
+                            Modal.show( {
+                    			content: <img style={{width:"100%","borderRadius":"1px",marginTop:"10px"}} alt="image" src={file.url()} />
+                    		} )
+            			} else if ( file ) {
+                            let win = window.open( file.url(), '_blank' );
+                    		win.focus();
+            			}
+                    }}>Booking rules/instructions</a>
+                </div>
+            },
+            condition: (item)=>{
+                let toReturn = false;
+                if(item.type == "Booking"){
+                    if(item.level && item.level.data && item.level.data.areaDetails){
+                        toReturn = false;
+                        if(item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.area && item.area.data && item.area.data.areaDetails){
+                        toReturn = false;
+                        if( item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.identifier && item.identifier.data && item.identifier.data.areaDetails){
+                        toReturn = false;
+                        if( item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    return toReturn;
+                }
+            }
         },
 
         area: {
@@ -468,6 +731,20 @@ const RequestSchema = {
             },
             size: 6,
             type: "object",
+            defaultValue: ( item ) => {
+                if (item.type == "Key Request") {
+                    var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                    if (services) {
+                        for (var i = 0; i < services.length; i++) {
+                            var name = services[i].name;
+                            if (name.indexOf('keys') !== -1) {
+                                item.service = services[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
@@ -494,6 +771,9 @@ const RequestSchema = {
                     }
                 }
                 if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
+                    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
+                        return true;
+                    }
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -877,6 +1157,11 @@ const RequestSchema = {
             subschema: CloseDetailsSchema
         },
 
+        invoiceDetails: {
+            type: "object",
+            subschema: InvoiceDetailsSchema
+        },
+
         //////////////////////////////////////////////////
         // Dates & timing
         //////////////////////////////////////////////////
@@ -885,7 +1170,20 @@ const RequestSchema = {
             type: "date",
             label: "Due/Start Date",
             description: "Latest date that the work can be completed",
-            input: DateTime,
+            //input: DateTime,
+            input: (props)=>{
+                return props.item.type == "Preventative" || props.item.status == "Issued" ? <DateInput
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                /> :<DateTime
+                    {...props}
+                    onChange ={(val)=>{
+                        props.onChange(val)
+                    }}
+                />
+            },
             size: 6,
             required: true,
             defaultValue: getDefaultDueDate,
@@ -898,7 +1196,7 @@ const RequestSchema = {
                 if ( _.contains( [ 'staff', 'resident', 'tenant' ], role ) /*&& request.type !='Booking'*/ ) {
                     return false;
                 }
-                if (request.type=='Incident') {
+                if ( _.contains(['Incident','Booking'],request.type)) {
                     return false;
                 }
                 return true;
@@ -1297,7 +1595,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length <= 1 || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -1651,6 +1949,29 @@ const RequestSchema = {
                     let role = Meteor.user().getRole();
                     return _.indexOf( [ "manager", "portfolio manager", "team portfolio manager", "team manager" ], role ) > -1;
                 }
+            },
+
+            memberName: {
+                type: "string",
+                label: "Member name",
+                description: "Name of member",
+                input: Text,
+                size: 6,
+                required: true,
+                defaultValue: (item)=>{
+                    return item.type == 'Booking' ? Meteor.user().getName() : null;
+                },
+                condition:"Booking" 
+            },
+
+            numberOfPersons: {
+                type: "number",
+                label: "Number of persons",
+                description: "Number of persons",
+                input: Text,
+                size: 6,
+                required: true,
+                condition:"Booking" 
             },
 
             footer: {

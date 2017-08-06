@@ -6,7 +6,7 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
-import { Actions, Routes } from '/modules/core/Actions';
+import { Actions } from '/modules/core/Actions';
 
 /**
  * @class           UserProfileMenu
@@ -72,7 +72,7 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 			<span className="dropdown-toggle count-info" data-toggle="dropdown">
 				{ children }
 			</span>
-			<ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts">
+			<ul id="settings-menu" className="fm-layout-menu user-profile-menu dropdown-menu dropdown-alerts" style={{overflowY:'auto',height:'76%'}}>
 				<li>
 					<a style = { { padding:"7px 8px", height:"48px" } } onClick = { () => { Actions.run( 'edit user', { user } ) } }>
 						<ContactCard item = { user }/>

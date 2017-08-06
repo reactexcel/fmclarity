@@ -14,16 +14,22 @@ import moment from 'moment'
  * @param           {object} props
  * @param           {string} props.example
  * @todo            Create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
- */
-class Calendar extends React.Component {
 
+ */
+const eventt = []
+
+class Calendar extends React.Component {
     /**
      * Takes the retrieved data and adds events to the calendar
      * @memberOf    module:ui/Calendar.Calendar
      * @private
      */
     _addEvents( { requests } ) {
-
+        let calendarView = $('#calendar').fullCalendar('getView');
+        let allDays = true;
+        if( _.contains(['agendaWeek','agendaDay'],calendarView.name) ){
+            allDays = false;
+        }
         if ( requests == null ) {
             return;
         }
@@ -32,7 +38,7 @@ class Calendar extends React.Component {
             "Standard": "#0152b5",
             "Urgent": "#f5a623",
             "Critical": "#d0021b",
-            "Closed": "#000000",
+            "Close": "#000000",
             "Booking": "#ef6c00",
             "PPM": "#333333",
         };
@@ -53,11 +59,12 @@ class Calendar extends React.Component {
                     color: colors[ request.priority ],
                     start: request.bookingPeriod.startTime,
                     end: request.bookingPeriod.endTime,
-                    allDay: true,
+                    allDay: allDays,
                     request: {
                         _id: request._id,
                         code: request.code,
-                        name: request.name
+                        name: request.name,
+                        start:request.dueDate
                     },
                     tooltip:request.priority
                 });
@@ -75,19 +82,20 @@ class Calendar extends React.Component {
                         title: title,
                         color: colors[ request.priority ],
                         start: request.dueDate,
-                        start: request.dueDate,
-                        allDay: true,
+                        allDay: allDays,
                         request: {
                             _id: request._id,
                             code: request.code,
                             name: request.name
-                        }
+                        },
+                        tooltip:request.priority
                         //url:i.getUrl()
                     } );
                 }
             }
 
         } );
+        this.eventt = events;
         $( '#calendar' ).fullCalendar( 'removeEventSource', events );
         $( '#calendar' ).fullCalendar( 'addEventSource', events );
     }
@@ -97,6 +105,7 @@ class Calendar extends React.Component {
      * @memberOf    module:ui/Calendar.Calendar
      */
     componentDidMount() {
+        let self = this;
         this.events = {
             events: []
         };
@@ -137,15 +146,19 @@ class Calendar extends React.Component {
                 $('.tooltiptopicevent').remove();
             },
             viewRender: function(view) {
-                let event = $("#calendar").fullCalendar('clientEvents');
-                if(event.length > 0){
+                //let event = $("#calendar").fullCalendar('clientEvents');
+                let event = self.eventt;
+                if(event && event.length > 0){
                     event.map( ( evt,id ) => {
-                        if(view.name == "agendaWeek" && event[id].end == null){
+                        if((view.name == "agendaWeek" || view.name == "agendaDay")/* && event[id].end == null*/){
                             event[id].allDay = false;
                         }else{
-                            event[id].allDay = false;
+                            event[id].allDay = true;
                         }
                     })
+                    self.eventt = event;
+                    self._addEvents( self.props );
+					$('#calendar').fullCalendar( 'refetchEvents' );
                 }
             },
             eventRender: function(event, element) {
