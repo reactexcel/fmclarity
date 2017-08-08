@@ -102,7 +102,7 @@ class UserPanel extends React.Component {
 		if ( contact.getAvailableServices ) {
 			availableServices = contact.getAvailableServices();
 		}
-		let roleInCurrentTeam = this.getRoleInCurrentTeam(roles);
+		let roleInCurrentTeam = this.props.group ? this.getRoleInCurrentTeam(roles) : null;
 		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
 		roleInCurrentTeam = !_.isEmpty(roleInCurrentTeam) ? roleInCurrentTeam : relation.role
 		return (
