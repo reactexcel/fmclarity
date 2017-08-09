@@ -443,8 +443,12 @@ Actions.addAccessRule( {
 
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
-                return true;
-            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+                if(request.status == 'Issued'){
+                    return false;
+                }else{
+                    return true;
+                }
+            } else if ( (request.status == 'New' || request.type == 'Preventative') && request.status != 'Issued' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -460,6 +464,8 @@ Actions.addAccessRule( {
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
                 }
+            } else {
+                return false;
             }
         },
     action: [

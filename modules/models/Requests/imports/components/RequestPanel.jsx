@@ -387,7 +387,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-                
+
                 { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 request.type=='Key Request' ?
                 Meteor.user().getRole()=='manager'?
