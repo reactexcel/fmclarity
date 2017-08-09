@@ -11,9 +11,6 @@ export default DocsSinglePageIndexContainer = createContainer( ( params ) => {
         facilities = null,
         query = { $or: [] };
 
-    // if ( facility ){
-    //   query.$or.push( { 'facility._id': facility._id } );
-    // }
     if ( team ) {
         facilities = team.getFacilities( { 'team._id': team._id } )
     }
