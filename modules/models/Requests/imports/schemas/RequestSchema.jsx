@@ -86,7 +86,7 @@ const RequestSchema = {
 
         type: {
             label: "Request type",
-            description: "The work request type (ie Ad-hoc, Preventative)",
+            description: "The work request type (ie Ad-hoc, Schedular)",
             type: "string",
             size: 12,
             required: true,
@@ -108,7 +108,7 @@ const RequestSchema = {
                         items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Preventative" ], request.type )) {
+                                if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
                                     request.costThreshold= '0';
                                 }
                                 if(request.type == 'Incident'){
@@ -155,21 +155,21 @@ const RequestSchema = {
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
-                                    if (_.contains( [ 'Defect', 'Preventative' ], request.type )) {
+                                    if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
                                         request.costThreshold= '0';
                                         /*request.frequency = {
-                                            number: (request.type == 'Preventative' ? 1 : ""),
-                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            number: (request.type == 'Schedular' ? 1 : ""),
+                                            repeats: (request.type == 'Schedular' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                            unit: (request.type == 'Schedular' ? "years" : "")
                                         };*/
                                         request.frequency = {
-                                            number: (request.type == 'Preventative' ? 1 : ""),
-                                            repeats: (request.type == 'Preventative' ? 10 : ""),
+                                            number: (request.type == 'Schedular' ? 1 : ""),
+                                            repeats: (request.type == 'Schedular' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Preventative' ? "years" : "")
+                                            unit: (request.type == 'Schedular' ? "years" : "")
                                         }
                                     }
                                     if(request.type == 'Incident'){
@@ -205,7 +205,7 @@ const RequestSchema = {
             },
             required: true,
             condition: ( request ) => {
-                if ( request.type == "Preventative" || request.type == 'Booking' ) {
+                if ( request.type == "Schedular" || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -251,7 +251,7 @@ const RequestSchema = {
                 );
             },
             condition: (request)=>{
-                if(request.type == "Preventative"){
+                if(request.type == "Schedular"){
                     return true;
                 }else{
                     return false
@@ -1172,7 +1172,7 @@ const RequestSchema = {
             description: "Latest date that the work can be completed",
             //input: DateTime,
             input: (props)=>{
-                return props.item.type == "Preventative" || props.item.status == "Issued" ? <DateInput
+                return props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
                     {...props}
                     onChange ={(val)=>{
                         props.onChange(val)
@@ -2027,7 +2027,7 @@ const RequestSchema = {
                         </div>
                     );
                 },
-                condition: "Preventative",
+                condition: "Schedular",
             }
 
         }

@@ -104,7 +104,7 @@ const PPMSchema = {
             },
             required: true,
             condition: ( request ) => {
-                if ( request.type == "Preventative" || request.type == 'Booking' ) {
+                if ( request.type == "Schedular" || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -150,7 +150,7 @@ const PPMSchema = {
                 );
             },
             condition: (request)=>{
-                if(request.type == "Preventative"){
+                if(request.type == "Schedular"){
                     return true;
                 }else{
                     return false
@@ -1071,7 +1071,7 @@ const PPMSchema = {
             description: "Latest date that the work can be completed",
             //input: DateTime,
             input: (props)=>{
-                return props.item.type == "Preventative" || props.item.status == "Issued" ? <DateInput
+                return props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
                     {...props}
                     onChange ={(val)=>{
                         props.onChange(val)
@@ -1926,7 +1926,7 @@ const PPMSchema = {
                         </div>
                     );
                 },
-                condition: "Preventative",
+                condition: "Schedular",
             }
 
         }

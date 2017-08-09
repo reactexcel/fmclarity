@@ -184,7 +184,7 @@ const createPPMRequest = new Action( {
             item = options
         }
         newItem = PPMRequest.create( item );
-        newItem.type = "Preventative";
+        newItem.type = "Schedular";
         console.log(newItem);
         Modal.show( {
             content: <AutoForm
@@ -232,7 +232,7 @@ const createPPMRequest = new Action( {
     // notification: ( item ) => {}???
     getResult: ( item ) => {
             if ( item && item._id ) {
-                let result = Requests.findOne( item._id );
+                let result = PPMRequest.findOne( item._id );
                 if ( result ) {
                     return {
                         text: ( result.code ? `#${result.code} - ` : '' ) + result.name,

@@ -71,7 +71,7 @@ class Calendar extends React.Component {
             } else{
                 if ( request.dueDate ) {
                     let title = null;
-                    if ( request.type == 'Preventative' ) {
+                    if ( request.type == 'Schedular' ) {
                         title = request.name;
                     } else if ( request.code ) {
                         title = `#${request.code} ${request.name}`
@@ -112,6 +112,7 @@ class Calendar extends React.Component {
         $( '#calendar' ).fullCalendar( {
             //height:500,
             eventClick( event ) {
+              console.log(event);
                 if ( event.request ) {
                     RequestActions.view.run( event.request );
                 }

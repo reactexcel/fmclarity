@@ -45,7 +45,7 @@ const CronJobs = {
     },
 
     issuePPMRequest() {
-        import { Requests } from '/modules/models/Requests';
+        import { PPMRequest } from '/modules/models/Requests';
         import { Teams } from '/modules/models/Teams';
         let collection = Requests.collection,
             requestsCursor = collection.find( { type: "Preventative" } ),
@@ -57,6 +57,7 @@ const CronJobs = {
             code = null,
                 nextDueDate = null;
             if ( request.frequency ) {
+
                 let dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
                     period = {};
@@ -87,7 +88,7 @@ const CronJobs = {
                 coopyRequest.dueDate = nextDueDate;
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
-                coopyRequest.type = 'Ad-hoc';
+                coopyRequest.type = 'Preventative';
 
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
                 collection.insert( coopyRequest );

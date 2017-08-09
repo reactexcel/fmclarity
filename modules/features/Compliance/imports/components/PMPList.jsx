@@ -3,6 +3,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import PMPGroup from './PMPGroup.jsx';
 import { TeamActions } from '/modules/models/Teams';
+import {PPMRequest } from '/modules/models/Requests';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -24,7 +25,35 @@ export default PMPList = React.createClass({
         var statusFilter = {"status":"PPM"};
         var customFilter = this.props.filter;
         var filter = {$and:[statusFilter,customFilter]};
-        var ungroupedRequests = Meteor.user().getRequests(filter);
+        // var ungroupedRequests = Meteor.user().getRequests(filter);
+        let query = [],
+            team = Session.getSelectedTeam(),
+            teamId = null;
+
+        if( team ) {
+            teamId = team._id;
+            query.push( {
+                $or: [
+                    { 'team._id': teamId },
+                    { 'supplier._id': teamId },
+                    { 'realEstateAgency._id': teamId }
+                ]
+            } );
+        }
+
+        //if filter passed to function then add that to the query
+        if ( filter ) {
+            query.push( filter );
+        }
+        var ungroupedRequests = PPMRequest.find( {
+                $and: query
+            } )
+            .fetch( {
+                sort: {
+                    createdAt: 1
+                }
+            } );
+        console.log(ungroupedRequests);
         var requests = _.groupBy(ungroupedRequests,function(r){
             return r.service?r.service.name:"Other";
         })

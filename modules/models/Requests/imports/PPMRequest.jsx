@@ -90,7 +90,7 @@ const PPMRequest = new Model( {
 } )
 
 PPMRequest.save.before( ( request ) => {
-    if ( request.type == "Preventative" ) {
+    if ( request.type == "Schedular" ) {
         request.status = "PPM";
         request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
@@ -247,7 +247,7 @@ PPMRequest.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Preventative' ) {
+            if ( request.type == 'Schedular' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -805,7 +805,7 @@ function checkIssuePermissions( role, user, request ) {
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
 
-    if ( request.type != 'Preventative' && hasSupplier ) {
+    if ( request.type != 'Schedular' && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
             requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
