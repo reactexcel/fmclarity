@@ -41,14 +41,14 @@ const OwnerCard = React.createClass( {
 		var type = this.data.type;
 		if ( type == "team" ) {
 			Modal.show( {
-				content: <TeamPanel 
-					item = { this.data.owner } 
+				content: <TeamPanel
+					item = { this.data.owner }
 				/>
 			} )
 		} else {
 			Modal.show( {
-				content: <UserPanel 
-					item =  {this.data.owner } 
+				content: <UserPanel
+					item =  {this.data.owner }
 					team = { this.data.target }
 				/>
 			} )
@@ -60,7 +60,7 @@ const OwnerCard = React.createClass( {
 			return <div/>
 		}
 		return (
-			<div className="active-link" onClick = { this.showModal }> 
+			<div className="active-link" onClick = { this.showModal }>
 				<ContactCard item = { this.data.owner } team = { this.data.target }/>
 			</div>
 		)

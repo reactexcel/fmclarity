@@ -65,9 +65,41 @@ export default function RequestsTable( { requests, filter, columns } ) {
         },
         "Due": ( item ) => {
             let dueDate = moment( item.dueDate );
+						let dueString
+						let year = dueDate.diff(moment(),"years")
+						let month
+						let days
+						let hours
+						let minutes
+						let seconds
+						dueString = year > 1 || year < -1 ? Math.abs(year) + " " + "years" : Math.abs(year) + " " + "year"
+						if(year === 0){
+							month = dueDate.diff(moment(),"months")
+							dueString = month > 1 || month < -1 ? Math.abs(month) + " " + "months" : Math.abs(month) + " " + "month"
+						}
+						if(month === 0){
+							days = dueDate.diff(moment(),"days")
+							dueString = days > 1 || days < -1 ? Math.abs(days) + " " + "days" : Math.abs(days) + " " + "day"
+						}
+						if(days === 0){
+							hours = dueDate.diff(moment(),"hours")
+							dueString = hours > 1 || hours < -1 ? Math.abs(hours) + " " + "hours" : Math.abs(hours) + " " + "hour"
+						}
+						if(hours === 0){
+							minutes = dueDate.diff(moment(),"minutes")
+							dueString = minutes > 1 || minutes < -1 ? Math.abs(minutes) + " " + "minutes" : Math.abs(minutes) + " " + "minute"
+						}
+						if(minutes === 0){
+							seconds = dueDate.diff(moment(),"seconds")
+							dueString = seconds > 1 || seconds <  -1 ? Math.abs(seconds) + " " + "seconds" : Math.abs(seconds) + " " + "second"
+						}
+						if(seconds === 0 ){
+							dueString = "few seconds ago"
+						}
+
             return {
                 originalVal: item.dueDate,
-                val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueDate.fromNow() }</span>
+                val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueString }</span>
             }
         },
 		//use square brackets for dynamic JSON keys (as variables)
