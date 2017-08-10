@@ -28,7 +28,7 @@ import moment from 'moment';
 const defaultContactRole = 'supplier manager';
 let onServiceChange = null;
 
-const RequestSchema = {
+const PPMSchema = {
 
         //$schema:              "http://json-schema.org/draft-04/schema#",
         //title:                "Request",
@@ -84,108 +84,7 @@ const RequestSchema = {
             }
         },
 
-        type: {
-            label: "Request type",
-            description: "The work request type (ie Ad-hoc, Schedular)",
-            type: "string",
-            size: 12,
-            required: true,
-            defaultValue: () => {
-                let team = Session.get( 'selectedTeam' );
-                if ( Teams.isServiceTeam( team ) ) {
-                    return 'Tenancy';
-                }
-                return "Ad-hoc";
-            },
-            input: Select,
-            options: (item) => {
-                let role = Meteor.user().getRole(),
-                    team = Session.get( 'selectedTeam' ),
-                    user = Meteor.user();
-
-                if ( Teams.isServiceTeam( team ) ) {
-                    return {
-                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
-                        afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                    request.area = null;
-                                    request.level = null;
-                                }
-
-                                } };
-                } else {
-                    if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
-                        return {
-                            items: items,
-                            afterChange: ( request ) => {
-                                // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.area= user.apartment ? user.apartment : null;
-                                    request.level= user.level ? user.level : null;
-                                    if (request.type == "Key Request") {
-                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
-                                        if(services){
-                                            for (var i = 0; i < services.length; i++) {
-                                                var name = services[i].name;
-                                                if (name.indexOf('keys') !== -1) {
-                                                    request.service = services[i];
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
-                                else{
-                                    request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;
-                                }
-
-                                }
-                             };
-                    } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
-                                afterChange: ( request ) => {
-
-                                    // prefill value with zero for defect
-                                    if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
-                                        request.costThreshold= '0';
-                                        /*request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
-                                            period: "",
-                                            endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
-                                        };*/
-                                        request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
-                                            period: "",
-                                            endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
-                                        }
-                                    }
-                                    if(request.type == 'Incident'){
-                                        request.costThreshold= '0';
-                                        request.priority = 'Urgent';
-                                        request.supplier = Session.getSelectedTeam();
-                                        request.area = null;
-                                        request.level = null;
-                                    }
-                                }
-                         };
-                    }
-                }
-            }
-        },
-
+    
         priority: {
             label: "Priority",
             description: (item) =>{
@@ -449,6 +348,23 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
+        reporter: {
+             label: "Reporter",
+             description: "Who reported the incident",
+             type: "object",
+             input: Select,
+             required: true,
+             options: ( request ) => {
+                     request = Requests.collection._transform( request );
+                     let team = request.getFacility() || request.getTeam(),
+                         members = team.getMembers();
+                     return {
+                         items: members,
+                         view: ContactCard
+                     }
+             },
+             condition: "Incident"
+         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
@@ -617,9 +533,9 @@ const RequestSchema = {
                     && item.level.data.areaDetails.type != "Bookable"
                 )
                 {
-                    RequestSchema.area.required = true;
+                    PPMSchema.area.required = true;
                 } else {
-                    RequestSchema.area.required = false;
+                    PPMSchema.area.required = false;
                 }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
@@ -672,9 +588,9 @@ const RequestSchema = {
                     && item.area.data.areaDetails.type != "Bookable"
                 )
                 {
-                    RequestSchema.identifier.required = true;
+                    PPMSchema.identifier.required = true;
                 } else {
-                    RequestSchema.area.required = false;
+                    PPMSchema.area.required = false;
                 }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
@@ -2060,4 +1976,4 @@ const RequestSchema = {
             return str;
         }
 
-        export default RequestSchema;
+        export default PPMSchema;
