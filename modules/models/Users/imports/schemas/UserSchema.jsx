@@ -229,10 +229,18 @@ const UserSchema = {
 	},
 
 	status:{
-		label: "Tenant",
+		label: "Owner/Tenant",
 		type: "boolean",
 		defaultValue: false,
-		input: Switch,
+		input: (props)=>{
+			return <Switch
+				placeholder={"Owner/Tenant ➡️ "+(props.item.status? "Tenant" : "Owner")}
+                value = { props.item.status && props.item.status == true ? props.item.status : false }
+                onChange={( value ) => {
+                    props.onChange(value);
+                }}
+			/>
+		},
 		options: ( item ) => {
 			return{
 				afterChange: ( item ) => {
@@ -638,7 +646,7 @@ const UserSchema = {
 			type: "date",
 			defaultValue: () => ( new Date() ),
 			condition: ( item ) => {
-				return role === "resident"
+				return role === "resident" && item.status;
 			}
 		},
 
