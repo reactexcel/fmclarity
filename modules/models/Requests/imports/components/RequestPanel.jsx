@@ -32,13 +32,10 @@ export default RequestPanel = React.createClass( {
             contact = null,
             facility = null,
             realEstateAgency = null,
-<<<<<<< HEAD
-            owner = null;
-=======
             owner = null,
-            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0 ,
             date_diff = null ;
->>>>>>> 4bed59afa53f0bf4c278798764d9ba1903775039
+
 
 
         if ( this.props.item && this.props.item._id ) {
@@ -66,13 +63,8 @@ export default RequestPanel = React.createClass( {
         }
 
         let callback = this.props.callback
-<<<<<<< HEAD
-        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
-=======
 
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
-
->>>>>>> 4bed59afa53f0bf4c278798764d9ba1903775039
     },
 
     componentWillMount() {
@@ -382,7 +374,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-                
+
                 { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 request.type=='Key Request' ?
                 Meteor.user().getRole()=='manager'?
