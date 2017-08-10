@@ -42,7 +42,12 @@ const invite = new Action( {
 		}
 
 		if ( collection && collection.findOne( { _id: group._id} ) ) {
-			group.sendMemberInvite( member, team );
+			if(group.sendMemberInvite){
+				group.sendMemberInvite( member, team );
+			}else{
+				team.sendMemberInvite( member, team );
+			}
+
 			window.alert("Invitation has been sent to \""+ member.getName() + "\"");
 		}
 	}

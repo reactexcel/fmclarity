@@ -22,7 +22,8 @@ const LoginService = {
 	loginWithToken,
 	forgotPassword,
 	getUrl,
-	logout: ()=> { Meteor.logout() },
+	logout: ()=> {
+		return FlowRouter.go( '/logout' ) },
 	loginUser: loginWithoutPassword,
 }
 

@@ -16,7 +16,6 @@ export default function WorkflowButtons( { actions, item, callback } ) {
   		}
         //item.callback = callback;
         item.callback = callback;
-        console.log(action,"actions");
   		action.run( item );
         if(callback){
             callback(item);

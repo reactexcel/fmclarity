@@ -1,5 +1,6 @@
 import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
+import ResidentDetails from './reports/ResidentDetails.jsx';
 import BookingReport from './reports/BookingReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
@@ -23,9 +24,9 @@ const Reports = {
 }
 
 Reports.register( {
-	id: "booking-status",
-	name: "Booking Report",
-	content: BookingReport
+	id: "resident-listing",
+	name: "Resident Listing",
+	content: ResidentDetails
 } )
 
 Reports.register( {

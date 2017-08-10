@@ -121,7 +121,6 @@ const ServicesRequiredEditorRow = React.createClass( {
 									Modal.show({
 										content:  <div style={{padding:'20px', maxWidth:"500px"}}>
 											<div>
-												<button style={{float:"right", color:"azure",backgroundColor:"#dd2c00"}} className="btn btn-info" onClick={this.removeService}>&times; Delete</button>
 												<h1>{'Service Parameters - '+this.data.service.name}</h1>
 											</div>
 											<AutoForm
@@ -135,6 +134,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 													}
 												}
 											/>
+											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}>&times; Delete</button>
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}

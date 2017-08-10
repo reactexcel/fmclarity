@@ -65,9 +65,13 @@ export default function DataSet( items ) {
 				val: val
 			}
 		} else if ( _.isDate( val ) ) {
-			return {
+			/*return {
 				originalVal: val,
 				val: moment( val ).fromNow()
+			}*/
+			return {
+				originalVal: val,
+				val: moment( val ).format('DD/MM/YY')
 			}
 		}
 	}
@@ -161,10 +165,15 @@ export default function DataSet( items ) {
 					newObj.Completed = {
 						val: (obj.Completed && obj.Completed.originalVal && obj.Completed.originalVal != '')?moment( obj.Completed.originalVal ).format('DD/MM/YY'):''
 					}
-				}
-				if(newObj.Supplier){
+				}*/
+				/*if(newObj.Supplier){
 					newObj.Supplier = {
-						val: obj.Supplier && obj.Supplier.val && obj.Supplier.val.props && obj.Supplier.val.props.item && obj.Supplier.val.props.item.name ? obj.Supplier.val.props.item.name : ''
+						val: obj.Supplier && obj.Supplier.val && obj.Supplier.val.props && obj.Supplier.val.props.children && obj.Supplier.val.props.children.props && obj.Supplier.val.props.children.props.item && obj.Supplier.val.props.children.props.item.name ? obj.Supplier.val.props.children.props.item.name : ''
+					}
+				}
+				if(newObj.Name){
+					newObj.Name = {
+						val: obj.Name && obj.Name.val && obj.Name.val.props && obj.Name.val.props.children && obj.Name.val.props.children.props && obj.Name.val.props.children.props.item && obj.Name.val.props.children.props.item.profile && obj.Name.val.props.children.props.item.profile.name ? obj.Name.val.props.children.props.item.profile.name : ''
 					}
 				}*/
 				newObj = _.omit(newObj,'_item')
@@ -199,12 +208,11 @@ export default function DataSet( items ) {
 			return fileName;
 		},
 		download: function(fileDetails) {
-			var newfileDetails = Object.assign({}, fileDetails)
 			var fileName = "fm-clarity-export";
-			if(newfileDetails && newfileDetails.pdfName){
-				fileName = newfileDetails.pdfName;
-				if(newfileDetails.pdfName[newfileDetails.pdfName.length-1] == '-'){
-				    fileName = this.getFileName(newfileDetails.pdfName);
+			if(fileDetails && fileDetails.pdfName){
+				fileName = fileDetails.pdfName;
+				if(fileDetails.pdfName[fileDetails.pdfName.length-1] == '-'){
+					fileName = this.getFileName(fileDetails.pdfName);
 				}
 			}
 			var csv = this.toCSV();
@@ -214,15 +222,15 @@ export default function DataSet( items ) {
 			saveAs( blob, fileName+".csv" );
 		},
 		print: function( element,pdfDetails ) {
-			var newPdfDetails = Object.assign({}, pdfDetails)
-			if(newPdfDetails && newPdfDetails.pdfName && newPdfDetails.pdfName[newPdfDetails.pdfName.length-1] == '-'){
-				newPdfDetails.pdfName = this.getFileName(newPdfDetails.pdfName);
+			if(pdfDetails && pdfDetails.pdfName && pdfDetails.pdfName[pdfDetails.pdfName.length-1] == '-'){
+				pdfDetails.pdfName = this.getFileName(pdfDetails.pdfName);
 			}
 			var print_data = element.innerHTML;
-			var datawindow = window.open( '', (newPdfDetails && newPdfDetails.pdfName ? newPdfDetails.pdfName : 'fm-clarity-print'), 'height=600,width=800' );
-			datawindow.document.write( '<html><head>'+newPdfDetails.styleForPDF+'<title>'+(newPdfDetails && newPdfDetails.pdfName ? newPdfDetails.pdfName : 'fm-clarity-print')+'</title>' );
+            //var datawindow = window.print();
+			var datawindow = window.open( '', 'fm-clarity-print', 'height=600,width=800' );
+			datawindow.document.write( '<html><head>'+pdfDetails.styleForPDF+'<title>'+(pdfDetails && pdfDetails.pdfName ? pdfDetails.pdfName : 'fm-clarity-print')+'</title>' );
 			//datawindow.document.write("<link href='DataTable.less' rel='stylesheet' type='text/css' />");
-			datawindow.document.write( '</head><body style="height:100%;width:100%;"><h3 style="text-align:center;margin-bottom:80px;margin-top:20px;text-decoration:underline;">'+newPdfDetails.pdfTitle+'</h3>' );
+			datawindow.document.write( '</head><body ><h3 style="text-align:center;margin-bottom:80px;margin-top:20px;text-decoration:underline;">'+pdfDetails.pdfTitle+'</h3>' );
 			datawindow.document.write( print_data );
 			datawindow.document.write( '</body></html>' );
 
