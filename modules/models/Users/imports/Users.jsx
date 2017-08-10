@@ -9,7 +9,7 @@ import { Model } from '/modules/core/ORM';
 
 import { Documents } from '/modules/models/Documents';
 import { Files } from '/modules/models/Files';
-import { Requests } from '/modules/models/Requests';
+import { Requests ,PPMRequest } from '/modules/models/Requests';
 
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
@@ -172,12 +172,12 @@ Users.actions( {
 
             if( team ) {
                 teamId = team._id;
-                query.push( { 
+                query.push( {
                     $or: [
                         { 'team._id': teamId },
                         { 'supplier._id': teamId },
                         { 'realEstateAgency._id': teamId }
-                    ] 
+                    ]
                 } );
             }
 
@@ -195,14 +195,30 @@ Users.actions( {
                         createdAt: 1
                     }
                 } );
+            var PPMIssued = PPMRequest.find( {
+                  type: "Preventative",
+                  status :"Issued"
+                } )
+                .fetch( {
+                  sort: {
+                    createdAt: 1
+                  }
+                } );
+                console.log(PPMIssued);
+                if(PPMIssued.length > 0){
+                  PPMIssued.map((val)=> {
+                    requests.push(val);
+                  })
+                }
+
 
 
             if ( options.expandPMP ) {
                 query.push( {
-                    type: "Preventative"
+                    type: "Schedular"
                 } );
 
-                var PMPRequests = Requests.find( {
+                var PMPRequests = PPMRequest.find( {
                         $and: query
                     } )
                     .fetch();
@@ -258,6 +274,7 @@ Users.actions( {
                   },
                 }
                 PMPRequests.map( ( r ) => {
+                  requests.push(r);
                   // console.log(r);
                     if ( r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats") ) {
                       if(r.frequency.unit === "custom"){
@@ -279,7 +296,7 @@ Users.actions( {
                             if(diff_in_dates_in_days > 0){
                               return
                             }else{
-                              copy = Requests.collection._transform( copy );
+                              copy = PPMRequest.collection._transform( copy );
                               requests.push( copy );
                             }
                           }
@@ -287,7 +304,7 @@ Users.actions( {
                           for ( var i = 0; i < repeats; i++ ) {
                             var copy = Object.assign( {}, r ); //_.omit(r,'_id');
                             copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
-                            copy = Requests.collection._transform( copy );
+                            copy = PPMRequest.collection._transform( copy );
                             requests.push( copy );
                           }
                         }
@@ -308,7 +325,7 @@ Users.actions( {
                             if(diff_in_dates_in_days > 0){
                               return
                             }else{
-                              copy = Requests.collection._transform( copy );
+                              copy = PPMRequest.collection._transform( copy );
                               requests.push( copy );
                             }
                           }
@@ -316,7 +333,7 @@ Users.actions( {
                           for ( var i = 0; i < repeats; i++ ) {
                             var copy = Object.assign( {}, r ); //_.omit(r,'_id');
                             copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
-                            copy = Requests.collection._transform( copy );
+                            copy = PPMRequest.collection._transform( copy );
                             requests.push( copy );
                           }
                         }
