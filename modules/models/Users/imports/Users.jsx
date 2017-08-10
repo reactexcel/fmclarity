@@ -195,16 +195,16 @@ Users.actions( {
                         createdAt: 1
                     }
                 } );
+
             var PPMIssued = PPMRequest.find( {
-                  type: "Preventative",
-                  status :"Issued"
+                    $and: query
                 } )
                 .fetch( {
                   sort: {
                     createdAt: 1
                   }
                 } );
-                console.log(PPMIssued);
+
                 if(PPMIssued.length > 0){
                   PPMIssued.map((val)=> {
                     requests.push(val);
@@ -274,7 +274,6 @@ Users.actions( {
                   },
                 }
                 PMPRequests.map( ( r ) => {
-                  requests.push(r);
                   // console.log(r);
                     if ( r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats") ) {
                       if(r.frequency.unit === "custom"){

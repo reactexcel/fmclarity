@@ -40,10 +40,10 @@ export default RequestPanel = React.createClass( {
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
-            if(request === undefined || this.props.item.type === "Schedular" || this.props.item.type === "Preventative"){
+            if(request === undefined){
             request = PPMRequest.findOne( { _id: this.props.item._id } );
           }
-          console.log(request);
+          console.log(this.props.item);
             if ( request ) {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
@@ -391,7 +391,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-                
+
                 { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 request.type=='Key Request' ?
                 Meteor.user().getRole()=='manager'?
