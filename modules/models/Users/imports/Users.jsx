@@ -204,7 +204,7 @@ Users.actions( {
                     createdAt: 1
                   }
                 } );
-                console.log(PPMIssued);
+
                 if(PPMIssued.length > 0){
                   PPMIssued.map((val)=> {
                     requests.push(val);
