@@ -331,22 +331,19 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 // console.log(item,team);
-                                                if(this.data.viewer.role === "fmc support"){
-                                                  // console.log("working");
+                                                /*if(this.data.viewer.role === "fmc support"){
                                                   item.members = [{
                                                     _id : this.data.viewer._id,
                                                     role : "fmc support",
                                                     name :  this.data.viewer.profile.name
                                                   }]
                                                 }else{
-                                                  // console.log("working");
-                                                  // console.log(item,item.members);
                                                   item.members = [{
                                                     _id : this.data.viewer._id,
                                                     role : "portfolio manager",
                                                     name :  this.data.viewer.profile.name
                                                   }]
-                                                }
+                                                }*/
                                                 // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
