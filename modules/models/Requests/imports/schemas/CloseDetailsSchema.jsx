@@ -47,13 +47,13 @@ export default CloseDetailsSchema = {
         },
     },
 
-    invoice: {
+    /*invoice: {
         label: "Invoice",
         input: FileField,
         condition( item ) {
             return (item.jobCancelled == undefined ? false : item.jobCancelled) == false
         },
-    },
+    },*/
 
     furtherWorkRequired: {
         label: "Further work required",

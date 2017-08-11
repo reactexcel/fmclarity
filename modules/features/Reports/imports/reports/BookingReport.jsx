@@ -64,6 +64,9 @@ const BookingReport = React.createClass( {
 
     componentDidMount(){
         $('.nav-list-selected').css('display','none')
+				setTimeout(function(){
+					$(".loader").hide();
+				},2000)
     },
 
     componentWillUnmount(){

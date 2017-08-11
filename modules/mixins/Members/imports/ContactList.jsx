@@ -44,7 +44,6 @@ export default ContactList = React.createClass( {
 
 	// Display a pop up modal for the selected user
 	showModal( selectedUser, idx ) {
-
 		let { team, role, group, members } = this.data;
 
 		//switch based on "type" sent into component

@@ -17,6 +17,15 @@ export default class IpsoTabso extends React.Component {
             active: idx
         } );
     }
+    componentWillMount(){
+      if(this.props.defaultIndex){
+        this.setState({
+          active:this.props.defaultIndex,
+          tabs: this.props.tabs
+        })
+      }
+    }
+
     componentWillReceiveProps( props ){
       this.setState( {
         tabs: props.tabs

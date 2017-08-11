@@ -121,6 +121,7 @@ FacilityAreasEditorInner = React.createClass( {
             selection: selection
         } );
         this.save();
+        Modal.hide();
     },
 
     updateItem( col, idx, event ) {
@@ -269,10 +270,13 @@ FacilityAreasEditorInner = React.createClass( {
                                                           }
                                                         }
                                                       />
+                                                      <div style={ {textAlign:"right", clear:"both"}}>
+                                                        {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,0,idx)}>&times; Delete</button>:null}
+                                                      </div>
                                                     </div>
                                                   })
                                                 } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                              {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null}
+                                              {/*editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null*/}
                                         </div>
                                       </div>
                                     </div>
@@ -333,10 +337,11 @@ FacilityAreasEditorInner = React.createClass( {
                                                         }
                                                       }
                                                       />
+                                                      {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,1,idx)}>&times; Delete</button>:null}
                                                   </div>
                                                 })
                                               } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                              {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null}
+                                              {/*editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null*/}
                                             </div>
                                         </div>
                                       </div>
@@ -398,11 +403,12 @@ FacilityAreasEditorInner = React.createClass( {
                                                     }
                                                   }
                                                   />
+                                                  {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}>&times; Delete</button>:null}
                                               </div>
                                             })
                                             //  component.removeItem.bind(component,0,idx)
                                           } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                          {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null}
+                                          {/*editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null*/}
                                         </div>
                                     </div>
                                   </div>

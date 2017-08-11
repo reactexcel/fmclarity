@@ -82,7 +82,8 @@ class Action {
 	 * @param {...args} Arguments that will be bound to a returned action then eventually passed on to the authentication and execution routine in ActionGroup.
 	 * @returns A copy of the action which has the provided arguments bound to it - so it can be called without arguments.
 	 */
-	bind( ...args ) {
+	bind( shouldConfirm, ...args ) {
+		this.shouldConfirm = shouldConfirm && shouldConfirm.shouldConfirm == true ? true : false;
 		return {
 			label: this.label,
 			verb: this.verb,

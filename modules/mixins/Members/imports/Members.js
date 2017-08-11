@@ -297,13 +297,15 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
 
     if ( members ) {
         members.map( ( m ) => {
-            if ( 
-                !filter || 
-                !m.role || 
-                filter.role == m.role || 
-                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) || 
-                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) || 
-                ( filter.role.$ne && filter.role.$ne != m.role )
+            if (
+                !filter ||
+                !m.role ||
+                (filter.role ? (filter.role == m.role ||
+                ( filter.role.$in && _.contains( filter.role.$in, m.role ) ) ||
+                ( filter.role.$nin && !_.contains( filter.role.$nin, m.role ) ) ||
+                ( filter.role.$ne && filter.role.$ne != m.role )) : (filter._id ? (
+                    filter._id == m._id
+                ) : false) )
             ) {
                 if ( !m ) {
                     console.log( { 'Found an empty member in the array': members } );
@@ -316,7 +318,6 @@ function getMembers( item, { collection = Meteor.users, fieldName = "members", f
         } )
     }
 
-    //console.log( {fieldName, name:collection._name, ids} );
 
     return collection.find( {
             $or: [
@@ -338,7 +339,6 @@ function getMembersGenerator( collection, fieldName ) {
 function getMemberRelation( collection, fieldName ) {
     return function( member ) {
         var group = this;
-        //console.log([group,group[fieldName]]);
         for ( var i in group[ fieldName ] ) {
             var relation = group[ fieldName ][ i ];
             if ( relation && member && relation._id == member._id ) {
@@ -378,5 +378,4 @@ function getMemberThresholdValue( collection, fieldName ) {
 	}
 }
 
-//console.log( Members );
 export default Members;

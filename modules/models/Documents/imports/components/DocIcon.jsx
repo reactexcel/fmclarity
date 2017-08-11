@@ -80,8 +80,8 @@ export default function DocIcon( props ) {
         return (
         <div>
             <div className = "doc-icon" onClick={handleClick}>
-                <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-                <span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
+                <span style={{display:"table-cell",verticalAlign:"bottom",minWidth:"28px",paddingRight:"18px"}}><i className="fa fa-cloud-upload" style={{fontSize:"23px",color:"gray",marginTop:"10px"}}></i></span>
+                <span style={{display:"table-cell",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Drop file to create doc or browse</span>
             </div>
         </div>
         )

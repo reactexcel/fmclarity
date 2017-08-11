@@ -12,6 +12,7 @@ import DocViewEdit from '../../../.././models/Documents/imports/components/DocVi
 import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
 import { DataTable } from '/modules/ui/DataTable';
+import WoTable from '../reports/WoTable.jsx';
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
 }
@@ -44,9 +45,8 @@ const MBMBuildingServiceReport = React.createClass( {
 
 		var startDate = this.state.startDate;
 		var query = {
-			status:{$ne:'Deleted'}
+			status:{$nin:['Deleted','PPM']}
 		}
-
 		var facility = Session.getSelectedFacility();;
 		if ( facility ) {
 			query[ "facility._id" ] = facility._id;
@@ -57,7 +57,6 @@ const MBMBuildingServiceReport = React.createClass( {
 			query[ "team._id" ] = team._id;
 		}
 		const handle = Meteor.subscribe('User: Facilities, Requests');
-
 		var labels = [];
 		var set = [];
         var queries = [];
@@ -69,12 +68,14 @@ const MBMBuildingServiceReport = React.createClass( {
 			};
             queries.unshift( Object.assign({},query) );
             let requestCursor = Requests.find( query )
+
             set.unshift( requestCursor.count() );
             labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
         }
 				let commentQuery = {}
 				commentQuery[ "facility._id" ] = facility._id;
 				commentQuery[ "team._id" ] = team._id;
+				commentQuery["type"]={$nin:['WOComment','Defect']};
 				commentQuery["createdAt"] = {
 					$gte: moment().subtract(0, "months").startOf("month").toDate(),
 					$lte: moment().subtract(0, "months").endOf("month").toDate( )
@@ -85,10 +86,11 @@ const MBMBuildingServiceReport = React.createClass( {
 					$lte: moment().subtract(1, "months").endOf("month").toDate( )
 				};
 				let previousMonthComment = Reports.find(commentQuery).fetch();
+
         let d;
         if ( facility ) {
             let services = facility.servicesRequired;
-						console.log(services);
+						// console.log(services);
 						services = services.filter((val) => val != null && val.name != "" || null || undefined)
             d = services.map( function( s, idx ){
 							let finalComment
@@ -103,11 +105,20 @@ const MBMBuildingServiceReport = React.createClass( {
 									currentMonth = false
 									finalComment = previousMonthServiceComment
 								}
+
 								let dataset = queries.map( function(q){
 									q["service.name"] = s.name;
+
 									return Requests.find( q ).count();
 								});
-								return <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>
+
+								let showChart = false ;
+								dataset.map((val)=>{
+									if(val > 0){
+										showChart = true
+									}
+								})
+								return  showChart ? <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>:null
 							}
             });
             //console.log(d);
@@ -365,6 +376,9 @@ const SingleServiceRequest = React.createClass( {
 
 	componentDidMount() {
 		this.resetChart();
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
 	},
 
 	componentDidUpdate() {
@@ -449,21 +463,14 @@ const SingleServiceRequest = React.createClass( {
 		return (
 			<div style={ { marginTop: "100px", marginBottom: "10px", borderTop:"2px solid"  } }>
 				<div className="ibox-title">
-					<h2>Requests for {this.props.serviceName}</h2>
+					<h2> {this.props.serviceName}</h2>
 				</div>
 				<div className="ibox-content">
 					<div style={{width:"830px","height":"400px",paddingLeft:"20%",paddingTop:"5%"}}>
 						<canvas id={"bar-chart-" + this.props.id} style={{width:"630px","height":"300px"}}></canvas>
 					</div>
 				</div>
-				<div className="data-table">
-					<div style={{width:"70%", marginLeft: "15%", marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
-						<DataTable items={data.length ? data : [{name:""}]} onClick={()=>{
-							console.log("onClickHandler");
-						}} fields={this.fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
-					</div>
-				</div>
-				<div style={ { marginTop: "20px", marginBottom: "-15px",height:"100px" } }>
+				<div style={ { marginTop: "20px", marginBottom: "70px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
@@ -499,6 +506,11 @@ const SingleServiceRequest = React.createClass( {
 							<div>
 								<p style={{fontFamily: "inherit"}}>{this.state.comment}</p>
 							</div>}
+					</div>
+				</div>
+				<div className="data-table">
+					<div style={{marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
+						<WoTable service={this.props.serviceName}/>
 					</div>
 				</div>
 			</div>

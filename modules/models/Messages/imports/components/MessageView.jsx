@@ -87,7 +87,6 @@ export default MessageView = React.createClass( {
             createdAt = message.createdAt,
             used = false,
             hideContext = message.type=='comment'&&this.data.messageIsInContext;
-
          {
             /*if(message.type=="comment") {
                         return (<div>
@@ -116,7 +115,12 @@ export default MessageView = React.createClass( {
                         <div className="message-subject">
                             <a style={{fontWeight:"bold"}}>{owner.getName()}</a> {
                             message.verb?
-                                <span>{message.verb} <b><a onClick = { () => { this.performLinkAction( message ) }}>{message.getTargetName()}</a></b></span>
+                                <span>{message.verb} <b><a onClick = {() => {
+                                        this.performLinkAction( message )
+                                    }}
+                                    >
+                                        {message.getTargetName()}
+                                    </a></b></span>
                             :
                                 <span>{message.subject}</span>
                             }
@@ -135,7 +139,7 @@ export default MessageView = React.createClass( {
                                 && target
                                 && target.closeDetails ?
                                 <div>
-                                    <small className="text-muted pull-right">Attended - {moment(target.closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br />
+                                    { target.closeDetails.attendanceDate ? <div><small className="text-muted pull-right">Attended - {moment(target.closeDetails.attendanceDate).format('MMM Do YYYY, h:mm:ss a')}</small><br /></div> : null }
                                     <small className="text-muted pull-right">Completed - {moment(target.closeDetails.completionDate).format('MMM Do YYYY, h:mm:ss a')}</small>
                                 </div>
                                 :null
