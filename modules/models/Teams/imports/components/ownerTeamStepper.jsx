@@ -202,7 +202,7 @@ const OwnerTeamStepper = React.createClass( {
                 } );
                 Teams.save.call( newTeam )
                     .then( ( data ) => {
-                      console.log(data,"---------------------");
+                      // console.log(data,"---------------------");
                         newTeam = Teams.findOne( data._id );
                         this.setItem( newTeam );
                                 if ( this.props.onChange ) {
@@ -289,7 +289,7 @@ const OwnerTeamStepper = React.createClass( {
       }
       Teams.save.call( viewingTeam )
           .then( ( data ) => {
-            console.log(data,"---------------------");
+            // console.log(data,"---------------------");
               newTeam = Teams.findOne( data._id );
 
               this.setState({
@@ -459,6 +459,7 @@ const OwnerTeamStepper = React.createClass( {
                                                 // console.log(this.data.viewer);
                                                 console.log(item,viewingTeam);
                                                 item.owner = viewingTeam.owner
+                                                item.members = viewingTeam.members 
                                                 if(item.members && item.members.length){
                                                   let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
                                                   if(!arr.length > 0 ){
