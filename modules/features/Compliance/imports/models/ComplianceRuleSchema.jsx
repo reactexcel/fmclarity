@@ -134,7 +134,7 @@ export default ComplianceRuleSchema = {
                     label: "Add New",
                     onAddNewItem: ( callback ) => {
                         let team = Session.getSelectedTeam();
-                        TeamActions.createRequest.bind( team ).run()
+                        TeamActions.createRequest.run( team , callback )
                     }
                 }
             }

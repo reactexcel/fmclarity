@@ -33,7 +33,9 @@ export default RequestPanel = React.createClass( {
             facility = null,
             realEstateAgency = null,
             owner = null,
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
             date_diff = null ;
+
 
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
@@ -71,7 +73,9 @@ export default RequestPanel = React.createClass( {
             }
         }
         let callback = this.props.callback
-        return { date_diff ,request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback }
+
+        return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
+
     },
 
     componentWillMount() {
@@ -101,7 +105,9 @@ export default RequestPanel = React.createClass( {
 } );
 
 
-const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner, callback } ) => {
+const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback } ) => {
+
+
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
             return moment( date ).format( 'ddd Do MMM' );
@@ -159,7 +165,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     } else {
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
-        } else if ( teamType == 'fm' ) {
+        }
+        else if (request.type == 'Incident') {
+            title = 'Incident';
+        }
+         else if ( teamType == 'fm' ) {
             if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
@@ -289,6 +299,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
                             : null }
 
+                            { request.type == "Incident" && request.incidenceDate ?
+                            <span><b>Incident Date</b> <span>{formatDate(request.incidenceDate)}</span><br/></span>
+                            : null }
+
                             { request.priority ?
                             <span><b>Priority</b> <span>{request.priority}</span><br/></span>
                             : null }
@@ -354,10 +368,17 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tbody>
                 :
                 <tbody>
-                <tr>
-                    <th>Summary</th>
-                    <td>{ request.name || <i>unnamed</i> }</td>
-                </tr>
+
+                    { request.type == 'Booking' ?
+                    <tr>
+                        <th>Booked By</th>
+                        <td>{ request.memberName || <i>unnamed</i> }</td>
+                    </tr>:
+                    <tr>
+                        <th>Summary</th>
+                        <td>{ request.name || <i>unnamed</i> }</td>
+                    </tr>
+                }
 
                 { request.getLocationString() ?
                 <tr>
@@ -366,11 +387,42 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
+                
+                { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
+                request.type=='Key Request' ?
+                Meteor.user().getRole()=='manager'?
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>: null
+                    :
+                    <tr>
+                        <th>Service</th>
+                        <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    </tr>
+                : null
+                }
 
-                { teamType=='fm' && request.service && request.type != 'Booking' ?
+                { _.contains(['Incident'], request.type) && request.incidentVictim ?
                 <tr>
-                    <th>Service</th>
-                    <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
+                    <th>Who did it happen to?</th>
+                    <td>{request.incidentVictim}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.reporterContact ?
+                <tr>
+                    <th>Reporter Contact details</th>
+                    <td>{request.reporterContact}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.location ?
+                <tr>
+                    <th>Where did it happen?</th>
+                    <td>{request.location}</td>
                 </tr>
                 : null
                 }
@@ -410,7 +462,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm a'):'')}</td>
                 </tr>
                 : null }
 
@@ -446,7 +498,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
             </table>
 
-            <Tabs tabs={[
+            <Tabs defaultIndex = {defaultIndex} tabs={[
                 {
                     tab:        <span id="discussion-tab"><span>Comments</span>{ request.messageCount?<span>({ request.messageCount })</span>:null}</span>,
                     content:    <Inbox for = { request } truncate = { true }/>

@@ -108,10 +108,22 @@ DocHead.addMeta( {
 Actions.addAccessRule( {
     action: [
         'edit user',
-        'login as user',
+        //'login as user',
         'send email digests',
         'logout'
     ],
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    action: [
+        'login as user'
+    ],
+    condition: ( item ) => {
+        let logedInUserRole = Meteor.user().getRole();
+        return _.contains(['fmc support'],logedInUserRole)
+    },
     role: [ '*' ],
     rule: { alert: true }
 } )
@@ -559,6 +571,19 @@ Actions.addAccessRule( {
     rule: { alert: true }
 } )
 
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'remove member',
+        'invite member'
+    ],
+    /*condition: ( item ) => {
+        return item.type == 'contractor' || item.canAddMember();
+    },*/
+    role: ['*'],
+    rule: { alert: true }
+} )
+
 
 /*
 Actions.addAccessRule( {
@@ -571,11 +596,11 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     action: [
-        'edit member',
+        //'edit member',
         'view member',
         'create member',
-        'remove member',
-        'invite member'
+        //'remove member',
+        //'invite member'
     ],
     condition: ( item ) => {
         /*return item.canAddMember();*/

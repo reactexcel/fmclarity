@@ -5,7 +5,6 @@ export default CreateRequestForm = [
 	'facility',
 	'location',
 	'incidentVictim',
-	'reporter',
 	'name',
 	'reporterContact',
 	'level',
@@ -29,6 +28,9 @@ export default CreateRequestForm = [
 	'costThreshold',
 	//'requireServiceReport',
 	//'requireInvoice',
+
+	'memberName',
+	'numberOfPersons',
 	'description',
 	'incidentFurtherComments',
 	'attachments',

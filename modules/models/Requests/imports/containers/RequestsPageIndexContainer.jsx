@@ -70,7 +70,6 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	    // could test moving this below loading team and only including facilities if supplier
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
 		//requests = user.getRequests();
-		//console.log( requests );
 	}
 
 
