@@ -180,6 +180,7 @@ export default DataTable = React.createClass( {
 						{unreadRows.map((unreadRow, idx)=>{
 
 							return (
+								<tbody key = { idx }>
 							<tr
 								className 	= "data-grid-row"
 								key 		= { idx }
@@ -207,6 +208,7 @@ export default DataTable = React.createClass( {
 
 								} ) }
 							</tr>
+							</tbody>
 							)
 
 						})}
