@@ -106,7 +106,7 @@ class UserPanel extends React.Component {
 		}
 		let roleInCurrentTeam = this.props.group ? this.getRoleInCurrentTeam(roles) : null;
 		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
-		roleInCurrentTeam = !_.isEmpty(roleInCurrentTeam) ? roleInCurrentTeam : relation.role
+		roleInCurrentTeam = !_.isEmpty(roleInCurrentTeam) ? roleInCurrentTeam : (relation && relation.role ? relation.role : null)
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
