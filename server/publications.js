@@ -220,7 +220,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
             { 'realEstateAgency._id': teamId }
         ] } );
         console.log( role );
-        if( !_.contains( [ 'fmc support', 'portfolio manager' ], role ) ) {
+        if( !_.contains( [ 'fmc support', 'portfolio manager', 'caretaker', 'manager' ], role ) ) {
             query.push( {
                 'members._id': this.userId
             } )
