@@ -214,11 +214,11 @@ Actions.addAccessRule( {
         'invite supplier'
     ],
     role: [
-        '*',
-        /*'fmc support',
+        //'*',
+        'fmc support',
         'portfolio manager',
         'manager',
-        'owner',
+        /*'owner',
         'property manager',
         'caretaker'*/
     ],
