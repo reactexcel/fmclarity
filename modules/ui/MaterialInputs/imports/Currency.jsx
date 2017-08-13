@@ -11,6 +11,16 @@ import React from "react";
 const Currency = React.createClass( {
 	handleChange() {
 		let newValue = this.refs.input.value;
+		if (Number(newValue.replace(/,/g, ""))=='0') {
+			newValue = '0';
+		}
+		if (newValue.substring(0, 1) == '0') { 
+		  newValue = newValue.substring(1);
+		  if (newValue.substring(0, 1) == ',') { 
+			  newValue = newValue.substring(1);
+			}
+		}
+
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
 		}
@@ -37,42 +47,44 @@ const Currency = React.createClass( {
 	formatNum(obj) {
 		// if object exists
 		if ( obj ) {
+			if (obj.value && obj.value!='0') {
+				var val = obj.value;
+			    val = val.replace(/,/g, "")
+			    obj.value = "";
+			    val += '';
+			    x = val.split('.');
+			    x1 = x[0];
+			    x2 = x.length > 1 ? '.' + x[1] : '';
 
-		    var val = obj.value;
-		    val = val.replace(/,/g, "")
-		    obj.value = "";
-		    val += '';
-		    x = val.split('.');
-		    x1 = x[0];
-		    x2 = x.length > 1 ? '.' + x[1] : '';
+			    var rgx = /(\d+)(\d{3})/;
 
-		    var rgx = /(\d+)(\d{3})/;
+			    while (rgx.test(x1)) {
+			        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			    }
 
-		    while (rgx.test(x1)) {
-		        x1 = x1.replace(rgx, '$1' + ',' + '$2');
-		    }
+			    obj.value = x1 + x2;
+			    /*if (!parseFloat(val) || val.match(/[^\d]$/)) {  // invalid character input
+			      if (val.length>0) {  // delete invalid char
+			        obj.value = val.substring(0, val.length-1)
+			      }
+			    }
+			    else {  // valid char input for the key stroke
+			      if (val.match(/\./)) {  // already added "."
+			        var idx = val.indexOf(".")
+			        var front = val.substring(0, idx)  // before "."
+			        var back = val.substring(idx+1, val.length)  // after "."
+			        front += back.charAt(0)  // move "." back 1 char
+			        if (parseInt(front)==0) { front = front.replace(/^0/, "") }  // delete leading "0"
+			        else { front = front.replace(/^0+/, "") }
+			        back = back.substring(1, back.length)
+			        obj.value = front + "." + back
+			      }
+			      else {
+			        obj.value = "0.0"+val
+			      }
+			    }*/			}
 
-		    obj.value = x1 + x2;
-		    /*if (!parseFloat(val) || val.match(/[^\d]$/)) {  // invalid character input
-		      if (val.length>0) {  // delete invalid char
-		        obj.value = val.substring(0, val.length-1)
-		      }
-		    }
-		    else {  // valid char input for the key stroke
-		      if (val.match(/\./)) {  // already added "."
-		        var idx = val.indexOf(".")
-		        var front = val.substring(0, idx)  // before "."
-		        var back = val.substring(idx+1, val.length)  // after "."
-		        front += back.charAt(0)  // move "." back 1 char
-		        if (parseInt(front)==0) { front = front.replace(/^0/, "") }  // delete leading "0"
-		        else { front = front.replace(/^0+/, "") }
-		        back = back.substring(1, back.length)
-		        obj.value = front + "." + back
-		      }
-		      else {
-		        obj.value = "0.0"+val
-		      }
-		    }*/
+		    
 		}
 	},
 
