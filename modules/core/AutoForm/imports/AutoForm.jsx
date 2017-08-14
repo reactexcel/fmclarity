@@ -278,6 +278,23 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
+							{
+
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
+
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
 
 							<button
 								type 		= "button"
