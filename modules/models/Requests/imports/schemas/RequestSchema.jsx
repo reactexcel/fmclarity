@@ -127,8 +127,9 @@ const RequestSchema = {
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.area= user.apartment ? user.apartment : null;
-                                    request.level= user.level ? user.level : null;
+                                    request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
+                                    request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
+                                    request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
                                     if (request.type == "Key Request") {
                                         var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
                                         if(services){
@@ -141,11 +142,13 @@ const RequestSchema = {
                                             }
                                         }
                                     }
-
                                 }
                                 else{
-                                    request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;
+                                    /*request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;*/
+                                    request.level = null;
+                                    request.area = null;
+                                    request.identifier = null;
                                 }
 
                                 }
@@ -525,11 +528,8 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
-                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy.level;
-                }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment ? user.apartment : null;
+                    val = user.areas;
                 }
                 return val;
             },
@@ -1578,7 +1578,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 || request.type == 'Booking' ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;
