@@ -15,6 +15,8 @@ import { Switch } from '/modules/ui/MaterialInputs';
 
 import { Documents } from '/modules/models/Documents';
 
+import { Requests, RequestActions } from '/modules/models/Requests';
+
 export default function DocIcon( props ) {
 
     function showFileDetailsModal() {
@@ -131,12 +133,20 @@ export default function DocIcon( props ) {
             { docAlmostExpires || docExpired  ?
                 reminder && reminder.name == reminderName ? 
                     <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
-                        <a   href={url}
+                        <button
+                             type        = "button"
                              className   = "btn btn-flat"
                              title="View Update request"
-                             >
+                             onClick={
+                                 ( event ) => {
+                                     event.stopPropagation();
+                                     selectedRequest = Requests.findOne( reminder._id );
+                                             RequestActions.view.run( selectedRequest );
+                                             props.onChange();
+                                 }
+                             }>
                              <span><i className="fa fa-eye" aria-hidden="true"></i></span>
-                         </a>
+                         </button>
                     </span>:<span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                                  <button
                                      type        = "button"
