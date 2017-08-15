@@ -140,7 +140,6 @@ Meteor.publish( 'Request: Last 10 Cancelled', function( ) {
     console.log( this.userId );
 
     let requestsCursor = Requests.find( {
-            'members._id': this.userId,
             status: 'Cancelled'
         }, {
         sort: {
