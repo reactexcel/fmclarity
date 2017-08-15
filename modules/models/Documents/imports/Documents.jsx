@@ -91,7 +91,7 @@ Documents.actions( {
 
             import { Requests } from '/modules/models/Requests';
             let reminderName =  "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD');
-            return Requests.findOne( { name: reminderName, type: 'Reminder' } );
+            return Requests.findOne( { name: reminderName, type: 'Reminder', status: { $in: [ 'New', 'Issued' ] } } );
             
         }
     },
