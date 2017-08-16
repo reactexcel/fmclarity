@@ -7,7 +7,7 @@ const UserProfileForm = [
 
   'facility',
   'level',
-  'apartment',
+  'areas',
   'identifier',
 
   'status',
