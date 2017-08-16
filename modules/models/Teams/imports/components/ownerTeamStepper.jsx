@@ -377,7 +377,7 @@ const OwnerTeamStepper = React.createClass( {
             )
         }
         */
-        console.log(viewingTeam.owner , this.state.newUser);
+        // console.log(viewingTeam.owner , this.state.newUser);
         return (
             <div className="ibox-form user-profile-card" style={{backgroundColor:"#fff"}}>
 
@@ -459,11 +459,11 @@ const OwnerTeamStepper = React.createClass( {
                                                 // console.log(this.data.viewer);
                                                 console.log(item,viewingTeam);
                                                 item.owner = viewingTeam.owner
-                                                item.members = viewingTeam.members 
+                                                item.members = viewingTeam.members
                                                 if(item.members && item.members.length){
                                                   let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
                                                   if(!arr.length > 0 ){
-                                                    if(this.data.viewer.role === "fmc support"){
+                                                    if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
                                                       // console.log("working");
                                                       item.members.push({
                                                         _id : this.data.viewer._id,
@@ -481,7 +481,7 @@ const OwnerTeamStepper = React.createClass( {
                                                     }
                                                   }
                                                 }else{
-                                                  if(this.data.viewer.role === "fmc support"){
+                                                  if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
                                                     // console.log("working");
                                                     item.members = [{
                                                       _id : this.data.viewer._id,
@@ -498,7 +498,7 @@ const OwnerTeamStepper = React.createClass( {
                                                     }]
                                                   }
                                                 }
-                                                console.log(item,"------------------------");
+                                                // console.log(item,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);

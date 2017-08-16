@@ -334,7 +334,7 @@ const TeamStepper = React.createClass( {
                                                 if(item.members && item.members.length){
                                                   let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
                                                   if(!arr.length > 0 ){
-                                                    if(this.data.viewer.role === "fmc support"){
+                                                    if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
                                                       // console.log("working");
                                                       item.members.push({
                                                         _id : this.data.viewer._id,
@@ -352,7 +352,7 @@ const TeamStepper = React.createClass( {
                                                     }
                                                   }
                                                 }else{
-                                                  if(this.data.viewer.role === "fmc support"){
+                                                  if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
                                                     // console.log("working");
                                                     item.members = [{
                                                       _id : this.data.viewer._id,
