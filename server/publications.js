@@ -81,7 +81,7 @@ Meteor.publish( 'Request: Last 10 Complete', function( ) {
         sort: {
             createdAt: -1
         },
-        limit: 10, 
+        limit: 10,
         fields: {
             _id: 1,
             area: 1,
@@ -142,7 +142,6 @@ Meteor.publish( 'Requests: Complete', function( ) {
     console.log( this.userId );
 
     let requestsCursor = Requests.find( {
-            'members._id': this.userId,
             status: 'Complete'
         }, {
         sort: {
@@ -231,7 +230,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
     if ( !includeComplete ) {
         query.push ( {
             $and: [
-                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
+                { status: { $nin: [ 'Deleted', 'Cancelled'] } },
             ]
         } );
     }

@@ -127,12 +127,28 @@ const RequestSchema = {
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.area= user.apartment ? user.apartment : null;
-                                    request.level= user.level ? user.level : null;
+                                    request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
+                                    request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
+                                    request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
+                                    if (request.type == "Key Request") {
+                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                                        if(services){
+                                            for (var i = 0; i < services.length; i++) {
+                                                var name = services[i].name;
+                                                if (name.indexOf('keys') !== -1) {
+                                                    request.service = services[i];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                                 else{
-                                    request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;
+                                    /*request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;*/
+                                    request.level = null;
+                                    request.area = null;
+                                    request.identifier = null;
                                 }
 
                                 }
@@ -436,23 +452,6 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
-        reporter: {
-             label: "Reporter",
-             description: "Who reported the incident",
-             type: "object",
-             input: Select,
-             required: true,
-             options: ( request ) => {
-                     request = Requests.collection._transform( request );
-                     let team = request.getFacility() || request.getTeam(),
-                         members = team.getMembers();
-                     return {
-                         items: members,
-                         view: ContactCard
-                     }
-             },
-             condition: "Incident"
-         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
@@ -529,11 +528,8 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
-                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy.level;
-                }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment;
+                    val = user.areas;
                 }
                 return val;
             },
@@ -718,6 +714,20 @@ const RequestSchema = {
             },
             size: 6,
             type: "object",
+            defaultValue: ( item ) => {
+                if (item.type == "Key Request") {
+                    var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
+                    if (services) {
+                        for (var i = 0; i < services.length; i++) {
+                            var name = services[i].name;
+                            if (name.indexOf('keys') !== -1) {
+                                item.service = services[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
             input:( props ) => {
                 return <Select {...props}
                         onChange={( value ) => {
@@ -744,6 +754,9 @@ const RequestSchema = {
                     }
                 }
                 if ( _.contains(['Booking','Key Request','Incident', 'Reminder'],request.type) ) {
+                    if (request.type=='Key Request' && Meteor.user().getRole()=='manager') {
+                        return true;
+                    }
                     return false;
                 } else if ( Teams.isServiceTeam( team ) && !team.services.length <= 1 ) {
                     return false;
@@ -1565,7 +1578,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;
