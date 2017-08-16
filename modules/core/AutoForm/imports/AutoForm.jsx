@@ -107,10 +107,12 @@ class AutoForm extends React.Component {
 			}
 			if ( this.props.onSubmit ) {
 				if ( this.form.validate( item ) ) {
-					this.props.onSubmit( item );
+					this.props.onSubmit( item, (newItem)=>{
+						callback( newItem );
+					} );
 				}
 				if ( this.props.afterSubmit ) {
-					this.props.afterSubmit( newItem )
+					this.props.afterSubmit( item )
 				}
 			} else {
 				this.form.save( item, ( newItem ) => {
@@ -282,6 +284,23 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
+							{
+
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
+
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
 
 							<button
 								type 		= "button"
