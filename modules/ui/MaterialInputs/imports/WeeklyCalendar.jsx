@@ -11,6 +11,7 @@ const WeeklyCalendar = React.createClass( {
 	},
 
 	_onTimeSlotAllotment(event, delta, revertFunc){
+		let self = this;
 		let bookedEvent = this.events.events;
 		let getCurrentTime = {};
 		let bookingStartTime = event.start._d
@@ -43,7 +44,7 @@ const WeeklyCalendar = React.createClass( {
 					if(ableToBook == false){
 						Bert.alert({
 			  				title: 'Oops, Operation not allowed',
-			  				message: "Unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
 			  				type: 'danger',
 			  				style: 'growl-top-right',
 			  				icon: 'fa-ban'
@@ -80,28 +81,28 @@ const WeeklyCalendar = React.createClass( {
 
 	checkBookingOnThisDay(getCurrentTime,areaDetails){
 		if(areaDetails.unit == "Hours"){
-			if( moment().diff(getCurrentTime.startTime, 'hours') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'hours') > (0 - areaDetails.bookingAdvanceDay) ){
+			if( moment().diff(getCurrentTime.startTime, 'hours') <= (0-areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'hours') <= (0-areaDetails.bookingAdvanceDay) ){
 				return true;
 			}else{
 				return false;
 			}
 		}
 		if( areaDetails.unit == "Days"){
-			if( moment().diff(getCurrentTime.startTime, 'days') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'days') > (0 - areaDetails.bookingAdvanceDay) ){
+			if( moment().diff(getCurrentTime.startTime, 'days') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'days') <= (0 - areaDetails.bookingAdvanceDay) ){
 				return true;
 			}else{
 				return false;
 			}
 		}
 		if( areaDetails.unit == "Weeks"){
-			if( moment().diff(getCurrentTime.startTime, 'weeks') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'weeks') > (0 - areaDetails.bookingAdvanceDay) ){
+			if( moment().diff(getCurrentTime.startTime, 'weeks') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'weeks') <= (0 - areaDetails.bookingAdvanceDay) ){
 				return true;
 			}else{
 				return false;
 			}
 		}
 		if( areaDetails.unit == "Months"){
-			if( moment().diff(getCurrentTime.startTime, 'months') > (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'months') > (0 - areaDetails.bookingAdvanceDay) ){
+			if( moment().diff(getCurrentTime.startTime, 'months') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'months') <= (0 - areaDetails.bookingAdvanceDay) ){
 				return true;
 			}else{
 				return false;
@@ -198,7 +199,7 @@ const WeeklyCalendar = React.createClass( {
 						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
 						Bert.alert({
 			  				title: 'Oops, Operation not allowed',
-			  				message: "Unable to book. You are able to book only "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
 			  				type: 'danger',
 			  				style: 'growl-top-right',
 			  				icon: 'fa-ban'
