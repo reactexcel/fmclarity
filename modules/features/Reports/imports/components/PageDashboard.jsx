@@ -25,6 +25,7 @@ function PageDashboard( props ) {
 		/*Perf.start();*/
 		return <div/>
 	}
+	console.log(Meteor.user().getRole(),"User role");
 	/*
 	Perf.stop();
     Perf.printInclusive();
