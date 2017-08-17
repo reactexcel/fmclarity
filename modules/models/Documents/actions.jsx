@@ -46,6 +46,9 @@ const destroy = new Action( {
 		shouldConfirm: true,
 	},
 	action: ( team, doc ) => {
+		if(_.isEmpty(doc._id)){
+			doc = team
+		}
 		if( !doc.destroy ){
 			doc = Documents.findOne( doc._id );
 		}
