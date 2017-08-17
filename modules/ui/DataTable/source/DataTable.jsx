@@ -43,7 +43,6 @@ export default DataTable = React.createClass( {
 					  b = j.lastUpdate.valueOf();
 					return a < b ? 1 : ( a > b ? -1 : 0);
 			} ) ;
-
 			items = items.concat( restItems )
 
 			dataset.reset( items, fields );
@@ -83,7 +82,12 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		this.update( props );
+		if(props.updateWithoutSorting){
+			let dataset = this.state.dataset
+			dataset.reset( props.items, props.fields );
+		}else{
+			this.update( props );
+		}
 	},
 
 
@@ -145,6 +149,7 @@ export default DataTable = React.createClass( {
 									<th
 										onClick = { () => { this.handleSortBy( col ) } }
 										className = "data-grid-header-cell" key={('head'+col)}
+										//style={i==0?{paddingLeft:'10px'}:{}}
 										style={{paddingLeft:'10px'}}
 										id={i==cols.length-1?'last-head':'pre-head'}
 									>
@@ -179,6 +184,7 @@ export default DataTable = React.createClass( {
 						{unreadRows.map((unreadRow, idx)=>{
 
 							return (
+								<tbody key = { idx }>
 							<tr
 								className 	= "data-grid-row"
 								key 		= { idx }
@@ -194,7 +200,7 @@ export default DataTable = React.createClass( {
 										styles.paddingLeft = '10px';
 									return (
 										<td
-											className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+											className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 											key 		= {('val('+idx+','+colIdx+')-'+unreadRow[col].val)}
 											style 		= {styles}
 											id={colIdx==cols.length-1?'last-col':'pre-col'}
@@ -206,6 +212,7 @@ export default DataTable = React.createClass( {
 
 								} ) }
 							</tr>
+							</tbody>
 							)
 
 						})}
@@ -252,7 +259,7 @@ export default DataTable = React.createClass( {
 															styles.paddingLeft = '10px';
 														return (
 															<td
-																className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+																className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 																key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
 																style 		= {styles}
 																id={colIdx==cols.length-1?'last-col':'pre-col'}
@@ -301,14 +308,15 @@ export default DataTable = React.createClass( {
 											if(this.props.onClick){
 												this.props.onClick( readRow._item )
 											}
-										} }
+										 } }
 										>
+											{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 											{ cols.map( (col,colIdx) => {
 												let styles = readRow[col].style?readRow[col].style:{}
 													styles.paddingLeft = '10px';
 												return (
 													<td
-														className 	= { `data-grid-cell data-grid-col-${colIdx}` }
+														className 	= { `data-grid-cell data-grid-col-${colIdx} `+col }
 														key 		= {('val('+idx+','+colIdx+')-'+readRow[col].val)}
 														style 		= {styles}
 														id={colIdx==cols.length-1?'last-col':'pre-col'}

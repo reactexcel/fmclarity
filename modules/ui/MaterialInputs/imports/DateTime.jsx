@@ -51,7 +51,11 @@ const DateTime = React.createClass( {
 		this.setState( {
 			value: dateValue.format( "D-MMM-YY HH:mm" )
 		} )
-		this.props.onChange( dateValue.toDate() );
+		this.props.onChange( dateValue.toDate(), ()=>{
+			this.setState({
+				value:null
+			})
+		} );
 	},
 
 	handleSelect() {

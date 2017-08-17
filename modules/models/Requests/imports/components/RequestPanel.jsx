@@ -110,9 +110,9 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
     function formatDate( date, onlyDate ) {
         if(onlyDate && onlyDate == true){
-            return moment( date ).format( 'ddd Do MMM' );
+            return moment( date ).format( 'Do MMM YYYY' );
         }
-        return moment( date ).format( 'ddd Do MMM, h:mm a' );
+        return moment( date ).format( 'ddd Do MMM YYYY, h:mm a' );
     }
     function showUserModal( selectedUser ) {
 
@@ -165,7 +165,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     } else {
         if ( request.type == 'Booking' ) {
             title = 'Room Booking';
-        } else if ( teamType == 'fm' ) {
+        }
+        else if (request.type == 'Incident') {
+            title = 'Incident';
+        }
+         else if ( teamType == 'fm' ) {
             if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
@@ -231,7 +235,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                         <BillingDetails item = { requestIsBaseBuilding && realEstateAgency ? realEstateAgency.address : facility.billingDetails }/>
 
-                        { teamType=="contractor" ? <span>{ billingOrderNumber }</span> : null }
+                        { teamType=="contractor" ? <span className = 'pull-left' style={{left:'0px', marginLeft:'0px'}}>{ billingOrderNumber }</span> : null }
                     </div>}
                     <div className="col-md-6 col-xs-6" style={{textAlign: 'right',float:'right'}}>
 
@@ -253,7 +257,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                     } }
                                         type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input>
                                     </h2>
-                                </span>
+                                    <span>{ billingOrderNumber }</span>
+                                </span> 
                                 : <h2>{title}</h2>}
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
@@ -261,13 +266,13 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                             { request.type == 'Ad-hoc' || "Ad-Hoc" &&
                               request.costThreshold &&
                               Meteor.user().getRole() != 'staff' && !requestIsInvoice ?
-                            <h2>${request.costThreshold}</h2>
+                            <h2>${requestIsInvoice ? formatToCurrency(request.invoiceDetails.totalPayable.toString()) : request.costThreshold}</h2>
                             : null }
 
                             {requestIsInvoice ?
                                 <div>
-                                <span><b>Invoice Date</b> <span>{formatDate(request.invoiceDetails.invoiceDate)}</span><br/></span>
-                                <span><b>Due Date</b> <span>{formatDate(request.invoiceDetails.dueDate)}</span><br/></span>
+                                <span><b>Invoice Date</b> <span>{formatDate(request.invoiceDetails.invoiceDate, true)}</span><br/></span>
+                                <span><b>Due Date</b> <span>{formatDate(request.invoiceDetails.dueDate, true)}</span><br/></span>
 
                                 <span
                                 style       = { { display:"inline-block",fontSize:"16px",marginTop:"20px"}}
@@ -293,6 +298,10 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
 
                             { request.type != 'Ad-hoc' && request.type !="Ad-Hoc" && request.createdAt ?
                             <span><b>Created</b> <span>{formatDate(request.createdAt)}</span><br/></span>
+                            : null }
+
+                            { request.type == "Incident" && request.incidenceDate ?
+                            <span><b>Incident Date</b> <span>{formatDate(request.incidenceDate)}</span><br/></span>
                             : null }
 
                             { request.priority ?
@@ -351,11 +360,11 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                     </tr>
                     <tr>
                         <th>GST</th>
-                        <td>{ request.invoiceDetails.gst || <i>unnamed</i> }</td>
+                        <td>${ formatToCurrency(request.invoiceDetails.gst.toString()) || <i>unnamed</i> }</td>
                     </tr>
                     <tr>
                         <th>Total</th>
-                        <td>{ request.invoiceDetails.totalPayable || request.costThreshold }</td>
+                        <td>${ formatToCurrency(request.invoiceDetails.totalPayable.toString()) || formatToCurrency(request.costThreshold.toString()) }</td>
                     </tr>
                 </tbody>
                 :
@@ -379,8 +388,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-
-                { teamType=='fm' && request.service && request.type != 'Booking' ?
+                
+                { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 request.type=='Key Request' ?
                 Meteor.user().getRole()=='manager'?
                     <tr>
@@ -392,6 +401,30 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                         <th>Service</th>
                         <td>{request.getServiceString()} {requestIsBaseBuilding?<span className = {`label`}>Base Buildling</span>:null}</td>
                     </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.incidentVictim ?
+                <tr>
+                    <th>Who did it happen to?</th>
+                    <td>{request.incidentVictim}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.reporterContact ?
+                <tr>
+                    <th>Reporter Contact details</th>
+                    <td>{request.reporterContact}</td>
+                </tr>
+                : null
+                }
+
+                { _.contains(['Incident'], request.type) && request.location ?
+                <tr>
+                    <th>Where did it happen?</th>
+                    <td>{request.location}</td>
+                </tr>
                 : null
                 }
 
@@ -430,7 +463,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 { request.type == 'Booking' && request.bookingPeriod ?
                 <tr>
                     <th style={{width:"110px"}}>Booking Period</th>
-                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm:ss a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm:ss a'):'')}</td>
+                    <td>{(request.bookingPeriod.startTime? moment(request.bookingPeriod.startTime).format('MMMM Do YYYY, h:mm a') : '')+' to '+(request.bookingPeriod.endTime? moment(request.bookingPeriod.endTime).format('MMMM Do YYYY, h:mm a'):'')}</td>
                 </tr>
                 : null }
 
