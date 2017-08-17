@@ -68,7 +68,6 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 
 	if ( user != null ) {
 	    // could test moving this below loading team and only including facilities if supplier
-	console.log( statusFilter ,contextFilter ,"request panel***********************");
 		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
 		//requests = user.getRequests();
 	}

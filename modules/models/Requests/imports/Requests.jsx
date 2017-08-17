@@ -889,7 +889,8 @@ function actionIssue( request ) {
             let team = Teams.findOne( {
                 _id: request.team._id
             } );
-            code = team.getNextWOCode();
+            //code = team.getNextWOCode();
+            code = request.code;
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id

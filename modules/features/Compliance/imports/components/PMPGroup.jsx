@@ -7,13 +7,14 @@ import { RequestActions } from '/modules/models/Requests';
 const PMPGroup = React.createClass({
 
     render() {
-        var requests = this.props.items;
+        let self = this;
+        var requests = self.props.items;
         return (
             <div>
-                {requests&&requests.length?requests.map((r,idx)=>{
+                {requests&&requests.length?requests.map((req,idx)=>{
                     return (
                         <div className="grid-item" key={idx} style={{height:"48px",paddingTop:"5px"}}>
-                            <PMPListTile item={r}/>
+                            <PMPListTile item={req}/>
                         </div>
                     )
                 }):null}
