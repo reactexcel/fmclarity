@@ -86,7 +86,7 @@ const RequestSchema = {
 
         type: {
             label: "Request type",
-            description: "The work request type (ie Ad-hoc, Schedular)",
+            description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
             size: 12,
             required: true,
@@ -105,7 +105,7 @@ const RequestSchema = {
 
                 if ( Teams.isServiceTeam( team ) ) {
                     return {
-                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
@@ -117,6 +117,9 @@ const RequestSchema = {
                                     request.area = null;
                                     request.level = null;
                                 }
+                                if(request.type == 'Preventative'){
+                                    request.priority = 'Scheduled';
+                                }
 
                                 } };
                 } else {
@@ -127,8 +130,9 @@ const RequestSchema = {
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.area= user.apartment ? user.apartment : null;
-                                    request.level= user.level ? user.level : null;
+                                    request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
+                                    request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
+                                    request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
                                     if (request.type == "Key Request") {
                                         var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
                                         if(services){
@@ -141,28 +145,30 @@ const RequestSchema = {
                                             }
                                         }
                                     }
-
                                 }
                                 else{
-                                    request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;
+                                    /*request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;*/
+                                    request.level = null;
+                                    request.area = null;
+                                    request.identifier = null;
                                 }
 
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
                                         request.costThreshold= '0';
                                         /*request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
+                                            unit: (request.type == 'Preventative' ? "years" : "")
                                         };*/
                                         request.frequency = {
                                             number: (request.type == 'Schedular' ? 1 : ""),
@@ -178,6 +184,8 @@ const RequestSchema = {
                                         request.supplier = Session.getSelectedTeam();
                                         request.area = null;
                                         request.level = null;
+                                    }else if(request.type == 'Preventative'){
+                                        request.priority = 'Scheduled';
                                     }
                                 }
                          };
@@ -214,7 +222,7 @@ const RequestSchema = {
             size: 6,
             options: ( item ) => {
                 return ( {
-                    items: [
+                    items: item.type === 'Preventative' ? ["Scheduled"] : [
                         "Standard",
                         "Scheduled",
                         "Urgent",
@@ -525,11 +533,8 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
-                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy.level;
-                }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment ? user.apartment : null;
+                    val = user.areas;
                 }
                 return val;
             },
@@ -1578,7 +1583,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 || request.type == 'Booking' ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;

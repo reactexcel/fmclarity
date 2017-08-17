@@ -4,7 +4,6 @@ export default CreatePPMRequestForm = [
 	'facility',
 	'location',
 	'incidentVictim',
-	'reporter',
 	'name',
 	'reporterContact',
 	'level',
