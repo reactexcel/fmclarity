@@ -86,7 +86,7 @@ const RequestSchema = {
 
         type: {
             label: "Request type",
-            description: "The work request type (ie Ad-hoc, Schedular)",
+            description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
             size: 12,
             required: true,
@@ -105,7 +105,7 @@ const RequestSchema = {
 
                 if ( Teams.isServiceTeam( team ) ) {
                     return {
-                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
+                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                                 // prefill value with zero for defect
                                 if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
@@ -116,6 +116,9 @@ const RequestSchema = {
                                     request.supplier = Session.getSelectedTeam();
                                     request.area = null;
                                     request.level = null;
+                                }
+                                if(request.type == 'Preventative'){
+                                    request.priority = 'Scheduled';
                                 }
 
                                 } };
@@ -154,18 +157,18 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
+                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
                                         request.costThreshold= '0';
                                         /*request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
+                                            number: (request.type == 'Preventative' ? 1 : ""),
+                                            repeats: (request.type == 'Preventative' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
+                                            unit: (request.type == 'Preventative' ? "years" : "")
                                         };*/
                                         request.frequency = {
                                             number: (request.type == 'Schedular' ? 1 : ""),
@@ -181,6 +184,8 @@ const RequestSchema = {
                                         request.supplier = Session.getSelectedTeam();
                                         request.area = null;
                                         request.level = null;
+                                    }else if(request.type == 'Preventative'){
+                                        request.priority = 'Scheduled';
                                     }
                                 }
                          };
@@ -217,7 +222,7 @@ const RequestSchema = {
             size: 6,
             options: ( item ) => {
                 return ( {
-                    items: [
+                    items: item.type === 'Preventative' ? ["Scheduled"] : [
                         "Standard",
                         "Scheduled",
                         "Urgent",

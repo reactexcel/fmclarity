@@ -138,9 +138,14 @@ const createRequest = new Action( {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
-
-                    Meteor.call( 'Issues.create', newRequest );
-                    let request = Requests.findOne( { _id: newRequest._id } );
+                    let request;
+                    if(newRequest.type == "Preventative"){
+                      Meteor.call( 'PPMRequest.create', newRequest );
+                      request = PPMRequest.findOne( { _id: newRequest._id } );
+                    }else{
+                      Meteor.call( 'Issues.create', newRequest );
+                      request = Requests.findOne( { _id: newRequest._id } );
+                    }
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
                     Modal.replace( {

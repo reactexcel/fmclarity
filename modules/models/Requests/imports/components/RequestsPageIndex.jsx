@@ -90,7 +90,7 @@ export default class RequestsPageIndex extends Component {
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">
-						<RequestsTable requests = { this.state.requests }/>
+						<RequestsTable requests = { this.state.requests } selectedItem={selectedStatus}/>
 					</div>
 				</div>
 			</div>
