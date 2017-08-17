@@ -540,6 +540,18 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+    condition: ( request ) => {
+        return (request.invoiceDetails && request.invoiceDetails.details)
+    },
+    action: [
+        'edit invoice',
+        'delete invoice'
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
     action: [
         'invite team member'
     ],

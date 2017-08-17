@@ -82,7 +82,13 @@ class AutoForm extends React.Component {
 					}
 				})
 				if(foundAreas.length == 0){
-					window.alert("Oops, no bookable areas available");
+					Bert.alert({
+		  				title: 'Oops, Bookin not allowed',
+		  				message: 'No bookable areas available.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
 				}
 			}
 		}
