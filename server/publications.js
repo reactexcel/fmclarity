@@ -135,6 +135,7 @@ Meteor.publish( 'Request: Last 10 Complete', function( ) {
     return requestsCursor;
 } );
 
+
 Meteor.publish( 'Request: Last 10 Cancelled', function( ) {
 
     console.log( this.userId );
@@ -187,7 +188,6 @@ Meteor.publish( 'Request: Last 10 Cancelled', function( ) {
 
     return requestsCursor;
 } );
-
 
 
 Meteor.publish( 'Requests: Complete', function( ) {
@@ -283,7 +283,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
     if ( !includeComplete ) {
         query.push ( {
             $and: [
-                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
+                { status: { $nin: [ 'Deleted', 'Cancelled'] } },
             ]
         } );
     }

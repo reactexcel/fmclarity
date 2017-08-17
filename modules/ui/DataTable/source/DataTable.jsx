@@ -43,7 +43,6 @@ export default DataTable = React.createClass( {
 					  b = j.lastUpdate.valueOf();
 					return a < b ? 1 : ( a > b ? -1 : 0);
 			} ) ;
-
 			items = items.concat( restItems )
 
 			dataset.reset( items, fields );
@@ -83,7 +82,12 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		this.update( props );
+		if(props.updateWithoutSorting){
+			let dataset = this.state.dataset
+			dataset.reset( props.items, props.fields );
+		}else{
+			this.update( props );
+		}
 	},
 
 
