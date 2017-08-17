@@ -90,6 +90,12 @@ Roles = new class {
 				if ( ownerTeam && ownerTeam.members && ownerTeam.members.length ) {
 					ownerTeam.members.map( ( member ) => {
 						this.addRole( results, member, "owner" );
+						if(Meteor.user().getRole() == "fmc support"){
+							this.addRole( results, member, "fmc support" );
+						}
+						if(Meteor.user().getRole() == "portfolio manager"){
+							this.addRole( results, member, "portfolio manager" );
+						}
 					} )
 				}
 			}

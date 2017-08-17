@@ -8,6 +8,7 @@ import Currency from './imports/Currency.jsx';
 import DateInput from './imports/DateInput.jsx';
 import DateTime from './imports/DateTime.jsx';
 import FileField from './imports/FileField.jsx';
+import NumericText from './imports/NumericText.jsx';
 import Rating from './imports/Rating.jsx';
 import Select from './imports/Select.jsx';
 import Switch from './imports/Switch.jsx';
@@ -35,7 +36,8 @@ checkModules( {
 	StartEndTimePicker,
 	DropFileContainer,
 	FMInstantSearchBox,
-	CalendarPeriod
+	CalendarPeriod,
+	NumericText,
 } );
 
 /**
@@ -57,5 +59,6 @@ export {
 	StartEndTimePicker,
 	DropFileContainer,
 	FMInstantSearchBox,
-	CalendarPeriod
+	CalendarPeriod,
+	NumericText,
 }

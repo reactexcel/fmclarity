@@ -127,8 +127,9 @@ const RequestSchema = {
                             afterChange: ( request ) => {
                                 // prefill area with tenant/resident address
                                 if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.area= user.apartment ? user.apartment : null;
-                                    request.level= user.level ? user.level : null;
+                                    request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
+                                    request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
+                                    request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
                                     if (request.type == "Key Request") {
                                         var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
                                         if(services){
@@ -142,10 +143,14 @@ const RequestSchema = {
                                         }
                                     }
 
+
                                 }
                                 else{
-                                    request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;
+                                    /*request.area = request.area ? request.area : null;
+                                    request.level = request.level ? request.level : null;*/
+                                    request.level = null;
+                                    request.area = null;
+                                    request.identifier = null;
                                 }
 
                                 }
@@ -449,23 +454,6 @@ const RequestSchema = {
             required: true,
             condition: "Incident"
         },
-        reporter: {
-             label: "Reporter",
-             description: "Who reported the incident",
-             type: "object",
-             input: Select,
-             required: true,
-             options: ( request ) => {
-                     request = Requests.collection._transform( request );
-                     let team = request.getFacility() || request.getTeam(),
-                         members = team.getMembers();
-                     return {
-                         items: members,
-                         view: ContactCard
-                     }
-             },
-             condition: "Incident"
-         },
         reporterContact: {
             label: "Reporter Contact details",
             type: "string",
@@ -542,11 +530,8 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
-                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
-                    val = user.profile.tenancy.level;
-                }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.apartment ? user.apartment : null;
+                    val = user.areas;
                 }
                 return val;
             },
@@ -1288,7 +1273,7 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.identifier.name
+        			bookingFor = items.identifier;
         		} else if(items && items.area && items.area.data) {
         			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
         				bookableTimeSlot = items.area.data.areaDetails.daySelector;
@@ -1314,7 +1299,7 @@ const RequestSchema = {
                             }
         				})
         			}
-                    bookingFor = items.area.name;
+                    bookingFor = items.area;
         		} else if(items && items.level && items.level.data) {
         			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
         				bookableTimeSlot = items.level.data.areaDetails.daySelector;
@@ -1340,9 +1325,8 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.level.name;
+        			bookingFor = items.level;
         		}
-
         		let businessHours = [];
 
                 let extra = moment().format('YYYY-MM-DD') + ' ';
@@ -1483,7 +1467,8 @@ const RequestSchema = {
         		let bookingDetails = {
         			businessHours:businessHours,
         			previousBookingEvents:previousBookingEvents,
-        			bookingFor:bookingFor
+        			bookingFor:bookingFor.name,
+                    areaDetails: bookingFor
         		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
@@ -1585,10 +1570,6 @@ const RequestSchema = {
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
-                /*
-                import { Facilities } from '/modules/models/Facilities';
-                let facilities = Facilities.findAll( { 'team._id': request.team._id } );
-                */
                 return {
                     items: facilities,
                     view: FacilityListTile,
@@ -1635,7 +1616,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;

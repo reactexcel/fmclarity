@@ -5,7 +5,6 @@ export default CreateRequestForm = [
 	'facility',
 	'location',
 	'incidentVictim',
-	'reporter',
 	'name',
 	'reporterContact',
 	'level',

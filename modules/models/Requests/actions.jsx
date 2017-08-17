@@ -10,6 +10,7 @@ import {Facilities} from '/modules/models/Facilities';
 import RequestPanel from './imports/components/RequestPanel.jsx';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
@@ -456,6 +457,74 @@ const invoice = new Action( {
     }
 } )
 
+const editInvoice = new Action( {
+    name: 'edit invoice',
+    type: 'request',
+    verb: "editted an invoice",
+    label: "Edit",
+    action: ( request, callback ) => {
+        let oldRequest = Object.assign( {}, request );
+        Modal.show( {
+            content:
+                <AutoForm
+            title = "Edit Invoice"
+            model = { Requests }
+            item = { request }
+            form = { ['invoiceDetails'] }
+            submitText="Save"
+            onSubmit = {
+                ( request ) => {
+                    if ( request.invoiceDetails.invoice ) {
+                        $.each( request.invoiceDetails.invoice, function( key, value ) {
+                          //request.attachments.push( value );
+                          let file = Files.findOne({_id:value._id}),
+                              filename = file && file.original && file.original.name,
+                              fileExists = false;
+                          $.each(request.attachments, function(k, v){
+                            let f = Files.findOne({_id:v._id});
+                            fname = f && f.original && f.original.name; 
+                            if (filename == fname) {
+                                fileExists =  true;
+                            }
+                          });
+                          if (!fileExists) {
+                            request.attachments.push( value );
+                          }
+
+                        });
+                    }
+                    Requests.save.call( request ).then((request)=>{
+                        Modal.hide();
+                    });
+                }
+            }
+            />
+        } )
+    }
+} )
+
+const deleteInvoice = new Action( {
+    name: "delete invoice",
+    type: 'request',
+    label: "Delete",
+    shouldConfirm: true,
+    verb: 'deleted invoice',
+    action: ( request, callback ) => {
+        var invoice = request.invoiceDetails;
+        Requests.update( request._id, { $set: { invoiceDetails: null } } );
+        Modal.hide();
+        request = Requests.collection._transform( request );
+        request.distributeMessage( {
+            message: {
+                verb: "deleted",
+                subject: `Invoice number ${invoice.invoiceNumber} has been deleted`,
+                body: invoice.details
+            }
+        } );
+        callback( request );
+    }
+} )
+
 const close = new Action( {
     name: "close request",
     type: 'request',
@@ -586,6 +655,8 @@ export {
     invoice,
     issueInvoice,
     reissueInvoice,
+    editInvoice,
+    deleteInvoice,
     //close,
     reopen,
     //reverse,
