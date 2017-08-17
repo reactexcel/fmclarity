@@ -1236,7 +1236,7 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.identifier.name
+        			bookingFor = items.identifier;
         		} else if(items && items.area && items.area.data) {
         			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
         				bookableTimeSlot = items.area.data.areaDetails.daySelector;
@@ -1262,7 +1262,7 @@ const RequestSchema = {
                             }
         				})
         			}
-                    bookingFor = items.area.name;
+                    bookingFor = items.area;
         		} else if(items && items.level && items.level.data) {
         			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
         				bookableTimeSlot = items.level.data.areaDetails.daySelector;
@@ -1288,9 +1288,8 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.level.name;
+        			bookingFor = items.level;
         		}
-
         		let businessHours = [];
 
                 let extra = moment().format('YYYY-MM-DD') + ' ';
@@ -1431,7 +1430,8 @@ const RequestSchema = {
         		let bookingDetails = {
         			businessHours:businessHours,
         			previousBookingEvents:previousBookingEvents,
-        			bookingFor:bookingFor
+        			bookingFor:bookingFor.name,
+                    areaDetails: bookingFor
         		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
@@ -1533,10 +1533,6 @@ const RequestSchema = {
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
-                /*
-                import { Facilities } from '/modules/models/Facilities';
-                let facilities = Facilities.findAll( { 'team._id': request.team._id } );
-                */
                 return {
                     items: facilities,
                     view: FacilityListTile,
