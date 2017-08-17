@@ -21,6 +21,9 @@ export default function ContactCard( props ) {
 	} else if ( props.team ) {
 		role = RBAC.getRole( contact, props.team );
 	}
+	if(role == undefined){
+		role = RBAC.getRole( contact, props.team );
+	}
 
 	return (
 		<div className="contact-card contact-card-2line">
