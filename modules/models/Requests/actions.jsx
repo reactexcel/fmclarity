@@ -70,6 +70,10 @@ const edit = new Action( {
                     Modal.hide();
                     request = Requests.collection._transform( request );
 
+                    if (request.assignee && request.assignee != oldRequest.assignee) {
+                        request.setAssignee( request.assignee );
+                    }
+
                     let notificationBody = "",
                         keys = [ 'costThreshold', 'priority', 'type', 'name' ];
 

@@ -276,6 +276,9 @@ Requests.methods( {
                 if ( newRequest.owner ) {
                     owner = newRequest.getOwner();
                 }
+                if (newRequest.assignee ) {
+                    newRequest.setAssignee( newRequest.assignee );
+                }
                 newRequest.distributeMessage( {
                     message: {
                         verb: "created",
