@@ -444,7 +444,11 @@ Actions.addAccessRule( {
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 if(request.status == 'Issued'){
-                    return false;
+                    if(user.getRole() && user.getRole() == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }else{
                     return true;
                 }
