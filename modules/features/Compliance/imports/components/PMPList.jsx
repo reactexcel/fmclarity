@@ -71,7 +71,7 @@ export default PMPList = React.createClass({
         <div style={{margin:"10px",fontWeight:"700",cursor:"pointer"}} onClick={()=>{
           TeamActions.createPPMRequest.run( team );
 
-        }}>+ Create PPM</div>
+        }}>+ Add another</div>
 				{keys.map((k,idx)=>{
                     return (
                         <div key={idx}>
