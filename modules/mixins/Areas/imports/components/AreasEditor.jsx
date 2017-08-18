@@ -271,7 +271,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                         }
                                                       />
                                                       <div style={ {textAlign:"right", clear:"both"}}>
-                                                        {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,0,idx)}>&times; Delete</button>:null}
+                                                        {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,0,idx)}> Delete</button>:null}
                                                       </div>
                                                     </div>
                                                   })
@@ -337,7 +337,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                         }
                                                       }
                                                       />
-                                                      {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,1,idx)}>&times; Delete</button>:null}
+                                                      {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,1,idx)}> Delete</button>:null}
                                                   </div>
                                                 })
                                               } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
@@ -403,7 +403,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                     }
                                                   }
                                                   />
-                                                  {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}>&times; Delete</button>:null}
+                                                  {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}> Delete</button>:null}
                                               </div>
                                             })
                                             //  component.removeItem.bind(component,0,idx)
