@@ -169,7 +169,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
             if ( requestIsPurchaseOrder ) {
                 title = "Purchase Order";
             } else {
-                title = "Work Order";
+                title = request.status == "Cancelled" ? "Cancelled" : "Work Order";
             }
         } else {
             title = "Job";

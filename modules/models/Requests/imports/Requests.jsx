@@ -33,7 +33,8 @@ const Requests = new Model( {
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    return "work order #" + this.code + ' "' + this.getName() + '"';
+                    var title = this.status == "Cancelled" ? "cancelled #" : "work order #";
+                    return title + this.code + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
@@ -1121,9 +1122,9 @@ function actionComplete( request ) {
     } else if( request.closeDetails.jobCancelled == true ){
         request.distributeMessage( {
             message: {
-                verb: 'closed',
+                verb: 'cancelled',
                 body: "JOB CANCELLED: "+request.closeDetails.comment,
-                subject: "Work order #" + request.code + " has been closed"
+                subject: "Work order #" + request.code + " has been cancelled"
             }
         } );
     } else {
