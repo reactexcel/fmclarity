@@ -87,9 +87,9 @@ const TeamPanel = React.createClass( {
             if (team.documents) {
                 team.documents.map(function(doc, idx){
                     if (doc.type=="Insurance") {
-                       docIds.push(doc._id); 
+                       docIds.push(doc._id);
                     }
-                    
+
                 });
             }
 
@@ -119,7 +119,7 @@ const TeamPanel = React.createClass( {
                             facility.removeSupplier( item );
                             Modal.hide();
                         }
-                        
+
                     }
                 }: null),
             (team && this.props.item.type == "contractor" ?
@@ -218,7 +218,7 @@ const TeamPanel = React.createClass( {
 				}
 			]}/>
 
-			<Menu items = { this.getMenu() } />
+			<Menu items = { this.getMenu() } team = {this.props.item} />
 
 		</div>
         )

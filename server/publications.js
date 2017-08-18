@@ -69,7 +69,6 @@ Meteor.publish( 'Team: Facilities', function( teamId ) {
     return facilitiesCursor;
 } );
 
-
 Meteor.publish( 'Request: Last 10 Complete', function( ) {
 
     console.log( this.userId );
@@ -81,7 +80,7 @@ Meteor.publish( 'Request: Last 10 Complete', function( ) {
         sort: {
             createdAt: -1
         },
-        limit: 10, 
+        limit: 10,
         fields: {
             _id: 1,
             area: 1,
@@ -142,7 +141,6 @@ Meteor.publish( 'Requests: Complete', function( ) {
     console.log( this.userId );
 
     let requestsCursor = Requests.find( {
-            'members._id': this.userId,
             status: 'Complete'
         }, {
         sort: {
@@ -231,7 +229,7 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
     if ( !includeComplete ) {
         query.push ( {
             $and: [
-                { status: { $nin: [ 'Deleted', 'Cancelled', 'Complete' ] } },
+                { status: { $nin: [ 'Deleted', 'Cancelled'] } },
             ]
         } );
     }
@@ -263,7 +261,9 @@ Meteor.publish( 'User: Requests, Facilities', function( { teamId, includeComplet
             incidenceDate: 1,
             incidentFurtherComments: 1,
             incidentVictim: 1,
+            invoiceDetails: 1,
             issuedAt: 1,
+            lastUpdate: 1,
             level: 1,
             memberName: 1,
             location: 1,
@@ -335,7 +335,6 @@ Meteor.publish( 'User: Teams, Facilities, Requests, Documents, Messages', functi
         }
     } );
 
-    console.log( facilityThumbs );
     let thumbsCursor = Files.find( { '_id': { $in: facilityThumbs } } );
 
     let requestsCursor = Requests.find( {
