@@ -37,7 +37,8 @@ const NumericText = React.createClass( {
 
 	handleKeyDown(evt){
 		var charCode = (evt.which) ? evt.which : event.keyCode
-        if (charCode > 31 && (charCode < 48 || charCode > 57)){
+		console.log(charCode,"charCode");
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)){
             evt.preventDefault();
         }else{
             return;
