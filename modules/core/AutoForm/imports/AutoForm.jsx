@@ -22,7 +22,7 @@ class AutoForm extends React.Component {
 	/**
 	 * @param 		{object} props
 	 */
-	constructor( props ) { 
+	constructor( props ) {
 		super( props );
 		let { model, form, item, errors } = props;
 
@@ -37,6 +37,14 @@ class AutoForm extends React.Component {
 			errors: this.form.errors || {},
 		}
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
+	}
+
+	componentWillMount(){
+		$("#fab").hide();
+	}
+
+	componentWillUnmount(){
+		$("#fab").show();
 	}
 
 	componentDidMount(){
@@ -82,7 +90,13 @@ class AutoForm extends React.Component {
 					}
 				})
 				if(foundAreas.length == 0){
-					window.alert("Oops, no bookable areas available");
+					Bert.alert({
+		  				title: 'Oops, Bookin not allowed',
+		  				message: 'No bookable areas available.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
 				}
 			}
 		}
@@ -101,10 +115,12 @@ class AutoForm extends React.Component {
 			}
 			if ( this.props.onSubmit ) {
 				if ( this.form.validate( item ) ) {
-					this.props.onSubmit( item );
+					this.props.onSubmit( item, (newItem)=>{
+						callback( newItem );
+					} );
 				}
 				if ( this.props.afterSubmit ) {
-					this.props.afterSubmit( newItem )
+					this.props.afterSubmit( item )
 				}
 			} else {
 				this.form.save( item, ( newItem ) => {
@@ -276,6 +292,23 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
+							{
+
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
+
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
 
 							<button
 								type 		= "button"
