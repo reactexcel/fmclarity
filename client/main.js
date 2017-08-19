@@ -204,6 +204,7 @@ Actions.addAccessRule( {
     },
     action: [
         'edit team',
+        'delete team',
         'view team',
         'view team member',
         'edit team member',
