@@ -34,6 +34,9 @@ const Users = new Model( {
 Users.collection.allow( {
     update: () => {
         return true;
+    },
+    remove: function() {
+        return true
     }
 } )
 
@@ -49,6 +52,12 @@ Users.methods( {
     createUser: {
         authentication: true,
         method: createUser
+    },
+    destroy: {
+        authentication: true,
+        method: function( team ) {
+            Users.remove( team._id );
+        }
     }
 } )
 Users.actions( {
@@ -172,12 +181,12 @@ Users.actions( {
 
             if( team ) {
                 teamId = team._id;
-                query.push( { 
+                query.push( {
                     $or: [
                         { 'team._id': teamId },
                         { 'supplier._id': teamId },
                         { 'realEstateAgency._id': teamId }
-                    ] 
+                    ]
                 } );
             }
 
