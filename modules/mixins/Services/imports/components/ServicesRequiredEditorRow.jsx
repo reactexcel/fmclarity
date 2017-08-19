@@ -134,7 +134,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 													}
 												}
 											/>
-											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}>&times; Delete</button>
+											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}> Delete</button>
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
