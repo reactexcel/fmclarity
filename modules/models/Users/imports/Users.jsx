@@ -34,6 +34,9 @@ const Users = new Model( {
 Users.collection.allow( {
     update: () => {
         return true;
+    },
+    remove: function() {
+        return true
     }
 } )
 
@@ -49,6 +52,12 @@ Users.methods( {
     createUser: {
         authentication: true,
         method: createUser
+    },
+    destroy: {
+        authentication: true,
+        method: function( team ) {
+            Users.remove( team._id );
+        }
     }
 } )
 Users.actions( {
