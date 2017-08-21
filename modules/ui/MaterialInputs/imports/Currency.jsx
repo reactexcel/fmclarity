@@ -53,7 +53,7 @@ const Currency = React.createClass( {
 		this.toggleCurrencyHolder();
 		// format number and delimit multiple 0's eg 0000, 0000.0002, 0002 etc
 		var curval = this.refs.input.value.replace(/,/g , "");
-		this.refs.input.value=Number(curval);
+		this.refs.input.value=Number(curval).toFixed(2);
 		this.formatNum(this.refs.input);
 	},
 
