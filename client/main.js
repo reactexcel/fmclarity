@@ -156,6 +156,7 @@ Actions.addAccessRule( {
     },
     action: [
         'create team request',
+        'create team PPM request'
     ],
     role: [
         'staff',
@@ -347,9 +348,9 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
-            import { Requests } from '/modules/models/Requests';
-            request = Requests.collection._transform( request );
+        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+            import { PPMRequest } from '/modules/models/Requests';
+            request = PPMRequest.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;
@@ -444,7 +445,7 @@ Actions.addAccessRule( {
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 return true;
-            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+            } else if ( request.status == 'New' || request.type == 'Schedular' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
