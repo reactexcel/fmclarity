@@ -87,7 +87,6 @@ export default MessageView = React.createClass( {
             createdAt = message.createdAt,
             used = false,
             hideContext = message.type=='comment'&&this.data.messageIsInContext;
-
          {
             /*if(message.type=="comment") {
                         return (<div>

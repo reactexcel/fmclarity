@@ -16,6 +16,7 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
@@ -33,7 +34,8 @@ const Requests = new Model( {
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    return "work order #" + this.code + ' "' + this.getName() + '"';
+                    var title = this.invoiceDetails && this.invoiceDetails.invoiceNumber ? "invoice #" + this.invoiceDetails.invoiceNumber : "work order #" + this.code;
+                    return title + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
@@ -891,6 +893,7 @@ function actionIssue( request ) {
                 _id: request.team._id
             } );
             //code = team.getNextWOCode();
+            code = request.code;
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id
@@ -1178,14 +1181,26 @@ function actionComplete( request ) {
 }
 
 function actionInvoice( request ) {
+    request.invoiceDetails.status = 'New';
+    if ( request.invoiceDetails && request.invoiceDetails.invoice ) {
+        var files = request.invoiceDetails.invoice;
+        for (var i = 0; i < files.length; i++) {
+            var file = Files.findOne({_id:files[i]._id});
+            var filename = file && file.original && file.original.name;
+            var fileExists = false;
+            for (var x = 0; x < request.attachments.length; x++) {
 
-    if ( request.invoiceDetails && request.invoiceDetails.details ) {
-
-        if ( request.invoiceDetails.invoice ) {
-            request.attachments.push( request.invoiceDetails.invoice );
+                let f = Files.findOne({_id:request.attachments[x]._id}),
+                fname = f && f.original && f.original.name;
+                if (filename == fname) {
+                    fileExists =  true;
+                }
+            }
+            if (!fileExists) {
+                request.attachments.push( files[i] );
+              }
         }
     }
-    request.invoiceDetails.status = 'New';
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );
 

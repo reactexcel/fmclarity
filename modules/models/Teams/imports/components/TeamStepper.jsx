@@ -331,22 +331,19 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 // console.log(item,team);
-                                                if(this.data.viewer.role === "fmc support"){
-                                                  // console.log("working");
+                                                /*if(this.data.viewer.role === "fmc support"){
                                                   item.members = [{
                                                     _id : this.data.viewer._id,
                                                     role : "fmc support",
                                                     name :  this.data.viewer.profile.name
                                                   }]
                                                 }else{
-                                                  // console.log("working");
-                                                  // console.log(item,item.members);
                                                   item.members = [{
                                                     _id : this.data.viewer._id,
                                                     role : "portfolio manager",
                                                     name :  this.data.viewer.profile.name
                                                   }]
-                                                }
+                                                }*/
                                                 // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
@@ -354,8 +351,22 @@ const TeamStepper = React.createClass( {
                                                 }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
+                                                    var defaultRole = "manager";
+                                                    switch(team.type) {
+                                                        case "fm":
+                                                            defaultRole = 'portfolio manager';
+                                                            break;
+                                                        case "real estate":
+                                                            defaultRole = 'property manager';
+                                                            break;
+                                                        case "contractor":
+                                                            defaultRole = 'manager';
+                                                            break;
+                                                        default:
+                                                            defaultRole = 'manager';
+                                                    }
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "portfolio manager",
+                                                      role: role ? role : defaultRole,
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
