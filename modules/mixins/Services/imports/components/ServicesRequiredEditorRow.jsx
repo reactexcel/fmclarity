@@ -115,7 +115,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 					{clickExpand?<span onClick={clickExpand} className="services-editor-expand-icon"><i className="fa fmc-fa-icon-expand"></i></span>:null}
 
 		    		<input
-		    			defaultValue={service.name||undefined}
+		    			//defaultValue={service.name||undefined}
+						value={service.name||undefined}
 		    			readOnly={readOnly}
 		    			onChange={this.updateServiceName}
 						onKeyDown={ (evt) => {
