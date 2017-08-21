@@ -61,6 +61,7 @@ const destroy = new Action( {
     action: ( team ) => {
         //Facilities.destroy( team );
         team.destroy();
+        Modal.hide()
     }
 } )
 
