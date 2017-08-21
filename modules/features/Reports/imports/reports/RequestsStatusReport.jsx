@@ -222,7 +222,7 @@ const RequestsStatusReport = React.createClass( {
 					<Menu items = { [ download(this.state.dataset,pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 					<div className="row">
-						<div className="col-md-4">
+						{/*<div className="col-md-4">
 
 							<Select
 								placeholder = "Team"
@@ -238,7 +238,7 @@ const RequestsStatusReport = React.createClass( {
 								} }
 							/>
 
-						</div>
+						</div>*/}
 						<div className="col-md-3">
 							<Select
 								placeholder = "Facility"
@@ -264,7 +264,9 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Service"
 								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
-								onChange    = { ( service ) => { this.setState( { service } ) } }
+								onChange    = { ( service ) => {
+									this.setState( { service } )
+								} }
 							/>
 
 						</div>
@@ -301,7 +303,6 @@ const RequestsStatusReport = React.createClass( {
 							/>
 
 						</div>
-
 					</div>
 
 				</div>
