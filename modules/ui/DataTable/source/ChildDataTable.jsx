@@ -61,7 +61,7 @@ export default ChildDataTable = React.createClass( {
 					<td style={{paddingLeft:"22px"}}>{data.four}</td>
 					<td style={{paddingLeft:"10px"}}>{data.three}</td>
 					<td style={{paddingLeft:"10px"}}>{data.one}</td>
-					<td style={{paddingLeft:"10px"}}>{data.two}</td>
+					<td style={{paddingLeft:"20px",width:"300px"}}>{data.two}</td>
 					<td style={{paddingLeft:"10px"}}>{data.six}</td>
 					<td style={{paddingLeft:"10px"}}>{data.five}</td>
 		</tr>

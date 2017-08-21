@@ -308,7 +308,7 @@ ComplianceEvaluationService = new function() {
                 serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Preventative" } );
+            var requestCurser = Requests.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Schedular" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -337,7 +337,7 @@ ComplianceEvaluationService = new function() {
                     let newRequest = Requests.create( {
                         facility: preSelectedFacility,
                         team: team,
-                        type: 'Preventative',
+                        type: 'Schedular',
                         priority: 'Scheduled',
                         status: 'PPM',
                         name: rule.event,
@@ -346,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                    TeamActions.createRequest.run( team, callback, newRequest );
                 }
             } )
         },
@@ -550,7 +550,7 @@ ComplianceEvaluationService = new function() {
                         let newRequest = Requests.create( {
                             facility: preSelectedFacility,
                             team: team,
-                            type: 'Preventative',
+                            type: 'Schedular',
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,
@@ -566,7 +566,7 @@ ComplianceEvaluationService = new function() {
                             supplier: serviceReq[0].data.supplier,
                             supplierContacts: serviceReq[0].data.defaultContact
                         } );
-                        TeamActions.createRequest.bind( team, callback, newRequest ).run();
+                        TeamActions.createRequest.run( team, callback, newRequest );
                     }
                 }
             } )
@@ -603,13 +603,13 @@ ComplianceEvaluationService = new function() {
             console.log(previousDate,"previousDate 111111");
             if ( event ) {
                 let nextRequest = Requests.findOne( _.extend( query, {
-                    type:"Preventative",
+                    type:"Schedular",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: {$in:["Complete","Issued"]},
                     dueDate:nextDate
                 })),
                 previousRequest = Requests.findOne( _.extend( query, {
-                    type:"Preventative",
+                    type:"Schedular",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: {$in:["Complete","Issued"]},
                     dueDate:previousDate
@@ -729,7 +729,7 @@ ComplianceEvaluationService = new function() {
                         let newRequest = Requests.create( {
                             facility: preSelectedFacility,
                             team: team,
-                            type: 'Preventative',
+                            type: 'Schedular',
                             priority: 'Scheduled',
                             status: 'PMP',
                             name: rule.event,

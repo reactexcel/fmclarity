@@ -185,7 +185,6 @@ class FormController {
 						onAfterSave( this.item );
 					}
 				} );
-			Modal.hide();
 		}
 	}
 

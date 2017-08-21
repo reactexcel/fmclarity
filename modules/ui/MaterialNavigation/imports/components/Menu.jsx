@@ -1,17 +1,22 @@
 import React from "react";
+import { TeamActions } from '/modules/models/Teams';
 
-export default function Menu( { items, icon = "ellipsis-v" } ) {
+export default function Menu( { items,team, icon = "ellipsis-v" } ) {
 
 	function runAction( item, e ) {
 		if ( item.shouldConfirm || item.verb ) {
-			if( item.verb.shouldConfirm || item.shouldConfirm ){
-				var message = confirm( item.label + ". Are you sure?" );
+			if( (item.verb && item.verb.shouldConfirm) || item.shouldConfirm ){
+				var message = confirm( item.uniqueAlertLabel ? item.uniqueAlertLabel : item.label + ". Are you sure?" );
 				if ( message != true ) {
 					return;
 				}
 			}
 		}
-		item.run( item, e );
+		if(item.label === "Edit team"){
+					TeamActions.edit.run( team );
+		}else{
+			item.run( item, e );
+		}
 	}
 
 	if ( items == null || items.length == 0 ) {
@@ -24,6 +29,7 @@ export default function Menu( { items, icon = "ellipsis-v" } ) {
 			</a>
 			<ul className="dropdown-menu" style = {{zIndex:"1499"}}>
 	    		{ items.map( ( item, idx ) => {
+
 	    			if( item != null ) {
 		    			return (
 			    			<li key = { idx } onClick={ () => { runAction( item ) } }>

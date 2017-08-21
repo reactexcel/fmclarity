@@ -11,7 +11,7 @@ function loadExternalScripts() {
 
     loadBrowerCompatibilityScript();// load browser-update.org browser compatibility script
     fixIEirregularScroll();// fixes internet explorer problem of scrolling fixed html elements which brings messy displays
-    
+
     loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
 
@@ -56,7 +56,7 @@ function isIE () {
 }
 
 function loadBrowerCompatibilityScript(  ){
-    
+
 	window.$buoop = {
 		vs:{
 			i:10,
@@ -85,7 +85,7 @@ function loadBrowerCompatibilityScript(  ){
             script.async = true;
             document.body.appendChild(script);
             }
-		    
+
 		});
 }
 loadExternalScripts();
@@ -108,10 +108,22 @@ DocHead.addMeta( {
 Actions.addAccessRule( {
     action: [
         'edit user',
-        'login as user',
+        //'login as user',
         'send email digests',
         'logout'
     ],
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    action: [
+        'login as user'
+    ],
+    condition: ( item ) => {
+        let logedInUserRole = Meteor.user().getRole();
+        return _.contains(['fmc support'],logedInUserRole)
+    },
     role: [ '*' ],
     rule: { alert: true }
 } )
@@ -144,6 +156,7 @@ Actions.addAccessRule( {
     },
     action: [
         'create team request',
+        'create team PPM request'
     ],
     role: [
         'staff',
@@ -170,9 +183,25 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
-            role = team.getMemberRole( user );
+            role = user.getRole();
 
         return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+
+    action: [
+        'remove supplier',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
         'edit team',
@@ -319,9 +348,9 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
-            import { Requests } from '/modules/models/Requests';
-            request = Requests.collection._transform( request );
+        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+            import { PPMRequest } from '/modules/models/Requests';
+            request = PPMRequest.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;
@@ -416,7 +445,7 @@ Actions.addAccessRule( {
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 return true;
-            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+            } else if ( request.status == 'New' || request.type == 'Schedular' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -511,6 +540,18 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
+    condition: ( request ) => {
+        return (request.invoiceDetails && request.invoiceDetails.details)
+    },
+    action: [
+        'edit invoice',
+        'delete invoice'
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
     action: [
         'invite team member'
     ],
@@ -543,6 +584,19 @@ Actions.addAccessRule( {
     rule: { alert: true }
 } )
 
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'remove member',
+        'invite member'
+    ],
+    /*condition: ( item ) => {
+        return item.type == 'contractor' || item.canAddMember();
+    },*/
+    role: ['*'],
+    rule: { alert: true }
+} )
+
 
 /*
 Actions.addAccessRule( {
@@ -555,11 +609,11 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     action: [
-        'edit member',
+        //'edit member',
         'view member',
         'create member',
-        'remove member',
-        'invite member'
+        //'remove member',
+        //'invite member'
     ],
     condition: ( item ) => {
         /*return item.canAddMember();*/

@@ -4,14 +4,13 @@ import ContactAvatarSmall from './ContactAvatarSmall.jsx';
 import Contact2Line from './Contact2Line.jsx';
 
 export default function ContactCard( props ) {
-
 	let contact = props.item,
 		profile = props.item,
 		group = props.group,
 		team = props.team,
 		view = null,
-		role = null;
-
+		role = null,
+		removeEmail = props.removeEmail;
 	if ( contact && contact.getProfile ) {
 		profile = contact.getProfile();
 	}
@@ -25,7 +24,7 @@ export default function ContactCard( props ) {
 	return (
 		<div className="contact-card contact-card-2line">
 			<ContactAvatarSmall item={ contact } />
-			<Contact2Line item={ contact } role={ role }/>
+			<Contact2Line item={ contact } role={ role } removeEmail={removeEmail}/>
         </div>
 	)
 }

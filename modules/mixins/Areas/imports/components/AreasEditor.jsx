@@ -102,16 +102,19 @@ FacilityAreasEditorInner = React.createClass( {
     },
 
     componentWillReceiveProps( props ) {
-        let stateToSet = {}
-        stateToSet.selection = [ { name: "Root", children: props.areas } ]
         if ( props.facility._id != this.state.facility._id ) {
-            stateToSet.facility = props.facility
+            this.setState( {
+                facility: props.facility,
+                selection: [ { name: "Root", children: props.areas } ]
+            } )
         }
         if( this.state.sort ){
-            stateToSet.facility = props.facility
-            stateToSet['sort'] = false;
+          this.setState( {
+              facility: props.facility,
+              selection: [ { name: "Root", children: props.areas } ],
+              sort: false,
+          } )
         }
-        this.setState(stateToSet)
     },
 
     selectItem( col, item ) {
@@ -179,10 +182,6 @@ FacilityAreasEditorInner = React.createClass( {
             selection: selection
         } );
         this.save();
-    },
-
-    preventBooking(){
-        window.alert("Oops, you have an active booking. Try editing when it is complete")
     },
 
     save( _component ) {
@@ -288,10 +287,6 @@ FacilityAreasEditorInner = React.createClass( {
                         {
                             areas.map(function(a,idx){
                               a.data = a.data?a.data:{};
-                              let activeBooking = false;
-                              if(a.totalBooking && a.totalBooking.length>0){
-                                  activeBooking = true
-                              }
                                 return (
                                   <li key={idx} id={"area-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==a.name?" active":"")}>
                                     <div className="row">
@@ -301,7 +296,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                 id={"area-"+idx}
                                                 onClick={component.selectItem.bind(component,1,a)}
                                                 value={a.name||undefined}
-                                                readOnly={!editable || activeBooking == true}
+                                                readOnly={!editable}
                                                 onChange={component.updateItem.bind(component,0,idx)}
                                                 onBlur={()=>{
                                                     component.props.sortArea(component.state.selection[0].children)
@@ -310,33 +305,29 @@ FacilityAreasEditorInner = React.createClass( {
                                             {editable?<span className="areas-selector-delete-icon"
                                               onClick = {
                                                 () => {
-                                                    if(activeBooking == false){
-                                                        Modal.show({
-                                                          content:  <div style={{padding:'20px'}}>
-                                                            <div>
-                                                              <h1>Area information: {a.name||""} </h1>
-                                                            </div>
-                                                            <AutoForm
-                                                              model = { Facilities }
-                                                              item = { a.data }
-                                                              form = { ["areaDetails"] }
-                                                              onSubmit={
-                                                                ( item ) => {
-                                                                  component.save();
-                                                                  Modal.hide();
-                                                                }
-                                                              }
-                                                            />
-                                                          </div>
-                                                        })
-                                                    }else{
-                                                        component.preventBooking()
-                                                    }
-
+                                                  Modal.show({
+                                                    content:  <div style={{padding:'20px'}}>
+                                                      <div>
+                                                        <h1>Area information: {a.name||""} </h1>
+                                                      </div>
+                                                      <AutoForm
+                                                        model = { Facilities }
+                                                        item = { a.data }
+                                                        form = { ["areaDetails"] }
+                                                        onSubmit={
+                                                          ( item ) => {
+                                                            component.save();
+                                                            Modal.hide();
+                                                          }
+                                                        }
+                                                      />
+                                                      <div style={ {textAlign:"right", clear:"both"}}>
+                                                        {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,0,idx)}> Delete</button>:null}
+                                                      </div>
+                                                    </div>
+                                                  })
                                                 } } ><i title="Configure Level" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                              {editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={()=>{
-                                                  activeBooking == true ? component.preventBooking() : component.removeItem(0,idx)
-                                              }}>&times;</span>:null}
+                                              {/*editable?<span title="Remove Level" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,0,idx)}>&times;</span>:null*/}
                                         </div>
                                       </div>
                                     </div>
@@ -360,10 +351,6 @@ FacilityAreasEditorInner = React.createClass( {
                           {
                               selectedArea&&selectedArea.children?selectedArea.children.map(function(b,idx){
                                 b.data = b.data?b.data:{};
-                                let activeBooking = false;
-                                if(b.totalBooking && b.totalBooking.length>0){
-                                    activeBooking = true
-                                }
                                   return (
                                     <li key={idx} id={"subarea-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedSubArea.name==b.name?" active":"")}>
                                       <div className="row">
@@ -373,7 +360,7 @@ FacilityAreasEditorInner = React.createClass( {
                                               id={"subarea-"+idx}
                                               onClick={component.selectItem.bind(component,2,b)}
                                               value={b.name||undefined}
-                                              readOnly={!editable || activeBooking == true}
+                                              readOnly={!editable}
                                               onChange={component.updateItem.bind(component,1,idx)}
                                               onBlur={()=>{
                                                   component.props.sortArea(component.state.selection[0].children)
@@ -383,33 +370,27 @@ FacilityAreasEditorInner = React.createClass( {
                                               //onClick={component.removeItem.bind(component,1,idx)}
                                               onClick = {
                                                 () => {
-                                                    if(activeBooking == false){
-                                                        Modal.show({
-                                                          content:  <div style={{padding:'20px'}}>
-                                                          <div>
-                                                            <h1>Area information: {b.name}</h1>
-                                                          </div>
-                                                          <AutoForm
-                                                            model = { Facilities }
-                                                            item = { b.data }
-                                                            form = { ["areaDetails"] }
-                                                            onSubmit={
-                                                              ( item ) => {
-                                                                component.save();
-                                                                Modal.hide();
-                                                              }
-                                                            }
-                                                            />
-                                                        </div>
-                                                      })
-                                                  }else{
-                                                      component.preventBooking()
-                                                  }
-
+                                                  Modal.show({
+                                                    content:  <div style={{padding:'20px'}}>
+                                                    <div>
+                                                      <h1>Area information: {b.name}</h1>
+                                                    </div>
+                                                    <AutoForm
+                                                      model = { Facilities }
+                                                      item = { b.data }
+                                                      form = { ["areaDetails"] }
+                                                      beforeSubmit={
+                                                        ( item ) => {
+                                                          component.save();
+                                                          Modal.hide();
+                                                        }
+                                                      }
+                                                      />
+                                                      {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,1,idx)}> Delete</button>:null}
+                                                  </div>
+                                                })
                                               } } ><i title="Configure Area"className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                              {editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={()=>{
-                                                  activeBooking == true  ? component.preventBooking(): component.removeItem(1,idx)
-                                              }}>&times;</span>:null}
+                                              {/*editable?<span title="Remove Area" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,1,idx)}>&times;</span>:null*/}
                                             </div>
                                         </div>
                                       </div>
@@ -433,10 +414,6 @@ FacilityAreasEditorInner = React.createClass( {
                         {
                             selectedSubArea&&selectedSubArea.children?selectedSubArea.children.map(function(c,idx){
                               c.data = c.data?c.data:{};
-                              let activeBooking = false;
-                              if(c.totalBooking && c.totalBooking.length>0){
-                                  activeBooking = true
-                              }
                               return (
                                 <li key={idx} id={"identity-"+idx} className={"ui-state-default areas-selector-row-li"+(selectedArea.name==c.name?" active":"")}>
                                   <div className="row">
@@ -446,7 +423,7 @@ FacilityAreasEditorInner = React.createClass( {
                                           id={"identity-"+idx}
                                           onClick={component.selectItem.bind(component,3,c)}
                                           value={c.name||undefined}
-                                          readOnly={!editable || activeBooking == true}
+                                          readOnly={!editable}
                                           onChange={component.updateItem.bind(component,2,idx)}
                                           onBlur={()=>{
                                               component.props.sortArea(component.state.selection[0].children)
@@ -457,33 +434,28 @@ FacilityAreasEditorInner = React.createClass( {
                                           //onClick={component.removeItem.bind(component,2,idx)}
                                           onClick = {
                                             () => {
-                                                if(activeBooking==false){
-                                                    Modal.show({
-                                                      content:  <div style={{padding:'20px'}}>
-                                                      <div>
-                                                        <h1>Area information: {c.name}</h1>
-                                                      </div>
-                                                      <AutoForm
-                                                        model = { Facilities }
-                                                        item = { c.data }
-                                                        form = { ["areaDetails"] }
-                                                        onSubmit={
-                                                          ( item ) => {
-                                                            component.save();
-                                                            Modal.hide();
-                                                          }
-                                                        }
-                                                        />
-                                                    </div>
-                                                  })
-                                              }else{
-                                                  component.preventBooking()
-                                              }
+                                              Modal.show({
+                                                content:  <div style={{padding:'20px'}}>
+                                                <div>
+                                                  <h1>Area information: {c.name}</h1>
+                                                </div>
+                                                <AutoForm
+                                                  model = { Facilities }
+                                                  item = { c.data }
+                                                  form = { ["areaDetails"] }
+                                                  beforeSubmit={
+                                                    ( item ) => {
+                                                      component.save();
+                                                      Modal.hide();
+                                                    }
+                                                  }
+                                                  />
+                                                  {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}> Delete</button>:null}
+                                              </div>
+                                            })
                                             //  component.removeItem.bind(component,0,idx)
                                           } } ><i title="Configure Subarea" className="fa fa-cogs" aria-hidden="true"></i></span>:null}
-                                          {editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={()=>{
-                                              activeBooking == true ? component.preventBooking() : component.removeItem(2,idx)
-                                          }}>&times;</span>:null}
+                                          {/*editable?<span title="Remove Subarea" className="areas-selector-delete-icon" style={{right: "10px", fontSize: "20px"}} onClick={component.removeItem.bind(component,2,idx)}>&times;</span>:null*/}
                                         </div>
                                     </div>
                                   </div>

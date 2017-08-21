@@ -87,9 +87,9 @@ const TeamPanel = React.createClass( {
             if (team.documents) {
                 team.documents.map(function(doc, idx){
                     if (doc.type=="Insurance") {
-                       docIds.push(doc._id); 
+                       docIds.push(doc._id);
                     }
-                    
+
                 });
             }
 
@@ -104,16 +104,40 @@ const TeamPanel = React.createClass( {
     },
 
     getMenu() {
+        var facility = Session.getSelectedFacility();
+        var team = Session.getSelectedTeam();
+        var item = this.props.item;
         return [
             TeamActions.edit.bind( this.props.item ),
             ( this.props.item.type == "contractor" ? TeamActions.inviteSupplier.bind( this.props.item ) : null ),
-            /*TeamActions.destroy.bind( this.props.item )*/
+            (facility && this.props.item.type == "contractor" ?
+                {
+                    label: "Remove supplier from " + facility.name,
+                    name: "remove supplier",
+                    run() {
+                        if (confirm('Remove supplier. Are you sure?')) {
+                            facility.removeSupplier( item );
+                            Modal.hide();
+                        }
+
+                    }
+                }: null),
+            (team && this.props.item.type == "contractor" ?
+                {
+                    label: "Remove supplier from " + team.name,
+                    name: "remove supplier",
+                    run() {
+                        if (confirm('Remove supplier. Are you sure?')) {
+                            team.removeSupplier( item );
+                            Modal.hide();
+                        }
+                    }
+                }: null)
         ];
     },
 
     render() {
         let { team, availableServices, insuranceDocs } = this.data;
-
         if ( !team ) {
             return <div/>
         }
@@ -194,7 +218,7 @@ const TeamPanel = React.createClass( {
 				}
 			]}/>
 
-			<Menu items = { this.getMenu() } />
+			<Menu items = { this.getMenu() } team = {this.props.item} />
 
 		</div>
         )

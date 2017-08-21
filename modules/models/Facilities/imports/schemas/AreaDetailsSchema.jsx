@@ -2,7 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker, NumericText } from '/modules/ui/MaterialInputs';
+import { FileExplorer } from '/modules/models/Files';
+
 export default AreaDetailsSchema = {
     type: {
         label: 'Type',
@@ -332,6 +334,25 @@ export default AreaDetailsSchema = {
             return item.type === "Bookable";
         }
     },
+    "bookingAdvanceDay": {
+        label: 'Accept bookings this far in advance',
+        size: 6,
+        input: ( props )=> {
+            return (
+                <div className="row">
+                        <div className="col-xs-10">
+                            <NumericText {...props}/>
+                        </div>
+                        <div className="col-xs-2" style={{marginTop: "7%"}}>
+                            <span>{props.item.unit}</span>
+                        </div>
+                    </div>
+            )
+        },
+        condition( item ) {
+            return item.type === "Bookable";;
+        }
+    },
     "cost": {
         label: 'Cost per unit',
         size: 6,
@@ -381,5 +402,22 @@ export default AreaDetailsSchema = {
         label: "Area description",
         size: 12,
         input: Text,
-    }
+    },
+    attachments: {
+		label: "Attachments",
+		input: (props)=>{
+            return <FileExplorer
+                    {...props}
+                    uploadNewFile = {props.item && props.item.attachments && props.item.attachments.length ? true : undefined}
+                    uploadFieldName="Drop Booking Rules/Instructions here or browse"
+                    onChange={(val)=>{
+                        props.onChange(val)
+                    }}
+            />
+        },
+        //input: FileExplorer,
+        condition(item){
+            return item.type === "Bookable";
+        }
+	},
 }
