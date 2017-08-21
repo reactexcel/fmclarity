@@ -120,8 +120,10 @@ const RequestsStatusReport = React.createClass( {
 		},
 		Facility: "facility.name",
 		"PO#": "code",
+		//Issue: "name",
+		Issued: "issuedAt",
+		Due: "dueDate",
 		Summary: "name",
-		//Issued: "issuedAt",
 		Supplier: "supplier.name",
 		/*Supplier: ( item ) => {
 			let supplier = item.getSupplier();
