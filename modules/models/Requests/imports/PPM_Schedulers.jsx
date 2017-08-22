@@ -25,9 +25,9 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
-const PPMRequest = new Model( {
+const PPM_Schedulers = new Model( {
     schema: PPMSchema,
-    collection: "PPMRequest",
+    collection: "PPM_Schedulers",
     mixins: [
         [ Owners ],
         [ DocMessages, {
@@ -89,7 +89,7 @@ const PPMRequest = new Model( {
     ]
 } )
 
-PPMRequest.save.before( ( request ) => {
+PPM_Schedulers.save.before( ( request ) => {
     if ( request.type == "Schedular" ) {
         request.status = "PPM";
         request.priority = "Scheduled";
@@ -118,7 +118,7 @@ PPMRequest.save.before( ( request ) => {
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
 
-PPMRequest.collection.allow( {
+PPM_Schedulers.collection.allow( {
     update: function() {
         return true
     },
@@ -158,7 +158,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 }
 
 //maybe actions it better terminology?
-PPMRequest.methods( {
+PPM_Schedulers.methods( {
 
     /* funtionality should be encapsulated in members */
     updateSupplierManagers: {
@@ -261,14 +261,14 @@ PPMRequest.methods( {
                 code = team.getNextWOCode();
             }
 
-            let newRequestId = Meteor.call( 'PPMRequest.save', request, {
+            let newRequestId = Meteor.call( 'PPM_Schedulers.save', request, {
                     status: status,
                     code: code,
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
             if ( newRequestId ) {
-                newRequest = PPMRequest.findOne( newRequestId );
+                newRequest = PPM_Schedulers.findOne( newRequestId );
             }
             if ( newRequest ) {
                 let owner = null;
@@ -342,7 +342,7 @@ PPMRequest.methods( {
                 teamNames.push( team.name );
             } );
 
-            let requestsCursor = PPMRequest.find( {
+            let requestsCursor = PPM_Schedulers.find( {
                 $and: [
                     { status: { $in: [ "Closed", "Complete" ] } }, {
                         $or: [
@@ -589,7 +589,7 @@ PPMRequest.methods( {
         authentication: true,
         helper: ( request, dueDate ) => {
             let facility = request.getFacility();
-            return PPMRequest.findOne( {
+            return PPM_Schedulers.findOne( {
                 "facility._id": facility._id,
                 name: request.name,
                 status: { $ne: 'PPM' },
@@ -619,7 +619,7 @@ PPMRequest.methods( {
 
             if ( nextDate ) {
                 let facility = request.getFacility();
-                nextRequest = PPMRequest.findOne( {
+                nextRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
@@ -638,7 +638,7 @@ PPMRequest.methods( {
 
             if ( previousDate ) {
                 let facility = request.getFacility();
-                previousRequest = PPMRequest.findOne( {
+                previousRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
@@ -668,7 +668,7 @@ PPMRequest.methods( {
     destroy: {
         authentication: true,
         helper: function( request ) {
-            PPMRequest.remove( { _id: request._id } );
+            PPM_Schedulers.remove( { _id: request._id } );
         }
     },
 
@@ -719,7 +719,7 @@ PPMRequest.methods( {
         method: function( request ) {
             let user = Meteor.user();
             if ( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ) {
-                PPMRequest.update( { _id: request._id }, {
+                PPM_Schedulers.update( { _id: request._id }, {
                     $pull: {
                         unreadRecipents: user._id
                     },
@@ -743,7 +743,7 @@ PPMRequest.methods( {
 
 } )
 
-PPMRequest.helpers( {
+PPM_Schedulers.helpers( {
     // this sent to schema config
     // or put in another package document-urls
     path: 'requests',
@@ -755,7 +755,7 @@ PPMRequest.helpers( {
     }
 } );
 
-PPMRequest.helpers( {
+PPM_Schedulers.helpers( {
     isOverdue: function() {
         return moment( this.dueDate )
             .isBefore();
@@ -765,7 +765,7 @@ PPMRequest.helpers( {
     },
 } );
 
-PPMRequest.helpers( {
+PPM_Schedulers.helpers( {
     //doc-attachments
     getAttachmentCount() {
         if ( this.attachments ) {
@@ -782,7 +782,7 @@ function actionCreate( request ) {
 
 function setAssignee( request, assignee ) {
 
-    PPMRequest.update( request._id, {
+    PPM_Schedulers.update( request._id, {
         $set: {
             assignee: {
                 _id: assignee._id,
@@ -790,13 +790,13 @@ function setAssignee( request, assignee ) {
             }
         }
     } );
-    PPMRequest.update( request._id, {
+    PPM_Schedulers.update( request._id, {
         $pull: {
             members: { role: "assignee" }
         }
     } );
 
-    request = PPMRequest.collection._transform( request );
+    request = PPM_Schedulers.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
@@ -899,10 +899,10 @@ function actionIssue( request ) {
     }
     if (requestIsInvoice) {
         request.invoiceDetails.status = 'Issued';
-        Meteor.call( 'PPMRequest.save', request );
+        Meteor.call( 'PPM_Schedulers.save', request );
     }
     else{
-        Meteor.call( 'PPMRequest.save', request, {
+        Meteor.call( 'PPM_Schedulers.save', request, {
             status: "Issued",
             issuedAt: new Date(),
             code: code,
@@ -910,11 +910,11 @@ function actionIssue( request ) {
         } );
     }
 
-    request = PPMRequest.findOne( request._id );
+    request = PPM_Schedulers.findOne( request._id );
 
     if ( request ) {
         request.updateSupplierManagers();
-        request = PPMRequest.findOne( request._id );
+        request = PPM_Schedulers.findOne( request._id );
         var title = request.invoiceDetails && request.invoiceDetails.invoiceNumber ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
@@ -1049,10 +1049,10 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-    Meteor.call( 'PPMRequest.save', request, {
+    Meteor.call( 'PPM_Schedulers.save', request, {
         status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
-    request = PPMRequest.findOne( request._id );
+    request = PPM_Schedulers.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
 
@@ -1082,8 +1082,8 @@ function actionComplete( request ) {
             newRequest.code = team.getNextWOCode();
         }
 
-        var response = Meteor.call( 'PPMRequest.create', newRequest );
-        var newRequest = PPMRequest.findOne( response._id );
+        var response = Meteor.call( 'PPM_Schedulers.create', newRequest );
+        var newRequest = PPM_Schedulers.findOne( response._id );
         //ok cool - but why send notification and not distribute message?
         //is it because distribute message automatically goes to all recipients
         //I think this needs to be replaced with distribute message
@@ -1114,7 +1114,7 @@ function actionComplete( request ) {
 
         let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
-            Meteor.call( 'PPMRequest.issue', newRequest );
+            Meteor.call( 'PPM_Schedulers.issue', newRequest );
         }
 
 
@@ -1149,15 +1149,15 @@ function actionInvoice( request ) {
         }
     }
     request.invoiceDetails.status = 'New';
-    Meteor.call( 'PPMRequest.save', request );
-    request = PPMRequest.findOne( request._id );
+    Meteor.call( 'PPM_Schedulers.save', request );
+    request = PPM_Schedulers.findOne( request._id );
 
     return request;
 }
 
 function actionSendReminder( requests ) {
     requests.map( ( request ) => {
-        request = PPMRequest.findOne( request._id );
+        request = PPM_Schedulers.findOne( request._id );
         team = request.getTeam();
         request.distributeMessage( {
             recipientRoles: [ "supplier manager" ],
@@ -1172,7 +1172,7 @@ function actionSendReminder( requests ) {
             suppressOriginalPost: true,
         } );
         if ( !request.sendFirstReminder ) {
-            PPMRequest.update( { _id: request._id }, {
+            PPM_Schedulers.update( { _id: request._id }, {
                 $set: {
                     firstReminderSent: true,
                 }
@@ -1181,4 +1181,4 @@ function actionSendReminder( requests ) {
     } )
 }
 
-export default PPMRequest;
+export default PPM_Schedulers;

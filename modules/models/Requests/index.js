@@ -3,14 +3,14 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import Requests from './imports/Requests.jsx';
-import PPMRequest from './imports/PPMRequest.jsx';
+import PPM_Schedulers from './imports/PPM_Schedulers.jsx';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 import RequestsTable from './imports/components/RequestsTable.jsx';
 
 import CreateRequestForm from './imports/schemas/CreateRequestForm.jsx';
 
-import CreatePPMRequestForm from './imports/schemas/CreatePPMRequestForm.jsx';
+import CreatePPM_SchedulersForm from './imports/schemas/CreatePPM_SchedulersForm.jsx';
 import SupplierCreateRequestForm from './imports/schemas/SupplierCreateRequestForm.jsx';
 import CreateDocUpdateRequestForm from './imports/schemas/CreateDocUpdateRequestForm.jsx';
 
@@ -28,7 +28,7 @@ export {
 	Requests,
 	RequestsTable,
 	CreateRequestForm,
-	CreatePPMRequestForm,
+	CreatePPM_SchedulersForm,
 	SupplierCreateRequestForm,
 	CreateDocUpdateRequestForm,
 	RequestPanel,
@@ -39,5 +39,5 @@ export {
 	RequestFilter,
 
 	RequestFrequencySchema,
-	PPMRequest
+	PPM_Schedulers
 }

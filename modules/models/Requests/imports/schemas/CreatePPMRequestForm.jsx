@@ -1,4 +1,4 @@
-export default CreatePPMRequestForm = [
+export default CreatePPM_SchedulersForm = [
 	/*'team',*/
 	/* 'occupancy', */
 	'facility',
