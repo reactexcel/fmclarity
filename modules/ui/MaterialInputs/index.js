@@ -19,7 +19,7 @@ import Phone from './imports/Phone.jsx';
 import StartEndTimePicker from './imports/StartEndTimePicker.jsx';
 import DropFileContainer from './imports/DropFile.jsx';
 import FMInstantSearchBox from './imports/FMInstantSearchBox.jsx';
-
+console.log(Check,"check");
 checkModules( {
 	Currency,
 	Check,

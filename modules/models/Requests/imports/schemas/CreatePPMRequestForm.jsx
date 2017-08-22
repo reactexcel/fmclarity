@@ -1,6 +1,5 @@
-export default CreateRequestForm = [
+export default CreatePPMRequestForm = [
 	/*'team',*/
-	'type',
 	/* 'occupancy', */
 	'facility',
 	'location',
@@ -28,10 +27,10 @@ export default CreateRequestForm = [
 	'costThreshold',
 	//'requireServiceReport',
 	//'requireInvoice',
-	'description',
+
 	'memberName',
 	'numberOfPersons',
-    'readBookingInstructions',
+	'description',
 	'incidentFurtherComments',
 	'attachments',
 	'footer'

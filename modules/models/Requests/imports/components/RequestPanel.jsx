@@ -12,7 +12,7 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
-import { Requests, RequestActions } from '/modules/models/Requests';
+import { Requests, RequestActions ,PPMRequest } from '/modules/models/Requests';
 import { Teams, TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
@@ -40,6 +40,10 @@ export default RequestPanel = React.createClass( {
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
+            if(request === undefined){
+            request = PPMRequest.findOne( { _id: this.props.item._id } );
+          }
+          console.log(this.props.item);
             if ( request ) {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
@@ -57,13 +61,13 @@ export default RequestPanel = React.createClass( {
                 contact = request.getContact();
                 supplier = request.getSupplier();
                 // console.log(request);
-                if ( request.type == 'Preventative') {
+                if ( request.type == 'Schedular') {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
-                if(date_diff === 0 && request.type == 'Preventative'){
+                if(date_diff === 0 && request.type == 'Schedular'){
                   let lastdate = request.getPreviousDate();
                   let adhocRequest = request.findCloneAt( lastdate );
                   if(adhocRequest != undefined || null){
@@ -153,7 +157,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         requestIsInvoice = true;
     }
 
-    if ( request.type == 'Preventative' ) {
+    if ( request.type == 'Schedular' ) {
         title = 'PPM';
         if ( nextDate ) {
             nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
@@ -388,7 +392,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                 </tr>
                 : null
                 }
-                
+
                 { teamType=='fm' && request.service && !_.contains(['Booking', 'Incident'], request.type) ?
                 request.type=='Key Request' ?
                 Meteor.user().getRole()=='manager'?
