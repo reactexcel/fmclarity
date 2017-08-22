@@ -46,6 +46,7 @@ const Check = React.createClass( {
                     label={this.props.placeholder}
                     labelStyle = {styles.labelStyle}
                     iconStyle = {styles.iconStyle}
+                    checked={this.state.checked}
                     onCheck = {()=>{
                         let checked = this.state.checked;
                         if(checked == true){
