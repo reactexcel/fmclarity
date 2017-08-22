@@ -9,7 +9,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { DataTable } from '/modules/ui/DataTable';
 import { download, print } from '/modules/ui/DataTable/source/DataSetActions.jsx';
-import { DateTime, Select } from '/modules/ui/MaterialInputs';
+import { DateTime, Select, Text } from '/modules/ui/MaterialInputs';
 
 
 import { ContactCard } from '/modules/mixins/Members';
@@ -31,7 +31,16 @@ const RequestsStatusReport = React.createClass( {
 			endDate: null,
 			showFacilityName: true,
 			dataset:null,
+			supplier:null
 		}
+	},
+
+	componentDidMount(){
+		$('.nav-list-selected').css('display','none')
+	},
+
+	componentWillUnmount(){
+		$('.nav-list-selected').css('display','block')
 	},
 
 	getMeteorData() {
@@ -41,13 +50,17 @@ const RequestsStatusReport = React.createClass( {
 		if ( user ) {
 			var q = {};
 			team = user.getSelectedTeam();
-			facility = this.state.facility || user.getSelectedFacility();
+			facility = this.state.facility;
 			service = this.state.service;
+			supplier = this.state.supplier;
 			if ( facility ) {
 				q[ "facility._id" ] = facility._id;
 			}
 			if ( service ) {
 				q[ "service.name" ] = service.name;
+			}
+			if( supplier ){
+				q[ "supplier.name" ] = supplier
 			}
 			if ( this.state.startDate || this.state.endDate ) {
 				q.issuedAt = {};
@@ -107,24 +120,27 @@ const RequestsStatusReport = React.createClass( {
 		},
 		Facility: "facility.name",
 		"PO#": "code",
-		Issue: "name",
+		//Issue: "name",
 		Issued: "issuedAt",
 		Due: "dueDate",
-		//Supplier: "supplier.name",
-		Supplier: ( item ) => {
+		Summary: "name",
+		Supplier: "supplier.name",
+		/*Supplier: ( item ) => {
 			let supplier = item.getSupplier();
 			if( supplier != null ){
 				return {
-					val: <ContactCard item={supplier} />
+					val: <div style={{minWidth:'100px'}}><ContactCard item={supplier} removeEmail={true}/></div>
 				}
 			}
 			return {
 				val: <span/>
 			}
-		},
+		},*/
 		Service: ( item ) => {
-			if ( item.service ) {
+			if ( item.service && item.service.name ) {
 				return { val: item.service.name + ( item.subservice && item.subservice.name ? ( " - " + item.subservice.name ) : "" ) };
+			}else{
+				return { value: ''}
 			}
 		},
 		Location: ( item ) => {
@@ -132,8 +148,9 @@ const RequestsStatusReport = React.createClass( {
 				return { val: item.level.name + ( item.area && item.area.name ? ( " - " + item.area.name ) : "" ) };
 			}
 		},
-		Completed: "closeDetails.completionDate",
-		Responsiveness: ( item ) => {
+		Due: "dueDate",
+		'Compl.': "closeDetails.completionDate",
+		"Response (days)": ( item ) => {
 			if ( !item.closeDetails || item.closeDetails.completionDate == null || item.closeDetails.completionDate == "" ) {
 				return;
 			}
@@ -146,9 +163,10 @@ const RequestsStatusReport = React.createClass( {
 				let val = {};
 				val.duration = duration;
 				val.originalVal = parseInt( duration.asMinutes() );
-				val.val = duration.humanize();
+				//val.val = duration.humanize();
+				val.val = duration._data && duration._data.days ? duration._data.days.toString() : (1).toString();
 				if ( val.originalVal < 0 ) {
-					val.val = ( "- " + val.val );
+					//val.val = ( "- " + val.val );
 					val.style = { color: "red" };
 				}
 				return val;
@@ -186,17 +204,25 @@ const RequestsStatusReport = React.createClass( {
 
 		let { team, showFacilityName } = this.data, { facility, service } = this.state;
 		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
-
+		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; } .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #last-head {text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #pre-col {text-align:left; border-right:1px solid black; border-bottom:1px solid black; padding-left: 0px;  padding-right: 10px;} .Summary{min-width:320px;} .Supplier{min-width:120px;} .Service{min-w-width:120px;} #last-col {text-align:left; border-bottom:1px solid black;  padding-left: 0px;  padding-right: 10px;}</style>';
+		//let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : '')+'Status Report '+(this.state.startDate || this.state.endDate ?'for ('+(this.state.startDate? moment( this.state.startDate ).format('DD/MM/YY'):'')+' -'(this.state.endDate? moment( this.state.endDate ).format('DD/MM/YY'):'')+' )':'')
+		let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : 'All Facility ')+'Status Report '+((this.state.startDate || this.state.endDate)?('for ('+(this.state.startDate ? moment( this.state.startDate ).format('DD/MM/YY'):'')+' - '+(this.state.endDate ? moment( this.state.endDate ).format('DD/MM/YY'):'')+')'):'')
+		let pdfName = (this.state.facility ? this.state.facility.name+'_' : 'All Facility_')+'Status Report '+((this.state.startDate || this.state.endDate)?('_('+(this.state.startDate ? moment( this.state.startDate ).format('DD-MM-YY'):'')+' to '+(this.state.endDate ? moment( this.state.endDate ).format('DD-MM-YY'):'')+')'):'')
+		let pdfDetails = {
+			styleForPDF:styleForPDF,
+			pdfTitle:pdfTitle,
+			pdfName: pdfName.replace('.','')
+		}
 		return (
 			<div>
 				<div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
 
 					<h2>Status Report</h2>
 	                {this.state.dataset ? <div>
-					<Menu items = { [ download(this.state.dataset), print(this.state.dataset, this.refs.printable) ] } />
+					<Menu items = { [ download(this.state.dataset,pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 					<div className="row">
-						<div className="col-md-4">
+						{/*<div className="col-md-4">
 
 							<Select
 								placeholder = "Team"
@@ -212,18 +238,23 @@ const RequestsStatusReport = React.createClass( {
 								} }
 							/>
 
-						</div>
+						</div>*/}
 						<div className="col-md-3">
-							{console.log(team,team.getFacilities() )}
 							<Select
 								placeholder = "Facility"
 								value       = { facility }
 								items       = { team ? team.getFacilities() : null }
 								onChange    = { ( facility ) => {
-									this.setState( {
+									let stateToSet = {
 										facility: facility,
 										showFacilityName: false
-									} ) } }
+									}
+									if(_.isEmpty(facility)){
+										stateToSet.showFacilityName = (facility && facility.name ? false : true);
+										stateToSet.service = null;
+									}
+									this.setState(stateToSet)
+								} }
 							/>
 
 						</div>
@@ -233,12 +264,27 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Service"
 								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
-								onChange    = { ( service ) => { this.setState( { service } ) } }
+								onChange    = { ( service ) => {
+									this.setState( { service } )
+								} }
 							/>
 
 						</div>
 					</div>
 					<div className="row">
+						<div className="col-md-4">
+							<Text
+								placeholder="Supplier"
+								value={this.state.supplier?this.state.supplier.$regex:''}
+								onChange={ ( value ) => {
+									let supplierName = value?{
+										$regex: value,
+										$options: 'i'
+									}:null
+									this.setState({ supplier: supplierName})
+								} }
+							/>
+						</div>
 						<div className="col-md-4">
 
 							<DateTime
@@ -257,7 +303,6 @@ const RequestsStatusReport = React.createClass( {
 							/>
 
 						</div>
-
 					</div>
 
 				</div>
