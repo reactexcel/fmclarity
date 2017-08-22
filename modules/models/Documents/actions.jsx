@@ -46,6 +46,9 @@ const destroy = new Action( {
 		shouldConfirm: true,
 	},
 	action: ( team, doc ) => {
+		if(_.isEmpty(doc._id)){
+			doc = team
+		}
 		if( !doc.destroy ){
 			doc = Documents.findOne( doc._id );
 		}
@@ -117,7 +120,7 @@ const createUpdateRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
 
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                    if ( newRequest.type != 'Schedular' && hasSupplier ) {
 
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
