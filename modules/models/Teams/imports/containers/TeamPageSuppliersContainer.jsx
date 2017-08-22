@@ -77,6 +77,7 @@ const TeamPageSuppliersContainer = createContainer((params) => {
         suppliers = _.uniq(suppliers, (i) => {
             return i._id;
         });
+        
     }
 
     return {
