@@ -376,8 +376,22 @@ const TeamStepper = React.createClass( {
                                                 }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
+                                                    var defaultRole = "manager";
+                                                    switch(team.type) {
+                                                        case "fm":
+                                                            defaultRole = 'portfolio manager';
+                                                            break;
+                                                        case "real estate":
+                                                            defaultRole = 'property manager';
+                                                            break;
+                                                        case "contractor":
+                                                            defaultRole = 'manager';
+                                                            break;
+                                                        default:
+                                                            defaultRole = 'manager';
+                                                    }
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "portfolio manager",
+                                                      role: role ? role : defaultRole,
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
