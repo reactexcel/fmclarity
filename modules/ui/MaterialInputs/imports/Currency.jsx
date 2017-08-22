@@ -55,6 +55,9 @@ const Currency = React.createClass( {
     	if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40) {
         	return;
     	}
+    	if (event.target.value == "0" && ( event.keyCode != 190 || event.keyCode != 110 )) {
+    		event.target.value = "";
+    	}
 		this.formatNum(event.target);
 
 	},
