@@ -111,12 +111,14 @@ export default function DocIcon( props ) {
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							if(props.handleListUpdate){
+                            runaction( DocActions.destroy.bind(props.team, item ) );
+                            props.onChange();
+							/*if(props.handleListUpdate){
 								removeDocumentFromList( item );
 							} else {
 								runaction( DocActions.destroy.bind(props.team, item ) );
 								props.onChange();
-							}
+							}*/
 						}
 					}>
 					<span>&times;</span>
