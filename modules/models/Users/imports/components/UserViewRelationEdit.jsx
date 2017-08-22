@@ -82,7 +82,7 @@ export default UserViewRelationEdit = React.createClass( {
 				/>
 
 				{(_.contains(['portfolio manager','fmc support'], userRole) ) && 
-				_.contains(['manager','caretaker'], role)? 
+				_.contains(['manager','caretaker'], role) && group && group.type != 'contractor'? 
 				<Text
 					value			= { threshold }
 					onChange		= { this.handleThresholdValueChange }
