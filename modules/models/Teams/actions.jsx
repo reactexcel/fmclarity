@@ -5,7 +5,7 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, RequestPanel, CreateRequestForm, CreatePPM_SchedulersForm, SupplierCreateRequestForm, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
+import { Requests, RequestPanel, CreateRequestForm, CreatePPMRequestForm, SupplierCreateRequestForm, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
 import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
 import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
@@ -196,7 +196,7 @@ const createPPM_Schedulers = new Action( {
             content: <AutoForm
             title = "Please tell us a little bit more about the scheduled task"
             model = { PPM_Schedulers }
-            form = {CreatePPM_SchedulersForm }
+            form = {CreatePPMRequestForm }
             item = { newItem }
             submitText="Save"
             onChange = { () => { callback("update") } }

@@ -84,6 +84,21 @@ const PPMSchema = {
             }
         },
 
+        type: {
+            label: "Request type",
+            description: "The work request type (ie Ad-hoc, Preventative)",
+            type: "string",
+            required: true,
+            size: 12,
+            condition: (item)=>{
+                return item.type === 'Preventative';
+            },
+            input: Text,
+            options: {
+                readonly: true
+            }
+        },
+
 
         priority: {
             label: "Priority",

@@ -10,7 +10,7 @@ import RequestsTable from './imports/components/RequestsTable.jsx';
 
 import CreateRequestForm from './imports/schemas/CreateRequestForm.jsx';
 
-import CreatePPM_SchedulersForm from './imports/schemas/CreatePPM_SchedulersForm.jsx';
+import CreatePPMRequestForm from './imports/schemas/CreatePPMRequestForm.jsx';
 import SupplierCreateRequestForm from './imports/schemas/SupplierCreateRequestForm.jsx';
 import CreateDocUpdateRequestForm from './imports/schemas/CreateDocUpdateRequestForm.jsx';
 
@@ -28,7 +28,7 @@ export {
 	Requests,
 	RequestsTable,
 	CreateRequestForm,
-	CreatePPM_SchedulersForm,
+	CreatePPMRequestForm,
 	SupplierCreateRequestForm,
 	CreateDocUpdateRequestForm,
 	RequestPanel,

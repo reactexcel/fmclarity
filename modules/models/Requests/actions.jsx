@@ -4,7 +4,7 @@ import { Modal } from '/modules/ui/Modal';
 import { Action } from '/modules/core/Actions';
 import { AutoForm } from '/modules/core/AutoForm';
 
-import { Requests, CreateRequestForm, CreatePPM_SchedulersForm, PPM_Schedulers } from '/modules/models/Requests';
+import { Requests, CreateRequestForm, CreatePPMRequestForm, PPM_Schedulers } from '/modules/models/Requests';
 import {Facilities} from '/modules/models/Facilities';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
@@ -62,7 +62,7 @@ const edit = new Action( {
             edit = {true}
             model = {newCollection ? PPM_Schedulers : Requests }
             item = { previousRequest }
-            form = {newCollection ? CreatePPM_SchedulersForm : CreateRequestForm }
+            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
             onSubmit = {
                 ( request ) => {
                     // this should really be in a Request action called 'update' or something
@@ -439,7 +439,7 @@ const getQuote = new Action( {
             content: <AutoForm
             model = {newCollection ? PPM_Schedulers : Requests }
             item = { request }
-            form = {newCollection ? CreatePPM_SchedulersForm : CreateRequestForm }
+            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
             onSubmit = {
                 ( request ) => {
                     //Requests.update( request._id, { $set: { status: 'In Progress' } } );
@@ -465,7 +465,7 @@ const sendQuote = new Action( {
             content: <AutoForm
             model = {newCollection ? PPM_Schedulers : Requests }
             item = { request }
-            form = {newCollection ? CreatePPM_SchedulersForm : CreateRequestForm }
+            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
             onSubmit = {
                 ( request ) => {
                     //Requests.update( request._id, { $set: { status: 'In Progress' } } );
