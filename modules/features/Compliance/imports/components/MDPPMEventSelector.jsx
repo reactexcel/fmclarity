@@ -11,7 +11,7 @@ MDPPMEventSelector = React.createClass({
 		user = Meteor.user();
 		facility = this.props.options.facility;
 		if(facility) {
-			requests = user.getRequests({'facility._id':facility._id,type:'Preventative'});
+			requests = user.getRequests({'facility._id':facility._id,type:'Schedular'});
 		}
 		return {
 			requests:requests

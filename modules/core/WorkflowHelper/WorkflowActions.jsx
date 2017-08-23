@@ -10,6 +10,8 @@ const WorkflowActions = [
 	'invoice request',
 	'reissue invoice',
 	'issue invoice',
+	'edit invoice', 
+	'delete invoice', 
 	//'close request',
 	'reopen request',
 	//'reverse request',
