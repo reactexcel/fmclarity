@@ -1,6 +1,5 @@
-export default CreateRequestForm = [
+export default CreatePPMRequestForm = [
 	/*'team',*/
-	'type',
 	/* 'occupancy', */
 	'facility',
 	'location',

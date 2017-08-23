@@ -9,8 +9,8 @@ import { Roles } from '/modules/mixins/Roles';
 import { Actions } from '/modules/core/Actions';
 import { UserActions } from '/modules/models/Users';
 import { MemberActions } from '/modules/mixins/Members';
-import { TeamActions } from '/modules/models/Teams';
-
+import { TeamActions,Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
 /**
  * @class 			UserPanel
  * @membersOf 		module:models/Users
@@ -67,6 +67,19 @@ class UserPanel extends React.Component {
 		this.setState( { item: props.item } );
 	}
 
+	getRoleInCurrentTeam(roles){
+		let teamOwner = Teams.findOne({_id:this.props.group._id})
+		let userRole;
+		if(!_.isEmpty(teamOwner)){
+			roles.map( ( role, idx ) => {
+				if(role.context == teamOwner.name){
+					userRole = role.name;
+				}
+			} )
+		}
+		return userRole;
+	}
+
 	render() {
 		let profile = null,
 			availableServices = null,
@@ -91,10 +104,10 @@ class UserPanel extends React.Component {
 		if ( contact.getAvailableServices ) {
 			availableServices = contact.getAvailableServices();
 		}
+		let roleInCurrentTeam = this.props.group ? this.getRoleInCurrentTeam(roles) : null;
+		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact );
+		roleInCurrentTeam = !_.isEmpty(roleInCurrentTeam) ? roleInCurrentTeam : (relation && relation.role ? relation.role : null)
 
-		let relation =this.props.group? this.props.group.getMemberRelation( contact ) : Session.getSelectedTeam().getMemberRelation( contact ),
-		currentUserRelation = this.props.group? this.props.group.getMemberRelation( Meteor.user() ) : Session.getSelectedTeam().getMemberRelation( Meteor.user() );
-		
 		return (
 			<div className="business-card">
 				<div className="contact-thumbnail pull-left">
@@ -103,8 +116,8 @@ class UserPanel extends React.Component {
 				 <div className = "contact-info">
 				 	<div>
 						<h2>{ contact.getName() }</h2>
-						{ relation&&relation.role ?
-							<span>{ relation.role }<br/></span>
+						{ roleInCurrentTeam ?
+							<span>{ roleInCurrentTeam }<br/></span>
 						: null }
 
 						{/*{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.threshold) ?
