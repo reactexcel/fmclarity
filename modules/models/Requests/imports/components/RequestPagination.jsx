@@ -37,20 +37,56 @@ export default class RequestPagination extends Component {
   }
 
 
-
   propagatePaginationItems() {
 
     let numberOfPages = Math.ceil(this.state.totalCollectionCount / this.state.itemsPerPage);
     let paginationItems = [];
+    let currentPage = this.state.currentPage;
+
+    // previous button
+    if (currentPage - 1 > 0) {
+      paginationItems.push({
+        pageNumber: currentPage - 1,
+        label: 'Prev',
+        click: () => {
+          Session.set('currentRequestPageNumber', currentPage - 1);
+          this.setState({
+            currentPage: currentPage - 1
+          })
+        }
+      });
+    }
+
     for (let x = 0; x < numberOfPages; x++) {
+
+      if (x > currentPage + 3) {
+        continue;
+      }
+      if (x < currentPage - 3) {
+        continue;
+      }
+
       paginationItems.push({
         pageNumber: x,
+        label: x + 1,
         click: () => {
           Session.set('currentRequestPageNumber', x);
           this.setState({
-            currentPage: x,
-            nextPage: x + 1 <= numberOfPages ? x + 1 : null,
-            previousPage: x - 1 > -1 ? x - 1 : null,
+            currentPage: x
+          })
+        }
+      });
+    }
+
+    // next button
+    if (currentPage + 1 < numberOfPages) {
+      paginationItems.push({
+        pageNumber: currentPage + 1,
+        label: 'Next',
+        click: () => {
+          Session.set('currentRequestPageNumber', currentPage + 1);
+          this.setState({
+            currentPage: currentPage + 1
           })
         }
       });
@@ -64,7 +100,7 @@ export default class RequestPagination extends Component {
       return (
         <a key={index}
            onClick={ () => { item.click() } }
-           className={ item.pageNumber === this.state.currentPage ? 'active' : null }>{ item.pageNumber + 1 }</a>
+           className={ item.pageNumber === this.state.currentPage ? 'active' : null }>{ item.label }</a>
       );
     });
 
