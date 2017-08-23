@@ -3,7 +3,7 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import Requests from './imports/Requests.jsx';
-import PPMRequest from './imports/PPMRequest.jsx';
+import PPM_Schedulers from './imports/PPM_Schedulers.jsx';
 
 import RequestPanel from './imports/components/RequestPanel.jsx';
 import RequestsTable from './imports/components/RequestsTable.jsx';
@@ -39,5 +39,5 @@ export {
 	RequestFilter,
 
 	RequestFrequencySchema,
-	PPMRequest
+	PPM_Schedulers
 }

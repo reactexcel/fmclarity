@@ -205,6 +205,7 @@ Actions.addAccessRule( {
     },
     action: [
         'edit team',
+        'delete team',
         'view team',
         'view team member',
         'edit team member',
@@ -253,6 +254,8 @@ Actions.addAccessRule( {
         'view facility',
     ],
     role: [
+        'fmc support',
+        'portfolio manager',
         'team fmc support',
         'team portfolio manager',
         'team manager',
@@ -267,7 +270,12 @@ Actions.addAccessRule( {
     action: [
         'destroy facility'
     ],
-    role: [ 'team fmc support', 'team portfolio manager' ],
+    role: [
+        'team fmc support',
+        'team portfolio manager',
+        'fmc support',
+        'portfolio manager'
+     ],
     rule: { alert: true }
 } )
 
@@ -349,8 +357,8 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
         if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
-            import { PPMRequest } from '/modules/models/Requests';
-            request = PPMRequest.collection._transform( request );
+            import { PPM_Schedulers } from '/modules/models/Requests';
+            request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;

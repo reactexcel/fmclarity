@@ -3,7 +3,7 @@ import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import PMPGroup from './PMPGroup.jsx';
 import { TeamActions } from '/modules/models/Teams';
-import {PPMRequest } from '/modules/models/Requests';
+import {PPM_Schedulers } from '/modules/models/Requests';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -45,7 +45,7 @@ export default PMPList = React.createClass({
         if ( filter ) {
             query.push( filter );
         }
-        var ungroupedRequests = PPMRequest.find( {
+        var ungroupedRequests = PPM_Schedulers.find( {
                 $and: query
             } )
             .fetch( {
@@ -69,7 +69,7 @@ export default PMPList = React.createClass({
 		return (
 			<div>
         <div style={{margin:"10px",fontWeight:"700",cursor:"pointer"}} onClick={()=>{
-          TeamActions.createPPMRequest.run( team );
+          TeamActions.createPPM_Schedulers.run( team );
 
         }}>+ Add another</div>
 				{keys.map((k,idx)=>{

@@ -12,6 +12,7 @@ import Rating from './imports/Rating.jsx';
 import Select from './imports/Select.jsx';
 import Switch from './imports/Switch.jsx';
 import Text from './imports/Text.jsx';
+import Label from './imports/Label.jsx';
 import TextArea from './imports/TextArea.jsx';
 import ABN from './imports/ABN.jsx';
 import Phone from './imports/Phone.jsx';
@@ -28,6 +29,7 @@ checkModules( {
 	Select,
 	Switch,
 	Text,
+	Label,
 	TextArea,
 	ABN,
 	Phone,
@@ -50,6 +52,7 @@ export {
 	Select,
 	Switch,
 	Text,
+	Label,
 	TextArea,
 	ABN,
 	Phone,
