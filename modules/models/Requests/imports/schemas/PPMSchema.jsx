@@ -17,7 +17,7 @@ import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
+import { Text, Label, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -93,10 +93,10 @@ const PPMSchema = {
             condition: (item)=>{
                 return item.type === 'Preventative';
             },
-            input: Text,
-            options: {
-                readonly: true
-            }
+            defaultValue: (item) =>{
+                return 'Preventative';
+            },
+            input: Label
         },
 
 
