@@ -20,6 +20,11 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
+	getInitialState() {
+		return {
+		}
+	},
+
 	getMeteorData() {
 		var service, supplier, suppliers, defaultContact;
 		service = this.props.service;
@@ -44,6 +49,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 			service,
 			supplier,
 		}
+	},
+
+	componentWillReceiveProps(){
 	},
 
 	updateSupplier( supplier, event ) {
@@ -107,11 +115,18 @@ const ServicesRequiredEditorRow = React.createClass( {
 					{clickExpand?<span onClick={clickExpand} className="services-editor-expand-icon"><i className="fa fmc-fa-icon-expand"></i></span>:null}
 
 		    		<input
-		    			defaultValue={service.name||undefined}
+		    			//defaultValue={service.name||undefined}
+						value={service.name||undefined}
 		    			readOnly={readOnly}
 		    			onChange={this.updateServiceName}
-						onKeyDown={ (evt) => this.props.onKeyDown(evt) }
+						onKeyDown={ (evt) => {
+							this.props.onKeyDown(evt) }}
 						id={this.props.id}
+						onBlur={()=>{
+							if(this.props.sortService){
+								this.props.sortService()
+							}
+						}}
 					/>
 						{!readOnly?<span className="services-editor-delete-icon"
 							onClick = {

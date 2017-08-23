@@ -14,6 +14,8 @@ export default function Menu( { items,team, icon = "ellipsis-v" } ) {
 		}
 		if(item.label === "Edit team"){
 					TeamActions.edit.run( team );
+		}else if(item.label === "Delete team"){
+					TeamActions.destroy.run( team );
 		}else{
 			item.run( item, e );
 		}

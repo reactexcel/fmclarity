@@ -109,6 +109,7 @@ const TeamPanel = React.createClass( {
         var item = this.props.item;
         return [
             TeamActions.edit.bind( this.props.item ),
+            TeamActions.destroy.bind( this.props.item ),
             ( this.props.item.type == "contractor" ? TeamActions.inviteSupplier.bind( this.props.item ) : null ),
             (facility && this.props.item.type == "contractor" ?
                 {

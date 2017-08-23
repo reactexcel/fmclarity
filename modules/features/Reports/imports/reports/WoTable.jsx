@@ -1,6 +1,6 @@
 import React from "react";
 import moment from 'moment';
-import { Requests,RequestActions } from '/modules/models/Requests';
+import { Requests,RequestActions,PPMRequest } from '/modules/models/Requests';
 import { Files } from '/modules/models/Files';
 import { Reports } from '/modules/models/Reports';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -79,6 +79,13 @@ const WoTable = React.createClass( {
                   q['status'] ={$nin:['Deleted','PPM']};
                       q['service.name'] = this.props.service;
                       let requests = Requests.findAll(q);
+                      let PPMIssued = PPMRequest.findAll(q);
+                      if(PPMIssued.length > 0){
+                        PPMIssued.map((val)=>{
+                          requests.push(val)
+                        })
+                      }
+
                       if (requests.length){
                           data.push({
                               name: this.props.service,
