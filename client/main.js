@@ -445,11 +445,10 @@ Actions.addAccessRule( {
                 team = request.getTeam(),
                 teamRole = team.getMemberRole( user ),
                 requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
-
+            /*let facilityRole = facility.getMemberRole( user )*/
             if (requestIsInvoice) {
                 return false;
             }
-
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 if(request.status == 'Issued'){
@@ -461,7 +460,7 @@ Actions.addAccessRule( {
                 }else{
                     return true;
                 }
-            } else if ( (request.status == 'New' || request.type == 'Preventative') && request.status != 'Issued' ) {
+            } else if ( request.status == 'New' || request.type == 'Preventative' || request.status == 'Issued' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -473,7 +472,13 @@ Actions.addAccessRule( {
                 if ( facility ) {
                     facilityRole = facility.getMemberRole( user );
                 }
-
+                if(request.status == 'Issued'){
+                    if(facilityRole == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
                 }
