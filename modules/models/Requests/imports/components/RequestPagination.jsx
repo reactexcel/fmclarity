@@ -32,8 +32,6 @@ export default class RequestPagination extends Component {
     this.setState({
       paginationItems: this.propagatePaginationItems()
     });
-    console.log(this.state)
-
   }
 
 
@@ -42,20 +40,6 @@ export default class RequestPagination extends Component {
     let numberOfPages = Math.ceil(this.state.totalCollectionCount / this.state.itemsPerPage);
     let paginationItems = [];
     let currentPage = this.state.currentPage;
-
-    // previous button
-    if (currentPage - 1 > 0) {
-      paginationItems.push({
-        pageNumber: currentPage - 1,
-        label: 'Prev',
-        click: () => {
-          Session.set('currentRequestPageNumber', currentPage - 1);
-          this.setState({
-            currentPage: currentPage - 1
-          })
-        }
-      });
-    }
 
     for (let x = 0; x < numberOfPages; x++) {
 
@@ -78,18 +62,6 @@ export default class RequestPagination extends Component {
       });
     }
 
-    // next button
-      paginationItems.push({
-        pageNumber: currentPage + 1,
-        label: 'Next',
-        click: () => {
-          Session.set('currentRequestPageNumber', currentPage + 1);
-          this.setState({
-            currentPage: currentPage + 1
-          })
-        }
-      });
-
     return paginationItems;
   }
 
@@ -102,15 +74,13 @@ export default class RequestPagination extends Component {
       );
     });
 
-    if (paginationItems.length === 2) {
+    if (paginationItems.length <= 1) {
       return null;
     }
 
     return (
       <div className="row">
-        <div className="col-xs-5">
-        </div>
-        <div className="col-xs-7">
+        <div className="col-xs-8 col-xs-offset-2">
           <div className="paginationRequest">{paginationItems}</div>
         </div>
       </div>
