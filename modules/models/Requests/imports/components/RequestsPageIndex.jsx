@@ -27,6 +27,7 @@ export default class RequestsPageIndex extends Component {
 		this.state = {
 			requests: props.requests,
       totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
 			currentPage: props.currentPage,
 			active: false,
 		};
@@ -39,6 +40,7 @@ export default class RequestsPageIndex extends Component {
 		this.setState( {
 			requests: props.requests,
       totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
       currentPage: props.currentPage,
 		} )
 	}
@@ -95,10 +97,10 @@ export default class RequestsPageIndex extends Component {
 					*/ }
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
+					<RequestPagination totalCollectionCount={ this.state.totalCollectionCount } itemsPerPage={ this.state.pageSize } currentPage={ this.state.currentPage }/>
 					<div className = "ibox">
 						<RequestsTable requests={ this.state.requests } selectedItem={selectedStatus} />
 					</div>
-					<RequestPagination totalCollectionCount={ this.state.totalCollectionCount } itemsPerPage={50} currentPage={ this.state.currentPage }/>
 				</div>
 			</div>
 		)

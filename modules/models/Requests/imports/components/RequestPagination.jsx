@@ -59,7 +59,7 @@ export default class RequestPagination extends Component {
 
     for (let x = 0; x < numberOfPages; x++) {
 
-      if (x > currentPage + 3) {
+      if (x > currentPage + 4) {
         continue;
       }
       if (x < currentPage - 3) {
@@ -79,7 +79,6 @@ export default class RequestPagination extends Component {
     }
 
     // next button
-    if (currentPage + 1 < numberOfPages) {
       paginationItems.push({
         pageNumber: currentPage + 1,
         label: 'Next',
@@ -90,7 +89,6 @@ export default class RequestPagination extends Component {
           })
         }
       });
-    }
 
     return paginationItems;
   }
@@ -104,7 +102,7 @@ export default class RequestPagination extends Component {
       );
     });
 
-    if (paginationItems.length === 1) {
+    if (paginationItems.length === 2) {
       return null;
     }
 
