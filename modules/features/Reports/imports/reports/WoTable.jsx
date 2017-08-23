@@ -29,7 +29,8 @@ const WoTable = React.createClass( {
     let query = {
       "facility._id" : this.state.facility._id ,
       service: this.props.service,
-      type : "toggle"}
+      type : this.props.defect ? "defectToggle" : "toggle"
+    }
     let RemovedWoKeys =  Reports.findOne(query);
     this.setState({
       removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
@@ -40,7 +41,7 @@ const WoTable = React.createClass( {
     let query = {
       "facility._id" : this.state.facility._id ,
       service: this.props.service,
-      type : "toggle"}
+      type : this.props.defect ? "defectToggle" : "toggle" }
     let RemovedWoKeys =  Reports.findOne(query);
     this.setState({
       removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
@@ -95,7 +96,7 @@ const WoTable = React.createClass( {
       let query = {
         "facility._id" : facility._id ,
         service: this.props.service,
-        type : "toggle"}
+        type : this.props.defect ? "defectToggle" : "toggle" }
       let RemovedWoKeys =  Reports.findOne(query);
       if(RemovedWoKeys){
         RemovedWoKeys.keys = [] ;
@@ -114,7 +115,7 @@ const WoTable = React.createClass( {
         let query = {
           "facility._id" : facility._id ,
           service: r.service.name,
-          type : "toggle"}
+          type : this.props.defect ? "defectToggle" : "toggle" }
         let RemovedWoKeys =  Reports.findOne(query);
         console.log(RemovedWoKeys);
 
@@ -125,7 +126,7 @@ const WoTable = React.createClass( {
             } ,
             service : r.service.name,
             keys:[key],
-            type : "toggle"
+            type : this.props.defect ? "defectToggle" : "toggle" 
           }
           this.setState({
             removedImg : item.keys
