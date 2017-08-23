@@ -15,7 +15,10 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		statusFilter = null,
 		contextFilter = {},
 		selectedRequest = null,
-		includeComplete = false;
+		includeComplete = false,
+  	totalCollectionCount = 0,
+	  currentPage = Session.get('currentRequestPageNumber') > 0 ? Session.get('currentRequestPageNumber') : 0;
+
 	if ( selectedStatus == 'New' ) {
 		statusFilter = { "status": 'New' };
 	}
@@ -76,7 +79,9 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 
 	if ( user != null ) {
 	    // could test moving this below loading team and only including facilities if supplier
-		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		({ requests, totalCollectionCount, currentPage } = user.getRequests(
+			{ $and: [ statusFilter, contextFilter ] }, { expandPMP: true, skip: currentPage, limit: 50 }
+		));
 		//requests = user.getRequests();
 	}
 
@@ -90,6 +95,8 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 		selectedRequest,
 		contextFilter,
 		statusFilter,
-		user
+		user,
+    totalCollectionCount,
+		currentPage,
 	}
 }, RequestsPageIndex );
