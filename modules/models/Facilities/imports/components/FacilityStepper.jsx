@@ -42,12 +42,13 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
         };
         var place = suggest.gmaps;
         var val = "";
-        let street_number, city, state, country, pcode, street_name = "";
+        let street_number, city, state, country, pcode, street_name, locname = "";
         // Get each component of the address from the place details
         // and fill the corresponding field on the form.
-        if (place && place.address_components) {
+        if ( place && place.address_components ) {
             var loctype = place.address_components[ 0 ].types[ 0 ];
-            var locname = place.address_components[ 0 ][ componentForm[ loctype ] ];
+            locname = place.address_components[ 0 ][ componentForm[ loctype ] ];
+
             for ( var i = 0; i < place.address_components.length; i++ ) {
                 var addressType = place.address_components[ i ].types[ 0 ];
                 console.log( addressType );
@@ -81,14 +82,15 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
                     }
                 };
             }
-            facility.address.streetNumber = street_number;
-            facility.address.city = city;
-            facility.address.state = state;
-            facility.address.country = country;
-            facility.address.postcode = pcode;
-            facility.address.streetName = street_name;
-            facility.name = locname;
         }
+
+        facility.address.streetNumber = street_number;
+        facility.address.city = city;
+        facility.address.state = state;
+        facility.address.country = country;
+        facility.address.postcode = pcode;
+        facility.address.streetName = street_name;
+        facility.name = locname;
 
         $('#address_area').html('');
         ReactDOM.render( <AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] } onNext = { onNext } hideSubmit = { true } submitFormOnStepperNext = { true }/>, document.getElementById( 'address_area' ) );

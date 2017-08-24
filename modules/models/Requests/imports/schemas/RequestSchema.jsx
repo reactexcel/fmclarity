@@ -17,7 +17,7 @@ import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency, Check } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -145,6 +145,8 @@ const RequestSchema = {
                                             }
                                         }
                                     }
+
+
                                 }
                                 else{
                                     /*request.area = request.area ? request.area : null;
@@ -1137,6 +1139,46 @@ const RequestSchema = {
                     return false;
                 }
                 return true;
+            }
+        },
+
+        readBookingInstructions:{
+            //label: "",
+            type: "boolean",
+            size: 12,
+            input: (props)=>{
+                return <Check {...props}
+                    placeholder={"I have read the Booking Rules/Instructions"}
+                    onChange = {(checked)=>{
+                        props.onChange(checked)
+                    }}
+                />
+                //return <div><h1>aaaaaaaaaaaa</h1></div>
+            },
+            required: true,
+            condition: (item)=>{
+                let toReturn = false;
+                if(item.type == "Booking"){
+                    if(item.level && item.level.data && item.level.data.areaDetails){
+                        toReturn = false;
+                        if(item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.area && item.area.data && item.area.data.areaDetails){
+                        toReturn = false;
+                        if( item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    if(item.identifier && item.identifier.data && item.identifier.data.areaDetails){
+                        toReturn = false;
+                        if( item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
+                            toReturn = true;
+                        }
+                    }
+                    return toReturn;
+                }
             }
         },
 

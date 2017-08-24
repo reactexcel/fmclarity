@@ -44,8 +44,8 @@ const CronJobs = {
         }
     },
 
-    issuePPMRequest() {
-        import { PPMRequest } from '/modules/models/Requests';
+    issuePPM_Schedulers() {
+        import { PPM_Schedulers } from '/modules/models/Requests';
         import { Teams } from '/modules/models/Teams';
         let collection = Requests.collection,
             requestsCursor = collection.find( { type: "Preventative" } ),
