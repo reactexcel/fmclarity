@@ -138,7 +138,6 @@ const TeamStepper = React.createClass( {
     },
 
     handleInvite( supplier = {} ) {
-
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
@@ -227,7 +226,6 @@ const TeamStepper = React.createClass( {
     },
 
     render() {
-      console.log(this.props ,this.data);
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
@@ -287,9 +285,22 @@ const TeamStepper = React.createClass( {
 
                 <Stepper
                   submitForm = {
-                    ( callback ) => {
+                    ( activeTab, callback ) => {
                       if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
-                        this.submitFormCallback( ( errorList ) => {
+                          if(activeTab == 2){
+                              callback({});
+                          }else{
+                              this.submitFormCallback( ( errorList ) => {
+                                this.submitFormCallbackForWorkOrder( ( error ) => {
+                                  let keys = Object.keys( error );
+                                  _.forEach( keys, ( k ) => {
+                                    errorList[ k ] = error[ k ];
+                                  } );
+                                  callback( errorList );
+                                } );
+                            } );
+                          }
+                        /*this.submitFormCallback( ( errorList ) => {
                           this.submitFormCallbackForWorkOrder( ( error ) => {
                             let keys = Object.keys( error );
                             _.forEach( keys, ( k ) => {
@@ -297,7 +308,7 @@ const TeamStepper = React.createClass( {
                             } );
                             callback( errorList );
                           } );
-                        } );
+                      } );*/
                       }
                     }
                   }
