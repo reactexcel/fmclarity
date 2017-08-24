@@ -43,7 +43,7 @@ export default class RequestPagination extends Component {
 
     for (let x = 0; x < numberOfPages; x++) {
 
-      if (x > currentPage + 4) {
+      if (x > currentPage + 3) {
         continue;
       }
       if (x < currentPage - 3) {
