@@ -116,8 +116,6 @@ export default DataTable = React.createClass( {
 		let { fields, children } = this.props;
 		const KEYS_TO_FILTERS = ["Prty.val", "Status.val", "Facility.val", "WO#.val", "Issue.val", "Amount.val", "Issued.val", "Due.val", "Supplier.val"];
 
-
-
 		let user = Meteor.user(),
 			facility = Session.getSelectedFacility() || {};
 
@@ -127,8 +125,8 @@ export default DataTable = React.createClass( {
 		const filteredRows = rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS));
 		//console.log(filteredRows.length);
 		//console.log( rows );
-		var unreadRows=[];
-		var readRows =[];
+		let unreadRows=[];
+    let readRows =[];
 
 		return (
 			<div className="data-grid">
@@ -144,6 +142,12 @@ export default DataTable = React.createClass( {
 						<tr className = "data-grid-header-row">
 							{/*<th className = "data-grid-select-col-header">&nbsp;</th>*/}
 							{ cols.map( (col,i) => {
+								if (unreadRows[0]) {
+									console.log(unreadRows[0][col]);
+								}
+								if (readRows[0]) {
+									console.log(readRows[0][col]);
+								}
 
 								return (
 									<th
@@ -153,11 +157,8 @@ export default DataTable = React.createClass( {
 										style={{paddingLeft:'10px'}}
 										id={i==cols.length-1?'last-head':'pre-head'}
 									>
-
 										<div style = {{/*position:"relative",left:"-15px"*/}}>
-
 											<i style = {{width:"15px"}} className = {(col==sortCol)?("fa fa-arrow-"+sortDir):"hidden"}></i>
-
 											<span>{col}</span>
 										</div>
 
@@ -196,6 +197,9 @@ export default DataTable = React.createClass( {
 							>
 								{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 								{ cols.map( (col,colIdx) => {
+									if (!unreadRow[col]) {
+                    return (<td className="data-grid-cell">&nbsp;</td>);
+									}
 									let styles = unreadRow[col].style?unreadRow[col].style:{}
 										styles.paddingLeft = '10px';
 									return (
@@ -255,6 +259,9 @@ export default DataTable = React.createClass( {
 												>
 													{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 													{ cols.map( (col,colIdx) => {
+                            if (!readRow[col]) {
+                              return (<td className="data-grid-cell">&nbsp;</td>);
+                            }
 														let styles = readRow[col].style?readRow[col].style:{}
 															styles.paddingLeft = '10px';
 														return (
@@ -312,6 +319,9 @@ export default DataTable = React.createClass( {
 										>
 											{/*<td className="data-grid-select-col">&nbsp;</td>*/}
 											{ cols.map( (col,colIdx) => {
+                        if (!readRow[col]) {
+                          return (<td className="data-grid-cell">&nbsp;</td>);
+                        }
 												let styles = readRow[col].style?readRow[col].style:{}
 													styles.paddingLeft = '10px';
 												return (
@@ -339,4 +349,4 @@ export default DataTable = React.createClass( {
 			</div>
 		)
 	}
-} )
+} );
