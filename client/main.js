@@ -156,6 +156,7 @@ Actions.addAccessRule( {
     },
     action: [
         'create team request',
+        'create team PPM request'
     ],
     role: [
         'staff',
@@ -204,6 +205,7 @@ Actions.addAccessRule( {
     },
     action: [
         'edit team',
+        'delete team',
         'view team',
         'view team member',
         'edit team member',
@@ -252,6 +254,8 @@ Actions.addAccessRule( {
         'view facility',
     ],
     role: [
+        'fmc support',
+        'portfolio manager',
         'team fmc support',
         'team portfolio manager',
         'team manager',
@@ -266,7 +270,12 @@ Actions.addAccessRule( {
     action: [
         'destroy facility'
     ],
-    role: [ 'team fmc support', 'team portfolio manager' ],
+    role: [
+        'team fmc support',
+        'team portfolio manager',
+        'fmc support',
+        'portfolio manager'
+     ],
     rule: { alert: true }
 } )
 
@@ -347,9 +356,9 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
-            import { Requests } from '/modules/models/Requests';
-            request = Requests.collection._transform( request );
+        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+            import { PPM_Schedulers } from '/modules/models/Requests';
+            request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;
@@ -436,15 +445,22 @@ Actions.addAccessRule( {
                 team = request.getTeam(),
                 teamRole = team.getMemberRole( user ),
                 requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
-
+            /*let facilityRole = facility.getMemberRole( user )*/
             if (requestIsInvoice) {
                 return false;
             }
-
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
-                return true;
-            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+                if(request.status == 'Issued'){
+                    if(user.getRole() && user.getRole() == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    return true;
+                }
+            } else if ( request.status == 'New' || request.type == 'Preventative' || request.status == 'Issued' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -456,10 +472,18 @@ Actions.addAccessRule( {
                 if ( facility ) {
                     facilityRole = facility.getMemberRole( user );
                 }
-
+                if(request.status == 'Issued'){
+                    if(facilityRole == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
                 }
+            } else {
+                return false;
             }
         },
     action: [
@@ -533,6 +557,18 @@ Actions.addAccessRule( {
     },
     action: [
         'issue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return (request.invoiceDetails && request.invoiceDetails.details)
+    },
+    action: [
+        'edit invoice',
+        'delete invoice'
     ],
     role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
     rule: { alert: true }

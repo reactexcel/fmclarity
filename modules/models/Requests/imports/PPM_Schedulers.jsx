@@ -5,7 +5,7 @@
 
 import { Model } from '/modules/core/ORM';
 
-import RequestSchema from './schemas/RequestSchema.jsx';
+import PPMSchema from './schemas/PPMSchema.jsx';
 
 import { Owners } from '/modules/mixins/Owners';
 import { Roles } from '/modules/mixins/Roles';
@@ -16,7 +16,6 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
-import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
@@ -26,16 +25,15 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
-const Requests = new Model( {
-    schema: RequestSchema,
-    collection: "Issues",
+const PPM_Schedulers = new Model( {
+    schema: PPMSchema,
+    collection: "PPM_Schedulers",
     mixins: [
         [ Owners ],
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    var title = this.invoiceDetails && this.invoiceDetails.invoiceNumber ? "invoice #" + this.invoiceDetails.invoiceNumber : "work order #" + this.code;
-                    return title + ' "' + this.getName() + '"';
+                    return "work order #" + this.code + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
@@ -91,7 +89,7 @@ const Requests = new Model( {
     ]
 } )
 
-Requests.save.before( ( request ) => {
+PPM_Schedulers.save.before( ( request ) => {
     if ( request.type == "Schedular" ) {
         request.status = "PPM";
         request.priority = "Scheduled";
@@ -120,7 +118,7 @@ Requests.save.before( ( request ) => {
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
 
-Requests.collection.allow( {
+PPM_Schedulers.collection.allow( {
     update: function() {
         return true
     },
@@ -160,7 +158,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 }
 
 //maybe actions it better terminology?
-Requests.methods( {
+PPM_Schedulers.methods( {
 
     /* funtionality should be encapsulated in members */
     updateSupplierManagers: {
@@ -235,7 +233,8 @@ Requests.methods( {
 
     create: {
         authentication: true,
-        method: function( request, furtherWorkRequired ) {
+        method: function( request ) {
+
             let status = 'New';
 
             // The description field simply carries the value to be sent to the notification or comment.
@@ -262,30 +261,28 @@ Requests.methods( {
                 code = team.getNextWOCode();
             }
 
-            let newRequestId = Meteor.call( 'Issues.save', request, {
+            let newRequestId = Meteor.call( 'PPM_Schedulers.save', request, {
                     status: status,
                     code: code,
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
             if ( newRequestId ) {
-                newRequest = Requests.findOne( newRequestId );
+                newRequest = PPM_Schedulers.findOne( newRequestId );
             }
             if ( newRequest ) {
                 let owner = null;
                 if ( newRequest.owner ) {
                     owner = newRequest.getOwner();
                 }
-                if(!furtherWorkRequired){
-                    newRequest.distributeMessage( {
-                        message: {
-                            verb: "created",
-                            read: false,
-                            subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                            body: description
-                        }
-                    } )
-                }
+                newRequest.distributeMessage( {
+                    message: {
+                        verb: "created",
+                        read: false,
+                        subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+                        body: description
+                    }
+                } );
             }
             return newRequest;
         }
@@ -345,7 +342,7 @@ Requests.methods( {
                 teamNames.push( team.name );
             } );
 
-            let requestsCursor = Requests.find( {
+            let requestsCursor = PPM_Schedulers.find( {
                 $and: [
                     { status: { $in: [ "Closed", "Complete" ] } }, {
                         $or: [
@@ -592,7 +589,7 @@ Requests.methods( {
         authentication: true,
         helper: ( request, dueDate ) => {
             let facility = request.getFacility();
-            return Requests.findOne( {
+            return PPM_Schedulers.findOne( {
                 "facility._id": facility._id,
                 name: request.name,
                 status: { $ne: 'PPM' },
@@ -622,7 +619,7 @@ Requests.methods( {
 
             if ( nextDate ) {
                 let facility = request.getFacility();
-                nextRequest = Requests.findOne( {
+                nextRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
@@ -641,7 +638,7 @@ Requests.methods( {
 
             if ( previousDate ) {
                 let facility = request.getFacility();
-                previousRequest = Requests.findOne( {
+                previousRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
                     status: { $ne: 'PPM' },
@@ -671,7 +668,7 @@ Requests.methods( {
     destroy: {
         authentication: true,
         helper: function( request ) {
-            Requests.remove( { _id: request._id } );
+            PPM_Schedulers.remove( { _id: request._id } );
         }
     },
 
@@ -722,7 +719,7 @@ Requests.methods( {
         method: function( request ) {
             let user = Meteor.user();
             if ( request.unreadRecipents && _.indexOf( request.unreadRecipents, user._id ) > -1 ) {
-                Requests.update( { _id: request._id }, {
+                PPM_Schedulers.update( { _id: request._id }, {
                     $pull: {
                         unreadRecipents: user._id
                     },
@@ -746,7 +743,7 @@ Requests.methods( {
 
 } )
 
-Requests.helpers( {
+PPM_Schedulers.helpers( {
     // this sent to schema config
     // or put in another package document-urls
     path: 'requests',
@@ -758,7 +755,7 @@ Requests.helpers( {
     }
 } );
 
-Requests.helpers( {
+PPM_Schedulers.helpers( {
     isOverdue: function() {
         return moment( this.dueDate )
             .isBefore();
@@ -768,7 +765,7 @@ Requests.helpers( {
     },
 } );
 
-Requests.helpers( {
+PPM_Schedulers.helpers( {
     //doc-attachments
     getAttachmentCount() {
         if ( this.attachments ) {
@@ -785,7 +782,7 @@ function actionCreate( request ) {
 
 function setAssignee( request, assignee ) {
 
-    Requests.update( request._id, {
+    PPM_Schedulers.update( request._id, {
         $set: {
             assignee: {
                 _id: assignee._id,
@@ -793,13 +790,13 @@ function setAssignee( request, assignee ) {
             }
         }
     } );
-    Requests.update( request._id, {
+    PPM_Schedulers.update( request._id, {
         $pull: {
             members: { role: "assignee" }
         }
     } );
 
-    request = Requests.collection._transform( request );
+    request = PPM_Schedulers.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
@@ -892,8 +889,7 @@ function actionIssue( request ) {
             let team = Teams.findOne( {
                 _id: request.team._id
             } );
-            //code = team.getNextWOCode();
-            code = request.code;
+            code = team.getNextWOCode();
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id
@@ -903,10 +899,10 @@ function actionIssue( request ) {
     }
     if (requestIsInvoice) {
         request.invoiceDetails.status = 'Issued';
-        Meteor.call( 'Issues.save', request );
+        Meteor.call( 'PPM_Schedulers.save', request );
     }
     else{
-        Meteor.call( 'Issues.save', request, {
+        Meteor.call( 'PPM_Schedulers.save', request, {
             status: "Issued",
             issuedAt: new Date(),
             code: code,
@@ -914,11 +910,11 @@ function actionIssue( request ) {
         } );
     }
 
-    request = Requests.findOne( request._id );
+    request = PPM_Schedulers.findOne( request._id );
 
     if ( request ) {
         request.updateSupplierManagers();
-        request = Requests.findOne( request._id );
+        request = PPM_Schedulers.findOne( request._id );
         var title = request.invoiceDetails && request.invoiceDetails.invoiceNumber ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
@@ -1053,10 +1049,10 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-    Meteor.call( 'Issues.save', request, {
+    Meteor.call( 'PPM_Schedulers.save', request, {
         status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
-    request = Requests.findOne( request._id );
+    request = PPM_Schedulers.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
 
@@ -1075,8 +1071,7 @@ function actionComplete( request ) {
             status: "New",
             service: request.service,
             subservice: request.subservice,
-            //name: "FOLLOW UP - " + request.name,
-            name: request.name,
+            name: "FOLLOW UP - " + request.name,
             description: request.closeDetails.furtherWorkDescription,
             priority: request.closeDetails.furtherPriority || 'Scheduled',
             costThreshold: request.closeDetails.furtherQuoteValue
@@ -1087,21 +1082,8 @@ function actionComplete( request ) {
             newRequest.code = team.getNextWOCode();
         }
 
-        var response = Meteor.call( 'Issues.create', newRequest, true );
-        var newRequest = Requests.findOne( response._id );
-        newRequest.distributeMessage( {
-            message: {
-                verb: "requested a follow up to",
-                subject: closer.getName() + " requested a follow up to " + request.getName(),
-                body: newRequest.description,
-                target: request.getInboxId(),
-                digest: false,
-                read: true,
-                //alert: false
-            }
-        } );
-        let newResponse = Meteor.call( 'Issues.issue', newRequest );
-        let newRequest = Requests.findOne( newResponse._id )
+        var response = Meteor.call( 'PPM_Schedulers.create', newRequest );
+        var newRequest = PPM_Schedulers.findOne( response._id );
         //ok cool - but why send notification and not distribute message?
         //is it because distribute message automatically goes to all recipients
         //I think this needs to be replaced with distribute message
@@ -1116,22 +1098,32 @@ function actionComplete( request ) {
                 read: true,
                 //alert: false
             }
+        } );
+
+        newRequest.distributeMessage( {
+            message: {
+                verb: "requested a follow up to",
+                subject: closer.getName() + " requested a follow up to " + request.getName(),
+                body: newRequest.description,
+                target: request.getInboxId(),
+                digest: false,
+                read: true,
+                //alert: false
+            }
         } );*/
 
-
-
-        /*let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
+        let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
-            Meteor.call( 'Issues.issue', newRequest );
-        }*/
+            Meteor.call( 'PPM_Schedulers.issue', newRequest );
+        }
 
 
     } else if( request.closeDetails.jobCancelled == true ){
         request.distributeMessage( {
             message: {
-                verb: 'cancelled',
+                verb: 'closed',
                 body: "JOB CANCELLED: "+request.closeDetails.comment,
-                subject: "Work order #" + request.code + " has been cancelled"
+                subject: "Work order #" + request.code + " has been closed"
             }
         } );
     } else {
@@ -1149,35 +1141,23 @@ function actionComplete( request ) {
 }
 
 function actionInvoice( request ) {
-    request.invoiceDetails.status = 'New';
-    if ( request.invoiceDetails && request.invoiceDetails.invoice ) {
-        var files = request.invoiceDetails.invoice;
-        for (var i = 0; i < files.length; i++) {
-            var file = Files.findOne({_id:files[i]._id});
-            var filename = file && file.original && file.original.name;
-            var fileExists = false;
-            for (var x = 0; x < request.attachments.length; x++) {
-                
-                let f = Files.findOne({_id:request.attachments[x]._id}),
-                fname = f && f.original && f.original.name; 
-                if (filename == fname) {
-                    fileExists =  true;
-                }
-            }
-            if (!fileExists) {
-                request.attachments.push( files[i] );
-              }
+
+    if ( request.invoiceDetails && request.invoiceDetails.details ) {
+
+        if ( request.invoiceDetails.invoice ) {
+            request.attachments.push( request.invoiceDetails.invoice );
         }
     }
-    Meteor.call( 'Issues.save', request );
-    request = Requests.findOne( request._id );
+    request.invoiceDetails.status = 'New';
+    Meteor.call( 'PPM_Schedulers.save', request );
+    request = PPM_Schedulers.findOne( request._id );
 
     return request;
 }
 
 function actionSendReminder( requests ) {
     requests.map( ( request ) => {
-        request = Requests.findOne( request._id );
+        request = PPM_Schedulers.findOne( request._id );
         team = request.getTeam();
         request.distributeMessage( {
             recipientRoles: [ "supplier manager" ],
@@ -1192,7 +1172,7 @@ function actionSendReminder( requests ) {
             suppressOriginalPost: true,
         } );
         if ( !request.sendFirstReminder ) {
-            Requests.update( { _id: request._id }, {
+            PPM_Schedulers.update( { _id: request._id }, {
                 $set: {
                     firstReminderSent: true,
                 }
@@ -1201,4 +1181,4 @@ function actionSendReminder( requests ) {
     } )
 }
 
-export default Requests;
+export default PPM_Schedulers;

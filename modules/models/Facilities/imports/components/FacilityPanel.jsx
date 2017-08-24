@@ -67,7 +67,6 @@ function FacilityPanel( { item } ) {
 		} )
 
 	  }
-    
     return (
 
 		<div>

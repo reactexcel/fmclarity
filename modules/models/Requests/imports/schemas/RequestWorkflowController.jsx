@@ -31,7 +31,7 @@ function actionGetQuote( request, user ) {
 }
 
 function actionEdit( request, user ) {
-	if ( request.type == "Preventative" ) {
+	if ( request.type == "Schedular" ) {
 		request.status = "PPM";
 		request.priority = "PPM";
 	}
@@ -77,7 +77,7 @@ Requests.workflow.addState( [ 'Draft' ], {
 		},
 
 		method: function( request ) {
-			if ( request.type == "Preventative" ) {
+			if ( request.type == "Schedular" ) {
 				request.status = "PPM";
 				request.priority = "PPM";
 			} else {
@@ -187,7 +187,7 @@ Requests.workflow.addState( [ 'PPM' ], {
 		},
 
 		method: function( request ) {
-			if ( request.type == "Preventative" ) {
+			if ( request.type == "Schedular" ) {
 				request.status = "PPM";
 				request.priority = "PPM";
 			} else {

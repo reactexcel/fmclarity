@@ -82,7 +82,13 @@ class AutoForm extends React.Component {
 					}
 				})
 				if(foundAreas.length == 0){
-					window.alert("Oops, no bookable areas available");
+					Bert.alert({
+		  				title: 'Oops, Bookin not allowed',
+		  				message: 'No bookable areas available.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
 				}
 			}
 		}
@@ -280,6 +286,23 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
+							{
+
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
+								type 		= "button"
+								className 	= "btn btn-flat btn-primary"
+								onClick 	= { ( ) => { this.submit(true) } }
+							>
+
+								{this.state.submitText}
+
+							</button>
+
+							:null
+
+							}
 
 							<button
 								type 		= "button"

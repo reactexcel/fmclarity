@@ -48,15 +48,27 @@ export default class TeamPageSuppliersMobile extends React.Component {
         } )
 	}
 
+	sortSuppliers(arr) {
+		let sortedList = arr.sort(function(a, b){
+			if(a != null && a.name != null && b != null && b.name != null){
+				var textA = a.name.toUpperCase();
+				var textB = b.name.toUpperCase();
+				return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+			} else {
+				return 0;
+			}
+		});
+		return sortedList
+	}
+
 	render() {
 		let { team, facility, facilities, suppliers, ...other } = this.props;
-
+		let sortedSuppliers = suppliers ? this.sortSuppliers(suppliers) : suppliers;
 		if ( !team ) {
 			return <div/>
 		}
 
 		return <div className="facility-page animated fadeIn">
-			{/*<ClientFilter/>*/}
 			<div className="row">
 				<div className="col-sm-6">
 					<FacilityFilter
@@ -80,7 +92,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 
 			<div style = { { paddingTop:"50px" } }>
 				<div className = "nav-list">
-					{ suppliers ? suppliers.map( ( supplier, idx ) => {
+					{ sortedSuppliers ? sortedSuppliers.map( ( supplier, idx ) => {
 						return 	<div
 							key 		= { `${idx}-${supplier._id}` }
 							className 	= "list-tile"
