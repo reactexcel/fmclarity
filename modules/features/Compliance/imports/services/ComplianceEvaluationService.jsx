@@ -1,5 +1,5 @@
 import { Facilities } from '/modules/models/Facilities';
-import { Requests, RequestPanel, RequestActions, PPMRequest } from '/modules/models/Requests';
+import { Requests, RequestPanel, RequestActions, PPM_Schedulers } from '/modules/models/Requests';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { TeamActions } from '/modules/models/Teams';
 import React from 'react';
@@ -308,7 +308,7 @@ ComplianceEvaluationService = new function() {
                 serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = PPMRequest.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Schedular" } );
+            var requestCurser = PPM_Schedulers.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Schedular" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -334,7 +334,7 @@ ComplianceEvaluationService = new function() {
                 resolve: function(r,callback) {
                     let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                     let team = Session.getSelectedTeam();
-                    let newRequest = PPMRequest.create( {
+                    let newRequest = PPM_Schedulers.create( {
                         facility: preSelectedFacility,
                         team: team,
                         type: 'Schedular',
@@ -346,7 +346,7 @@ ComplianceEvaluationService = new function() {
                         subservice: rule.subservice
                     } );
                     //Meteor.call( 'Issues.save', newRequest );
-                    TeamActions.createPPMRequest.run( team, callback, newRequest );
+                    TeamActions.createPPM_Schedulers.run( team, callback, newRequest );
                 }
             } )
         },
@@ -360,7 +360,7 @@ ComplianceEvaluationService = new function() {
                     status: {$in:["PMP","PPM"]}
                 }
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
-                event = PPMRequest.findOne( query );
+                event = PPM_Schedulers.findOne( query );
             }
 
             let nextDate,
@@ -379,13 +379,13 @@ ComplianceEvaluationService = new function() {
                 previousDate = event.getPreviousDate();
             }
             if ( event ) {
-                let nextRequest = PPMRequest.findOne( _.extend( query, {
+                let nextRequest = PPM_Schedulers.findOne( _.extend( query, {
                     type:"Preventative",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
-                previousRequest = PPMRequest.findOne( _.extend( query, {
+                previousRequest = PPM_Schedulers.findOne( _.extend( query, {
                     type:"Preventative",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
@@ -471,7 +471,7 @@ ComplianceEvaluationService = new function() {
             if (rule.subservice){
                  q["subservice.name"] = rule.subservice.name;
             }
-            let request = PPMRequest.findOne( q );
+            let request = PPM_Schedulers.findOne( q );
             let message = {}
             let passed = false;
             let summary = "failed"
@@ -548,7 +548,7 @@ ComplianceEvaluationService = new function() {
                     } else if ( !request ) { // If no PPM event exists.
                         let preSelectedFacility = Facilities.findOne({ _id: facility._id });
                         console.log(rule);
-                        let newRequest = PPMRequest.create( {
+                        let newRequest = PPM_Schedulers.create( {
                             facility: preSelectedFacility,
                             team: team,
                             type: 'Schedular',
@@ -567,7 +567,7 @@ ComplianceEvaluationService = new function() {
                             supplier: serviceReq[0].data.supplier,
                             supplierContacts: serviceReq[0].data.defaultContact
                         } );
-                        TeamActions.createPPMRequest.run( team, callback, newRequest );
+                        TeamActions.createPPM_Schedulers.run( team, callback, newRequest );
                     }
                 }
             } )
