@@ -1,256 +1,319 @@
 import React from "react";
-import moment from 'moment';
-import { Requests } from '/modules/models/Requests';
-import { Files } from '/modules/models/Files';
-import { Reports } from '/modules/models/Reports';
+import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+
+import { Menu } from '/modules/ui/MaterialNavigation';
+import { Requests } from '/modules/models/Requests';
+import { Reports } from '/modules/models/Reports';
+import { ServicesRequestsView } from '/modules/mixins/Services';
+import { Facilities } from '/modules/models/Facilities';
+import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
+
+import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
+import { DataTable } from '/modules/ui/DataTable';
+import WoTable from '../reports/WoTable.jsx';
+if ( Meteor.isClient ) {
+	import Chart from 'chart.js';
+}
 
+/**
+ * @class 			RequestBreakdownChart
+ * @memberOf 		module:features/Reports
+ */
 const MBMDefectImages = React.createClass( {
-    getInitialState(){
-      let	user = Meteor.user();
-      let team = user.getSelectedTeam();
-      let facility = Session.getSelectedFacility();
-        return{
-            data:[],
-            removedImg:[],
-            expandall: false,
-            comment: "",
-            commentData: {},
-            facility,
-            team
-          };
-    },
 
-	componentWillMount() {
-    this.updateImages();
+	mixins: [ ReactMeteorData ],
+
+	getInitialState() {
+		let	user = Meteor.user();
+		let team = user.getSelectedTeam();
+		let facility = Session.getSelectedFacility();
+		var startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
+		var title = startDate.format( "[since] MMMM YYYY" )
+		return ( {
+			startDate: startDate,
+			title: title,
+			expandall: false,
+			team,
+			facility,
+			commentString :""
+		} )
 	},
-  componentWillReceiveProps(){
-    this.updateImages();
-  },
-  componentDidMount(){
-    	$(".loader").hide();
-  },
-    updateImages(){
-      var user, team, facility, requests, data = [];
-          var user = Meteor.user();
-  		if ( user ) {
-  			var q = {};
-  			team = Session.getSelectedTeam();
-  			facility = Session.getSelectedFacility();
-  			if ( facility ) {
-  				let services = facility.servicesRequired;
-          // console.log(services);
-          services = services.filter((val)=> val != null)
-                  q['facility._id'] = facility._id;
-                  // q['closeDetails.completionDate'] = {
-                  //     $gte: moment().startOf("month").toDate(),
-                  //     $lte: moment().endOf("month").toDate()
-                  // };
-                   q['dueDate'] = {
-                       $gte: moment().startOf("month").toDate(),
-                       $lte: moment().endOf("month").toDate()
-                   };
-                  q['status'] = {$in:['Completed', "Issued"]};
-                  q['type'] = "Defect";
-                  for (var i in services) {
-                      q['service.name'] = services[i].name;
-                      let requests = Requests.findAll(q);
-                      if (requests.length){
-                          data.push({
-                              name: services[i].name,
-                              requests: requests
-                          })
-                      }
-                  }
-  			}
-  		}
-  		this.setState({
-              data
-          })
-    },
-    getImage( _id ){
-        let file = Files.findOne({_id});
-        let url = null;
-        let { removedImg } = this.state;
-        if (file != null ) {
-            url = file.url();
-            if( _.contains(["jpg", "png"], file.extension()) && !_.contains(removedImg, _id) ) {
-                return (
-                    <div className="col-sm-3 report-thumb" key={_id}>
-                        <img src={url} style={{ height:"150px", width:"200px" }} />
-                    </div>
-                );
-            }
-        }
-        return null;
-    },
-    getComment(s) {
 
-      var facility = this.state.facility
-      var query = {};
-      if ( facility ) {
-        query[ "facility._id" ] = facility._id;
-      }
-      var team = this.state.team
-      if ( team ) {
-        query[ "team._id" ] = team._id;
-      }
-      const handle = Meteor.subscribe('User: Facilities, Requests,Reports') ;
-      let commentQuery = {}
-      commentQuery[ "facility._id" ] = facility._id;
-      commentQuery[ "team._id" ] = team._id;
-      commentQuery["type"]="Defect";
-      commentQuery["createdAt"] = {
-        $gte: moment().subtract(0, "months").startOf("month").toDate(),
-        $lte: moment().subtract(0, "months").endOf("month").toDate( )
-      };
-      let currentMonthComment = Reports.find(commentQuery).fetch();
-      commentQuery["createdAt"] = {
-        $gte: moment().subtract(1, "months").startOf("month").toDate(),
-        $lte: moment().subtract(1, "months").endOf("month").toDate( )
-      };
-      let previousMonthComment = Reports.find(commentQuery).fetch();
+	getMeteorData() {
 
-      if ( facility ) {
-        let finalComment
-        let currentMonth = false
-        if(s != null){
-          let previousMonthServiceComment = previousMonthComment.filter((val) => val.service === s.name);
-          let presentMonthServiceComment = currentMonthComment.filter((val) => val.service === s.name);
-          if(presentMonthServiceComment.length > 0){
-            currentMonth = true
-            finalComment = presentMonthServiceComment
-          }else{
-            currentMonth = false
-            finalComment = previousMonthServiceComment
-          }
-          return <CommentRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth}/>
+		var startDate = this.state.startDate;
+		var query = {
+			status:{$nin:['Deleted','PPM']},
+      type:"Defect"
+		}
+		var facility = Session.getSelectedFacility();;
+		if ( facility ) {
+			query[ "facility._id" ] = facility._id;
+		}
+
+		var team = Session.get( 'selectedTeam' );
+		if ( team ) {
+			query[ "team._id" ] = team._id;
+		}
+		const handle = Meteor.subscribe('User: Facilities, Requests');
+		var labels = [];
+		var set = [];
+        var queries = [];
+
+        for (var i = 0; i < 12; i++) {
+            query["createdAt"] = {
+				$gte: moment().subtract(i, "months").startOf("month").toDate(),
+				$lte: moment().subtract(i, "months").endOf("month").toDate( )
+			};
+            queries.unshift( Object.assign({},query) );
+            let requestCursor = Requests.find( query )
+
+            set.unshift( requestCursor.count() );
+            labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
         }
-        //console.log(d);
-      }
-    },
+				// let commentQuery = {}
+				// commentQuery[ "facility._id" ] = facility._id;
+				// commentQuery[ "team._id" ] = team._id;
+				// commentQuery["type"]={$nin:['WOComment','Defect']};
+				// commentQuery["createdAt"] = {
+				// 	$gte: moment().subtract(0, "months").startOf("month").toDate(),
+				// 	$lte: moment().subtract(0, "months").endOf("month").toDate( )
+				// };
+				// let currentMonthComment = Reports.find(commentQuery).fetch();
+				// commentQuery["createdAt"] = {
+				// 	$gte: moment().subtract(1, "months").startOf("month").toDate(),
+				// 	$lte: moment().subtract(1, "months").endOf("month").toDate( )
+				// };
+				// let previousMonthComment = Reports.find(commentQuery).fetch();
+
+        let d;
+        if ( facility ) {
+            let services = facility.servicesRequired;
+						// console.log(services);
+						services = services.filter((val) => val != null && val.name != "" || null || undefined)
+            d = services.map( function( s, idx ){
+							let finalComment =[]
+							let currentMonth = false
+							if(s != null){
+								// let previousMonthServiceComment = previousMonthComment.filter((val) => val.service === s.name);
+								// let presentMonthServiceComment = currentMonthComment.filter((val) => val.service === s.name);
+								// if(presentMonthServiceComment.length > 0){
+								// 	currentMonth = true
+								// 	finalComment = presentMonthServiceComment
+								// }else{
+								// 	currentMonth = false
+								// 	finalComment = previousMonthServiceComment
+								// }
+
+								let dataset = queries.map( function(q){
+									q["service.name"] = s.name;
+
+									return Requests.find( q ).count();
+								});
+
+								let showChart = false ;
+								dataset.map((val)=>{
+									if(val > 0){
+										showChart = true
+									}
+								})
+								return  showChart ? <SingleServiceRequest serviceName={s.name} commentData = {finalComment} currentMonth ={currentMonth} set={dataset} labels={labels} key={idx} id={idx}/>:null
+							}
+            });
+            //console.log(d);
+        }
+
+		return {
+			facility: facility,
+			labels: labels,
+			set: set,
+            d:d,
+			ready: handle.ready()
+		}
+	},
+	componentWillUnmount(){
+		$("#fab").show();
+		PubSub.publish('stop', "test");
+	},
+	componentWillMount(){
+		$("#fab").hide();
+		// if(!this.props.MonthlyReport){
+		// 	let query = {};
+		// 	query[ "facility._id" ] = this.state.facility ? this.state.facility._id : null;
+		// 	query[ "team._id" ] = this.state.team ? this.state.team._id : null;
+		// 	query["createdAt"] = {
+		// 		$gte: moment().subtract(1, "months").startOf("month").toDate(),
+		// 		$lte: moment().subtract(0, "months").endOf("month").toDate( )
+		// 	};
+		// 	let comments = Reports.find(query).fetch();
+    //
+		// 	comments = comments.filter((c) => c.hasOwnProperty("service"));
+		// 	let commentString = " "
+		// 	comments.map((c)=>{
+		// 		commentString = commentString + c.comment
+		// 	})
+		// 	this.setState({commentString})
+		// }
+	},
+
+	// componentDidMount(){
+	// 	if(!this.props.MonthlyReport){
+	// 		let update = setInterval(()=>{
+  //
+	// 			PubSub.subscribe( 'stop', (msg,data) => {
+	// 				clearInterval(update)
+	// 			});
+	// 			let query = {};
+	// 			query[ "facility._id" ] = this.state.facility._id;
+	// 			query[ "team._id" ] = this.state.team._id;
+	// 			query["createdAt"] = {
+	// 				$gte: moment().subtract(1, "months").startOf("month").toDate(),
+	// 				$lte: moment().subtract(0, "months").endOf("month").toDate( )
+	// 			};
+	// 			let comments = Reports.find(query).fetch();
+  //
+	// 			comments = comments.filter((c) => c.hasOwnProperty("service"));
+	// 			let UpdatedString = " "
+	// 			comments.map((c)=>{
+	// 				UpdatedString = UpdatedString + c.comment
+	// 			})
+	// 			if(UpdatedString != this.state.commentString){
+	// 				this.setState({
+	// 					commentString : UpdatedString
+	// 				})
+	// 			}
+	// 		},1000)
+	// 	}
+	// },
 
 	render() {
+		var facility=this.data.facility;
+		facilities=null;
+		if (this.data.ready) {
+			facilities = Meteor.user().getTeam().getFacilities();
+		}
 		return (
-			<div className = "defectTable">
-                <div className="ibox-content">
-                  <table>
-                    <thead>
-                    <tr>
-                    <th>S no.</th>
-                    <th>Service</th>
-                    <th>Images</th>
-                  </tr>
-                  </thead>
-                <tbody>
-
-                  {this.state.data.map( ( d, idx ) => {
-                    return(
-                      <tr key={idx} >
-                        <td>{idx+1}</td>
-                        <td style={{fontWeight:"600"}}>{d.name}</td>
-                        <td>{_.flatten(d.requests.map( (r, idy) => {
-                          let imgs = [];
-                          if (r.attachments && r.attachments.length) {
-                            imgs.push(<div className="row" key={idy} style={{marginLeft:"5px"}}>
-                              <div className="col-sm-12" style={{paddingTop:"20px", marginBottom:"5px", fontWeight:"500"}}>
-                                <span>#WO: <em>{r.code}</em></span>
-                                <span style={{paddingLeft:"10px"}}>
-                                  {r.name}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                          r.attachments.map( (attach, idz) => {
-                            let element = this.getImage(attach._id);
-                            // console.log(element);
-                            if( element ) {
-                              imgs.push( element);
-                            }
-                          });
-                        }
-                        return imgs;
-                      }), true)}
-                      {this.getComment(d)}
-                    </td>
-                  </tr>
-                )
-              })}
-                </tbody>
-                  </table>
-                </div>
-            </div>
-        )
+			<div>
+                {this.data.d?this.data.d:null}
+			</div>
+		)
 	}
-} )
+
+} );
 
 
 
-const CommentRequest = React.createClass( {
+
+
+
+
+const SingleServiceRequest = React.createClass( {
 
 	getInitialState() {
 		return ( {
-      expandall: false,
+			expandall: false,
 			comment: this.props.commentData.length > 0 ? this.props.commentData[0].comment : "",
 			commentData:this.props.commentData.length > 0 ? this.props.commentData[0] : {},
 			currentMonth: this.props.currentMonth
 		} )
 	},
-  componentWillReceiveProps(props){
-  this.setState({
-    comment: props.commentData.length > 0 ? props.commentData[0].comment : "",
-    commentData:props.commentData.length > 0 ? props.commentData[0] : {},
-    currentMonth:props.currentMonth
-  })
-  },
-	handleComment(item){
-		let	user = Meteor.user();
-		let team = user.getSelectedTeam();
-		let facility = Session.getSelectedFacility();
-		let commentSchema = {
-			service : this.props.serviceName,
-			team : {
-				_id : team._id
-			},
-			facility :{
-				_id : facility._id
-			},
-      type:"Defect",
-			comment : this.state.comment.trim()
-		}
-    console.log(item);
-		if(item){
+	componentWillReceiveProps(props){
+	this.setState({
+		comment: props.commentData.length > 0 ? props.commentData[0].comment : "",
+		commentData:props.commentData.length > 0 ? props.commentData[0] : {},
+		currentMonth:props.currentMonth
+	})
+	},
 
-			if(!item._id){
-				let test = this.state.comment.trim()
+	componentDidMount() {
+		setTimeout(function(){
+			$(".loader").hide();
+		},2000)
+	},
 
-				if(test != "" || null || undefined){
-					Reports.save.call(commentSchema);
+	setDataSet(newdata){
+		this.setState({
+			dataset:newdata,
+		});
+	},
+	fields:{
+		"Event Name": "name",
+		"Completed At": ( item ) => {
+			if( item && item.closeDetails && item.closeDetails.completionDate ){
+				return {
+					val: moment( item.closeDetails.completionDate ).format("DD-MMM-YY")
 				}
-
-			}else{
-				item["comment"] = this.state.comment;
-				let test = this.state.comment.trim()
-
-				if(test != "" || null || undefined){
-					if(this.state.currentMonth){
-						console.log("current");
-						Reports.save.call(item);
-				}else{
-						console.log("previousMonthComment");
-						Reports.save.call(commentSchema);
-					}
-				}
-
 			}
 		}
 	},
+	getData(){
+		let facility = Session.getSelectedFacility();
+		let data = Requests.findAll( {
+			'facility._id': facility._id,
+			"service.name": this.props.serviceName,
+			status: "Complete",
+			type: "Ad-Hoc",
+			priority: "PMP",
+			"closeDetails.completionDate":{
+				$gte: new moment().startOf("month").toDate(),
+				$lte: new moment().endOf("month").toDate()
+			}
+		} );
+
+		return data;
+	},
+	// handleComment(item){
+	// 	let	user = Meteor.user();
+	// 	let team = user.getSelectedTeam();
+	// 	let facility = Session.getSelectedFacility();
+	// 	let commentSchema = {
+	// 		service : this.props.serviceName,
+	// 		team : {
+	// 			_id : team._id
+	// 		},
+	// 		facility :{
+	// 			_id : facility._id
+	// 		},
+	// 		comment : this.state.comment.trim()
+	// 	}
+	// 	if(item){
+  //
+	// 		if(!item._id){
+	// 			let test = this.state.comment.trim()
+  //
+	// 			if(test != "" || null || undefined){
+	// 				Reports.save.call(commentSchema);
+	// 			}
+  //
+	// 		}else{
+	// 			item["comment"] = this.state.comment;
+	// 			let test = this.state.comment.trim()
+  //
+	// 			if(test != "" || null || undefined){
+	// 				if(this.state.currentMonth){
+	// 					console.log("current");
+	// 					Reports.save.call(item);
+	// 			}else{
+	// 					console.log("previousMonthComment");
+	// 					Reports.save.call(commentSchema);
+	// 				}
+	// 			}
+  //
+	// 		}
+	// 	}
+	// },
 
 	render() {
+		let data = this.getData();
 		let item = this.state.commentData;
 		return (
-				<div className = "test" style={{marginTop:"160px"}}>
+			<div style={ { marginTop: "100px", marginBottom: "10px", borderTop:"2px solid"  } }>
+				<div className="ibox-title">
+					<h2> {this.props.serviceName}</h2>
+				</div>
+				{/* <div style={ { marginTop: "20px", marginBottom: "70px" } }>
 					<div className="comment-header">
 						<h4>Comments</h4>
 						<span style={{float: "right"}}>
@@ -287,7 +350,13 @@ const CommentRequest = React.createClass( {
 								<p style={{fontFamily: "inherit"}}>{this.state.comment}</p>
 							</div>}
 					</div>
+				</div> */}
+				<div className="data-table">
+					<div style={{marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
+						<WoTable service={this.props.serviceName} defect/>
+					</div>
 				</div>
+			</div>
 		)
 	}
 

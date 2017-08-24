@@ -177,18 +177,17 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
 			}
 		}
 	});
-    if (Session.get( 'selectedFacility' )) {
-            delete this.fields['Facility'];
-        }
-        var requiredColumns = columns ? $.grep(columns, function(element) {
-                                return $.inArray(element, Object.keys(this.fields) ) !== -1;
-                                }) : Object.keys(this.fields);
-        var newCols={};
-        requiredColumns.map(function(col){
-            newCols[col] = this.fields[col];
-        });
-        if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) == "Booking"){
-			newCols = _.omit(newCols,"Due");
+
+		let requiredColumns = columns ? $.grep(columns, (element) => {
+			return $.inArray(element, Object.keys(this.fields) ) !== -1;
+		}) : Object.keys(this.fields);
+		let newCols={};
+		requiredColumns.map(function(col){
+			newCols[col] = this.fields[col];
+		});
+
+		if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) === "Booking"){
+			newCols = _.omit(newCols, "Due");
 		}
     return (
         <div className = "request-table">

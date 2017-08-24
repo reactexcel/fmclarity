@@ -1,6 +1,7 @@
 export default CreatePPMRequestForm = [
 	/*'team',*/
 	/* 'occupancy', */
+	'type',
 	'facility',
 	'location',
 	'incidentVictim',

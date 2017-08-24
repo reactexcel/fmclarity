@@ -80,7 +80,9 @@ Roles = new class {
 			roles: {},
 			actors: {}
 		}
-
+		if(Meteor.user().getRole() == "fmc support"){
+			this.addRole( results, Meteor.user(), Meteor.user().getRole() );
+		}
 		let { owner, team, supplier, facility, facilities, members, assignee } = item;
 
 		if ( owner != null ) {
