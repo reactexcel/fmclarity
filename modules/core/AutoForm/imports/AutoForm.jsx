@@ -180,8 +180,8 @@ class AutoForm extends React.Component {
 					// remove fields that do not meet condition from being added to collection
 					if (shouldClearIfHidden) {
 						delete item[key];
-					return;
 					}
+					return;
 				}
 			}
 
