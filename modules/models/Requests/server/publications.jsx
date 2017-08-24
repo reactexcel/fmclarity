@@ -1,5 +1,5 @@
 import { Requests } from '/modules/models/Requests';
-import { PPMRequest } from '/modules/models/Requests';
+import { PPM_Schedulers } from '/modules/models/Requests';
 
 Meteor.publish( 'Requests', () => {
     return Requests.find();
@@ -10,12 +10,12 @@ Meteor.publish( 'Requests: Closed', () => {
 } );
 
 
-Meteor.publish( 'PPMRequest', () => {
-    return PPMRequest.find();
+Meteor.publish( 'PPM_Schedulers', () => {
+    return PPM_Schedulers.find();
 } );
 
-Meteor.publish( 'PPMRequest: Closed', () => {
-    return PPMRequest.find( { status: 'Closed' } );
+Meteor.publish( 'PPM_Schedulers: Closed', () => {
+    return PPM_Schedulers.find( { status: 'Closed' } );
 } );
 
 

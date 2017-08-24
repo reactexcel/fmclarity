@@ -9,7 +9,7 @@ import { Model } from '/modules/core/ORM';
 
 import { Documents } from '/modules/models/Documents';
 import { Files } from '/modules/models/Files';
-import { Requests ,PPMRequest } from '/modules/models/Requests';
+import { Requests ,PPM_Schedulers } from '/modules/models/Requests';
 
 import { Thumbs } from '/modules/mixins/Thumbs';
 import { Owners } from '/modules/mixins/Owners';
@@ -205,14 +205,22 @@ Users.actions( {
             let currentCollectionCount = currentCollection.count();
             let requests = currentCollection.fetch();
 
-            let PPMIssued = PPMRequest.find( {
-              $and: query
-            } )
-              .fetch( {
-                sort: {
-                  createdAt: 1
+
+
+            var PPMIssued = PPM_Schedulers.find( {
+                    $and: query
+                } )
+                .fetch( {
+                  sort: {
+                    createdAt: 1
+                  }
+                } );
+
+                if(PPMIssued.length > 0){
+                  PPMIssued.map((val)=> {
+                    requests.push(val);
+                  })
                 }
-              } );
 
             if(PPMIssued.length > 0){
               PPMIssued.map((val)=> {
@@ -225,7 +233,7 @@ Users.actions( {
                 type: "Schedular"
               } );
 
-              var PPMRequests = PPMRequest.find( {
+              var PMPRequests = PPM_Schedulers.find( {
                 $and: query
               } )
                 .fetch();
@@ -279,9 +287,8 @@ Users.actions( {
                   repeats : 10,
                   unit : "years"
                 },
-              };
-
-              PPMRequests.map( ( r ) => {
+              }
+              PMPRequests.map( ( r ) => {
                 // console.log(r);
                 if ( r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats") ) {
                   if(r.frequency.unit === "custom"){
@@ -303,7 +310,7 @@ Users.actions( {
                         if(diff_in_dates_in_days > 0){
                           return
                         }else{
-                          copy = PPMRequest.collection._transform( copy );
+                          copy = PPM_Schedulers.collection._transform( copy );
                           requests.push( copy );
                         }
                       }
@@ -311,7 +318,7 @@ Users.actions( {
                       for ( var i = 0; i < repeats; i++ ) {
                         var copy = Object.assign( {}, r ); //_.omit(r,'_id');
                         copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
-                        copy = PPMRequest.collection._transform( copy );
+                        copy = PPM_Schedulers.collection._transform( copy );
                         requests.push( copy );
                       }
                     }
@@ -332,7 +339,7 @@ Users.actions( {
                         if(diff_in_dates_in_days > 0){
                           return
                         }else{
-                          copy = PPMRequest.collection._transform( copy );
+                          copy = PPM_Schedulers.collection._transform( copy );
                           requests.push( copy );
                         }
                       }
@@ -340,7 +347,7 @@ Users.actions( {
                       for ( var i = 0; i < repeats; i++ ) {
                         var copy = Object.assign( {}, r ); //_.omit(r,'_id');
                         copy.dueDate = date.add(1* r.frequency.number , r.frequency.period).toDate();
-                        copy = PPMRequest.collection._transform( copy );
+                        copy = PPM_Schedulers.collection._transform( copy );
                         requests.push( copy );
                       }
                     }

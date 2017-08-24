@@ -3,7 +3,7 @@ import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Requests,PPMRequest } from '/modules/models/Requests';
+import { Requests,PPM_Schedulers } from '/modules/models/Requests';
 import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 import { Facilities } from '/modules/models/Facilities';
@@ -56,7 +56,7 @@ const MBMBuildingServiceReport = React.createClass( {
 		if ( team ) {
 			query[ "team._id" ] = team._id;
 		}
-		const handle = Meteor.subscribe('User: Facilities, Requests , PPMRequest');
+		const handle = Meteor.subscribe('User: Facilities, Requests , PPM_Schedulers');
 		var labels = [];
 		var set = [];
         var queries = [];
@@ -69,7 +69,7 @@ const MBMBuildingServiceReport = React.createClass( {
             queries.unshift( Object.assign({},query) );
             let requestCursor = Requests.find( query )
 
-            set.unshift( requestCursor.count() + PPMRequest.find( query ).count() );
+            set.unshift( requestCursor.count() + PPM_Schedulers.find( query ).count() );
             labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
         }
 				let commentQuery = {}
@@ -109,7 +109,7 @@ const MBMBuildingServiceReport = React.createClass( {
 								let dataset = queries.map( function(q){
 									q["service.name"] = s.name;
 
-									return Requests.find( q ).count() + PPMRequest.find( q ).count();
+									return Requests.find( q ).count() + PPM_Schedulers.find( q ).count();
 								});
 
 								let showChart = false ;

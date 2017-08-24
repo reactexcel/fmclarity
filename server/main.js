@@ -24,7 +24,7 @@ Meteor.startup( function() {
         schedule: function( parser ) {
             return parser.text( "at 09:00 am" );
         },
-        job: CronJobs.issuePPMRequest,
+        job: CronJobs.issuePPM_Schedulers,
     } );
 
     SyncedCron.add( {

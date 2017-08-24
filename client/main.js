@@ -357,8 +357,8 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( request ) => {
         if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
-            import { PPMRequest } from '/modules/models/Requests';
-            request = PPMRequest.collection._transform( request );
+            import { PPM_Schedulers } from '/modules/models/Requests';
+            request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;
