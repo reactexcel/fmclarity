@@ -33,13 +33,21 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	else if ( selectedStatus == 'Booking' ){
 		statusFilter = { "status": 'Booking' };
 	}
+	else if ( selectedStatus == 'Preventative' ){
+		statusFilter = {
+			"status": 'Issued',"type": 'Preventative' };
+	}
 	else if ( selectedStatus == 'Cancelled' ) {
 		statusFilter = { "status": 'Cancelled' };
 		includeComplete = true;
 	}
+	else if ( selectedStatus == 'All' ) {
+		statusFilter = { "status": { $in:[ 'Open','Booking', 'New', 'Issued', 'Complete', 'Close', 'Cancelled' ] }  };
+		includeComplete = true;
+	}
 	else {
 		selectedStatus = 'Open';
-		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
+		statusFilter = { "status": { $in: [ 'New', 'Issued', 'Booking' ] } };
 	}
 
 	if( includeComplete ) {
