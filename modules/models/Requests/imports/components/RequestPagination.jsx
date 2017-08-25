@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FlatButton from 'material-ui/FlatButton';
 
 /**
  * @class 			RequestsPageIndex
@@ -41,22 +42,60 @@ export default class RequestPagination extends Component {
     let paginationItems = [];
     let currentPage = this.state.currentPage;
 
+    if (currentPage > 5) {
+      paginationItems.push({
+        pageNumber: 0,
+        label: 1,
+        clickable: true,
+        click: () => {
+          Session.set('currentRequestPageNumber', 0);
+          this.setState({
+            currentPage: 0
+          })
+        }
+      });
+      paginationItems.push({
+        clickable: false
+      });
+    }
+
     for (let x = 0; x < numberOfPages; x++) {
 
-      if (x > currentPage + 3) {
+      if (x > currentPage + 2) {
         continue;
       }
-      if (x < currentPage - 3) {
+      if (x < currentPage - 2) {
         continue;
       }
 
       paginationItems.push({
         pageNumber: x,
         label: x + 1,
+        clickable: true,
         click: () => {
+          if (currentPage === x) {
+            return null;
+          }
           Session.set('currentRequestPageNumber', x);
           this.setState({
             currentPage: x
+          })
+        }
+      });
+    }
+
+    if (currentPage < numberOfPages - 6) {
+      paginationItems.push({
+        clickable: false
+      });
+      paginationItems.push({
+        pageNumber: numberOfPages - 1,
+        label: numberOfPages,
+        clickable: true,
+        click: () => {
+          Session.set('currentRequestPageNumber', numberOfPages - 1);
+          this.setState({
+            currentPage: numberOfPages - 1
           })
         }
       });
@@ -67,10 +106,21 @@ export default class RequestPagination extends Component {
 
   render() {
     let paginationItems = this.state.paginationItems.map( ( item, index ) => {
-      return (
-        <a key={index}
-           onClick={ () => { item.click() } }
-           className={ item.pageNumber === this.state.currentPage ? 'active' : null }>{ item.label }</a>
+      return item.clickable ? (
+        <FlatButton label={ item.label }
+                    key={ index }
+                    backgroundColor={ item.pageNumber === this.state.currentPage ? '#0152b5' : null }
+                    onClick={ () => { item.click() } }
+                    style={{
+                      color: item.pageNumber === this.state.currentPage ? '#FFF' : '#000',
+                      minWidth: 40,
+                      width: 40,
+                      marginLeft: 5,
+                      marginRight: 5
+                    }}
+        />
+      ) : (
+        <span className="ellipsis" style={{ marginLeft: 10, marginRight: 10 }}>...</span>
       );
     });
 
