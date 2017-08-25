@@ -3,6 +3,7 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import CalendarPeriod from './imports/CalendarPeriod.jsx';
+import Check from './imports/Check.jsx';
 import Currency from './imports/Currency.jsx';
 import DateInput from './imports/DateInput.jsx';
 import DateTime from './imports/DateTime.jsx';
@@ -19,9 +20,10 @@ import Phone from './imports/Phone.jsx';
 import StartEndTimePicker from './imports/StartEndTimePicker.jsx';
 import DropFileContainer from './imports/DropFile.jsx';
 import FMInstantSearchBox from './imports/FMInstantSearchBox.jsx';
-
+console.log(Check,"check");
 checkModules( {
 	Currency,
+	Check,
 	DateInput,
 	DateTime,
 	FileField,
@@ -45,6 +47,7 @@ checkModules( {
  */
 export {
 	Currency,
+	Check,
 	DateInput,
 	DateTime,
 	FileField,

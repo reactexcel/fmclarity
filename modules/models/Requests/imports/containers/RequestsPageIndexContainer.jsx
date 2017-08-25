@@ -51,7 +51,7 @@ export default RequestsPageIndexContainer = createContainer( ( { selectedRequest
 	}
 	else {
 		selectedStatus = 'Open';
-		statusFilter = { "status": { $in: [ 'New', 'Issued' ] } };
+		statusFilter = { "status": { $in: [ 'New', 'Issued', 'Booking' ] } };
 	}
 
 	if( includeComplete ) {

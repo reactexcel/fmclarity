@@ -29,7 +29,8 @@ const WoTable = React.createClass( {
     let query = {
       "facility._id" : this.state.facility._id ,
       service: this.props.service,
-      type : "toggle"}
+      type : this.props.defect ? "defectToggle" : "toggle"
+    }
     let RemovedWoKeys =  Reports.findOne(query);
     this.setState({
       removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
@@ -40,7 +41,7 @@ const WoTable = React.createClass( {
     let query = {
       "facility._id" : this.state.facility._id ,
       service: this.props.service,
-      type : "toggle"}
+      type : this.props.defect ? "defectToggle" : "toggle" }
     let RemovedWoKeys =  Reports.findOne(query);
     this.setState({
       removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
@@ -69,8 +70,11 @@ const WoTable = React.createClass( {
                   //      $gte: moment().startOf("month").toDate(),
                   //      $lte: moment().endOf("month").toDate()
                   //  };
-
-                  q["type"] = {$ne:'Defect'}
+                  if(this.props.defect){
+                    q["type"] = 'Defect'
+                  }else{
+                    q["type"] = {$ne:'Defect'}
+                  }
 
                   q['status'] ={$nin:['Deleted','PPM']};
                       q['service.name'] = this.props.service;
@@ -99,7 +103,7 @@ const WoTable = React.createClass( {
       let query = {
         "facility._id" : facility._id ,
         service: this.props.service,
-        type : "toggle"}
+        type : this.props.defect ? "defectToggle" : "toggle" }
       let RemovedWoKeys =  Reports.findOne(query);
       if(RemovedWoKeys){
         RemovedWoKeys.keys = [] ;
@@ -118,7 +122,7 @@ const WoTable = React.createClass( {
         let query = {
           "facility._id" : facility._id ,
           service: r.service.name,
-          type : "toggle"}
+          type : this.props.defect ? "defectToggle" : "toggle" }
         let RemovedWoKeys =  Reports.findOne(query);
         console.log(RemovedWoKeys);
 
@@ -129,7 +133,7 @@ const WoTable = React.createClass( {
             } ,
             service : r.service.name,
             keys:[key],
-            type : "toggle"
+            type : this.props.defect ? "defectToggle" : "toggle" 
           }
           this.setState({
             removedImg : item.keys
@@ -173,7 +177,6 @@ const WoTable = React.createClass( {
         return null;
     },
     getComment(s) {
-
       var facility = this.state.facility
       var query = {};
       if ( facility ) {
@@ -187,7 +190,7 @@ const WoTable = React.createClass( {
       let commentQuery = {}
       commentQuery[ "facility._id" ] = facility._id;
       commentQuery[ "team._id" ] = team._id;
-      commentQuery["type"]="WOComment";
+      commentQuery["type"]=this.props.defect ? "defect" : "WOComment";
       commentQuery["code"]= s.code ;
       commentQuery["createdAt"] = {
         $gte: moment().subtract(0, "months").startOf("month").toDate(),
@@ -213,7 +216,7 @@ const WoTable = React.createClass( {
             currentMonth = false
             finalComment = previousMonthServiceComment
           }
-          return <CommentRequest serviceName={s.service.name} request = {s} commentData = {finalComment} currentMonth ={currentMonth}/>
+          return <CommentRequest serviceName={s.service.name} request = {s} commentData = {finalComment} currentMonth ={currentMonth} {...this.props}/>
         }
         //console.log(d);
       }
@@ -348,7 +351,7 @@ const CommentRequest = React.createClass( {
 			facility :{
 				_id : facility._id
 			},
-      type:"WOComment",
+      type:this.props.defect ? "defect" : "WOComment",
 			comment : this.state.comment.trim()
 		}
 
