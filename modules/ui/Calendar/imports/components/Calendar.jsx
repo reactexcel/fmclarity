@@ -112,7 +112,6 @@ class Calendar extends React.Component {
         $( '#calendar' ).fullCalendar( {
             //height:500,
             eventClick( event ) {
-              console.log(event);
                 if ( event.request ) {
                     RequestActions.view.run( event.request );
                 }

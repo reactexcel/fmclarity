@@ -301,7 +301,8 @@ FacilityAreasEditorInner = React.createClass( {
                                                 onBlur={()=>{
                                                     component.props.sortArea(component.state.selection[0].children)
                                                 }}
-                                                onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
+                                                onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }
+                                            />
                                             {editable?<span className="areas-selector-delete-icon"
                                               onClick = {
                                                 () => {

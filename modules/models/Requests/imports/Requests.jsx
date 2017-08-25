@@ -1129,9 +1129,9 @@ function actionComplete( request ) {
     } else if( request.closeDetails.jobCancelled == true ){
         request.distributeMessage( {
             message: {
-                verb: 'closed',
+                verb: 'cancelled',
                 body: "JOB CANCELLED: "+request.closeDetails.comment,
-                subject: "Work order #" + request.code + " has been closed"
+                subject: "Work order #" + request.code + " has been cancelled"
             }
         } );
     } else {
