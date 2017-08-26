@@ -247,7 +247,7 @@ PPM_Schedulers.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Schedular' ) {
+            if ( request.type == 'Schedular' || request.type == 'Preventative' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
