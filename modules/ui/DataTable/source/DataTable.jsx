@@ -66,7 +66,6 @@ export default DataTable = React.createClass( {
 	},
 
 	componentWillMount() {
-		//console.log("[][][][][][][]");
 		//Perf.start();
 		this.update( this.props );
 		if (this.props.setDataSet) {
