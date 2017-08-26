@@ -67,6 +67,36 @@ export default Inbox = React.createClass( {
 
                 : null }
 
+                { inbox.type && _.contains(['Incident'], inbox.type) && inbox.incidentFurtherComments ?
+                                    <div>
+                                    {inbox.incidentFurtherComments.where ?
+                                        <div className="feed-element">
+                                        <div style={{borderBottom:"none", paddingLeft:"47px"}}>
+                                            <span>How and where are they being treated (if applicable)?</span>&nbsp;
+                                            <span className="text-muted">{inbox.incidentFurtherComments && inbox.incidentFurtherComments.where}</span>
+                                        </div>
+                                    </div>:null}
+
+                                    {inbox.incidentFurtherComments.action ?
+                                        <div className="feed-element">
+                                        <div style={{borderBottom:"none", paddingLeft:"47px"}}>
+                                            <span>What has/is being done?</span>&nbsp;
+                                            <span className="text-muted">{inbox.incidentFurtherComments && inbox.incidentFurtherComments.action}</span>
+                                        </div>
+                                    </div>:null}
+
+                                    {inbox.incidentFurtherComments.furtherAction ?
+                                        <div className="feed-element">
+                                        <div style={{borderBottom:"none", paddingLeft:"47px"}}>
+                                            <span>Further action required</span>&nbsp;
+                                            <span className="text-muted">{inbox.incidentFurtherComments && inbox.incidentFurtherComments.furtherAction}</span>
+                                        </div>
+                                    </div>:null}
+                                    </div>
+
+                                    : null
+                                    }
+
                 { readOnly ? null :
                 <div className="feed-element" style={{borderBottom:"none"}}>
                     <MessageView inbox={inbox}/>

@@ -11,11 +11,15 @@ const WeeklyCalendar = React.createClass( {
 	},
 
 	_onTimeSlotAllotment(event, delta, revertFunc){
+		let self = this;
 		let bookedEvent = this.events.events;
+		let getCurrentTime = {};
 		let bookingStartTime = event.start._d
 			bookingStartTime = moment(bookingStartTime).subtract({hours:5,minutes:30})
+			getCurrentTime.startTime = bookingStartTime._d;
 		let bookingEndTime = event.end._d
 			bookingEndTime = moment(bookingEndTime).subtract({hours:5,minutes:30})
+			getCurrentTime.endTime = bookingEndTime._d;
 			bookingStartTime = new Date(bookingStartTime).getTime()
 			bookingEndTime = new Date(bookingEndTime).getTime()
 
@@ -34,6 +38,18 @@ const WeeklyCalendar = React.createClass( {
 					ableToBook =  false;
 				} else {
 					ableToBook =  true;
+					if(this.props.areaDetails.bookingAdvanceDay && this.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
+						ableToBook = this.checkBookingOnThisDay(getCurrentTime,this.props.areaDetails)
+					}
+					if(ableToBook == false){
+						Bert.alert({
+			  				title: 'Oops, Operation not allowed',
+			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				type: 'danger',
+			  				style: 'growl-top-right',
+			  				icon: 'fa-ban'
+						});
+					}
 				}
 			}
 			if( ableToBook == false ){
@@ -42,6 +58,7 @@ const WeeklyCalendar = React.createClass( {
 		}
 		return ableToBook;
 	},
+
 	componentWillUnmount(){
 		this.props.setValue(this.state.value);
 	},
@@ -60,6 +77,39 @@ const WeeklyCalendar = React.createClass( {
 				startTime:startTime,
 				endTime:endTime
 			}
+	},
+
+	checkBookingOnThisDay(getCurrentTime,areaDetails){
+		if(areaDetails.unit == "Hours"){
+			if( moment().diff(getCurrentTime.startTime, 'hours') <= (0-areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'hours') <= (0-areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Days"){
+			if( moment().diff(getCurrentTime.startTime, 'days') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'days') <= (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Weeks"){
+			if( moment().diff(getCurrentTime.startTime, 'weeks') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'weeks') <= (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		if( areaDetails.unit == "Months"){
+			if( moment().diff(getCurrentTime.startTime, 'months') <= (0 - areaDetails.bookingAdvanceDay) && moment().diff(getCurrentTime.endTime, 'months') <= (0 - areaDetails.bookingAdvanceDay) ){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return true;
+		}
 	},
 
     componentDidMount() {
@@ -124,35 +174,7 @@ const WeeklyCalendar = React.createClass( {
                 right: 'next'
             },
 			selectOverlap: false,
-			/*header: {
-      			left: 'prev,next today prevYear nextYear',
-      			center: 'title',
-      			right: 'agendaWeek,month,agendaDay'
-    		},*/
 		    events: calendarEvents,
-			/*events:[{
-				title: 'sunday',
-                allDay: false,
-                start:"01:00",
-                end:"24:00",
-				editable:false,
-                dow: [0]
-			},{
-				title: 'sunday',
-                allDay: false,
-                start:"24:00",
-                end:"24:59",
-				editable:false,
-                dow: [6]
-			}],*/
-			/*events:[{
-				title: 'sunday',
-                allDay: false,
-                start:"00:00",
-                end:"24:00",
-				editable:false,
-                dow: [0]
-			}],*/
 			select: function(start, end, ev) {
 				let startTime = start._d
 				let endTime = end._d
@@ -163,16 +185,37 @@ const WeeklyCalendar = React.createClass( {
 					endTime = moment(endTime)
 					endTime._d = getCurrentTime.endTime
 				if(moment(startTime._d).isBefore(moment(new Date()))) {
-					 $('#bookingCalendar').fullCalendar('unselect');
-			        Bert.alert({
-						  title: 'Operation not allowed',
-						  message: 'Event date is in the past.',
-						  type: 'danger',
-						  style: 'growl-top-right',
-						  icon: 'fa-ban'
+	 				$('#bookingCalendar').fullCalendar('unselect');
+					Bert.alert({
+		  				title: 'Operation not allowed',
+		  				message: 'Event date is in the past.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
+				}else{
+					let bookable = true;
+					if(self.props.areaDetails.bookingAdvanceDay && self.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
+						bookable = self.checkBookingOnThisDay(getCurrentTime,self.props.areaDetails)
+					}
+					if( bookable == false ){
+						$('.fc-time-grid-event').css('display','none');
+						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
+						Bert.alert({
+			  				title: 'Oops, Operation not allowed',
+			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				type: 'danger',
+			  				style: 'growl-top-right',
+			  				icon: 'fa-ban'
 						});
-			    }
-			    else{
+					}else{
+					/*if(timeDiff>1800000){
+	        			$("#bookingCalendar").fullCalendar('unselect');
+	      			} else {*/
+						startTime = moment(startTime)
+						startTime._d = getCurrentTime.startTime
+						endTime = moment(endTime)
+						endTime._d = getCurrentTime.endTime
 						let newEvent = {
 							id:0,
 							title: 'Your Booking',
@@ -193,8 +236,8 @@ const WeeklyCalendar = React.createClass( {
 								endTime:endTime,
 							}
 						})
-					//}
-			    }
+					}
+				}
     		},
     		eventClick: function(event) {
     		},
@@ -261,15 +304,11 @@ const WeeklyCalendar = React.createClass( {
 				}
     		},
             eventAfterRender: function(event, element, view) {
-                //if(event.type == 'unAvailable'){
                     $(element).css('width','105%');
 					$(element).css('left','-2px');
-					//$(element).css('right','-3px');
-                //}
             },
             eventMouseover: function(data, event, view){
                 let tooltip;
-                //if(data.type == "unAvailable"){
 				if(data.tooltip != undefined){
                     tooltip = '<div class="tooltiptopicevent" style="color:white;width:auto;height:auto;background:black;opacity: 0.7;position:absolute;z-index:10001;padding:5px 5px 5px 5px;line-height: 200%;">' + data.tooltip + '</div>';
                     $("body").append(tooltip);
@@ -282,7 +321,6 @@ const WeeklyCalendar = React.createClass( {
                         $('.tooltiptopicevent').css('left', e.pageX + 20);
                     });
 				}
-                //}
             },
             eventMouseout: function (data, event, view) {
                 $(this).css('z-index', 0);

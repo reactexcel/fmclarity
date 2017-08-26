@@ -73,6 +73,7 @@ const CalendarPeriod = React.createClass( {
 										businessHours = {this.state.businessHours}
 										calendarValue = {this.state.calendarValue}
 										previousBookingEvents = {this.state.previousBookingEvents}
+										areaDetails = {this.props.bookingDetails.areaDetails.data && this.props.bookingDetails.areaDetails.data.areaDetails}
 										{...this.props}
 									/>
 								</div>
