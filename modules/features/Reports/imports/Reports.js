@@ -54,21 +54,21 @@ Reports.register( {
 } )
 
 
-Reports.register( {
-	id: "mbm-service-image",
-	name: "MBM Service Image",
-	content: MBMServiceImages
-} )
+// Reports.register( {
+// 	id: "mbm-service-image",
+// 	name: "Service Image",
+// 	content: MBMServiceImages
+// } )
 
 Reports.register( {
 	id: "mbm-report-contract",
-	name: "MBM Report (Service Contract)",
+	name: "Report (Service Contract)",
 	content: MBMReport
 } )
 
 Reports.register( {
 	id: "mbm-report-request",
-	name: "MBM Report (Building Service Requests)",
+	name: "Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
 } )
 

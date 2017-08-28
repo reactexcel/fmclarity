@@ -1,4 +1,6 @@
+.idea
 mup.json
+run.sh
 node_modules/
 .meteor/dev_bundle/
 .docs/
