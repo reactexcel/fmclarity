@@ -26,7 +26,6 @@ const CronJobs = {
 
         let users = Users.findAll();
         if ( !users || !users.length ) {
-            console.log( 'no users found' );
         } else {
             users.map( ( user ) => {
                 let messages = getMessagesThisHour( user );
@@ -96,6 +95,19 @@ const CronJobs = {
             }
         } );
     },
+
+    completeBookingRequest(){
+        import { Requests } from '/modules/models/Requests';
+        import { Teams } from '/modules/models/Teams';
+        let collection = Requests.collection,
+            requestsCursor = collection.find( { status: "Booking" } ),
+            requests = requestsCursor.fetch();
+        requests.forEach( ( request, i ) => {
+            if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime && moment(request.bookingPeriod.startTime).isBefore(moment(new Date())) && moment(request.bookingPeriod.endTime).isBefore(moment(new Date()))){
+                collection.update( { "_id": request._id }, { $set: { "status": "Complete", "closeDetails.completionDate": new Date()  } } )
+            }
+        })
+    }
 }
 
 export default CronJobs;

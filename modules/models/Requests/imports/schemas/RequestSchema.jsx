@@ -146,7 +146,6 @@ const RequestSchema = {
                                         }
                                     }
 
-
                                 }
                                 else{
                                     /*request.area = request.area ? request.area : null;
