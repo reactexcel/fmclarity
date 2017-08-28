@@ -8,6 +8,7 @@ import { FacilityFilter } from '/modules/models/Facilities';
 import { RequestActions, RequestsTable } from '/modules/models/Requests';
 
 import { RequestFilter } from '/modules/models/Requests';
+import RequestPagination from './RequestPagination';
 
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -25,6 +26,9 @@ export default class RequestsPageIndex extends Component {
 
 		this.state = {
 			requests: props.requests,
+      totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
+			currentPage: props.currentPage,
 			active: false,
 		};
 
@@ -32,8 +36,12 @@ export default class RequestsPageIndex extends Component {
 
 	componentWillReceiveProps( props ){
 		this.props = props;
+
 		this.setState( {
-			requests: props.requests
+			requests: props.requests,
+      totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
+      currentPage: props.currentPage,
 		} )
 	}
 
@@ -90,8 +98,9 @@ export default class RequestsPageIndex extends Component {
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
 					<div className = "ibox">
-						<RequestsTable requests = { this.state.requests } selectedItem={selectedStatus}/>
+						<RequestsTable requests={ this.state.requests } selectedItem={selectedStatus} />
 					</div>
+					<RequestPagination totalCollectionCount={ this.state.totalCollectionCount } itemsPerPage={ this.state.pageSize } currentPage={ this.state.currentPage }/>
 				</div>
 			</div>
 		)
