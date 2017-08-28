@@ -146,7 +146,6 @@ const RequestSchema = {
                                         }
                                     }
 
-
                                 }
                                 else{
                                     /*request.area = request.area ? request.area : null;
@@ -1621,8 +1620,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-
-                if ( facilities.length < 1 ) {
+                if ( facilities.length <= 1 ) {
                     return false;
                 }
                 return true;

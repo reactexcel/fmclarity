@@ -176,7 +176,15 @@ const WeeklyCalendar = React.createClass( {
 			selectOverlap: false,
 		    events: calendarEvents,
 			select: function(start, end, ev) {
-				if(moment(start._d).isBefore(moment(new Date()))) {
+				let startTime = start._d
+				let endTime = end._d
+				let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
+				let getCurrentTime = self.getCurrentTime(start, end)
+					startTime = moment(startTime)
+					startTime._d = getCurrentTime.startTime
+					endTime = moment(endTime)
+					endTime._d = getCurrentTime.endTime
+				if(moment(startTime._d).isBefore(moment(new Date()))) {
 	 				$('#bookingCalendar').fullCalendar('unselect');
 					Bert.alert({
 		  				title: 'Operation not allowed',
@@ -186,10 +194,6 @@ const WeeklyCalendar = React.createClass( {
 		  				icon: 'fa-ban'
 					});
 				}else{
-					let startTime = start._d
-					let endTime = end._d
-					let timeDiff = new Date(endTime).getTime() - new Date(startTime).getTime()
-					let getCurrentTime = self.getCurrentTime(start, end)
 					let bookable = true;
 					if(self.props.areaDetails.bookingAdvanceDay && self.props.areaDetails.bookingAdvanceDay != "" && !_.contains( [ 'manager', 'fmc support', 'portfolio manager', 'caretaker' ], Meteor.user().getRole() )){
 						bookable = self.checkBookingOnThisDay(getCurrentTime,self.props.areaDetails)
@@ -238,27 +242,27 @@ const WeeklyCalendar = React.createClass( {
     		eventClick: function(event) {
     		},
     		eventDrop: function (event, delta, revertFunc) {
-				if(moment(event.start._d).isBefore(moment(new Date()))) {
-	 				revertFunc();
-					Bert.alert({
-		  				title: 'Operation not allowed',
-		  				message: 'Event date is in the past.',
-		  				type: 'danger',
-		  				style: 'growl-top-right',
-		  				icon: 'fa-ban'
-					});
-				}else{
+				let getCurrentTime = self.getCurrentTime(event.start,event.end)
+				let startTime = event.start._d
+					startTime = moment(startTime)
+					startTime._d = getCurrentTime.startTime
+				let endTime = event.end._d
+					endTime = moment(endTime)
+					endTime._d = getCurrentTime.endTime
+				if(moment(startTime._d).isBefore(moment(new Date()))) {
+					revertFunc();
+			        Bert.alert({
+						  title: 'Operation not allowed',
+						  message: 'Event date is in the past.',
+						  type: 'danger',
+						  style: 'growl-top-right',
+						  icon: 'fa-ban'
+						});
+			    }else{
 					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 					if(value == false){
 						revertFunc();
 					} else {
-						let getCurrentTime = self.getCurrentTime(event.start,event.end)
-						let startTime = event.start._d
-						    startTime = moment(startTime)
-							startTime._d = getCurrentTime.startTime
-						let endTime = event.end._d
-							endTime = moment(endTime)
-							endTime._d = getCurrentTime.endTime
 						self.setState({
 							value:{
 								startTime:startTime,
@@ -270,15 +274,15 @@ const WeeklyCalendar = React.createClass( {
     		},
 			eventResize: function(event, delta, revertFunc) {
 				if(moment(event.start._d).isBefore(moment(new Date()))) {
-	 				revertFunc();
-					Bert.alert({
-		  				title: 'Operation not allowed',
-		  				message: 'Event date is in the past.',
-		  				type: 'danger',
-		  				style: 'growl-top-right',
-		  				icon: 'fa-ban'
-					});
-				}else{
+					revertFunc();
+			        Bert.alert({
+						  title: 'Operation not allowed',
+						  message: 'Event date is in the past.',
+						  type: 'danger',
+						  style: 'growl-top-right',
+						  icon: 'fa-ban'
+						});
+			    }else{
 					let value = self._onTimeSlotAllotment(event, delta, revertFunc);
 					if(value == false){
 						revertFunc();
