@@ -22,24 +22,31 @@ const PageChangePassword = React.createClass( {
     },
 
     handleSubmit( e ) {
-        //console.log(Meteor.user());
         e.preventDefault();
-        var component = this;
-        var password = this.refs.password.value.trim();
-        var password2 = this.refs.password.value.trim();
-        if ( password != password2 ) {
-            component.setState( { errorMessage: <span>Passwords do not match, please try again.</span> } )
-            component.refs.password.value = '';
-            component.refs.password2.value = '';
-        } else if ( password.length < 8 ) {
-            component.setState( { errorMessage: <span>Passwords should be at least 8 characters, please try again.</span> } )
-            component.refs.password.value = '';
-            component.refs.password2.value = '';
+
+        let component = this;
+        let password = this.refs.password.value.trim();
+        let password2 = this.refs.password.value.trim();
+        let errorMessage = null;
+
+        if ( password.length === 0 || password2.length === 0) {
+            errorMessage = 'Please fill up the required fields.';
+        } else if ( password != password2 ) {
+            errorMessage = 'Passwords do not match, please try again.';
+        } else if ( password.length < 8) {
+            errorMessage = 'Passwords should be at least 8 characters, please try again.';
+        }
+
+        if (errorMessage) {
+          component.setState( { errorMessage: <span>{ errorMessage }</span> } );
+          component.refs.password.value = '';
+          component.refs.password2.value = '';
         } else {
             Accounts.changePassword( 'fm1q2w3e', password ); //really???
             FlowRouter.go( '/' );
         }
-        return;
+
+        return this;
     },
 
     render() {
