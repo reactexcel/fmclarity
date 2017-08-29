@@ -39,6 +39,14 @@ class AutoForm extends React.Component {
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
 
+	componentWillMount(){
+		$("#fab").hide();
+	}
+
+	componentWillUnmount(){
+		$("#fab").show();
+	}
+
 	componentDidMount(){
 		let self = this;
 		setTimeout(function() { self.checkBookingAreas('type') }, 100);

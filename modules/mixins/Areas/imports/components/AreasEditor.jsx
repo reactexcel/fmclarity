@@ -380,7 +380,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                       model = { Facilities }
                                                       item = { b.data }
                                                       form = { ["areaDetails"] }
-                                                      beforeSubmit={
+                                                      onSubmit={
                                                         ( item ) => {
                                                           component.save();
                                                           Modal.hide();
@@ -444,7 +444,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   model = { Facilities }
                                                   item = { c.data }
                                                   form = { ["areaDetails"] }
-                                                  beforeSubmit={
+                                                  onSubmit={
                                                     ( item ) => {
                                                       component.save();
                                                       Modal.hide();

@@ -105,26 +105,22 @@ const RequestSchema = {
 
                 if ( Teams.isServiceTeam( team ) ) {
                     return {
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                    request.area = null;
-                                    request.level = null;
-                                }
-                                if(request.type == 'Preventative'){
-                                    request.priority = 'Scheduled';
-                                }
-
-                                } };
+                            // prefill value with zero for defect
+                            if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
+                                request.costThreshold= '0';
+                            }
+                            if (request.type == 'Incident') {
+                                request.priority = 'Urgent';
+                                request.supplier = Session.getSelectedTeam();
+                                request.area = null;
+                                request.level = null;
+                            }
+                        } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
+                        let items = role == "staff" ? [ 'Ad-hoc', 'Booking' ] : (role == "resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
@@ -146,7 +142,6 @@ const RequestSchema = {
                                         }
                                     }
 
-
                                 }
                                 else{
                                     /*request.area = request.area ? request.area : null;
@@ -159,7 +154,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
@@ -186,8 +181,6 @@ const RequestSchema = {
                                         request.supplier = Session.getSelectedTeam();
                                         request.area = null;
                                         request.level = null;
-                                    }else if(request.type == 'Preventative'){
-                                        request.priority = 'Scheduled';
                                     }
                                 }
                          };
@@ -741,9 +734,12 @@ const RequestSchema = {
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
-                                costAbleToIssue = false;
-                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ?
+                                  typeof props.item.costThreshold === 'string' ?
+                                    props.item.costThreshold.replace(/,/g, ""):
+                                    props.item.costThreshold
+                                : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
@@ -1621,8 +1617,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-
-                if ( facilities.length < 1 ) {
+                if ( facilities.length <= 1 ) {
                     return false;
                 }
                 return true;

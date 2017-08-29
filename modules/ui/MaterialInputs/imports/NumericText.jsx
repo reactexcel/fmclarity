@@ -37,7 +37,7 @@ const NumericText = React.createClass( {
 
 	handleKeyDown(evt){
 		var charCode = (evt.which) ? evt.which : event.keyCode
-        if (charCode > 31 && (charCode < 48 || charCode > 57)){
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105)){
             evt.preventDefault();
         }else{
             return;
@@ -73,7 +73,7 @@ const NumericText = React.createClass( {
       			className		= { classes.join(' ') }
       			ref 			= "input"
       			type 			= "text"
-      			maxLength		="5"
+      			//maxLength		="5"
       			value 			= { value }
       			onChange 		= { this.handleChange }
       			onSelect		= { this.handleSelect }
