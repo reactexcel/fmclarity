@@ -105,26 +105,22 @@ const RequestSchema = {
 
                 if ( Teams.isServiceTeam( team ) ) {
                     return {
-                        items: [ 'Base Building', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
-                                // prefill value with zero for defect
-                                if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
-                                    request.costThreshold= '0';
-                                }
-                                if(request.type == 'Incident'){
-                                    request.priority = 'Urgent';
-                                    request.supplier = Session.getSelectedTeam();
-                                    request.area = null;
-                                    request.level = null;
-                                }
-                                if(request.type == 'Preventative'){
-                                    request.priority = 'Scheduled';
-                                }
-
-                                } };
+                            // prefill value with zero for defect
+                            if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
+                                request.costThreshold= '0';
+                            }
+                            if (request.type == 'Incident') {
+                                request.priority = 'Urgent';
+                                request.supplier = Session.getSelectedTeam();
+                                request.area = null;
+                                request.level = null;
+                            }
+                        } };
                 } else {
                     if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role=="staff" ? [ 'Ad-hoc', 'Booking' ] : (role=="resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
+                        let items = role == "staff" ? [ 'Ad-hoc', 'Booking' ] : (role == "resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
                         return {
                             items: items,
                             afterChange: ( request ) => {
@@ -158,7 +154,7 @@ const RequestSchema = {
                                 }
                              };
                     } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Preventative', 'Defect', 'Reminder', 'Incident' ],
+                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
@@ -185,8 +181,6 @@ const RequestSchema = {
                                         request.supplier = Session.getSelectedTeam();
                                         request.area = null;
                                         request.level = null;
-                                    }else if(request.type == 'Preventative'){
-                                        request.priority = 'Scheduled';
                                     }
                                 }
                          };
