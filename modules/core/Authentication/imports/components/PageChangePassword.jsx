@@ -46,7 +46,7 @@ const PageChangePassword = React.createClass( {
             FlowRouter.go( '/' );
         }
 
-        return this;
+        return;
     },
 
     render() {
