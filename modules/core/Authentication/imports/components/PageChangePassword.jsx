@@ -26,12 +26,12 @@ const PageChangePassword = React.createClass( {
 
         let component = this;
         let password = this.refs.password.value.trim();
-        let password2 = this.refs.password.value.trim();
+        let password2 = this.refs.password2.value.trim();
         let errorMessage = null;
 
         if ( password.length === 0 || password2.length === 0) {
             errorMessage = 'Please fill up the required fields.';
-        } else if ( password != password2 ) {
+        } else if ( password !== password2 ) {
             errorMessage = 'Passwords do not match, please try again.';
         } else if ( password.length < 8) {
             errorMessage = 'Passwords should be at least 8 characters, please try again.';
