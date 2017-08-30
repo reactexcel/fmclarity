@@ -480,7 +480,7 @@ const UserSchema = {
 				<div className="row">
 					<div className="col-sm-12">
 						<Select {...props} />
-						<h4 style={{marginBottom: "0px"}}>Apartment address </h4>
+						<h4 style={{marginBottom: "0px"}}>Occupant Status </h4>
 					</div>
 				</div>
 			),
