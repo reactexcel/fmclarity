@@ -197,6 +197,7 @@ Users.actions({
 
       //perform query
       let currentPage = options.skip ? options.skip : 0;
+      // query option needed to determine current page number and number of documents per collection
       let queryOptions = currentPage > -1 && options.limit ? {
         limit: options.limit,
         skip: currentPage * options.limit,
@@ -210,6 +211,8 @@ Users.actions({
       let requests = currentCollection.fetch();
       let skip = !(currentPage > -1 && options.limit);
 
+      // skips the addition of PPMs into the requests collection if it's on the requests component
+      // only determines if it's on the requests component by checking if there's a pagination option
       if (skip) {
         let PPMIssued = PPM_Schedulers.find({
           $and: query
