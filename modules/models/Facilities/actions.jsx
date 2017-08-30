@@ -17,6 +17,9 @@ const edit = new Action( {
 	type: 'facility',
 	label: "Edit facility",
 	action: ( facility ) => {
+		if(!facility._id){
+			facility = Session.getSelectedFacility()
+		}
 		Modal.show( {
 			content: <DropFileContainer model={Facilities}>
 				<FacilityStepperContainer params = { { item: facility } } />
@@ -49,6 +52,9 @@ const destroy = new Action( {
 	},
 	action: ( facility ) => {
 		//Facilities.destroy( facility );
+		if(!facility._id){
+			facility = Session.getSelectedFacility()
+		}
 		facility.destroy();
 	}
 } )

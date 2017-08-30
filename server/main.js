@@ -24,7 +24,7 @@ Meteor.startup( function() {
         schedule: function( parser ) {
             return parser.text( "at 09:00 am" );
         },
-        job: CronJobs.issuePPMRequest,
+        job: CronJobs.issuePPM_Schedulers,
     } );
 
     SyncedCron.add( {
@@ -33,6 +33,14 @@ Meteor.startup( function() {
             return parser.text('every 1 hour');
         },
         job: CronJobs.sendEmailDigests,
+    } );
+
+    SyncedCron.add( {
+        name: 'Complete Booking Request',
+        schedule: function( parser ) {
+            return parser.text('every 5 minute');
+        },
+        job: CronJobs.completeBookingRequest,
     } );
 
     SyncedCron.start();
