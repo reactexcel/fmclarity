@@ -118,7 +118,7 @@ export default ComplianceRuleSchema = {
             import { Requests } from '/modules/models/Requests';
             let query = {
                  "facility._id": item.facility._id,
-                 type: "Preventative",
+                 type: "Schedular",
              };
             if ( item.service ) query[ "service.name" ] = item.service.name;
             if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
@@ -134,7 +134,7 @@ export default ComplianceRuleSchema = {
                     label: "Add New",
                     onAddNewItem: ( callback ) => {
                         let team = Session.getSelectedTeam();
-                        TeamActions.createRequest.bind( team ).run()
+                        TeamActions.createRequest.run( team , callback )
                     }
                 }
             }
