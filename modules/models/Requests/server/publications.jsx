@@ -1,4 +1,5 @@
 import { Requests } from '/modules/models/Requests';
+import { PPM_Schedulers } from '/modules/models/Requests';
 
 Meteor.publish( 'Requests', () => {
     return Requests.find();
@@ -8,6 +9,16 @@ Meteor.publish( 'Requests: Closed', () => {
     return Requests.find( { status: 'Closed' } );
 } );
 
+
+Meteor.publish( 'PPM_Schedulers', () => {
+    return PPM_Schedulers.find();
+} );
+
+Meteor.publish( 'PPM_Schedulers: Closed', () => {
+    return PPM_Schedulers.find( { status: 'Closed' } );
+} );
+
+
 Meteor.publish( 'Request: Last 20 Complete', function( ) {
 
     let requestsCursor = Requests.find( {
@@ -16,7 +27,7 @@ Meteor.publish( 'Request: Last 20 Complete', function( ) {
         sort: {
             'lastUpdate': -1
         },
-        limit: 20, 
+        limit: 20,
         fields: {
             _id: 1,
             area: 1,
@@ -151,6 +162,7 @@ Meteor.publish( 'Requests: Complete', function( ) {
 
     return requestsCursor;
 } );
+
 
 
 Requests.collection._ensureIndex( { 'createdAt': 1 } );

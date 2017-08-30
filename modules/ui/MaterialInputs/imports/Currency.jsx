@@ -11,6 +11,16 @@ import React from "react";
 const Currency = React.createClass( {
 	handleChange() {
 		let newValue = this.refs.input.value;
+		if (Number(newValue.replace(/,/g, ""))=='0') {
+			newValue = '0';
+		}
+		if (newValue.substring(0, 1) == '0') { 
+		  newValue = newValue.substring(1);
+		  if (newValue.substring(0, 1) == ',') { 
+			  newValue = newValue.substring(1);
+			}
+		}
+
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
 		}
@@ -44,6 +54,9 @@ const Currency = React.createClass( {
 		//allow navigation around textbox using arrow keys
     	if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40) {
         	return;
+    	}
+    	if (event.target.value == "0" && ( event.keyCode != 190 || event.keyCode != 110 )) {
+    		event.target.value = "";
     	}
 		this.formatNum(event.target);
 
