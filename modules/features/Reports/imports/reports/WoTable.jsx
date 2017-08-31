@@ -66,7 +66,7 @@ const WoTable = React.createClass( {
                   //     $gte: moment().startOf("month").toDate(),
                   //     $lte: moment().endOf("month").toDate()
                   // };
-                   q['createdAt'] = {
+                   q['issuedAt'] = {
                        $gte: moment().startOf("month").toDate(),
                        $lte: moment().endOf("month").toDate()
                    };
@@ -76,7 +76,7 @@ const WoTable = React.createClass( {
                     q["type"] = {$ne:'Defect'}
                   }
 
-                  q['status'] ={$nin:['Deleted','PPM']};
+                  q['status'] ={$nin:['Deleted','PPM','New']};
                       q['service.name'] = this.props.service;
                       let requests = Requests.findAll(q);
                       if(!this.props.defect){
@@ -293,6 +293,7 @@ const WoTable = React.createClass( {
                               <div style={{cursor:"pointer"}}>{r.name}</div>
                               <div style={{cursor:"pointer"}}>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
                               {this.props.defect ? null : <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>}
+                              <div style={{cursor:"pointer"}}>Issued Date : {moment(r.issuedAt).format("DD-MM-YYYY")}</div>
                               {imgs}
                             </td>
                             {this.props.defect ? <td>{r.status}</td> : <td>{r.costThreshold}</td>}
