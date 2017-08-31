@@ -7,8 +7,8 @@ import { Documents } from '/modules/models/Documents';
 import moment from 'moment';
 
 export default ReportsNavWidget = React.createClass( {
- 	abc(id){
-		$(".loader").show();
+  navigateToReport(id) {
+		$(".loader").removeClass('hidden');
 		setTimeout(function(){
 			FlowRouter.go("/report/"+id+"/");
 		},2000)
@@ -30,7 +30,7 @@ export default ReportsNavWidget = React.createClass( {
 		let xyz = _.map(reportIds, (id) => {
 			report = reports[id];
 			return (
-				<div onClick={()=>this.abc(id)} className="grid-item" style={{padding:"15px", cursor:"pointer"}} key={id}>
+				<div onClick={()=>this.navigateToReport(id)} className="grid-item" style={{padding:"15px", cursor:"pointer"}} key={id}>
 					{report.name}
 				</div>
 			)

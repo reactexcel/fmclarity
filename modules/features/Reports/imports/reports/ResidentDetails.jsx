@@ -109,7 +109,7 @@ const ResidentDetails = React.createClass( {
  		return sortedList
 	},
 	componentDidUpdate(){
-		$(".loader").hide();
+    $('.loader').addClass('hidden');
 	},
 
 	render() {

@@ -71,7 +71,7 @@ const RequestsStatusReport = React.createClass( {
 	},
 	componentDidMount(){
 		setTimeout(function(){
-			$(".loader").hide();
+      $('.loader').addClass('hidden');
 		},2000)
 		if(!this.props.MonthlyReport){
 			let update = setInterval(()=>{

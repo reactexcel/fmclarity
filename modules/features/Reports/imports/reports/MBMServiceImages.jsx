@@ -20,7 +20,7 @@ const MBMServiceImages = React.createClass( {
   },
   componentDidMount(){
     setTimeout(function(){
-      $(".loader").hide();
+      $('.loader').addClass('hidden');
     },2000)
   },
     updateImages(){

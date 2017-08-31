@@ -377,7 +377,7 @@ const SingleServiceRequest = React.createClass( {
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
-			$(".loader").hide();
+      $('.loader').addClass('hidden');
 		},2000)
 	},
 

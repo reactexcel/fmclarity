@@ -193,7 +193,7 @@ const RequestsStatusReport = React.createClass( {
     	});
     },
 	componentDidUpdate(){
-		$(".loader").hide();
+    $('.loader').addClass('hidden');
 	},
 
 	render() {

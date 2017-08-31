@@ -20,7 +20,7 @@ class NavigationDrawer extends React.Component {
 	}
 
 	componentWillMount(){
-	$(".loader").hide();	
+		$('.loader').addClass('hidden');
 	}
 
 	selectRoute( route ) {

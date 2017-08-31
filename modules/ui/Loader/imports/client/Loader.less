@@ -1,0 +1,28 @@
+.loader {
+  background: rgba(0,0,0,0.5);
+  position: fixed;
+  z-index: 5000;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+
+  &.hidden {
+    display: block;
+    width: 0;
+    height: 0;
+    padding: 0;
+    position: fixed;
+    left: -10px;
+    top: -10px;
+  }
+
+  .loader-content {
+      position: absolute;
+      width: 100px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+  }
+}

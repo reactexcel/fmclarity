@@ -48,7 +48,7 @@ const WoTable = React.createClass( {
     })
   },
   componentDidMount(){
-    	$(".loader").hide();
+    $('.loader').addClass('hidden');
   },
     updateImages(){
       var user, team, facility, requests, data = [];

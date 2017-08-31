@@ -51,7 +51,7 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	componentWillReceiveProps(props){
-				// $(".loader").hide();
+				// $('.loader').addClass('hidden');
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
@@ -61,7 +61,7 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-right").hide();
 		$(".facility-list-tile").hide()
 		setTimeout(function(){
-			$(".loader").hide();
+      $('.loader').addClass('hidden');
 		},2000)
 		let update = setInterval(()=>{
 
