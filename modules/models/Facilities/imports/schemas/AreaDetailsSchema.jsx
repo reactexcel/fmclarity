@@ -49,7 +49,14 @@ export default AreaDetailsSchema = {
                 "Weeks",
                 "Days",
                 "Hours",
-            ]
+            ],
+            afterChange( item ) {
+                console.log(item,"item");
+                item.hour = '',
+                item.month = '',
+                item.day = '',
+                item.week = ''
+            }
         },
         condition( item ) {
             return item.type === "Bookable";
