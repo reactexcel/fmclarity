@@ -10,6 +10,8 @@ import { RequestActions, RequestsTable } from '/modules/models/Requests';
 import { RequestFilter } from '/modules/models/Requests';
 import RequestPagination from './RequestPagination';
 
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
+
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
 import Perf from 'react-addons-perf';
@@ -50,6 +52,7 @@ export default class RequestsPageIndex extends Component {
 	}
 
 	componentDidMount() {
+    loaderStoreActions.setLoaderVisibility(false);
 		/*
 	    Perf.stop();
 	    console.log('output requests page load time');

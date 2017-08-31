@@ -10,6 +10,8 @@ import RequestsPageAllContainer from './imports/containers/RequestsPageAllContai
 import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
 import PrintRequestContainer from './imports/containers/PrintRequestContainer.jsx';
 
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
+
 AccessGroups.loggedIn.add( {
 	name: 'all-requests',
 	path: '/all-requests',
@@ -40,6 +42,7 @@ AccessGroups.loggedIn.add( {
 	label: "Requests",
 	icon: 'fa fa-wrench',
 	action() {
+    loaderStoreActions.setLoaderVisibility(true);
 		mount( LayoutMain, {
 			content: <RequestsPageIndexContainer />
 		} );

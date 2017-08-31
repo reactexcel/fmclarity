@@ -4,6 +4,8 @@ import { Requests } from '/modules/models/Requests';
 import { Files } from '/modules/models/Files';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
+
 const MBMServiceImages = React.createClass( {
     getInitialState(){
         return{
@@ -20,7 +22,7 @@ const MBMServiceImages = React.createClass( {
   },
   componentDidMount(){
     setTimeout(function(){
-      $('.loader').addClass('hidden');
+      loaderStoreActions.setLoaderVisibility(false);
     },2000)
   },
     updateImages(){

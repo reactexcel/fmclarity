@@ -6,7 +6,10 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
+import { Loader } from '/modules/ui/Loader';
 import { Actions } from '/modules/core/Actions';
+
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 /**
  * @class           UserProfileMenu
@@ -26,38 +29,10 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 };
 
 	if ( !team ) {
-		return ( <div style = {
-				{
-					background: "rgba(0,0,0,0.5)",
-					position: "fixed",
-					zIndex: 5000,
-					left: "0px",
-					right: "0px",
-					top: "0px",
-					bottom: "0px",
-					textAlign: "center"
-				}
-			} >
-			<div style = {
-				{
-					position: "absolute",
-					width: "100px",
-					marginLeft: "-50px",
-					left: "50%",
-					top: "50%",
-					marginTop: "-50px"
-				}
-			} >
-			<RefreshIndicator
-					size = { 100 }
-					left = { 0 }
-					top = { 0 }
-					status = "loading"
-					style = {style.refresh}
-			/>
-			</div>
-			</div>
-		)
+    loaderStoreActions.setLoaderVisibility(true);
+    return null;
+	} else {
+		loaderStoreActions.setLoaderVisibility(false);
 	}
 
 	let actionNames = Object.keys( UserMenuActions.actions ),

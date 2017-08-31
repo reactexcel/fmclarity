@@ -16,7 +16,7 @@ import { Facilities } from '/modules/models/Facilities';
 import { ContactCard } from '/modules/mixins/Members';
 
 import moment from 'moment';
-
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 /**
  * @class 			RequestStatusReport
  * @memberOf 		module:features/Reports
@@ -109,7 +109,7 @@ const ResidentDetails = React.createClass( {
  		return sortedList
 	},
 	componentDidUpdate(){
-    $('.loader').addClass('hidden');
+    loaderStoreActions.setLoaderVisibility(false);
 	},
 
 	render() {

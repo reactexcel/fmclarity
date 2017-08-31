@@ -14,6 +14,7 @@ import MBMReport from '../reports/MBMReport.jsx';
 import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
 
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 export default MonthlyReport = React.createClass( {
 
@@ -51,7 +52,6 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	componentWillReceiveProps(props){
-				// $('.loader').addClass('hidden');
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
@@ -61,7 +61,7 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-right").hide();
 		$(".facility-list-tile").hide()
 		setTimeout(function(){
-      $('.loader').addClass('hidden');
+      loaderStoreActions.setLoaderVisibility(false);
 		},2000)
 		let update = setInterval(()=>{
 

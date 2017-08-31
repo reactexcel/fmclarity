@@ -15,7 +15,7 @@ import { DateTime, Select, Text } from '/modules/ui/MaterialInputs';
 import { ContactCard } from '/modules/mixins/Members';
 
 import moment from 'moment';
-
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 /**
  * @class 			RequestStatusReport
  * @memberOf 		module:features/Reports
@@ -193,7 +193,7 @@ const RequestsStatusReport = React.createClass( {
     	});
     },
 	componentDidUpdate(){
-    $('.loader').addClass('hidden');
+    loaderStoreActions.setLoaderVisibility(false);
 	},
 
 	render() {

@@ -5,6 +5,7 @@
 
 import React from "react";
 import { Modal } from '/modules/ui/Modal';
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 /**
  * @class 			NavigationDrawer
@@ -20,7 +21,7 @@ class NavigationDrawer extends React.Component {
 	}
 
 	componentWillMount(){
-		$('.loader').addClass('hidden');
+    loaderStoreActions.setLoaderVisibility(false);
 	}
 
 	selectRoute( route ) {

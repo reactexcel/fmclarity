@@ -13,6 +13,7 @@ import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
 
 import { ContactCard } from '/modules/mixins/Members';
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 import moment from 'moment';
 
@@ -63,9 +64,10 @@ const BookingReport = React.createClass( {
 	},
 
     componentDidMount(){
-        $('.nav-list-selected').css('display','none')
+        $('.nav-list-selected').css('display','none');
 				setTimeout(function(){
-          $('.loader').addClass('hidden');
+          loaderStoreActions.setLoaderVisibility(false);
+          loaderStoreActions.setLoaderVisibility(false);
 				}, 2000)
     },
 

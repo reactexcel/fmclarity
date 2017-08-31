@@ -14,22 +14,6 @@ function loadExternalScripts() {
 
     loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
-  loadMaterializeScripts();
-}
-
-function loadMaterializeScripts() {
-
-  let script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js';
-  script.async = true;
-  document.body.appendChild(script);
-
-  let link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css';
-  link.async = true;
-  document.body.appendChild(link);
 }
 
 function loadGoogleMapApiScript() {
