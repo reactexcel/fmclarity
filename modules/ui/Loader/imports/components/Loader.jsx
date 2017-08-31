@@ -15,12 +15,18 @@ export default class Loader extends Component {
     return (
       <div className="loader hidden">
         <div className="loader-content">
-          <RefreshIndicator
-            size={100}
-            left={0} top={0}
-            status="loading"
-            style={style.refresh}
-          />
+          <!-- PRELOADER -->
+          <div className="preloader-wrapper big active">
+            <div className="spinner-layer spinner-custom-blue-only">
+              <div className="circle-clipper left">
+                <div className="circle"></div>
+              </div><div className="gap-patch">
+              <div className="circle"></div>
+            </div><div className="circle-clipper right">
+              <div className="circle"></div>
+            </div>
+            </div>
+          </div>
         </div>
       </div>
     );
