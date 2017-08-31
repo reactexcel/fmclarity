@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
-import '../client/Loader.less';
 
 export default class Loader extends Component {
 
