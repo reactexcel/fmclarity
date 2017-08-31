@@ -3,7 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import { Text, Phone, DateInput, Select, FileField, Switch } from '/modules/ui/MaterialInputs';
+import { Text, Phone, DateInput, Select, FileField, Switch, RadioButton_Group } from '/modules/ui/MaterialInputs';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
@@ -230,13 +230,16 @@ const UserSchema = {
 
 	status:{
 		label: "Owner/Tenant",
-		type: "boolean",
-		defaultValue: false,
+		type: "string",
+		//defaultValue: false,
 		input: (props)=>{
-			return <Switch
-				placeholder={"Owner/Tenant ➡️ "+(props.item.status? "Tenant" : "Owner")}
-                value = { props.item.status && props.item.status == true ? props.item.status : false }
-                onChange={( value ) => {
+			let option1 = "Tenant",
+			    option2 = "Owner"
+			return <RadioButton_Group
+				option1 = {option1}
+				option2 = {option2}
+				defaultValue = { props.item.status == "" ? option1 : props.item.status }
+				onChange={( value ) => {
                     props.onChange(value);
                 }}
 			/>
@@ -406,7 +409,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status;
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 
@@ -606,7 +609,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status
+				return role === "resident" && item.status === "Tenant"
 			}
 		},
 
@@ -634,7 +637,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status;
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 
@@ -646,7 +649,7 @@ const UserSchema = {
 			type: "date",
 			defaultValue: () => ( new Date() ),
 			condition: ( item ) => {
-				return role === "resident" && item.status;
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 
