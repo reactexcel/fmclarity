@@ -2,24 +2,9 @@ import React from 'react';
 
 export default class Loader extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: props.visible ? props.visible : false
-    };
-  }
-
   render() {
-    let loaderClass = ['loader'];
-    if (Session.get('showLoader')) {
-      loaderClass = ['loader'];
-    } else if (!this.state.visible) {
-      loaderClass = ['loader', 'hidden'];
-    }
-    console.log(Session.get('showLoader'));
-
     return (
-      <div className={ loaderClass.join(' ') }>
+      <div className="loader">
         <div className="loader-content">
           <div className="preloader-wrapper big active">
             <div className="spinner-layer spinner-custom-blue-only">
@@ -39,3 +24,11 @@ export default class Loader extends React.Component {
     );
   }
 }
+
+export const hideLoader = () => {
+  $('.loader').hide();
+};
+
+export const showLoader = () => {
+  $('.loader').show();
+};

@@ -7,6 +7,7 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { TextArea } from '/modules/ui/MaterialInputs';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Modal } from '/modules/ui/Modal';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 const WoTable = React.createClass( {
     getInitialState(){
@@ -48,7 +49,7 @@ const WoTable = React.createClass( {
     })
   },
   componentDidMount(){
-    Session.set('showLoader', false);
+    hideLoader();
   },
     updateImages(){
       var user, team, facility, requests, data = [];

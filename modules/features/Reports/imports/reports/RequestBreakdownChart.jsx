@@ -11,7 +11,7 @@ import { Requests } from '/modules/models/Requests';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 
 import moment from 'moment';
-
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
@@ -258,7 +258,7 @@ const RequestBreakdownChart = React.createClass( {
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
-      Session.set('showLoader', false);
+      hideLoader();
 		},2000)
 	},
 

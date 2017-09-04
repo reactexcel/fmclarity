@@ -13,6 +13,7 @@ import MBMDefectImages from '../reports/MBMDefectImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
 import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 export default MonthlyReport = React.createClass( {
 
@@ -59,7 +60,7 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-right").hide();
 		$(".facility-list-tile").hide()
 		setTimeout(function() {
-      Session.set('showLoader', false);
+      hideLoader();
 		}, 2000)
 		let update = setInterval(()=>{
 

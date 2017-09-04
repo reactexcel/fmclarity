@@ -9,6 +9,7 @@ import { RequestActions, RequestsTable } from '/modules/models/Requests';
 
 import { RequestFilter } from '/modules/models/Requests';
 import RequestPagination from './RequestPagination';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -50,7 +51,7 @@ export default class RequestsPageIndex extends Component {
 	}
 
 	componentDidMount() {
-    Session.set('showLoader', false);
+    hideLoader();
 		/*
 	    Perf.stop();
 	    console.log('output requests page load time');

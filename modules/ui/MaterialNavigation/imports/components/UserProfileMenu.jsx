@@ -7,6 +7,7 @@ import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
 import { Actions } from '/modules/core/Actions';
+import { showLoader, hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 /**
  * @class           UserProfileMenu
@@ -26,10 +27,10 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 };
 
 	if ( !team ) {
-    Session.set('showLoader', true);
+    showLoader();
     return null;
 	} else {
-    Session.set('showLoader', false);
+    hideLoader();
 	}
 
 	let actionNames = Object.keys( UserMenuActions.actions ),

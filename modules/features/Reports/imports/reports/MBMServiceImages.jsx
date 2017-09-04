@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Requests } from '/modules/models/Requests';
 import { Files } from '/modules/models/Files';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 const MBMServiceImages = React.createClass( {
     getInitialState(){
@@ -20,7 +21,7 @@ const MBMServiceImages = React.createClass( {
   },
   componentDidMount(){
     setTimeout(function(){
-      Session.set('showLoader', false);
+      hideLoader();
     },2000)
   },
     updateImages(){

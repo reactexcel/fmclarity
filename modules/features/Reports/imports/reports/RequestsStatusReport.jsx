@@ -15,6 +15,7 @@ import { DateTime, Select, Text } from '/modules/ui/MaterialInputs';
 import { ContactCard } from '/modules/mixins/Members';
 
 import moment from 'moment';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 /**
  * @class 			RequestStatusReport
@@ -193,7 +194,7 @@ const RequestsStatusReport = React.createClass( {
     	});
     },
 	componentDidUpdate(){
-    Session.set('showLoader', false);
+    hideLoader();
 	},
 
 	render() {

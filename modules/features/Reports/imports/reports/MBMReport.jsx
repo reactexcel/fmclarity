@@ -19,6 +19,7 @@ import { Facilities } from '/modules/models/Facilities';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
 import moment from 'moment';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 /**
  * @class 			RequestStatusReport
@@ -71,7 +72,7 @@ const RequestsStatusReport = React.createClass( {
 	},
 	componentDidMount(){
 		setTimeout(function(){
-      Session.set('showLoader', false);
+      hideLoader();
 		}, 2000);
 		if(!this.props.MonthlyReport){
 			let update = setInterval(()=>{
