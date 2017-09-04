@@ -6,7 +6,7 @@
 import React from "react";
 import FileView from './FileView.jsx';
 
-import loaderStoreActions from '/modules/ui/Loader/imports/store/LoaderStore'
+import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore'
 
 /**
  * @class 			FilesPageIndex
