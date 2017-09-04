@@ -26,7 +26,6 @@ const CronJobs = {
 
         let users = Users.findAll();
         if ( !users || !users.length ) {
-            console.log( 'no users found' );
         } else {
             users.map( ( user ) => {
                 let messages = getMessagesThisHour( user );
@@ -44,11 +43,12 @@ const CronJobs = {
         }
     },
 
-    issuePPMRequest() {
-        import { Requests } from '/modules/models/Requests';
+    issuePPM_Schedulers() {
+        import { PPM_Schedulers, Requests } from '/modules/models/Requests';
         import { Teams } from '/modules/models/Teams';
-        let collection = Requests.collection,
-            requestsCursor = collection.find( { type: "Preventative" } ),
+        let request_collection = Requests.collection,
+            schedulers_collection = PPM_Schedulers.collection,
+            requestsCursor = schedulers_collection.find( { type: "Schedular" } ),
             requests = requestsCursor.fetch();
 
         requests.forEach( ( request, i ) => {
@@ -82,7 +82,6 @@ const CronJobs = {
             if ( !request.lastIssedRequest ||
                 ( moment( nextDueDate ).format( "YYYY-MM-DD" ) === moment().add( 7, 'd' ).format( "YYYY-MM-DD" ) &&
                     moment( nextDueDate ).isAfter( request.lastIssedRequest ) ) ) {
-
                 if ( team ) {
                     code = team.getNextWOCode();
                 }
@@ -91,15 +90,29 @@ const CronJobs = {
                 coopyRequest.dueDate = nextDueDate;
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
-                coopyRequest.type = 'Ad-Hoc';
                 coopyRequest.issuedAt = new Date();
+                coopyRequest.type = 'Preventative';
+
 
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
-                collection.insert( coopyRequest );
-                collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
+                let ab = request_collection.insert( coopyRequest );
+                let xyx = schedulers_collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
             }
         } );
     },
+
+    completeBookingRequest(){
+        import { Requests } from '/modules/models/Requests';
+        import { Teams } from '/modules/models/Teams';
+        let collection = Requests.collection,
+            requestsCursor = collection.find( { status: "Booking" } ),
+            requests = requestsCursor.fetch();
+        requests.forEach( ( request, i ) => {
+            if(request.bookingPeriod && request.bookingPeriod.startTime && request.bookingPeriod.endTime && moment(request.bookingPeriod.startTime).isBefore(moment(new Date())) && moment(request.bookingPeriod.endTime).isBefore(moment(new Date()))){
+                collection.update( { "_id": request._id }, { $set: { "status": "Complete", "closeDetails.completionDate": new Date()  } } )
+            }
+        })
+    }
 }
 
 export default CronJobs;

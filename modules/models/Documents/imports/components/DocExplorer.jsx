@@ -142,8 +142,9 @@ export default class DocExplorer extends React.Component {
 				<DocIconHeader />
 
 				{//Listing of old Documents
-					oldDocumentsList.map( ( doc, idx ) => (
-							<DocIcon
+					oldDocumentsList.map( ( doc, idx ) => {
+                        if(Documents.findOne( { "_id": doc._id } ) != null){
+                            return <DocIcon
                                 key = { idx }
                                 item = { doc }
                                 onChange = { (doc) => { this.handleChange( idx, doc ) } }
@@ -153,13 +154,15 @@ export default class DocExplorer extends React.Component {
                                 handleListUpdate={this.handleListUpdate.bind(this)}
                                 team = { this.state.item}
                             />
-						)
+                        }
+                    }
 					)
 				}
 
 				{//Listing of new documents
-					newDocumentsList.map( ( doc, idx ) => (
-							<DocIcon
+					newDocumentsList.map( ( doc, idx ) => {
+                        if(Documents.findOne( { "_id": doc._id } ) != null){
+                            return <DocIcon
                                 key = { idx }
                                 item = { doc }
                                 onChange = { (doc) => { this.handleChange( idx, doc ) } }
@@ -168,7 +171,8 @@ export default class DocExplorer extends React.Component {
                                 role = {role}
                                 team = { this.state.item}
                             />
-						)
+                        }
+                    }
 					)
 				}
 

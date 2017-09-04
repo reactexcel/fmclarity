@@ -48,15 +48,28 @@ export default class TeamPageSuppliersMobile extends React.Component {
         } )
 	}
 
+	sortSuppliers(arr) {
+		let sortedList = arr.sort(function(a, b){
+			if(a != null && a.name != null && b != null && b.name != null){
+				var textA = a.name.toUpperCase();
+				var textB = b.name.toUpperCase();
+				return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+			} else {
+				return 0;
+			}
+		});
+		return sortedList
+	}
+
 	render() {
 		let { team, facility, facilities, suppliers, ...other } = this.props;
-
+		let sortedSuppliers = suppliers ? this.sortSuppliers(suppliers) : suppliers;
+		let currentUser = Meteor.user();
 		if ( !team ) {
 			return <div/>
 		}
 
 		return <div className="facility-page animated fadeIn">
-			{/*<ClientFilter/>*/}
 			<div className="row">
 				<div className="col-sm-6">
 					<FacilityFilter
@@ -73,14 +86,14 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} label="Add new supplier" onClick={() => this.addSupplier({addNewSupplier:true})}/>
+						{_.contains(['resident','tenant','staff','support','manager'],currentUser.getRole())?<div></div>:<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} label="Add new supplier" onClick={() => this.addSupplier({addNewSupplier:true})}/>}
 					</span>
 				</div>
 			</div>
 
 			<div style = { { paddingTop:"50px" } }>
 				<div className = "nav-list">
-					{ suppliers ? suppliers.map( ( supplier, idx ) => {
+					{ sortedSuppliers ? sortedSuppliers.map( ( supplier, idx ) => {
 						return 	<div
 							key 		= { `${idx}-${supplier._id}` }
 							className 	= "list-tile"

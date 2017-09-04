@@ -19,7 +19,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 		facilities = [];
 
 	if ( facility ) {
-		let requests = Meteor.user().getRequests( { 'facility._id': facility._id } );
+		let {requests} = Meteor.user().getRequests( { 'facility._id': facility._id } );
 
 		if( requests ) {
 			let requestIds = _.pluck( requests, '_id' );

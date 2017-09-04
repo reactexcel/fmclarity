@@ -2,8 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker } from '/modules/ui/MaterialInputs';
+import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker, NumericText } from '/modules/ui/MaterialInputs';
 import { FileExplorer } from '/modules/models/Files';
+
 export default AreaDetailsSchema = {
     type: {
         label: 'Type',
@@ -48,7 +49,14 @@ export default AreaDetailsSchema = {
                 "Weeks",
                 "Days",
                 "Hours",
-            ]
+            ],
+            afterChange( item ) {
+                console.log(item,"item");
+                item.hour = '',
+                item.month = '',
+                item.day = '',
+                item.week = ''
+            }
         },
         condition( item ) {
             return item.type === "Bookable";
@@ -331,6 +339,25 @@ export default AreaDetailsSchema = {
         },
         condition( item ) {
             return item.type === "Bookable";
+        }
+    },
+    "bookingAdvanceDay": {
+        label: 'Accept bookings this far in advance',
+        size: 6,
+        input: ( props )=> {
+            return (
+                <div className="row">
+                        <div className="col-xs-10">
+                            <NumericText {...props}/>
+                        </div>
+                        <div className="col-xs-2" style={{marginTop: "7%"}}>
+                            <span>{props.item.unit}</span>
+                        </div>
+                    </div>
+            )
+        },
+        condition( item ) {
+            return item.type === "Bookable";;
         }
     },
     "cost": {

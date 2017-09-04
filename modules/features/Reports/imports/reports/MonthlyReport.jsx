@@ -133,7 +133,6 @@ export default MonthlyReport = React.createClass( {
 		setTimeout(function(){
 			document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
 			$(".test").removeAttr("style");
-			$(".body-background").css({"position":"relative"});
 			$(".page-wrapper-inner").css({"display":"block"});
 			$("#toggleButton").hide();
 			$("#toggleButton2").hide();
@@ -149,7 +148,6 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
-			$(".body-background").css({"position":"fixed"});
 			$(".page-wrapper-inner").css({"display":"inlineBlock"});
 			Modal.show( {
 			content: <DocViewEdit
@@ -168,7 +166,6 @@ export default MonthlyReport = React.createClass( {
 		$(".test").removeAttr("style");
 		var component = this;
 		document.title = "Monthly_Report" + '-' + component.state.facility.name + "_" + moment().format('MMMM YYYY') + "_" + moment().format('YYYY-MM-DD') + "_" + moment().format('hhmmss');
-		$(".body-background").css({"position":"relative"});
 		$(".page-wrapper-inner").css({"display":"block"});
 		$("#toggleButton").hide();
 		$("#toggleButton2").hide();
@@ -186,7 +183,6 @@ export default MonthlyReport = React.createClass( {
 			$("#toggleButton").show();
 			$("#toggleButton2").show();
 			$(".contact-card-avatar").show();
-			$(".body-background").css({"position":"fixed"});
 			$(".page-wrapper-inner").css({"display":"inline-block"});
 		},200);
 	},
@@ -241,7 +237,9 @@ export default MonthlyReport = React.createClass( {
         // Requests.findForUser( Meteor.user() )...???
         requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
     }
-
+	if(!Array.isArray(requests)){
+		requests = requests.requests;
+	}
 		return (
 			<div>
 				<div id="toggleButton">
