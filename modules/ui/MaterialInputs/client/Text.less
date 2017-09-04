@@ -56,11 +56,18 @@
         border: none;
         border-bottom: 1px solid @border;
         background-color: transparent;
+
+        @media (max-width: 475px) {
+            font-size : 16px;
+        }
         &.used {
             ~ label {
                 font-size: 11px;
                 top: -12px;
                 color: @default;
+                @media (max-width: 475px) {
+                    font-size : 12px;
+                }
             }
         }
         &:focus,

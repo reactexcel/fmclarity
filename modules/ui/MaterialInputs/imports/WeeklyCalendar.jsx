@@ -43,8 +43,8 @@ const WeeklyCalendar = React.createClass( {
 					}
 					if(ableToBook == false){
 						Bert.alert({
-			  				title: 'Oops, Operation not allowed',
-			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				title: 'Operation not allowed',
+			  				message: "Oops, booking needs to be at least "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " in advance.",
 			  				type: 'danger',
 			  				style: 'growl-top-right',
 			  				icon: 'fa-ban'
@@ -202,8 +202,8 @@ const WeeklyCalendar = React.createClass( {
 						$('.fc-time-grid-event').css('display','none');
 						$('#bookingCalendar').fullCalendar( 'refetchEvents' );
 						Bert.alert({
-			  				title: 'Oops, Operation not allowed',
-			  				message: "Unable to book. You are able to book atleast "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " before.",
+			  				title: 'Operation not allowed',
+			  				message: "Oops, booking needs to be at least "+ self.props.areaDetails.bookingAdvanceDay +" "+ self.props.areaDetails.unit+ " in advance.",
 			  				type: 'danger',
 			  				style: 'growl-top-right',
 			  				icon: 'fa-ban'

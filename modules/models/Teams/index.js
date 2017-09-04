@@ -7,6 +7,7 @@ import TeamActions from './actions.jsx';
 import TeamFilter from './imports/components/TeamFilter.jsx';
 import SupplierFilter from './imports/components/SupplierFilter.jsx';
 import TeamStepper from './imports/components/TeamStepper.jsx';
+import OwnerTeamStepper from './imports/components/ownerTeamStepper.jsx';
 import SupplierStepper from './imports/components/SupplierStepper.jsx';
 import TeamPanel from './imports/components/TeamPanel.jsx';
 import TeamInviteEmailTemplate from './imports/components/TeamInviteEmailTemplate.jsx';
@@ -22,6 +23,7 @@ export {
 	TeamFilter,
 	SupplierFilter,
 	TeamStepper,
+	OwnerTeamStepper,
 	SupplierStepper,
 	TeamPanel,
 	TeamInviteEmailTemplate,

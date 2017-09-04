@@ -888,7 +888,7 @@ function actionIssue( request ) {
 
     if ( request ) {
         if ( request.code ) {
-            //code = request.code;
+            code = request.code;
             let team = Teams.findOne( {
                 _id: request.team._id
             } );
@@ -1060,6 +1060,13 @@ function actionComplete( request ) {
 
     if ( request.closeDetails.furtherWorkRequired ) {
 
+        request.distributeMessage( {
+            message: {
+                verb: 'completed',
+                subject: "Work order #" + request.code + " has been completed"
+            }
+        } );
+
         var closer = Meteor.user(),
             closerRole = closer.getRole();
 
@@ -1075,8 +1082,8 @@ function actionComplete( request ) {
             status: "New",
             service: request.service,
             subservice: request.subservice,
-            //name: "FOLLOW UP - " + request.name,
-            name: request.name,
+            name: "FOLLOW UP - " + request.name,
+            //name: request.name,
             description: request.closeDetails.furtherWorkDescription,
             priority: request.closeDetails.furtherPriority || 'Scheduled',
             costThreshold: request.closeDetails.furtherQuoteValue
@@ -1089,6 +1096,17 @@ function actionComplete( request ) {
 
         var response = Meteor.call( 'Issues.create', newRequest, true );
         var newRequest = Requests.findOne( response._id );
+        request.distributeMessage( {
+            message: {
+                verb: "raised a follow up",
+                subject: "Work order #" + newRequest.code + " requested",
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true,
+                body: request.description,
+                //alert: false
+            }
+        } );
         newRequest.distributeMessage( {
             message: {
                 verb: "requested a follow up to",
@@ -1100,8 +1118,24 @@ function actionComplete( request ) {
                 //alert: false
             }
         } );
-        let newResponse = Meteor.call( 'Issues.issue', newRequest );
-        let newRequest = Requests.findOne( newResponse._id )
+        //let newResponse = Meteor.call( 'Issues.issue', newRequest );
+        let newRequest = Requests.findOne( response._id )
+        newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order #" + ( newRequest ? `  ${newRequest.code}` : '' ),
+                body: newRequest.description
+            }
+        } )
+        /*newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order" + ( owner ? ` by ${owner.getName()}` : '' ),
+                body: newRequest.description
+            }
+        } );*/
         //ok cool - but why send notification and not distribute message?
         //is it because distribute message automatically goes to all recipients
         //I think this needs to be replaced with distribute message
@@ -1135,14 +1169,12 @@ function actionComplete( request ) {
             }
         } );
     } else {
-
         request.distributeMessage( {
             message: {
                 verb: 'completed',
                 subject: "Work order #" + request.code + " has been completed"
             }
         } );
-
     }
 
     return request;
@@ -1157,9 +1189,9 @@ function actionInvoice( request ) {
             var filename = file && file.original && file.original.name;
             var fileExists = false;
             for (var x = 0; x < request.attachments.length; x++) {
-                
+
                 let f = Files.findOne({_id:request.attachments[x]._id}),
-                fname = f && f.original && f.original.name; 
+                fname = f && f.original && f.original.name;
                 if (filename == fname) {
                     fileExists =  true;
                 }
