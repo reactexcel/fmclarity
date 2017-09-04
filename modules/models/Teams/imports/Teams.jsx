@@ -185,8 +185,8 @@ Teams.methods( {
         authentication: true,
         helper: ( team ) => {
             var user = Meteor.user();
-            var requests, teamIds = [];
-            requests = user.getRequests();
+            var teamIds = [];
+            let {requests} = user.getRequests();
             if ( requests && requests.length ) {
                 requests.map( function( i ) {
                     if ( i.team ) {
@@ -230,7 +230,7 @@ function getSuppliers() {
     }
 
     //also add any suppliers of the requests allocated to us
-    var requests = this.getRequests();
+    let {requests} = this.getRequests();
     if ( requests && requests.length ) {
         requests.map( function( i ) {
             if ( i.team ) {
@@ -507,8 +507,8 @@ Teams.helpers( {
         //return all facilities in my currently selected team
         //and all the facilities in the requests user can see
         var user = Meteor.user();
-        var requests, facilityIds = [];
-        requests = user.getRequests();
+        var facilityIds = [];
+        let {requests} = user.getRequests();
 
         if ( requests && requests.length ) {
             requests.map( ( request ) => {
@@ -547,8 +547,8 @@ Teams.helpers( {
             return []
         }
 
-        var requests, facilityIds = [];
-        requests = user.getRequests();
+        var facilityIds = [];
+        let {requests} = user.getRequests();
         if ( requests && requests.length ) {
             requests.map( function( i ) {
                 if ( i.facility ) {

@@ -64,6 +64,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 	render() {
 		let { team, facility, facilities, suppliers, ...other } = this.props;
 		let sortedSuppliers = suppliers ? this.sortSuppliers(suppliers) : suppliers;
+		let currentUser = Meteor.user();
 		if ( !team ) {
 			return <div/>
 		}
@@ -85,7 +86,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>
-						<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} label="Add new supplier" onClick={() => this.addSupplier({addNewSupplier:true})}/>
+						{_.contains(['resident','tenant','staff','support','manager'],currentUser.getRole())?<div></div>:<RaisedButton backgroundColor={"#b8e986"} labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}} label="Add new supplier" onClick={() => this.addSupplier({addNewSupplier:true})}/>}
 					</span>
 				</div>
 			</div>

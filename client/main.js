@@ -212,7 +212,6 @@ Actions.addAccessRule( {
         'delete team member',
         'create team member',
         'create compliance rule',
-        'create team document',
         'invite supplier'
     ],
     role: [
@@ -223,6 +222,29 @@ Actions.addAccessRule( {
         'owner',
         'property manager',
         'caretaker'*/
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'create team document'
+    ],
+    role: [
+        //'*'
+        'fmc support',
+        'portfolio manager',
+        'team portfolio manager',
+        'facility manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker'
     ],
 } )
 
@@ -445,15 +467,22 @@ Actions.addAccessRule( {
                 team = request.getTeam(),
                 teamRole = team.getMemberRole( user ),
                 requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
-
+            /*let facilityRole = facility.getMemberRole( user )*/
             if (requestIsInvoice) {
                 return false;
             }
-
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
-                return true;
-            } else if ( request.status == 'New' || request.type == 'Schedular' ) {
+                if(request.status == 'Issued'){
+                    if(user.getRole() && user.getRole() == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    return true;
+                }
+            } else if ( request.status == 'New' || request.type == 'Preventative' || request.status == 'Issued' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -465,10 +494,18 @@ Actions.addAccessRule( {
                 if ( facility ) {
                     facilityRole = facility.getMemberRole( user );
                 }
-
+                if(request.status == 'Issued'){
+                    if(facilityRole == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
                 }
+            } else {
+                return false;
             }
         },
     action: [

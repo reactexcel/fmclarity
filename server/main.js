@@ -35,6 +35,14 @@ Meteor.startup( function() {
         job: CronJobs.sendEmailDigests,
     } );
 
+    SyncedCron.add( {
+        name: 'Complete Booking Request',
+        schedule: function( parser ) {
+            return parser.text('every 5 minute');
+        },
+        job: CronJobs.completeBookingRequest,
+    } );
+
     SyncedCron.start();
 } );
 
