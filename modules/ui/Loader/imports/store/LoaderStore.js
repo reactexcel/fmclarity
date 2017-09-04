@@ -13,11 +13,11 @@ export default class LoaderStore extends Reflux.Store {
   }
 
   onSetLoaderVisibility(bool) {
-    let visibility = Boolean(bool);
-    if (visibility === this.state.visible) {
-      return;
+    try {
+      this.setState({ visible: Boolean(bool) });
+    } catch (e) {
+      // console.warn(e);
     }
-    this.setState({ visible: visibility });
   }
 
   onGetLoaderVisibility() {

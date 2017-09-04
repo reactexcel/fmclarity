@@ -9,6 +9,7 @@ function TopNavigationBar( props ) {
     import { NotificationList } from '/modules/models/Messages';
 
     loaderStoreActions.setLoaderVisibility(false);
+
     setTimeout( () => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {

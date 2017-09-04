@@ -42,7 +42,6 @@ AccessGroups.loggedIn.add( {
 	label: "Requests",
 	icon: 'fa fa-wrench',
 	action() {
-    loaderStoreActions.setLoaderVisibility(true);
 		mount( LayoutMain, {
 			content: <RequestsPageIndexContainer />
 		} );
