@@ -86,6 +86,9 @@ export default UserViewEdit = React.createClass( {
 		} else {
 			input.value = '';
 			var creatorsTeam = Session.getSelectedTeam();
+			// if(this.props.new){
+			// 	creatorsTeam = this.props.team
+			// }
 			team.inviteMember( email, {
 				role: role,
 				owner: {
@@ -151,9 +154,13 @@ export default UserViewEdit = React.createClass( {
 				newMember.emails[0].address = profileEmail;
 				Users.save.call( newMember );
 		}
-
+		console.log(newMember);
+		if(this.props.onChange){
+			this.props.onChange(newMember)
+		}
 		if( this.state.userIsNew ) {
 			let { user, team, group, role } = this.data;
+			console.log(user);
 			group.sendMemberInvite( user, team );
 			window.alert("Invitation has been sent to \""+ user.getName() + "\"");
 			//Meteor.call("Teams.sendMemberInvite",team, user);
@@ -170,6 +177,7 @@ export default UserViewEdit = React.createClass( {
 			profile = user.profile;
 			role = user.getRole();
 		}
+		console.log(this.data,profile,role);
 
 		// if the form has been called without a user then assume we want to create one and prompt for email address
 		if ( !user || !profile ) {

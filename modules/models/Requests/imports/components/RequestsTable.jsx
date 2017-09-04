@@ -128,10 +128,10 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
 		},
     }
     if ( filter ) {
-        requests = Meteor.user().getRequests( { $and:[
+				({requests} = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
             filter
-        ] });
+        ] }));
     }
 
 
@@ -140,6 +140,7 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
 			let openB = b.code
 			return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
 	});
+
 	let sortByLastUpdate = sortByWO.sort(function(a,b){
 		if(a != null && b != null){
 			if(_.contains(['Open'],selectedItem)){
