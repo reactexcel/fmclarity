@@ -44,11 +44,13 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 			Meteor.subscribe( 'Thumbs', facilityThumbs );
 		}
 	}
-	if(!_.contains(['fmc support'],Meteor.user().getRole())){
-        let logedUser = Meteor.user();
-        let newFacilityList = Roles.getAssociateFacility( logedUser );
-        facilities = newFacilityList
-    }
+	let logedUser = Meteor.user();
+	if(logedUser){
+		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole())){
+	        let newFacilityList = Roles.getAssociateFacility( logedUser );
+	        facilities = newFacilityList
+	    }
+	}
 	return {
 		team,
 		facility,
