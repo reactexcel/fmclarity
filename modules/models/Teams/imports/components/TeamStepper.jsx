@@ -415,7 +415,7 @@ const TeamStepper = React.createClass( {
                         content:    <ContactList
                                         team        = { viewingTeam }
                                         group       = { viewingTeam }
-                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } }
+                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'fmc support', 'portfolio manager', 'property manager', 'resident', 'support', 'tenant' ] } } }
                                         defaultRole = "staff"
                                     />,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>
