@@ -9,8 +9,6 @@ import { ContactCard } from '/modules/mixins/Members';
 import { Loader } from '/modules/ui/Loader';
 import { Actions } from '/modules/core/Actions';
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
-
 /**
  * @class           UserProfileMenu
  * @memberOf        module:models/User
