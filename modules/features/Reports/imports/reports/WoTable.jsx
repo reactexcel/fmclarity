@@ -67,24 +67,26 @@ const WoTable = React.createClass( {
                   //     $gte: moment().startOf("month").toDate(),
                   //     $lte: moment().endOf("month").toDate()
                   // };
-                  //  q['dueDate'] = {
-                  //      $gte: moment().startOf("month").toDate(),
-                  //      $lte: moment().endOf("month").toDate()
-                  //  };
+                   q['issuedAt'] = {
+                       $gte: moment().startOf("month").toDate(),
+                       $lte: moment().endOf("month").toDate()
+                   };
                   if(this.props.defect){
                     q["type"] = 'Defect'
                   }else{
                     q["type"] = {$ne:'Defect'}
                   }
 
-                  q['status'] ={$nin:['Deleted','PPM']};
+                  q['status'] ={$nin:['Deleted','PPM','New']};
                       q['service.name'] = this.props.service;
                       let requests = Requests.findAll(q);
-                      let PPMIssued = PPM_Schedulers.findAll(q);
-                      if(PPMIssued.length > 0){
-                        PPMIssued.map((val)=>{
-                          requests.push(val)
-                        })
+                      if(!this.props.defect){
+                        let PPMIssued = PPM_Schedulers.findAll(q);
+                        if(PPMIssued.length > 0){
+                          PPMIssued.map((val)=>{
+                            requests.push(val)
+                          })
+                        }
                       }
 
                       if (requests.length){
@@ -134,7 +136,7 @@ const WoTable = React.createClass( {
             } ,
             service : r.service.name,
             keys:[key],
-            type : this.props.defect ? "defectToggle" : "toggle" 
+            type : this.props.defect ? "defectToggle" : "toggle"
           }
           this.setState({
             removedImg : item.keys
@@ -243,7 +245,7 @@ const WoTable = React.createClass( {
                     <tr>
                     <th>WO#</th>
                     <th>Summary & Images</th>
-                    <th>Value</th>
+                    {this.props.defect ? <th>Status</th> : <th>Value</th>}
                     <th>Comments</th>
                     <th>Opt</th>
                   </tr>
@@ -291,10 +293,11 @@ const WoTable = React.createClass( {
                               }}>+ Add-image</span>
                               <div style={{cursor:"pointer"}}>{r.name}</div>
                               <div style={{cursor:"pointer"}}>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
-                              <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>
+                              {this.props.defect ? null : <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>}
+                              <div style={{cursor:"pointer"}}>Issued Date : {moment(r.issuedAt).format("DD-MM-YYYY")}</div>
                               {imgs}
                             </td>
-                            <td>{r.costThreshold}</td>
+                            {this.props.defect ? <td>{r.status}</td> : <td>{r.costThreshold}</td>}
                             <td key ={idx + idy + 20}>{this.getComment(r)}</td>
                             <td  style={{
                               color:"#0152b5",
