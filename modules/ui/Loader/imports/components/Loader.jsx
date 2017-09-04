@@ -16,6 +16,7 @@ export default class Loader extends React.Component {
     } else if (!this.state.visible) {
       loaderClass = ['loader', 'hidden'];
     }
+    console.log(Session.get('showLoader'));
 
     return (
       <div className={ loaderClass.join(' ') }>

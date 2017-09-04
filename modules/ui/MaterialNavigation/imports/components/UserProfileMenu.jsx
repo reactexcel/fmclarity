@@ -6,7 +6,6 @@
 import React from "react";
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 import { ContactCard } from '/modules/mixins/Members';
-import { Loader } from '/modules/ui/Loader';
 import { Actions } from '/modules/core/Actions';
 
 /**
