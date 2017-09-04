@@ -17,8 +17,6 @@ if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
 }
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
-
 /**
  * @class 			RequestBreakdownChart
  * @memberOf 		module:features/Reports
@@ -260,7 +258,7 @@ const RequestBreakdownChart = React.createClass( {
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
-      loaderStoreActions.setLoaderVisibility(false);
+      Session.set('showLoader', false);
 		},2000)
 	},
 

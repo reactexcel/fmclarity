@@ -20,8 +20,6 @@ if ( Meteor.isClient ) {
 import Reports from '../Reports.js';
 import ProgressArc from '../components/ProgressArc';
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
-
 /**
  * @class 			RequestActivityChart
  * @memberOf 		module:features/Reports
@@ -278,7 +276,7 @@ const RequestActivityChart = React.createClass( {
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
-      loaderStoreActions.setLoaderVisibility(false);
+      Session.set('showLoader', false);
 		},2000)
 	},
 

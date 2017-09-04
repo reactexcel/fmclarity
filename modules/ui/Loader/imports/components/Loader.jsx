@@ -1,22 +1,20 @@
 import React from 'react';
-import Reflux from 'reflux';
 
-import LoaderStore from '../store/LoaderStore';
-
-export default class Loader extends Reflux.Component {
+export default class Loader extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
-    this.store = LoaderStore;
-    this.storeKeys = ['visible'];
+    this.state = {
+      visible: props.visible ? props.visible : false
+    };
   }
 
   render() {
-
     let loaderClass = ['loader'];
-    if (!this.state.visible) {
-      loaderClass.push('hidden');
+    if (Session.get('showLoader')) {
+      loaderClass = ['loader'];
+    } else if (!this.state.visible) {
+      loaderClass = ['loader', 'hidden'];
     }
 
     return (
@@ -25,7 +23,7 @@ export default class Loader extends Reflux.Component {
           <div className="preloader-wrapper big active">
             <div className="spinner-layer spinner-custom-blue-only">
               <div className="circle-clipper left">
-                <div className="circle"></div>
+                <div className="circle"/>
               </div>
               <div className="gap-patch">
                 <div className="circle"/>

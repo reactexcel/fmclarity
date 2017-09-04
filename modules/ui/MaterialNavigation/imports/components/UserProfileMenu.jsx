@@ -29,10 +29,10 @@ function UserProfileMenu( { user, team, teams, children, UserActions } ) {
 };
 
 	if ( !team ) {
-    loaderStoreActions.setLoaderVisibility(true);
+    Session.set('showLoader', true);
     return null;
 	} else {
-		loaderStoreActions.setLoaderVisibility(false);
+    Session.set('showLoader', false);
 	}
 
 	let actionNames = Object.keys( UserMenuActions.actions ),

@@ -6,17 +6,15 @@
 import React from "react";
 import FileView from './FileView.jsx';
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore'
-
 /**
  * @class 			FilesPageIndex
  * @memberOf 		module:models/Files
  */
 function FilesPageIndex( props ) {
 	if (props.items.length === 0) {
-    loaderStoreActions.setLoaderVisibility(true);
+    Session.set('showLoader', true);
 	} else {
-    loaderStoreActions.setLoaderVisibility(false);
+    Session.set('showLoader', false);
 	}
 
 	return (

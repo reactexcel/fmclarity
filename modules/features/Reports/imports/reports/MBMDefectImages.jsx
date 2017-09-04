@@ -13,7 +13,6 @@ import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
 import { DataTable } from '/modules/ui/DataTable';
 import WoTable from '../reports/WoTable.jsx';
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 if ( Meteor.isClient ) {
 	import Chart from 'chart.js';
@@ -231,7 +230,7 @@ const SingleServiceRequest = React.createClass( {
 
 	componentDidMount() {
 		setTimeout(function(){
-      loaderStoreActions.setLoaderVisibility(false);
+      Session.set('showLoader', false);
 		},2000)
 	},
 

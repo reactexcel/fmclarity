@@ -5,11 +5,10 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import Reports from '../Reports.js';
 import { Documents } from '/modules/models/Documents';
 import moment from 'moment';
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 export default ReportsNavWidget = React.createClass( {
   navigateToReport(id) {
-    loaderStoreActions.setLoaderVisibility(true);
+    Session.set('showLoader', true);
 
 		setTimeout(function(){
 			FlowRouter.go("/report/"+id+"/");

@@ -18,7 +18,6 @@ import { ContactCard } from '/modules/mixins/Members';
 import { Facilities } from '/modules/models/Facilities';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 import moment from 'moment';
 
 /**
@@ -72,8 +71,8 @@ const RequestsStatusReport = React.createClass( {
 	},
 	componentDidMount(){
 		setTimeout(function(){
-      loaderStoreActions.setLoaderVisibility(false);
-		},2000)
+      Session.set('showLoader', false);
+		}, 2000);
 		if(!this.props.MonthlyReport){
 			let update = setInterval(()=>{
 				PubSub.subscribe( 'stop', (msg,data) => {

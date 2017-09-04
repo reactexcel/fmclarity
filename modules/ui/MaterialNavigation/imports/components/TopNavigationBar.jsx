@@ -1,5 +1,4 @@
 import React from "react";
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 function TopNavigationBar( props ) {
 
@@ -8,7 +7,7 @@ function TopNavigationBar( props ) {
     import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
     import { NotificationList } from '/modules/models/Messages';
 
-    loaderStoreActions.setLoaderVisibility(false);
+    Session.set('showLoader', false);
 
     setTimeout( () => {
 

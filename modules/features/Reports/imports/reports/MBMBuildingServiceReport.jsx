@@ -9,8 +9,6 @@ import { ServicesRequestsView } from '/modules/mixins/Services';
 import { Facilities } from '/modules/models/Facilities';
 import DocViewEdit from '../../../.././models/Documents/imports/components/DocViewEdit.jsx';
 
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
-
 import moment from 'moment';
 import { TextArea } from '/modules/ui/MaterialInputs';
 import { DataTable } from '/modules/ui/DataTable';
@@ -379,7 +377,7 @@ const SingleServiceRequest = React.createClass( {
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
-      loaderStoreActions.setLoaderVisibility(false);
+      Session.set('showLoader', false);
 		},2000)
 	},
 

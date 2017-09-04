@@ -11,9 +11,7 @@ import { DataTable } from '/modules/ui/DataTable';
 import { download, print } from '/modules/ui/DataTable/source/DataSetActions.jsx';
 import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
-
 import { ContactCard } from '/modules/mixins/Members';
-import { loaderStoreActions } from '/modules/ui/Loader/imports/store/LoaderStore';
 
 import moment from 'moment';
 
@@ -66,8 +64,7 @@ const BookingReport = React.createClass( {
     componentDidMount(){
         $('.nav-list-selected').css('display','none');
 				setTimeout(function(){
-          loaderStoreActions.setLoaderVisibility(false);
-          loaderStoreActions.setLoaderVisibility(false);
+          Session.set('showLoader', false);
 				}, 2000)
     },
 
