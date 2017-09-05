@@ -73,8 +73,6 @@ export default function RequestsTable({requests, filter, columns, selectedItem})
       let minutes;
       let seconds;
 
-      console.log(dueDate);
-
       if (dueDate.isValid()) {
         dueString = year > 1 || year < -1 ? Math.abs(year) + " " + "years" : Math.abs(year) + " " + "year"
         if (year === 0) {

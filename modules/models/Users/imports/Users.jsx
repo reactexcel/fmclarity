@@ -361,9 +361,6 @@ Users.actions({
           });
         }
       }
-
-      console.log(requests);
-
       return {
         requests: requests,
         totalCollectionCount: totalCollectionCount,
