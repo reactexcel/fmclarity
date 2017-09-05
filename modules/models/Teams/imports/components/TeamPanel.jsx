@@ -85,12 +85,17 @@ const TeamPanel = React.createClass( {
             } );
             */
             if (team.documents) {
-                team.documents.map(function(doc, idx){
-                    if (doc.type=="Insurance") {
-                       docIds.push(doc._id);
-                    }
+                if(Array.isArray(team.documents)){
+                    team.documents.map(function(doc, idx){
+                        if (doc.type=="Insurance") {
+                           docIds.push(doc._id);
+                        }
+                    });
+                }
+                if(typeof team.documents == "object"){
+                    docIds.push(team.documents._id);
+                }
 
-                });
             }
 
             insuranceDocs = Documents.find( { $or: [{ type: "Insurance", "team._id": team._id }, { _id: { $in: docIds } } ] } ).fetch();

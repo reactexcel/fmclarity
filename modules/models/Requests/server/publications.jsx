@@ -163,8 +163,6 @@ Meteor.publish( 'Requests: Complete', function( ) {
     return requestsCursor;
 } );
 
-
-
 Requests.collection._ensureIndex( { 'createdAt': 1 } );
 Requests.collection._ensureIndex( { 'lastUpdate': 1 } );
 Requests.collection._ensureIndex( { 'team._id': 1 } );
