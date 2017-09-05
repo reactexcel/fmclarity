@@ -348,7 +348,6 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 // console.log(item,team);
-                                                if(item.type === "fm"){
                                                 if(item.members && item.members.length){
                                                   let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
                                                   if(!arr.length > 0 ){
@@ -387,7 +386,6 @@ const TeamStepper = React.createClass( {
                                                     }]
                                                   }
                                                 }
-                                              }
                                                 // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
                                                     //quick fix to manually add supplier to a team. better solution needed
