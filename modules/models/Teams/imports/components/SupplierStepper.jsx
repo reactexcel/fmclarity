@@ -229,7 +229,7 @@ const SupplierStepper = React.createClass( {
 
                 <Stepper
                   submitForm = {
-                    ( callback ) => {
+                    ( activeTab, callback ) => {
                         if( this.submitFormCallback){
                             this.submitFormCallback( ( errorList ) => {
                                 if(!_.isEmpty(this.state.viewingTeam.name) && !_.isEmpty(this.state.viewingTeam.email) && !_.isEmpty(this.state.viewingTeam.email) && _.isEmpty(this.data.viewingTeam) ){
