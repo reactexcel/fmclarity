@@ -39,6 +39,14 @@ class AutoForm extends React.Component {
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
 
+	componentWillMount(){
+		$("#fab").hide();
+	}
+
+	componentWillUnmount(){
+		$("#fab").show();
+	}
+
 	componentDidMount(){
 		let self = this;
 		setTimeout(function() { self.checkBookingAreas('type') }, 100);
@@ -82,7 +90,13 @@ class AutoForm extends React.Component {
 					}
 				})
 				if(foundAreas.length == 0){
-					window.alert("Oops, no bookable areas available");
+					Bert.alert({
+		  				title: 'Oops, Bookin not allowed',
+		  				message: 'No bookable areas available.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
 				}
 			}
 		}

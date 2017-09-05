@@ -30,6 +30,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'Team: Last 10 Created' );
     /*These need to be reduced*/
     Meteor.subscribe( 'Documents' );
+    Meteor.subscribe( 'PPM_Schedulers' );
     Meteor.subscribe( 'Files' );
 
     let user = Meteor.user(),

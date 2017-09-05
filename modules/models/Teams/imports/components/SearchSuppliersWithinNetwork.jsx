@@ -80,8 +80,10 @@ export default class SearchSuppliersWithinNetwork extends Component {
                 }
             })
             suppliers = newSupplierList;
+            suppliers = _.uniq( suppliers, s => s._id );
+        } else {
+          suppliers = [];
         }
-        suppliers = _.uniq( suppliers, s => s._id );
         if (suppliers.length ){
             if(this.state.selectedService){
                 this.setState({suppliers, showMsg: false,searchTeams:''});
@@ -153,7 +155,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
     }
     setSupplier(supplier){
         let { facility, selectedService } = this.state;
-        Meteor.call("Facilities.setDefaultSupplier", facility, supplier, selectedService, (err, data) => {
+        Meteor.call("Facilities.setDefaultSupplier", facility, supplier, selectedService, this.state.team, (err, data) => {
             if (data) {
                 toastr.success(
                     "Supplier '" + data.supplier.name + "' has been added to service '" + data.service.name + "'",
@@ -208,6 +210,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                 value={this.state.supplierName}
                                 onChange={ ( text ) => {
                                     this.setState( { supplierName : text } );
+                                    this.search();
                                 } }
                             />
                         </div>
@@ -216,19 +219,9 @@ export default class SearchSuppliersWithinNetwork extends Component {
                         <div className="col-lg-12">
                             <span style={{'float':'right','marginRight':'1%'}}>
                                 <button
-                                    className="btn btn-flat btn-primary"
-                                    style={{float:'right'}}
-                                    onClick={ () => {
-                                            this.search()
-                                    } }>
-                                    Search <i className="fa fa-search" aria-hidden="true"></i>
-                                </button>
-                            </span>
-                            <span style={{'float':'right','marginRight':'1%'}}>
-                                <button
                                     title={"Click to add new supplier."}
                                     className="btn btn-flat btn-primary" onClick={(event)=>{
-                                        //this.addSupplier(event)
+                                        // this.addSupplier(event)
                                         this.checkName(event)
                                     }}
                                 >
