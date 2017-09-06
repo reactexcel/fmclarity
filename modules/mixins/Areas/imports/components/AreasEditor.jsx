@@ -301,7 +301,8 @@ FacilityAreasEditorInner = React.createClass( {
                                                 onBlur={()=>{
                                                     component.props.sortArea(component.state.selection[0].children)
                                                 }}
-                                                onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }/>
+                                                onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }
+                                            />
                                             {editable?<span className="areas-selector-delete-icon"
                                               onClick = {
                                                 () => {
@@ -379,7 +380,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                       model = { Facilities }
                                                       item = { b.data }
                                                       form = { ["areaDetails"] }
-                                                      beforeSubmit={
+                                                      onSubmit={
                                                         ( item ) => {
                                                           component.save();
                                                           Modal.hide();
@@ -443,7 +444,7 @@ FacilityAreasEditorInner = React.createClass( {
                                                   model = { Facilities }
                                                   item = { c.data }
                                                   form = { ["areaDetails"] }
-                                                  beforeSubmit={
+                                                  onSubmit={
                                                     ( item ) => {
                                                       component.save();
                                                       Modal.hide();

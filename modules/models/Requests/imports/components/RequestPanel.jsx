@@ -12,7 +12,7 @@ import { Menu } from '/modules/ui/MaterialNavigation';
 import { Users, UserPanel } from '/modules/models/Users';
 // wouldn't it be nice to go import { Tabs, Menu } from '/modules/ui/MaterialNavigation'
 
-import { Requests, RequestActions ,PPMRequest } from '/modules/models/Requests';
+import { Requests, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
 import { Teams, TeamActions } from '/modules/models/Teams';
 
 import moment from 'moment';
@@ -41,7 +41,7 @@ export default RequestPanel = React.createClass( {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
             if(request === undefined){
-            request = PPMRequest.findOne( { _id: this.props.item._id } );
+            request = PPM_Schedulers.findOne( { _id: this.props.item._id } );
           }
           console.log(this.props.item);
             if ( request ) {

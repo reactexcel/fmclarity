@@ -5,9 +5,9 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, RequestPanel, CreateRequestForm, CreatePPMRequestForm, SupplierCreateRequestForm, RequestActions ,PPMRequest } from '/modules/models/Requests';
+import { Requests, RequestPanel, CreateRequestForm, CreatePPMRequestForm, SupplierCreateRequestForm, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
 import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
-import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
+import { Teams, TeamStepper,OwnerTeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -22,7 +22,7 @@ const create = new Action( {
         team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } showFilter={showFilter || false} />
+                <OwnerTeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }
@@ -124,9 +124,9 @@ const createRequest = new Action( {
             onSubmit = {
                 ( newRequest ) => {
                     if(newRequest.type == "Booking"){
+                        newRequest = _.omit(newRequest,'bookingRules')
                         Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
-
                     /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
                                 <RequestPanel item = { newRequest } callback={callback}/>
@@ -141,8 +141,8 @@ const createRequest = new Action( {
                     };
                     let request;
                     if(newRequest.type == "Preventative"){
-                      Meteor.call( 'PPMRequest.create', newRequest );
-                      request = PPMRequest.findOne( { _id: newRequest._id } );
+                      Meteor.call( 'PPM_Schedulers.create', newRequest );
+                      request = PPM_Schedulers.findOne( { _id: newRequest._id } );
                     }else{
                       Meteor.call( 'Issues.create', newRequest );
                       request = Requests.findOne( { _id: newRequest._id } );
@@ -176,7 +176,7 @@ const createRequest = new Action( {
         // this function returns the email template
 } )
 
-const createPPMRequest = new Action( {
+const createPPM_Schedulers = new Action( {
     name: "create team PPM request",
     type: [ 'team' ],
     label: "Create new request",
@@ -189,13 +189,13 @@ const createPPMRequest = new Action( {
             options.team = team;
             item = options
         }
-        newItem = PPMRequest.create( item );
+        newItem = PPM_Schedulers.create( item );
         newItem.type = "Schedular";
         console.log(newItem);
         Modal.show( {
             content: <AutoForm
             title = "Please tell us a little bit more about the scheduled task"
-            model = { PPMRequest }
+            model = { PPM_Schedulers }
             form = {CreatePPMRequestForm }
             item = { newItem }
             submitText="Save"
@@ -219,12 +219,12 @@ const createPPMRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
-                    Meteor.call( 'PPMRequest.create', newRequest );
-                    let request = PPMRequest.findOne( { _id: newRequest._id } );
+                    Meteor.call( 'PPM_Schedulers.create', newRequest );
+                    let request = PPM_Schedulers.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
                     Modal.replace( {
-                        content: <DropFileContainer model = { PPMRequest } request = { request }>
+                        content: <DropFileContainer model = { PPM_Schedulers } request = { request }>
                                 <RequestPanel item = { /*newRequest*/  request} callback = { callback }/>
                             </DropFileContainer>
                     } );
@@ -238,7 +238,7 @@ const createPPMRequest = new Action( {
     // notification: ( item ) => {}???
     getResult: ( item ) => {
             if ( item && item._id ) {
-                let result = PPMRequest.findOne( item._id );
+                let result = PPM_Schedulers.findOne( item._id );
                 if ( result ) {
                     return {
                         text: ( result.code ? `#${result.code} - ` : '' ) + result.name,
@@ -398,7 +398,7 @@ export {
     createFacility,
     createRequest,
     CreateTeamRequest,
-    createPPMRequest,
+    createPPM_Schedulers,
     createDocument,
     removeSupplier,
 

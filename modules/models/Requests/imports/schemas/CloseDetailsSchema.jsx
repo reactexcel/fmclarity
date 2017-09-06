@@ -49,6 +49,7 @@ export default CloseDetailsSchema = {
     comment:{
         label: "Comment",
         input: TextArea,
+        type: "string",
         required: true,
         condition( item ) {
             return (item.jobCancelled == undefined ? false : item.jobCancelled) == true;
