@@ -125,6 +125,19 @@ const DocViewEdit = React.createClass( {
         if ( !item._id ) {
             Documents.save.call( item )
                 .then( ( item ) => {
+                    import { Facilities } from '/modules/models/Facilities';
+                    let docFacility = Facilities.findOne( this.data.doc.facility._id );
+                    let facilityMember = docFacility.members && docFacility.members.length ? _.find(docFacility.members, function(memb){ return memb._id === Meteor.user()._id; }) : undefined;
+                    let createdByUser_role = facilityMember ? (facilityMember.role ? facilityMember.role : 'manager' ) : 'manager'
+                    let createdByUser = {
+                        _id: Meteor.user()._id,
+                        role: createdByUser_role
+                    }
+                    Documents.update( { _id: item._id }, {
+                        $set: {
+                            createdByUser: createdByUser
+                        }
+                    });
                     if ( self.props.team ) {
                         item.team = {
                             _id: this.props.team._id,
