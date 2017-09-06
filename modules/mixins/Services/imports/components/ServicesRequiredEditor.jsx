@@ -94,10 +94,11 @@ const ServicesRequiredEditor = React.createClass( {
 	save() {
 		var item = this.state.item;
 		var services = this.state.services;
-		var isValidated = false;
+		var isValidatedService = false;
+		var isValidatedSubservice = false;
 		services.forEach(function(service, idx){
 			if (!service.name) {
-				isValidated = false;
+				isValidatedService = false;
 				// delete services[idx];
 				Bert.alert({
 		  				title: '',
@@ -108,10 +109,26 @@ const ServicesRequiredEditor = React.createClass( {
 					});
 			}
 			else {
-				isValidated = true;
+				isValidatedService = true;
+			}
+			if (service.children) {
+				service.children.forEach(function(subservice, idx){
+					if (!subservice.name) {
+						isValidatedSubservice = false;
+						Bert.alert({
+			  				title: '',
+			  				message: 'Sub service name is required.',
+			  				type: 'danger',
+			  				style: 'growl-bottom-right',
+			  				icon: 'fa-ban'
+						});
+					} else {
+						isValidatedSubservice = true;
+					}
+				});
 			}
 		});
-		if (isValidated) {
+		if (isValidatedService && isValidatedSubservice) {
 			item.setServicesRequired( services );
 		}
 		/* or???
