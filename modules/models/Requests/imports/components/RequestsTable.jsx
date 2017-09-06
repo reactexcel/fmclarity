@@ -136,14 +136,15 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
 
     let sortByWO = [];
     if (requests) {
-        sortByWO = requests.sort(function(a, b){
-                let openA = a.code
-                let openB = b.code
-                return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
-        });
+         sortByWO = requests.sort(function(a, b){
+            let openA = a.code
+            let openB = b.code
+            return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
+    });
     }
 
-	let sortByLastUpdate = sortByWO.sort(function(a,b){
+	let sortByLastUpdate = sortByWO;
+	/*let sortByLastUpdate = sortByWO.sort(function(a,b){
 		if(a != null && b != null){
 			if(_.contains(['Open'],selectedItem)){
 				if(a.issuedAt != null && b.issuedAt != null){
@@ -181,7 +182,7 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
 				return (lastUpdate_B < lastUpdate_A) ? -1 : (lastUpdate_B > lastUpdate_A) ? 1 : 0;
 			}
 		}
-	});
+	});*/
 
 		let requiredColumns = columns ? $.grep(columns, (element) => {
 			return $.inArray(element, Object.keys(this.fields) ) !== -1;
