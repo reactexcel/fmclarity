@@ -94,7 +94,26 @@ const ServicesRequiredEditor = React.createClass( {
 	save() {
 		var item = this.state.item;
 		var services = this.state.services;
-		item.setServicesRequired( services );
+		var isValidated = false;
+		services.forEach(function(service, idx){
+			if (!service.name) {
+				isValidated = false;
+				// delete services[idx];
+				Bert.alert({
+		  				title: '',
+		  				message: 'Service name is required.',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+			}
+			else {
+				isValidated = true;
+			}
+		});
+		if (isValidated) {
+			item.setServicesRequired( services );
+		}
 		/* or???
 		if(this.props.onChange) {
 			this.props.onChange(this.state.services);
