@@ -188,7 +188,11 @@ const deleteFunction = new Action( {
                 Facilities.update( { _id: facility._id }, { $set: { "areas": areas } } );
         }
         if(newCollection){
-        PPM_Schedulers.update( request._id, { $set: { status: 'Deleted' } } );
+          if(request.status == "PPM"){
+            PPM_Schedulers.update( request._id, { $set: { status: 'Deleted' } } );
+          }else{
+            PPM_Schedulers.remove( request._id );
+          }
         }else{
         Requests.update( request._id, { $set: { status: 'Deleted' } } );
         }
@@ -595,7 +599,7 @@ const editInvoice = new Action( {
                               fileExists = false;
                           $.each(request.attachments, function(k, v){
                             let f = Files.findOne({_id:v._id});
-                            fname = f && f.original && f.original.name; 
+                            fname = f && f.original && f.original.name;
                             if (filename == fname) {
                                 fileExists =  true;
                             }
