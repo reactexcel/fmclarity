@@ -138,13 +138,14 @@ Actions.addAccessRule( {
     alert: true
 } );
 
-Actions.addAccessRule( {
+
+/*Actions.addAccessRule( {
     action: [
         'create team',
     ],
     role: [ 'portfolio manager', 'manager' ],
     alert: true
-} );
+} );*/
 
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
