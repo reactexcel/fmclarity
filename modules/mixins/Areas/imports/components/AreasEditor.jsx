@@ -299,6 +299,9 @@ FacilityAreasEditorInner = React.createClass( {
                                                 readOnly={!editable}
                                                 onChange={component.updateItem.bind(component,0,idx)}
                                                 onBlur={()=>{
+                                                    if(_.isEmpty(a.name)){
+                                                        component.removeItem(0,idx)
+                                                    }
                                                     component.props.sortArea(component.state.selection[0].children)
                                                 }}
                                                 onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }
@@ -316,10 +319,28 @@ FacilityAreasEditorInner = React.createClass( {
                                                         item = { a.data }
                                                         form = { ["areaDetails"] }
                                                         onSubmit={
-                                                          ( item ) => {
-                                                            component.save();
-                                                            Modal.hide();
-                                                          }
+                                                            ( item ) => {
+                                                                let readyToSave = false;
+                                                                    readyToSave = _.isEmpty(item.areaDetails.daySelector) ? false : true;
+                                                                if(readyToSave){
+                                                                    readyToSave = false;
+                                                                    if(!_.isEmpty(item.areaDetails.daySelector.Mon.time) || !_.isEmpty(item.areaDetails.daySelector.Tue.time) || !_.isEmpty(item.areaDetails.daySelector.Wed.time) || !_.isEmpty(item.areaDetails.daySelector.Thu.time) || !_.isEmpty(item.areaDetails.daySelector.Fri.time) || !_.isEmpty(item.areaDetails.daySelector.Sat.time) || !_.isEmpty(item.areaDetails.daySelector.Sun.time) ){
+                                                                        readyToSave = true;
+                                                                    }
+                                                                }
+                                                                if(readyToSave){
+                                                                    component.save();
+                                                                    Modal.hide();
+                                                                }else{
+                                                                    Bert.alert({
+                                            			  				title: 'Operation not allowed',
+                                            			  				message: "Please set the booking time for at least 1 day",
+                                            			  				type: 'danger',
+                                            			  				style: 'growl-top-right',
+                                            			  				icon: 'fa-ban'
+                                            						});
+                                                                }
+                                                            }
                                                         }
                                                       />
                                                       <div style={ {textAlign:"right", clear:"both"}}>
@@ -364,6 +385,9 @@ FacilityAreasEditorInner = React.createClass( {
                                               readOnly={!editable}
                                               onChange={component.updateItem.bind(component,1,idx)}
                                               onBlur={()=>{
+                                                  if(_.isEmpty(b.name)){
+                                                      component.removeItem(1,idx)
+                                                  }
                                                   component.props.sortArea(component.state.selection[0].children)
                                               }}
                                               onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
@@ -427,6 +451,9 @@ FacilityAreasEditorInner = React.createClass( {
                                           readOnly={!editable}
                                           onChange={component.updateItem.bind(component,2,idx)}
                                           onBlur={()=>{
+                                              if(_.isEmpty(c.name)){
+                                                  component.removeItem(2,idx)
+                                              }
                                               component.props.sortArea(component.state.selection[0].children)
                                           }}
                                           onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
