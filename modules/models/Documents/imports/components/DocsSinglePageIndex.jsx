@@ -100,73 +100,93 @@ export default class DocsSinglePageIndex extends React.Component {
                 }
             );
             let folders = [];
-            for(var idx in documents){
-                if(documents[idx].facility && documents[idx].facility._id && _.contains(ids,documents[idx].facility._id) && documents[idx].type){
-                    let facilityAlreadyExist = folders.filter(function(obj){
-                        return obj._id == documents[idx].facility._id
-                    })
-                    if(facilityAlreadyExist.length == 0){
-                        folders.push({
-                            _id: documents[idx].facility._id,
-                            name: documents[idx].facility.name,
-                            folderType:'facility',
-                            content:[]
+            if( _.isEmpty(this.state.selectedFacilities) && _.isEmpty(this.state.docName) && _.isEmpty(this.state.docTypes) ){
+                for(var idx in documents){
+                    if(documents[idx].facility && documents[idx].facility._id && _.contains(ids,documents[idx].facility._id) && documents[idx].type){
+                        let facilityAlreadyExist = folders.filter(function(obj){
+                            return obj._id == documents[idx].facility._id
                         })
-                        facilityAlreadyExist.push({
-                            _id: documents[idx].facility._id,
-                            name: documents[idx].facility.name,
-                            folderType:'facility',
-                            content:[]
-                        })
-                    }
-                    if(facilityAlreadyExist.length != 0){
-                        if(documents[idx].serviceType && documents[idx].serviceType.name){
-                            let serviceTypeAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
-                                return obj.name === documents[idx].serviceType.name
+                        if(facilityAlreadyExist.length == 0){
+                            folders.push({
+                                _id: documents[idx].facility._id,
+                                name: documents[idx].facility.name,
+                                folderType:'facility',
+                                content:[]
                             })
-                            let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id);
-                            if(serviceTypeAlreadyExist.length == 0){
-                                folders[facilityIndex].content.push({
-                                    facilityId: documents[idx].facility._id,
-                                    name: documents[idx].serviceType.name,
-                                    folderType:'service',
-                                    content:[]
+                            facilityAlreadyExist.push({
+                                _id: documents[idx].facility._id,
+                                name: documents[idx].facility.name,
+                                folderType:'facility',
+                                content:[]
+                            })
+                        }
+                        if(facilityAlreadyExist.length != 0){
+                            if(documents[idx].serviceType && documents[idx].serviceType.name){
+                                let serviceTypeAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
+                                    return obj.name === documents[idx].serviceType.name
                                 })
-                                serviceTypeAlreadyExist.push({
-                                    facilityId: documents[idx].facility._id,
-                                    name: documents[idx].serviceType.name,
-                                    folderType:'service',
-                                    content:[]
-                                })
-                            }
-                            if(serviceTypeAlreadyExist.length != 0){
-                                if(documents[idx].subServiceType && documents[idx].subServiceType.name){
-                                    let subServiceTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
-                                        return obj.name === documents[idx].subServiceType.name
+                                let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id);
+                                if(serviceTypeAlreadyExist.length == 0){
+                                    folders[facilityIndex].content.push({
+                                        facilityId: documents[idx].facility._id,
+                                        name: documents[idx].serviceType.name,
+                                        folderType:'service',
+                                        content:[]
                                     })
-                                    //let docIndex = folders[facilityIndex].content.findIndex(doc => doc.name === documents[idx].type)
-                                    let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
-                                    if(subServiceTypeAlreadyExist.length == 0){
-                                        folders[facilityIndex].content[serviceIndex].content.push({
-                                            facilityyId:documents[idx].facility._id,
-                                            name:documents[idx].subServiceType.name,
-                                            folderType: 'subService',
-                                            content:[]
+                                    serviceTypeAlreadyExist.push({
+                                        facilityId: documents[idx].facility._id,
+                                        name: documents[idx].serviceType.name,
+                                        folderType:'service',
+                                        content:[]
+                                    })
+                                }
+                                if(serviceTypeAlreadyExist.length != 0){
+                                    if(documents[idx].subServiceType && documents[idx].subServiceType.name){
+                                        let subServiceTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
+                                            return obj.name === documents[idx].subServiceType.name
                                         })
-                                        subServiceTypeAlreadyExist.push({
-                                            facilityyId:documents[idx].facility._id,
-                                            name:documents[idx].subServiceType.name,
-                                            folderType: 'subService',
-                                            content:[]
+                                        //let docIndex = folders[facilityIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                        let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
+                                        if(subServiceTypeAlreadyExist.length == 0){
+                                            folders[facilityIndex].content[serviceIndex].content.push({
+                                                facilityyId:documents[idx].facility._id,
+                                                name:documents[idx].subServiceType.name,
+                                                folderType: 'subService',
+                                                content:[]
+                                            })
+                                            subServiceTypeAlreadyExist.push({
+                                                facilityyId:documents[idx].facility._id,
+                                                name:documents[idx].subServiceType.name,
+                                                folderType: 'subService',
+                                                content:[]
+                                            })
+                                        }
+                                        if(subServiceTypeAlreadyExist.length != 0){
+                                            let docTypeAlreadyExist = subServiceTypeAlreadyExist[0].content.filter(function(obj){
+                                                return obj.name === documents[idx].type
+                                            })
+                                            let subServiceIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(subServ => subServ.name === documents[idx].subServiceType.name);
+                                            if(docTypeAlreadyExist.length == 0){
+                                                folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push({
+                                                    facilityId: documents[idx].facility._id,
+                                                    name: documents[idx].type,
+                                                    folderType:'docType',
+                                                    content: [documents[idx]],
+                                                    folderColor:'#d6e6fa'
+                                                })
+                                            }else{
+                                                let docIndex = folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                                folders[facilityIndex].content[serviceIndex].content[subServiceIndex].facilityId = documents[idx].facility._id;
+                                                folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push(documents[idx]);
+                                            }
+                                        }
+                                    }else{
+                                        let docTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
+                                            return (obj.folderType == 'docType' && obj.name == documents[idx].type)
                                         })
-                                    }
-                                    if(subServiceTypeAlreadyExist.length != 0){
-                                        let docTypeAlreadyExist = subServiceTypeAlreadyExist[0].content.filter(function(obj){
-                                            return obj.name === documents[idx].type
-                                        })
-                                        let subServiceIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(subServ => subServ.name === documents[idx].subServiceType.name);
+                                        let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
                                         if(docTypeAlreadyExist.length == 0){
-                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push({
+                                            folders[facilityIndex].content[serviceIndex].content.push({
                                                 facilityId: documents[idx].facility._id,
                                                 name: documents[idx].type,
                                                 folderType:'docType',
@@ -174,18 +194,38 @@ export default class DocsSinglePageIndex extends React.Component {
                                                 folderColor:'#d6e6fa'
                                             })
                                         }else{
-                                            let docIndex = folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.findIndex(doc => doc.name === documents[idx].type)
-                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].facilityId = documents[idx].facility._id;
-                                            folders[facilityIndex].content[serviceIndex].content[subServiceIndex].content.push(documents[idx]);
+                                            let docIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(doc => (doc.name == documents[idx].type && doc.folderType == 'docType'))
+                                            folders[facilityIndex].content[serviceIndex].content[docIndex].facilityId = documents[idx].facility._id;
+                                            folders[facilityIndex].content[serviceIndex].content[docIndex].content.push(documents[idx]);
                                         }
                                     }
-                                }else{
-                                    let docTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
-                                        return (obj.folderType == 'docType' && obj.name == documents[idx].type)
+                                }
+                            }else{
+                                let buildingDocAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
+                                    return obj.folderType === 'buildingDocs'
+                                })
+                                let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id)
+                                if(buildingDocAlreadyExist.length == 0){
+                                    folders[facilityIndex].content.push({
+                                        facilityId: documents[idx].facility._id,
+                                        name:'Building Documents',
+                                        folderType:'buildingDocs',
+                                        content:[]
                                     })
-                                    let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
+                                    buildingDocAlreadyExist.push({
+                                        facilityId: documents[idx].facility._id,
+                                        name:'Building Documents',
+                                        folderType:'buildingDocs',
+                                        content:[]
+                                    })
+                                }
+                                if(buildingDocAlreadyExist.length != 0){
+                                    let docTypeAlreadyExist = buildingDocAlreadyExist[0].content.filter(function(obj){
+                                        return obj.name === documents[idx].type
+                                    })
+                                    let buildingDocIndex = folders[facilityIndex].content.findIndex(fold => fold.folderType === 'buildingDocs')
                                     if(docTypeAlreadyExist.length == 0){
-                                        folders[facilityIndex].content[serviceIndex].content.push({
+                                        folders[facilityIndex].content[buildingDocIndex].content.push({
                                             facilityId: documents[idx].facility._id,
                                             name: documents[idx].type,
                                             folderType:'docType',
@@ -193,54 +233,21 @@ export default class DocsSinglePageIndex extends React.Component {
                                             folderColor:'#d6e6fa'
                                         })
                                     }else{
-                                        let docIndex = folders[facilityIndex].content[serviceIndex].content.findIndex(doc => (doc.name == documents[idx].type && doc.folderType == 'docType'))
-                                        folders[facilityIndex].content[serviceIndex].content[docIndex].facilityId = documents[idx].facility._id;
-                                        folders[facilityIndex].content[serviceIndex].content[docIndex].content.push(documents[idx]);
+                                        let docIndex = folders[facilityIndex].content[buildingDocIndex].content.findIndex(doc => doc.name === documents[idx].type)
+                                        folders[facilityIndex].content[buildingDocIndex].content[docIndex].facilityId = documents[idx].facility._id;
+                                        folders[facilityIndex].content[buildingDocIndex].content[docIndex].content.push(documents[idx]);
                                     }
-                                }
-                            }
-                        }else{
-                            let buildingDocAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){
-                                return obj.folderType === 'buildingDocs'
-                            })
-                            let facilityIndex = folders.findIndex(fold => fold._id === facilityAlreadyExist[0]._id)
-                            if(buildingDocAlreadyExist.length == 0){
-                                folders[facilityIndex].content.push({
-                                    facilityId: documents[idx].facility._id,
-                                    name:'Building Documents',
-                                    folderType:'buildingDocs',
-                                    content:[]
-                                })
-                                buildingDocAlreadyExist.push({
-                                    facilityId: documents[idx].facility._id,
-                                    name:'Building Documents',
-                                    folderType:'buildingDocs',
-                                    content:[]
-                                })
-                            }
-                            if(buildingDocAlreadyExist.length != 0){
-                                let docTypeAlreadyExist = buildingDocAlreadyExist[0].content.filter(function(obj){
-                                    return obj.name === documents[idx].type
-                                })
-                                let buildingDocIndex = folders[facilityIndex].content.findIndex(fold => fold.folderType === 'buildingDocs')
-                                if(docTypeAlreadyExist.length == 0){
-                                    folders[facilityIndex].content[buildingDocIndex].content.push({
-                                        facilityId: documents[idx].facility._id,
-                                        name: documents[idx].type,
-                                        folderType:'docType',
-                                        content: [documents[idx]],
-                                        folderColor:'#d6e6fa'
-                                    })
-                                }else{
-                                    let docIndex = folders[facilityIndex].content[buildingDocIndex].content.findIndex(doc => doc.name === documents[idx].type)
-                                    folders[facilityIndex].content[buildingDocIndex].content[docIndex].facilityId = documents[idx].facility._id;
-                                    folders[facilityIndex].content[buildingDocIndex].content[docIndex].content.push(documents[idx]);
                                 }
                             }
                         }
                     }
                 }
+            } else {
+                for(var idx in documents){
+                    folders.push(documents[idx])
+                }
             }
+
             let currentFolders = folders
             let path = {
                 documents:{
