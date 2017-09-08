@@ -466,6 +466,9 @@ PPM_Schedulers.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
+                        if(_.isEmpty(unit)){
+                            unit = "weeks";
+                        }
                     period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
@@ -564,6 +567,9 @@ PPM_Schedulers.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
+                        if(_.isEmpty(unit)){
+                            unit = "weeks"
+                        }
                     period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
