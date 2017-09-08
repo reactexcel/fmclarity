@@ -99,7 +99,6 @@ export default ComplianceListTile = React.createClass( {
 
     let service = facility.servicesRequired.filter((ser)=> ser!= null && ser.name === rule.service.name)
     rule.service = service[0]
-    console.log("1111");
     Modal.show( {
       content: <AutoForm
             item = { rule }

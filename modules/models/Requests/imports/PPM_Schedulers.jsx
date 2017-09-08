@@ -467,7 +467,7 @@ PPM_Schedulers.methods( {
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                         if(_.isEmpty(unit)){
-                            unit = "weeks";
+                            unit = "days";
                         }
                     period[ unit ] = parseInt( time[unit].number );
                 }
@@ -568,7 +568,7 @@ PPM_Schedulers.methods( {
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
                         if(_.isEmpty(unit)){
-                            unit = "weeks"
+                            unit = "days"
                         }
                     period[ unit ] = parseInt( time[unit].number );
                 }
