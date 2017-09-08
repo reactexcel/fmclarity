@@ -99,7 +99,7 @@ export default TeamGlobalSupplierPage = React.createClass( {
 		return <div className="facility-page animated fadeIn">
 			<div style = { { paddingTop:"10px"} }>
 			<SupplierFilter suppliers={suppliers} onChange={ ( suppliers ) => { this.setState({suppliers})}} team={this.props.team}/>
-            <div className ="row" style={{'marginLeft':'0px','marginTop':'20px'}}>
+            <div id="suppliers-container" className ="row" style={{'marginLeft':'0px','marginTop':'20px'}}>
 	            { suppliers ? suppliers.map( ( supplier, idx ) => {
 					let contactName = supplier.contact ? supplier.contact.name : null,
 					    availableServices = null;

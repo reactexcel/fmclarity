@@ -7,7 +7,7 @@ import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
 import { Requests, RequestPanel, CreateRequestForm, CreatePPMRequestForm, SupplierCreateRequestForm, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
 import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
-import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
+import { Teams, TeamStepper,OwnerTeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -22,7 +22,7 @@ const create = new Action( {
         team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } showFilter={showFilter || false} />
+                <OwnerTeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }

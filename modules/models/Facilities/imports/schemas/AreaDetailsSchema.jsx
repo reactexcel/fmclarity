@@ -49,7 +49,14 @@ export default AreaDetailsSchema = {
                 "Weeks",
                 "Days",
                 "Hours",
-            ]
+            ],
+            afterChange( item ) {
+                console.log(item,"item");
+                item.hour = '',
+                item.month = '',
+                item.day = '',
+                item.week = ''
+            }
         },
         condition( item ) {
             return item.type === "Bookable";
@@ -383,12 +390,10 @@ export default AreaDetailsSchema = {
                     "ft",
                 ],
                 afterChange( item ) {
-                    if ( item.areaUnit == 'm' && item.areaUnit != initiallUnit ) {
-                        initiallUnit = item.areaUnit;
+                    if ( item.areaUnit === 'm') {
                         item.nla = Math.round( parseInt( item.nla ) * 0.09290 ).toString();
                     }
-                    if ( item.areaUnit == 'ft' && item.areaUnit != initiallUnit ) {
-                        initiallUnit = item.areaUnit;
+                    if ( item.areaUnit === 'ft') {
                         item.nla = Math.round( parseInt( item.nla ) * 10.7639 ).toString();
                     }
                 },
