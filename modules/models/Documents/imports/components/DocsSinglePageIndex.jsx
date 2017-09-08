@@ -43,7 +43,6 @@ export default class DocsSinglePageIndex extends React.Component {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
             $('#document-container').css('margin-top','20px')
-            //$('#filter-details').css('display','block')
        });
         if ( this.state.facilities && this.state.facilities.length ) {
             this.onPageChange();
@@ -145,7 +144,6 @@ export default class DocsSinglePageIndex extends React.Component {
                                         let subServiceTypeAlreadyExist = serviceTypeAlreadyExist[0].content.filter(function(obj){
                                             return obj.name === documents[idx].subServiceType.name
                                         })
-                                        //let docIndex = folders[facilityIndex].content.findIndex(doc => doc.name === documents[idx].type)
                                         let serviceIndex = folders[facilityIndex].content.findIndex(serv => serv.name === documents[idx].serviceType.name);
                                         if(subServiceTypeAlreadyExist.length == 0){
                                             folders[facilityIndex].content[serviceIndex].content.push({
@@ -520,12 +518,10 @@ export default class DocsSinglePageIndex extends React.Component {
                                     $('#arrow-icon').css('display','block')
                                     let filterBoxHeight = $('#filter-box').height() + 20 + 'px';
                                     $('#document-container').css('margin-top',filterBoxHeight)
-                                    //$('#filter-details').css('display','none')
                                 } else {
                                     $('#filter-box').css('display','none')
                                     $('#arrow-icon').css('display','none')
                                     $('#document-container').css('margin-top','20px')
-                                    //$('#filter-details').css('display','block')
                                 }
                             }}
                         />
@@ -554,7 +550,6 @@ export default class DocsSinglePageIndex extends React.Component {
                                         }, () => componet.onPageChange() );
                                         this.query = {
                                             $and: [],
-                                            //'team._id': this.state.team._id,
                                         }
                                     }}>
                                     <i className="fa fa-refresh"></i>
