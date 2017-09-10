@@ -134,12 +134,15 @@ export default function RequestsTable( { requests, filter, columns, selectedItem
         ] }));
     }
 
+    let sortByWO = [];
+    if (requests) {
+         sortByWO = requests.sort(function(a, b){
+            let openA = a.code
+            let openB = b.code
+            return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
+    });
+    }
 
- 	let sortByWO = requests.sort(function(a, b){
-			let openA = a.code
-			let openB = b.code
-			return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
-	});
 	let sortByLastUpdate = sortByWO;
 	/*let sortByLastUpdate = sortByWO.sort(function(a,b){
 		if(a != null && b != null){

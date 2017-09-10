@@ -42,6 +42,7 @@ export default class DocsSinglePageIndex extends React.Component {
         $(window).click(function(event) {
             $('#filter-box').css('display','none')
             $('#arrow-icon').css('display','none')
+            $('#document-container').css('margin-top','20px')
             //$('#filter-details').css('display','block')
        });
         if ( this.state.facilities && this.state.facilities.length ) {
@@ -62,6 +63,7 @@ export default class DocsSinglePageIndex extends React.Component {
             $('#arrow-icon').hide('slow');
             $('#filter-box').hide('slow');
             $('#filter-details').css('display','block')
+            $('#document-container').css('margin-top','20px')
         }
     }
 
@@ -509,10 +511,13 @@ export default class DocsSinglePageIndex extends React.Component {
                                 if($('#filter-box').css('display') == 'none'){
                                     $('#filter-box').css('display','block')
                                     $('#arrow-icon').css('display','block')
+                                    let filterBoxHeight = $('#filter-box').height() + 20 + 'px';
+                                    $('#document-container').css('margin-top',filterBoxHeight)
                                     //$('#filter-details').css('display','none')
                                 } else {
                                     $('#filter-box').css('display','none')
                                     $('#arrow-icon').css('display','none')
+                                    $('#document-container').css('margin-top','20px')
                                     //$('#filter-details').css('display','block')
                                 }
                             }}
@@ -691,7 +696,7 @@ export default class DocsSinglePageIndex extends React.Component {
                         </div>
                     </div>
                 </div>
-				<div className="row" style={{marginLeft:'0px',marginTop:'20px'}}>
+				<div id="document-container" className="row" style={{marginLeft:'0px',marginTop:'20px'}}>
                     {this.state.path?<div className={'col-xs-12'} style={{display:'inline',padding:'10px 10px 10px 0px'}}>
                         {this.state.path && this.state.path.documents?<span><a title="Root directory" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.documents.onClick}>{this.state.path.documents.name}</a></span>:null}
                         {this.state.path && this.state.path.facility?<span><i style={{marginLeft:'8px',marginRight:'8px',fontSize:'15px'}} className="fa fa-caret-right" aria-hidden="true"></i><a title="Facility" style={{color:'#424242',fontSize:'15px'}} onClick={this.state.path.facility.onClick}>{this.state.path.facility.name}</a></span>:null}

@@ -72,6 +72,7 @@ export default class SupplierFilter extends React.Component {
             $('.chip svg').css('height','16px');
             $('.chip svg').css('width','16px');
             $('.chip svg').css('margin','4px 4px 0px -8px');
+            $('#suppliers-container').css('margin-top','20px')
        });
     }
 
@@ -93,6 +94,7 @@ export default class SupplierFilter extends React.Component {
             $('.chip svg').css('height','16px');
             $('.chip svg').css('width','16px');
             $('.chip svg').css('margin','4px 4px 0px -8px');
+            $('#suppliers-container').css('margin-top','20px')
         }
     }
     search(){
@@ -278,10 +280,13 @@ export default class SupplierFilter extends React.Component {
                                         $('#filter-box').css('display','block')
                                         $('#arrow-icon').css('display','block')
                                         $('#filter-details').css('display','none')
+                                        let filterBoxHeight = $('#filter-box').height() + 20 + 'px';
+                                        $('#suppliers-container').css('margin-top',filterBoxHeight)
                                     } else {
                                         $('#filter-box').css('display','none')
                                         $('#arrow-icon').css('display','none')
                                         $('#filter-details').css('display','block')
+                                        $('#suppliers-container').css('margin-top','20px')
                                     }
                                     $('.chip svg').css('height','16px');
                                     $('.chip svg').css('width','16px');
