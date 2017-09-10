@@ -94,43 +94,7 @@ const ServicesRequiredEditor = React.createClass( {
 	save() {
 		var item = this.state.item;
 		var services = this.state.services;
-		var isValidatedService = false;
-		var isValidatedSubservice = false;
-		services.forEach(function(service, idx){
-			if (!service.name) {
-				isValidatedService = false;
-				// delete services[idx];
-				Bert.alert({
-		  				title: '',
-		  				message: 'Service name is required.',
-		  				type: 'danger',
-		  				style: 'growl-bottom-right',
-		  				icon: 'fa-ban'
-					});
-			}
-			else {
-				isValidatedService = true;
-			}
-			if (service.children) {
-				service.children.forEach(function(subservice, idx){
-					if (!subservice.name) {
-						isValidatedSubservice = false;
-						Bert.alert({
-			  				title: '',
-			  				message: 'Sub service name is required.',
-			  				type: 'danger',
-			  				style: 'growl-bottom-right',
-			  				icon: 'fa-ban'
-						});
-					} else {
-						isValidatedSubservice = true;
-					}
-				});
-			}
-		});
-		if (isValidatedService && isValidatedSubservice) {
-			item.setServicesRequired( services );
-		}
+		item.setServicesRequired( services );
 		/* or???
 		if(this.props.onChange) {
 			this.props.onChange(this.state.services);
@@ -146,9 +110,20 @@ const ServicesRequiredEditor = React.createClass( {
 			services[ idx ] = newValue;
 		}
 		this.setState( {
-			services: services
-		} )
-		this.save();
+				services: services
+			} )
+		if (newValue.name.trim() !="" && newValue.name.length >= 3) {
+			this.save();
+		}
+		else{
+			Bert.alert({
+		  				title: '',
+		  				message: 'Name is required and be 2 or more characters',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+		}
 	},
 
 	updateSubService( idx, subIdx, newValue ) {
@@ -163,7 +138,19 @@ const ServicesRequiredEditor = React.createClass( {
 		this.setState( {
 			services: services
 		} )
-		this.save();
+		if (service.children[subIdx].name.trim() !="" && newValue.name.length >= 3) {
+			this.save();
+		}
+		else{
+			Bert.alert({
+		  				title: '',
+		  				message: 'Name is required and be 2 or more characters',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+		}
+		
 	},
 
 	addService() {
@@ -181,7 +168,7 @@ const ServicesRequiredEditor = React.createClass( {
                 $("input#service-" + (services.length -1 )).click();
                 $("input#service-" + (services.length -1 )).focus();
             } )
-			this.save();
+			// this.save();
 		}
 	},
 
@@ -202,7 +189,7 @@ const ServicesRequiredEditor = React.createClass( {
                 $("input#subservice-" + (services[idx].children.length -1 )).click();
                 $("input#subservice-" + (services[idx].children.length -1 )).focus();
             } )
-			this.save();
+			// this.save();
 		}
 	},
 
