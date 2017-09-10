@@ -413,7 +413,7 @@ const OwnerTeamStepper = React.createClass( {
 
                 <Stepper
                   submitForm = {
-                    ( callback ) => {
+                    ( activeTab, callback ) => {
                       if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
                         this.submitFormCallback( ( errorList ) => {
                           this.submitFormCallbackForWorkOrder( ( error ) => {
