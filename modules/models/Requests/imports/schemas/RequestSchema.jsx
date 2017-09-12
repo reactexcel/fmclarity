@@ -1746,6 +1746,9 @@ const RequestSchema = {
                 )
             },
             input( props ) {
+                if(!props.item.supplier){
+                    props.item.supplierContacts = ""
+                }
                 if ( !props.item.supplierContacts ) {
                     props.item.supplierContacts = [];
                 }

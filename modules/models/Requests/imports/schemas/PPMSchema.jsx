@@ -1608,6 +1608,7 @@ const PPMSchema = {
             type: 'string',
             size: 12,
             condition: ( request ) => {
+                console.log("22222");
                 let selectedTeam = Session.get( 'selectedTeam' );
                 //do not show for booking, contractors, staff or resident
                 return (
