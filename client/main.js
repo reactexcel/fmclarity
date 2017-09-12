@@ -204,7 +204,6 @@ Actions.addAccessRule( {
         return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
-        'edit team',
         'delete team',
         'view team',
         'view team member',
@@ -222,6 +221,23 @@ Actions.addAccessRule( {
         'owner',
         'property manager',
         'caretaker'*/
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'edit team'
+    ],
+    role: [
+        'fmc support',
+        'portfolio manager',
+        //'manager'
     ],
 } )
 
