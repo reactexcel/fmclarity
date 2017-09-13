@@ -9,6 +9,7 @@ import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
 import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
+import WorkOrderReport from './reports/WorkOrderReport.jsx';
 
 const Reports = {
 	dict: {},
@@ -70,6 +71,12 @@ Reports.register( {
 	id: "mbm-report-request",
 	name: "Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
+} )
+
+Reports.register( {
+	id: "work-order-report",
+	name: "Work Order Report",
+	content: WorkOrderReport
 } )
 
 export default Reports;
