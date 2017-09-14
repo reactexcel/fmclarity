@@ -97,8 +97,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 	removeService(){
 		if(this.props.onChange){
 			this.props.onChange(null);
-				Modal.hide();
-			}
+			Modal.hide();
+		}
 	},
 
 	render() {
@@ -123,6 +123,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 							this.props.onKeyDown(evt) }}
 						id={this.props.id}
 						onBlur={()=>{
+							if(_.isEmpty(service.name)){
+								this.removeService();
+							}
 							if(this.props.sortService){
 								this.props.sortService()
 							}

@@ -727,7 +727,6 @@ const PortfolioManagerCreateRequestForm = {
 		type: 'string',
 		size: 12,
 		input(props) {
-			console.log(props.item.members);
 			return(
 				<div className="row">
 					<div className="col-xs-12">

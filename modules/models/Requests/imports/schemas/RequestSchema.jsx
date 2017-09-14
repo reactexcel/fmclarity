@@ -1617,7 +1617,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;
@@ -1746,6 +1746,9 @@ const RequestSchema = {
                 )
             },
             input( props ) {
+                if(!props.item.supplier){
+                    props.item.supplierContacts = ""
+                }
                 if ( !props.item.supplierContacts ) {
                     props.item.supplierContacts = [];
                 }

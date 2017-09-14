@@ -262,6 +262,29 @@ FacilityAreasEditorInner = React.createClass( {
       }
     },
 
+    checkAbleToSave(item){
+        let readyToSave = false;
+            readyToSave = _.isEmpty(item.areaDetails.daySelector) ? false : true;
+        if(readyToSave){
+            readyToSave = false;
+            if(!_.isEmpty(item.areaDetails.daySelector.Mon.time) || !_.isEmpty(item.areaDetails.daySelector.Tue.time) || !_.isEmpty(item.areaDetails.daySelector.Wed.time) || !_.isEmpty(item.areaDetails.daySelector.Thu.time) || !_.isEmpty(item.areaDetails.daySelector.Fri.time) || !_.isEmpty(item.areaDetails.daySelector.Sat.time) || !_.isEmpty(item.areaDetails.daySelector.Sun.time) ){
+                readyToSave = true;
+            }
+        }
+        if(readyToSave){
+            this.save();
+            Modal.hide();
+        }else{
+            Bert.alert({
+                title: 'Operation not allowed',
+                message: "Please set the booking time for at least 1 day",
+                type: 'danger',
+                style: 'growl-top-right',
+                icon: 'fa-ban'
+            });
+        }
+    },
+
     render() {
         //refact - create a FacilityAreaSelectorRow class nad use that in these three instances below
         var component = this;
@@ -299,6 +322,9 @@ FacilityAreasEditorInner = React.createClass( {
                                                 readOnly={!editable}
                                                 onChange={component.updateItem.bind(component,0,idx)}
                                                 onBlur={()=>{
+                                                    if(_.isEmpty(a.name)){
+                                                        component.removeItem(0,idx)
+                                                    }
                                                     component.props.sortArea(component.state.selection[0].children)
                                                 }}
                                                 onKeyDown={ event => component.handleKeyDown( event, 0, 1, areas, idx ) }
@@ -316,10 +342,9 @@ FacilityAreasEditorInner = React.createClass( {
                                                         item = { a.data }
                                                         form = { ["areaDetails"] }
                                                         onSubmit={
-                                                          ( item ) => {
-                                                            component.save();
-                                                            Modal.hide();
-                                                          }
+                                                            ( item ) => {
+                                                                component.checkAbleToSave(item)
+                                                            }
                                                         }
                                                       />
                                                       <div style={ {textAlign:"right", clear:"both"}}>
@@ -364,6 +389,9 @@ FacilityAreasEditorInner = React.createClass( {
                                               readOnly={!editable}
                                               onChange={component.updateItem.bind(component,1,idx)}
                                               onBlur={()=>{
+                                                  if(_.isEmpty(b.name)){
+                                                      component.removeItem(1,idx)
+                                                  }
                                                   component.props.sortArea(component.state.selection[0].children)
                                               }}
                                               onKeyDown={ event => component.handleKeyDown( event, 1, 2, selectedArea.children, idx ) }/>
@@ -377,16 +405,15 @@ FacilityAreasEditorInner = React.createClass( {
                                                       <h1>Area information: {b.name}</h1>
                                                     </div>
                                                     <AutoForm
-                                                      model = { Facilities }
-                                                      item = { b.data }
-                                                      form = { ["areaDetails"] }
-                                                      onSubmit={
-                                                        ( item ) => {
-                                                          component.save();
-                                                          Modal.hide();
+                                                        model = { Facilities }
+                                                        item = { b.data }
+                                                        form = { ["areaDetails"] }
+                                                        onSubmit={
+                                                            ( item ) => {
+                                                                component.checkAbleToSave(item)
+                                                            }
                                                         }
-                                                      }
-                                                      />
+                                                     />
                                                       {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,1,idx)}> Delete</button>:null}
                                                   </div>
                                                 })
@@ -427,6 +454,9 @@ FacilityAreasEditorInner = React.createClass( {
                                           readOnly={!editable}
                                           onChange={component.updateItem.bind(component,2,idx)}
                                           onBlur={()=>{
+                                              if(_.isEmpty(c.name)){
+                                                  component.removeItem(2,idx)
+                                              }
                                               component.props.sortArea(component.state.selection[0].children)
                                           }}
                                           onKeyDown={  event  => component.handleKeyDown( event, 2, 3, selectedSubArea.children, idx ) }
@@ -441,17 +471,16 @@ FacilityAreasEditorInner = React.createClass( {
                                                   <h1>Area information: {c.name}</h1>
                                                 </div>
                                                 <AutoForm
-                                                  model = { Facilities }
-                                                  item = { c.data }
-                                                  form = { ["areaDetails"] }
-                                                  onSubmit={
-                                                    ( item ) => {
-                                                      component.save();
-                                                      Modal.hide();
+                                                    model = { Facilities }
+                                                    item = { c.data }
+                                                    form = { ["areaDetails"] }
+                                                    onSubmit={
+                                                        ( item ) => {
+                                                            component.checkAbleToSave(item)
+                                                        }
                                                     }
-                                                  }
-                                                  />
-                                                  {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}> Delete</button>:null}
+                                                />
+                                                {editable ? <button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={component.removeItem.bind(component,2,idx)}> Delete</button>:null}
                                               </div>
                                             })
                                             //  component.removeItem.bind(component,0,idx)

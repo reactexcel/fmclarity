@@ -53,7 +53,6 @@ export default PMPList = React.createClass({
                     createdAt: 1
                 }
             } );
-        console.log(ungroupedRequests);
         var requests = _.groupBy(ungroupedRequests,function(r){
             return r.service?r.service.name:"Other";
         })

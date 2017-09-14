@@ -49,9 +49,11 @@ export default InvoiceDetailsSchema = {
                         if( !value ) {
                             value = '0';
                         }
-                        value = parseInt(value.replace(/,/g, ''));
-                        props.item.gst = 0.1 * value;
-                        props.item.totalPayablePlusGst = value + props.item.gst;
+                        //value = value.replace(/,/g, '');
+                        let gst = 0.1 * parseFloat(value.replace(/,/g, '')),
+                            totalPayablePlusGst = parseFloat(value.replace(/,/g, '')) + parseFloat(gst);
+                        props.item.gst = formatToCurrency(gst.toFixed(2));
+                        props.item.totalPayablePlusGst = formatToCurrency(totalPayablePlusGst.toFixed(2));
                         props.onChange( value );
                     }}
                 />
@@ -70,12 +72,11 @@ export default InvoiceDetailsSchema = {
                         if( !value ) {
                             value = '0';
                         }
-                        value = parseInt(value);
-                        let totalPayable = value * 10,
-                            totalPayablePlusGst = totalPayable + value;
+                        let totalPayable = parseFloat(value.replace(/,/g, '')) * 10,
+                            totalPayablePlusGst = totalPayable + parseFloat(value.replace(/,/g, ''));
                             
-                        props.item.totalPayable = totalPayable;
-                        props.item.totalPayablePlusGst = totalPayablePlusGst;
+                        props.item.totalPayable = formatToCurrency(totalPayable.toFixed(2));
+                        props.item.totalPayablePlusGst = formatToCurrency(totalPayablePlusGst.toFixed(2));
                         props.onChange( value );
                     }}
                 />
@@ -94,12 +95,11 @@ export default InvoiceDetailsSchema = {
                         if( !value ) {
                             value = '0';
                         }
-                        value = parseInt(value);
-                        let totalPayable = (100*value)/110,
+                        let totalPayable = (100*parseFloat(value.replace(/,/g, '')))/110,
                             gst = 0.1*totalPayable;
 
-                        props.item.totalPayable = totalPayable;
-                        props.item.gst = gst;
+                        props.item.totalPayable = formatToCurrency(totalPayable.toFixed(2));
+                        props.item.gst = formatToCurrency(gst.toFixed(2));
                         props.onChange( value );
                     }}
                 />
@@ -135,4 +135,20 @@ export default InvoiceDetailsSchema = {
             ]
         }
     },
+}
+
+function formatToCurrency (val){
+    val = val.toString().replace(/,/g, "");
+    val += '';
+    x = val.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+
+    var rgx = /(\d+)(\d{3})/;
+
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+
+    return (x1 + x2);
 }
