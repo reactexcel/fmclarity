@@ -66,10 +66,9 @@ const FacilitySchema = {
 		required: true,
 		options: {
 			items: [
-				"Commercial",
-				"Retail",
-				"Residential",
-				"Industrial"
+				"Base building",
+				"Corporate occupier",
+				"Residential strata"
 			]
 		}
 	},
