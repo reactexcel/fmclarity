@@ -31,7 +31,7 @@ Reports.register( {
 
 Reports.register( {
 	id: "requests-status",
-	name: "Requests Status Report",
+	name: "Request Status Report",
 	content: RequestsStatusReport
 } )
 

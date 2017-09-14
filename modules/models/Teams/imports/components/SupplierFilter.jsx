@@ -272,7 +272,7 @@ export default class SupplierFilter extends React.Component {
                                 label="Filter Suppliers"
                                 backgroundColor={"#b8e986"}
                                 labelStyle={{fontSize:'12px',paddingLeft:'10px',paddingRight:'10px'}}
-                                buttonStyle={{lineHeight:'30px'}}
+                                //buttonStyle={{lineHeight:'30px'}}
                                 icon={<i className="fa fa-filter" style={{'marginLeft':'12px',fontSize:'16px',marginTop:"-5px"}}></i>}
                                 onClick={(event)=>{
                                     event.stopPropagation();
