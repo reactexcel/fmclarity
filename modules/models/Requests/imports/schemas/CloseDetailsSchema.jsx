@@ -1,4 +1,6 @@
 import { DateTime, Select, Switch, FileField, TextArea, Text, Currency } from '/modules/ui/MaterialInputs';
+import React from "react";
+import moment from 'moment';
 
 export default CloseDetailsSchema = {
 
@@ -13,7 +15,27 @@ export default CloseDetailsSchema = {
 
     completionDate: {
         label: "Completion date and time",
-        input: DateTime,
+        input: (props)=>{
+            return <DateTime
+                {...props}
+                onChange = { (val,callback) => {
+                    if(moment(val).isAfter(moment(new Date()))){
+                        Bert.alert({
+    						  title: 'Operation not allowed',
+    						  message: 'Date is invalid.',
+    						  type: 'danger',
+    						  style: 'growl-top-right',
+    						  icon: 'fa-ban'
+    						});
+                        if(callback){
+                            callback();
+                        }
+                    } else{
+                        props.onChange(val)
+                    }
+                }}
+            />
+        },
         size: 6,
         required: true,
         defaultValue: () => {
@@ -27,6 +49,7 @@ export default CloseDetailsSchema = {
     comment:{
         label: "Comment",
         input: TextArea,
+        type: "string",
         required: true,
         condition( item ) {
             return (item.jobCancelled == undefined ? false : item.jobCancelled) == true;

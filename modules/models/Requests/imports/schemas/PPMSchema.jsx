@@ -17,7 +17,7 @@ import { FileExplorer,Files } from '/modules/models/Files';
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 
 import { ContactCard } from '/modules/mixins/Members';
-import { Text, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency, Check } from '/modules/ui/MaterialInputs';
+import { Text, Label, TextArea, Select, CalendarPeriod, DateTime, Switch, DateInput, FileField, Currency } from '/modules/ui/MaterialInputs';
 import AddressSchema from './AddressSchema.jsx'
 
 import React from "react";
@@ -28,7 +28,7 @@ import moment from 'moment';
 const defaultContactRole = 'supplier manager';
 let onServiceChange = null;
 
-const RequestSchema = {
+const PPMSchema = {
 
         //$schema:              "http://json-schema.org/draft-04/schema#",
         //title:                "Request",
@@ -88,106 +88,17 @@ const RequestSchema = {
             label: "Request type",
             description: "The work request type (ie Ad-hoc, Preventative)",
             type: "string",
-            size: 12,
             required: true,
-            defaultValue: () => {
-                let team = Session.get( 'selectedTeam' );
-                if ( Teams.isServiceTeam( team ) ) {
-                    return 'Tenancy';
-                }
-                return "Ad-hoc";
+            size: 12,
+            condition: (item)=>{
+                return item.type === 'Preventative';
             },
-            input: Select,
-            options: (item) => {
-                let role = Meteor.user().getRole(),
-                    team = Session.get( 'selectedTeam' ),
-                    user = Meteor.user();
-
-                if ( Teams.isServiceTeam( team ) ) {
-                    return {
-                        items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
-                        afterChange: ( request ) => {
-                            // prefill value with zero for defect
-                            if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
-                                request.costThreshold= '0';
-                            }
-                            if (request.type == 'Incident') {
-                                request.priority = 'Urgent';
-                                request.supplier = Session.getSelectedTeam();
-                                request.area = null;
-                                request.level = null;
-                            }
-                        } };
-                } else {
-                    if ( _.contains( [ "staff", 'resident', 'tenant' ], role ) ) {
-                        let items = role == "staff" ? [ 'Ad-hoc', 'Booking' ] : (role == "resident" ? [ 'Ad-hoc', 'Booking', 'Tenancy', 'Key Request' ] : [ 'Ad-hoc', 'Booking', 'Tenancy' ]);
-                        return {
-                            items: items,
-                            afterChange: ( request ) => {
-                                // prefill area with tenant/resident address
-                                if (_.contains( [ "Tenancy","Key Request" ], request.type )) {
-                                    request.level = user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.level : null;
-                                    request.area = user.profile.tenancy && user.profile.tenancy.area && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.area : null;
-                                    request.identifier = user.profile.tenancy && user.profile.tenancy.identifier && _.contains( [ 'tenant' ], role ) ? user.profile.tenancy.identifier : null;
-                                    if (request.type == "Key Request") {
-                                        var services = Session.getSelectedFacility() && Session.getSelectedFacility().servicesRequired;
-                                        if(services){
-                                            for (var i = 0; i < services.length; i++) {
-                                                var name = services[i].name;
-                                                if (name.indexOf('keys') !== -1) {
-                                                    request.service = services[i];
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
-                                else{
-                                    /*request.area = request.area ? request.area : null;
-                                    request.level = request.level ? request.level : null;*/
-                                    request.level = null;
-                                    request.area = null;
-                                    request.identifier = null;
-                                }
-
-                                }
-                             };
-                    } else {
-                        return { items: [ 'Ad-hoc', 'Booking', 'Defect', 'Reminder', 'Incident' ],
-                                afterChange: ( request ) => {
-
-                                    // prefill value with zero for defect
-                                    if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
-                                        request.costThreshold= '0';
-                                        /*request.frequency = {
-                                            number: (request.type == 'Preventative' ? 1 : ""),
-                                            repeats: (request.type == 'Preventative' ? 10 : ""),
-                                            period: "",
-                                            endDate: "",
-                                            unit: (request.type == 'Preventative' ? "years" : "")
-                                        };*/
-                                        request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
-                                            period: "",
-                                            endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
-                                        }
-                                    }
-                                    if(request.type == 'Incident'){
-                                        request.costThreshold= '0';
-                                        request.priority = 'Urgent';
-                                        request.supplier = Session.getSelectedTeam();
-                                        request.area = null;
-                                        request.level = null;
-                                    }
-                                }
-                         };
-                    }
-                }
-            }
+            defaultValue: (item) =>{
+                return 'Preventative';
+            },
+            input: Label
         },
+
 
         priority: {
             label: "Priority",
@@ -217,7 +128,7 @@ const RequestSchema = {
             size: 6,
             options: ( item ) => {
                 return ( {
-                    items: item.type === 'Preventative' ? ["Scheduled"] : [
+                    items: [
                         "Standard",
                         "Scheduled",
                         "Urgent",
@@ -528,8 +439,11 @@ const RequestSchema = {
                 if (request.type=="Incident") {
                     return val;
                 }
+                if ( user.profile.tenancy && user.profile.tenancy.level && _.contains( [ 'tenant' ], user.getRole() ) ) {
+                    val = user.profile.tenancy.level;
+                }
                 if (user.getRole() == 'resident' && request.type == 'Key Request' ) {
-                    val = user.areas;
+                    val = user.apartment ? user.apartment : null;
                 }
                 return val;
             },
@@ -617,9 +531,9 @@ const RequestSchema = {
                     && item.level.data.areaDetails.type != "Bookable"
                 )
                 {
-                    RequestSchema.area.required = true;
+                    PPMSchema.area.required = true;
                 } else {
-                    RequestSchema.area.required = false;
+                    PPMSchema.area.required = false;
                 }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
@@ -672,9 +586,9 @@ const RequestSchema = {
                     && item.area.data.areaDetails.type != "Bookable"
                 )
                 {
-                    RequestSchema.identifier.required = true;
+                    PPMSchema.identifier.required = true;
                 } else {
-                    RequestSchema.area.required = false;
+                    PPMSchema.area.required = false;
                 }
                 let selectedTeam = Session.get( 'selectedTeam' ),
                     teamType = null;
@@ -734,12 +648,9 @@ const RequestSchema = {
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
-                                let actualCost = props.item.hasOwnProperty("costThreshold") ?
-                                  typeof props.item.costThreshold === 'string' ?
-                                    props.item.costThreshold.replace(/,/g, ""):
-                                    props.item.costThreshold
-                                : "";
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
+                                costAbleToIssue = false;
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
@@ -1138,46 +1049,6 @@ const RequestSchema = {
             }
         },
 
-        readBookingInstructions:{
-            //label: "",
-            type: "boolean",
-            size: 12,
-            input: (props)=>{
-                return <Check {...props}
-                    placeholder={"I have read the Booking Rules/Instructions"}
-                    onChange = {(checked)=>{
-                        props.onChange(checked)
-                    }}
-                />
-                //return <div><h1>aaaaaaaaaaaa</h1></div>
-            },
-            required: true,
-            condition: (item)=>{
-                let toReturn = false;
-                if(item.type == "Booking"){
-                    if(item.level && item.level.data && item.level.data.areaDetails){
-                        toReturn = false;
-                        if(item.level.data.areaDetails.attachments && item.level.data.areaDetails.attachments.length){
-                            toReturn = true;
-                        }
-                    }
-                    if(item.area && item.area.data && item.area.data.areaDetails){
-                        toReturn = false;
-                        if( item.area.data.areaDetails.attachments && item.area.data.areaDetails.attachments.length){
-                            toReturn = true;
-                        }
-                    }
-                    if(item.identifier && item.identifier.data && item.identifier.data.areaDetails){
-                        toReturn = false;
-                        if( item.identifier.data.areaDetails.attachments && item.identifier.data.areaDetails.attachments.length){
-                            toReturn = true;
-                        }
-                    }
-                    return toReturn;
-                }
-            }
-        },
-
         closeDetails: {
             type: "object",
             subschema: CloseDetailsSchema
@@ -1274,7 +1145,7 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.identifier;
+        			bookingFor = items.identifier.name
         		} else if(items && items.area && items.area.data) {
         			if(items.area.data.areaDetails && items.area.data.areaDetails.daySelector){
         				bookableTimeSlot = items.area.data.areaDetails.daySelector;
@@ -1300,7 +1171,7 @@ const RequestSchema = {
                             }
         				})
         			}
-                    bookingFor = items.area;
+                    bookingFor = items.area.name;
         		} else if(items && items.level && items.level.data) {
         			if(items.level.data.areaDetails && items.level.data.areaDetails.daySelector){
         				bookableTimeSlot = items.level.data.areaDetails.daySelector;
@@ -1326,8 +1197,9 @@ const RequestSchema = {
                             }
         				})
         			}
-        			bookingFor = items.level;
+        			bookingFor = items.level.name;
         		}
+
         		let businessHours = [];
 
                 let extra = moment().format('YYYY-MM-DD') + ' ';
@@ -1468,8 +1340,7 @@ const RequestSchema = {
         		let bookingDetails = {
         			businessHours:businessHours,
         			previousBookingEvents:previousBookingEvents,
-        			bookingFor:bookingFor.name,
-                    areaDetails: bookingFor
+        			bookingFor:bookingFor
         		};
                 return  <CalendarPeriod
                             onChangeValue={(value)=>{
@@ -1571,6 +1442,10 @@ const RequestSchema = {
                 let team = Teams.findOne( request.team._id ),
                     role = Meteor.user().getRole(),
                     facilities = team.getFacilities( { 'team._id': request.team._id } );
+                /*
+                import { Facilities } from '/modules/models/Facilities';
+                let facilities = Facilities.findAll( { 'team._id': request.team._id } );
+                */
                 return {
                     items: facilities,
                     view: FacilityListTile,
@@ -1617,7 +1492,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length < 1 ) {
+                if ( facilities.length <= 1 || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -1746,9 +1621,6 @@ const RequestSchema = {
                 )
             },
             input( props ) {
-                if(!props.item.supplier){
-                    props.item.supplierContacts = ""
-                }
                 if ( !props.item.supplierContacts ) {
                     props.item.supplierContacts = [];
                 }
@@ -2102,4 +1974,4 @@ const RequestSchema = {
             return str;
         }
 
-        export default RequestSchema;
+        export default PPMSchema;

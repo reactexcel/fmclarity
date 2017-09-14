@@ -11,7 +11,6 @@ export default function ContactCard( props ) {
 		view = null,
 		role = null,
 		removeEmail = props.removeEmail;
-
 	if ( contact && contact.getProfile ) {
 		profile = contact.getProfile();
 	}

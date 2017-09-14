@@ -216,7 +216,7 @@ Facilities.actions( {
         authentication: true,
         helper: ( facility ) => {
             let user = Meteor.user(),
-                requests = user.getRequests( { 'facility._id': facility._id } ),
+                {requests} = user.getRequests( { 'facility._id': facility._id } ),
                 messages = null,
                 requestIds = [];
 

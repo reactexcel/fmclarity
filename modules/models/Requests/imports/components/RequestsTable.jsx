@@ -7,7 +7,7 @@ import { ContactAvatarSmall } from '/modules/mixins/Members';
 
 import moment from 'moment';
 
-export default function RequestsTable( { requests, filter, columns } ) {
+export default function RequestsTable( { requests, filter, columns, selectedItem } ) {
 
 	let team = Meteor.user().getTeam();
 	//when in client (fm) view, show supplier, else if in supplier view show client on table column name.
@@ -72,34 +72,36 @@ export default function RequestsTable( { requests, filter, columns } ) {
 						let hours
 						let minutes
 						let seconds
-						dueString = year > 1 || year < -1 ? Math.abs(year) + " " + "years" : Math.abs(year) + " " + "year"
-						if(year === 0){
-							month = dueDate.diff(moment(),"months")
-							dueString = month > 1 || month < -1 ? Math.abs(month) + " " + "months" : Math.abs(month) + " " + "month"
-						}
-						if(month === 0){
-							days = dueDate.diff(moment(),"days")
-							dueString = days > 1 || days < -1 ? Math.abs(days) + " " + "days" : Math.abs(days) + " " + "day"
-						}
-						if(days === 0){
-							hours = dueDate.diff(moment(),"hours")
-							dueString = hours > 1 || hours < -1 ? Math.abs(hours) + " " + "hours" : Math.abs(hours) + " " + "hour"
-						}
-						if(hours === 0){
-							minutes = dueDate.diff(moment(),"minutes")
-							dueString = minutes > 1 || minutes < -1 ? Math.abs(minutes) + " " + "minutes" : Math.abs(minutes) + " " + "minute"
-						}
-						if(minutes === 0){
-							seconds = dueDate.diff(moment(),"seconds")
-							dueString = seconds > 1 || seconds <  -1 ? Math.abs(seconds) + " " + "seconds" : Math.abs(seconds) + " " + "second"
-						}
-						if(seconds === 0 ){
-							dueString = "few seconds ago"
+						if(!_.isEmpty(item.dueDate)){
+							dueString = year > 1 || year < -1 ? Math.abs(year) + " " + "years" : Math.abs(year) + " " + "year"
+							if(year === 0){
+								month = dueDate.diff(moment(),"months")
+								dueString = month > 1 || month < -1 ? Math.abs(month) + " " + "months" : Math.abs(month) + " " + "month"
+							}
+							if(month === 0){
+								days = dueDate.diff(moment(),"days")
+								dueString = days > 1 || days < -1 ? Math.abs(days) + " " + "days" : Math.abs(days) + " " + "day"
+							}
+							if(days === 0){
+								hours = dueDate.diff(moment(),"hours")
+								dueString = hours > 1 || hours < -1 ? Math.abs(hours) + " " + "hours" : Math.abs(hours) + " " + "hour"
+							}
+							if(hours === 0){
+								minutes = dueDate.diff(moment(),"minutes")
+								dueString = minutes > 1 || minutes < -1 ? Math.abs(minutes) + " " + "minutes" : Math.abs(minutes) + " " + "minute"
+							}
+							if(minutes === 0){
+								seconds = dueDate.diff(moment(),"seconds")
+								dueString = seconds > 1 || seconds <  -1 ? Math.abs(seconds) + " " + "seconds" : Math.abs(seconds) + " " + "second"
+							}
+							if(seconds === 0 ){
+								dueString = "few seconds ago"
+							}
 						}
 
             return {
-                originalVal: item.dueDate,
-                val: <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueString }</span>
+                originalVal: _.isEmpty(item.dueDate) ? "" : item.dueDate,
+                val: !_.isEmpty(item.dueDate) ? <span className = { dueDate.isBefore() ? "text-overdue" : "" }>{ dueString }</span> : <span></span>
             }
         },
 		//use square brackets for dynamic JSON keys (as variables)
@@ -126,31 +128,83 @@ export default function RequestsTable( { requests, filter, columns } ) {
 		},
     }
     if ( filter ) {
-        requests = Meteor.user().getRequests( { $and:[
+				({requests} = Meteor.user().getRequests( { $and:[
             { 'status': { $in: ['New','Issued'] } },
             filter
-        ] });
+        ] }));
     }
-    if (Session.get( 'selectedFacility' )) {
-            delete this.fields['Facility'];
-        }
-        var requiredColumns = columns ? $.grep(columns, function(element) {
-                                return $.inArray(element, Object.keys(this.fields) ) !== -1;
-                                }) : Object.keys(this.fields);
-        var newCols={};
-        requiredColumns.map(function(col){
-            newCols[col] = this.fields[col];
-        });
-        if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) == "Booking"){
-			newCols = _.omit(newCols,"Due");
+
+    let sortByWO = [];
+    if (requests) {
+         sortByWO = requests.sort(function(a, b){
+            let openA = a.code
+            let openB = b.code
+            return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
+    });
+    }
+
+	let sortByLastUpdate = sortByWO;
+	/*let sortByLastUpdate = sortByWO.sort(function(a,b){
+		if(a != null && b != null){
+			if(_.contains(['Open'],selectedItem)){
+				if(a.issuedAt != null && b.issuedAt != null){
+					let issuedAt_A = a.issuedAt
+					let issuedAt_B = b.issuedAt
+					return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
+				}else if(a.issuedAt == null && b.issuedAt != null){
+					let created_A = a.createdAt
+					let issuedAt_B = b.issuedAt
+					return (issuedAt_B < created_A) ? -1 : (issuedAt_B > created_A) ? 1 : 0;
+				}else if(a.issuedAt != null && b.issuedAt == null){
+					let issuedAt_A = a.issuedAt
+					let created_B = b.createdAt
+					return (created_B < issuedAt_A) ? -1 : (created_B > issuedAt_A) ? 1 : 0;
+				}else if(a.issuedAt == null && b.issuedAt == null){
+					let created_A = a.createdAt
+					let created_B = b.createdAt
+					return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
+				}
+			}else if(_.contains(['New'],selectedItem)){
+				let created_A = a.createdAt
+				let created_B = b.createdAt
+				return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
+			}else if(_.contains(['Issued'],selectedItem)){
+				let issuedAt_A = a.issuedAt
+				let issuedAt_B = b.issuedAt
+				return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
+			}else if(_.contains(['Complete'],selectedItem)){
+				let complete_A = a.closeDetails.completionDate
+				let complete_B = b.closeDetails.completionDate
+				return (complete_B < complete_A) ? -1 : (complete_B > complete_A) ? 1 : 0;
+			}else if(_.contains(['Cancelled','Close'],selectedItem)){
+				let lastUpdate_A = a.lastUpdate
+				let lastUpdate_B = b.lastUpdate
+				return (lastUpdate_B < lastUpdate_A) ? -1 : (lastUpdate_B > lastUpdate_A) ? 1 : 0;
+			}
+		}
+	});*/
+
+		let requiredColumns = columns ? $.grep(columns, (element) => {
+			return $.inArray(element, Object.keys(this.fields) ) !== -1;
+		}) : Object.keys(this.fields);
+		let newCols={};
+		requiredColumns.map(function(col){
+			newCols[col] = this.fields[col];
+		});
+
+		if(Session.get( 'selectedStatus' ) && Session.get( 'selectedStatus' ) === "Booking"){
+			newCols = _.omit(newCols, "Due");
 		}
     return (
         <div className = "request-table">
         <DataTable
-            items   = { requests }
+            items   = { sortByLastUpdate }
             fields  = { newCols }
-            sortByColumn = "Issued"
-            sortDirection = "up"
+			updateWithoutSorting = {true}
+            //sortByColumn = "Issued"
+			//sortByColumn = "WO#"
+            //sortDirection = "Up"
+			//sortDirection = "Up"
             onClick = {
                 ( request ) => {
                     let team = Session.getSelectedTeam();

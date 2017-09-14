@@ -85,12 +85,17 @@ const TeamPanel = React.createClass( {
             } );
             */
             if (team.documents) {
-                team.documents.map(function(doc, idx){
-                    if (doc.type=="Insurance") {
-                       docIds.push(doc._id); 
-                    }
-                    
-                });
+                if(Array.isArray(team.documents)){
+                    team.documents.map(function(doc, idx){
+                        if (doc.type=="Insurance") {
+                           docIds.push(doc._id);
+                        }
+                    });
+                }
+                if(typeof team.documents == "object"){
+                    docIds.push(team.documents._id);
+                }
+
             }
 
             insuranceDocs = Documents.find( { $or: [{ type: "Insurance", "team._id": team._id }, { _id: { $in: docIds } } ] } ).fetch();
@@ -109,6 +114,7 @@ const TeamPanel = React.createClass( {
         var item = this.props.item;
         return [
             TeamActions.edit.bind( this.props.item ),
+            TeamActions.destroy.bind( this.props.item ),
             ( this.props.item.type == "contractor" ? TeamActions.inviteSupplier.bind( this.props.item ) : null ),
             (facility && this.props.item.type == "contractor" ?
                 {
@@ -119,7 +125,7 @@ const TeamPanel = React.createClass( {
                             facility.removeSupplier( item );
                             Modal.hide();
                         }
-                        
+
                     }
                 }: null),
             (team && this.props.item.type == "contractor" ?
@@ -218,7 +224,7 @@ const TeamPanel = React.createClass( {
 				}
 			]}/>
 
-			<Menu items = { this.getMenu() } />
+			<Menu items = { this.getMenu() } team = {this.props.item} />
 
 		</div>
         )

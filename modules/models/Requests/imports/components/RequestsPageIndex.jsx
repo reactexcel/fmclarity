@@ -8,6 +8,7 @@ import { FacilityFilter } from '/modules/models/Facilities';
 import { RequestActions, RequestsTable } from '/modules/models/Requests';
 
 import { RequestFilter } from '/modules/models/Requests';
+import RequestPagination from './RequestPagination';
 
 import { Switch } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -25,6 +26,9 @@ export default class RequestsPageIndex extends Component {
 
 		this.state = {
 			requests: props.requests,
+      totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
+			currentPage: props.currentPage,
 			active: false,
 		};
 
@@ -32,8 +36,12 @@ export default class RequestsPageIndex extends Component {
 
 	componentWillReceiveProps( props ){
 		this.props = props;
+
 		this.setState( {
-			requests: props.requests
+			requests: props.requests,
+      totalCollectionCount: props.totalCollectionCount,
+      pageSize: props.pageSize,
+      currentPage: props.currentPage,
 		} )
 	}
 
@@ -68,7 +76,7 @@ export default class RequestsPageIndex extends Component {
 						<FacilityFilter items = { facilities } selectedItem = { facility } />
 					</div>
 					<div className="col-xs-offset-3 col-xs-3 desktop-only">
-						<RequestFilter items = { [ 'Open', 'New', 'Issued', 'Complete', 'Close', 'Cancelled' ] } selectedItem = { selectedStatus } />
+						<RequestFilter items = { [ 'Open','Preventative','All', 'New','Booking', 'Issued', 'Complete', /*'Close',*/ 'Cancelled' ] } selectedItem = { selectedStatus } />
 					</div>
 					{ /*user.getRole && user.getRole() == 'fmc support' ?
 						<div className="col-xs-offset-9 col-xs-3" >
@@ -89,9 +97,23 @@ export default class RequestsPageIndex extends Component {
 					*/ }
 				</div>
 				<div className = "issue-page animated fadeIn" style = { {paddingTop:"50px"} }>
+				{team && requests.length == '0' ? 
+				<div className="middle-box text-center animated fadeInDown" style={{textAlign:'center',paddingTop:'5px', paddingBottom:'5px', backgroundColor: 'white'}}>
+		            <h3 className="font-bold">Filter returned empty results</h3>
+
+		            <div className="error-desc">
+		                <p>No {(selectedStatus && selectedStatus != 'All') ? selectedStatus : ''} requests found.</p>
+		            </div>
+		        </div>
+		         :
+		        <div>
 					<div className = "ibox">
-						<RequestsTable requests = { this.state.requests }/>
+						<RequestsTable requests={ this.state.requests } selectedItem={selectedStatus} />
 					</div>
+					<RequestPagination totalCollectionCount={ this.state.totalCollectionCount } itemsPerPage={ this.state.pageSize } currentPage={ this.state.currentPage }/>
+				</div>
+			}
+					
 				</div>
 			</div>
 		)

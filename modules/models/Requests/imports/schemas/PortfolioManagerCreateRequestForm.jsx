@@ -76,7 +76,7 @@ const PortfolioManagerCreateRequestForm = {
 
 	type: {
 		label: "Request type",
-		description: "The work request type (ie Ad-hoc, Preventative)",
+		description: "The work request type (ie Ad-hoc, Schedular)",
 		type: "string",
 		required: true,
 		defaultValue: () => {
@@ -101,14 +101,14 @@ const PortfolioManagerCreateRequestForm = {
 			}
 
 			if( teamType == 'contractor' ) {
-				return { items:[ 'Base Building', 'Preventative', 'Defect' ]};
+				return { items:[ 'Base Building', 'Schedular', 'Defect' ]};
 			}
 			else {
 				if( _.contains(["staff",'resident'], role) ) {
 					return {items:[ 'Ad-hoc', 'Booking', 'Tenancy' ]};
 				}
 				else {
-					return {items:[ 'Ad-hoc', 'Booking', 'Preventative', 'Defect' ]};
+					return {items:[ 'Ad-hoc', 'Booking', 'Schedular', 'Defect' ]};
 				}
 			}
 		}
@@ -121,7 +121,7 @@ const PortfolioManagerCreateRequestForm = {
 		defaultValue: "Standard",
 		required: true,
 		condition: ( request ) => {
-			if ( request.type == "Preventative" || request.type == 'Booking' ) {
+			if ( request.type == "Schedular" || request.type == 'Booking' ) {
 				return false;
 			}
 			return true;
@@ -152,7 +152,7 @@ const PortfolioManagerCreateRequestForm = {
 	frequency: {
 		/*label: "Frequency",
 		description: "The frequency with which this job should occur",*/
-		condition: "Preventative",
+		condition: "Schedular",
 		subschema: RequestFrequencySchema,
 		required: true,
 		type: "object",
@@ -497,7 +497,7 @@ const PortfolioManagerCreateRequestForm = {
 		defaultValue: '500',
 		input: Currency,
 		condition: ( request ) => {
-			if( _.contains( [ "Defect", "Preventative" ], request.type )  ) {
+			if( _.contains( [ "Defect", "Schedular" ], request.type )  ) {
 				return false;
 			}
 			let role = Meteor.user().getRole();
@@ -727,7 +727,6 @@ const PortfolioManagerCreateRequestForm = {
 		type: 'string',
 		size: 12,
 		input(props) {
-			console.log(props.item.members);
 			return(
 				<div className="row">
 					<div className="col-xs-12">
@@ -805,7 +804,7 @@ const PortfolioManagerCreateRequestForm = {
 		description: "The individual who has been allocated to this job",
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
-			if( request.type == 'Preventative' || role == "caretaker" || role == "staff" || role == "resident") {
+			if( request.type == 'Schedular' || role == "caretaker" || role == "staff" || role == "resident") {
 				return false;
 			}
 			let team = Session.getSelectedTeam();
