@@ -119,7 +119,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
 
                 <Stepper
 
-                    submitForm = { ( callback ) => {
+                    submitForm = { ( activeTab, callback ) => {
                         if( submitFormCallback ){
                             Session.selectFacility( facility );
                             submitFormCallback( callback );
