@@ -49,30 +49,6 @@ export default function DocIcon( props ) {
     }
 
     function handleClick() {
-        /*let facility = Session.getSelectedFacility(),
-             facilityMembers = facility.getMembers( { 'role': "manager" } );
-             facilityMembers = facilityMembers.length ? facilityMembers[0] : Meteor.user();
-        let allDocuments = Documents.findAll({'facility._id':facility._id}),
-            createdByUser = {
-                _id: facilityMembers._id,
-                role: 'manager'
-            }
-            console.log(allDocuments,"allDocuments before update");
-        _.map(allDocuments,( doc, i ) => {
-            if(doc.createdByUser && !_.isEmpty(doc.createdByUser)){
-
-            }else{
-                Documents.update( { _id: doc._id }, {
-                    $set: {
-                        createdByUser: createdByUser
-                    }
-                })
-            }
-        })
-
-        console.log(allDocuments,"allDocuments");
-        let after = Documents.findAll({'facility._id':facility._id});
-        console.log(after,"allDocuments after update which will comes with a new field called `createdByUser`");*/
         showFileDetailsModal();
     }
 
