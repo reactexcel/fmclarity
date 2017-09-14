@@ -26,7 +26,6 @@ const PMPListTile = React.createClass( {
     },
 
     render() {
-
         let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data,
             nextDateString = null,
             frequency = request.frequency || {},
@@ -61,10 +60,8 @@ const PMPListTile = React.createClass( {
                 : null }
             </div>
             <div className = "issue-summary-col" style = {{width:"20%"}}>
-
                 { nextDateString && nextRequest && nextRequest.status != "Deleted"?
                     <span onClick = { () => { nextRequest ? RequestActions.view.run( nextRequest ) : RequestActions.view.run( request ) } } >
-
                         <span>next due <b>{ nextDateString }</b> </span>
                         { nextRequest ?
                             <span className = {`label label-${nextRequest.status}`}>{ nextRequest.status } { nextRequest.getTimeliness() }</span>
