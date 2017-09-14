@@ -113,7 +113,7 @@ class Calendar extends React.Component {
             //height:500,
             eventClick( event ) {
                 if ( event.request ) {
-                    RequestActions.view.run( event.request );
+                    RequestActions.view.run( event.request, ()=>{} );
                 }
             },
             displayEventTime: false,
