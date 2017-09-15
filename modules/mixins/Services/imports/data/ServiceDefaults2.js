@@ -118,7 +118,8 @@ export default ServiceDefaults2 = [ {
 	} ]
 }, {
 	name: "Building Maintenance Unit",
-	propType: [propTypes[0]]
+	propType: [propTypes[0]],
+	children: []
 }, {
 	name: "Car park",
 	propType: propTypes,
@@ -427,7 +428,7 @@ export default ServiceDefaults2 = [ {
 }, {
 	name: "Kitchen Equipment",
 	propType: [propTypes[1],propTypes[2]],
-	children: [ ]
+	children: []
 }, {
 	name: "Landscaping",
 	propType: propTypes,
