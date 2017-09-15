@@ -118,7 +118,7 @@ export default ComplianceRuleSchema = {
             import { Requests } from '/modules/models/Requests';
             let query = {
                  "facility._id": item.facility._id,
-                 type: "Preventative",
+                 type: "Schedular",
              };
             if ( item.service ) query[ "service.name" ] = item.service.name;
             if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
@@ -129,6 +129,7 @@ export default ComplianceRuleSchema = {
                          }
                      }
                  ), "name"),*/
+
                 items: _.pluck(PPM_Schedulers.findAll( query , {
                         fields: {
                              name: true
@@ -143,7 +144,7 @@ export default ComplianceRuleSchema = {
                         let newRequest = PPM_Schedulers.create( {
                             facility: Session.getSelectedFacility(),
                             team: team,
-                            type: 'Preventative',
+                            type: 'Schedular',
                             priority: 'Standard',
                             status: 'PMP',
                             name: '',

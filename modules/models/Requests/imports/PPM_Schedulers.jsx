@@ -234,7 +234,6 @@ PPM_Schedulers.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-
             let status = 'New';
 
             // The description field simply carries the value to be sent to the notification or comment.
@@ -260,7 +259,6 @@ PPM_Schedulers.methods( {
                 } );
                 code = team.getNextWOCode();
             }
-
             let newRequestId = Meteor.call( 'PPM_Schedulers.save', request, {
                     status: status,
                     code: code,
