@@ -799,7 +799,7 @@ Facilities.actions( {
                 index,
                 service: services[index],
                 supplier,
-            }
+            };
         }
     },
 

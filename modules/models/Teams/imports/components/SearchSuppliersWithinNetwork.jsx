@@ -22,7 +22,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
             team: Session.getSelectedTeam(),
             services: facility?facility.servicesRequired:[],
             selectedService: JSON.parse(localStorage.getItem('defaultService')),
-            searchTeams:''
+            searchTeams:[]
         }
     }
     search(){
@@ -86,7 +86,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
         }
         if (suppliers.length ){
             if(this.state.selectedService){
-                this.setState({suppliers, showMsg: false,searchTeams:''});
+                this.setState({suppliers, showMsg: false});
             }else{
                 this.setState({suppliers:[], showMsg: false});
             }
@@ -94,8 +94,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
             this.setState({suppliers, showMsg: true});
         }
     }
-    checkName( event ) {
-        event.preventDefault();
+    checkName() {
         var inputName = this.state.supplierName?this.state.supplierName:'';
         let query = {
             name: {
@@ -106,14 +105,12 @@ export default class SearchSuppliersWithinNetwork extends Component {
         searchTeams = Teams.findAll( query, { sort: { name: 1 } } );
         this.setState({
             searchTeams: searchTeams,
-            suppliers:[]
         })
         if ( searchTeams.length > 0 ) {
             this.setState( { searchTeams: searchTeams } );
 
         } else {
             this.setState( { searchTeams: '' } );
-            this.handleTeamChange();
 
         }
     }
@@ -123,7 +120,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
         if ( !searchName ) {
             alert( 'Please enter a valid name.' );
         } else {
-            this.setState( { supplierName: '' }, () => {
+            this.setState( { supplierName: supplier.name }, () => {
                 let supplierId = supplier._id || Random.id();
                 viewersTeam.inviteSupplier( searchName, supplierId, ( invitee ) => {
                     invitee = Teams.collection._transform( invitee );
@@ -154,6 +151,10 @@ export default class SearchSuppliersWithinNetwork extends Component {
         return attachments;
     }
     setSupplier(supplier){
+      this.setState({
+        supplierName: supplier.name,
+        searchTeams: []
+      })
         let { facility, selectedService } = this.state;
         Meteor.call("Facilities.setDefaultSupplier", facility, supplier, selectedService, this.state.team, (err, data) => {
             if (data) {
@@ -172,10 +173,19 @@ export default class SearchSuppliersWithinNetwork extends Component {
         let { team } = this.state;
         TeamActions.create.bind(team, false).run();
     }*/
+    selectSupplier(supplier) {
+      let {facility} = this.state;
+      idList = facility ? _.pluck(facility.suppliers, '_id') : [];
+      if(_.find(this.state.suppliers, obj=> obj._id === supplier._id ) && !_.contains(idList, supplier._id)){
+        this.setSupplier(supplier);
+      } else {
+        this.handleTeamChange(supplier);
+      }
+    }
     render(){
         let idList = []
-		let { suppliers, facility, showMsg } = this.state;
-		idList = facility ? _.pluck(facility.suppliers, '_id') : [];
+  		let { searchTeams, suppliers, facility, showMsg } = this.state;
+  		idList = facility ? _.pluck(facility.suppliers, '_id') : [];
         return (
             <div style={{minWidth:'800px'}}>
                 <div style = { {padding:"5px 15px 20px 15px"} } >
@@ -209,10 +219,22 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                 placeholder="Supplier name (optional)"
                                 value={this.state.supplierName}
                                 onChange={ ( text ) => {
-                                    this.setState( { supplierName : text } );
-                                    this.search();
+                                    this.setState( { supplierName : text }, ()=>{
+                                      this.checkName()
+                                      this.search();
+                                    });
+
                                 } }
                             />
+                          <div className="filter-supplier-container">
+                          {
+                            _.map(searchTeams, ( supplier, idx ) => {
+                                return <div key={idx} onClick={()=>this.selectSupplier(supplier)} className="filter-supplier-item">
+                                  <ContactCard item={supplier} />
+                                </div>
+                            })
+                          }
+                          </div>
                         </div>
                     </div>
                     <div className="row">
@@ -222,7 +244,8 @@ export default class SearchSuppliersWithinNetwork extends Component {
                                     title={"Click to add new supplier."}
                                     className="btn btn-flat btn-primary" onClick={(event)=>{
                                         // this.addSupplier(event)
-                                        this.checkName(event)
+                                        // this.checkName(event)
+                                        this.handleTeamChange()
                                     }}
                                 >
                                     Add new
@@ -231,82 +254,7 @@ export default class SearchSuppliersWithinNetwork extends Component {
                         </div>
                     </div>
                 </div>
-                <div className ="row" style={{'marginLeft':'0px'}}>
-                    {this.state.searchTeams && this.state.searchTeams.length ? <div className="col-xs-12" style={{marginBottom:'1%',padding:'15px'}}><Select items={this.state.searchTeams} view={ContactCard} onChange={(supplier)=>{this.handleTeamChange(supplier)}} placeholder={"Select Supplier from list"}/></div> : null }
-    	            { suppliers && suppliers.length ? suppliers.map( ( supplier, idx ) => {
-    					let contactName = supplier.contact ? supplier.contact.name : null,
-    					    availableServices = null;
-    				    if ( supplier.getAvailableServices ) {
-    					    availableServices = supplier.getAvailableServices();
-    				    }
-    					let attachments = this.getAttachments( supplier )
-    	        	    return (
-    						<div className="col-xs-12" key={idx}
-                                style={{
-                                    'backgroundColor':'white',
-                                    'marginBottom':'1%',
-                                    'padding':'0px',
-                                }} className = "ibox search-box report-details">
-                                <div className="business-card">
-    								<div className="contact-thumbnail pull-left">
-    									{supplier.thumbUrl?
-    										<img alt="image" src={supplier.thumbUrl} />
-    									:null}
-    								 </div>
-    								 <div className="contact-info">
-    									<h2>{supplier.name}</h2>
-    									<i style={{color:"#999",display:"block",padding:"3px"}}>{ contactName ? contactName : null }<br/></i>
-    									<b>Email</b> { supplier.email }<br/>
-    									{ supplier.phone ? <span><b>Phone</b> { supplier.phone }<br/></span> :null }
-    									{ supplier.phone2 ? <span><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> { supplier.phone2 }<br/></span> :null }
-    									<div style={{margin:"10px 0 10px 70px",borderBottom:"1px solid #ccc"}}></div>
-    									{availableServices && availableServices.length?
-    									availableServices.map( (service,index) => {
-    										return <span key = { service.name }>{ index?' | ':'' }{ service.name }</span>
-    									})
-    									:null}
-    									<br />
-    								</div>
-    								<div className="row">
-    									{attachments}
-    									<div className="col-sm-12">
-    										<span style={{'float':'right','marginRight':'1%'}}>
-                                                <button
-        											title={"Click to save supplier in your team."}
-        											className="btn btn-flat btn-primary"
-                                                    onClick={() => {
-        												this.setSupplier( supplier )
-        											}}
-        											disabled={_.contains(idList, supplier._id) == true?true:false}
-        											style={{'cursor':_.contains(idList, supplier._id) == true?"not-allowed":"pointer"}}
-        										>
-        											{_.contains(idList, supplier._id) == true?"Saved":"Save supplier"}
-        										</button>
-    									    </span>
-    								    </div>
-    							    </div>
-    						    </div>
-    					    </div>
-                        )
-    	            } ) : (showMsg?<div className="col-xs-12"
-                            style={{
-                                'backgroundColor':'white',
-                                'marginBottom':'1%',
-                                'padding':'0px',
-                            }}
-                            className = "search-box report-details"
-                            >
-                                <p style={{
-                                    "textAling":"center",
-                                    'borderTop': '1px solid #e3e3e3',
-                                    padding: '15px',
-                                }}>
-                                    Sorry! No suppliers found...  You can add a new supplier by pressing the  <em>ADD NEW</em> button.
-                                </p>
-                        </div>:null)
-                    }
-    	        </div>
             </div>
-        )
+        );
     }
 }
