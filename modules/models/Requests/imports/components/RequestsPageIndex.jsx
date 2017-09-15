@@ -99,11 +99,22 @@ export default class RequestsPageIndex extends Component {
            */ }
         </div>
         <div className="issue-page animated fadeIn" style={ {paddingTop: "50px"} }>
-          <div className="ibox">
-            <RequestsTable requests={ this.state.requests } selectedItem={selectedStatus}/>
-          </div>
-          <RequestPagination totalCollectionCount={ this.state.totalCollectionCount }
-                             itemsPerPage={ this.state.pageSize } currentPage={ this.state.currentPage }/>
+          { team && requests.length === 0 ?
+            <div className="middle-box text-center animated fadeInDown"
+                 style={{textAlign: 'center', paddingTop: '5px', paddingBottom: '5px', backgroundColor: 'white'}}>
+              <h3 className="font-bold">Filter returned empty results</h3>
+              <div className="error-desc">
+                <p>No {(selectedStatus && selectedStatus != 'All') ? selectedStatus : ''} requests found.</p>
+              </div>
+            </div> :
+            <div>
+              <div className="ibox">
+                <RequestsTable requests={ this.state.requests } selectedItem={selectedStatus} />
+              </div>
+              <RequestPagination totalCollectionCount={ this.state.totalCollectionCount }
+                                 itemsPerPage={ this.state.pageSize } currentPage={ this.state.currentPage }/>
+            </div>
+          }
         </div>
       </div>
     )

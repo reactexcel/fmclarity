@@ -30,7 +30,7 @@ export default ReportsNavWidget = React.createClass( {
 		let xyz = _.map(reportIds, (id) => {
 			report = reports[id];
 			return (
-				<div onClick={()=>this.abc(id)} className="grid-item" style={{padding:"15px", cursor:"pointer"}} key={id}>
+				<div id="report-link" onClick={()=>this.abc(id)} className="grid-item" style={{padding:"15px", cursor:"pointer", textDecoration:'underline'}} key={id}>
 					{report.name}
 				</div>
 			)
@@ -39,7 +39,7 @@ export default ReportsNavWidget = React.createClass( {
 			<div>
 		        {/*<ActionsMenu items={this.getMenu()} icon="eye" />*/}
 		        <div className="ibox-title">
-		        	<h2>Available Reports</h2>
+		        	<h2 style = {{testTransform:'uppercase',fontWeight:'400'}}>Available Reports</h2>
 		        </div>
 		        <div className="ibox-content" style={{padding:"0px"}}>
 					<div className="row">

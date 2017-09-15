@@ -108,7 +108,6 @@ export default function RequestsTable({requests, filter, columns, selectedItem})
     },
     //use square brackets for dynamic JSON keys (as variables)
     [ ClientOrSupplier ]: (item) => {
-
       if (team.type == 'fm') {
         let supplier = item.getSupplier();
         if (supplier) {
@@ -138,54 +137,55 @@ export default function RequestsTable({requests, filter, columns, selectedItem})
     }));
   }
 
+  let sortByWO = [];
+  if (requests) {
+    sortByWO = requests.sort(function (a, b) {
+      let openA = a.code
+      let openB = b.code
+      return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
+    });
+  }
 
-  let sortByWO = requests.sort(function (a, b) {
-    let openA = a.code
-    let openB = b.code
-    return (openB < openA) ? -1 : (openB > openA) ? 1 : 0;
-  });
-  let sortByLastUpdate = sortByWO;
-  /**
-  let sortByLastUpdate = sortByWO.sort(function (a, b) {
-    if (a != null && b != null) {
-      if (_.contains(['Open'], selectedItem)) {
-        if (a.issuedAt != null && b.issuedAt != null) {
-          let issuedAt_A = a.issuedAt
-          let issuedAt_B = b.issuedAt
-          return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
-        } else if (a.issuedAt == null && b.issuedAt != null) {
-          let created_A = a.createdAt
-          let issuedAt_B = b.issuedAt
-          return (issuedAt_B < created_A) ? -1 : (issuedAt_B > created_A) ? 1 : 0;
-        } else if (a.issuedAt != null && b.issuedAt == null) {
-          let issuedAt_A = a.issuedAt
-          let created_B = b.createdAt
-          return (created_B < issuedAt_A) ? -1 : (created_B > issuedAt_A) ? 1 : 0;
-        } else if (a.issuedAt == null && b.issuedAt == null) {
-          let created_A = a.createdAt
-          let created_B = b.createdAt
-          return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
-        }
-      } else if (_.contains(['New'], selectedItem)) {
-        let created_A = a.createdAt
-        let created_B = b.createdAt
-        return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
-      } else if (_.contains(['Issued'], selectedItem)) {
-        let issuedAt_A = a.issuedAt
-        let issuedAt_B = b.issuedAt
-        return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
-      } else if (_.contains(['Complete'], selectedItem)) {
-        let complete_A = a.closeDetails.completionDate
-        let complete_B = b.closeDetails.completionDate
-        return (complete_B < complete_A) ? -1 : (complete_B > complete_A) ? 1 : 0;
-      } else if (_.contains(['Cancelled', 'Close'], selectedItem)) {
-        let lastUpdate_A = a.lastUpdate
-        let lastUpdate_B = b.lastUpdate
-        return (lastUpdate_B < lastUpdate_A) ? -1 : (lastUpdate_B > lastUpdate_A) ? 1 : 0;
-      }
-    }
-  });
-   **/
+	let sortByLastUpdate = sortByWO;
+	/*let sortByLastUpdate = sortByWO.sort(function(a,b){
+		if(a != null && b != null){
+			if(_.contains(['Open'],selectedItem)){
+				if(a.issuedAt != null && b.issuedAt != null){
+					let issuedAt_A = a.issuedAt
+					let issuedAt_B = b.issuedAt
+					return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
+				}else if(a.issuedAt == null && b.issuedAt != null){
+					let created_A = a.createdAt
+					let issuedAt_B = b.issuedAt
+					return (issuedAt_B < created_A) ? -1 : (issuedAt_B > created_A) ? 1 : 0;
+				}else if(a.issuedAt != null && b.issuedAt == null){
+					let issuedAt_A = a.issuedAt
+					let created_B = b.createdAt
+					return (created_B < issuedAt_A) ? -1 : (created_B > issuedAt_A) ? 1 : 0;
+				}else if(a.issuedAt == null && b.issuedAt == null){
+					let created_A = a.createdAt
+					let created_B = b.createdAt
+					return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
+				}
+			}else if(_.contains(['New'],selectedItem)){
+				let created_A = a.createdAt
+				let created_B = b.createdAt
+				return (created_B < created_A) ? -1 : (created_B > created_A) ? 1 : 0;
+			}else if(_.contains(['Issued'],selectedItem)){
+				let issuedAt_A = a.issuedAt
+				let issuedAt_B = b.issuedAt
+				return (issuedAt_B < issuedAt_A) ? -1 : (issuedAt_B > issuedAt_A) ? 1 : 0;
+			}else if(_.contains(['Complete'],selectedItem)){
+				let complete_A = a.closeDetails.completionDate
+				let complete_B = b.closeDetails.completionDate
+				return (complete_B < complete_A) ? -1 : (complete_B > complete_A) ? 1 : 0;
+			}else if(_.contains(['Cancelled','Close'],selectedItem)){
+				let lastUpdate_A = a.lastUpdate
+				let lastUpdate_B = b.lastUpdate
+				return (lastUpdate_B < lastUpdate_A) ? -1 : (lastUpdate_B > lastUpdate_A) ? 1 : 0;
+			}
+		}
+	});*/
 
   let requiredColumns = columns ? $.grep(columns, (element) => {
     return $.inArray(element, Object.keys(this.fields)) !== -1;
