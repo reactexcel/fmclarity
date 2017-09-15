@@ -290,7 +290,6 @@ const RequestsStatusReport = React.createClass( {
 				                value       = { this.state.selectedStatus }
 				                items       = { [ "Booking", "Complete", "Deleted", "Issued", "New", "PMP", "PPM" ] }
 				                onChange    = { ( item ) => {
-									console.log(item,"Status");
 									this.setState({
 										selectedStatus: item,
 										showStatusField: _.isEmpty(item) ? true : false
