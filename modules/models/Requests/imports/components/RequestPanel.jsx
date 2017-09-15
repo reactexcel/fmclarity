@@ -261,8 +261,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                     } }
                                         type="text" minLength="4" style ={{textAlign:'right'}} value={request.invoiceDetails.invoiceNumber}></input>
                                     </h2>
-                                    <h2>{ billingOrderNumber }</h2>
-                                </span> 
+                                    <span>{ billingOrderNumber }</span>
+                                </span>
                                 : <h2>{title}</h2>}
 
                             {/*<b>Created</b> <span>{formatDate(request.createdAt)}<br/></span>*/}
