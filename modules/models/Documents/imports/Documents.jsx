@@ -5,6 +5,7 @@
 
 import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/mixins/Owners';
+import { CreatedByUser } from '/modules/mixins/CreatedByUser';
 import { DocMessages } from '/modules/models/Messages';
 import { Members } from '/modules/mixins/Members';
 
@@ -20,6 +21,7 @@ const Documents = new Model( {
     collection: "Files",
     mixins: [
         [ Owners ],
+        [ CreatedByUser ],
         [ DocMessages, {
             helpers: {
                 getInboxName() {
