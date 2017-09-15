@@ -112,7 +112,7 @@ const ServicesRequiredEditor = React.createClass( {
 		this.setState( {
 				services: services
 			} )
-		if (newValue.name.trim() !="" && newValue.name.length >= 3) {
+		if (services[ idx ].name.trim() !="") {
 			this.save();
 		}
 		else{
@@ -138,7 +138,7 @@ const ServicesRequiredEditor = React.createClass( {
 		this.setState( {
 			services: services
 		} )
-		if (service.children[subIdx].name.trim() !="" && newValue.name.length >= 3) {
+		if (service.children[subIdx].name.trim() !="") {
 			this.save();
 		}
 		else{
