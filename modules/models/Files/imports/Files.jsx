@@ -6,9 +6,37 @@
 /**
  * @memberOf        modules:models/Files
  */
-const Files = new FS.Collection( "File", {
-    stores: [ new FS.Store.GridFS( "master" ) ]
-} );
+
+import s3Config, {  } from '/modules/config/s3';
+let stores = [];
+if (s3Config.enabled()) {
+  const s3Store = new FS.Store.S3("s3Images", {
+    accessKeyId: s3Config.account.accessKeyId,
+    secretAccessKey: s3Config.account.secretAccessKey,
+    bucket: s3Config.bucket.name,
+    folder: s3Config.bucket.folder,
+    endpoint: s3Config.bucket.endpoint
+  });
+  stores.push(s3Store);
+} else {
+  stores.push(new FS.Store.GridFS("master"));
+}
+
+if (s3Config.migrate.gridfs && s3Config.enabled()) {
+  stores.push(new FS.Store.GridFS("master"));
+}
+
+const Files = new FS.Collection("File", {
+  stores: stores
+});
+
+if (Meteor.isServer && s3Config.migrate.gridfs && s3Config.enabled()) {
+  Files.find({'copies.s3Images.size': 0}).forEach(function (fileObj) {
+      let readStream = fileObj.createReadStream('master');
+      let writeStream = fileObj.createWriteStream('s3Images');
+      readStream.pipe(writeStream);
+  });
+}
 
 if ( Meteor.isServer ) {
     Files.allow( {
