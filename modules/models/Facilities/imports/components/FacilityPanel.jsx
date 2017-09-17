@@ -67,6 +67,7 @@ function FacilityPanel( { item } ) {
 		} )
 
 	  }
+      
     return (
 
 		<div>
@@ -120,7 +121,7 @@ function FacilityPanel( { item } ) {
 						//hide:       !facility.canAddMember(),
                         hide:     	!facility.canAddMember() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList  group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList  group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager', 'portfolio manager' ] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
 						//hide:       !facility.canAddTenant()||teamType!='fm',
                         hide:     	!facility.canAddTenant() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
