@@ -364,6 +364,7 @@ export default AreaDetailsSchema = {
         label: 'Cost per unit',
         size: 6,
         input: Currency,
+        required: true,
         condition( item ) {
             return item.type === "Bookable";;
         }

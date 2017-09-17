@@ -70,13 +70,13 @@ export default class DocsSinglePageIndex extends React.Component {
     onPageChange(){
         let  { query, facilityIds, listSize, currentPage, previousPage, nextPage, facilities, team } = this.state;
         if ( facilities && facilities.length ) {
-            let ids = facilityIds || _.map(facilities, f => f._id),
+            let docIds = facilityIds || _.map(facilities, f => f._id),
             q = query || {
                 $or:[
                     { "team._id" : team._id },
                     {
                         "facility._id": {
-                            $in: ids
+                            $in: docIds
                         }
                     }
                 ]
@@ -86,7 +86,7 @@ export default class DocsSinglePageIndex extends React.Component {
                     { "team._id" : team._id },
                     {
                         "facility._id": {
-                            $in: ids
+                            $in: docIds
                         }
                     }
                 ]
@@ -100,25 +100,25 @@ export default class DocsSinglePageIndex extends React.Component {
             );
             let folders = [];
             if( _.isEmpty(this.state.selectedFacilities) && _.isEmpty(this.state.docName) && _.isEmpty(this.state.docTypes) ){
-                for(var idx in documents){
-                    if(documents[idx].facility && documents[idx].facility._id && _.contains(ids,documents[idx].facility._id) && documents[idx].type){
-                        let facilityAlreadyExist = folders.filter(function(obj){
-                            return obj._id == documents[idx].facility._id
+            for(var idx in documents){
+                if((documents[idx].facility && documents[idx].facility._id && _.contains(docIds,documents[idx].facility._id)) && documents[idx].type){
+                    let facilityAlreadyExist = folders.filter(function(obj){
+                        return obj._id == documents[idx].facility._id
+                    })
+                    if(facilityAlreadyExist.length == 0){
+                        folders.push({
+                            _id: documents[idx].facility._id,
+                            name: documents[idx].facility.name,
+                            folderType:'facility',
+                            content:[]
                         })
-                        if(facilityAlreadyExist.length == 0){
-                            folders.push({
-                                _id: documents[idx].facility._id,
-                                name: documents[idx].facility.name,
-                                folderType:'facility',
-                                content:[]
-                            })
-                            facilityAlreadyExist.push({
-                                _id: documents[idx].facility._id,
-                                name: documents[idx].facility.name,
-                                folderType:'facility',
-                                content:[]
-                            })
-                        }
+                        facilityAlreadyExist.push({
+                            _id: documents[idx].facility._id,
+                            name: documents[idx].facility.name,
+                            folderType:'facility',
+                            content:[]
+                        })
+                    }
                         if(facilityAlreadyExist.length != 0){
                             if(documents[idx].serviceType && documents[idx].serviceType.name){
                                 let serviceTypeAlreadyExist = facilityAlreadyExist[0].content.filter(function(obj){

@@ -108,7 +108,7 @@ const RequestSchema = {
                         items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                             // prefill value with zero for defect
-                            if (_.contains( [ "Defect", "Incident", "Schedular" ], request.type )) {
+                            if (_.contains( [ "Defect", "Incident", "Schedular", "Reminder" ], request.type )) {
                                 request.costThreshold= '0';
                             }
                             if (request.type == 'Incident') {
@@ -175,6 +175,10 @@ const RequestSchema = {
                                             unit: (request.type == 'Schedular' ? "years" : "")
                                         }
                                     }
+                                    if (request.type == 'Reminder') {
+                                        request.costThreshold = '0';
+                                        request.priority = 'Urgent';
+                                    }
                                     if(request.type == 'Incident'){
                                         request.costThreshold= '0';
                                         request.priority = 'Urgent';
@@ -201,7 +205,7 @@ const RequestSchema = {
             type: "string",
             defaultValue: (item) =>{
                 let priority = "Standard";
-                if(item.type == 'Incident'){
+                if(_.contains(['Incident', 'Reminder'])){
                     priority = 'Urgent'
                 }
                 return priority;
@@ -1040,7 +1044,7 @@ const RequestSchema = {
             type: "number",
             size: 6,
             defaultValue: ( item ) => {
-                if(item.type && _.contains(['Key Request','Incident'],item.type)){
+                if(item.type && _.contains(['Key Request','Incident', 'Reminder'],item.type)){
                     return '0';
                 }
                 // get the default value from the team and return that as default costThreshold
@@ -1617,7 +1621,7 @@ const RequestSchema = {
                 //do not show this field if number of facilities is one or less
                 let team = request.team && request.team._id ? Teams.findOne( request.team._id ) : Session.getSelectedTeam(),
                     facilities = team.getFacilities( { 'team._id': team._id } );
-                if ( facilities.length <= 1 ) {
+                if ( facilities.length < 1 ) {
                     return false;
                 }
                 return true;
@@ -1746,6 +1750,9 @@ const RequestSchema = {
                 )
             },
             input( props ) {
+                if(!props.item.supplier){
+                    props.item.supplierContacts = ""
+                }
                 if ( !props.item.supplierContacts ) {
                     props.item.supplierContacts = [];
                 }
