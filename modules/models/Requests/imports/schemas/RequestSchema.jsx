@@ -78,7 +78,9 @@ const RequestSchema = {
             },
             type: "number",
             input: Text,
-            defaultValue: getJobCode,
+            defaultValue:(item)=>{
+                return getJobCode(item);
+            },
             options: {
                 readonly: true
             }
@@ -2073,8 +2075,7 @@ const RequestSchema = {
         function getJobCode( item ) {
             let team = null,
                 code = 0;
-
-            if ( item && item.team ) {
+            if ( item && item.team && item.team._id) {
                 team = Teams.findOne( {
                     _id: item.team._id
                 } );

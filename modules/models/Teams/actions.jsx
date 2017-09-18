@@ -140,7 +140,7 @@ const createRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
                     let request;
-                    if(newRequest.type == "Preventative"){
+                    if(newRequest.type == "Preventative" || newRequest.type == 'Schedular'){
                       Meteor.call( 'PPM_Schedulers.create', newRequest );
                       request = PPM_Schedulers.findOne( { _id: newRequest._id } );
                     }else{
