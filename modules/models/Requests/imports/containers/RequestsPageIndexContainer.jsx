@@ -12,53 +12,17 @@ export default RequestsPageIndexContainer = createContainer(({selectedRequestId}
     user = Meteor.user(),
     requests = null,
     facilities = null,
-    statusFilter = null,
     contextFilter = {},
     selectedRequest = null,
-    includeComplete = false,
-    totalCollectionCount = 0,
-    pageSize = 25,
-    currentPage = Session.get('currentRequestPageNumber') > 0 ? Session.get('currentRequestPageNumber') : 0;
+    includeComplete = false;
 
-  if (selectedStatus == 'New') {
-    statusFilter = {"status": 'New'};
-  }
-  else if (selectedStatus == 'Issued') {
-    statusFilter = {"status": 'Issued'};
-  }
-  else if (selectedStatus == 'Complete') {
-    statusFilter = {"status": 'Complete'};
-    includeComplete = true;
-  }
-  else if (selectedStatus == 'Close') {
-    statusFilter = {"status": 'Close'};
-    includeComplete = true;
-  }
-  else if (selectedStatus == 'Booking') {
-    statusFilter = {"status": 'Booking'};
-  }
-  else if (selectedStatus == 'Preventative') {
-    statusFilter = {
-      "status": 'Issued', "type": 'Preventative'
-    };
-  }
-  else if (selectedStatus == 'Cancelled') {
-    statusFilter = {"status": 'Cancelled'};
-    includeComplete = true;
-  }
-  else if (selectedStatus == 'All') {
-    statusFilter = {"status": {$in: ['Open', 'Booking', 'New', 'Issued', 'Complete', 'Close', 'Cancelled']}};
-    includeComplete = true;
-  }
-  else {
-    selectedStatus = 'Open';
-    statusFilter = {"status": {$in: ['New', 'Issued', 'Booking']}};
-  }
+  let statusFilterResult = getStatusFilter(selectedStatus);
+  let statusFilter = statusFilterResult.statusFilter;
+  selectedStatus = statusFilterResult.selectedStatus;
 
   if (includeComplete) {
     Meteor.subscribe('Requests: Complete');
   }
-
 
   if (selectedRequestId) {
     selectedRequest = Requests.findOne(selectedRequestId);
@@ -79,27 +43,59 @@ export default RequestsPageIndexContainer = createContainer(({selectedRequestId}
     //contextFilter[ 'team._id' ] = team._id;
   }
 
-  if (user != null) {
-    // could test moving this below loading team and only including facilities if supplier
-    ({requests, totalCollectionCount, currentPage} = user.getRequests(
-      {$and: [statusFilter, contextFilter]}, {expandPMP: true, skip: currentPage, limit: pageSize}
-    ));
-    //requests = user.getRequests();
+  function getStatusFilter(selectedStatus) {
+    let statusFilter = {};
+    if (selectedStatus == 'New') {
+      statusFilter = {"status": 'New'};
+    }
+    else if (selectedStatus == 'Issued') {
+      statusFilter = {"status": 'Issued'};
+    }
+    else if (selectedStatus == 'Complete') {
+      statusFilter = {"status": 'Complete'};
+      includeComplete = true;
+    }
+    else if (selectedStatus == 'Close') {
+      statusFilter = {"status": 'Close'};
+      includeComplete = true;
+    }
+    else if (selectedStatus == 'Booking') {
+      statusFilter = {"status": 'Booking'};
+    }
+    else if (selectedStatus == 'Preventative') {
+      statusFilter = {
+        "status": 'Issued', "type": 'Preventative'
+      };
+    }
+    else if (selectedStatus == 'Cancelled') {
+      statusFilter = {"status": 'Cancelled'};
+      includeComplete = true;
+    }
+    else if (selectedStatus == 'All') {
+      statusFilter = {"status": {$in: ['Open', 'Booking', 'New', 'Issued', 'Complete', 'Close', 'Cancelled']}};
+      includeComplete = true;
+    }
+    else {
+      selectedStatus = 'Open';
+      statusFilter = {"status": {$in: ['New', 'Issued', 'Booking']}};
+    }
+    return {
+      selectedStatus,
+      statusFilter
+    };
   }
 
 
   return {
     team,
     facilities,
-    facility,
     requests,
+    facility,
     selectedStatus,
     selectedRequest,
     contextFilter,
     statusFilter,
     user,
-    totalCollectionCount,
-    currentPage,
-    pageSize
+    getStatusFilter
   }
 }, RequestsPageIndex);

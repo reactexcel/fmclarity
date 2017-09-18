@@ -174,7 +174,6 @@ Users.actions({
 
     // as this function is same as publication is there a way to DRY it?
     helper: function (user, filter, options = {expandPMP: false}) {
-
       let query = [],
         team = Session.getSelectedTeam(),
         teamId = null;
@@ -198,22 +197,36 @@ Users.actions({
       //perform query
       let currentPage = options.skip ? options.skip : 0;
       // query option needed to determine current page number and number of documents per collection
-      let queryOptions = currentPage > -1 && options.limit ? {
-        limit: options.limit,
-        skip: currentPage * options.limit,
-        sort: {createdDate: -1}
-      } : {sort: {createdDate: -1}};
+      let queryOptions = {};
+      let usePager = currentPage > -1 && options.limit;
+      if (usePager) {
+        queryOptions = {
+          limit: options.limit,
+          skip: currentPage * options.limit,
+          sort: {createdDate: -1}
+        };
+      } else {
+        queryOptions = {sort: {createdDate: -1}};
+      }
+
       let totalCollection = Requests.find({$and: query});
-      let totalCollectionCount = totalCollection.count();
       let currentCollection = Requests.find({$and: query}, queryOptions);
 
-      let currentCollectionCount = currentCollection.count();
-      let requests = currentCollection.fetch();
-      let skip = !(currentPage > -1 && options.limit);
+      let totalCollectionCount = totalCollection ? totalCollection.count() : 0;
+      let currentCollectionCount = currentCollection ? currentCollection.count() : 0;
+      let requests = currentCollection ? currentCollection.fetch() : [];
+
+      let skip = currentPage > -1 && options.limit;
+
+      if (usePager && skip) {
+        if (( (options.limit * currentPage) + options.limit) >= totalCollectionCount) {
+          skip = false;
+        }
+      }
 
       // skips the addition of PPMs into the requests collection if it's on the requests component
       // only determines if it's on the requests component by checking if there's a pagination option
-      if (skip) {
+      if (!skip) {
         let PPMIssued = PPM_Schedulers.find({
           $and: query
         })
@@ -346,6 +359,7 @@ Users.actions({
                     } else {
                       copy = PPM_Schedulers.collection._transform(copy);
                       requests.push(copy);
+                      additionalEntries++;
                     }
                   }
                 } else {
@@ -361,6 +375,7 @@ Users.actions({
           });
         }
       }
+
       return {
         requests: requests,
         totalCollectionCount: totalCollectionCount,
