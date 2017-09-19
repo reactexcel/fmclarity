@@ -119,7 +119,7 @@ class ActionGroup {
 	 * @param {Action} action - The action this new rule will pertain to.
 	 * @param {array} roles - The roles that this rule is for.
 	 * @param {object} condition - a "condition" object that will be matched against the access item to check that certain properties pertain
-	 * @param {object} rile - The access rule we will add for this action
+	 * @param {object} rule - The access rule we will add for this action
 	 */
 	addOneAccessRule( action, roles, condition, rule ) {
 		if ( this.accessRules[ action ] == null ) {
@@ -197,7 +197,7 @@ class ActionGroup {
 		//  of the passed in will actually match the name property of the action itself
 		actionNames.map( ( actionName ) => {
 			let action = this.actions[ actionName ],
-				rules = this.accessRules[ actionName ];
+					rules = this.accessRules[ actionName ];
 
 			if ( rules == null ) {
 				console.log( `Tried to perform action '${actionName}' but access rules have not been defined` );

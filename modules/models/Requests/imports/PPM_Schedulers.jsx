@@ -13,6 +13,7 @@ import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
 import { Documents } from '/modules/models/Documents';
+import Requests from '/modules/models/Requests/imports/Requests';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
@@ -90,7 +91,7 @@ const PPM_Schedulers = new Model( {
 } )
 
 PPM_Schedulers.save.before( ( request ) => {
-    if ( request.type == "Schedular" ) {
+    if ( request.type == "Schedular" || request.type === "Scheduler"  ) {
         request.status = "PPM";
         request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
@@ -246,7 +247,7 @@ PPM_Schedulers.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Schedular' || request.type == 'Preventative' ) {
+            if ( request.type == 'Schedular' || request.type === "Scheduler" || request.type == 'Preventative' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -259,6 +260,7 @@ PPM_Schedulers.methods( {
                 } );
                 code = team.getNextWOCode();
             }
+
             let newRequestId = Meteor.call( 'PPM_Schedulers.save', request, {
                     status: status,
                     code: code,
@@ -593,12 +595,17 @@ PPM_Schedulers.methods( {
         authentication: true,
         helper: ( request, dueDate ) => {
             let facility = request.getFacility();
-            return PPM_Schedulers.findOne( {
-                "facility._id": facility._id,
-                name: request.name,
-                status: { $ne: 'PPM' },
-                dueDate: dueDate
-            } );
+            let query = {
+              "facility._id": facility._id,
+              name: request.name,
+              status: { $nin: ['PPM', 'Cancelled'] },
+              dueDate: dueDate
+            };
+            let result = PPM_Schedulers.findOne(query);
+            if (!result) {
+              result = Requests.findOne(query);
+            }
+            return result;
         }
     },
 
@@ -623,12 +630,16 @@ PPM_Schedulers.methods( {
 
             if ( nextDate ) {
                 let facility = request.getFacility();
-                nextRequest = PPM_Schedulers.findOne( {
-                    "facility._id": facility._id,
-                    name: request.name,
-                    status: { $ne: 'PPM' },
-                    dueDate: nextDate
-                } );
+                let query = {
+                  "facility._id": facility._id,
+                  name: request.name,
+                  status: { $ne: 'PPM' },
+                  dueDate: nextDate
+                };
+                nextRequest = PPM_Schedulers.findOne(query);
+                if (!nextRequest) {
+                  nextRequest = Requests.findOne(query);
+                }
             }
             return nextRequest;
         }
@@ -809,7 +820,7 @@ function checkIssuePermissions( role, user, request ) {
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
 
-    if ( request.type != 'Schedular' && hasSupplier ) {
+    if ( (request.type != 'Schedular' || request.type != 'Scheduler') && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
             requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
@@ -1184,5 +1195,7 @@ function actionSendReminder( requests ) {
         }
     } )
 }
+
+
 
 export default PPM_Schedulers;

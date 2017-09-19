@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import CronJobs from "./cronJobs.js";
-
 //import { FlowRouter } from 'meteor/kadira:flow-router-ssr';
 
 Meteor.startup( function() {
@@ -44,6 +43,7 @@ Meteor.startup( function() {
     } );
 
     SyncedCron.start();
+    import './scripts';
 } );
 
 FM.inDevelopment = function() {

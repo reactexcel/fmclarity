@@ -119,7 +119,7 @@ const PPMSchema = {
             },
             required: true,
             condition: ( request ) => {
-                if ( request.type == "Schedular" || request.type == 'Booking' ) {
+                if ( request.type == "Schedular" || request.type == "Scheduler" || request.type == 'Booking' ) {
                     return false;
                 }
                 return true;
@@ -165,7 +165,7 @@ const PPMSchema = {
                 );
             },
             condition: (request)=>{
-                if(request.type == "Schedular"){
+                if(request.type == "Schedular" || request.type == "Scheduler"){
                     return true;
                 }else{
                     return false
@@ -649,9 +649,16 @@ const PPMSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                                let actualCost;
+                                if (props.item.hasOwnProperty("costThreshold")) {
+                                    if (typeof props.item.costThreshold === 'string') {
+                                      actualCost = props.item.costThreshold.replace(/,/g, "");
+                                      actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
+                                    } else {
+                                      actualCost = parseFloat(props.item.costThreshold);
+                                    }
+                                    costAbleToIssue = actualCost <= team.defaultCostThreshold;
+                                }
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
                             props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
@@ -1069,7 +1076,7 @@ const PPMSchema = {
             description: "Latest date that the work can be completed",
             //input: DateTime,
             input: (props)=>{
-                return props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
+                return props.item.type == "Schedular" || props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
                     {...props}
                     onChange ={(val)=>{
                         props.onChange(val)
@@ -1539,10 +1546,16 @@ const PPMSchema = {
                         let team = Session.getSelectedTeam();
                         let costAbleToIssue = true;
                         if(team.defaultCostThreshold){
-                            costAbleToIssue = false;
-                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                          costAbleToIssue = false;
+                          if (props.item.hasOwnProperty("costThreshold")) {
+                            if (typeof props.item.costThreshold === 'string') {
+                              actualCost = props.item.costThreshold.replace(/,/g, "");
+                              actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
+                            } else {
+                              actualCost = parseFloat(props.item.costThreshold);
+                            }
+                            costAbleToIssue = actualCost <= team.defaultCostThreshold;
+                          }
                         }
                         onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                         props.onChange(value);
@@ -1924,7 +1937,7 @@ const PPMSchema = {
                         </div>
                     );
                 },
-                condition: "Schedular",
+                condition: "Scheduler",
             }
 
         }

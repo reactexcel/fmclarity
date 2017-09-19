@@ -92,7 +92,7 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-    if ( request.type == "Schedular" ) {
+    if ( request.type == "Schedular" || request.type == "Scheduler" ) {
         request.status = "PPM";
         request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
@@ -595,7 +595,7 @@ Requests.methods( {
             return Requests.findOne( {
                 "facility._id": facility._id,
                 name: request.name,
-                status: { $ne: 'PPM' },
+                status: { $nin: ['PPM', 'Cancelled'] },
                 dueDate: dueDate
             } );
         }
@@ -808,7 +808,7 @@ function checkIssuePermissions( role, user, request ) {
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
 
-    if ( request.type != 'Schedular' && hasSupplier ) {
+    if ( (request.type != 'Schedular' || request.type != 'Scheduler') && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
             requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
