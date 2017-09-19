@@ -32,6 +32,10 @@ const RadioButton_Group = React.createClass( {
             iconStyle:{
                 marginRight:'7px',
                 fill:'#00BFA5'
+            },
+            displayStyle:{
+                display: 'inline-block',
+                width: '170px'
             }
         }
         let { option1, option2 } = this.props;
@@ -44,18 +48,18 @@ const RadioButton_Group = React.createClass( {
                     })
                 }}>
                     <RadioButton
-                        value={option1}
-                        label={option1}
-                        style={{ display: 'inline-block', width: '150px' }}
-                        labelStyle={RadioButtonStyle.labelStyle}
-                        iconStyle={RadioButtonStyle.iconStyle}
+                        value       =   { option1 }
+                        label       =   {option1}
+                        style       =   {RadioButtonStyle.displayStyle}
+                        labelStyle  =   {RadioButtonStyle.labelStyle}
+                        iconStyle   =   {RadioButtonStyle.iconStyle}
                     />
                     <RadioButton
-                        value={option2}
-                        label={option2}
-                        style={{ display: 'inline-block', width: '200px' }}
-                        labelStyle={RadioButtonStyle.labelStyle}
-                        iconStyle={RadioButtonStyle.iconStyle}
+                        value   =   {option2}
+                        label   =   {option2}
+                        style   =   {RadioButtonStyle.displayStyle}
+                        labelStyle  =   {RadioButtonStyle.labelStyle}
+                        iconStyle   ={  RadioButtonStyle.iconStyle}
                     />
                 </RadioButtonGroup>
     	    </div>

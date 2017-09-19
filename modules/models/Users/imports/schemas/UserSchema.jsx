@@ -3,7 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import { Text, Phone, DateInput, Select, FileField, Switch, RadioButton_Group } from '/modules/ui/MaterialInputs';
+import { RadioButton_Group, Text, Phone, DateInput, Select, FileField, Switch } from '/modules/ui/MaterialInputs';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
@@ -467,23 +467,11 @@ const UserSchema = {
 			label: "Site Address",
 			optional: true,
 			type: "object",
-			// relation: {
-			// 	join: ( item ) => {
-			// 		if ( item.facility && item.facility._id ) {
-			// 			return Facilities.findOne( item.facility._id );
-			// 		}
-			// 	},
-			// 	unjoin: ( item ) => {
-			// 		if ( item.facility && item.facility._id ) {
-			// 			return _.pick( item.facility, '_id', 'name' );
-			// 		}
-			// 	}
-			// },
 			input: ( props ) => (
 				<div className="row">
 					<div className="col-sm-12">
 						<Select {...props} />
-						<h4 style={{marginBottom: "0px"}}>Occupant Status </h4>
+						<h4>Occupant Status </h4>
 					</div>
 				</div>
 			),
