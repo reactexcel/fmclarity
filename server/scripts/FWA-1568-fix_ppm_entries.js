@@ -9,8 +9,9 @@
 
 import PPM_Schedulers from '/modules/models/Requests/imports/PPM_Schedulers';
 import Requests from '/modules/models/Requests/imports/Requests';
+import config from './config';
 
-if (Meteor.isServer) {
+if (Meteor.isServer && config.FWA_1568.enabled) {
   PPM_Schedulers.find({
     type: 'Preventative'
   }).fetch().map((request) => {
