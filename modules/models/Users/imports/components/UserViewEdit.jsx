@@ -67,6 +67,10 @@ export default UserViewEdit = React.createClass( {
 		} );
 	},
 
+	componentDidMount(){
+
+	},
+
 	save() {
 		Users.save.call( this.state.item );
 	},
