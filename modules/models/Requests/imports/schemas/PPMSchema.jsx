@@ -26,7 +26,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
-let onServiceChange = null;
+//let onServiceChange = null;
 
 const PPMSchema = {
 
@@ -653,7 +653,7 @@ const PPMSchema = {
                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
-                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            //onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
                             props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
@@ -711,9 +711,9 @@ const PPMSchema = {
                                         defaultSupplier = Teams.findOne( { name: supplier.name } );
                                     }
                                     request.supplier = defaultSupplier;
-                                    if( request.supplier && onServiceChange ) {
+                                    /*if( request.supplier && onServiceChange ) {
                                         onServiceChange( request.supplier );
-                                    }
+                                    }*/
                                     if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                         request.supplierContacts = request.service.data.defaultContact;
                                     } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
@@ -1544,7 +1544,7 @@ const PPMSchema = {
                                 actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
                             costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                         }
-                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                        //onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                         props.onChange(value);
                     }}/>
             } ,

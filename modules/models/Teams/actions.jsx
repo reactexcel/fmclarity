@@ -119,7 +119,7 @@ const createRequest = new Action( {
             model = { Requests }
             form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
-            submitText="Save"
+            //submitText="Save"
             onChange = { () => { callback("update") } }
             onSubmit = {
                 ( newRequest ) => {
@@ -197,7 +197,7 @@ const createPPM_Schedulers = new Action( {
             model = { PPM_Schedulers }
             form = {CreatePPMRequestForm }
             item = { newItem }
-            submitText="Save"
+            //submitText="Save"
             onChange = { () => { callback("update") } }
             onSubmit = {
                 ( newRequest ) => {

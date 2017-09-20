@@ -263,10 +263,10 @@ class AutoForm extends React.Component {
 							placeholder	= { placeholder }
 							description	= { description }
 							maxLength 	= { maxLength }
-							changeSubmitText={(value)=> {
+							/*changeSubmitText={(value)=> {
 								let val = value==null?"Save":"Issue"
 								this.setState({submitText: val})
-							}}
+							}}*/
 							item 		= { this.props.item }
 							model 		= { this.props.model }
 							edit = {this.props.edit ? this.props.edit : false}
@@ -294,7 +294,7 @@ class AutoForm extends React.Component {
 						<div style={ {textAlign:"right", clear:"both"}}>
 							{
 
-							this.state.submitText && this.state.submitText == "Issue"?
+							/*this.state.submitText && this.state.submitText == "Issue"?
 
 							<button
 								type 		= "button"
@@ -306,7 +306,7 @@ class AutoForm extends React.Component {
 
 							</button>
 
-							:null
+							:null*/
 
 							}
 
