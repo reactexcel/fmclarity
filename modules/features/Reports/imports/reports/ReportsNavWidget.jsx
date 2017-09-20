@@ -16,12 +16,11 @@ export default ReportsNavWidget = React.createClass( {
 	render() {
 		// <a  style={{color:"#111"}} href={"/report/"+id+"/"}>{report.name}</a>
 		var reports = Reports.getAll();
-		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart");
+		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart" || val == "work-order-report");
 		var facility = Session.getSelectedFacility();
 		if(facility){
 			// console.log(facility);
 			let docs = Documents.find({"facility._id": facility["_id"],"type":"Report","reportType": "Monthly Report"}).fetch();
-			// console.log(docs);
 			reportIds = Object.keys( reports )
 			if(docs.length > 0){
 				reportIds = Object.keys( reports ).filter((val)=> val != "monthly-report")
