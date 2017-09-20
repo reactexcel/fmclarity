@@ -50,8 +50,8 @@ class NavListDropDown extends React.Component {
 				: null }
 
 				{ items.map( ( item, idx ) => {
-					return ( 
-						<div 
+					return (
+						<div
 							key 		= { `${idx}-${item._id}` }
 							className 	= { "list-tile fadeIn" + ( this.state.selectedItem && this.state.selectedItem._id == item._id ? " active" : "" ) }
 							onClick 	= { ( e ) => {
@@ -70,13 +70,13 @@ class NavListDropDown extends React.Component {
 
 				</div>
 			)
-		} 
+		}
 		// if the dropdown is closed render the selected item - or if no item is selected the muliple selection tile
 		else {
 			return (
 				<div className="nav-list-selected">
-					<div 
-						className	="list-tile" 
+					<div
+						className	="list-tile"
 						onClick		= { () => {
 							this.setState({open:true});
 						} }

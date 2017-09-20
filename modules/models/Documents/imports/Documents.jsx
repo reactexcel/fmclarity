@@ -5,11 +5,13 @@
 
 import { Model } from '/modules/core/ORM';
 import { Owners } from '/modules/mixins/Owners';
+import { CreatedByUser } from '/modules/mixins/CreatedByUser';
 import { DocMessages } from '/modules/models/Messages';
 import { Members } from '/modules/mixins/Members';
 
 import DocumentSchema from './schemas/DocumentSchema.jsx';
 
+import moment from 'moment';
 /**
  * @memberOf		module:models/Documents
  */
@@ -19,6 +21,7 @@ const Documents = new Model( {
     collection: "Files",
     mixins: [
         [ Owners ],
+        [ CreatedByUser ],
         [ DocMessages, {
             helpers: {
                 getInboxName() {
@@ -82,6 +85,16 @@ Documents.actions( {
             if ( doc.team && doc.team._id ) {
                 return Requests.findOne( {"team._id" : doc.team._id} );
             }
+        }
+    },
+    getReminder: {
+        authentication: true,
+        helper: ( doc ) => {
+
+            import { Requests } from '/modules/models/Requests';
+            let reminderName =  "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD');
+            return Requests.findOne( { name: reminderName, type: 'Reminder', status: { $in: [ 'New', 'Issued' ] } } );
+            
         }
     },
     destroy: {

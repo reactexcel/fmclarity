@@ -62,11 +62,6 @@ class ServicesProvidedEditor extends React.Component {
 		var item = this.state.item;
 		var services = this.state.services;
 		item.setServicesProvided( services );
-		/* or???
-		if(this.props.onChange) {
-			this.props.onChange(this.state.services);
-		}
-		*/
 	}
 
 	updateService( idx, newValue ) {

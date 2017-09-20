@@ -649,8 +649,8 @@ const PPMSchema = {
                             let costAbleToIssue = true;
                             if(team.defaultCostThreshold){
                                 costAbleToIssue = false;
-                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
+                                let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.toString().replace(/,/g, "") : "";
+                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
