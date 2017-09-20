@@ -51,7 +51,8 @@ const BookingReport = React.createClass( {
                 query['bookingPeriod.endTime'] = {$lte: this.state.endDate}
 			}
 			if ( team ) {
-				data.requests = user.getRequests( query );
+				let { requests } = user.getRequests(query);
+				data.requests = requests;
 			}
 		}
 		return {

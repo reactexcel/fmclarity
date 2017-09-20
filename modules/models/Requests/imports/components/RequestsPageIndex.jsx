@@ -26,25 +26,29 @@ export default class RequestsPageIndex extends Component {
     super(props);
 
     this.state = {
-      requests: [],
       currentPage: 0,
       status: this.props.selectedStatus,
       statusFilter: this.props.statusFilter,
       facility: this.props.facility,
       contextFilter: this.props.contextFilter,
-      totalCollectionCount: 0,
+      totalCollectionCount: 0
     };
+    let { requests, totalCollectionCount } = this.getRequests();
+    this.state['requests'] = requests;
+    this.state['totalCollectionCount'] = totalCollectionCount;
   }
 
-  componentWillReceiveProps() {
-    this.getRequests();
+  componentWillReceiveProps(props) {
+    if (props.user) {
+      this.setState(this.getRequests());
+    }
   }
 
   changeCurrentPage = (pageNum) => {
     this.setState({
       currentPage: pageNum
     }, () => {
-      this.getRequests();
+      this.setState(this.getRequests());
     });
   };
 
@@ -58,7 +62,7 @@ export default class RequestsPageIndex extends Component {
       contextFilter: contextFilter,
       currentPage: 0
     });
-    this.getRequests();
+    this.setState(this.getRequests());
   };
 
   onStatusChange = (status) => {
@@ -72,25 +76,28 @@ export default class RequestsPageIndex extends Component {
       statusFilter: statusFilter,
       currentPage: 0
     });
-    this.getRequests();
+    this.setState(this.getRequests());
   };
 
   getRequests() {
-    let {requests, totalCollectionCount } = this.props.user.getRequests(
-      {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: true, skip: this.state.currentPage, limit: this.pageSize }
-    );
+    let requests = [];
+    let totalCollectionCount = 0;
+    if (this.props.user) {
+      ({requests, totalCollectionCount } = this.props.user.getRequests(
+        {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: true, skip: this.state.currentPage, limit: this.pageSize }
+      ));
+    }
 
-    this.setState({
+    return {
       requests: requests,
       totalCollectionCount: totalCollectionCount
-    });
+    };
   }
 
   render() {
     let { team, facilities, selectedRequest } = this.props;
     let { facility, status, requests } = this.state;
 
-    let user = Meteor.user();
     if (!team) {
       return <div/>
     }
@@ -110,23 +117,6 @@ export default class RequestsPageIndex extends Component {
               items={ ['Open', 'Preventative', 'All', 'New', 'Booking', 'Issued', 'Complete', /*'Close',*/ 'Cancelled'] }
               selectedItem={ status } onChange={ status => this.onStatusChange(status) }  />
           </div>
-          { /*user.getRole && user.getRole() == 'fmc support' ?
-           <div className="col-xs-offset-9 col-xs-3" >
-           <Switch
-           value={ this.state.active}
-           onChange={ ( active ) => {
-           if( active ) {
-           let now  = new Date(),
-           requests = _.filter( this.state.requests, (r) => moment( r.dueDate ).isBefore( now ) );
-           this.setState( { active: active, requests: requests } );
-           } else {
-           this.setState( { active: active, requests: this.props.requests } );
-           }
-           }}>
-           Show Overdue Work Order only
-           </Switch>
-           </div> : null
-           */ }
         </div>
         <div className="issue-page animated fadeIn" style={ {paddingTop: "50px"} }>
           { team && requests.length === 0 ?
@@ -134,7 +124,7 @@ export default class RequestsPageIndex extends Component {
                  style={{textAlign: 'center', paddingTop: '5px', paddingBottom: '5px', backgroundColor: 'white'}}>
               <h3 className="font-bold">Filter returned empty results</h3>
               <div className="error-desc">
-                <p>No {(status && status != 'All') ? status : ''} requests found.</p>
+                <p>No {(status && status !== 'All') ? status : ''} requests found.</p>
               </div>
             </div> :
             <div>
