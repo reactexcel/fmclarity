@@ -17,10 +17,15 @@ export default EmailDigestRow = React.createClass( {
             target = null,
             facility = null,
             secret = null,
+            recipient = null,
             owner = null;
 
         if( this.props.message && this.props.message._id ) {
             message = Messages.findOne( this.props.message._id );
+        }
+
+        if (this.props.recipient) {
+            recipient = Users.findOne( this.props.recipient._id );
         }
 
         if ( message ) {
@@ -32,18 +37,18 @@ export default EmailDigestRow = React.createClass( {
                 facility = Facilities.findOne( target.facility._id );
             }
         }
-        if (owner) {
+        if (recipient) {
             
             let expiry = moment( new Date() ).add( { days: 14 } ).toDate();
 
-            let token = LoginService.generateLoginToken( owner, expiry );
+            let token = LoginService.generateLoginToken( recipient, expiry );
             secret = token.token;
         }
-        return { message, facility, owner, secret }
+        return { message, facility, owner, recipient, secret }
     },
 
     render() {
-        let { message, facility, owner, secret } = this.data,
+        let { message, facility, owner, recipient, secret } = this.data,
             url = message.getAbsoluteTargetUrl();
             if(secret) {
                 url = Meteor.absoluteUrl('u/'+ secret + '/' + message.getEncodedAbsoluteTargetUrl() );
