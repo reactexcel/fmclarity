@@ -234,7 +234,6 @@ PPM_Schedulers.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-
             let status = 'New';
 
             // The description field simply carries the value to be sent to the notification or comment.
@@ -247,7 +246,7 @@ PPM_Schedulers.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Schedular' ) {
+            if ( request.type == 'Schedular' || request.type == 'Preventative' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -260,7 +259,6 @@ PPM_Schedulers.methods( {
                 } );
                 code = team.getNextWOCode();
             }
-
             let newRequestId = Meteor.call( 'PPM_Schedulers.save', request, {
                     status: status,
                     code: code,
@@ -466,6 +464,9 @@ PPM_Schedulers.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
+                        if(_.isEmpty(unit)){
+                            unit = "days";
+                        }
                     period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
@@ -564,6 +565,9 @@ PPM_Schedulers.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
+                        if(_.isEmpty(unit)){
+                            unit = "days"
+                        }
                     period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {

@@ -288,7 +288,7 @@ const RequestsStatusReport = React.createClass( {
 							<Select
 								placeholder = "Status"
 				                value       = { this.state.selectedStatus }
-				                items       = { [ "Booking", "Completed", "Deleted", "Issued", "New", "PMP", "PPM" ] }
+				                items       = { [ "Booking", "Complete", "Deleted", "Issued", "New", "PMP", "PPM" ] }
 				                onChange    = { ( item ) => {
 									this.setState({
 										selectedStatus: item,
