@@ -391,10 +391,8 @@ const TeamStepper = React.createClass( {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
                                                 }
-                                                if(this.props.test){
-                                                  if(this.props.onChange){
-                                                    this.props.onChange(item)
-                                                  }
+                                                if(this.props.onChange){
+                                                  this.props.onChange(item)
                                                 }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
