@@ -11,6 +11,7 @@ import { Documents } from '/modules/models/Documents';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import DocViewEdit from './DocViewEdit.jsx';
 
+
 export default class DocExplorer extends React.Component {
     constructor( props ) {
         super( props );
@@ -32,13 +33,13 @@ export default class DocExplorer extends React.Component {
     componentWillMount(){
       let docs = Documents.find({}).fetch();
       let contractDocs = Documents.find({"type":"Contract"}).fetch();
-      let aa = contractDocs.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+      let aa = contractDocs.filter((doc) => doc.serviceType ? doc.serviceType.hasOwnProperty("name"):null);
 
       let docString = " "
       aa.map((d)=>{
         docString = docString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
         if(d.hasOwnProperty("subServiceType")){
-          if(d.subServiceType.hasOwnProperty("name")){
+          if(d.subServiceType && d.serviceType.hasOwnProperty("name")){
             docString = docString + d.subServiceType.name
           }
         }
@@ -48,18 +49,19 @@ export default class DocExplorer extends React.Component {
       })
       this.setState({currentDoc : docs , docString})
 
-      let test = setInterval(()=>{
+      let update = setInterval(()=>{
 
         PubSub.subscribe( 'stop', (msg,data) => {
-          clearInterval(test)
+          clearInterval(update)
+
         } );
         let contractServerDoc = Documents.find({"type":"Contract"}).fetch();
-        let aa = contractServerDoc.filter((doc) => doc.serviceType.hasOwnProperty("name"));
+        let aa = contractServerDoc.filter((doc) => doc.serviceType ? doc.serviceType.hasOwnProperty("name"):null);
         let updatedString = " "
         aa.map((d)=>{
           updatedString = updatedString + d.name + d.description + d.expiryDate + d.clientExecutedDate + d.supplierExecutedDate + d.totalValue + d.serviceType.name
           if(d.hasOwnProperty("subServiceType")){
-            if(d.subServiceType.hasOwnProperty("name")){
+            if(d.subServiceType && d.serviceType.hasOwnProperty("name")){
               updatedString = updatedString + d.subServiceType.name
             }
           }
@@ -140,8 +142,9 @@ export default class DocExplorer extends React.Component {
 				<DocIconHeader />
 
 				{//Listing of old Documents
-					oldDocumentsList.map( ( doc, idx ) => (
-							<DocIcon
+					oldDocumentsList.map( ( doc, idx ) => {
+                        if(Documents.findOne( { "_id": doc._id } ) != null){
+                            return <DocIcon
                                 key = { idx }
                                 item = { doc }
                                 onChange = { (doc) => { this.handleChange( idx, doc ) } }
@@ -151,13 +154,15 @@ export default class DocExplorer extends React.Component {
                                 handleListUpdate={this.handleListUpdate.bind(this)}
                                 team = { this.state.item}
                             />
-						)
+                        }
+                    }
 					)
 				}
 
 				{//Listing of new documents
-					newDocumentsList.map( ( doc, idx ) => (
-							<DocIcon
+					newDocumentsList.map( ( doc, idx ) => {
+                        if(Documents.findOne( { "_id": doc._id } ) != null){
+                            return <DocIcon
                                 key = { idx }
                                 item = { doc }
                                 onChange = { (doc) => { this.handleChange( idx, doc ) } }
@@ -166,7 +171,8 @@ export default class DocExplorer extends React.Component {
                                 role = {role}
                                 team = { this.state.item}
                             />
-						)
+                        }
+                    }
 					)
 				}
 

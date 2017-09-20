@@ -7,7 +7,7 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 
 
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
-import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
+import { RequestFrequencySchema, Requests, RequestActions, PPM_Schedulers } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
 import ComplianceDocumentSearchSchema from './ComplianceDocumentSearchSchema.jsx';
 
@@ -58,7 +58,7 @@ export default ComplianceRuleSchema = {
             items: [
                 "Document exists",
                 "Document is current",
-                "PPM schedule established",
+                "PPM exists",
                 "PPM event completed",
                 "Compliance level",
             ],
@@ -73,7 +73,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Service",
-        //condition: [ "PPM schedule established", "PPM event completed", "Document exists", "Document is current" ],
+        //condition: [ "PPM exists", "PPM event completed", "Document exists", "Document is current" ],
         options: function( item ) {
             if ( item.facility ) {
                 return {
@@ -88,7 +88,7 @@ export default ComplianceRuleSchema = {
         type: Object,
         input: Select,
         label: "Sub-Service",
-        //condition: item => item.service && [ "PPM event completed", "PPM schedule established" ].indexOf( item.type ) > -1,
+        //condition: item => item.service && [ "PPM event completed", "PPM exists" ].indexOf( item.type ) > -1,
         options: function( item ) {
             if ( item.service ) {
                 return {
@@ -111,19 +111,26 @@ export default ComplianceRuleSchema = {
         condition: [ "Document exists", "Document is current", "Compliance level" ],
     },
     event: {
-        label: "PMP event name",
+        label: "PPM event name",
         input: Select,
-        condition: [ "PPM event completed", "PPM schedule established" ],
+        condition: [ "PPM event completed", "PPM exists" ],
         options( item ) {
             import { Requests } from '/modules/models/Requests';
             let query = {
                  "facility._id": item.facility._id,
-                 type: "Preventative",
+                 type: "Schedular",
              };
             if ( item.service ) query[ "service.name" ] = item.service.name;
             if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
             return {
-                items: _.pluck(Requests.findAll( query , {
+                /*items: _.pluck(Requests.findAll( query , {
+                        fields: {
+                             name: true
+                         }
+                     }
+                 ), "name"),*/
+
+                items: _.pluck(PPM_Schedulers.findAll( query , {
                         fields: {
                              name: true
                          }
@@ -134,7 +141,19 @@ export default ComplianceRuleSchema = {
                     label: "Add New",
                     onAddNewItem: ( callback ) => {
                         let team = Session.getSelectedTeam();
-                        TeamActions.createRequest.bind( team ).run()
+                        let newRequest = PPM_Schedulers.create( {
+                            facility: Session.getSelectedFacility(),
+                            team: team,
+                            type: 'Schedular',
+                            priority: 'Standard',
+                            status: 'PMP',
+                            name: '',
+                            service: item.service,
+                            subservice: item.subservice || {},
+                            supplier: '',
+                            supplierContacts: ''
+                        } );
+                        TeamActions.createRequest.run( team , callback, newRequest )
                     }
                 }
             }
@@ -153,18 +172,19 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event );
+            item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            //let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            let lastWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
+            let status  = lastWO.length && lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ].status;
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
-            let status = lastWO.length && lastWO[lastWO.length - 1].status;
             return (
                 lastWO.length ? ( <div>
                     <span>
                         <a className="link" href={"javascript:void(0);"} onClick={() => {
-                                RequestActions.view.bind(lastWO[lastWO.length - 1]).run()
+                                RequestActions.view.bind(lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ]).run()
                             }}>
                             Previous work order link
                         </a>
@@ -180,19 +200,23 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event );
+            //item.event && ( query.name = item.event );
+            item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            //let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            let nextWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
+            //let status = nextWO.length && nextWO[nextWO.length - 1].status;
             let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[nextWO.length > 1 ? nextWO.length - 2: 0]).run()
-                 }
+                   //RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
+                   RequestActions.view.bind(nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ]).run()
+                }
                }> Next work order link </a>
             </span>
             <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
@@ -234,9 +258,8 @@ export default ComplianceRuleSchema = {
                     default:
 
                 }
-                period = props.item.frequency.number > 1?
-                    ( period || props.item.frequency.period ) + "s":
-                    ( period || props.item.frequency.period );
+                period = period || props.item.frequency.period;
+                period = formatSingularPlural(period);
             }
             return (
                 <div style={{paddingTop: "10%", fontWeight:"500",fontSize:"16px"}}>
@@ -250,10 +273,10 @@ export default ComplianceRuleSchema = {
                             </div>:(
                                 props.item.frequency.period && props.item.frequency.endDate?
                                 <div>
-                                    {props.item.frequency.endDate?`Repeats ${props.item.frequency.period} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
+                                    {props.item.frequency.endDate?`Repeats ${formatSingularPlural(props.item.frequency.period)} until ${moment(props.item.frequency.endDate).format("D MMMM YYYY")}`:null}
                                 </div>:
                                 <div>
-                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period || props.item.frequency.unit} until stopped`:null}
+                                    {props.item.frequency.unit?`Repeats ${props.item.frequency.period?formatSingularPlural(props.item.frequency.period):null || props.item.frequency.unit?formatSingularPlural(props.item.frequency.unit):null} until stopped`:null}
                                 </div>
                             )
                         )
@@ -263,4 +286,10 @@ export default ComplianceRuleSchema = {
         },
         condition: "PPM event completed",
     }
+}
+function formatSingularPlural(str) {
+    if (str.slice(-1)=='s') {
+        str =  str.substring(0, str.length-1)+"(s)";
+    }
+    return str;
 }

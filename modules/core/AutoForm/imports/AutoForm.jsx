@@ -6,7 +6,9 @@
 import React from "react";
 import { Text } from '/modules/ui/MaterialInputs';
 import FormController from './FormController.jsx';
-import { Modal } from '/modules/ui/Modal'
+import { Modal } from '/modules/ui/Modal';
+
+	import { Documents, DocExplorer } from '/modules/models/Documents';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -37,6 +39,18 @@ class AutoForm extends React.Component {
 		this.submitFormOnStepperNext = this.submitFormOnStepperNext.bind( this );
 	}
 
+	componentWillMount(){
+		$("#fab").hide();
+	}
+
+	componentWillUnmount(){
+		$("#fab").show();
+	}
+
+	componentDidMount(){
+		let self = this;
+		setTimeout(function() { self.checkBookingAreas('type') }, 100);
+	}
 	/**
 	 * Takes the condition field from a schema and a document item and returns true if the item passes the condition
 	 * @param 		{object} condition
@@ -58,6 +72,36 @@ class AutoForm extends React.Component {
 		this.setState( newState );
 	}
 
+	checkBookingAreas( key ) {
+		if(key == 'type' || key == 'facility'){
+			let item = this.props.item;
+			if(item && item.type && item.type == "Booking" && !_.isEmpty(item.facility)){
+				let { keys, schema } = this.form;
+				let formItem = this.form.item,
+				    areaLevels = ['level','area','identifier'],
+					foundAreas = [];
+				areaLevels.map( ( area ) => {
+					let { options } = schema[ area ];
+					if ( _.isFunction( options ) ) {
+						options = options( formItem );
+					}
+					if(!_.isEmpty(options) && !_.isEmpty(options.items) && options.items.length > 0){
+						foundAreas.push(area)
+					}
+				})
+				if(foundAreas.length == 0){
+					Bert.alert({
+		  				title: 'Oops, Bookin not allowed',
+		  				message: 'No bookable areas available.',
+		  				type: 'danger',
+		  				style: 'growl-top-right',
+		  				icon: 'fa-ban'
+					});
+				}
+			}
+		}
+	}
+
 	/**
 	 * Returns a callback that submits the form
 	 */
@@ -71,10 +115,12 @@ class AutoForm extends React.Component {
 			}
 			if ( this.props.onSubmit ) {
 				if ( this.form.validate( item ) ) {
-					this.props.onSubmit( item );
+					this.props.onSubmit( item, (newItem)=>{
+						callback( newItem );
+					} );
 				}
 				if ( this.props.afterSubmit ) {
-					this.props.afterSubmit( newItem )
+					this.props.afterSubmit( item )
 				}
 			} else {
 				this.form.save( item, ( newItem ) => {
@@ -91,16 +137,13 @@ class AutoForm extends React.Component {
 	/**
 	 * Submits the autoform
 	 */
-	submit(haveToIssue) {
+	submit() {
 		let { item, errors } = this.state;
 		if ( this.props.beforeSubmit ) {
 			this.props.beforeSubmit( item );
 		}
 		if ( this.props.onSubmit ) {
 			if ( this.form.validate( item ) ) {
-				if(haveToIssue == true){
-					item.haveToIssue = true
-				}
 				this.props.onSubmit( item );
 			}
 			if ( this.props.afterSubmit ) {
@@ -123,10 +166,13 @@ class AutoForm extends React.Component {
 		let form = this.form;
 		let { keys, schema } = form;
 		return keys.map( ( key ) => {
+			if(key == 'documents'){
+				schema[key].input = DocExplorer;
+			}
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-			let { input, size = 12, label, description, options, condition, maxLength } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength,nextRow } = schema[ key ],
 				placeholder = label,
 				Input = null;
 			// Create default value for this field
@@ -140,7 +186,7 @@ class AutoForm extends React.Component {
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
 					// remove fields that do not meet condition from being added to collection
-					delete item[key];
+					//delete item[key];
 					return;
 				}
 			}
@@ -152,7 +198,6 @@ class AutoForm extends React.Component {
 			if ( _.isFunction( description ) ) {
 				description = description( item );
 			}
-
 			// If this field in the schema has it's own subschema then recursively run autoform
 			if ( schema[ key ].subschema != null ) {
 				let { subschema, size = 12, ...others } = schema[ key ];
@@ -203,16 +248,16 @@ class AutoForm extends React.Component {
 				if ( Input == null ) {
 					throw new Error( `Invalid schema input type for field: ${key}`, `Trying to render a input type "${schema[ key ].input}" that does not exist` );
 				}
-
 				return (
-
 					<div key = { key } className = { `col-sm-${size}` } >
 						<Input
 
 							fieldName 	= { key }
 							value 		= { item[ key ] }
 							onChange	= { ( update, modifiers ) => {
+							    let self = this;
 								form.updateField( key, update, modifiers )
+								setTimeout(function() { self.checkBookingAreas(key) }, 100);
 							} }
 							errors 		= { errors[ key ] }
 							placeholder	= { placeholder }
@@ -224,6 +269,7 @@ class AutoForm extends React.Component {
 							}}
 							item 		= { this.props.item }
 							model 		= { this.props.model }
+							edit = {this.props.edit ? this.props.edit : false}
 
 										  { ...options}
 						/>
@@ -246,20 +292,34 @@ class AutoForm extends React.Component {
 
 		        { !this.props.hideSubmit ?
 						<div style={ {textAlign:"right", clear:"both"}}>
-							{this.state.submitText && this.state.submitText == "Issue"?<button
+							{
+
+							this.state.submitText && this.state.submitText == "Issue"?
+
+							<button
 								type 		= "button"
 								className 	= "btn btn-flat btn-primary"
 								onClick 	= { ( ) => { this.submit(true) } }
-								>
+							>
+
 								{this.state.submitText}
-							</button>:null}
+
+							</button>
+
+							:null
+
+							}
+
 							<button
 								type 		= "button"
 								className 	= "btn btn-flat btn-primary"
 								onClick 	= { ( ) => { this.submit() } }
 							>
+
 								{this.props.submitText?this.props.submitText:'Submit'}
+
 							</button>
+
 						</div>
 
 

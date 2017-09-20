@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Action } from '/modules/core/Actions';
 import { Modal } from '/modules/ui/Modal';
+import { Users } from '/modules/models/Users';
 
 const create = new Action( {
 	name: 'create member',
@@ -42,7 +43,12 @@ const invite = new Action( {
 		}
 
 		if ( collection && collection.findOne( { _id: group._id} ) ) {
-			group.sendMemberInvite( member, team );
+			if(group.sendMemberInvite){
+				group.sendMemberInvite( member, team );
+			}else{
+				team.sendMemberInvite( member, team );
+			}
+
 			window.alert("Invitation has been sent to \""+ member.getName() + "\"");
 		}
 	}
@@ -64,9 +70,8 @@ const remove = new Action( {
 	name: 'remove member',
 	label: "Remove member",
 	action: ( group, user ) => {
-		if( group && user ) {
-			group.removeMember( user );
-		}
+		  Meteor.call( 'Users.destroy', user);
+			Modal.hide();
 	}
 } )
 

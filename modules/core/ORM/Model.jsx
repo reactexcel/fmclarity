@@ -175,6 +175,12 @@ class Model {
         return this.collection.find( ...args );
     }
 
+    /*
+     * Calls the models collection's transform method
+     */
+    transform( ...args ) {
+        return this.collection.transform( ...args );
+    }
 
     /*
      * Calls the models collection's findOne method

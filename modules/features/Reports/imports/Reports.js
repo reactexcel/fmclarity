@@ -1,9 +1,15 @@
+import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
+import ResidentDetails from './reports/ResidentDetails.jsx';
+import BookingReport from './reports/BookingReport.jsx';
 import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
 import RequestActivityChart from './reports/RequestActivityChart.jsx';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
+import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
+import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
+import WorkOrderReport from './reports/WorkOrderReport.jsx';
 
 const Reports = {
 	dict: {},
@@ -19,9 +25,21 @@ const Reports = {
 }
 
 Reports.register( {
+	id: "resident-listing",
+	name: "Resident Listing",
+	content: ResidentDetails
+} )
+
+Reports.register( {
 	id: "requests-status",
-	name: "Requests Status Report",
+	name: "Request Status Report",
 	content: RequestsStatusReport
+} )
+
+Reports.register( {
+	id: "monthly-report",
+	name: "Monthly Report" + ' ' + '-' + ' ' + moment().format('MMMM YYYY'),
+	content: MonthlyReport
 } )
 
 Reports.register( {
@@ -36,22 +54,29 @@ Reports.register( {
 	content: RequestActivityChart
 } )
 
-Reports.register( {
-	id: "mbm-service-image",
-	name: "MBM Service Image",
-	content: MBMServiceImages
-} )
+
+// Reports.register( {
+// 	id: "mbm-service-image",
+// 	name: "Service Image",
+// 	content: MBMServiceImages
+// } )
 
 Reports.register( {
 	id: "mbm-report-contract",
-	name: "MBM Report (Service Contract)",
+	name: "Report (Service Contract)",
 	content: MBMReport
 } )
 
 Reports.register( {
 	id: "mbm-report-request",
-	name: "MBM Report (Building Service Requests)",
+	name: "Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
+} )
+
+Reports.register( {
+	id: "work-order-report",
+	name: "Work Order Report",
+	content: WorkOrderReport
 } )
 
 export default Reports;

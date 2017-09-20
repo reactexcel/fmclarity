@@ -5,7 +5,7 @@
 import React from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { TopNavigationBar } from '/modules/ui/MaterialNavigation';
-import { TeamActions } from '/modules/models/Teams';
+import { Teams, TeamActions } from '/modules/models/Teams';
 
 /**
  * @class 			TopNavigationBarContainer
@@ -16,6 +16,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'User: Teams' );
     Meteor.subscribe( 'Users' );
     Meteor.subscribe( 'Teams' );
+    Meteor.subscribe( 'Reports' );
 
     ////////////////////////////////////////
     //Meteor.subscribe( 'Request: Files' );
@@ -24,10 +25,12 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     Meteor.subscribe( 'User: Messages' );
     // could test moving this below loading team and only including facilities if supplier
-    Meteor.subscribe( 'User: Requests, Facilities', { includeFacilities: true } );
-
+    Meteor.subscribe( 'Request: Last 10 Complete' );
+    Meteor.subscribe( 'Request: Last 10 Cancelled' );
+    Meteor.subscribe( 'Team: Last 10 Created' );
     /*These need to be reduced*/
     Meteor.subscribe( 'Documents' );
+    Meteor.subscribe( 'PPM_Schedulers' );
     Meteor.subscribe( 'Files' );
 
     let user = Meteor.user(),
@@ -55,6 +58,9 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
             TeamActions.edit.run( team );
         } else {
             Meteor.subscribe( 'Team: Facilities', team._id );
+            // could team subscription be used to only includ facilities if supplier?
+            let includeFacilities = Teams.isServiceTeam( team );
+            Meteor.subscribe( 'User: Requests, Facilities', { teamId: team._id, includeFacilities } );
         }
 
         //subscribe to team specific guff here

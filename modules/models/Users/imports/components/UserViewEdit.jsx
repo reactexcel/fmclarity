@@ -75,7 +75,6 @@ export default UserViewEdit = React.createClass( {
 	//  in /modules/models/Users/actions.jsx
 	handleInvite( event ) {
 		event.preventDefault();
-
 		let { team, group, role } = this.data,
 		//	role = this.props.role;
 			input = this.refs.invitationEmail;
@@ -87,6 +86,9 @@ export default UserViewEdit = React.createClass( {
 		} else {
 			input.value = '';
 			var creatorsTeam = Session.getSelectedTeam();
+			// if(this.props.new){
+			// 	creatorsTeam = this.props.team
+			// }
 			team.inviteMember( email, {
 				role: role,
 				owner: {
@@ -106,7 +108,7 @@ export default UserViewEdit = React.createClass( {
 						role: role
 					} );
 				}
-				this.setState( { 
+				this.setState( {
 					item: user,
 					userIsNew: response.userIsNew
 				} );
@@ -152,9 +154,13 @@ export default UserViewEdit = React.createClass( {
 				newMember.emails[0].address = profileEmail;
 				Users.save.call( newMember );
 		}
-
+		console.log(newMember);
+		if(this.props.onChange){
+			this.props.onChange(newMember)
+		}
 		if( this.state.userIsNew ) {
 			let { user, team, group, role } = this.data;
+			console.log(user);
 			group.sendMemberInvite( user, team );
 			window.alert("Invitation has been sent to \""+ user.getName() + "\"");
 			//Meteor.call("Teams.sendMemberInvite",team, user);
@@ -171,6 +177,7 @@ export default UserViewEdit = React.createClass( {
 			profile = user.profile;
 			role = user.getRole();
 		}
+		console.log(this.data,profile,role);
 
 		// if the form has been called without a user then assume we want to create one and prompt for email address
 		if ( !user || !profile ) {
@@ -196,7 +203,6 @@ export default UserViewEdit = React.createClass( {
                 </form>
 			)
 		}
-
 		// ...otherwise show the user
 		return (
 			<div className = "user-profile-card">
@@ -218,7 +224,7 @@ export default UserViewEdit = React.createClass( {
 	    				<UserViewRelationEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 	    			</div>
 	    			{/*{
-	    				    				_.contains( ['portfolio manager', 'fmc support'], Meteor.user().getRole() ) ? 
+	    				    				_.contains( ['portfolio manager', 'fmc support'], Meteor.user().getRole() ) ?
 	    				    					<div className = "col-sm-12">
 	    				    						<UserThresholdEdit member = { user } team = { team } group = { group } onChange={ () => { this.setState({});}}/>
 	    										</div>
@@ -251,7 +257,9 @@ export default UserViewEdit = React.createClass( {
 	                	<button
 	                    	type 		= "button"
 	                    	className 	= "btn btn-primary"
-	                    	onClick 	= { ( ) => { /*non-idiomatic access to sibling*/this.refs.form.submit() } }
+	                    	onClick 	= { ( ) => {
+								this.refs.form.submit()
+							} }
 	                  	>
 	                  	Done
 	                	</button>

@@ -47,6 +47,9 @@ const UserProfileSchema = {
 		label: "Position",
 		input: Text,
 		type: "string",
+		condition: ( item ) => {
+			return role !== "resident";
+		},
 	},
 	email: {
 		label: "Email address",
@@ -75,9 +78,56 @@ const UserProfileSchema = {
 	},
 	tenancy: {
 		label: "Tenancy",
-		input: Text,
+		//input: Text,
+
+		input: (props)=>{
+			let facility = Session.getSelectedFacility();
+			    facility = facility && facility._id  ? facility : Meteor.user().getTeam().getFacilities()[0]
+			return <div style={{marginTop:'20px',border:'1px solid #e0d7d7'}}>
+				<h1 style={{color:'#aaaaaa',width:'49px',marginTop:'-8px',marginLeft:'10px',fontSize:'13px',fontWeight:'400',backgroundColor:'white'}}>Tenancy</h1>
+				<div className="row" style={{padding:'0px 10px 0px 10px'}}>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Location - Areas"}
+							value = {props.item.tenancy && props.item.tenancy.level && props.item.tenancy.level.name ? props.item.tenancy.level : null}
+							onChange = {(val)=>{
+								props.item.tenancy.level = val;
+								props.onChange({level:val})
+							}}
+							items={ facility && facility.areas ? facility.areas : [] }
+						/>
+					</div>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Sub - Area"}
+							value = {props.item.tenancy && props.item.tenancy.area && props.item.tenancy.area.name ? props.item.tenancy.area : null}
+							onChange = {(val)=>{
+								props.item.tenancy.area = val;
+								props.onChange({ level:props.item.tenancy.level, area:val })
+							}}
+							items={ props.item.tenancy && props.item.tenancy.level && props.item.tenancy.level.children && props.item.tenancy.level.children.length ? props.item.tenancy.level.children : [] }
+						/>
+					</div>
+					<div className="col-sm-4">
+						<Select
+							{...props}
+							placeholder={"Identifier"}
+							value = {props.item.tenancy && props.item.tenancy.identifier && props.item.tenancy.identifier.name ? props.item.tenancy.identifier : null}
+							onChange = {(val)=>{
+								props.item.tenancy.identifier = val;
+								props.onChange({ level:props.item.tenancy.level, area:props.item.tenancy.area, identifier:val})
+							}}
+							items={ props.item.tenancy && props.item.tenancy.area && props.item.tenancy.area.children && props.item.tenancy.area.children.length ? props.item.tenancy.area.children : [] }
+						/>
+					</div>
+				</div>
+			</div>
+		},
 		optional: true,
-		type: "string",
+		//type: "string",
+		type: "object",
 		condition: ( item ) => {
 				//group = user.getSelectedFacility() || user.getSelectedTeam();
 
@@ -437,7 +487,7 @@ const UserSchema = {
 							return;
 						}
 						item.level = null;
-						item.apartment = null;
+						item.areas = null;
 						item.propertyManager = null;
 						item.realEstateAgency = null;
 						currentState = item;
@@ -463,14 +513,14 @@ const UserSchema = {
 				return {
 					items: item.facility ? item.facility.areas : null,
 					afterChange: ( item ) => {
-						item.apartment = item.propertyManager  = item.realEstateAgency = null;
+						item.areas = item.propertyManager  = item.realEstateAgency = null;
 					}
 				}
 			}
 		},
 
 
-		apartment: {
+		areas: {
 			label: "Address 2",
 			optional: true,
 			type:"object",
@@ -496,11 +546,11 @@ const UserSchema = {
 			type: "object",
 			input: Select,
 			condition: ( item ) => {
-				return role === "resident" && item.apartment ? ( item.apartment.children ? true : false ) : false;
+				return role === "resident" && item.areas ? ( item.areas.children ? true : false ) : false;
 			},
 			options: ( item ) => {
 				return {
-					items: item.apartment ? item.apartment.children : null
+					items: item.areas ? item.areas.children : null
 				}
 			}
 		},
@@ -698,7 +748,7 @@ function updatePropertyManager( item ) {
 
 	let areas = item.facility.areas,
 		level = item.level,
-		apartment = item.apartment;
+		apartment = item.areas;
 		currentState = item;
 	for ( i in level.children || [] ) {
 		if ( level.children[i].name === apartment.name ) {

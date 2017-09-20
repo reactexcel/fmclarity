@@ -46,6 +46,9 @@ const destroy = new Action( {
 		shouldConfirm: true,
 	},
 	action: ( team, doc ) => {
+		if(_.isEmpty(doc._id)){
+			doc = team
+		}
 		if( !doc.destroy ){
 			doc = Documents.findOne( doc._id );
 		}
@@ -69,19 +72,28 @@ const createUpdateRequest = new Action( {
 	type: 'request',
 	action: ( doc ) => {
 		 team = Session.getSelectedTeam();
+         let owner = team.getOwner(),
+             user = Meteor.user(),
+             supplier = null;
+         
+        if (doc.supplier) {
+            supplier = doc.supplier;
+        }
 		let item = Requests.create( {
                     team: team,
                     type: 'Reminder',
                     priority: 'Urgent',
-                    dueDate: moment(doc.expiryDate).subtract( { months: 1 } ).toDate(),
-                    name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
+                    dueDate: doc.dueDate,
+                    name: "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD'),
                     service: doc.serviceType ? doc.serviceType : null,
-                    supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
+                    supplier: supplier,
+                    costThreshold: '0',
+                    // supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
                 } );
 		newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
-            title = "Please tell us what needs to be updated."
+            title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
             form = { CreateDocUpdateRequestForm  }
             item = { newItem }
@@ -100,12 +112,18 @@ const createUpdateRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
 
+                    /*this seems to override supplier selected by user at supplier dropdown
+                    newRequest.supplier = {
+                        _id: owner._id,
+                        name: owner.profile ? owner.profile.name : owner.name
+                    };*/
+
                     // this is a big of a mess - for starters it would be better placed in the create method
                     //  and then perhaps in its own function "canAutoIssue( request )"
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
 
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
+                    if ( newRequest.type != 'Schedular' && hasSupplier ) {
 
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
@@ -163,7 +181,7 @@ const createUpdateRequest = new Action( {
                     let docRequest = {
                     	_id: newRequest._id,
                     }
-                    doc.serviceType.data.request = docRequest;
+                    doc.reminder = docRequest;
                     Documents.save.call(doc);
                     //callback( newRequest );
                 }

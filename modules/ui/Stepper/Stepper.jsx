@@ -21,7 +21,7 @@ export default Stepper = React.createClass( {
     selectNext( evt, done ) {
         var idx = parseInt( this.state.active );
         if ( this.props.submitForm && ( idx == 0 || done == true ) ) {
-            this.props.submitForm( ( err ) => {
+            this.props.submitForm( this.state.active, ( err ) => {
                 if ( _.isObject( err ) ) {
                     if ( Object.keys( err ).length == 0 ) {
 
@@ -41,7 +41,7 @@ export default Stepper = React.createClass( {
         } else {
 
             this.selectTab( idx + 1 );
-            
+
         }
 
         if ( this.state.active >= this.props.tabs.length - 1 ) {

@@ -9,6 +9,8 @@ import { ContactCard } from '/modules/mixins/Members';
 import { UserPanel } from '/modules/models/Users';
 import { TeamPanel } from '/modules/models/Teams';
 import { Teams } from '/modules/models/Teams';
+import { Users } from '/modules/models/Users';
+
 
 /**
  * @class 			OwnerCard
@@ -27,11 +29,11 @@ const OwnerCard = React.createClass( {
 			if ( type == "team" ) {
 				owner = Teams.findOne( q._id );
 			} else {
-				owner = Meteor.users.findOne( q._id );
+				owner = Users.findOne( q._id );
 			}
 		}
 		return {
-			owner: this.props.item.owner,
+			owner: owner,
 			target: target,
 			type: type
 		}
@@ -41,14 +43,15 @@ const OwnerCard = React.createClass( {
 		var type = this.data.type;
 		if ( type == "team" ) {
 			Modal.show( {
-				content: <TeamPanel 
-					item = { this.data.owner } 
+				content: <TeamPanel
+					item = { this.data.owner }
 				/>
 			} )
 		} else {
+			console.log(this.data.owner);
 			Modal.show( {
-				content: <UserPanel 
-					item =  {this.data.owner } 
+				content: <UserPanel
+					item =  {this.data.owner }
 					team = { this.data.target }
 				/>
 			} )
@@ -60,7 +63,7 @@ const OwnerCard = React.createClass( {
 			return <div/>
 		}
 		return (
-			<div className="active-link" onClick = { this.showModal }> 
+			<div className="active-link" onClick = { this.showModal }>
 				<ContactCard item = { this.data.owner } team = { this.data.target }/>
 			</div>
 		)

@@ -5,7 +5,7 @@ import React from "react";
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ContactCard from './ContactCard.jsx';
 import { UserPanel } from '/modules/models/Users';
-import { TeamActions } from '/modules/models/Teams';
+import { TeamActions, Teams } from '/modules/models/Teams';
 
 import { MemberActions } from '/modules/mixins/Members';
 
@@ -14,7 +14,7 @@ export default ContactList = React.createClass( {
 	mixins: [ ReactMeteorData ],
 
 	getMeteorData() {
-		let team = this.props.team,
+		let team = Teams.findOne( this.props.team._id ),
 			role = this.props.defaultRole,
 			group = this.props.group,
 			members = this.props.members,
@@ -24,8 +24,12 @@ export default ContactList = React.createClass( {
 		// 1.passed in from members prop
 		// 2.loaded from group
 		// 3.initiated as blank array
-
-
+		let teamMember = [];
+		if(filter && filter.role && filter.role.$in && _.contains(filter.role.$in,"portfolio manager")){
+			teamMember = team.getMembers( {
+				role: "portfolio manager"
+			} )
+		}
 		if ( members == null ) {
 			if ( group != null ) {
 				members = group.getMembers( filter );
@@ -33,7 +37,7 @@ export default ContactList = React.createClass( {
 				members = [];
 			}
 		}
-
+		members = members.concat(teamMember);
 		return {
 			group: group,
 			members: members,
@@ -44,7 +48,6 @@ export default ContactList = React.createClass( {
 
 	// Display a pop up modal for the selected user
 	showModal( selectedUser, idx ) {
-
 		let { team, role, group, members } = this.data;
 
 		//switch based on "type" sent into component
@@ -117,7 +120,7 @@ export default ContactList = React.createClass( {
 			            </div>
 		            )
 			    }):null}
-			    
+
 			</div>
 		)
 	}

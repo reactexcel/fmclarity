@@ -100,13 +100,14 @@ export default ServiceDetailsSchema = {
         label: "Default supplier",
         size: 12,
         input: Select,
-        options( item ) {
-            let facility = Session.getSelectedFacility();
+        options(item){
             return {
-                items: facility.getSuppliers(),
-                view: ( props ) => <div style={ { cursor: "default", height: "inherit", } }>
-                                        <ContactCard {...props} />
-                                    </div>,
+                items: getSuppliersByTeam(),
+                view: ( props ) => {
+                    return (<div style={ { cursor: "default", height: "inherit", } }>
+                                            <ContactCard {...props} />
+                                        </div>)
+                },
                 addNew: {
                     //Add new supplier to request and selected facility.
                     show: !_.contains( [ "staff", 'resident' ], Meteor.user().getRole() ), //Meteor.user().getRole() != 'staff',
@@ -200,7 +201,7 @@ export default ServiceDetailsSchema = {
                                     }} title="Remove tag">&times;</span>
                                 <ContactCard item={sc}/>
                             </div>))}
-                    </div> < /div>
+                    </div> </div>
             )
         },
         options( item ) {
@@ -218,4 +219,15 @@ export default ServiceDetailsSchema = {
             }
         }
     },
+}
+
+function getSuppliersByTeam (suppliersIds) {
+  import { Teams } from '/modules/models/Teams';
+  let selectedTeam = Session.getSelectedTeam();
+  let suppliersInTeam = selectedTeam ? selectedTeam.suppliers : [];
+  let ids = [];
+  suppliersInTeam && suppliersInTeam.map((supplier)=>{
+    ids.push(supplier._id);
+  })
+  return Teams.find({_id:{$in: ids}}).fetch();
 }

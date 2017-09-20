@@ -5,12 +5,14 @@ import { Modal } from '/modules/ui/Modal';
 import { Roles } from '/modules/mixins/Roles';
 import { AutoForm } from '/modules/core/AutoForm';
 import { Documents, DocViewEdit } from '/modules/models/Documents';
-import { Requests, RequestPanel, CreateRequestForm, SupplierCreateRequestForm, RequestActions } from '/modules/models/Requests';
+import { Requests, RequestPanel, CreateRequestForm, CreatePPMRequestForm, SupplierCreateRequestForm, RequestActions ,PPM_Schedulers } from '/modules/models/Requests';
 import { Facilities, FacilityStepperContainer, CreateSupplierFacility } from '/modules/models/Facilities';
-import { Teams, TeamStepper, TeamPanel } from '/modules/models/Teams';
+import { Teams, TeamStepper,OwnerTeamStepper, TeamPanel } from '/modules/models/Teams';
 import { Users, UserPanel, UserViewEdit } from '/modules/models/Users';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import moment from 'moment';
+
+import CreateTeamRequest from './imports/actions/CreateTeamRequest';
 
 const create = new Action( {
     name: 'create team',
@@ -20,7 +22,7 @@ const create = new Action( {
         team = Teams.create();
         Modal.show( {
             content: <DropFileContainer model={Teams}>
-                <TeamStepper item = { team } showFilter={showFilter || false} />
+                <OwnerTeamStepper item = { team } showFilter={showFilter || false} />
             </DropFileContainer>
         } )
     }
@@ -59,6 +61,7 @@ const destroy = new Action( {
     action: ( team ) => {
         //Facilities.destroy( team );
         team.destroy();
+        Modal.hide()
     }
 } )
 
@@ -96,8 +99,6 @@ const createFacility = new Action( {
     }
 } )
 
-// now that we are evaluating people based on their role in the request then we can perhaps actually
-// have this located in request ( ie request.create ) rather than team.createRequest
 const createRequest = new Action( {
     name: "create team request",
     type: [ 'team' ],
@@ -119,18 +120,18 @@ const createRequest = new Action( {
             form = { Teams.isFacilityTeam( team ) ? CreateRequestForm : SupplierCreateRequestForm }
             item = { newItem }
             submitText="Save"
+            onChange = { () => { callback("update") } }
             onSubmit = {
                 ( newRequest ) => {
-
                     if(newRequest.type == "Booking"){
-                        Meteor.call("Facilities.updateBookingForArea", newRequest.facility, newRequest.level, newRequest.area, newRequest.identifier, newRequest.bookingPeriod)
+                        newRequest = _.omit(newRequest,'bookingRules')
+                        Meteor.call("Facilities.updateBookingForArea", newRequest)
                     }
-
-                    Modal.replace( {
+                    /*Modal.replace( {
                         content: <DropFileContainer model={Requests} request={request}>
-                                <RequestPanel item = { newRequest }/>
+                                <RequestPanel item = { newRequest } callback={callback}/>
                             </DropFileContainer>
-                    } );
+                    } );*/
 
                     let owner = Meteor.user();
 
@@ -138,86 +139,21 @@ const createRequest = new Action( {
                         _id: owner._id,
                         name: owner.profile ? owner.profile.name : owner.name
                     };
-
-                    // this is a big of a mess - for starters it would be better placed in the create method
-                    //  and then perhaps in its own function "canAutoIssue( request )"
-                    let hasSupplier = newRequest.supplier && newRequest.supplier._id,
-                        method = 'Issues.create';
-                    if ( newRequest.type != 'Preventative' && hasSupplier ) {
-                        let team = Teams.findOne( newRequest.team._id ),
-                            role = team.getMemberRole( owner ),
-                            baseBuilding = ( newRequest.service && newRequest.service.data && newRequest.service.data.baseBuilding );
-                        if( !team ) {
-                            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
-                            return;
-                        }
-                        else if( baseBuilding ) {
-                            if( role == 'property manager' ) {
-                                method = 'Issues.issue';
-                            }
-                        }
-                        else if( !baseBuilding ) {
-
-                            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
-                                method = 'Issues.issue';
-                            }
-                            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
-                                method = 'Issues.create';
-                                let relation = team.getMemberRelation( owner ),
-                                    costString = newRequest.costThreshold,
-                                    memberThreshold = null,
-                                    costThreshold = null;
-
-                                if( relation ) {
-                                    memberThreshold = relation.issueThresholdValue;
-                                    if( _.isString( memberThreshold ) ) {
-                                        memberThreshold = memberThreshold.replace(',','');
-                                    }
-                                }
-
-                                // strips out commas
-                                //  this is a hack due to an inadequete implementation of number formatting
-                                //  needs a refactor
-                                if( _.isString( costString ) ) {
-                                    costString = costString.replace(',','')
-                                }
-
-                                let cost = parseInt( costString );
-
-                                // this is the value saved in the member team relation
-                                if( memberThreshold ) {
-                                    costThreshold = parseInt( memberThreshold );
-                                }
-                                // this is the threshold value from the global team configuration
-                                else if( team.defaultCostThreshold ) {
-                                    costThreshold = parseInt( team.defaultCostThreshold );
-                                }
-
-                                if( cost > costThreshold ) {
-                                    method = 'Issues.create';
-                                }
-                                /*if( parseInt(relation.threshold) < 1 ) {
-                                    method = 'Issues.create';
-                                }
-                                if(newRequest.haveToIssue == true){
-                                    method = 'Issues.issue';
-                                }
-                                if( method == 'Issues.issue' ) {
-                                    console.log('new threshold='+newThreshold.toString());
-                                    team.setMemberThreshold( owner, newThreshold.toString() );
-                                }*/
-                            }
-
-                        }
-                        if(newRequest.haveToIssue == true){
-                            method = 'Issues.issue';
-                            newRequest = _.omit(newRequest,'haveToIssue')
-                        }
+                    let request;
+                    if(newRequest.type == "Preventative" || newRequest.type == 'Schedular'){
+                      Meteor.call( 'PPM_Schedulers.create', newRequest );
+                      request = PPM_Schedulers.findOne( { _id: newRequest._id } );
+                    }else{
+                      Meteor.call( 'Issues.create', newRequest );
+                      request = Requests.findOne( { _id: newRequest._id } );
                     }
-                    Meteor.call( method, newRequest );
-                    let request = Requests.findOne( { _id: newRequest._id } );
                     request.markAsUnread();
                     callback? callback( newRequest ): null;
+                    Modal.replace( {
+                        content: <DropFileContainer model = { Requests } request = { request }>
+                                <RequestPanel item = { /*newRequest*/  request} callback = { callback }/>
+                            </DropFileContainer>
+                    } );
                 }
             }
             />
@@ -229,6 +165,79 @@ const createRequest = new Action( {
     getResult: ( item ) => {
             if ( item && item._id ) {
                 let result = Requests.findOne( item._id );
+                if ( result ) {
+                    return {
+                        text: ( result.code ? `#${result.code} - ` : '' ) + result.name,
+                        href: ""
+                    }
+                }
+            }
+        }
+        // this function returns the email template
+} )
+
+const createPPM_Schedulers = new Action( {
+    name: "create team PPM request",
+    type: [ 'team' ],
+    label: "Create new request",
+    verb: "created a work order",
+    icon: 'fa fa-plus',
+    // action should return restult and that gets used in the notification
+    action: ( team, callback, options ) => {
+        let item = { team };
+        if ( options ) {
+            options.team = team;
+            item = options
+        }
+        newItem = PPM_Schedulers.create( item );
+        newItem.type = "Schedular";
+        Modal.show( {
+            content: <AutoForm
+            title = "Please tell us a little bit more about the scheduled task"
+            model = { PPM_Schedulers }
+            form = {CreatePPMRequestForm }
+            item = { newItem }
+            submitText="Save"
+            onChange = { () => { callback("update") } }
+            onSubmit = {
+                ( newRequest ) => {
+                    if(newRequest.type == "Booking"){
+                        Meteor.call("Facilities.updateBookingForArea", newRequest)
+                    }
+
+                    /*Modal.replace( {
+                        content: <DropFileContainer model={Requests} request={request}>
+                                <RequestPanel item = { newRequest } callback={callback}/>
+                            </DropFileContainer>
+                    } );*/
+
+                    let owner = Meteor.user();
+
+                    newRequest.owner = {
+                        _id: owner._id,
+                        name: owner.profile ? owner.profile.name : owner.name
+                    };
+
+                    Meteor.call( 'PPM_Schedulers.create', newRequest );
+                    let request = PPM_Schedulers.findOne( { _id: newRequest._id } );
+                    request.markAsUnread();
+                    callback? callback( newRequest ): null;
+                    Modal.replace( {
+                        content: <DropFileContainer model = { PPM_Schedulers } request = { request }>
+                                <RequestPanel item = { /*newRequest*/  request} callback = { callback }/>
+                            </DropFileContainer>
+                    } );
+                }
+            }
+            />
+        } )
+    },
+    // this function is a template for formatting / displaying the notification
+    // it should default to a simple statement of the notification
+    // notification: ( item ) => {}???
+    getResult: ( item ) => {
+            if ( item && item._id ) {
+                let result = PPM_Schedulers.findOne( item._id );
                 if ( result ) {
                     return {
                         text: ( result.code ? `#${result.code} - ` : '' ) + result.name,
@@ -370,7 +379,7 @@ const sendReminder = new Action( {
     icon: 'fa fa-paper-plane-o',
     action: ( team ) => {
         let facilities = team.getFacilities(),
-            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PMP", "Rejected", "Complete" ] } }
+            statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed", "PPM", "Rejected", "Complete" ] } }
         user = Meteor.user(),
             now = new Date(),
             requests = Requests.find( statusFilter ).fetch();
@@ -387,7 +396,10 @@ export {
 
     createFacility,
     createRequest,
+    CreateTeamRequest,
+    createPPM_Schedulers,
     createDocument,
+    removeSupplier,
 
     createMember,
     viewMember,

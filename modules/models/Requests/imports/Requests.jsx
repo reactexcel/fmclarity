@@ -16,6 +16,7 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
@@ -33,7 +34,8 @@ const Requests = new Model( {
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    return "work order #" + this.code + ' "' + this.getName() + '"';
+                    var title = this.invoiceDetails && this.invoiceDetails.invoiceNumber ? "invoice #" + this.invoiceDetails.invoiceNumber : "work order #" + this.code;
+                    return title + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
@@ -50,7 +52,6 @@ const Requests = new Model( {
                                 memberRoles = roles.actors[ member._id ];
 
                             //console.log( memberRoles );
-
                             if ( this.service && this.service.data && this.service.data.baseBuilding == true ) {
                                 //remove everyone who isn't pm
                                 for( let i in memberRoles ) {
@@ -91,16 +92,15 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-
-    if ( request.type == "Preventative" ) {
-        request.status = "PMP";
-        request.priority = "PMP";
+    if ( request.type == "Schedular" ) {
+        request.status = "PPM";
+        request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
         request.status = "Booking";
         request.priority = "Booking";
     }
 
-    if ( request.costThreshold && ( request.costThreshold.length === 0 || !request.costThreshold.trim() ) ) {
+    if ( request.costThreshold && ( request.costThreshold.length === 0 || ( _.isString( request.costThreshold ) && !request.costThreshold.trim() ) ) ) {
         request.costThreshold = 0;
     }
 
@@ -235,17 +235,21 @@ Requests.methods( {
 
     create: {
         authentication: true,
-        method: function( request ) {
-            let status = 'New',
-                description = request.description;
+        method: function( request, furtherWorkRequired ) {
+            let status = 'New';
 
+            // The description field simply carries the value to be sent to the notification or comment.
+            // After extracting that value we clear it because we don't want to save the description value.
+            let description = request.description;
             request.description = null;
+
+            // Cost threshold should be numeric - perhaps there is a better way to enforce this in the schema... anyone?
             if ( request.costThreshold == "" ) {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Preventative' ) {
-                status = 'PMP';
+            if ( request.type == 'Schedular' ) {
+                status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
             }
@@ -264,31 +268,31 @@ Requests.methods( {
                     members: getMembersDefaultValue( request )
                 } ),
                 newRequest = null;
-
             if ( newRequestId ) {
                 newRequest = Requests.findOne( newRequestId );
             }
-
             if ( newRequest ) {
                 let owner = null;
                 if ( newRequest.owner ) {
                     owner = newRequest.getOwner();
                 }
-                newRequest.distributeMessage( {
-                    message: {
-                        verb: "created",
-                        read: false,
-                        subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: description
-                    }
-                } );
+                if(!furtherWorkRequired){
+                    newRequest.distributeMessage( {
+                        message: {
+                            verb: "created",
+                            read: false,
+                            subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+                            body: description
+                        }
+                    } )
+                }
             }
             return newRequest;
         }
     },
 
     issue: {
-        authentication: true,
+        authentication: checkIssuePermissions,
         method: actionIssue
     },
 
@@ -316,6 +320,11 @@ Requests.methods( {
     complete: {
         authentication: true,
         method: actionComplete
+    },
+
+    invoice: {
+        authentication: true,
+        method: actionInvoice
     },
 
     getCompleteRequest: {
@@ -393,7 +402,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -409,7 +469,7 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
@@ -440,7 +500,58 @@ Requests.methods( {
                         "monthly": 'months',
                         "quarterly": 'quarterly',
                         "annually": 'years',
-                    };
+                    },
+                    time = {
+                        days: {
+                          endDate:"",
+                          number: 1,
+                          period:"days",
+                          repeats : 30,
+                          unit : "days"
+                        },
+                        weeks: {
+                          endDate:"",
+                          number: 1,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "weeks"
+                        },
+                        fortnights: {
+                          endDate:"",
+                          number: 2,
+                          period:"weeks",
+                          repeats : 10,
+                          unit : "fortnights"
+                        },
+                        months: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        monthly: {
+                          endDate:"",
+                          number: 1,
+                          period:"months",
+                          repeats : 10,
+                          unit : "months"
+                        },
+                        quarters: {
+                          endDate:"",
+                          number: 3,
+                          period:"months",
+                          repeats : 10,
+                          unit : "quarters"
+                        },
+                        years: {
+                          endDate:"",
+                          number: 1,
+                          period:"years",
+                          repeats : 10,
+                          unit : "years"
+                        }
+                      };
                 if ( request.frequency.unit == "custom" ) {
                     unit = request.frequency.period;
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
@@ -456,15 +567,20 @@ Requests.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( request.frequency.number );
+                    period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
+                let originalDueDate =  moment( request.dueDate );
                 for ( var i = 0; i <= repeats; i++ ) {
 
-                    if ( dueDate.isAfter() ) {
+                    if ( dueDate.isAfter() && dueDate.isAfter(request.createdAt) ) {
+                      if(moment(dueDate).subtract( period ).isAfter(request.createdAt)){
                         return dueDate.subtract( period ).toDate();
+                      }else{
+                        return
+                      }
                     }
                     dueDate = dueDate.add( period );
                 }
@@ -475,9 +591,11 @@ Requests.methods( {
     findCloneAt: {
         authentication: true,
         helper: ( request, dueDate ) => {
+            let facility = request.getFacility();
             return Requests.findOne( {
+                "facility._id": facility._id,
                 name: request.name,
-                status: { $ne: 'PMP' },
+                status: { $ne: 'PPM' },
                 dueDate: dueDate
             } );
         }
@@ -503,9 +621,11 @@ Requests.methods( {
                 nextRequest = null;
 
             if ( nextDate ) {
+                let facility = request.getFacility();
                 nextRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: nextDate
                 } );
             }
@@ -520,9 +640,11 @@ Requests.methods( {
             previousRequest = null;
 
             if ( previousDate ) {
+                let facility = request.getFacility();
                 previousRequest = Requests.findOne( {
+                    "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PMP' },
+                    status: { $ne: 'PPM' },
                     dueDate: previousDate
                 } );
             }
@@ -681,18 +803,96 @@ function setAssignee( request, assignee ) {
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
 }
 
+function checkIssuePermissions( role, user, request ) {
+
+    let hasSupplier = request.supplier && request.supplier._id,
+        userCanIssue = false;
+
+    if ( request.type != 'Schedular' && hasSupplier ) {
+        let team = Teams.findOne( request.team._id ),
+            role = team.getMemberRole( user ),
+            requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
+            baseBuilding = ( request.service && request.service.data && request.service.data.baseBuilding );
+
+        if(requestIsInvoice){
+        let supplier = Teams.findOne( request.supplier._id ),
+            userRole = supplier.getMemberRole( user );
+            if (_.contains( [ 'supplier manager', 'supplier fmc support', 'manager' ], userRole ) ){
+                userCanIssue = true;
+            }
+        }
+        if( !team ) {
+            throw new Meteor.Error( 'Attempted to issue request with no requestor team' );
+            return;
+        }
+        else if( baseBuilding ) {
+            if( role == 'property manager' ) {
+                userCanIssue = true;
+            }
+        }
+        else if( !baseBuilding ) {
+
+            if( _.contains( [ 'portfolio manager', 'fmc support' ], role ) ) {
+                userCanIssue = true;
+            }
+            else if( _.contains( [ 'manager', 'caretaker' ], role )) {
+                let relation = team.getMemberRelation( user ),
+                    costString = request.costThreshold,
+                    memberThreshold = null,
+                    costThreshold = null;
+
+                if( relation ) {
+                    memberThreshold = relation.issueThresholdValue;
+                    if( _.isString( memberThreshold ) ) {
+                        memberThreshold = memberThreshold.replace(',','');
+                    }
+                }
+
+                // strips out commas
+                //  this is a hack due to an inadequete implementation of number formatting
+                //  needs a refactor
+                if( _.isString( costString ) ) {
+                    costString = costString.replace(',','')
+                }
+
+                let cost = parseInt( costString );
+
+                // this is the value saved in the member team relation
+                if( memberThreshold ) {
+                    costThreshold = parseInt( memberThreshold );
+                }
+                // this is the threshold value from the global team configuration
+                else if( team.defaultCostThreshold ) {
+                    costThreshold = parseInt( team.defaultCostThreshold );
+                }
+
+                if( cost <= costThreshold ) {
+                    userCanIssue = true;
+                }
+            }
+
+        }
+    }
+    return userCanIssue;
+}
+
 
 function actionIssue( request ) {
-
     let code = null,
         userId = Meteor.user(),
         description = request.description,
-        user = Users.findOne( userId._id );
+        user = Users.findOne( userId._id ),
+        requestIsInvoice = request && request.invoiceDetails && request.invoiceDetails.details;
 
     request.description = null;
 
     if ( request ) {
         if ( request.code ) {
+            code = request.code;
+            let team = Teams.findOne( {
+                _id: request.team._id
+            } );
+            //code = team.getNextWOCode();
             code = request.code;
         } else if ( request.team ) {
             let team = Teams.findOne( {
@@ -701,45 +901,52 @@ function actionIssue( request ) {
             code = team.getNextWOCode();
         }
     }
-
-    Meteor.call( 'Issues.save', request, {
-        status: "Issued",
-        issuedAt: new Date(),
-        code: code,
-        members: getMembersDefaultValue( request )
-    } );
-
+    if (requestIsInvoice) {
+        request.invoiceDetails.status = 'Issued';
+        Meteor.call( 'Issues.save', request );
+    }
+    else{
+        Meteor.call( 'Issues.save', request, {
+            status: "Issued",
+            issuedAt: new Date(),
+            code: code,
+            members: getMembersDefaultValue( request )
+        } );
+    }
 
     request = Requests.findOne( request._id );
 
     if ( request ) {
         request.updateSupplierManagers();
         request = Requests.findOne( request._id );
+        var title = request.invoiceDetails && request.invoiceDetails.invoiceNumber ? "Invoice #" + request.invoiceDetails.invoiceNumber  : "Work order #" + request.code;
         request.distributeMessage( {
             recipientRoles: [ "owner", "team", "team manager", "facility manager", "supplier" ],
             message: {
                 verb: "issued",
-                subject: "Work order #" + request.code + " has been issued",
+                subject: title+ " has been issued",
                 body: description
             }
         } );
-
-        var team = request.getTeam();
-        request.distributeMessage( {
-            recipientRoles: [ "supplier manager" ],
-            suppressOriginalPost: true,
-            message: {
-                verb: "issued",
-                subject: "New work request from " + " " + team.getName(),
-                read: false,
-                digest: false,
-                emailBody: function( recipient ) {
-                    var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
-                    var token = LoginService.generateLoginToken( recipient, expiry );
-                    return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+        if (!requestIsInvoice) {
+            var team = request.getTeam();
+            request.distributeMessage( {
+                recipientRoles: [ "supplier manager" ],
+                suppressOriginalPost: true,
+                message: {
+                    verb: "issued",
+                    subject: "New work request from " + " " + team.getName(),
+                    read: false,
+                    digest: false,
+                    emailBody: function( recipient ) {
+                        var expiry = moment( request.dueDate ).add( { days: 14 } ).toDate();
+                        var token = LoginService.generateLoginToken( recipient, expiry );
+                        return DocMessages.render( SupplierRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                    }
                 }
-            }
-        } );
+            } );
+        }
+
 
         return request;
     }
@@ -804,7 +1011,7 @@ function getMembersDefaultValue( item ) {
                 let role = member.getRole( facility );
 
                 if ( role == 'property manager' ) {
-                    if ( item.service.data && item.service.data.baseBuilding ) {
+                    if ( item.service && item.service.data && item.service.data.baseBuilding ) {
                         members.push( {
                             _id: member._id,
                             name: member.profile.name,
@@ -827,7 +1034,6 @@ function getMembersDefaultValue( item ) {
 
 
 function actionComplete( request ) {
-
     if ( request.closeDetails ) {
         if( request.closeDetails.jobCancelled == true ){
             request.closeDetails.furtherQuoteValue = 0;
@@ -847,15 +1053,19 @@ function actionComplete( request ) {
             request.attachments.push( request.closeDetails.serviceReport );
         }
     }
-
     Meteor.call( 'Issues.save', request, {
-        status: request.closeDetails.jobCancelled == true?'Close':'Complete'
+        status: request.closeDetails.jobCancelled == true?'Cancelled':'Complete'
     } );
     request = Requests.findOne( request._id );
 
     if ( request.closeDetails.furtherWorkRequired ) {
 
-        console.log( 'further work required' );
+        request.distributeMessage( {
+            message: {
+                verb: 'completed',
+                subject: "Work order #" + request.code + " has been completed"
+            }
+        } );
 
         var closer = Meteor.user(),
             closerRole = closer.getRole();
@@ -873,6 +1083,7 @@ function actionComplete( request ) {
             service: request.service,
             subservice: request.subservice,
             name: "FOLLOW UP - " + request.name,
+            //name: request.name,
             description: request.closeDetails.furtherWorkDescription,
             priority: request.closeDetails.furtherPriority || 'Scheduled',
             costThreshold: request.closeDetails.furtherQuoteValue
@@ -883,24 +1094,19 @@ function actionComplete( request ) {
             newRequest.code = team.getNextWOCode();
         }
 
-        var response = Meteor.call( 'Issues.create', newRequest );
+        var response = Meteor.call( 'Issues.create', newRequest, true );
         var newRequest = Requests.findOne( response._id );
-        //ok cool - but why send notification and not distribute message?
-        //is it because distribute message automatically goes to all recipients
-        //I think this needs to be replaced with distribute message
-
-        //previous request WO# change to show the WO# of new request
         request.distributeMessage( {
             message: {
-                verb: "raised follow up",
-                subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
+                verb: "raised a follow up",
+                subject: "Work order #" + newRequest.code + " requested",
                 target: newRequest.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                body: request.description,
+                //alert: false
             }
         } );
-
         newRequest.distributeMessage( {
             message: {
                 verb: "requested a follow up to",
@@ -909,34 +1115,94 @@ function actionComplete( request ) {
                 target: request.getInboxId(),
                 digest: false,
                 read: true,
-                /*alert: false*/
+                //alert: false
             }
         } );
+        //let newResponse = Meteor.call( 'Issues.issue', newRequest );
+        let newRequest = Requests.findOne( response._id )
+        newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order #" + ( newRequest ? `  ${newRequest.code}` : '' ),
+                body: newRequest.description
+            }
+        } )
+        /*newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order" + ( owner ? ` by ${owner.getName()}` : '' ),
+                body: newRequest.description
+            }
+        } );*/
+        //ok cool - but why send notification and not distribute message?
+        //is it because distribute message automatically goes to all recipients
+        //I think this needs to be replaced with distribute message
 
-        let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
+        //previous request WO# change to show the WO# of new request
+        /*request.distributeMessage( {
+            message: {
+                verb: "raised follow up",
+                subject: "Work order #" + request.code + " has been completed and a follow up has been requested",
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true,
+                //alert: false
+            }
+        } );*/
+
+
+
+        /*let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
             Meteor.call( 'Issues.issue', newRequest );
-        }
+        }*/
 
 
     } else if( request.closeDetails.jobCancelled == true ){
         request.distributeMessage( {
             message: {
-                verb: 'closed',
+                verb: 'cancelled',
                 body: "JOB CANCELLED: "+request.closeDetails.comment,
-                subject: "Work order #" + request.code + " has been closed"
+                subject: "Work order #" + request.code + " has been cancelled"
             }
         } );
     } else {
-
         request.distributeMessage( {
             message: {
                 verb: 'completed',
                 subject: "Work order #" + request.code + " has been completed"
             }
         } );
-
     }
+
+    return request;
+}
+
+function actionInvoice( request ) {
+    request.invoiceDetails.status = 'New';
+    if ( request.invoiceDetails && request.invoiceDetails.invoice ) {
+        var files = request.invoiceDetails.invoice;
+        for (var i = 0; i < files.length; i++) {
+            var file = Files.findOne({_id:files[i]._id});
+            var filename = file && file.original && file.original.name;
+            var fileExists = false;
+            for (var x = 0; x < request.attachments.length; x++) {
+
+                let f = Files.findOne({_id:request.attachments[x]._id}),
+                fname = f && f.original && f.original.name;
+                if (filename == fname) {
+                    fileExists =  true;
+                }
+            }
+            if (!fileExists) {
+                request.attachments.push( files[i] );
+              }
+        }
+    }
+    Meteor.call( 'Issues.save', request );
+    request = Requests.findOne( request._id );
 
     return request;
 }

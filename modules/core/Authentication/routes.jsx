@@ -10,6 +10,7 @@ import PageLostPassword from './imports/components/PageLostPassword.jsx';
 import PageChangePassword from './imports/components/PageChangePassword.jsx';
 import LoginService from './imports/LoginService.js';
 import Page403 from './imports/components/Page403.jsx';
+import PageRequestLinkExpired from './imports/components/PageRequestLinkExpired.jsx';
 import PageInviteFailed from './imports/components/PageInviteFailed.jsx';
 
 AccessGroups.exposed.add( {
@@ -87,7 +88,13 @@ AccessGroups.exposed.add( {
 			//console.log( 'Did it!' );
 			if ( err ) {
 				console.log( err );
-				mount( LayoutBlank, { content: <Page403 /> } );
+				if (redirect.substring(0, 9) == "requests/") {
+					mount( LayoutBlank, { content: <PageRequestLinkExpired /> } );
+				}
+				else{
+					mount( LayoutBlank, { content: <Page403 /> } );
+				}
+
 			} else {
 				FlowRouter.go( '/' + redirect );
 			}
@@ -102,7 +109,8 @@ AccessGroups.loggedIn.add( {
 	icon: 'fa fa-sign-out',
 	action() {
 		Meteor.logout( function() {
-			FlowRouter.go( '/' );
+			FlowRouter.go( '/login' );
+			location.reload();
 		} );
 	}
 } );
@@ -122,5 +130,13 @@ AccessGroups.exposed.add( {
 	path: '/403',
 	action() {
 		mount( LayoutBlank, { content: <Page403 /> } );
+	}
+} );
+
+AccessGroups.exposed.add( {
+	name: 'request-link-expired',
+	path: '/request-link-expired',
+	action() {
+		mount( LayoutBlank, { content: <PageRequestLinkExpired /> } );
 	}
 } );

@@ -15,6 +15,8 @@ import { Switch } from '/modules/ui/MaterialInputs';
 
 import { Documents } from '/modules/models/Documents';
 
+import { Requests, RequestActions } from '/modules/models/Requests';
+
 export default function DocIcon( props ) {
 
     function showFileDetailsModal() {
@@ -80,8 +82,8 @@ export default function DocIcon( props ) {
         return (
         <div>
             <div className = "doc-icon" onClick={handleClick}>
-                <span style={{display:"inline-block",minWidth:"18px",paddingRight:"24px"}}><i className="fa fa-plus"></i></span>
-                <span style={{display:"inline-block",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Add document</span>
+                <span style={{display:"table-cell",verticalAlign:"bottom",minWidth:"28px",paddingRight:"18px"}}><i className="fa fa-cloud-upload" style={{fontSize:"23px",color:"gray",marginTop:"10px"}}></i></span>
+                <span style={{display:"table-cell",width:"90%",minWidth:"20px",fontStyle:"italic"}}>Drop file to create doc or browse</span>
             </div>
         </div>
         )
@@ -90,9 +92,11 @@ export default function DocIcon( props ) {
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
-    var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
+    var url = item.reminder && item.reminder._id ? 'requests/'+item.reminder._id : "";
     let docAlmostExpires = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
     let docExpired = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
+    let reminderName =  "Update Document - "+item.name+' - Expiry: '+moment(item.expiryDate).format('YYYY-MM-DD');
+    let reminder = item.getReminder();
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
@@ -100,7 +104,7 @@ export default function DocIcon( props ) {
 			<span style={{display:"inline-block",minWidth:"18px",color:color,paddingRight:"24px"}}><i className="fa fa-file"></i></span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap"}}>{item.type||'-'}</span>
 			<span style={{display:"inline-block",width:"20%",minWidth:"20px",whiteSpace:"nowrap",paddingLeft:"10px"}}>{item.name||'-'}</span>
-			<span style={{display:"inline-block",width:"46%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
+			<span style={{display:"inline-block",width:"45%",minWidth:"20px",whiteSpace:"nowrap",color:"#999",fontStyle:"italic",paddingLeft:"10px"}}>{item.description||'-'}</span>
 			{/*<span style={{display:"inline-block",width:"7%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>{item.request||'-'}</span>*/}
 			{ _.contains(['fmc support', "portfolio manager" ], props.role ) ?
 				<span style={{display:"inline-block",width:"5%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
@@ -111,12 +115,14 @@ export default function DocIcon( props ) {
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							if(props.handleListUpdate){
+                            runaction( DocActions.destroy.bind(props.team, item ) );
+                            props.onChange();
+							/*if(props.handleListUpdate){
 								removeDocumentFromList( item );
 							} else {
 								runaction( DocActions.destroy.bind(props.team, item ) );
 								props.onChange();
-							}
+							}*/
 						}
 					}>
 					<span>&times;</span>
@@ -126,16 +132,24 @@ export default function DocIcon( props ) {
 				<span style={{display:"inline-block",width:"3%",minWidth:"20px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"10px"}}>
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
-            { docAlmostExpires  ?
-                item.serviceType && item.serviceType.data && item.serviceType.data.request ?
-                    <span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
-                        <a   href={url}
+            { docAlmostExpires || docExpired  ?
+                reminder && reminder.name == reminderName ? 
+                    <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                        <button
+                             type        = "button"
                              className   = "btn btn-flat"
                              title="View Update request"
-                             >
+                             onClick={
+                                 ( event ) => {
+                                     event.stopPropagation();
+                                     selectedRequest = Requests.findOne( reminder._id );
+                                             RequestActions.view.run( selectedRequest );
+                                             props.onChange();
+                                 }
+                             }>
                              <span><i className="fa fa-eye" aria-hidden="true"></i></span>
-                         </a>
-                    </span>:<span style={{display:"inline-block",width:"2%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
+                         </button>
+                    </span>:<span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                                  <button
                                      type        = "button"
                                      className   = "btn btn-flat"
@@ -143,9 +157,9 @@ export default function DocIcon( props ) {
                                      onClick={
                                          ( event ) => {
                                              event.stopPropagation();
-                                                 runaction( DocActions.createUpdateRequest.bind( item ) );
-                                                 props.onChange();
-
+                                             item.dueDate = docAlmostExpires ? item.expiryDate : moment(new Date()).add( { days: 1 } ).toDate();
+                                                     runaction( DocActions.createUpdateRequest.bind( null, item ) );
+                                                     props.onChange();
                                          }
                                      }>
                                      <span>&#43;</span>

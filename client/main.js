@@ -11,7 +11,7 @@ function loadExternalScripts() {
 
     loadBrowerCompatibilityScript();// load browser-update.org browser compatibility script
     fixIEirregularScroll();// fixes internet explorer problem of scrolling fixed html elements which brings messy displays
-    
+
     loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
 
@@ -56,7 +56,7 @@ function isIE () {
 }
 
 function loadBrowerCompatibilityScript(  ){
-    
+
 	window.$buoop = {
 		vs:{
 			i:10,
@@ -80,12 +80,12 @@ function loadBrowerCompatibilityScript(  ){
             }
             else{
             const script = document.createElement("script");
-            script.src = "http://browser-update.org/update.min.js";
+            script.src = "https://browser-update.org/update.min.js";
             script.type = "text/javascript";
             script.async = true;
             document.body.appendChild(script);
             }
-		    
+
 		});
 }
 loadExternalScripts();
@@ -108,10 +108,22 @@ DocHead.addMeta( {
 Actions.addAccessRule( {
     action: [
         'edit user',
-        'login as user',
+        //'login as user',
         'send email digests',
         'logout'
     ],
+    role: [ '*' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    action: [
+        'login as user'
+    ],
+    condition: ( item ) => {
+        let logedInUserRole = Meteor.user().getRole();
+        return _.contains(['fmc support'],logedInUserRole)
+    },
     role: [ '*' ],
     rule: { alert: true }
 } )
@@ -126,13 +138,14 @@ Actions.addAccessRule( {
     alert: true
 } );
 
-Actions.addAccessRule( {
+
+/*Actions.addAccessRule( {
     action: [
         'create team',
     ],
     role: [ 'portfolio manager', 'manager' ],
     alert: true
-} );
+} );*/
 
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
@@ -144,6 +157,7 @@ Actions.addAccessRule( {
     },
     action: [
         'create team request',
+        'create team PPM request'
     ],
     role: [
         'staff',
@@ -170,19 +184,34 @@ Actions.addAccessRule( {
 Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
-            role = team.getMemberRole( user );
+            role = user.getRole();
 
         return team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
+
     action: [
-        'edit team',
+        'remove supplier',
+    ],
+    role: [
+        '*',
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'delete team',
         'view team',
         'view team member',
         'edit team member',
         'delete team member',
         'create team member',
         'create compliance rule',
-        'create team document',
         'invite supplier'
     ],
     role: [
@@ -193,6 +222,46 @@ Actions.addAccessRule( {
         'owner',
         'property manager',
         'caretaker'*/
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'edit team'
+    ],
+    role: [
+        'fmc support',
+        'portfolio manager',
+        //'manager'
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'create team document'
+    ],
+    role: [
+        //'*'
+        'fmc support',
+        'portfolio manager',
+        'team portfolio manager',
+        'facility manager',
+        'manager',
+        'owner',
+        'property manager',
+        'caretaker'
     ],
 } )
 
@@ -224,6 +293,8 @@ Actions.addAccessRule( {
         'view facility',
     ],
     role: [
+        'fmc support',
+        'portfolio manager',
         'team fmc support',
         'team portfolio manager',
         'team manager',
@@ -238,7 +309,12 @@ Actions.addAccessRule( {
     action: [
         'destroy facility'
     ],
-    role: [ 'team fmc support', 'team portfolio manager' ],
+    role: [
+        'team fmc support',
+        'team portfolio manager',
+        'fmc support',
+        'portfolio manager'
+     ],
     rule: { alert: true }
 } )
 
@@ -280,8 +356,12 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
+        let requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+        if (requestIsInvoice) {
+            return false;
+        }
 
-        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'Booking' ], request.status ) ) {
+        if ( _.contains( [ 'Draft', 'New', 'Issued', 'PMP', 'PPM', 'Booking' ], request.status ) ) {
             let user = Meteor.user(),
                 team = request.getTeam(),
                 facility = request.getFacility(),
@@ -315,9 +395,9 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Preventative'  && request.supplier && request.supplier._id ) {
-            import { Requests } from '/modules/models/Requests';
-            request = Requests.collection._transform( request );
+        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+            import { PPM_Schedulers } from '/modules/models/Requests';
+            request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
             if ( nextRequest == null ) {
                 return true;
@@ -402,12 +482,25 @@ Actions.addAccessRule( {
         ( request ) => {
             let user = Meteor.user(),
                 team = request.getTeam(),
-                teamRole = team.getMemberRole( user );
-
+                teamRole = team.getMemberRole( user ),
+                requestIsInvoice = (request.invoiceDetails && request.invoiceDetails.details);
+            /*let facilityRole = facility.getMemberRole( user )*/
+            if (requestIsInvoice) {
+                return false;
+            }
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
-                return true;
-            } else if ( request.status == 'New' || request.type == 'Preventative' ) {
+                if(request.status == 'Issued'){
+                    return false;
+                    /*if(user.getRole() && user.getRole() == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }*/
+                }else{
+                    return true;
+                }
+            } else if ( request.status == 'New' || request.type == 'Preventative' || request.status == 'Issued' ) {
                 /*  Allow action if status is new and only for
                     roles specified below
                 */
@@ -419,10 +512,19 @@ Actions.addAccessRule( {
                 if ( facility ) {
                     facilityRole = facility.getMemberRole( user );
                 }
-
+                if(request.status == 'Issued'){
+                    return false;
+                    /*if(facilityRole == 'fmc support'){
+                        return true;
+                    }else{
+                        return false;
+                    }*/
+                }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
                 }
+            } else {
+                return false;
             }
         },
     action: [
@@ -446,7 +548,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        return _.contains( [ 'In Progress', 'Issued' ], request.status )
+        return _.contains( [ 'In Progress', 'Issued' ], request.status) && (request.status != 'Complete')
     },
     action: [
         'complete request',
@@ -456,13 +558,60 @@ Actions.addAccessRule( {
 } )
 
 Actions.addAccessRule( {
-    condition: { status: 'Complete' },
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details)
+    },
     action: [
         //'close request',
         'reopen request',
         //'reverse request',
     ],
     role: [ 'team fmc support', 'team portfolio manager', 'team manager', 'facility manager' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && (request.invoiceDetails && request.invoiceDetails.status=='Issued')
+    },
+    action: [
+        'reissue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return _.contains( [ 'Complete' ], request.status) && !(request.invoiceDetails && request.invoiceDetails.details);
+    },
+    action: [
+        'invoice request',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return request.invoiceDetails && request.invoiceDetails.status=='New';
+    },
+    action: [
+        'issue invoice',
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
+    rule: { alert: true }
+} )
+
+Actions.addAccessRule( {
+    condition: ( request ) => {
+        return (request.invoiceDetails && request.invoiceDetails.details)
+    },
+    action: [
+        'edit invoice',
+        'delete invoice'
+    ],
+    role: [ 'supplier manager', 'supplier portfolio manager', 'supplier fmc support' ],
     rule: { alert: true }
 } )
 
@@ -499,6 +648,19 @@ Actions.addAccessRule( {
     rule: { alert: true }
 } )
 
+Actions.addAccessRule( {
+    action: [
+        'edit member',
+        'remove member',
+        'invite member'
+    ],
+    /*condition: ( item ) => {
+        return item.type == 'contractor' || item.canAddMember();
+    },*/
+    role: ['*'],
+    rule: { alert: true }
+} )
+
 
 /*
 Actions.addAccessRule( {
@@ -511,11 +673,11 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     action: [
-        'edit member',
+        //'edit member',
         'view member',
         'create member',
-        'remove member',
-        'invite member'
+        //'remove member',
+        //'invite member'
     ],
     condition: ( item ) => {
         /*return item.canAddMember();*/

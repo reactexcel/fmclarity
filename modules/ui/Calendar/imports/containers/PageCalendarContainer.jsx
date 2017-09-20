@@ -13,12 +13,11 @@ import { Facilities } from '/modules/models/Facilities';
 const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	//Meteor.subscribe( 'Requests this month' );
-	
+
 
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
-		requests = null,
 		facilities = null,
 		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
 		contextFilter = {};
@@ -39,7 +38,7 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	if ( user != null ) {
 		// Requests.findForUser( Meteor.user() )...???
-		requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+		({ requests } = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true }));
 	}
 
 	return {

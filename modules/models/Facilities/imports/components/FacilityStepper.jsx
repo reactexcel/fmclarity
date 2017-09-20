@@ -41,46 +41,49 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
             premise: 'short_name'
         };
         var place = suggest.gmaps;
-        console.log( place );
         var val = "";
-        let street_number, city, state, country, pcode, street_name = "";
+        let street_number, city, state, country, pcode, street_name, locname = "";
         // Get each component of the address from the place details
         // and fill the corresponding field on the form.
-        var loctype = place.address_components[ 0 ].types[ 0 ];
-        var locname = place.address_components[ 0 ][ componentForm[ loctype ] ];
-        for ( var i = 0; i < place.address_components.length; i++ ) {
-            var addressType = place.address_components[ i ].types[ 0 ];
-            console.log( addressType );
-            if ( componentForm[ addressType ] ) {
-                val = place.address_components[ i ][ componentForm[ addressType ] ];
-            }
-            if ( facility ) {
+        if ( place && place.address_components ) {
+            var loctype = place.address_components[ 0 ].types[ 0 ];
+            locname = place.address_components[ 0 ][ componentForm[ loctype ] ];
 
-                switch ( addressType ) {
-
-                    case "street_number":
-                        street_number = val;
-                        break;
-                    case "route":
-                        street_name = val;
-                        break;
-                    case "locality":
-                        city = val;
-                        break;
-                    case "administrative_area_level_1":
-                        state = val;
-                        break;
-                    case "country":
-                        country = val;
-                        break;
-                    case "postal_code":
-                        pcode = val;
-                        break;
-                    default:
-
+            for ( var i = 0; i < place.address_components.length; i++ ) {
+                var addressType = place.address_components[ i ].types[ 0 ];
+                console.log( addressType );
+                if ( componentForm[ addressType ] ) {
+                    val = place.address_components[ i ][ componentForm[ addressType ] ];
                 }
-            };
+                if ( facility ) {
+
+                    switch ( addressType ) {
+
+                        case "street_number":
+                            street_number = val;
+                            break;
+                        case "route":
+                            street_name = val;
+                            break;
+                        case "locality":
+                            city = val;
+                            break;
+                        case "administrative_area_level_1":
+                            state = val;
+                            break;
+                        case "country":
+                            country = val;
+                            break;
+                        case "postal_code":
+                            pcode = val;
+                            break;
+                        default:
+
+                    }
+                };
+            }
         }
+
         facility.address.streetNumber = street_number;
         facility.address.city = city;
         facility.address.state = state;
@@ -89,7 +92,7 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
         facility.address.streetName = street_name;
         facility.name = locname;
 
-
+        $('#address_area').html('');
         ReactDOM.render( <AutoForm model = { Facilities } item = { facility } form = { ["name", "type", "address", "operatingTimes" ] } onNext = { onNext } hideSubmit = { true } submitFormOnStepperNext = { true }/>, document.getElementById( 'address_area' ) );
     }
     /*
@@ -116,8 +119,9 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
 
                 <Stepper
 
-                    submitForm = { ( callback ) => {
+                    submitForm = { ( activeTab, callback ) => {
                         if( submitFormCallback ){
+                            Session.selectFacility( facility );
                             submitFormCallback( callback );
                         }
                     } }
@@ -143,13 +147,13 @@ export default function FacilityStepper( { facility, onSaveFacility } ) {
                                         />
                                         <div id="address_area">
                                             <AutoForm
-                                                model       = { Facilities }
-                                                item        = { facility }
-                                                form        = { ["name", "type", "address", "operatingTimes" ] }
-                                                onNext      = { onNext }
-                                                hideSubmit  = { true }
-                                                submitFormOnStepperNext = { true }
-                                              />
+                                                    model       = { Facilities }
+                                                    item        = { facility }
+                                                    form        = { ["name", "type", "address", "operatingTimes" ] }
+                                                    onNext      = { onNext }
+                                                    hideSubmit  = { true }
+                                                    submitFormOnStepperNext = { true }
+                                                  />
                                         </div>
                                         </div>
                                         <div className = "col-sm-5">
