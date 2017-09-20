@@ -97,6 +97,9 @@ export default ServiceDefaults2 = [ {
 		name: "Stat Valves",
 		propType: [propTypes[0]]
 	}, {
+		name: "Tenancy",
+		propType: [propTypes[0],propTypes[2]]
+	}, {
 		name: "Terminal Units",
 		propType: [propTypes[0]]
 	} ]
@@ -128,7 +131,7 @@ export default ServiceDefaults2 = [ {
 		propType: [propTypes[1]]
 	}, {
 		name: "Gate Maintenance",
-		propType: [propTypes[0],propTypes[1]]
+		propType: [propTypes[0],propTypes[2]]
 	}, {
 		name: "Line Marking",
 		propType: [propTypes[0]]
@@ -225,7 +228,7 @@ export default ServiceDefaults2 = [ {
 		propType: propTypes
 	}, {
 		name: "Lighting - Emergency & Exit",
-		propType: propTypes
+		propType: []
 	}, {
 		name: "Lighting - Tenancy",
 		propType: [propTypes[0],propTypes[1]]
@@ -543,6 +546,22 @@ export default ServiceDefaults2 = [ {
 		propType: [propTypes[0]]
 	} ]
 }, {
+	name: "Signage",
+	propType: propTypes,
+	children: [ {
+		name: "Base Building",
+		propType: [propTypes[1]]
+	}, {
+		name: "External",
+		propType: [propTypes[0]]
+	}, {
+		name: "Internal",
+		propType: [propTypes[0]]
+	}, {
+		name: "Tenancy",
+		propType: [propTypes[0]]
+	} ]
+}, {
 	name: "Stairs",
 	propType: propTypes,
 	children: []
@@ -599,7 +618,7 @@ export default ServiceDefaults2 = [ {
 		propType: []
 	}, {
 		name: "Base Building",
-		propType: [propTypes[0]]
+		propType: [propTypes[1]]
 	}, {
 		name: "Confined Spaces",
 		propType: []
