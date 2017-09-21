@@ -19,8 +19,9 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
     'copies.master.size': { $gt: 0 }
   };
   let files = Files.find(query).fetch();
-  let streams = [];
 
+  // store all streams into the streams array
+  let streams = [];
   for (let file of files) {
     let fileMigrationEntryCount = FileMigration.find({fsId: file._id, 's3Bucket.name': s3Config.bucket.name,
       's3Bucket.folder': s3Config.bucket.folder}).count();
@@ -35,6 +36,7 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
     }
   }
 
+  // recursively pipe all stored streams
   if (streams.length > 0) {
     pipeStreamsRecursive(streams, 0);
   }
@@ -45,7 +47,9 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
     }
 
     let stream = streams[index].read.pipe(streams[index].write);
+    // recursively call self after the stream has been finished to simulate synchronous functionality
     stream.on('finish', Meteor.bindEnvironment(function () {
+      // save streamed file into the database for future migration reference
       FileMigration.upsert({
         fsId: streams[index].id,
         s3Bucket: {
@@ -59,7 +63,7 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
           folder: s3Config.bucket.folder
         }
       });
-      console.log('Migrating file # ' + index + ' with the id: ' + streams[index].id);
+      console.log('Migrated file # ' + index + ' with the id: ' + streams[index].id);
       index = index + 1;
       pipeStreamsRecursive(streams, index);
     }));
