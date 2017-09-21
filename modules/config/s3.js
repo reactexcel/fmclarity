@@ -17,8 +17,11 @@ const s3Config = {
     endpoint: process.env.S3_BUCKET_ENDPOINT
   },
   migrate: {
-    gridfs: process.env.S3_MIGRATE_GRIDFS || false
-  }
+    gridfs: {
+      enabled: process.env.S3_MIGRATE_GRIDFS || false,
+      all: process.env.S3_MIGRATE_GRIDFS_ALL || false
+    }
+  },
 };
 
 export default s3Config;

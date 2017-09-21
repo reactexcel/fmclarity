@@ -22,7 +22,7 @@ if (s3Config.enabled()) {
   stores.push(new FS.Store.GridFS("master"));
 }
 
-if (s3Config.migrate.gridfs && s3Config.enabled()) {
+if (s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
   stores.push(new FS.Store.GridFS("master"));
 }
 
@@ -30,8 +30,9 @@ const Files = new FS.Collection("File", {
   stores: stores
 });
 
-if (Meteor.isServer && s3Config.migrate.gridfs && s3Config.enabled()) {
-  Files.find({'copies.s3Images.size': 0}).forEach(function (fileObj) {
+if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
+  let query = s3Config.migrate.gridfs.all ? {} : { 'copies.s3Images.size': 0 };
+  Files.find(query).forEach(function (fileObj) {
       let readStream = fileObj.createReadStream('master');
       let writeStream = fileObj.createWriteStream('s3Images');
       readStream.pipe(writeStream);
