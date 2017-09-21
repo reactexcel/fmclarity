@@ -17,7 +17,7 @@ export default UserViewRelationEdit = React.createClass( {
 		group = this.props.group;
 		group.setMemberRole( member, role );
 		this.handleThresholdValueChange(null);
-		
+
 		if ( !_.contains([ "portfolio manager" ], role) ) {
 			Users.update( { _id: member._id}, { $set: { role: role } } );
 			this.props.team.setMemberRole( member, role );
@@ -71,7 +71,7 @@ export default UserViewRelationEdit = React.createClass( {
 			let role = relation.role,
 			threshold = relation.issueThresholdValue ? relation.issueThresholdValue : "",
 			currentUserRelation = group.getMemberRelation( Meteor.user() );
-			
+
 			return (
 				<div>
 				<Select
@@ -81,8 +81,8 @@ export default UserViewRelationEdit = React.createClass( {
 					placeholder 	= "Role"
 				/>
 
-				{(_.contains(['portfolio manager','fmc support'], userRole) ) && 
-				_.contains(['manager','caretaker'], role) && group && group.type != 'contractor'? 
+				{(_.contains(['portfolio manager','fmc support'], userRole) ) &&
+				_.contains(['manager','caretaker'], role) && group && group.type != 'contractor'?
 				<Text
 					value			= { threshold }
 					onChange		= { this.handleThresholdValueChange }

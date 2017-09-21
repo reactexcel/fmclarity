@@ -165,6 +165,27 @@ class ActionGroup {
 	 * @return {array} An array of actions that are valid for this user with the provided args.
 	 */
 	filter( actionNames, ...args ) {
+		let selectedFacility = Session.getSelectedFacility();
+		/////------Add more items on left side bar after selecting any facility-----------//////
+		if(selectedFacility != undefined){
+			let facilityRole = selectedFacility.getMemberRole( Meteor.user() );
+			if(facilityRole && _.contains(['manager'],facilityRole)){
+				this.addAccessRule({
+					action: [
+						'dashboard',
+						'requests',
+						'portfolio',
+						'suppliers',
+						'calendar',
+						'user-docs'
+					],
+					role: [ Meteor.user().getRole() ],
+					condition: null,
+					rule : {}
+				})
+			}
+		}
+		////////-----------------------------------////////
 		if(args[0] != undefined && args[1] != undefined){
 			let callback = args[1]
 			callback(args[0])

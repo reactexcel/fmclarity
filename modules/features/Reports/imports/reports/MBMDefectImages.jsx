@@ -227,6 +227,10 @@ const SingleServiceRequest = React.createClass( {
 	})
 	},
 
+		componentWillMount(){
+			this.getWorkOrderData();
+		},
+
 	componentDidMount() {
 		setTimeout(function(){
 			$(".loader").hide();
@@ -264,6 +268,33 @@ const SingleServiceRequest = React.createClass( {
 
 		return data;
 	},
+
+	getWorkOrderData() {
+		var user = Meteor.user();
+		if ( user ) {
+			let facility = Session.getSelectedFacility();
+			if ( facility ) {
+				var q = {};
+				q['facility._id'] = facility._id;
+				 q['issuedAt'] = {
+						 $gte: moment().startOf("month").toDate(),
+						 $lte: moment().endOf("month").toDate()
+				 };
+					q["type"] = {$ne:'Defect'}
+					q['status'] ={$nin:['Deleted','PPM','New']};
+					q['service.name'] = this.props.serviceName;
+					let requests = Requests.findAll(q);
+					let PPMIssued = PPM_Schedulers.findAll(q);
+					if(PPMIssued.length > 0){
+						PPMIssued.map((val)=>{
+							requests.push(val)
+						})
+					}
+					this.setState({WoData: requests.length ? requests : [] });
+			}
+		}
+	},
+
 	// handleComment(item){
 	// 	let	user = Meteor.user();
 	// 	let team = user.getSelectedTeam();
@@ -353,7 +384,7 @@ const SingleServiceRequest = React.createClass( {
 				</div> */}
 				<div className="data-table">
 					<div style={{marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
-						<WoTable service={this.props.serviceName} defect/>
+						<WoTable defect data={this.state.WoData} reload={this.getWorkOrderData} />
 					</div>
 				</div>
 			</div>

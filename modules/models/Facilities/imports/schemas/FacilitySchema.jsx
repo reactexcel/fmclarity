@@ -10,6 +10,7 @@ import { Documents, DocExplorer } from '/modules/models/Documents';
 import { Text, TextArea, Select, Switch, Currency, DateTime, StartEndTimePicker} from '/modules/ui/MaterialInputs';
 import { Users } from '/modules/models/Users';
 import { ContactCard } from '/modules/mixins/Members';
+import { ServiceDefaults2 } from '/modules/mixins/Services';
 import React from "react";
 import moment from 'moment';
 
@@ -61,16 +62,55 @@ const FacilitySchema = {
 
 	type: {
 		label: "Property type",
-		input: Select,
+		//input: Select,
+		input: (props)=>{
+			return (
+				<Select
+					placeholder = { "Property type" }
+					items = { props.items }
+					errors = { props.errors }
+					value = { props.value }
+					onChange = { (item) => {
+						props.onChange(item)
+					}}
+				/>
+			)
+		},
 		type: "string",
 		required: true,
 		options: {
 			items: [
-				"Commercial",
-				"Retail",
-				"Residential",
-				"Industrial"
+				"Base building",
+				"Corporate occupier",
+				"Residential strata"
 			]
+		},
+		condition: (item)=> {
+			if(item && !_.isEmpty(item.type)){
+				let originalValue = [];
+				let setServicesRequired = $.grep( ServiceDefaults2, function( service, i ) {
+  					if(_.contains(service.propType,item.type)){
+						return true;
+					}
+				});
+				setServicesRequired.map( ( service, idx ) => {
+					let children = $.grep( service.children, function( child, i ) {
+						if(_.contains(child.propType,item.type)){
+							return true;
+						}
+					})
+					originalValue.push({
+						name: service.name,
+						propType: service.propType,
+						children: children
+					})
+				})
+				item.servicesRequired = originalValue
+			}else{
+				item.servicesRequired = []
+			}
+			//return Object.assign( {}, ServiceDefaults2 );
+			return true;
 		}
 	},
 
@@ -132,9 +172,12 @@ const FacilitySchema = {
 		label: "Services Required",
 		description: "The services required to maintain this site",
 		type: [ Object ],
-		//defaultValue: () => {
-		//return JSON.parse( JSON.stringify( Config.services ) )
-		//}
+		/*defaultValue: () => {
+		    //return JSON.parse( JSON.stringify( Config.services ) )
+		}
+		defaultValue: (item) => {
+            return Object.assign( {}, ServiceDefaults2 );
+        },*/
 	},
 
 	////////////////////////////////////////////////////
